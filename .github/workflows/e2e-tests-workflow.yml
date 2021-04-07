@@ -45,21 +45,21 @@ jobs:
       - name: Checkout Anomaly Detection OpenSearch Dashboards plugin
         uses: actions/checkout@v2
         with:
-          path: OpenSearch-Dashboards/plugins/anomaly-detection-opensearch-dashboards-plugin
+          path: OpenSearch-Dashboards/plugins/anomaly-detection-dashboards-plugin
 
       - name: Bootstrap the plugin
         run: |
-          cd OpenSearch-Dashboards/plugins/anomaly-detection-opensearch-dashboards-plugin
+          cd OpenSearch-Dashboards/plugins/anomaly-detection-dashboards-plugin
           yarn osd bootstrap
 
       - name: Build the artifact
         run: |
-          cd OpenSearch-Dashboards/plugins/anomaly-detection-opensearch-dashboards-plugin
+          cd OpenSearch-Dashboards/plugins/anomaly-detection-dashboards-plugin
           yarn build
 
       - name: Create tagged images for OpenSearch and OpenSearch Dashboards
         run: |
-          cd OpenSearch-Dashboards/plugins/anomaly-detection-opensearch-dashboards-plugin
+          cd OpenSearch-Dashboards/plugins/anomaly-detection-dashboards-plugin
           odfe_version=$ODFE_VERSION
           plugin_version=$(node -pe "require('./package.json').version")
           echo odfe version: $odfe_version
@@ -83,7 +83,7 @@ jobs:
 
       - name: Start ES and OpenSearch Dashboards
         run: |
-          cd OpenSearch-Dashboards/plugins/anomaly-detection-opensearch-dashboards-plugin/.github/configurations
+          cd OpenSearch-Dashboards/plugins/anomaly-detection-dashboards-plugin/.github/configurations
           ## Need to increase max map count for running the docker container
           sudo sysctl -w vm.max_map_count=262144
           docker-compose up -d
@@ -92,7 +92,7 @@ jobs:
       - name: Run e2e tests
         uses: cypress-io/github-action@v2.5.0
         with:
-          working-directory: OpenSearch-Dashboards/plugins/anomaly-detection-opensearch-dashboards-plugin
+          working-directory: OpenSearch-Dashboards/plugins/anomaly-detection-dashboards-plugin
           command: yarn cy:run --env SECURITY_ENABLED=true
 
   test-without-security:
@@ -145,13 +145,13 @@ jobs:
       - name: Checkout Anomaly Detection OpenSearch Dashboards plugin
         uses: actions/checkout@v2
         with:
-          path: OpenSearch-Dashboards/plugins/anomaly-detection-opensearch-dashboards-plugin
+          path: OpenSearch-Dashboards/plugins/anomaly-detection-dashboards-plugin
       - name: Bootstrap the plugin
         run: |
-          cd OpenSearch-Dashboards/plugins/anomaly-detection-opensearch-dashboards-plugin
+          cd OpenSearch-Dashboards/plugins/anomaly-detection-dashboards-plugin
           yarn osd bootstrap
       - name: Run e2e tests
         uses: cypress-io/github-action@v2.5.0
         with:
-          working-directory: OpenSearch-Dashboards/plugins/anomaly-detection-opensearch-dashboards-plugin
+          working-directory: OpenSearch-Dashboards/plugins/anomaly-detection-dashboards-plugin
           command: yarn test:e2e

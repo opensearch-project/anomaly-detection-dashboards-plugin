@@ -1,6 +1,6 @@
-[![Unit tests](https://github.com/opensearch-project/anomaly-detection-opensearch-dashboards-plugin/workflows/Unit%20tests%20workflow/badge.svg)](https://github.com/opensearch-project/anomaly-detection-opensearch-dashboards-plugin/actions?query=workflow%3A%22Unit+tests+workflow%22)
-[![Integration tests](https://github.com/opensearch-project/anomaly-detection-opensearch-dashboards-plugin/workflows/E2E%20tests%20workflow/badge.svg)](https://github.com/opensearch-project/anomaly-detection-opensearch-dashboards-plugin/actions?query=workflow%3A%22E2E+tests+workflow%22)
-[![codecov](https://codecov.io/gh/opensearch-project/anomaly-detection-opensearch-dashboards-plugin/branch/main/graph/badge.svg)](https://codecov.io/gh/opensearch-project/anomaly-detection-opensearch-dashboards-plugin)
+[![Unit tests](https://github.com/opensearch-project/anomaly-detection-dashboards-plugin/workflows/Unit%20tests%20workflow/badge.svg)](https://github.com/opensearch-project/anomaly-detection-dashboards-plugin/actions?query=workflow%3A%22Unit+tests+workflow%22)
+[![Integration tests](https://github.com/opensearch-project/anomaly-detection-dashboards-plugin/workflows/E2E%20tests%20workflow/badge.svg)](https://github.com/opensearch-project/anomaly-detection-dashboards-plugin/actions?query=workflow%3A%22E2E+tests+workflow%22)
+[![codecov](https://codecov.io/gh/opensearch-project/anomaly-detection-dashboards-plugin/branch/main/graph/badge.svg)](https://codecov.io/gh/opensearch-project/anomaly-detection-dashboards-plugin)
 [![Documentation](https://img.shields.io/badge/doc-reference-blue)](https://opendistro.github.io/for-elasticsearch-docs/docs/ad/)
 [![Forum](https://img.shields.io/badge/chat-on%20forums-blue)](https://discuss.opendistrocommunity.dev/c/Use-this-category-for-all-questions-around-machine-learning-plugins)
 ![PRs welcome!](https://img.shields.io/badge/PRs-welcome!-success)
@@ -13,7 +13,7 @@ The Open Distro for Elasticsearch Anomaly Detection plugin enables you to levera
 
 Anomaly detection is using Random Cut Forest (RCF) algorithm for detecting anomalous data points.
 
-You should use the Anomaly Detection OpenSearch Dashboards plugin with the same version of the [OpenSearch Dashboards Alerting Plugin](https://github.com/opensearch-project/alerting-opensearch-dashboards-plugin). You can also create monitors based on a created anomaly detector. A scheduled monitor run checks the anomaly detection results regularly and collects anomalies to trigger alerts based on custom trigger conditions.
+You should use the Anomaly Detection OpenSearch Dashboards plugin with the same version of the [OpenSearch Dashboards Alerting Plugin](https://github.com/opensearch-project/alerting-dashboards-plugin). You can also create monitors based on a created anomaly detector. A scheduled monitor run checks the anomaly detection results regularly and collects anomalies to trigger alerts based on custom trigger conditions.
 
 ## Current Limitations
 
@@ -35,7 +35,7 @@ Please see our [documentation](https://opendistro.github.io/for-elasticsearch-do
 1. Change your node version to the version specified in `.node-version` inside the OpenSearch Dashboards root directory.
 1. Create a `plugins` directory inside the OpenSearch Dashboards source code directory, if `plugins` directory doesn't exist.
 1. Check out this package from version control into the `plugins` directory.
-1. Run `yarn osd bootstrap` inside `OpenSearch-Dashboards/plugins/anomaly-detection-opensearch-dashboards-plugin`.
+1. Run `yarn osd bootstrap` inside `OpenSearch-Dashboards/plugins/anomaly-detection-dashboards-plugin`.
 
 Ultimately, your directory structure should look like this:
 
@@ -44,7 +44,7 @@ Ultimately, your directory structure should look like this:
 .
 ├── OpenSearch-Dashboards
 │   └──plugins
-│      └── anomaly-detection-opensearch-dashboards-plugin
+│      └── anomaly-detection-dashboards-plugin
 ```
 
 ## Build

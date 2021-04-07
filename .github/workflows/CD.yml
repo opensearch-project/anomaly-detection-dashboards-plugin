@@ -47,21 +47,21 @@ jobs:
       - name: Checkout Anomaly Detection OpenSearch Dashboards plugin
         uses: actions/checkout@v2
         with:
-          path: OpenSearch-Dashboards/plugins/anomaly-detection-opensearch-dashboards-plugin
+          path: OpenSearch-Dashboards/plugins/anomaly-detection-dashboards-plugin
 
       - name: Bootstrap the plugin
         run: |
-          cd OpenSearch-Dashboards/plugins/anomaly-detection-opensearch-dashboards-plugin
+          cd OpenSearch-Dashboards/plugins/anomaly-detection-dashboards-plugin
           yarn osd bootstrap
 
       - name: Build the artifact
         run: |
-          cd OpenSearch-Dashboards/plugins/anomaly-detection-opensearch-dashboards-plugin
+          cd OpenSearch-Dashboards/plugins/anomaly-detection-dashboards-plugin
           yarn build
 
       - name: Upload to S3
         run: |
-          cd OpenSearch-Dashboards/plugins/anomaly-detection-opensearch-dashboards-plugin
+          cd OpenSearch-Dashboards/plugins/anomaly-detection-dashboards-plugin
           zip=`ls build/*.zip`
 
           # Inject the build number before the suffix

@@ -38,14 +38,14 @@ jobs:
       - name: Checkout Anomaly Detection OpenSearch Dashboards plugin
         uses: actions/checkout@v2
         with:
-          path: OpenSearch-Dashboards/plugins/anomaly-detection-opensearch-dashboards-plugin
+          path: OpenSearch-Dashboards/plugins/anomaly-detection-dashboards-plugin
       - name: Bootstrap the plugin
         run: |
-          cd OpenSearch-Dashboards/plugins/anomaly-detection-opensearch-dashboards-plugin
+          cd OpenSearch-Dashboards/plugins/anomaly-detection-dashboards-plugin
           yarn osd bootstrap
       - name: Run tests
         run: |
-          cd OpenSearch-Dashboards/plugins/anomaly-detection-opensearch-dashboards-plugin
+          cd OpenSearch-Dashboards/plugins/anomaly-detection-dashboards-plugin
           yarn run test:jest --coverage
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v1

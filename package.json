@@ -1,7 +1,7 @@
 {
   "name": "opendistro-anomaly-detection-opensearch-dashboards",
   "version": "1.13.0.0",
-  "description": "Anomaly Detection OpenSearch Dashboards plugin",
+  "description": "Open Distro Anomaly Detection OpenSearch Dashboards Plugin",
   "main": "index.js",
   "config": {
     "odfe_version": "1.13.0.0",
