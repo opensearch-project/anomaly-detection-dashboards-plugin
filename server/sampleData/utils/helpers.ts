@@ -16,7 +16,10 @@
 //@ts-ignore
 import moment from 'moment';
 import readline from 'readline';
-import { RequestHandlerContext, KibanaRequest } from '../../../../../src/core/server';
+import {
+  RequestHandlerContext,
+  OpenSearchDashboardsRequest,
+} from '../../../../../src/core/server';
 import fs from 'fs';
 import { createUnzip } from 'zlib';
 import { isEmpty } from 'lodash';
@@ -28,7 +31,7 @@ export const loadSampleData = (
   filePath: string,
   indexName: string,
   client: any,
-  request: KibanaRequest,
+  request: OpenSearchDashboardsRequest
 ) => {
   return new Promise((resolve, reject) => {
     let count: number = 0;
@@ -99,12 +102,9 @@ export const loadSampleData = (
     const bulkInsert = async (docs: any[]) => {
       try {
         const bulkBody = prepareBody(docs, offset);
-        const resp = await client.asScoped(request).callAsCurrentUser(
-          'bulk',
-          {
-            body: bulkBody,
-          }
-        );
+        const resp = await client.asScoped(request).callAsCurrentUser('bulk', {
+          body: bulkBody,
+        });
         if (resp.errors) {
           const errorItems = resp.items;
           const firstErrorReason = isEmpty(errorItems)

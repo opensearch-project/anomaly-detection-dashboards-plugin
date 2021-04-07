@@ -26,7 +26,7 @@ export const API: ADApis = {
 export const DEFAULT_HEADERS: DefaultHeaders = {
   'Content-Type': 'application/json',
   Accept: 'application/json',
-  'User-Agent': 'Kibana',
+  'User-Agent': 'OpenSearch Dashboards',
 };
 
 export const SEC_IN_MILLI_SECS = 1000;

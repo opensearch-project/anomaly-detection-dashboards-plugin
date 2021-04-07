@@ -16,8 +16,8 @@ import { BASE_NODE_API_PATH } from '../utils/constants';
 import { first } from 'rxjs/operators';
 import { default as createRouter, Router } from './router';
 import {
-  AnomalyDetectionKibanaPluginSetup,
-  AnomalyDetectionKibanaPluginStart,
+  AnomalyDetectionOpenSearchDashboardsPluginSetup,
+  AnomalyDetectionOpenSearchDashboardsPluginStart,
 } from '.';
 import {
   Plugin,
@@ -37,11 +37,11 @@ import SampleDataService, {
 } from './routes/sampleData';
 import { DEFAULT_HEADERS } from './utils/constants';
 
-export class AnomalyDetectionKibanaPlugin
+export class AnomalyDetectionOpenSearchDashboardsPlugin
   implements
     Plugin<
-      AnomalyDetectionKibanaPluginSetup,
-      AnomalyDetectionKibanaPluginStart
+      AnomalyDetectionOpenSearchDashboardsPluginSetup,
+      AnomalyDetectionOpenSearchDashboardsPluginStart
     > {
   private readonly logger: Logger;
   private readonly globalConfig$: any;
@@ -53,10 +53,10 @@ export class AnomalyDetectionKibanaPlugin
   public async setup(core: CoreSetup) {
     // Get any custom/overridden headers
     const globalConfig = await this.globalConfig$.pipe(first()).toPromise();
-    const { customHeaders, ...rest } = globalConfig.elasticsearch;
+    const { customHeaders, ...rest } = globalConfig.opensearch;
 
     // Create ES client w/ relevant plugins and headers
-    const client: ILegacyClusterClient = core.elasticsearch.legacy.createClient(
+    const client: ILegacyClusterClient = core.opensearch.legacy.createClient(
       'anomaly_detection',
       {
         plugins: [adPlugin, alertingPlugin],

@@ -51,15 +51,15 @@ export const APP_PATH = {
   HISTORICAL_DETECTOR_DETAIL: '/historical-detectors/:detectorId/details',
 };
 
-export const KIBANA_PATH = {
+export const OPENSEARCH_DASHBOARDS_PATH = {
   DISCOVER: '/discover',
 };
 
-export const PLUGIN_NAME = 'opendistro-anomaly-detection-kibana';
+export const PLUGIN_NAME = 'opendistro-anomaly-detection-opensearch-dashboards';
 
 export const ALERTING_PLUGIN_NAME = 'opendistro-alerting';
 
-export const KIBANA_NAME = 'kibana';
+export const OPENSEARCH_DASHBOARDS_NAME = 'kibana';
 
 export const ANOMALY_DETECTORS_INDEX = '.opendistro-anomaly-detectors';
 

@@ -16,17 +16,17 @@
 import {
   IRouter,
   RequestHandlerContext,
-  KibanaRequest,
-  KibanaResponseFactory,
-  IKibanaResponse,
+  OpenSearchDashboardsRequest,
+  OpenSearchDashboardsResponseFactory,
+  IOpenSearchDashboardsResponse,
 } from '../../../src/core/server';
-import { schema } from '@kbn/config-schema';
+import { schema } from '@osd/config-schema';
 
 type RouteHandler = (
   context: RequestHandlerContext,
-  request: KibanaRequest,
-  response: KibanaResponseFactory
-) => Promise<IKibanaResponse<any>>;
+  request: OpenSearchDashboardsRequest,
+  response: OpenSearchDashboardsResponseFactory
+) => Promise<IOpenSearchDashboardsResponse<any>>;
 
 type Route = (path: string, handler: RouteHandler) => Router;
 
@@ -43,8 +43,8 @@ export default (iRouter: IRouter, basePath: String): Router => {
   }
   const requestHandler = (handler: RouteHandler) => async (
     context: RequestHandlerContext,
-    request: KibanaRequest,
-    response: KibanaResponseFactory
+    request: OpenSearchDashboardsRequest,
+    response: OpenSearchDashboardsResponseFactory
   ) => {
     try {
       return await handler(context, request, response);

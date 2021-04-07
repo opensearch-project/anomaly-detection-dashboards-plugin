@@ -18,7 +18,7 @@ import moment from 'moment';
 import React from 'react';
 import { EuiIcon } from '@elastic/eui';
 
-// same as default Kibana sample data
+// same as default OpenSearch Dashboards sample data
 export const indexSettings = {
   index: {
     number_of_shards: 1,

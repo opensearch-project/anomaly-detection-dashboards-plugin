@@ -16,7 +16,7 @@
 export interface DefaultHeaders {
   'Content-Type': 'application/json';
   Accept: 'application/json';
-  'User-Agent': 'Kibana';
+  'User-Agent': 'OpenSearch Dashboards';
 }
 
 export interface SearchResponse<T> {

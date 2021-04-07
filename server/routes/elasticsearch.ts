@@ -27,9 +27,9 @@ import { Router } from '../router';
 import { getErrorMessage, isIndexNotFoundError } from './utils/adHelpers';
 import {
   RequestHandlerContext,
-  KibanaRequest,
-  KibanaResponseFactory,
-  IKibanaResponse,
+  OpenSearchDashboardsRequest,
+  OpenSearchDashboardsResponseFactory,
+  IOpenSearchDashboardsResponse,
 } from '../../../../src/core/server';
 
 type SearchParams = {
@@ -57,9 +57,9 @@ export default class ESService {
 
   executeSearch = async (
     context: RequestHandlerContext,
-    request: KibanaRequest,
-    kibanaResponse: KibanaResponseFactory
-  ): Promise<IKibanaResponse<any>> => {
+    request: OpenSearchDashboardsRequest,
+    opensearchDashboardsResponse: OpenSearchDashboardsResponseFactory
+  ): Promise<IOpenSearchDashboardsResponse<any>> => {
     try {
       const {
         index,
@@ -93,10 +93,12 @@ export default class ESService {
         .asScoped(request)
         .callAsCurrentUser('search', params);
 
-      return kibanaResponse.ok({ body: { ok: true, response: results } });
+      return opensearchDashboardsResponse.ok({
+        body: { ok: true, response: results },
+      });
     } catch (err) {
       console.error('Anomaly detector - Unable to execute search', err);
-      return kibanaResponse.ok({
+      return opensearchDashboardsResponse.ok({
         body: {
           ok: false,
           error: getErrorMessage(err),
@@ -107,9 +109,9 @@ export default class ESService {
 
   getIndices = async (
     context: RequestHandlerContext,
-    request: KibanaRequest,
-    kibanaResponse: KibanaResponseFactory
-  ): Promise<IKibanaResponse<any>> => {
+    request: OpenSearchDashboardsRequest,
+    opensearchDashboardsResponse: OpenSearchDashboardsResponseFactory
+  ): Promise<IOpenSearchDashboardsResponse<any>> => {
     const { index } = request.query as { index: string };
     try {
       const response: CatIndex[] = await this.client
@@ -119,7 +121,7 @@ export default class ESService {
           format: 'json',
           h: 'health,index',
         });
-      return kibanaResponse.ok({
+      return opensearchDashboardsResponse.ok({
         body: { ok: true, response: { indices: response } },
       });
     } catch (err) {
@@ -128,12 +130,12 @@ export default class ESService {
         err.statusCode === 404 &&
         get<string>(err, 'body.error.type', '') === 'index_not_found_exception'
       ) {
-        return kibanaResponse.ok({
+        return opensearchDashboardsResponse.ok({
           body: { ok: true, response: { indices: [] } },
         });
       }
       console.log('Anomaly detector - Unable to get indices', err);
-      return kibanaResponse.ok({
+      return opensearchDashboardsResponse.ok({
         body: {
           ok: false,
           error: getErrorMessage(err),
@@ -144,9 +146,9 @@ export default class ESService {
 
   getAliases = async (
     context: RequestHandlerContext,
-    request: KibanaRequest,
-    kibanaResponse: KibanaResponseFactory
-  ): Promise<IKibanaResponse<any>> => {
+    request: OpenSearchDashboardsRequest,
+    opensearchDashboardsResponse: OpenSearchDashboardsResponseFactory
+  ): Promise<IOpenSearchDashboardsResponse<any>> => {
     const { alias } = request.query as { alias: string };
     try {
       const response: IndexAlias[] = await this.client
@@ -156,12 +158,12 @@ export default class ESService {
           format: 'json',
           h: 'alias,index',
         });
-      return kibanaResponse.ok({
+      return opensearchDashboardsResponse.ok({
         body: { ok: true, response: { aliases: response } },
       });
     } catch (err) {
       console.log('Anomaly detector - Unable to get aliases', err);
-      return kibanaResponse.ok({
+      return opensearchDashboardsResponse.ok({
         body: {
           ok: false,
           error: getErrorMessage(err),
@@ -172,9 +174,9 @@ export default class ESService {
 
   createIndex = async (
     context: RequestHandlerContext,
-    request: KibanaRequest,
-    kibanaResponse: KibanaResponseFactory
-  ): Promise<IKibanaResponse<any>> => {
+    request: OpenSearchDashboardsRequest,
+    opensearchDashboardsResponse: OpenSearchDashboardsResponseFactory
+  ): Promise<IOpenSearchDashboardsResponse<any>> => {
     //@ts-ignore
     const index = request.body.index;
     //@ts-ignore
@@ -186,7 +188,7 @@ export default class ESService {
       });
     } catch (err) {
       console.log('Anomaly detector - Unable to create index', err);
-      return kibanaResponse.ok({
+      return opensearchDashboardsResponse.ok({
         body: {
           ok: false,
           error: getErrorMessage(err),
@@ -201,12 +203,12 @@ export default class ESService {
           format: 'json',
           h: 'health,index',
         });
-      return kibanaResponse.ok({
+      return opensearchDashboardsResponse.ok({
         body: { ok: true, response: { indices: response } },
       });
     } catch (err) {
       console.log('Anomaly detector - Unable to get indices', err);
-      return kibanaResponse.ok({
+      return opensearchDashboardsResponse.ok({
         body: {
           ok: false,
           error: getErrorMessage(err),
@@ -217,9 +219,9 @@ export default class ESService {
 
   bulk = async (
     context: RequestHandlerContext,
-    request: KibanaRequest,
-    kibanaResponse: KibanaResponseFactory
-  ): Promise<IKibanaResponse<any>> => {
+    request: OpenSearchDashboardsRequest,
+    opensearchDashboardsResponse: OpenSearchDashboardsResponseFactory
+  ): Promise<IOpenSearchDashboardsResponse<any>> => {
     const body = request.body;
     try {
       const response: any = await this.client
@@ -227,10 +229,12 @@ export default class ESService {
         .callAsCurrentUser('bulk', {
           body: body,
         });
-      return kibanaResponse.ok({ body: { ok: true, response: { response } } });
+      return opensearchDashboardsResponse.ok({
+        body: { ok: true, response: { response } },
+      });
     } catch (err) {
       console.log('Anomaly detector - Unable to perform bulk action', err);
-      return kibanaResponse.ok({
+      return opensearchDashboardsResponse.ok({
         body: {
           ok: false,
           error: getErrorMessage(err),
@@ -241,9 +245,9 @@ export default class ESService {
 
   deleteIndex = async (
     context: RequestHandlerContext,
-    request: KibanaRequest,
-    kibanaResponse: KibanaResponseFactory
-  ): Promise<IKibanaResponse<any>> => {
+    request: OpenSearchDashboardsRequest,
+    opensearchDashboardsResponse: OpenSearchDashboardsResponseFactory
+  ): Promise<IOpenSearchDashboardsResponse<any>> => {
     const index = request.query as { index: string };
     try {
       await this.client.asScoped(request).callAsCurrentUser('indices.delete', {
@@ -256,7 +260,7 @@ export default class ESService {
       );
       // Ignore the error if it's an index_not_found_exception
       if (!isIndexNotFoundError(err)) {
-        return kibanaResponse.ok({
+        return opensearchDashboardsResponse.ok({
           body: {
             ok: false,
             error: getErrorMessage(err),
@@ -272,12 +276,12 @@ export default class ESService {
           format: 'json',
           h: 'health,index',
         });
-      return kibanaResponse.ok({
+      return opensearchDashboardsResponse.ok({
         body: { ok: true, response: { indices: response } },
       });
     } catch (err) {
       console.log('Anomaly detector - Unable to get indices', err);
-      return kibanaResponse.ok({
+      return opensearchDashboardsResponse.ok({
         body: {
           ok: false,
           error: getErrorMessage(err),
@@ -288,9 +292,9 @@ export default class ESService {
 
   getMapping = async (
     context: RequestHandlerContext,
-    request: KibanaRequest,
-    kibanaResponse: KibanaResponseFactory
-  ): Promise<IKibanaResponse<any>> => {
+    request: OpenSearchDashboardsRequest,
+    opensearchDashboardsResponse: OpenSearchDashboardsResponseFactory
+  ): Promise<IOpenSearchDashboardsResponse<any>> => {
     const { index } = request.query as { index: string };
     try {
       const response = await this.client
@@ -298,12 +302,12 @@ export default class ESService {
         .callAsCurrentUser('indices.getMapping', {
           index,
         });
-      return kibanaResponse.ok({
+      return opensearchDashboardsResponse.ok({
         body: { ok: true, response: { mappings: response } },
       });
     } catch (err) {
       console.log('Anomaly detector - Unable to get mappings', err);
-      return kibanaResponse.ok({
+      return opensearchDashboardsResponse.ok({
         body: {
           ok: false,
           error: getErrorMessage(err),

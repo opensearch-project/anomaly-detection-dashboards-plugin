@@ -24,7 +24,7 @@ import {
   sampleHttpResponses,
   sampleEcommerce,
   sampleHostHealth,
-} from '../utils/constants';
+} from './constants';
 
 export const containsDetectorsIndex = (indices: CatIndex[]) => {
   if (isEmpty(indices)) {

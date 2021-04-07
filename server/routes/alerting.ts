@@ -22,9 +22,9 @@ import { MAX_MONITORS } from '../utils/constants';
 import { getErrorMessage } from './utils/adHelpers';
 import {
   RequestHandlerContext,
-  KibanaRequest,
-  KibanaResponseFactory,
-  IKibanaResponse,
+  OpenSearchDashboardsRequest,
+  OpenSearchDashboardsResponseFactory,
+  IOpenSearchDashboardsResponse,
 } from '../../../../src/core/server';
 
 export function registerAlertingRoutes(
@@ -44,9 +44,9 @@ export default class AlertingService {
 
   searchMonitors = async (
     context: RequestHandlerContext,
-    request: KibanaRequest,
-    kibanaResponse: KibanaResponseFactory
-  ): Promise<IKibanaResponse<any>> => {
+    request: OpenSearchDashboardsRequest,
+    opensearchDashboardsResponse: OpenSearchDashboardsResponseFactory
+  ): Promise<IOpenSearchDashboardsResponse<any>> => {
     try {
       const requestBody = {
         size: MAX_MONITORS,
@@ -90,7 +90,7 @@ export default class AlertingService {
         {}
       );
 
-      return kibanaResponse.ok({
+      return opensearchDashboardsResponse.ok({
         body: {
           ok: true,
           response: {
@@ -101,7 +101,7 @@ export default class AlertingService {
       });
     } catch (err) {
       console.log('Unable to get monitor on top of detector', err);
-      return kibanaResponse.ok({
+      return opensearchDashboardsResponse.ok({
         body: {
           ok: false,
           error: getErrorMessage(err),
@@ -112,9 +112,9 @@ export default class AlertingService {
 
   searchAlerts = async (
     context: RequestHandlerContext,
-    request: KibanaRequest,
-    kibanaResponse: KibanaResponseFactory
-  ): Promise<IKibanaResponse<any>> => {
+    request: OpenSearchDashboardsRequest,
+    opensearchDashboardsResponse: OpenSearchDashboardsResponseFactory
+  ): Promise<IOpenSearchDashboardsResponse<any>> => {
     try {
       const { monitorId, startTime, endTime } = request.query as {
         monitorId?: string;
@@ -128,7 +128,7 @@ export default class AlertingService {
           startTime: startTime,
           endTime: endTime,
         });
-      return kibanaResponse.ok({
+      return opensearchDashboardsResponse.ok({
         body: {
           ok: true,
           response,
@@ -136,7 +136,7 @@ export default class AlertingService {
       });
     } catch (err) {
       console.log('Unable to search alerts', err);
-      return kibanaResponse.ok({
+      return opensearchDashboardsResponse.ok({
         body: {
           ok: false,
           error: getErrorMessage(err),

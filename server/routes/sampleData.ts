@@ -22,9 +22,9 @@ import { SAMPLE_TYPE } from '../utils/constants';
 import { loadSampleData } from '../sampleData/utils/helpers';
 import {
   RequestHandlerContext,
-  KibanaRequest,
-  KibanaResponseFactory,
-  IKibanaResponse,
+  OpenSearchDashboardsRequest,
+  OpenSearchDashboardsResponseFactory,
+  IOpenSearchDashboardsResponse,
 } from '../../../../src/core/server';
 
 export function registerSampleDataRoutes(
@@ -47,9 +47,9 @@ export default class SampleDataService {
   // Get the zip file stored in server, unzip it, and bulk insert it
   createSampleData = async (
     context: RequestHandlerContext,
-    request: KibanaRequest,
-    kibanaResponse: KibanaResponseFactory
-  ): Promise<IKibanaResponse<any>> => {
+    request: OpenSearchDashboardsRequest,
+    opensearchDashboardsResponse: OpenSearchDashboardsResponseFactory
+  ): Promise<IOpenSearchDashboardsResponse<any>> => {
     //@ts-ignore
     const type = request.params.type as SAMPLE_TYPE;
     try {
@@ -85,10 +85,12 @@ export default class SampleDataService {
 
       await loadSampleData(filePath, indexName, this.client, request);
 
-      return kibanaResponse.ok({ body: { ok: true } });
+      return opensearchDashboardsResponse.ok({ body: { ok: true } });
     } catch (err) {
       console.log('Anomaly detector - Unable to load the sample data', err);
-      return kibanaResponse.ok({ body: { ok: false, error: err.message } });
+      return opensearchDashboardsResponse.ok({
+        body: { ok: false, error: err.message },
+      });
     }
   };
 }
