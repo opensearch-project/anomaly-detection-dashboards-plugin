@@ -4,7 +4,7 @@
     "tsconfig.json",
     "yarn.lock",
     ".yarnrc",
-    "kibana.json",
+    "opensearch_dashboards.json",
     "offline-module-cache/*.tgz",
     "{lib,public,server,webpackShims,translations,utils,models,test}/**/*",
     "!__tests__/**/*"

@@ -41,7 +41,7 @@ import {
   stopDetector,
 } from '../../../redux/reducers/ad';
 import { getErrorMessage, Listener } from '../../../utils/utils';
-import { darkModeEnabled } from '../../../utils/kibanaUtils';
+import { darkModeEnabled } from '../../../utils/opensearchDashboardsUtils';
 import { BREADCRUMBS } from '../../../utils/constants';
 import { DETECTOR_STATE } from '../../../../server/utils/constants';
 import { DetectorControls } from '../components/DetectorControls';

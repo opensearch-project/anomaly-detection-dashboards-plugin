@@ -14,12 +14,12 @@
  */
 
 import { PluginInitializerContext } from '../../../src/core/public';
-import { AnomalyDetectionKibanaPlugin } from './plugin';
+import { AnomalyDetectionOpenSearchDashboardsPlugin } from './plugin';
 import './app.scss';
 
-export interface AnomalyDetectionKibanaPluginSetup {}
-export interface AnomalyDetectionKibanaPluginStart {}
+export interface AnomalyDetectionOpenSearchDashboardsPluginSetup {}
+export interface AnomalyDetectionOpenSearchDashboardsPluginStart {}
 
 export function plugin(initializerContext: PluginInitializerContext) {
-  return new AnomalyDetectionKibanaPlugin(initializerContext);
+  return new AnomalyDetectionOpenSearchDashboardsPlugin(initializerContext);
 }

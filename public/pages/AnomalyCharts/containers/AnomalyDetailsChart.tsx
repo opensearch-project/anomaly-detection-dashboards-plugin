@@ -46,7 +46,7 @@ import {
   MonitorAlert,
 } from '../../../models/interfaces';
 import { searchAlerts } from '../../../redux/reducers/alerting';
-import { darkModeEnabled } from '../../../utils/kibanaUtils';
+import { darkModeEnabled } from '../../../utils/opensearchDashboardsUtils';
 import {
   filterWithDateRange,
   prepareDataForChart,

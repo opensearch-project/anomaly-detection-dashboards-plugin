@@ -1,15 +1,15 @@
 {
-  "name": "opendistro-anomaly-detection-kibana",
+  "name": "opendistro-anomaly-detection-opensearch-dashboards",
   "version": "1.13.0.0",
-  "description": "Open Distro for Elasticsearch Anomaly Detection Kibana plugin",
+  "description": "Anomaly Detection OpenSearch Dashboards plugin",
   "main": "index.js",
   "config": {
     "odfe_version": "1.13.0.0",
-    "odfe_name": "opendistroAnomalyDetectionKibana"
+    "odfe_name": "opendistroAnomalyDetectionOpenSearchDashboards"
   },
   "scripts": {
-    "kbn": "node ../../scripts/kbn",
-    "es": "node ../../scripts/es",
+    "osd": "node ../../scripts/osd",
+    "opensearch": "node ../../scripts/opensearch",
     "lint": "eslint .",
     "plugin-helpers": "node ../../scripts/plugin_helpers",
     "test:jest": "../../node_modules/.bin/jest --config ./test/jest.config.js",
@@ -17,7 +17,7 @@
     "cy:open": "cypress open",
     "cy:run": "cypress run",
     "cy:run-with-security": "cypress run --env SECURITY_ENABLED=true",
-    "test:e2e": "CHOKIDAR_USEPOLLING=1 CYPRESS_responseTimeout=180000 WAIT_ON_TIMEOUT=900000 start-server-and-test 'cd ../../ && yarn start --no-base-path --oss && cd plugins/anomaly-detection-kibana-plugin' http-get://localhost:5601/app/opendistro-anomaly-detection-kibana 'echo sleeping to wait for server to get ready && sleep 360 && yarn cy:run'"
+    "test:e2e": "CHOKIDAR_USEPOLLING=1 CYPRESS_responseTimeout=180000 WAIT_ON_TIMEOUT=900000 start-server-and-test 'cd ../../ && yarn start --no-base-path --oss && cd plugins/anomaly-detection-opensearch-dashboards-plugin' http-get://localhost:5601/app/opendistro-anomaly-detection-opensearch-dashboards-plugin 'echo sleeping to wait for server to get ready && sleep 360 && yarn cy:run'"
   },
   "lint-staged": {
     "*.{ts,tsx,js,jsx,json,css,md}": [
@@ -26,7 +26,7 @@
     ]
   },
   "devDependencies": {
-    "@elastic/eslint-import-resolver-kibana": "link:../../packages/kbn-eslint-import-resolver-kibana",
+    "@elastic/eslint-import-resolver-kibana": "link:../../packages/osd-eslint-import-resolver-opensearch-dashboards",
     "@testing-library/jest-dom": "^5.11.4",
     "@testing-library/react": "^11.0.4",
     "@testing-library/user-event": "^12.1.6",

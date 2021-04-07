@@ -8,7 +8,7 @@ build
 .idea/
 .DS_Store
 *.sublime*
-.kibana-plugin-helpers.dev.json
+.opensearch-dashboards-plugin-helpers.dev.json
 coverage
 .vscode
 *.code-workspace

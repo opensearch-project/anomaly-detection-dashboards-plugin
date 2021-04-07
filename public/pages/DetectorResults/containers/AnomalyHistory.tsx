@@ -78,7 +78,7 @@ import {
   getAnomalyHistoryWording,
   NUM_CELLS,
 } from '../../AnomalyCharts/utils/anomalyChartUtils';
-import { darkModeEnabled } from '../../../utils/kibanaUtils';
+import { darkModeEnabled } from '../../../utils/opensearchDashboardsUtils';
 import {
   EntityAnomalySummaries,
   Entity,

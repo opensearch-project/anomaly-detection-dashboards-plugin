@@ -41,7 +41,7 @@ import { useSelector } from 'react-redux';
 import { UIFilter } from '../../../../models/interfaces';
 import { getAllFields } from '../../../../redux/selectors/elasticsearch';
 import { DATA_TYPES } from '../../../../utils/constants';
-import { darkModeEnabled } from '../../../../utils/kibanaUtils';
+import { darkModeEnabled } from '../../../../utils/opensearchDashboardsUtils';
 import { getError, isInvalid, required } from '../../../../utils/utils';
 import { ADFormikValues } from '../../containers/models/interfaces';
 import { EMPTY_UI_FILTER } from '../../containers/utils/constant';
