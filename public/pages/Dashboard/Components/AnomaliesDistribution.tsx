@@ -52,6 +52,7 @@ export const AnomaliesDistributionChart = (
   // TODO: try to find a better way of using redux,
   // which can leverage redux, and also get rid of issue with multiple redux on same page,
   // so that we don't need to manualy update loading status
+  // TODO: update issue link to new repo once it is transferred
   // Issue link: https://github.com/opendistro-for-elasticsearch/anomaly-detection-kibana-plugin/issues/23
   const [anomalyResultsLoading, setAnomalyResultsLoading] = useState(true);
   const [finalDetectors, setFinalDetectors] = useState(

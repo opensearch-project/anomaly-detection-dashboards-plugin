@@ -59,7 +59,7 @@ export const PLUGIN_NAME = 'opendistro-anomaly-detection-opensearch-dashboards';
 
 export const ALERTING_PLUGIN_NAME = 'opendistro-alerting';
 
-export const OPENSEARCH_DASHBOARDS_NAME = 'kibana';
+export const OPENSEARCH_DASHBOARDS_NAME = 'dashboards';
 
 export const ANOMALY_DETECTORS_INDEX = '.opendistro-anomaly-detectors';
 

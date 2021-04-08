@@ -38,11 +38,12 @@ describe('elasticsearch reducer actions', () => {
         requesting: false,
         indices,
       });
-      expect(
-        httpMockedClient.get
-      ).toHaveBeenCalledWith(`..${BASE_NODE_API_PATH}/_indices`, {
-        query: { index: '' },
-      });
+      expect(httpMockedClient.get).toHaveBeenCalledWith(
+        `..${BASE_NODE_API_PATH}/_indices`,
+        {
+          query: { index: '' },
+        }
+      );
     });
     test('should invoke [REQUEST, FAILURE]', async () => {
       httpMockedClient.get = jest.fn().mockRejectedValue({
@@ -132,7 +133,7 @@ describe('elasticsearch reducer actions', () => {
   describe('getMappings', () => {
     test('should invoke [REQUEST, SUCCESS]', async () => {
       const mappings = {
-        kibana: {
+        opensearch_dashboards: {
           mappings: {
             properties: {
               field_1: { type: 'string' },

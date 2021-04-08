@@ -26,9 +26,9 @@ services:
       - '9200'
     networks:
       - odfe-net
-  kibana:
-    image: odfe-ad-kibana:test
-    container_name: odfe-kibana
+  dashboards:
+    image: odfe-ad-dashboards:test
+    container_name: odfe-dashboards
     ports:
       - 5601:5601
     expose:

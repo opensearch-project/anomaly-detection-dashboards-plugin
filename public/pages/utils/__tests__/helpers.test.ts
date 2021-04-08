@@ -25,7 +25,7 @@ describe('helpers', () => {
           ],
           [
             { alias: 'hello', index: 'world' },
-            { alias: '.system', index: 'kibana' },
+            { alias: '.system', index: 'opensearch_dashboards' },
           ]
         )
       ).toEqual([
@@ -46,7 +46,7 @@ describe('helpers', () => {
             { index: '.hello', health: 'green' },
             { index: '.world', health: 'green' },
           ],
-          [{ alias: '.system', index: 'kibana' }]
+          [{ alias: '.system', index: 'opensearch_dashboards' }]
         )
       ).toEqual([
         {

@@ -77,7 +77,7 @@ jobs:
 
             ## Create the tagged images
             docker build -f ./Dockerfile-AD -t odfe-ad:test .
-            docker build -f ./Dockerfile-AD-OpenSearch-Dashboards -t odfe-ad-opensearch-dashboards:test .
+            docker build -f ./Dockerfile-AD-OpenSearch-Dashboards -t odfe-ad-dashboards:test .
           fi
           docker images
 

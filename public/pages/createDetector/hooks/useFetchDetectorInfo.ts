@@ -21,7 +21,7 @@ import { AppState } from '../../../redux/reducers';
 import { getDetector } from '../../../redux/reducers/ad';
 import { getMappings } from '../../../redux/reducers/elasticsearch';
 
-//A hook which gets required info in order to display a detector on kibana.
+//A hook which gets required info in order to display a detector on OpenSearch Dashboards.
 // 1. Get detector
 // 2. Gets index mapping
 export const useFetchDetectorInfo = (
