@@ -5,9 +5,9 @@
 [![Forum](https://img.shields.io/badge/chat-on%20forums-blue)](https://discuss.opendistrocommunity.dev/c/Use-this-category-for-all-questions-around-machine-learning-plugins)
 ![PRs welcome!](https://img.shields.io/badge/PRs-welcome!-success)
 
-## OpenSearch Dashboards Anomaly Detection
+## Open Distro for Elasticsearch Anomaly Detection
 
-The Open Distro for Elasticsearch Anomaly Detection plugin enables you to leverage Machine Learning based algorithms to automatically detect anomalies as your log data is ingested. Combined with Alerting, you can monitor your data in near real time and automatically send alert notifications . With an intuitive OpenSearch Dashboards interface and a powerful API, it is easy to set up, tune, and monitor your anomaly detectors.
+The Open Distro for Elasticsearch Anomaly Detection plugin enables you to leverage Machine Learning based algorithms to automatically detect anomalies as your log data is ingested. Combined with Alerting, you can monitor your data in near real time and automatically send alert notifications. With an intuitive OpenSearch Dashboards interface and a powerful API, it is easy to set up, tune, and monitor your anomaly detectors.
 
 ## Highlights
 
@@ -55,13 +55,17 @@ Example output: `./build/opendistroAnomalyDetectionOpenSearchDashboards-1.13.0.0
 
 ## Run
 
-- `yarn start`
+In the base OpenSearch Dashboards directory, run
+
+- `yarn start --no-base-path`
 
   Starts OpenSearch Dashboards and includes this plugin. OpenSearch Dashboards will be available on `localhost:5601`.
 
-- `NODE_PATH=../../node_modules yarn test:jest`
+## Test
 
-  Runs the plugin tests.
+- `yarn test:jest`
+
+  Runs the plugin unit tests.
 
 - `yarn test:e2e`
 
@@ -72,7 +76,7 @@ Example output: `./build/opendistroAnomalyDetectionOpenSearchDashboards-1.13.0.0
   Runs end-to-end tests on a currently running OpenSearch Dashboards server. Defaults to run the tests on `localhost:5601`, although you can change this to run on any
   OpenSearch Dashboards server with the command `yarn cy:run --config baseUrl=<your-custom-URL>`
 
-## Contributing to OpenSearch Dashboards Anomaly Detection Plugin
+## Contributing
 
 We welcome you to get involved in development, documentation, testing the anomaly detection plugin. See our [CONTRIBUTING.md](./CONTRIBUTING.md) and join in.
 

@@ -15,10 +15,10 @@ services:
         soft: -1
         hard: -1
       nofile:
-        soft: 65536 # maximum number of open files for the Elasticsearch user, set to at least 65536 on modern systems
+        soft: 65536 # maximum number of open files for the OpenSearch user, set to at least 65536 on modern systems
         hard: 65536
     volumes:
-      - odfe-data1:/usr/share/elasticsearch/data
+      - odfe-data1:/usr/share/opensearch/data
     ports:
       - 9200:9200
       - 9600:9600 # required for Performance Analyzer
@@ -34,8 +34,8 @@ services:
     expose:
       - '5601'
     environment:
-      ELASTICSEARCH_URL: https://odfe-node1:9200
-      ELASTICSEARCH_HOSTS: https://odfe-node1:9200
+      OPENSEARCH_URL: https://odfe-node1:9200
+      OPENSEARCH_HOSTS: https://odfe-node1:9200
     networks:
       - odfe-net
 
