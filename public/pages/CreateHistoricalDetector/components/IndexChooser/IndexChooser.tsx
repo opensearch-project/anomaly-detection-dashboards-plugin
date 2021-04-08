@@ -25,7 +25,7 @@ import {
   getIndices,
   getMappings,
   getPrioritizedIndices,
-} from '../../../../redux/reducers/elasticsearch';
+} from '../../../../redux/reducers/opensearch';
 import { FormattedFormRow } from '../../../createDetector/components/FormattedFormRow/FormattedFormRow';
 import { getVisibleOptions, sanitizeSearchText } from '../../../utils/helpers';
 import { getError, isInvalid } from '../../../../utils/utils';
@@ -43,9 +43,7 @@ interface IndexChooserProps {
 
 export function IndexChooser(props: IndexChooserProps) {
   const dispatch = useDispatch();
-  const elasticsearchState = useSelector(
-    (state: AppState) => state.elasticsearch
-  );
+  const opensearchState = useSelector((state: AppState) => state.opensearch);
   const [queryText, setQueryText] = useState('');
 
   useEffect(() => {
@@ -70,8 +68,8 @@ export function IndexChooser(props: IndexChooserProps) {
     }
   };
 
-  const visibleIndices = get(elasticsearchState, 'indices', []) as CatIndex[];
-  const visibleAliases = get(elasticsearchState, 'aliases', []) as IndexAlias[];
+  const visibleIndices = get(opensearchState, 'indices', []) as CatIndex[];
+  const visibleAliases = get(opensearchState, 'aliases', []) as IndexAlias[];
 
   return (
     <ContentPanel title="Data source" titleSize="s">
@@ -102,7 +100,7 @@ export function IndexChooser(props: IndexChooserProps) {
                     id="index"
                     placeholder="Find indices"
                     async
-                    isLoading={elasticsearchState.requesting}
+                    isLoading={opensearchState.requesting}
                     options={getVisibleOptions(visibleIndices, visibleAliases)}
                     onSearchChange={handleSearchChange}
                     onCreateOption={(createdOption: string) => {

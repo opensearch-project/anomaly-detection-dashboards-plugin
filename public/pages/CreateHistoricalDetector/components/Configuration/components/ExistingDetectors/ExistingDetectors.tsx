@@ -30,7 +30,7 @@ import {
   getDetectorList,
   getHistoricalDetectorList,
 } from '../../../../../../redux/reducers/ad';
-import { getMappings } from '../../../../../../redux/reducers/elasticsearch';
+import { getMappings } from '../../../../../../redux/reducers/opensearch';
 import { GET_ALL_DETECTORS_QUERY_PARAMS } from '../../../../../utils/constants';
 import { getDetector } from '../../../../../../redux/reducers/ad';
 import { FormattedFormRow } from '../../../../../createDetector/components/FormattedFormRow/FormattedFormRow';

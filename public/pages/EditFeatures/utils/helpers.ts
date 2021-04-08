@@ -26,7 +26,7 @@ import {
 import { v4 as uuidv4 } from 'uuid';
 import { get, forOwn } from 'lodash';
 import { FeaturesFormikValues } from '../containers/utils/formikToFeatures';
-import { DataTypes } from '../../../redux/reducers/elasticsearch';
+import { DataTypes } from '../../../redux/reducers/opensearch';
 
 export const getFieldOptions = (
   allFields: { [key: string]: string[] },

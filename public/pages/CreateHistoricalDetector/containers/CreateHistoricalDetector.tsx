@@ -38,7 +38,7 @@ import {
   startDetector,
   getDetector,
 } from '../../../redux/reducers/ad';
-import { getMappings } from '../../../redux/reducers/elasticsearch';
+import { getMappings } from '../../../redux/reducers/opensearch';
 import { RouteComponentProps } from 'react-router';
 import { useDispatch, useSelector } from 'react-redux';
 import { useHideSideNavBar } from '../../main/hooks/useHideSideNavBar';

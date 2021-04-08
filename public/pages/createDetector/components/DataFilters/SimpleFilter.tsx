@@ -39,7 +39,7 @@ import React, { useEffect, Fragment, useState } from 'react';
 import { useSelector } from 'react-redux';
 
 import { UIFilter } from '../../../../models/interfaces';
-import { getAllFields } from '../../../../redux/selectors/elasticsearch';
+import { getAllFields } from '../../../../redux/selectors/opensearch';
 import { DATA_TYPES } from '../../../../utils/constants';
 import { darkModeEnabled } from '../../../../utils/opensearchDashboardsUtils';
 import { getError, isInvalid, required } from '../../../../utils/utils';

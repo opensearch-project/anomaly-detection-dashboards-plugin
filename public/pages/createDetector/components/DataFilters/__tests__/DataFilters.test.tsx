@@ -32,8 +32,8 @@ const renderDataFilter = (initialValue: ADFormikValues) => ({
     <Provider
       store={mockedStore({
         ...initialState,
-        elasticsearch: {
-          ...initialState.elasticsearch,
+        opensearch: {
+          ...initialState.opensearch,
           dataTypes: {
             keyword: ['cityName.keyword'],
             integer: ['age'],

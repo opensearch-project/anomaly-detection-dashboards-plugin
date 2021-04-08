@@ -44,7 +44,7 @@ import {
 import {
   getIndices,
   getPrioritizedIndices,
-} from '../../../../redux/reducers/elasticsearch';
+} from '../../../../redux/reducers/opensearch';
 import { APP_PATH, PLUGIN_NAME } from '../../../../utils/constants';
 import { DETECTOR_STATE } from '../../../../../server/utils/constants';
 import { getVisibleOptions, sanitizeSearchText } from '../../../utils/helpers';
@@ -121,9 +121,7 @@ export const DetectorList = (props: ListProps) => {
   const errorGettingDetectors = useSelector(
     (state: AppState) => state.ad.errorMessage
   );
-  const elasticsearchState = useSelector(
-    (state: AppState) => state.elasticsearch
-  );
+  const opensearchState = useSelector((state: AppState) => state.opensearch);
   const isRequestingFromES = useSelector(
     (state: AppState) => state.ad.requesting
   );
@@ -192,8 +190,8 @@ export const DetectorList = (props: ListProps) => {
   }, [errorGettingDetectors]);
 
   // Updating displayed indices (initializing to first 20 for now)
-  const visibleIndices = get(elasticsearchState, 'indices', []) as CatIndex[];
-  const visibleAliases = get(elasticsearchState, 'aliases', []) as IndexAlias[];
+  const visibleIndices = get(opensearchState, 'indices', []) as CatIndex[];
+  const visibleAliases = get(opensearchState, 'aliases', []) as IndexAlias[];
   const indexOptions = getVisibleOptions(visibleIndices, visibleAliases);
 
   const [state, setState] = useState<ListState>({

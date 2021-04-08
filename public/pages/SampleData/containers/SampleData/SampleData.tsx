@@ -33,10 +33,7 @@ import { AppState } from '../../../../redux/reducers';
 import { getDetectorList } from '../../../../redux/reducers/ad';
 import { createSampleData } from '../../../../redux/reducers/sampleData';
 
-import {
-  getIndices,
-  createIndex,
-} from '../../../../redux/reducers/elasticsearch';
+import { getIndices, createIndex } from '../../../../redux/reducers/opensearch';
 import { createDetector, startDetector } from '../../../../redux/reducers/ad';
 import {
   sampleHttpResponses,
@@ -58,7 +55,7 @@ export const SampleData = () => {
   const core = React.useContext(CoreServicesContext) as CoreStart;
   const dispatch = useDispatch();
   const visibleIndices = useSelector(
-    (state: AppState) => state.elasticsearch.indices
+    (state: AppState) => state.opensearch.indices
   );
   const allDetectors = Object.values(
     useSelector((state: AppState) => state.ad.detectorList)

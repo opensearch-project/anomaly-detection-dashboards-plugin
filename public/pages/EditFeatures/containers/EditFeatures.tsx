@@ -47,7 +47,7 @@ import { RouteComponentProps } from 'react-router-dom';
 import ContentPanel from '../../../components/ContentPanel/ContentPanel';
 import { AppState } from '../../../redux/reducers';
 import { updateDetector, startDetector } from '../../../redux/reducers/ad';
-import { getMappings } from '../../../redux/reducers/elasticsearch';
+import { getMappings } from '../../../redux/reducers/opensearch';
 import {
   getErrorMessage,
   validatePositiveInteger,
@@ -95,7 +95,7 @@ export function EditFeatures(props: EditFeaturesProps) {
   const detectorId = get(props, 'match.params.detectorId', '');
   const { detector, hasError } = useFetchDetectorInfo(detectorId);
   const indexDataTypes = useSelector(
-    (state: AppState) => state.elasticsearch.dataTypes
+    (state: AppState) => state.opensearch.dataTypes
   );
   const [showSaveConfirmation, setShowSaveConfirmation] = useState<boolean>(
     false
@@ -110,8 +110,7 @@ export function EditFeatures(props: EditFeaturesProps) {
   );
   const [isHCDetector, setIsHCDetector] = useState<boolean>(false);
   const isLoading =
-    useSelector((state: AppState) => state.elasticsearch.requesting) ||
-    firstLoad;
+    useSelector((state: AppState) => state.opensearch.requesting) || firstLoad;
 
   // When detector is loaded: get any category fields (if applicable) and
   // get all index mappings based on detector's selected index

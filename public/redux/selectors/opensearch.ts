@@ -16,7 +16,7 @@
 import { createSelector } from 'reselect';
 import { AppState } from '../reducers';
 
-const esSelector = (state: AppState) => state.elasticsearch;
+const opensearchSelector = (state: AppState) => state.opensearch;
 
 const NUMBER_TYPES = [
   'long',
@@ -30,41 +30,33 @@ const NUMBER_TYPES = [
 ];
 
 export const getIndices = createSelector(
-  esSelector,
-  es => es.indices
+  opensearchSelector,
+  (opensearch) => opensearch.indices
 );
 
 export const getDataTypes = createSelector(
-  esSelector,
-  es => es.dataTypes
+  opensearchSelector,
+  (opensearch) => opensearch.dataTypes
 );
 
-const getNumberFields = createSelector(
-  getDataTypes,
-  dataTypes => ({
-    number: NUMBER_TYPES.reduce((acc, currentType) => {
-      const newOptions = dataTypes[currentType] || [];
-      return acc.concat(newOptions);
-    }, []),
-  })
-);
+const getNumberFields = createSelector(getDataTypes, (dataTypes) => ({
+  number: NUMBER_TYPES.reduce((acc, currentType) => {
+    const newOptions = dataTypes[currentType] || [];
+    return acc.concat(newOptions);
+  }, []),
+}));
 
-const getOtherFields = createSelector(
-  getDataTypes,
-  dataTypes =>
-    Object.keys(dataTypes).reduce(
-      (acc, dataType: string) => {
-        if (NUMBER_TYPES.includes(dataType)) {
-          return { ...acc };
-        } else {
-          return {
-            ...acc,
-            [dataType]: [...dataTypes[dataType]],
-          };
-        }
-      },
-      {} as { [key: string]: string[] }
-    )
+const getOtherFields = createSelector(getDataTypes, (dataTypes) =>
+  Object.keys(dataTypes).reduce((acc, dataType: string) => {
+    if (NUMBER_TYPES.includes(dataType)) {
+      return { ...acc };
+    } else {
+      return {
+        ...acc,
+        [dataType]: [...dataTypes[dataType]],
+      };
+    }
+  }, {} as { [key: string]: string[] })
 );
 
 //TODO:: Memoize this selector to avoid calculation on each time

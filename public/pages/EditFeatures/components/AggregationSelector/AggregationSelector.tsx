@@ -17,7 +17,7 @@ import React, { Fragment } from 'react';
 import { useSelector } from 'react-redux';
 import { get } from 'lodash';
 import { EuiFormRow, EuiSelect, EuiComboBox } from '@elastic/eui';
-import { getAllFields } from '../../../../redux/selectors/elasticsearch';
+import { getAllFields } from '../../../../redux/selectors/opensearch';
 import {
   getNumberFieldOptions,
   getCountableFieldOptions,
