@@ -38,17 +38,20 @@ type SearchParams = {
   body: object;
 };
 
-export function registerESRoutes(apiRouter: Router, esService: ESService) {
-  apiRouter.get('/_indices', esService.getIndices);
-  apiRouter.get('/_aliases', esService.getAliases);
-  apiRouter.get('/_mappings', esService.getMapping);
-  apiRouter.post('/_search', esService.executeSearch);
-  apiRouter.put('/create_index', esService.createIndex);
-  apiRouter.post('/bulk', esService.bulk);
-  apiRouter.post('/delete_index', esService.deleteIndex);
+export function registerOpenSearchRoutes(
+  apiRouter: Router,
+  opensearchService: OpenSearchService
+) {
+  apiRouter.get('/_indices', opensearchService.getIndices);
+  apiRouter.get('/_aliases', opensearchService.getAliases);
+  apiRouter.get('/_mappings', opensearchService.getMapping);
+  apiRouter.post('/_search', opensearchService.executeSearch);
+  apiRouter.put('/create_index', opensearchService.createIndex);
+  apiRouter.post('/bulk', opensearchService.bulk);
+  apiRouter.post('/delete_index', opensearchService.deleteIndex);
 }
 
-export default class ESService {
+export default class OpenSearchService {
   private client: any;
 
   constructor(client: any) {

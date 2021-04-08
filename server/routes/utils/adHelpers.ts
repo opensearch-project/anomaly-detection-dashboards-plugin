@@ -20,7 +20,7 @@ import { mapKeysDeep, toCamel, toSnake } from '../../utils/helpers';
 import {
   DETECTOR_STATE,
   STACK_TRACE_PATTERN,
-  ES_EXCEPTION_PREFIX,
+  OPENSEARCH_EXCEPTION_PREFIX,
 } from '../../utils/constants';
 import { InitProgress } from '../../models/interfaces';
 
@@ -350,7 +350,7 @@ export const getHistoricalDetectorState = (task: any) => {
 };
 
 export const processTaskError = (error: string) => {
-  const errorWithPrefixRemoved = error.replace(ES_EXCEPTION_PREFIX, '');
+  const errorWithPrefixRemoved = error.replace(OPENSEARCH_EXCEPTION_PREFIX, '');
   return errorWithPrefixRemoved.endsWith('.')
     ? errorWithPrefixRemoved
     : errorWithPrefixRemoved + '.';

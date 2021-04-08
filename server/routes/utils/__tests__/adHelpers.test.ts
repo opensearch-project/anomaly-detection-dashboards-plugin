@@ -15,7 +15,7 @@
 
 import {
   SORT_DIRECTION,
-  ES_EXCEPTION_PREFIX,
+  OPENSEARCH_EXCEPTION_PREFIX,
   DETECTOR_STATE,
 } from '../../../utils/constants';
 import {
@@ -632,10 +632,10 @@ describe('adHelpers', () => {
     test('should not add punctuation if it exists', () => {
       expect(processTaskError('Some failure.')).toEqual('Some failure.');
     });
-    test('should remove ES exception prefix if it exists', () => {
-      expect(processTaskError(ES_EXCEPTION_PREFIX + 'Some failure.')).toEqual(
-        'Some failure.'
-      );
+    test('should remove OpenSearch exception prefix if it exists', () => {
+      expect(
+        processTaskError(OPENSEARCH_EXCEPTION_PREFIX + 'Some failure.')
+      ).toEqual('Some failure.');
     });
   });
 });

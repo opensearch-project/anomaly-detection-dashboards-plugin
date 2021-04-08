@@ -86,4 +86,5 @@ export const DOC_COUNT_FIELD = 'doc_count';
 export const KEY_FIELD = 'key';
 
 export const STACK_TRACE_PATTERN = '.java:';
-export const ES_EXCEPTION_PREFIX = 'org.opensearch.OpenSearchException: ';
+export const OPENSEARCH_EXCEPTION_PREFIX =
+  'org.opensearch.OpenSearchException: ';

@@ -81,7 +81,7 @@ jobs:
           fi
           docker images
 
-      - name: Start ES and OpenSearch Dashboards
+      - name: Start OpenSearch and OpenSearch Dashboards
         run: |
           cd OpenSearch-Dashboards/plugins/anomaly-detection-dashboards-plugin/.github/configurations
           ## Need to increase max map count for running the docker container
@@ -110,7 +110,7 @@ jobs:
           if docker pull opendistroforelasticsearch/opendistroforelasticsearch:$odfe_version
           then
             echo "FROM opendistroforelasticsearch/opendistroforelasticsearch:$odfe_version" >> Dockerfile
-            ## The ESRestTest Client uses http by default.
+            ## The OpenSearch rest test client uses http by default.
             ## Need to disable the security plugin to call the rest api over http.
             echo "RUN if [ -d /usr/share/OpenSearch/plugins/opensearch-security ]; then /usr/share/OpenSearch/bin/OpenSearch-plugin remove opensearch-security; fi" >> Dockerfile
             docker build -t odfe-ad:test .

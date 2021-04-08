@@ -31,7 +31,9 @@ import adPlugin from './cluster/ad/adPlugin';
 import alertingPlugin from './cluster/ad/alertingPlugin';
 import AdService, { registerADRoutes } from './routes/ad';
 import AlertingService, { registerAlertingRoutes } from './routes/alerting';
-import ESService, { registerESRoutes } from './routes/elasticsearch';
+import OpenSearchService, {
+  registerOpenSearchRoutes,
+} from './routes/opensearch';
 import SampleDataService, {
   registerSampleDataRoutes,
 } from './routes/sampleData';
@@ -55,7 +57,7 @@ export class AnomalyDetectionOpenSearchDashboardsPlugin
     const globalConfig = await this.globalConfig$.pipe(first()).toPromise();
     const { customHeaders, ...rest } = globalConfig.opensearch;
 
-    // Create ES client w/ relevant plugins and headers
+    // Create OpenSearch client w/ relevant plugins and headers
     const client: ILegacyClusterClient = core.opensearch.legacy.createClient(
       'anomaly_detection',
       {
@@ -71,16 +73,16 @@ export class AnomalyDetectionOpenSearchDashboardsPlugin
       BASE_NODE_API_PATH
     );
 
-    // Create services & register with ES client
+    // Create services & register with OpenSearch client
     const adService = new AdService(client);
     const alertingService = new AlertingService(client);
-    const esService = new ESService(client);
+    const opensearchService = new OpenSearchService(client);
     const sampleDataService = new SampleDataService(client);
 
     // Register server routes with the service
     registerADRoutes(apiRouter, adService);
     registerAlertingRoutes(apiRouter, alertingService);
-    registerESRoutes(apiRouter, esService);
+    registerOpenSearchRoutes(apiRouter, opensearchService);
     registerSampleDataRoutes(apiRouter, sampleDataService);
 
     return {};
