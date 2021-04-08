@@ -9,7 +9,7 @@ import reducer, {
   initialDetectorsState,
 } from '../anomalyResults';
 
-describe('elasticsearch reducer actions', () => {
+describe('anomaly results reducer actions', () => {
   let store: MockStore;
   beforeEach(() => {
     store = mockedStore();
