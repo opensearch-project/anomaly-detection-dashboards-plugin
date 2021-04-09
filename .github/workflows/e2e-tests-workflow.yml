@@ -5,7 +5,7 @@ on:
       - main
 env:
   OPENSEARCH_DASHBOARDS_VERSION: 7.10.2
-  ODFE_VERSION: 1.13.1
+  OPENSEARCH_VERSION: 1.13.1
   AD_OPENSEARCH_DASHBOARDS_PLUGIN_NAME: anomalyDetectionDashboards
 jobs:
   test-with-security:
@@ -60,24 +60,24 @@ jobs:
       - name: Create tagged images for OpenSearch and OpenSearch Dashboards
         run: |
           cd OpenSearch-Dashboards/plugins/anomaly-detection-dashboards-plugin
-          odfe_version=$ODFE_VERSION
+          opensearch_version=$OPENSEARCH_VERSION
           plugin_version=$(node -pe "require('./package.json').version")
-          echo odfe version: $odfe_version
+          echo opensearch version: $opensearch_version
           echo plugin version: $plugin_version
           echo plugin name: $AD_OPENSEARCH_DASHBOARDS_PLUGIN_NAME
-          if docker pull opendistroforelasticsearch/opendistroforelasticsearch:$odfe_version
+          if docker pull opendistroforelasticsearch/opendistroforelasticsearch:$opensearch_version
           then
             ## Populate the Dockerfiles
-            echo "FROM opendistroforelasticsearch/opendistroforelasticsearch:$odfe_version" >> Dockerfile-AD-OpenSearch-Dashboards
-            echo "FROM opendistroforelasticsearch/opendistroforelasticsearch-kibana:$odfe_version" >> Dockerfile-AD-OpenSearch-Dashboards
+            echo "FROM opendistroforelasticsearch/opendistroforelasticsearch:$opensearch_version" >> Dockerfile-AD-OpenSearch-Dashboards
+            echo "FROM opendistroforelasticsearch/opendistroforelasticsearch-kibana:$opensearch_version" >> Dockerfile-AD-OpenSearch-Dashboards
             echo "COPY build/$AD_OPENSEARCH_DASHBOARDS_PLUGIN_NAME-$plugin_version.zip ." >> Dockerfile-AD-OpenSearch-Dashboards
             ## Uninstall existing AD artifact and install new one
             echo "RUN if [ -d /usr/share/opensearch-dashboards/plugins/$AD_OPENSEARCH_DASHBOARDS_PLUGIN_NAME ]; then /usr/share/opensearch-dashboards/bin/opensearch-dashboards-plugin remove $AD_OPENSEARCH_DASHBOARDS_PLUGIN_NAME; fi" >> Dockerfile-AD-OpenSearch-Dashboards
             echo "RUN bin/opensearch-dashboards-plugin install file:///usr/share/OpenSearch-Dashboards/$AD_OPENSEARCH_DASHBOARDS_PLUGIN_NAME-$plugin_version.zip;" >> Dockerfile-AD-OpenSearch-Dashboards
 
             ## Create the tagged images
-            docker build -f ./Dockerfile-AD -t odfe-ad:test .
-            docker build -f ./Dockerfile-AD-OpenSearch-Dashboards -t odfe-ad-dashboards:test .
+            docker build -f ./Dockerfile-AD -t opensearch-ad:test .
+            docker build -f ./Dockerfile-AD-OpenSearch-Dashboards -t opensearch-ad-dashboards:test .
           fi
           docker images
 
@@ -105,19 +105,19 @@ jobs:
     steps:
       - name: Pull and Run Docker
         run: |
-          odfe_version=$ODFE_VERSION
-          echo odfe version: $odfe_version
-          if docker pull opendistroforelasticsearch/opendistroforelasticsearch:$odfe_version
+          opensearch_version=$OPENSEARCH_VERSION
+          echo opensearch version: $opensearch_version
+          if docker pull opendistroforelasticsearch/opendistroforelasticsearch:$opensearch_version
           then
-            echo "FROM opendistroforelasticsearch/opendistroforelasticsearch:$odfe_version" >> Dockerfile
+            echo "FROM opendistroforelasticsearch/opendistroforelasticsearch:$opensearch_version" >> Dockerfile
             ## The OpenSearch rest test client uses http by default.
             ## Need to disable the security plugin to call the rest api over http.
             echo "RUN if [ -d /usr/share/OpenSearch/plugins/opensearch-security ]; then /usr/share/OpenSearch/bin/OpenSearch-plugin remove opensearch-security; fi" >> Dockerfile
-            docker build -t odfe-ad:test .
+            docker build -t opensearch-ad:test .
           fi
       - name: Run Docker Image
         run: |
-          docker run -p 9200:9200 -d -p 9600:9600 -e "discovery.type=single-node" odfe-ad:test
+          docker run -p 9200:9200 -d -p 9600:9600 -e "discovery.type=single-node" opensearch-ad:test
           sleep 90
           curl -XGET http://localhost:9200/_cat/plugins
       - name: Checkout OpenSearch Dashboards

@@ -42,7 +42,7 @@ export class AnomalyDetectionOpenSearchDashboardsPlugin
       id: 'anomaly-detection-dashboards',
       title: 'Anomaly Detection',
       category: {
-        id: 'odfe',
+        id: 'opensearch',
         label: 'OpenSearch Plugins',
         order: 2000,
       },
