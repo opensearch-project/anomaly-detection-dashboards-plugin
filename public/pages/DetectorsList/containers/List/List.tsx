@@ -681,7 +681,7 @@ export const DetectorList = (props: ListProps) => {
               itemId here is used to keep track of the selected detectors and render appropriately.
               Because the item id is dependent on the current time (see getItemID() above), all selected
               detectors will be deselected once new detectors are retrieved because the page will
-              re-render with a new timestamp. This logic is borrowed from Alerting OpenSearch Dashboards plugin's
+              re-render with a new timestamp. This logic is borrowed from Alerting Dashboards plugin's
               monitors list page.
             */
             itemId={getItemId}
