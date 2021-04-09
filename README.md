@@ -5,15 +5,15 @@
 [![Forum](https://img.shields.io/badge/chat-on%20forums-blue)](https://discuss.opendistrocommunity.dev/c/Use-this-category-for-all-questions-around-machine-learning-plugins)
 ![PRs welcome!](https://img.shields.io/badge/PRs-welcome!-success)
 
-## Open Distro for Elasticsearch Anomaly Detection
+## OpenSearch Anomaly Detection Dashboards
 
-The Open Distro for Elasticsearch Anomaly Detection plugin enables you to leverage Machine Learning based algorithms to automatically detect anomalies as your log data is ingested. Combined with Alerting, you can monitor your data in near real time and automatically send alert notifications. With an intuitive OpenSearch Dashboards interface and a powerful API, it is easy to set up, tune, and monitor your anomaly detectors.
+The OpenSearch Anomaly Detection Dashboards plugin enables you to leverage Machine Learning based algorithms to automatically detect anomalies as your log data is ingested. Combined with Alerting, you can monitor your data in near real time and automatically send alert notifications. With an intuitive OpenSearch Dashboards interface and a powerful API, it is easy to set up, tune, and monitor your anomaly detectors.
 
 ## Highlights
 
 Anomaly detection is using Random Cut Forest (RCF) algorithm for detecting anomalous data points.
 
-You should use the Anomaly Detection OpenSearch Dashboards plugin with the same version of the [OpenSearch Dashboards Alerting Plugin](https://github.com/opensearch-project/alerting-dashboards-plugin). You can also create monitors based on a created anomaly detector. A scheduled monitor run checks the anomaly detection results regularly and collects anomalies to trigger alerts based on custom trigger conditions.
+You should use the plugin with the same version of the [OpenSearch Alerting Dashboards plugin](https://github.com/opensearch-project/alerting-dashboards-plugin). You can also create monitors based on a created anomaly detector. A scheduled monitor run checks the anomaly detection results regularly and collects anomalies to trigger alerts based on custom trigger conditions.
 
 ## Current Limitations
 
@@ -51,7 +51,7 @@ Ultimately, your directory structure should look like this:
 
 To build the plugin's distributable zip simply run `yarn build`.
 
-Example output: `./build/opendistroAnomalyDetectionOpenSearchDashboards-1.13.0.0.zip`
+Example output: `./build/anomalyDetectionDashboards-1.13.0.0.zip`
 
 ## Run
 

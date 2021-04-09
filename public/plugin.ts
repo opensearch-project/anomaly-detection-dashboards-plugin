@@ -39,11 +39,11 @@ export class AnomalyDetectionOpenSearchDashboardsPlugin
     core: CoreSetup
   ): AnomalyDetectionOpenSearchDashboardsPluginSetup {
     core.application.register({
-      id: 'opendistro-anomaly-detection-opensearch-dashboards',
+      id: 'anomaly-detection-dashboards',
       title: 'Anomaly Detection',
       category: {
         id: 'odfe',
-        label: 'Open Distro for Elasticsearch',
+        label: 'OpenSearch Plugins',
         order: 2000,
       },
       order: 5000,

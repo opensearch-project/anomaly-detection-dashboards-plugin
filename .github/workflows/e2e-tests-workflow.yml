@@ -6,7 +6,7 @@ on:
 env:
   OPENSEARCH_DASHBOARDS_VERSION: 7.10.2
   ODFE_VERSION: 1.13.1
-  AD_OPENSEARCH_DASHBOARDS_PLUGIN_NAME: opendistroAnomalyDetectionOpenSearchDashboards
+  AD_OPENSEARCH_DASHBOARDS_PLUGIN_NAME: anomalyDetectionDashboards
 jobs:
   test-with-security:
     name: Run e2e tests with security

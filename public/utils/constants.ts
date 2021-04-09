@@ -55,9 +55,9 @@ export const OPENSEARCH_DASHBOARDS_PATH = {
   DISCOVER: '/discover',
 };
 
-export const PLUGIN_NAME = 'opendistro-anomaly-detection-opensearch-dashboards';
+export const PLUGIN_NAME = 'anomaly-detection-dashboards';
 
-export const ALERTING_PLUGIN_NAME = 'opendistro-alerting';
+export const ALERTING_PLUGIN_NAME = 'alerting';
 
 export const OPENSEARCH_DASHBOARDS_NAME = 'dashboards';
 
