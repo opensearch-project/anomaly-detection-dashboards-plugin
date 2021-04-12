@@ -14,7 +14,7 @@
  */
 
 import { combineReducers } from 'redux';
-import indicesReducer from './elasticsearch';
+import opensearchReducer from './opensearch';
 import adReducer from './ad';
 import previewAnomalies from './previewAnomalies';
 import anomalyResults from './anomalyResults';
@@ -23,7 +23,7 @@ import adAppReducer from './adAppReducer';
 import alertingReducer from './alerting';
 
 const rootReducer = combineReducers({
-  elasticsearch: indicesReducer,
+  opensearch: opensearchReducer,
   anomalies: previewAnomalies,
   anomalyResults: anomalyResults,
   liveAnomalyResults: liveAnomalyResults,

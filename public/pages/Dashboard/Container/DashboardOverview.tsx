@@ -20,7 +20,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { get, isEmpty, cloneDeep } from 'lodash';
 
 import { DetectorListItem } from '../../../models/interfaces';
-import { getIndices, getAliases } from '../../../redux/reducers/elasticsearch';
+import { getIndices, getAliases } from '../../../redux/reducers/opensearch';
 import { getDetectorList } from '../../../redux/reducers/ad';
 import {
   EuiFlexGroup,
@@ -112,15 +112,13 @@ export function DashboardOverview() {
     setAllDetectorStatesSelected(isEmpty(selectedStates));
   };
 
-  const elasticsearchState = useSelector(
-    (state: AppState) => state.elasticsearch
-  );
+  const opensearchState = useSelector((state: AppState) => state.opensearch);
 
   const [selectedIndices, setSelectedIndices] = useState([] as string[]);
   const [allIndicesSelected, setAllIndicesSelected] = useState(true);
 
-  const visibleIndices = get(elasticsearchState, 'indices', []) as CatIndex[];
-  const visibleAliases = get(elasticsearchState, 'aliases', []) as IndexAlias[];
+  const visibleIndices = get(opensearchState, 'indices', []) as CatIndex[];
+  const visibleAliases = get(opensearchState, 'aliases', []) as IndexAlias[];
 
   const handleIndicesFilterChange = (
     options: EuiComboBoxOptionProps[]

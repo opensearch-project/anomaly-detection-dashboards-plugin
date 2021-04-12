@@ -39,7 +39,7 @@ import {
   matchDetector,
   getDetectorCount,
 } from '../../../redux/reducers/ad';
-import { getIndices } from '../../../redux/reducers/elasticsearch';
+import { getIndices } from '../../../redux/reducers/opensearch';
 import { AppState } from '../../../redux/reducers';
 import { BREADCRUMBS, MAX_DETECTORS } from '../../../utils/constants';
 import { getErrorMessage, validateDetectorName } from '../../../utils/utils';
@@ -79,7 +79,7 @@ export function CreateDetector(props: CreateADProps) {
     false
   );
   const visibleIndices = useSelector(
-    (state: AppState) => state.elasticsearch.indices
+    (state: AppState) => state.opensearch.indices
   ) as CatIndex[];
   const [newIndexSelected, setNewIndexSelected] = useState<boolean>(false);
 

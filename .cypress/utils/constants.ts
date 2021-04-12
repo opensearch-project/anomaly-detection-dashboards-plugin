@@ -13,7 +13,7 @@
  * permissions and limitations under the License.
  */
 
-export const AD_URL = 'opendistro-anomaly-detection-kibana#';
+export const AD_URL = 'anomaly-detection-dashboards#';
 export const APP_URL_PREFIX = 'app';
 export const API_URL_PREFIX = 'api';
 export const AD_PATH = 'anomaly_detectors';

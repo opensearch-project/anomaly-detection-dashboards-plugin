@@ -21,27 +21,29 @@ import {
   PluginInitializerContext,
 } from '../../../src/core/public';
 import {
-  AnomalyDetectionKibanaPluginSetup,
-  AnomalyDetectionKibanaPluginStart,
+  AnomalyDetectionOpenSearchDashboardsPluginSetup,
+  AnomalyDetectionOpenSearchDashboardsPluginStart,
 } from '.';
 
-export class AnomalyDetectionKibanaPlugin
+export class AnomalyDetectionOpenSearchDashboardsPlugin
   implements
     Plugin<
-      AnomalyDetectionKibanaPluginSetup,
-      AnomalyDetectionKibanaPluginStart
+      AnomalyDetectionOpenSearchDashboardsPluginSetup,
+      AnomalyDetectionOpenSearchDashboardsPluginStart
     > {
   constructor(private readonly initializerContext: PluginInitializerContext) {
     // can retrieve config from initializerContext
   }
 
-  public setup(core: CoreSetup): AnomalyDetectionKibanaPluginSetup {
+  public setup(
+    core: CoreSetup
+  ): AnomalyDetectionOpenSearchDashboardsPluginSetup {
     core.application.register({
-      id: 'opendistro-anomaly-detection-kibana',
+      id: 'anomaly-detection-dashboards',
       title: 'Anomaly Detection',
       category: {
-        id: 'odfe',
-        label: 'Open Distro for Elasticsearch',
+        id: 'opensearch',
+        label: 'OpenSearch Plugins',
         order: 2000,
       },
       order: 5000,
@@ -54,7 +56,9 @@ export class AnomalyDetectionKibanaPlugin
     return {};
   }
 
-  public start(core: CoreStart): AnomalyDetectionKibanaPluginStart {
+  public start(
+    core: CoreStart
+  ): AnomalyDetectionOpenSearchDashboardsPluginStart {
     return {};
   }
 }

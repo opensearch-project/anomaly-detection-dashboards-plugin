@@ -5,7 +5,7 @@ on:
       - v*
 
 env:
-  KIBANA_VERSION: 7.10.2
+  OPENSEARCH_DASHBOARDS_VERSION: 7.10.2
 jobs:
   Build-and-upload:
     name: Build and upload artifacts
@@ -18,19 +18,19 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_STAGING_SECRET_ACCESS_KEY }}
           aws-region: us-east-1
 
-      - name: Checkout Kibana
+      - name: Checkout OpenSearch Dashboards
         uses: actions/checkout@v2
         with:
-          repository: opendistro-for-elasticsearch/kibana-oss
-          ref: ${{ env.KIBANA_VERSION }}
-          token: ${{ secrets.KIBANA_OSS_ACCESS }}
-          path: kibana
+          repository: opensearch-project/OpenSearch-Dashboards
+          ref: ${{ env.OPENSEARCH_DASHBOARDS_VERSION }}
+          token: ${{ secrets.OPENSEARCH_DASHBOARDS_OSS_ACCESS }}
+          path: opensearch-dashboards
 
       - name: Get node and yarn versions
         id: versions_step
         run: |
-          echo "::set-output name=node_version::$(node -p "(require('./kibana/package.json').engines.node).match(/[.0-9]+/)[0]")"
-          echo "::set-output name=yarn_version::$(node -p "(require('./kibana/package.json').engines.yarn).match(/[.0-9]+/)[0]")"
+          echo "::set-output name=node_version::$(node -p "(require('./OpenSearch-Dashboards/package.json').engines.node).match(/[.0-9]+/)[0]")"
+          echo "::set-output name=yarn_version::$(node -p "(require('./OpenSearch-Dashboards/package.json').engines.yarn).match(/[.0-9]+/)[0]")"
 
       - name: Setup node
         uses: actions/setup-node@v1
@@ -38,30 +38,30 @@ jobs:
           node-version: ${{ steps.versions_step.outputs.node_version }}
           registry-url: 'https://registry.npmjs.org'
 
-      - name: Install correct yarn version for Kibana
+      - name: Install correct yarn version for OpenSearch Dashboards
         run: |
           npm uninstall -g yarn
           echo "Installing yarn ${{ steps.versions_step.outputs.yarn_version }}"
           npm i -g yarn@${{ steps.versions_step.outputs.yarn_version }}
 
-      - name: Checkout Anomaly Detection Kibana plugin
+      - name: Checkout Anomaly Detection OpenSearch Dashboards plugin
         uses: actions/checkout@v2
         with:
-          path: kibana/plugins/anomaly-detection-kibana-plugin
+          path: OpenSearch-Dashboards/plugins/anomaly-detection-dashboards-plugin
 
       - name: Bootstrap the plugin
         run: |
-          cd kibana/plugins/anomaly-detection-kibana-plugin
-          yarn kbn bootstrap
+          cd OpenSearch-Dashboards/plugins/anomaly-detection-dashboards-plugin
+          yarn osd bootstrap
 
       - name: Build the artifact
         run: |
-          cd kibana/plugins/anomaly-detection-kibana-plugin
+          cd OpenSearch-Dashboards/plugins/anomaly-detection-dashboards-plugin
           yarn build
 
       - name: Upload to S3
         run: |
-          cd kibana/plugins/anomaly-detection-kibana-plugin
+          cd OpenSearch-Dashboards/plugins/anomaly-detection-dashboards-plugin
           zip=`ls build/*.zip`
 
           # Inject the build number before the suffix

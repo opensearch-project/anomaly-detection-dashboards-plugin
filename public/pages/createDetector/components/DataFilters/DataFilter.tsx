@@ -43,7 +43,7 @@ function DataFilter(props: DataFilterProps) {
             }
             hint={[
               'Choose a subset of your data source to focus your data stream and reduce noisy data.',
-              'Use the visual editor to create a simple filter, or use the Elasticsearch query DSL to create more advanced filters.',
+              'Use the visual editor to create a simple filter, or use the OpenSearch query DSL to create more advanced filters.',
             ]}
             isInvalid={isInvalid(field.name, form)}
             error={getError(field.name, form)}

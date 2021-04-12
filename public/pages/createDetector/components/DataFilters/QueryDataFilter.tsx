@@ -37,7 +37,7 @@ export const QueryDataFilter = (props: QueryDataFilterProps) => {
           {({ field, form }: FieldProps) => (
             <EuiFormRow
               fullWidth
-              label="Use Elasticsearch query DSL to write a custom filter."
+              label="Use OpenSearch query DSL to write a custom filter."
               isInvalid={isInvalid(field.name, form)}
               error={getError(field.name, form)}
             >

@@ -13,7 +13,7 @@
  * permissions and limitations under the License.
  */
 
-import { DataTypes, Mappings } from './elasticsearch';
+import { DataTypes, Mappings } from './opensearch';
 
 export function shouldSkip(mapping: any) {
   const isDisabled = mapping.enabled === false;

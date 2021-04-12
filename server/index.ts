@@ -12,31 +12,31 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-import { schema, TypeOf } from '@kbn/config-schema';
+import { schema, TypeOf } from '@osd/config-schema';
 import {
   PluginConfigDescriptor,
   PluginInitializerContext,
 } from '../../../src/core/server';
-import { AnomalyDetectionKibanaPlugin } from './plugin';
+import { AnomalyDetectionOpenSearchDashboardsPlugin } from './plugin';
 
 export const configSchema = schema.object({
   enabled: schema.boolean({ defaultValue: true }),
 });
 
-export type AnomalyDetectionKibanaPluginConfigType = TypeOf<
+export type AnomalyDetectionOpenSearchDashboardsPluginConfigType = TypeOf<
   typeof configSchema
 >;
 
-export const config: PluginConfigDescriptor<AnomalyDetectionKibanaPluginConfigType> = {
+export const config: PluginConfigDescriptor<AnomalyDetectionOpenSearchDashboardsPluginConfigType> = {
   exposeToBrowser: {
     enabled: true,
   },
   schema: configSchema,
 };
 
-export interface AnomalyDetectionKibanaPluginSetup {}
-export interface AnomalyDetectionKibanaPluginStart {}
+export interface AnomalyDetectionOpenSearchDashboardsPluginSetup {}
+export interface AnomalyDetectionOpenSearchDashboardsPluginStart {}
 
 export function plugin(initializerContext: PluginInitializerContext) {
-  return new AnomalyDetectionKibanaPlugin(initializerContext);
+  return new AnomalyDetectionOpenSearchDashboardsPlugin(initializerContext);
 }

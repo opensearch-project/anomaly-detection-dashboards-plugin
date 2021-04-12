@@ -16,8 +16,8 @@ import { BASE_NODE_API_PATH } from '../utils/constants';
 import { first } from 'rxjs/operators';
 import { default as createRouter, Router } from './router';
 import {
-  AnomalyDetectionKibanaPluginSetup,
-  AnomalyDetectionKibanaPluginStart,
+  AnomalyDetectionOpenSearchDashboardsPluginSetup,
+  AnomalyDetectionOpenSearchDashboardsPluginStart,
 } from '.';
 import {
   Plugin,
@@ -31,17 +31,19 @@ import adPlugin from './cluster/ad/adPlugin';
 import alertingPlugin from './cluster/ad/alertingPlugin';
 import AdService, { registerADRoutes } from './routes/ad';
 import AlertingService, { registerAlertingRoutes } from './routes/alerting';
-import ESService, { registerESRoutes } from './routes/elasticsearch';
+import OpenSearchService, {
+  registerOpenSearchRoutes,
+} from './routes/opensearch';
 import SampleDataService, {
   registerSampleDataRoutes,
 } from './routes/sampleData';
 import { DEFAULT_HEADERS } from './utils/constants';
 
-export class AnomalyDetectionKibanaPlugin
+export class AnomalyDetectionOpenSearchDashboardsPlugin
   implements
     Plugin<
-      AnomalyDetectionKibanaPluginSetup,
-      AnomalyDetectionKibanaPluginStart
+      AnomalyDetectionOpenSearchDashboardsPluginSetup,
+      AnomalyDetectionOpenSearchDashboardsPluginStart
     > {
   private readonly logger: Logger;
   private readonly globalConfig$: any;
@@ -53,10 +55,10 @@ export class AnomalyDetectionKibanaPlugin
   public async setup(core: CoreSetup) {
     // Get any custom/overridden headers
     const globalConfig = await this.globalConfig$.pipe(first()).toPromise();
-    const { customHeaders, ...rest } = globalConfig.elasticsearch;
+    const { customHeaders, ...rest } = globalConfig.opensearch;
 
-    // Create ES client w/ relevant plugins and headers
-    const client: ILegacyClusterClient = core.elasticsearch.legacy.createClient(
+    // Create OpenSearch client w/ relevant plugins and headers
+    const client: ILegacyClusterClient = core.opensearch.legacy.createClient(
       'anomaly_detection',
       {
         plugins: [adPlugin, alertingPlugin],
@@ -71,16 +73,16 @@ export class AnomalyDetectionKibanaPlugin
       BASE_NODE_API_PATH
     );
 
-    // Create services & register with ES client
+    // Create services & register with OpenSearch client
     const adService = new AdService(client);
     const alertingService = new AlertingService(client);
-    const esService = new ESService(client);
+    const opensearchService = new OpenSearchService(client);
     const sampleDataService = new SampleDataService(client);
 
     // Register server routes with the service
     registerADRoutes(apiRouter, adService);
     registerAlertingRoutes(apiRouter, alertingService);
-    registerESRoutes(apiRouter, esService);
+    registerOpenSearchRoutes(apiRouter, opensearchService);
     registerSampleDataRoutes(apiRouter, sampleDataService);
 
     return {};

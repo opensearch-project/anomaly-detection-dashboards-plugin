@@ -134,7 +134,7 @@ exports[`<SampleDataBox /> spec Data is loaded renders component 1`] = `
           >
             <a
               class="euiLink euiLink--primary"
-              href="opendistro-anomaly-detection-kibana#/detectors/sample-detector-id"
+              href="anomaly-detection-dashboards#/detectors/sample-detector-id"
               rel="noreferrer"
             >
               View detector and sample data

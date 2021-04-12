@@ -25,7 +25,7 @@ import {
   getIndices,
   getMappings,
   getPrioritizedIndices,
-} from '../../../../redux/reducers/elasticsearch';
+} from '../../../../redux/reducers/opensearch';
 import { getError, isInvalid, required } from '../../../../utils/utils';
 import { IndexOption } from '../../components/Datasource/IndexOption';
 import { getVisibleOptions, sanitizeSearchText } from '../../../utils/helpers';
@@ -47,9 +47,7 @@ function DataSource(props: DataSourceProps) {
   const [indexName, setIndexName] = useState<string>(
     props.formikProps.values.index[0]?.label
   );
-  const elasticsearchState = useSelector(
-    (state: AppState) => state.elasticsearch
-  );
+  const opensearchState = useSelector((state: AppState) => state.opensearch);
   useEffect(() => {
     const getInitialIndices = async () => {
       await dispatch(getIndices(queryText));
@@ -83,15 +81,15 @@ function DataSource(props: DataSourceProps) {
   };
 
   const dateFields = Array.from(
-    get(elasticsearchState, 'dataTypes.date', []) as string[]
+    get(opensearchState, 'dataTypes.date', []) as string[]
   );
 
   const timeStampFieldOptions = isEmpty(dateFields)
     ? []
     : dateFields.map((dateField) => ({ label: dateField }));
 
-  const visibleIndices = get(elasticsearchState, 'indices', []) as CatIndex[];
-  const visibleAliases = get(elasticsearchState, 'aliases', []) as IndexAlias[];
+  const visibleIndices = get(opensearchState, 'indices', []) as CatIndex[];
+  const visibleAliases = get(opensearchState, 'aliases', []) as IndexAlias[];
 
   const isRemoteIndex = () => {
     const initialIndex = get(
@@ -144,7 +142,7 @@ function DataSource(props: DataSourceProps) {
                 id="index"
                 placeholder="Find indices"
                 async
-                isLoading={elasticsearchState.requesting}
+                isLoading={opensearchState.requesting}
                 options={getVisibleOptions(visibleIndices, visibleAliases)}
                 onSearchChange={handleSearchChange}
                 onCreateOption={(createdOption: string) => {

@@ -25,7 +25,7 @@ export const initialState = {
     errorMessage: '',
     detectorList: {},
   },
-  elasticsearch: {
+  opensearch: {
     indices: [],
     aliases: [],
     dataTypes: {},

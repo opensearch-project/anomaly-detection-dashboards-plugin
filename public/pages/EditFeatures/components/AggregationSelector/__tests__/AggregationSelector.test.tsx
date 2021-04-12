@@ -30,8 +30,8 @@ const renderAggregationSelector = (initialValue: FeaturesFormikValues) => ({
     <Provider
       store={mockedStore({
         ...initialState,
-        elasticsearch: {
-          ...initialState.elasticsearch,
+        opensearch: {
+          ...initialState.opensearch,
           dataTypes: {
             keyword: ['cityName.keyword'],
             integer: ['age'],
@@ -41,7 +41,7 @@ const renderAggregationSelector = (initialValue: FeaturesFormikValues) => ({
       })}
     >
       <Formik initialValues={initialValue} onSubmit={jest.fn()}>
-        {formikProps => (
+        {(formikProps) => (
           <div>
             <AggregationSelector />
           </div>

@@ -7,10 +7,10 @@ import reducer, {
   getIndices,
   getMappings,
   initialState,
-  searchES,
-} from '../elasticsearch';
+  searchOpenSearch,
+} from '../opensearch';
 
-describe('elasticsearch reducer actions', () => {
+describe('opensearch reducer actions', () => {
   let store: MockStore;
   beforeEach(() => {
     store = mockedStore();
@@ -27,22 +27,23 @@ describe('elasticsearch reducer actions', () => {
       await store.dispatch(getIndices());
       const actions = store.getActions();
 
-      expect(actions[0].type).toBe('elasticsearch/GET_INDICES_REQUEST');
+      expect(actions[0].type).toBe('opensearch/GET_INDICES_REQUEST');
       expect(reducer(initialState, actions[0])).toEqual({
         ...initialState,
         requesting: true,
       });
-      expect(actions[1].type).toBe('elasticsearch/GET_INDICES_SUCCESS');
+      expect(actions[1].type).toBe('opensearch/GET_INDICES_SUCCESS');
       expect(reducer(initialState, actions[1])).toEqual({
         ...initialState,
         requesting: false,
         indices,
       });
-      expect(
-        httpMockedClient.get
-      ).toHaveBeenCalledWith(`..${BASE_NODE_API_PATH}/_indices`, {
-        query: { index: '' },
-      });
+      expect(httpMockedClient.get).toHaveBeenCalledWith(
+        `..${BASE_NODE_API_PATH}/_indices`,
+        {
+          query: { index: '' },
+        }
+      );
     });
     test('should invoke [REQUEST, FAILURE]', async () => {
       httpMockedClient.get = jest.fn().mockRejectedValue({
@@ -53,12 +54,12 @@ describe('elasticsearch reducer actions', () => {
         await store.dispatch(getIndices());
       } catch (e) {
         const actions = store.getActions();
-        expect(actions[0].type).toBe('elasticsearch/GET_INDICES_REQUEST');
+        expect(actions[0].type).toBe('opensearch/GET_INDICES_REQUEST');
         expect(reducer(initialState, actions[0])).toEqual({
           ...initialState,
           requesting: true,
         });
-        expect(actions[1].type).toBe('elasticsearch/GET_INDICES_FAILURE');
+        expect(actions[1].type).toBe('opensearch/GET_INDICES_FAILURE');
         expect(reducer(initialState, actions[1])).toEqual({
           ...initialState,
           requesting: false,
@@ -82,12 +83,12 @@ describe('elasticsearch reducer actions', () => {
       await store.dispatch(getAliases());
       const actions = store.getActions();
 
-      expect(actions[0].type).toBe('elasticsearch/GET_ALIASES_REQUEST');
+      expect(actions[0].type).toBe('opensearch/GET_ALIASES_REQUEST');
       expect(reducer(initialState, actions[0])).toEqual({
         ...initialState,
         requesting: true,
       });
-      expect(actions[1].type).toBe('elasticsearch/GET_ALIASES_SUCCESS');
+      expect(actions[1].type).toBe('opensearch/GET_ALIASES_SUCCESS');
       expect(reducer(initialState, actions[1])).toEqual({
         ...initialState,
         requesting: false,
@@ -109,12 +110,12 @@ describe('elasticsearch reducer actions', () => {
         await store.dispatch(getAliases());
       } catch (e) {
         const actions = store.getActions();
-        expect(actions[0].type).toBe('elasticsearch/GET_ALIASES_REQUEST');
+        expect(actions[0].type).toBe('opensearch/GET_ALIASES_REQUEST');
         expect(reducer(initialState, actions[0])).toEqual({
           ...initialState,
           requesting: true,
         });
-        expect(actions[1].type).toBe('elasticsearch/GET_ALIASES_FAILURE');
+        expect(actions[1].type).toBe('opensearch/GET_ALIASES_FAILURE');
         expect(reducer(initialState, actions[1])).toEqual({
           ...initialState,
           requesting: false,
@@ -132,7 +133,7 @@ describe('elasticsearch reducer actions', () => {
   describe('getMappings', () => {
     test('should invoke [REQUEST, SUCCESS]', async () => {
       const mappings = {
-        kibana: {
+        opensearch_dashboards: {
           mappings: {
             properties: {
               field_1: { type: 'string' },
@@ -146,12 +147,12 @@ describe('elasticsearch reducer actions', () => {
         .mockResolvedValue({ ok: true, response: { mappings } });
       await store.dispatch(getMappings());
       const actions = store.getActions();
-      expect(actions[0].type).toBe('elasticsearch/GET_MAPPINGS_REQUEST');
+      expect(actions[0].type).toBe('opensearch/GET_MAPPINGS_REQUEST');
       expect(reducer(initialState, actions[0])).toEqual({
         ...initialState,
         requesting: true,
       });
-      expect(actions[1].type).toBe('elasticsearch/GET_MAPPINGS_SUCCESS');
+      expect(actions[1].type).toBe('opensearch/GET_MAPPINGS_SUCCESS');
       expect(reducer(initialState, actions[1])).toEqual({
         ...initialState,
         requesting: false,
@@ -176,12 +177,12 @@ describe('elasticsearch reducer actions', () => {
         await store.dispatch(getMappings());
       } catch (e) {
         const actions = store.getActions();
-        expect(actions[0].type).toBe('elasticsearch/GET_MAPPINGS_REQUEST');
+        expect(actions[0].type).toBe('opensearch/GET_MAPPINGS_REQUEST');
         expect(reducer(initialState, actions[0])).toEqual({
           ...initialState,
           requesting: true,
         });
-        expect(actions[1].type).toBe('elasticsearch/GET_MAPPINGS_FAILURE');
+        expect(actions[1].type).toBe('opensearch/GET_MAPPINGS_FAILURE');
         expect(reducer(initialState, actions[1])).toEqual({
           ...initialState,
           requesting: false,
@@ -197,7 +198,7 @@ describe('elasticsearch reducer actions', () => {
     });
   });
 
-  describe('searchES', () => {
+  describe('searchOpenSearch', () => {
     test('should invoke [REQUEST, SUCCESS]', async () => {
       const requestData = {
         query: {
@@ -209,14 +210,14 @@ describe('elasticsearch reducer actions', () => {
         ok: true,
         response: { hits: { hits: [] } },
       });
-      await store.dispatch(searchES(requestData));
+      await store.dispatch(searchOpenSearch(requestData));
       const actions = store.getActions();
-      expect(actions[0].type).toBe('elasticsearch/SEARCH_ES_REQUEST');
+      expect(actions[0].type).toBe('opensearch/SEARCH_OPENSEARCH_REQUEST');
       expect(reducer(initialState, actions[0])).toEqual({
         ...initialState,
         requesting: true,
       });
-      expect(actions[1].type).toBe('elasticsearch/SEARCH_ES_SUCCESS');
+      expect(actions[1].type).toBe('opensearch/SEARCH_OPENSEARCH_SUCCESS');
       expect(reducer(initialState, actions[1])).toEqual({
         ...initialState,
         requesting: false,
@@ -243,15 +244,15 @@ describe('elasticsearch reducer actions', () => {
         error: 'Something went wrong',
       });
       try {
-        await store.dispatch(searchES(requestData));
+        await store.dispatch(searchOpenSearch(requestData));
       } catch (e) {
         const actions = store.getActions();
-        expect(actions[0].type).toBe('elasticsearch/SEARCH_ES_REQUEST');
+        expect(actions[0].type).toBe('opensearch/SEARCH_OPENSEARCH_REQUEST');
         expect(reducer(initialState, actions[0])).toEqual({
           ...initialState,
           requesting: true,
         });
-        expect(actions[1].type).toBe('elasticsearch/SEARCH_ES_FAILURE');
+        expect(actions[1].type).toBe('opensearch/SEARCH_OPENSEARCH_FAILURE');
         expect(reducer(initialState, actions[1])).toEqual({
           ...initialState,
           requesting: false,

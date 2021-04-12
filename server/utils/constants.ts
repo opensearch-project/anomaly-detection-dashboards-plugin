@@ -26,7 +26,7 @@ export const API: ADApis = {
 export const DEFAULT_HEADERS: DefaultHeaders = {
   'Content-Type': 'application/json',
   Accept: 'application/json',
-  'User-Agent': 'Kibana',
+  'User-Agent': 'OpenSearch Dashboards',
 };
 
 export const SEC_IN_MILLI_SECS = 1000;
@@ -86,4 +86,5 @@ export const DOC_COUNT_FIELD = 'doc_count';
 export const KEY_FIELD = 'key';
 
 export const STACK_TRACE_PATTERN = '.java:';
-export const ES_EXCEPTION_PREFIX = 'org.elasticsearch.ElasticsearchException: ';
+export const OPENSEARCH_EXCEPTION_PREFIX =
+  'org.opensearch.OpenSearchException: ';

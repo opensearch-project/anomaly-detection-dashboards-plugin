@@ -27,7 +27,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useHideSideNavBar } from '../../../main/hooks/useHideSideNavBar';
 import { prettifyErrorMessage } from '../../../../../server/utils/helpers';
 import { Listener, getErrorMessage } from '../../../../utils/utils';
-import { darkModeEnabled } from '../../../../utils/kibanaUtils';
+import { darkModeEnabled } from '../../../../utils/opensearchDashboardsUtils';
 import { AppState } from '../../../../redux/reducers';
 import {
   startDetector,

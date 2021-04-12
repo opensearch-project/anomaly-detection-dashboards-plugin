@@ -43,7 +43,7 @@ export const CustomAggregation = (props: CustomAggregationProps) => {
         <EuiFormRow
           fullWidth
           label="Expression"
-          helpText="Custom expression uses the Elasticsearch query DSL."
+          helpText="Custom expression uses the OpenSearch query DSL."
           isInvalid={isInvalid(field.name, form)}
           error={getError(field.name, form)}
           onClick={() => {

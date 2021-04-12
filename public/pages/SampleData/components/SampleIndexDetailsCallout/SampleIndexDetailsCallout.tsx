@@ -15,7 +15,10 @@
 
 import React from 'react';
 import { EuiCallOut, EuiLink } from '@elastic/eui';
-import { KIBANA_NAME, KIBANA_PATH } from '../../../../utils/constants';
+import {
+  OPENSEARCH_DASHBOARDS_NAME,
+  OPENSEARCH_DASHBOARDS_PATH,
+} from '../../../../utils/constants';
 
 interface SampleIndexDetailsCalloutProps {
   indexName: string;
@@ -33,10 +36,10 @@ export const SampleIndexDetailsCallout = (
       <p>
         Check out the{' '}
         <EuiLink
-          href={`${KIBANA_NAME}#${KIBANA_PATH.DISCOVER}`}
+          href={`${OPENSEARCH_DASHBOARDS_NAME}#${OPENSEARCH_DASHBOARDS_PATH.DISCOVER}`}
           target="_blank"
         >
-          Kibana Discover app
+          OpenSearch Dashboards Discover app
         </EuiLink>
         {''} to view the raw data for sample index '{props.indexName}'.
       </p>

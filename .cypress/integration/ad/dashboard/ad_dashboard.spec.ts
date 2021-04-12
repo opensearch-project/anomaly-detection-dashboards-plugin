@@ -31,16 +31,13 @@ context('AD Dashboard', () => {
     cy.contains('h2', 'You have no detectors');
   });
 
-  it('AD dashboard - single stopped detector', () => {
-    cy.mockGetDetectorOnAction('single_stopped_detector_response.json', () => {
+  it('AD dashboard - single running detector', () => {
+    cy.mockGetDetectorOnAction('single_running_detector_response.json', () => {
       cy.visit(buildAdAppUrl(DASHBOARD));
     });
 
     cy.contains('h3', 'Live anomalies');
-    cy.contains(
-      'p',
-      'All matching detectors are under initialization or stopped for the last 30 minutes. Please adjust filters or come back later.'
-    );
+    cy.contains('a', 'running-detector');
   });
 
   it('AD dashboard - redirect to create detector', () => {

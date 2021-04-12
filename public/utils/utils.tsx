@@ -16,7 +16,7 @@
 import { get, isEmpty } from 'lodash';
 import React from 'react';
 import { EuiTitle } from '@elastic/eui';
-import { darkModeEnabled } from '../utils/kibanaUtils';
+import { darkModeEnabled } from './opensearchDashboardsUtils';
 import { ALERTING_PLUGIN_NAME, NAME_REGEX } from './constants';
 import { MAX_FEATURE_NAME_SIZE } from './constants';
 import { CoreStart } from '../../../../src/core/public';

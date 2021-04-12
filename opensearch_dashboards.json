@@ -1,0 +1,10 @@
+{
+  "id": "anomalyDetectionDashboards",
+  "version": "1.13.0.0",
+  "opensearchDashboardsVersion": "7.10.2",
+  "configPath": ["anomaly_detection_dashboards"],
+  "requiredPlugins": ["navigation"],
+  "optionalPlugins": [],
+  "server": true,
+  "ui": true
+}

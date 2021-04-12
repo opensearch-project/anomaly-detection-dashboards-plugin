@@ -1,19 +1,19 @@
-[![Unit tests](https://github.com/opendistro-for-elasticsearch/anomaly-detection-kibana-plugin/workflows/Unit%20tests%20workflow/badge.svg)](https://github.com/opendistro-for-elasticsearch/anomaly-detection-kibana-plugin/actions?query=workflow%3A%22Unit+tests+workflow%22)
-[![Integration tests](https://github.com/opendistro-for-elasticsearch/anomaly-detection-kibana-plugin/workflows/E2E%20tests%20workflow/badge.svg)](https://github.com/opendistro-for-elasticsearch/anomaly-detection-kibana-plugin/actions?query=workflow%3A%22E2E+tests+workflow%22)
-[![codecov](https://codecov.io/gh/opendistro-for-elasticsearch/anomaly-detection-kibana-plugin/branch/master/graph/badge.svg)](https://codecov.io/gh/opendistro-for-elasticsearch/anomaly-detection-kibana-plugin)
+[![Unit tests](https://github.com/opensearch-project/anomaly-detection-dashboards-plugin/workflows/Unit%20tests%20workflow/badge.svg)](https://github.com/opensearch-project/anomaly-detection-dashboards-plugin/actions?query=workflow%3A%22Unit+tests+workflow%22)
+[![Integration tests](https://github.com/opensearch-project/anomaly-detection-dashboards-plugin/workflows/E2E%20tests%20workflow/badge.svg)](https://github.com/opensearch-project/anomaly-detection-dashboards-plugin/actions?query=workflow%3A%22E2E+tests+workflow%22)
+[![codecov](https://codecov.io/gh/opensearch-project/anomaly-detection-dashboards-plugin/branch/main/graph/badge.svg)](https://codecov.io/gh/opensearch-project/anomaly-detection-dashboards-plugin)
 [![Documentation](https://img.shields.io/badge/doc-reference-blue)](https://opendistro.github.io/for-elasticsearch-docs/docs/ad/)
 [![Forum](https://img.shields.io/badge/chat-on%20forums-blue)](https://discuss.opendistrocommunity.dev/c/Use-this-category-for-all-questions-around-machine-learning-plugins)
 ![PRs welcome!](https://img.shields.io/badge/PRs-welcome!-success)
 
-## Open Distro for Elasticsearch Anomaly Detection
+## OpenSearch Anomaly Detection Dashboards
 
-The Open Distro for Elasticsearch Anomaly Detection plugin enables you to leverage Machine Learning based algorithms to automatically detect anomalies as your log data is ingested. Combined with Alerting, you can monitor your data in near real time and automatically send alert notifications . With an intuitive Kibana interface and a powerful API, it is easy to set up, tune, and monitor your anomaly detectors.
+The OpenSearch Anomaly Detection Dashboards plugin enables you to leverage Machine Learning based algorithms to automatically detect anomalies as your log data is ingested. Combined with Alerting, you can monitor your data in near real time and automatically send alert notifications. With an intuitive OpenSearch Dashboards interface and a powerful API, it is easy to set up, tune, and monitor your anomaly detectors.
 
 ## Highlights
 
 Anomaly detection is using Random Cut Forest (RCF) algorithm for detecting anomalous data points.
 
-You should use anomaly detection kibana plugin with the same version of [Open Distro Alerting kibana plugin](https://github.com/opendistro-for-elasticsearch/alerting-kibana-plugin). You can also create monitor based on anomaly detector. A scheduled monitor run checks the anomaly detection results regularly and collects anomalies to trigger alerts based on custom trigger conditions.
+You should use the plugin with the same version of the [OpenSearch Alerting Dashboards plugin](https://github.com/opensearch-project/alerting-dashboards-plugin). You can also create monitors based on a created anomaly detector. A scheduled monitor run checks the anomaly detection results regularly and collects anomalies to trigger alerts based on custom trigger conditions.
 
 ## Current Limitations
 
@@ -26,57 +26,61 @@ Please see our [documentation](https://opendistro.github.io/for-elasticsearch-do
 
 ## Setup
 
-1. Download Elasticsearch for the version that matches the [Kibana version specified in package.json](./package.json#L7).
-1. Download and install the appropriate [Open Distro for Elasticsearch Anomaly Detection Kibana plugin](https://github.com/opendistro-for-elasticsearch/anomaly-detection-kibana-plugin).
-1. Download the Kibana source code for the [version specified in package.json](./package.json#L7) you want to set up.
+1. Download OpenSearch for the version that matches the [OpenSearch Dashboards version specified in package.json](./package.json#L7).
+1. Download and install the appropriate [Anomaly Detection OpenSearch plugin](https://github.com/opensearch-project/anomaly-detection).
+1. Download the OpenSearch Dashboards source code for the [version specified in package.json](./package.json#L7) you want to set up.
 
-   See the [Kibana contributing guide](https://github.com/elastic/kibana/blob/master/CONTRIBUTING.md#setting-up-your-development-environment) for more instructions on setting up your development environment.
+   See the [OpenSearch Dashboards contributing guide](https://github.com/opensearch-project/OpenSearch-Dashboards/blob/main/CONTRIBUTING.md) and [developer guide](https://github.com/opensearch-project/OpenSearch-Dashboards/blob/main/DEVELOPER_GUIDE.md) for more instructions on setting up your development environment.
 
-1. Change your node version to the version specified in `.node-version` inside the Kibana root directory.
-1. Create a `plugins` directory inside the Kibana source code directory, if `plugins` directory doesn't exist.
+1. Change your node version to the version specified in `.node-version` inside the OpenSearch Dashboards root directory.
+1. Create a `plugins` directory inside the OpenSearch Dashboards source code directory, if `plugins` directory doesn't exist.
 1. Check out this package from version control into the `plugins` directory.
-1. Run `yarn kbn bootstrap` inside `kibana/plugins/anomaly-detection-kibana-plugin`.
+1. Run `yarn osd bootstrap` inside `OpenSearch-Dashboards/plugins/anomaly-detection-dashboards-plugin`.
 
 Ultimately, your directory structure should look like this:
 
 <!-- prettier-ignore -->
 ```md
 .
-├── kibana
+├── OpenSearch-Dashboards
 │   └──plugins
-│      └── anomaly-detection-kibana-plugin
+│      └── anomaly-detection-dashboards-plugin
 ```
 
 ## Build
 
 To build the plugin's distributable zip simply run `yarn build`.
 
-Example output: `./build/opendistroAnomalyDetectionKibana-1.13.0.0.zip`
+Example output: `./build/anomalyDetectionDashboards-1.13.0.0.zip`
 
 ## Run
 
-- `yarn start`
+In the base OpenSearch Dashboards directory, run
 
-  Starts Kibana and includes this plugin. Kibana will be available on `localhost:5601`.
+- `yarn start --no-base-path`
 
-- `NODE_PATH=../../node_modules yarn test:jest`
+  Starts OpenSearch Dashboards and includes this plugin. OpenSearch Dashboards will be available on `localhost:5601`.
 
-  Runs the plugin tests.
+## Test
+
+- `yarn test:jest`
+
+  Runs the plugin unit tests.
 
 - `yarn test:e2e`
 
-  Start Kibana, wait for it to be available on `localhost:5601`, and runs end-to-end tests.
+  Start OpenSearch Dashboards, wait for it to be available on `localhost:5601`, and runs end-to-end tests.
 
 - `yarn cy:run`
 
-  Runs end-to-end tests on a currently running Kibana server. Defaults to run the tests on `localhost:5601`, although you can change this to run on any
-  Kibana server with the command `yarn cy:run --config baseUrl=<your-custom-URL>`
+  Runs end-to-end tests on a currently running OpenSearch Dashboards server. Defaults to run the tests on `localhost:5601`, although you can change this to run on any
+  OpenSearch Dashboards server with the command `yarn cy:run --config baseUrl=<your-custom-URL>`
 
-## Contributing to Open Distro for Elasticsearch Anomaly detection Kibana
+## Contributing
 
 We welcome you to get involved in development, documentation, testing the anomaly detection plugin. See our [CONTRIBUTING.md](./CONTRIBUTING.md) and join in.
 
-Since this is a Kibana plugin, it can be useful to review the [Kibana contributing guide](https://github.com/elastic/kibana/blob/master/CONTRIBUTING.md) alongside the documentation around [Kibana plugins](https://www.elastic.co/guide/en/kibana/master/kibana-plugins.html) and [plugin development](https://www.elastic.co/guide/en/kibana/master/plugin-development.html).
+Since this is a OpenSearch Dashboards plugin, it can be useful to review the [OpenSearch Dashboards contributing guide](https://github.com/opensearch-project/OpenSearch-Dashboards/blob/main/CONTRIBUTING.md) as well as the [developer guide](https://github.com/opensearch-project/OpenSearch-Dashboards/blob/main/DEVELOPER_GUIDE.md) to help get started.
 
 ## Code of Conduct
 
@@ -92,4 +96,4 @@ See the [LICENSE](./LICENSE.txt) file for our project's licensing. We will ask y
 
 ## Copyright
 
-Copyright 2020 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.

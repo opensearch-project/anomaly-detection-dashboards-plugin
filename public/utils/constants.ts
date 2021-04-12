@@ -51,15 +51,15 @@ export const APP_PATH = {
   HISTORICAL_DETECTOR_DETAIL: '/historical-detectors/:detectorId/details',
 };
 
-export const KIBANA_PATH = {
+export const OPENSEARCH_DASHBOARDS_PATH = {
   DISCOVER: '/discover',
 };
 
-export const PLUGIN_NAME = 'opendistro-anomaly-detection-kibana';
+export const PLUGIN_NAME = 'anomaly-detection-dashboards';
 
-export const ALERTING_PLUGIN_NAME = 'opendistro-alerting';
+export const ALERTING_PLUGIN_NAME = 'alerting';
 
-export const KIBANA_NAME = 'kibana';
+export const OPENSEARCH_DASHBOARDS_NAME = 'dashboards';
 
 export const ANOMALY_DETECTORS_INDEX = '.opendistro-anomaly-detectors';
 
@@ -75,7 +75,7 @@ export const MAX_FEATURE_NAME_SIZE = 64;
 
 export const NAME_REGEX = RegExp('^[a-zA-Z0-9._-]+$');
 
-//https://github.com/opendistro-for-elasticsearch/anomaly-detection/blob/master/src/main/java/com/amazon/opendistroforelasticsearch/ad/settings/AnomalyDetectorSettings.java#L186
+//https://github.com/opensearch-project/anomaly-detection/blob/main/src/main/java/com/amazon/opendistroforelasticsearch/ad/settings/AnomalyDetectorSettings.java
 export const SINGLE_ENTITY_SHINGLE_SIZE = 8;
 
 export const MULTI_ENTITY_SHINGLE_SIZE = 4;

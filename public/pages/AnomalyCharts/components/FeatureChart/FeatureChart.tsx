@@ -36,7 +36,7 @@ import {
   FEATURE_TYPE,
   Schedule,
 } from '../../../../models/interfaces';
-import { darkModeEnabled } from '../../../../utils/kibanaUtils';
+import { darkModeEnabled } from '../../../../utils/opensearchDashboardsUtils';
 import {
   prepareDataForChart,
   getFeatureMissingDataAnnotations,

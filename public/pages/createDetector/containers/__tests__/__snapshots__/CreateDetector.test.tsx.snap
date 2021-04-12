@@ -54,7 +54,7 @@ exports[`<CreateDetector /> spec create detector renders the component 1`] = `
                
               <a
                 class="euiLink euiLink--primary"
-                href="opendistro-anomaly-detection-kibana#/sample-detectors"
+                href="anomaly-detection-dashboards#/sample-detectors"
                 rel="noreferrer"
               >
                 sample detector
@@ -485,7 +485,7 @@ exports[`<CreateDetector /> spec create detector renders the component 1`] = `
         </div>
         <div
           class="euiFormRow euiFormRow--fullWidth"
-          hint="Choose a subset of your data source to focus your data stream and reduce noisy data.,Use the visual editor to create a simple filter, or use the Elasticsearch query DSL to create more advanced filters."
+          hint="Choose a subset of your data source to focus your data stream and reduce noisy data.,Use the visual editor to create a simple filter, or use the OpenSearch query DSL to create more advanced filters."
           id="random_html_id-row"
         >
           <div
@@ -516,7 +516,7 @@ exports[`<CreateDetector /> spec create detector renders the component 1`] = `
                 <p
                   class="sublabel"
                 >
-                  Use the visual editor to create a simple filter, or use the Elasticsearch query DSL to create more advanced filters.
+                  Use the visual editor to create a simple filter, or use the OpenSearch query DSL to create more advanced filters.
                 </p>
               </div>
             </label>

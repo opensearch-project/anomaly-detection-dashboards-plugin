@@ -42,7 +42,7 @@ exports[`<SampleDataCallout /> spec Data not loaded renders component 1`] = `
        
       <a
         class="euiLink euiLink--primary"
-        href="opendistro-anomaly-detection-kibana#/sample-detectors"
+        href="anomaly-detection-dashboards#/sample-detectors"
         rel="noreferrer"
       >
         sample detector

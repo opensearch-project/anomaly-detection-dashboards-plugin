@@ -973,7 +973,7 @@ exports[`<SampleData /> spec Some detectors created renders component with sampl
                 >
                   <a
                     class="euiLink euiLink--primary"
-                    href="opendistro-anomaly-detection-kibana#/detectors/sample-detector-id"
+                    href="anomaly-detection-dashboards#/detectors/sample-detector-id"
                     rel="noreferrer"
                   >
                     View detector and sample data
