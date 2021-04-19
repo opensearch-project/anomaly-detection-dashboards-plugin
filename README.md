@@ -78,13 +78,13 @@ In the base OpenSearch Dashboards directory, run
 
 ## Contributing
 
-We welcome you to get involved in development, documentation, testing the anomaly detection plugin. See our [CONTRIBUTING.md](./CONTRIBUTING.md) and join in.
+We welcome you to get involved in development, documentation, testing the anomaly detection plugin. See our [CONTRIBUTING.md](CONTRIBUTING.md) and join in.
 
 Since this is a OpenSearch Dashboards plugin, it can be useful to review the [OpenSearch Dashboards contributing guide](https://github.com/opensearch-project/OpenSearch-Dashboards/blob/main/CONTRIBUTING.md) as well as the [developer guide](https://github.com/opensearch-project/OpenSearch-Dashboards/blob/main/DEVELOPER_GUIDE.md) to help get started.
 
 ## Code of Conduct
 
-This project has adopted an [Open Source Code of Conduct](https://opendistro.github.io/for-elasticsearch/codeofconduct.html).
+This project has adopted an [Open Source Code of Conduct](CODE_OF_CONDUCT.md).
 
 ## Security issue notifications
 
@@ -92,8 +92,8 @@ If you discover a potential security issue in this project we ask that you notif
 
 ## License
 
-See the [LICENSE](./LICENSE.txt) file for our project's licensing. We will ask you to confirm the licensing of your contribution.
+See the [LICENSE](LICENSE.txt) file for our project's licensing. We will ask you to confirm the licensing of your contribution.
 
 ## Copyright
 
-Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+Copyright 2021 OpenSearch Contributors
