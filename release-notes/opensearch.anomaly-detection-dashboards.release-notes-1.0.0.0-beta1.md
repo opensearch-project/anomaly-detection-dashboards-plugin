@@ -9,6 +9,7 @@ Compatible with OpenSearch Dashboards 1.0.0
 ### Infrastructure
 
 * Reset plugin version to 1.0.0.0, fix UT workflow ([#9](https://github.com/opensearch-project/anomaly-detection-dashboards-plugin/pull/9))
+* Rename plugin helpers file to fix zip build ([#12](https://github.com/opensearch-project/anomaly-detection-dashboards-plugin/pull/12))
 
 ### Documentation
 
