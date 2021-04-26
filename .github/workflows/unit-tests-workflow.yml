@@ -7,7 +7,7 @@ on:
     branches:
       - main
 env:
-  OPENSEARCH_DASHBOARDS_VERSION: main
+  OPENSEARCH_DASHBOARDS_VERSION: 1.0.0-alpha2
 jobs:
   tests:
     name: Run unit tests
