@@ -18,6 +18,7 @@ jobs:
     steps:
       - name: Checkout OpenSearch Dashboards
         uses: actions/checkout@v2
+        ref: 1.0.0-alpha2
         with:
           repository: opensearch-project/OpenSearch-Dashboards
           ref: ${{ env.OPENSEARCH_DASHBOARDS_VERSION }}
