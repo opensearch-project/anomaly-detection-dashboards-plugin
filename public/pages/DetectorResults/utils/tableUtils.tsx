@@ -13,9 +13,11 @@
  * permissions and limitations under the License.
  */
 
+import React from 'react';
 //@ts-ignore
 import moment from 'moment';
-import { EuiBasicTableColumn } from '@elastic/eui';
+import { EuiBasicTableColumn, EuiText, EuiIconTip } from '@elastic/eui';
+import { columnStyle } from '../../DetectorsList/utils/tableUtils';
 
 export const DEFAULT_EMPTY_DATA = '-';
 
@@ -46,14 +48,32 @@ export const staticColumn = [
   },
   {
     field: 'confidence',
-    name: 'Data confidence',
+    name: (
+      <EuiText size="xs" style={columnStyle}>
+        <b>Confidence</b>{' '}
+        <EuiIconTip
+          content="Indicates the level of confidence in the anomaly result."
+          position="top"
+          type="iInCircle"
+        />
+      </EuiText>
+    ),
     sortable: true,
     truncateText: false,
     dataType: 'number',
   },
   {
     field: 'anomalyGrade',
-    name: 'Anomaly grade',
+    name: (
+      <EuiText size="xs" style={columnStyle}>
+        <b>Anomaly grade</b>{' '}
+        <EuiIconTip
+          content="Indicates to what extent this data point is anomalous. The scale ranges from 0 to 1."
+          position="top"
+          type="iInCircle"
+        />
+      </EuiText>
+    ),
     sortable: true,
     truncateText: false,
     dataType: 'number',

@@ -36,7 +36,7 @@ export const DetectorControls = (props: DetectorControls) => {
   const [isOpen, setIsOpen] = useState(false);
   return (
     <EuiFlexGroup justifyContent="spaceBetween" alignItems="center">
-      <EuiFlexItem grow={false} style={{ marginRight: '16px' }}>
+      <EuiFlexItem grow={false}>
         <EuiPopover
           id="actionsPopover"
           button={
@@ -60,7 +60,7 @@ export const DetectorControls = (props: DetectorControls) => {
               data-test-subj="editDetector"
               onClick={props.onEditDetector}
             >
-              Edit detector
+              Edit detector settings
             </EuiContextMenuItem>
 
             <EuiContextMenuItem
@@ -75,28 +75,12 @@ export const DetectorControls = (props: DetectorControls) => {
               key="deleteDetector"
               data-test-subj="deleteDetector"
               onClick={props.onDelete}
+              style={{ color: '#FF6666' }}
             >
               Delete detector
             </EuiContextMenuItem>
           </EuiContextMenuPanel>
         </EuiPopover>
-      </EuiFlexItem>
-      <EuiFlexItem grow={false} style={{ marginLeft: '0px' }}>
-        <EuiButton
-          data-test-subj="stopDetectorButton"
-          onClick={
-            props.detector.enabled
-              ? props.onStopDetector
-              : props.onStartDetector
-          }
-          iconType={props.detector.enabled ? 'stop' : 'play'}
-          disabled={
-            !props.detector.featureAttributes ||
-            props.detector.featureAttributes.length === 0
-          }
-        >
-          {props.detector.enabled ? 'Stop detector' : 'Start detector'}
-        </EuiButton>
       </EuiFlexItem>
     </EuiFlexGroup>
   );

@@ -15,6 +15,7 @@
 
 export enum DETECTOR_DETAIL_TABS {
   RESULTS = 'results',
+  HISTORICAL = 'historical',
   CONFIGURATIONS = 'configurations',
 }
 
