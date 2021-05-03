@@ -27,7 +27,7 @@ export const BREADCRUMBS = Object.freeze({
   SAMPLE_DETECTORS: { text: 'Sample detectors', href: '#/sample-detectors' },
   CREATE_DETECTOR: { text: 'Create detector' },
   EDIT_DETECTOR: { text: 'Edit detector' },
-  DASHBOARD: { text: 'Dashboard', href: '#/' },
+  DASHBOARD: { text: 'Dashboard', href: '#/dashboard' },
   EDIT_MODEL_CONFIGURATION: { text: 'Edit model configuration' },
   HISTORICAL_DETECTORS: {
     text: 'Historical detectors',
@@ -49,17 +49,19 @@ export const APP_PATH = {
   CREATE_HISTORICAL_DETECTOR: '/create-historical-detector/',
   EDIT_HISTORICAL_DETECTOR: '/historical-detectors/:detectorId/edit',
   HISTORICAL_DETECTOR_DETAIL: '/historical-detectors/:detectorId/details',
+  CREATE_DETECTOR_STEPS: '/create-detector-steps',
+  OVERVIEW: '/overview',
 };
 
-export const KIBANA_PATH = {
+export const OPENSEARCH_DASHBOARDS_PATH = {
   DISCOVER: '/discover',
 };
 
-export const PLUGIN_NAME = 'opendistro-anomaly-detection-kibana';
+export const PLUGIN_NAME = 'anomaly-detection-dashboards';
 
-export const ALERTING_PLUGIN_NAME = 'opendistro-alerting';
+export const ALERTING_PLUGIN_NAME = 'alerting';
 
-export const KIBANA_NAME = 'kibana';
+export const OPENSEARCH_DASHBOARDS_NAME = 'dashboards';
 
 export const ANOMALY_DETECTORS_INDEX = '.opendistro-anomaly-detectors';
 
@@ -69,13 +71,16 @@ export const MAX_DETECTORS = 1000;
 
 export const MAX_ANOMALIES = 10000;
 
+export const MAX_HISTORICAL_AGG_RESULTS = 10000;
+
+// TODO: get this value from index settings since it is dynamic
 export const MAX_FEATURE_NUM = 5;
 
 export const MAX_FEATURE_NAME_SIZE = 64;
 
 export const NAME_REGEX = RegExp('^[a-zA-Z0-9._-]+$');
 
-//https://github.com/opendistro-for-elasticsearch/anomaly-detection/blob/master/src/main/java/com/amazon/opendistroforelasticsearch/ad/settings/AnomalyDetectorSettings.java#L186
+//https://github.com/opensearch-project/anomaly-detection/blob/main/src/main/java/com/amazon/opendistroforelasticsearch/ad/settings/AnomalyDetectorSettings.java
 export const SINGLE_ENTITY_SHINGLE_SIZE = 8;
 
 export const MULTI_ENTITY_SHINGLE_SIZE = 4;

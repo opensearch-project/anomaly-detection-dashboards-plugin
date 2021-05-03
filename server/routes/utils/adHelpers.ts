@@ -20,9 +20,11 @@ import { mapKeysDeep, toCamel, toSnake } from '../../utils/helpers';
 import {
   DETECTOR_STATE,
   STACK_TRACE_PATTERN,
-  ES_EXCEPTION_PREFIX,
+  OPENSEARCH_EXCEPTION_PREFIX,
+  REALTIME_TASK_TYPE_PREFIX,
 } from '../../utils/constants';
 import { InitProgress } from '../../models/interfaces';
+import { MAX_DETECTORS } from '../../utils/constants';
 
 export const convertDetectorKeysToSnakeCase = (payload: any) => {
   return {
@@ -56,7 +58,7 @@ export const convertPreviewInputKeysToSnakeCase = (payload: any) => {
 };
 
 export const convertDetectorKeysToCamelCase = (response: object) => {
-  return {
+  let camelCaseResponse = {
     ...mapKeysDeep(
       omit(response, [
         'filter_query',
@@ -64,6 +66,7 @@ export const convertDetectorKeysToCamelCase = (response: object) => {
         'feature_query',
         'feature_attributes',
         'adJob',
+        'historicalTask',
       ]),
       toCamel
     ),
@@ -80,6 +83,25 @@ export const convertDetectorKeysToCamelCase = (response: object) => {
     disabledTime: get(response, 'adJob.disabled_time'),
     categoryField: get(response, 'category_field'),
   };
+
+  if (!isEmpty(get(response, 'historicalTask', {}))) {
+    camelCaseResponse = {
+      ...camelCaseResponse,
+      //@ts-ignore
+      taskId: get(response, 'historicalTask.task_id'),
+      taskState: getTaskState(get(response, 'historicalTask', {})),
+      taskProgress: get(response, 'historicalTask.task_progress'),
+      taskError: processTaskError(get(response, 'historicalTask.error', '')),
+      detectionDateRange: {
+        startTime: get(
+          response,
+          'historicalTask.detection_date_range.start_time'
+        ),
+        endTime: get(response, 'historicalTask.detection_date_range.end_time'),
+      },
+    };
+  }
+  return camelCaseResponse;
 };
 
 export const getResultAggregationQuery = (
@@ -108,6 +130,11 @@ export const getResultAggregationQuery = (
           { terms: { detector_id: detectors } },
           { range: { anomaly_grade: { gt: 0 } } },
         ],
+        must_not: {
+          exists: {
+            field: 'task_id',
+          },
+        },
       },
     },
     aggs: {
@@ -170,15 +197,11 @@ export const anomalyResultMapper = (anomalyResults: any[]): AnomalyResults => {
   return resultData;
 };
 
-export const getDetectorInitProgress = (
-  detectorStateResponse: any
-): InitProgress | undefined => {
-  if (detectorStateResponse.init_progress) {
+export const getTaskInitProgress = (task: any): InitProgress | undefined => {
+  if (task?.init_progress !== undefined) {
     return {
-      percentageStr: detectorStateResponse.init_progress.percentage,
-      estimatedMinutesLeft:
-        detectorStateResponse.init_progress.estimated_minutes_left,
-      neededShingles: detectorStateResponse.init_progress.needed_shingles,
+      percentageStr: `${(get(task, 'init_progress', 0) * 100).toFixed(0)}%`,
+      estimatedMinutesLeft: task.estimated_minutes_left,
     };
   }
   return undefined;
@@ -238,6 +261,7 @@ export const getDetectorsWithJob = (
       primaryTerm: detectorWithJobResponse._primary_term,
       seqNo: detectorWithJobResponse._seq_no,
       adJob: { ...detectorWithJobResponse.anomaly_detector_job },
+      historicalTask: { ...detectorWithJobResponse.anomaly_detection_task },
     };
     resultDetectorWithJobs.push(convertDetectorKeysToCamelCase(resp));
   });
@@ -313,7 +337,7 @@ export const appendTaskInfo = (
       };
     } else {
       const task = detectorToTaskMap[detectorId];
-      const state = getHistoricalDetectorState(task);
+      const state = getTaskState(task);
       const totalAnomalies = get(
         detectorToResultsMap[detectorId],
         'hits.total.value',
@@ -334,7 +358,7 @@ export const appendTaskInfo = (
 // - set to UNEXPECTED_FAILURE if the task is in a FAILED state & the error message is unreadable / is a stack trace
 // - set to INIT if the task is in a CREATED state
 // - set to DISABLED if the task is in a STOPPED state
-export const getHistoricalDetectorState = (task: any) => {
+export const getTaskState = (task: any) => {
   const state = get(task, 'state', 'DISABLED');
   const errorMessage = processTaskError(get(task, 'error', ''));
   const updatedState =
@@ -350,8 +374,54 @@ export const getHistoricalDetectorState = (task: any) => {
 };
 
 export const processTaskError = (error: string) => {
-  const errorWithPrefixRemoved = error.replace(ES_EXCEPTION_PREFIX, '');
+  const errorWithPrefixRemoved = error.replace(OPENSEARCH_EXCEPTION_PREFIX, '');
   return errorWithPrefixRemoved.endsWith('.')
     ? errorWithPrefixRemoved
     : errorWithPrefixRemoved + '.';
+};
+
+export const getLatestDetectorTasksQuery = () => {
+  return {
+    size: 0,
+    query: {
+      bool: {
+        filter: [
+          {
+            term: {
+              is_latest: 'true',
+            },
+          },
+          {
+            terms: {
+              task_type: [
+                'REALTIME_HC_DETECTOR',
+                'REALTIME_SINGLE_ENTITY',
+                'HISTORICAL_SINGLE_ENTITY',
+                'HISTORICAL_HC_DETECTOR',
+              ],
+            },
+          },
+        ],
+      },
+    },
+    aggs: {
+      detectors: {
+        terms: {
+          field: 'detector_id',
+          size: MAX_DETECTORS,
+        },
+        aggs: {
+          latest_tasks: {
+            top_hits: {
+              size: 2,
+            },
+          },
+        },
+      },
+    },
+  };
+};
+
+export const isRealTimeTask = (task: any) => {
+  return get(task, 'task_type', '').includes(REALTIME_TASK_TYPE_PREFIX);
 };
