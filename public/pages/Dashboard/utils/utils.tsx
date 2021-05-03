@@ -362,7 +362,7 @@ export const anomalousDetectorsStaticColumn = [
     render: (name: string, detector: Detector) => {
       return !isEmpty(detector.taskId) ? (
         <EuiLink href={`${PLUGIN_NAME}#/detectors/${detector.id}/historical`}>
-          Enabled
+          View results
         </EuiLink>
       ) : (
         <EuiText>-</EuiText>
