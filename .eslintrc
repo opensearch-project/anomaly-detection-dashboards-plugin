@@ -3,5 +3,5 @@ extends: "@elastic/kibana"
 
 settings:
   import/resolver:
-    '@elastic/eslint-import-resolver-kibana':
+    '@osd/eslint-import-resolver':
       rootPackageName: 'anomaly-detection-dashboards'
