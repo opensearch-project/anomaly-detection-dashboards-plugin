@@ -72,9 +72,9 @@ export const ALERTING_PLUGIN_NAME = 'alerting';
 
 export const OPENSEARCH_DASHBOARDS_NAME = 'dashboards';
 
-export const ANOMALY_DETECTORS_INDEX = '.opendistro-anomaly-detectors';
+export const ANOMALY_DETECTORS_INDEX = '.opensearch-anomaly-detectors';
 
-export const ANOMALY_RESULT_INDEX = '.opendistro-anomaly-results';
+export const ANOMALY_RESULT_INDEX = '.opensearch-anomaly-results';
 
 export const MAX_DETECTORS = 1000;
 

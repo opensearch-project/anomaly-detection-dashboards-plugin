@@ -136,7 +136,7 @@ export const getRandomMonitor = (
     inputs: [
       {
         search: {
-          indices: ['.opendistro-anomaly-results*'],
+          indices: ['.opensearch-anomaly-results*'],
           query: {
             size: 1,
             query: {

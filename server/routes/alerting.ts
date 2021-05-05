@@ -70,7 +70,7 @@ export default class AlertingService {
                   {
                     term: {
                       'monitor.inputs.search.indices.keyword': {
-                        value: '.opendistro-anomaly-results*',
+                        value: '.opensearch-anomaly-results*',
                       },
                     },
                   },
