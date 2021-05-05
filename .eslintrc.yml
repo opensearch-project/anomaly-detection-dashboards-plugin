@@ -1,5 +1,5 @@
 ---
-extends: '@elastic/eslint-config-kibana'
+extends: ['@elastic/eslint-config-kibana', 'plugin:@elastic/eui/recommended']
 
 settings:
   import/resolver:
