@@ -81,14 +81,14 @@ export const GET_ALL_DETECTORS_QUERY_PARAMS = {
 
 export const GET_SAMPLE_DETECTORS_QUERY_PARAMS = {
   from: 0,
-  search: 'opendistro-sample',
+  search: 'sample',
   indices: '',
   size: MAX_DETECTORS,
   sortDirection: SORT_DIRECTION.ASC,
   sortField: 'name',
 };
 
-export const GET_SAMPLE_INDICES_QUERY = 'opendistro-sample-*';
+export const GET_SAMPLE_INDICES_QUERY = '*sample-*';
 
 export const TOP_ENTITIES_FIELD = 'top_entities';
 export const TOP_ENTITY_AGGS = 'top_entity_aggs';

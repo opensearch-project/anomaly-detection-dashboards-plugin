@@ -223,7 +223,8 @@ export const SampleData = () => {
             )}
             detectorId={getDetectorId(
               allDetectors,
-              sampleHttpResponses.detectorName
+              sampleHttpResponses.detectorName,
+              sampleHttpResponses.legacyDetectorName
             )}
           />
         </EuiFlexItem>
@@ -253,7 +254,8 @@ export const SampleData = () => {
             )}
             detectorId={getDetectorId(
               allDetectors,
-              sampleEcommerce.detectorName
+              sampleEcommerce.detectorName,
+              sampleEcommerce.legacyDetectorName
             )}
           />
         </EuiFlexItem>
@@ -283,7 +285,8 @@ export const SampleData = () => {
             )}
             detectorId={getDetectorId(
               allDetectors,
-              sampleHostHealth.detectorName
+              sampleHostHealth.detectorName,
+              sampleHostHealth.legacyDetectorName
             )}
           />
         </EuiFlexItem>
