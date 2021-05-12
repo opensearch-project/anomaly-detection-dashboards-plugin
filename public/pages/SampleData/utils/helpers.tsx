@@ -25,7 +25,7 @@
  */
 
 import React from 'react';
-import { isEmpty } from 'lodash';
+import { isEmpty, get } from 'lodash';
 import { EuiDataGrid } from '@elastic/eui';
 import { CatIndex } from '../../../../server/models/types';
 import { Detector, DetectorListItem } from '../../../models/interfaces';
@@ -72,7 +72,7 @@ export const containsSampleIndex = (
   return indexNames.includes(indexName) || indexNames.includes(legacyIndexName);
 };
 
-export const containsSampleDetector = (
+export const getSampleDetector = (
   detectors: DetectorListItem[],
   sampleType: SAMPLE_TYPE
 ) => {
@@ -96,10 +96,14 @@ export const containsSampleDetector = (
     }
   }
   // Checking for legacy sample detectors
-  const detectorNames = detectors.map((detector) => detector.name);
-  return (
-    detectorNames.includes(detectorName) ||
-    detectorNames.includes(legacyDetectorName)
+  return get(
+    detectors.filter(
+      (detector) =>
+        detector.name.includes(detectorName) ||
+        detector.name.includes(legacyDetectorName)
+    ),
+    '0',
+    undefined
   );
 };
 
