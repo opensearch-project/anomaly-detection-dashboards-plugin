@@ -39,7 +39,9 @@ export const indexSettings = {
 
 export interface SAMPLE_DATA {
   indexName: string;
+  legacyIndexName: string;
   detectorName: string;
+  legacyDetectorName: string;
   description: string;
   icon: any;
   fieldMappings: {};
@@ -50,8 +52,11 @@ export interface SAMPLE_DATA {
 /*
  *** SAMPLE HTTP RESPONSES CONSTANTS ***
  */
-const httpResponsesIndexName = 'opendistro-sample-http-responses';
-const httpResponsesDetectorName = 'opendistro-sample-http-responses-detector';
+const httpResponsesIndexName = 'sample-http-responses';
+const legacyHttpResponsesIndexName = 'opendistro-sample-http-responses';
+const httpResponsesDetectorName = 'sample-http-responses-detector';
+const legacyHttpResponsesDetectorName =
+  'opendistro-sample-http-responses-detector';
 const httpFieldMappings = {
   timestamp: {
     type: 'date',
@@ -77,7 +82,9 @@ const httpFieldMappings = {
 };
 export const sampleHttpResponses = {
   indexName: httpResponsesIndexName,
+  legacyIndexName: legacyHttpResponsesIndexName,
   detectorName: httpResponsesDetectorName,
+  legacyDetectorName: legacyHttpResponsesDetectorName,
   description:
     'Detect high numbers of error response codes in an index containing HTTP response data.',
   icon: <EuiIcon type="visLine" size="l" />,
@@ -144,8 +151,10 @@ export const sampleHttpResponses = {
 /*
  *** ECOMMERCE CONSTANTS ***
  */
-const ecommerceIndexName = 'opendistro-sample-ecommerce';
-const ecommerceDetectorName = 'opendistro-sample-ecommerce-detector';
+const ecommerceIndexName = 'sample-ecommerce';
+const legacyEcommerceIndexName = 'opendistro-sample-ecommerce';
+const ecommerceDetectorName = 'sample-ecommerce-detector';
+const legacyEcommerceDetectorName = 'opendistro-sample-ecommerce-detector';
 const ecommerceFieldMappings = {
   timestamp: {
     type: 'date',
@@ -165,7 +174,9 @@ const ecommerceFieldMappings = {
 };
 export const sampleEcommerce = {
   indexName: ecommerceIndexName,
+  legacyIndexName: legacyEcommerceIndexName,
   detectorName: ecommerceDetectorName,
+  legacyDetectorName: legacyEcommerceDetectorName,
   description:
     'Detect any unusual increase or decrease of orders in an index containing online order data.',
   icon: <EuiIcon type="package" size="l" />,
@@ -261,8 +272,10 @@ export const sampleEcommerce = {
 /*
  *** HOST HEALTH CONSTANTS ***
  */
-const hostHealthIndexName = 'opendistro-sample-host-health';
-const hostHealthDetectorName = 'opendistro-sample-host-health-detector';
+const hostHealthIndexName = 'sample-host-health';
+const legacyHostHealthIndexName = 'opendistro-sample-host-health';
+const hostHealthDetectorName = 'sample-host-health-detector';
+const legacyHostHealthDetectorName = 'opendistro-sample-host-health-detector';
 const hostHealthFieldMappings = {
   timestamp: {
     type: 'date',
@@ -276,7 +289,9 @@ const hostHealthFieldMappings = {
 };
 export const sampleHostHealth = {
   indexName: hostHealthIndexName,
+  legacyIndexName: legacyHostHealthIndexName,
   detectorName: hostHealthDetectorName,
+  legacyDetectorName: legacyHostHealthDetectorName,
   description:
     'Detect increases in CPU and memory utilization in an index containing various health metrics from a host.',
   icon: <EuiIcon type="visGauge" size="l" />,

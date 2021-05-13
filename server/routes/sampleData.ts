@@ -73,7 +73,7 @@ export default class SampleDataService {
             __dirname,
             '../sampleData/rawData/httpResponses.json.gz'
           );
-          indexName = 'opendistro-sample-http-responses';
+          indexName = 'sample-http-responses';
           break;
         }
         case SAMPLE_TYPE.ECOMMERCE: {
@@ -81,7 +81,7 @@ export default class SampleDataService {
             __dirname,
             '../sampleData/rawData/ecommerce.json.gz'
           );
-          indexName = 'opendistro-sample-ecommerce';
+          indexName = 'sample-ecommerce';
           break;
         }
         case SAMPLE_TYPE.HOST_HEALTH: {
@@ -89,7 +89,7 @@ export default class SampleDataService {
             __dirname,
             '../sampleData/rawData/hostHealth.json.gz'
           );
-          indexName = 'opendistro-sample-host-health';
+          indexName = 'sample-host-health';
           break;
         }
       }

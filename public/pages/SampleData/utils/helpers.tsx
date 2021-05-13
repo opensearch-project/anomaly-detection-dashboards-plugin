@@ -25,7 +25,7 @@
  */
 
 import React from 'react';
-import { isEmpty } from 'lodash';
+import { isEmpty, get } from 'lodash';
 import { EuiDataGrid } from '@elastic/eui';
 import { CatIndex } from '../../../../server/models/types';
 import { Detector, DetectorListItem } from '../../../models/interfaces';
@@ -49,77 +49,86 @@ export const containsSampleIndex = (
   sampleType: SAMPLE_TYPE
 ) => {
   let indexName = '';
+  let legacyIndexName = '';
   switch (sampleType) {
     case SAMPLE_TYPE.HTTP_RESPONSES: {
       indexName = sampleHttpResponses.indexName;
+      legacyIndexName = sampleHttpResponses.legacyIndexName;
       break;
     }
     case SAMPLE_TYPE.ECOMMERCE: {
       indexName = sampleEcommerce.indexName;
+      legacyIndexName = sampleEcommerce.legacyIndexName;
       break;
     }
     case SAMPLE_TYPE.HOST_HEALTH: {
       indexName = sampleHostHealth.indexName;
+      legacyIndexName = sampleHostHealth.legacyIndexName;
       break;
     }
   }
-  return indices.map((index) => index.index).includes(indexName);
+  // Checking for legacy sample indices
+  const indexNames = indices.map((index) => index.index);
+  return indexNames.includes(indexName) || indexNames.includes(legacyIndexName);
 };
 
-export const containsSampleDetector = (
+export const getSampleDetector = (
   detectors: DetectorListItem[],
   sampleType: SAMPLE_TYPE
 ) => {
   let detectorName = '';
+  let legacyDetectorName = '';
   switch (sampleType) {
     case SAMPLE_TYPE.HTTP_RESPONSES: {
       detectorName = sampleHttpResponses.detectorName;
+      legacyDetectorName = sampleHttpResponses.legacyDetectorName;
       break;
     }
     case SAMPLE_TYPE.ECOMMERCE: {
       detectorName = sampleEcommerce.detectorName;
+      legacyDetectorName = sampleEcommerce.legacyDetectorName;
       break;
     }
     case SAMPLE_TYPE.HOST_HEALTH: {
       detectorName = sampleHostHealth.detectorName;
+      legacyDetectorName = sampleHostHealth.legacyDetectorName;
       break;
     }
   }
-  return detectors.map((detector) => detector.name).includes(detectorName);
+  // Checking for legacy sample detectors
+  return get(
+    detectors.filter(
+      (detector) =>
+        detector.name.includes(detectorName) ||
+        detector.name.includes(legacyDetectorName)
+    ),
+    '0',
+    undefined
+  );
 };
 
 export const detectorIsSample = (detector: Detector) => {
   return (
     detector.name === sampleHttpResponses.detectorName ||
+    detector.name === sampleHttpResponses.legacyDetectorName ||
     detector.name === sampleEcommerce.detectorName ||
-    detector.name === sampleHostHealth.detectorName
+    detector.name === sampleEcommerce.legacyDetectorName ||
+    detector.name === sampleHostHealth.detectorName ||
+    detector.name === sampleHostHealth.legacyDetectorName
   );
-};
-
-export const getAssociatedIndex = (detector: Detector) => {
-  if (detector.name === sampleHttpResponses.detectorName) {
-    return sampleHttpResponses.indexName;
-  }
-  if (detector.name === sampleEcommerce.detectorName) {
-    return sampleEcommerce.indexName;
-  }
-  if (detector.name === sampleHostHealth.detectorName) {
-    return sampleHostHealth.indexName;
-  }
-  console.error(
-    'Error getting associated sample index for detector ',
-    detector.name
-  );
-  return '';
 };
 
 export const getDetectorId = (
   detectors: DetectorListItem[],
-  detectorName: string
+  detectorName: string,
+  legacyDetectorName: string
 ) => {
   let detectorId = '';
   detectors.some((detector) => {
-    if (detector.name === detectorName) {
+    if (
+      detector.name === detectorName ||
+      detector.name === legacyDetectorName
+    ) {
       detectorId = detector.id;
       return true;
     }

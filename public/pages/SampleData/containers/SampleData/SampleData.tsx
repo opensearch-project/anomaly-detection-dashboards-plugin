@@ -53,8 +53,8 @@ import {
 } from '../../utils/constants';
 import {
   containsSampleIndex,
-  containsSampleDetector,
   getDetectorId,
+  getSampleDetector,
 } from '../../utils/helpers';
 import { SampleDataBox } from '../../components/SampleDataBox/SampleDataBox';
 import { SampleDetailsFlyout } from '../../components/SampleDetailsFlyout/SampleDetailsFlyout';
@@ -217,13 +217,14 @@ export const SampleData = () => {
               );
             }}
             isLoadingData={isLoadingHttpData}
-            isDataLoaded={containsSampleDetector(
-              allDetectors,
-              SAMPLE_TYPE.HTTP_RESPONSES
-            )}
+            isDataLoaded={
+              getSampleDetector(allDetectors, SAMPLE_TYPE.HTTP_RESPONSES) !==
+              undefined
+            }
             detectorId={getDetectorId(
               allDetectors,
-              sampleHttpResponses.detectorName
+              sampleHttpResponses.detectorName,
+              sampleHttpResponses.legacyDetectorName
             )}
           />
         </EuiFlexItem>
@@ -247,13 +248,14 @@ export const SampleData = () => {
               );
             }}
             isLoadingData={isLoadingEcommerceData}
-            isDataLoaded={containsSampleDetector(
-              allDetectors,
-              SAMPLE_TYPE.ECOMMERCE
-            )}
+            isDataLoaded={
+              getSampleDetector(allDetectors, SAMPLE_TYPE.ECOMMERCE) !==
+              undefined
+            }
             detectorId={getDetectorId(
               allDetectors,
-              sampleEcommerce.detectorName
+              sampleEcommerce.detectorName,
+              sampleEcommerce.legacyDetectorName
             )}
           />
         </EuiFlexItem>
@@ -277,13 +279,14 @@ export const SampleData = () => {
               );
             }}
             isLoadingData={isLoadingHostHealthData}
-            isDataLoaded={containsSampleDetector(
-              allDetectors,
-              SAMPLE_TYPE.HOST_HEALTH
-            )}
+            isDataLoaded={
+              getSampleDetector(allDetectors, SAMPLE_TYPE.HOST_HEALTH) !==
+              undefined
+            }
             detectorId={getDetectorId(
               allDetectors,
-              sampleHostHealth.detectorName
+              sampleHostHealth.detectorName,
+              sampleHostHealth.legacyDetectorName
             )}
           />
         </EuiFlexItem>
@@ -293,6 +296,7 @@ export const SampleData = () => {
         <SampleDetailsFlyout
           title="Monitor HTTP responses"
           sampleData={sampleHttpResponses}
+          detector={getSampleDetector(allDetectors, SAMPLE_TYPE.HTTP_RESPONSES)}
           interval={1}
           onClose={() => setShowHttpResponseDetailsFlyout(false)}
         />
@@ -301,6 +305,7 @@ export const SampleData = () => {
         <SampleDetailsFlyout
           title="Monitor eCommerce orders"
           sampleData={sampleEcommerce}
+          detector={getSampleDetector(allDetectors, SAMPLE_TYPE.ECOMMERCE)}
           interval={1}
           onClose={() => setShowEcommerceDetailsFlyout(false)}
         />
@@ -309,6 +314,7 @@ export const SampleData = () => {
         <SampleDetailsFlyout
           title="Monitor host health"
           sampleData={sampleHostHealth}
+          detector={getSampleDetector(allDetectors, SAMPLE_TYPE.HOST_HEALTH)}
           interval={1}
           onClose={() => setShowHostHealthDetailsFlyout(false)}
         />

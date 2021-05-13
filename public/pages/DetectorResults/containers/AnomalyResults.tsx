@@ -72,10 +72,7 @@ import {
   FEATURE_DATA_CHECK_WINDOW_OFFSET,
 } from '../../utils/anomalyResultUtils';
 import { getDetectorResults } from '../../../redux/reducers/anomalyResults';
-import {
-  detectorIsSample,
-  getAssociatedIndex,
-} from '../../SampleData/utils/helpers';
+import { detectorIsSample } from '../../SampleData/utils/helpers';
 import { SampleIndexDetailsCallout } from '../../SampleData/components/SampleIndexDetailsCallout/SampleIndexDetailsCallout';
 import { CoreStart } from '../../../../../../src/core/public';
 import { CoreServicesContext } from '../../../components/CoreServices/CoreServices';
@@ -133,7 +130,7 @@ export function AnomalyResults(props: AnomalyResultsProps) {
   useEffect(() => {
     if (detector && detectorIsSample(detector)) {
       setIsSampleDetector(true);
-      setSampleIndexName(getAssociatedIndex(detector));
+      setSampleIndexName(detector.indices[0]);
     } else {
       setIsSampleDetector(false);
     }

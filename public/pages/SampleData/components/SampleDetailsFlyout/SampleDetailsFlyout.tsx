@@ -39,12 +39,14 @@ import {
   getFieldsAndTypesGrid,
   getFeaturesAndAggsAndFieldsGrid,
 } from '../../utils/helpers';
+import { Detector } from '../../../../models/interfaces';
 import { SAMPLE_DATA } from '../../utils/constants';
 import { EuiHorizontalRule } from '@elastic/eui';
 
 interface SampleDetailsFlyoutProps {
   title: string;
   sampleData: SAMPLE_DATA;
+  detector: Detector | undefined;
   interval: number;
   onClose(): void;
 }
@@ -98,7 +100,11 @@ export const SampleDetailsFlyout = (props: SampleDetailsFlyoutProps) => {
         >
           <EuiText style={{ lineHeight: 2.0 }}>
             <b>Name: </b>
-            <i>{props.sampleData.detectorName}</i>
+            <i>
+              {props.detector
+                ? props.detector.name
+                : props.sampleData.detectorName}
+            </i>
             <br></br>
             <b>Detection interval: </b>
             Every {detectorInterval} minutes
@@ -125,7 +131,11 @@ export const SampleDetailsFlyout = (props: SampleDetailsFlyoutProps) => {
         >
           <EuiText style={{ lineHeight: 2.0 }}>
             <b>Name: </b>
-            <i>{props.sampleData.indexName}</i>
+            <i>
+              {props.detector
+                ? props.detector.indices[0]
+                : props.sampleData.indexName}
+            </i>
             <br></br>
             <b>Log frequency: </b>Every {props.interval} minute(s)
             <br></br>
