@@ -47,7 +47,7 @@ export const DetectorUnknownState = (props: DetectorUnknownStateProps) => {
         >
           View detector configuration
         </EuiButton>,
-        <EuiButton onClick={props.onStartDetector} style={{ width: '250px' }}>
+        <EuiButton onClick={props.onStartDetector} style={{ width: '200px' }}>
           Restart detector
         </EuiButton>,
       ]}
