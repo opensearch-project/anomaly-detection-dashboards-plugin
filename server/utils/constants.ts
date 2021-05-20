@@ -26,8 +26,8 @@
 
 import { ADApis, DefaultHeaders } from '../models/interfaces';
 
-export const AD_API_ROUTE_PREFIX = '/_opendistro/_anomaly_detection';
-export const ALERTING_API_ROUTE_PREFIX = '/_opendistro/_alerting';
+export const AD_API_ROUTE_PREFIX = '/_plugins/_anomaly_detection';
+export const ALERTING_API_ROUTE_PREFIX = '/_plugins/_alerting';
 
 export const API: ADApis = {
   DETECTOR_BASE: `${AD_API_ROUTE_PREFIX}/detectors`,
