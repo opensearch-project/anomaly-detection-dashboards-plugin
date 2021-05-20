@@ -39,7 +39,7 @@ import {
   FeatureAttributes,
 } from '../../../models/interfaces';
 import { get, isEmpty, sortBy } from 'lodash';
-import { PLUGIN_NAME } from '../../../utils/constants';
+import { PLUGIN_NAME, BASE_DOCS_LINK } from '../../../utils/constants';
 import ContentPanel from '../../../components/ContentPanel/ContentPanel';
 import { CodeModal } from '../components/CodeModal/CodeModal';
 import { getTitleWithCount } from '../../../utils/utils';
@@ -211,10 +211,7 @@ export const Features = (props: FeaturesProps) => {
         <EuiText className="anomaly-distribution-subtitle">
           <p>
             {`${setParamsText} ${previewText} `}
-            <EuiLink
-              href="https://opendistro.github.io/for-elasticsearch-docs/docs/ad/"
-              target="_blank"
-            >
+            <EuiLink href={`${BASE_DOCS_LINK}/ad`} target="_blank">
               Learn more &nbsp;
               <EuiIcon size="s" type="popout" />
             </EuiLink>

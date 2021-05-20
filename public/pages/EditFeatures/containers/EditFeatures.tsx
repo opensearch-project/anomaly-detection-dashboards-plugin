@@ -71,13 +71,12 @@ import { useFetchDetectorInfo } from '../../createDetector/hooks/useFetchDetecto
 import {
   BREADCRUMBS,
   MAX_FEATURE_NUM,
-  MULTI_ENTITY_SHINGLE_SIZE,
+  BASE_DOCS_LINK,
 } from '../../../utils/constants';
 import { useHideSideNavBar } from '../../main/hooks/useHideSideNavBar';
 import { FeatureAccordion } from '../components/FeatureAccordion/FeatureAccordion';
 import { SaveFeaturesConfirmModal } from '../components/ConfirmModal/SaveFeaturesConfirmModal';
 import { SAVE_FEATURE_OPTIONS } from '../utils/constants';
-import { SINGLE_ENTITY_SHINGLE_SIZE } from '../../../utils/constants';
 import {
   initialFeatureValue,
   generateInitialFeatures,
@@ -156,10 +155,7 @@ export function EditFeatures(props: EditFeaturesProps) {
     <EuiText className="content-panel-subTitle">
       Specify an index field that you want to find anomalies for by defining
       features. You can add up to 5 features.{' '}
-      <EuiLink
-        href="https://opendistro.github.io/for-elasticsearch-docs/docs/ad/"
-        target="_blank"
-      >
+      <EuiLink href={`${BASE_DOCS_LINK}/ad`} target="_blank">
         Learn more <EuiIcon size="s" type="popout" />
       </EuiLink>
     </EuiText>
@@ -347,10 +343,7 @@ export function EditFeatures(props: EditFeaturesProps) {
               based on the current interval, choose 1. If your data is
               continuously ingested and you want the anomalies based on multiple
               intervals, choose a larger window size.{' '}
-              <EuiLink
-                href="https://opendistro.github.io/for-elasticsearch-docs/docs/ad/"
-                target="_blank"
-              >
+              <EuiLink href={`${BASE_DOCS_LINK}/ad`} target="_blank">
                 Learn more <EuiIcon size="s" type="popout" />
               </EuiLink>
             </EuiText>

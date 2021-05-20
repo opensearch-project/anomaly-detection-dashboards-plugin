@@ -78,7 +78,7 @@ exports[`<AlertsFlyout /> spec Alerts Flyout renders component with monitor 1`] 
                       Anomaly detector alerts are powered by the
                       <a
                         class="euiLink euiLink--primary"
-                        href="https://opendistro.github.io/for-elasticsearch-docs/docs/alerting"
+                        href="https://docs-beta.opensearch.org/docs/alerting"
                         rel="noreferrer"
                       >
                          
@@ -98,7 +98,7 @@ exports[`<AlertsFlyout /> spec Alerts Flyout renders component with monitor 1`] 
                       Alerting in your navigation panel,
                       <a
                         class="euiLink euiLink--primary"
-                        href="https://opendistro.github.io/for-elasticsearch-docs/docs/install/plugins/#alerting"
+                        href="https://docs-beta.opensearch.org/docs/opensearch/install/plugins/#alerting"
                         rel="noreferrer"
                       >
                          
@@ -217,7 +217,7 @@ exports[`<AlertsFlyout /> spec Alerts Flyout renders component with monitor 1`] 
               <a
                 class="euiButton euiButton--primary"
                 data-test-subj="setUpAlerts"
-                href="https://opendistro.github.io/for-elasticsearch-docs/docs/alerting"
+                href="https://docs-beta.opensearch.org/docs/alerting"
                 rel="noopener noreferrer"
                 target="_blank"
               >
@@ -363,7 +363,7 @@ exports[`<AlertsFlyout /> spec Alerts Flyout renders component with undefined mo
                       Anomaly detector alerts are powered by the
                       <a
                         class="euiLink euiLink--primary"
-                        href="https://opendistro.github.io/for-elasticsearch-docs/docs/alerting"
+                        href="https://docs-beta.opensearch.org/docs/alerting"
                         rel="noreferrer"
                       >
                          
@@ -388,7 +388,7 @@ exports[`<AlertsFlyout /> spec Alerts Flyout renders component with undefined mo
                       Alerting in your navigation panel,
                       <a
                         class="euiLink euiLink--primary"
-                        href="https://opendistro.github.io/for-elasticsearch-docs/docs/install/plugins/#alerting"
+                        href="https://docs-beta.opensearch.org/docs/opensearch/install/plugins/#alerting"
                         rel="noreferrer"
                       >
                          
@@ -507,7 +507,7 @@ exports[`<AlertsFlyout /> spec Alerts Flyout renders component with undefined mo
               <a
                 class="euiButton euiButton--primary"
                 data-test-subj="setUpAlerts"
-                href="https://opendistro.github.io/for-elasticsearch-docs/docs/alerting"
+                href="https://docs-beta.opensearch.org/docs/alerting"
                 rel="noopener noreferrer"
                 target="_blank"
               >

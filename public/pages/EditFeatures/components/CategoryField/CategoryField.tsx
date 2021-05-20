@@ -41,7 +41,10 @@ import {
 } from '@elastic/eui';
 import { Field, FieldProps } from 'formik';
 import { get, isEmpty } from 'lodash';
-import { MULTI_ENTITY_SHINGLE_SIZE } from '../../../../utils/constants';
+import {
+  MULTI_ENTITY_SHINGLE_SIZE,
+  BASE_DOCS_LINK,
+} from '../../../../utils/constants';
 import React, { useState, useEffect } from 'react';
 import ContentPanel from '../../../../components/ContentPanel/ContentPanel';
 import {
@@ -85,10 +88,7 @@ export function CategoryField(props: CategoryFieldProps) {
               Categorize anomalies based on unique partitions. For example, with
               clickstream data you can categorize anomalies into a given day,
               week, or month.{' '}
-              <EuiLink
-                href="https://opendistro.github.io/for-elasticsearch-docs/docs/ad/"
-                target="_blank"
-              >
+              <EuiLink href={`${BASE_DOCS_LINK}/ad`} target="_blank">
                 Learn more <EuiIcon size="s" type="popout" />
               </EuiLink>
             </EuiText>
