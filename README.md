@@ -1,7 +1,7 @@
 [![Unit tests](https://github.com/opensearch-project/anomaly-detection-dashboards-plugin/workflows/Unit%20tests%20workflow/badge.svg)](https://github.com/opensearch-project/anomaly-detection-dashboards-plugin/actions?query=workflow%3A%22Unit+tests+workflow%22)
 [![Integration tests](https://github.com/opensearch-project/anomaly-detection-dashboards-plugin/workflows/E2E%20tests%20workflow/badge.svg)](https://github.com/opensearch-project/anomaly-detection-dashboards-plugin/actions?query=workflow%3A%22E2E+tests+workflow%22)
 [![codecov](https://codecov.io/gh/opensearch-project/anomaly-detection-dashboards-plugin/branch/main/graph/badge.svg)](https://codecov.io/gh/opensearch-project/anomaly-detection-dashboards-plugin)
-[![Documentation](https://img.shields.io/badge/doc-reference-blue)](https://opendistro.github.io/for-elasticsearch-docs/docs/ad/)
+[![Documentation](https://img.shields.io/badge/doc-reference-blue)](https://docs-beta.opensearch.org/docs/ad/)
 [![Forum](https://img.shields.io/badge/chat-on%20forums-blue)](https://discuss.opendistrocommunity.dev/c/Use-this-category-for-all-questions-around-machine-learning-plugins)
 ![PRs welcome!](https://img.shields.io/badge/PRs-welcome!-success)
 
@@ -22,7 +22,7 @@ You should use the plugin with the same version of the [OpenSearch Alerting Dash
 
 ## Documentation
 
-Please see our [documentation](https://opendistro.github.io/for-elasticsearch-docs/docs/ad/).
+Please see our [documentation](https://docs-beta.opensearch.org/docs/ad).
 
 ## Setup
 

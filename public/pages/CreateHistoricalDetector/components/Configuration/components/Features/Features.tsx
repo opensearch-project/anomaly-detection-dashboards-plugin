@@ -41,7 +41,10 @@ import React, { Fragment, useEffect } from 'react';
 import ContentPanel from '../../../../../../components/ContentPanel/ContentPanel';
 import { Detector } from '../../../../../../models/interfaces';
 import { initialFeatureValue } from '../../../../../EditFeatures/utils/helpers';
-import { MAX_FEATURE_NUM } from '../../../../../../utils/constants';
+import {
+  MAX_FEATURE_NUM,
+  BASE_DOCS_LINK,
+} from '../../../../../../utils/constants';
 import { HistoricalDetectorFormikValues } from '../../../../utils/constants';
 import { FeatureAccordion } from '../../../../../EditFeatures/components/FeatureAccordion/FeatureAccordion';
 
@@ -67,10 +70,7 @@ export function Features(props: FeaturesProps) {
         <EuiText className="content-panel-subTitle">
           Specify an index field that you want to find anomalies for by defining
           features. You can add up to 5 features.{' '}
-          <EuiLink
-            href="https://opendistro.github.io/for-elasticsearch-docs/docs/ad/"
-            target="_blank"
-          >
+          <EuiLink href={`${BASE_DOCS_LINK}/ad`} target="_blank">
             Learn more <EuiIcon size="s" type="popout" />
           </EuiLink>
         </EuiText>

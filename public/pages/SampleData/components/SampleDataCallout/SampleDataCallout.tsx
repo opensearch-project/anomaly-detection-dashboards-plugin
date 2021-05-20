@@ -26,7 +26,11 @@
 
 import React from 'react';
 import { EuiCallOut, EuiLink } from '@elastic/eui';
-import { APP_PATH, PLUGIN_NAME } from '../../../../utils/constants';
+import {
+  APP_PATH,
+  PLUGIN_NAME,
+  BASE_DOCS_LINK,
+} from '../../../../utils/constants';
 
 export const SampleDataCallout = () => {
   return (
@@ -37,10 +41,7 @@ export const SampleDataCallout = () => {
     >
       <p>
         Read the{' '}
-        <EuiLink
-          href="https://opendistro.github.io/for-elasticsearch-docs/docs/ad/"
-          target="_blank"
-        >
+        <EuiLink href={`${BASE_DOCS_LINK}/ad`} target="_blank">
           documentation
         </EuiLink>{' '}
         or create a{' '}

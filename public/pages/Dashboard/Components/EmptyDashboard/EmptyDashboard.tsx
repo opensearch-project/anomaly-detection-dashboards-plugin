@@ -27,6 +27,7 @@
 import { EuiEmptyPrompt, EuiLink, EuiIcon } from '@elastic/eui';
 import React, { Component, Fragment } from 'react';
 import { CreateDetectorButtons } from '../../../../components/CreateDetectorButtons/CreateDetectorButtons';
+import { BASE_DOCS_LINK } from '../../../../utils/constants';
 
 export class EmptyDashboard extends Component<{}, {}> {
   render() {
@@ -42,10 +43,7 @@ export class EmptyDashboard extends Component<{}, {}> {
             </p>
             <p>
               Read about{' '}
-              <EuiLink
-                href="https://opendistro.github.io/for-elasticsearch-docs/docs/ad/"
-                target="_blank"
-              >
+              <EuiLink href={`${BASE_DOCS_LINK}/ad`} target="_blank">
                 Get started with Anomaly detection &nbsp;
                 <EuiIcon size="s" type="popout" />
               </EuiLink>{' '}

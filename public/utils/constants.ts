@@ -76,6 +76,8 @@ export const ANOMALY_DETECTORS_INDEX = '.opendistro-anomaly-detectors';
 
 export const ANOMALY_RESULT_INDEX = '.opendistro-anomaly-results';
 
+export const BASE_DOCS_LINK = 'https://docs-beta.opensearch.org/docs';
+
 export const MAX_DETECTORS = 1000;
 
 export const MAX_ANOMALIES = 10000;
