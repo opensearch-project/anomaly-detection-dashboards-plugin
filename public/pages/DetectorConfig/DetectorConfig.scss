@@ -23,6 +23,16 @@
   line-height: 14px;
 }
 
+.enabledLongerWidth {
+  height: 14.3px;
+  width: 500px;
+  color: #454545;
+  font-family: 'Helvetica Neue';
+  font-size: 12px;
+  letter-spacing: 0;
+  line-height: 14px;
+}
+
 .modelSubtitle {
   height: 17px;
   width: 162px;
@@ -84,12 +94,12 @@
 }
 
 .header-single-value-euiBasicTable {
-    .euiTableHeaderCell, .euiTableRowCell {
-      border: 0;
-      .euiTableCellContent {
-        padding-top: 0;
-        padding-bottom: 0;
-      }
+  .euiTableHeaderCell,
+  .euiTableRowCell {
+    border: 0;
+    .euiTableCellContent {
+      padding-top: 0;
+      padding-bottom: 0;
     }
-
+  }
 }
