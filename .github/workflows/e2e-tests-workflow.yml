@@ -3,16 +3,21 @@ on:
   push:
     branches:
       - main
+  pull_request:
+    branches:
+      - main
 env:
-  OPENSEARCH_DASHBOARDS_VERSION: 7.10.2
-  OPENSEARCH_VERSION: 1.13.1
+  OPENSEARCH_DASHBOARDS_VERSION: 1.0.0-beta1
+  OPENSEARCH_VERSION: 1.0.0-beta1
   AD_OPENSEARCH_DASHBOARDS_PLUGIN_NAME: anomalyDetectionDashboards
+  OPENSEARCH_DOCKER_IMAGE: opensearchstaging/opensearch
+  DASHBOARDS_DOCKER_IMAGE: opensearchstaging/opensearch-dashboards
 jobs:
   test-with-security:
     name: Run e2e tests with security
     strategy:
       matrix:
-        os: [ubuntu-16.04] # use ubuntu-16.04 as required by cypress: https://github.com/marketplace/actions/cypress-io#important
+        os: [ubuntu-latest]
         java: [14]
     runs-on: ${{ matrix.os }}
     steps:
@@ -21,7 +26,6 @@ jobs:
         with:
           repository: opensearch-project/OpenSearch-Dashboards
           ref: ${{ env.OPENSEARCH_DASHBOARDS_VERSION }}
-          token: ${{ secrets.OPENSEARCH_DASHBOARDS_OSS_ACCESS }}
           path: OpenSearch-Dashboards
 
       - name: Get node and yarn versions
@@ -60,23 +64,22 @@ jobs:
       - name: Create tagged images for OpenSearch and OpenSearch Dashboards
         run: |
           cd OpenSearch-Dashboards/plugins/anomaly-detection-dashboards-plugin
-          opensearch_version=$OPENSEARCH_VERSION
           plugin_version=$(node -pe "require('./package.json').version")
-          echo opensearch version: $opensearch_version
+          echo opensearch version: $OPENSEARCH_VERSION
           echo plugin version: $plugin_version
           echo plugin name: $AD_OPENSEARCH_DASHBOARDS_PLUGIN_NAME
-          if docker pull opendistroforelasticsearch/opendistroforelasticsearch:$opensearch_version
+          if docker pull $OPENSEARCH_DOCKER_IMAGE:latest
           then
             ## Populate the Dockerfiles
-            echo "FROM opendistroforelasticsearch/opendistroforelasticsearch:$opensearch_version" >> Dockerfile-AD-OpenSearch-Dashboards
-            echo "FROM opendistroforelasticsearch/opendistroforelasticsearch-kibana:$opensearch_version" >> Dockerfile-AD-OpenSearch-Dashboards
+            echo "FROM $OPENSEARCH_DOCKER_IMAGE:latest" >> Dockerfile-AD-OpenSearch
+            echo "FROM $DASHBOARDS_DOCKER_IMAGE:latest" >> Dockerfile-AD-OpenSearch-Dashboards
             echo "COPY build/$AD_OPENSEARCH_DASHBOARDS_PLUGIN_NAME-$plugin_version.zip ." >> Dockerfile-AD-OpenSearch-Dashboards
             ## Uninstall existing AD artifact and install new one
             echo "RUN if [ -d /usr/share/opensearch-dashboards/plugins/$AD_OPENSEARCH_DASHBOARDS_PLUGIN_NAME ]; then /usr/share/opensearch-dashboards/bin/opensearch-dashboards-plugin remove $AD_OPENSEARCH_DASHBOARDS_PLUGIN_NAME; fi" >> Dockerfile-AD-OpenSearch-Dashboards
-            echo "RUN bin/opensearch-dashboards-plugin install file:///usr/share/OpenSearch-Dashboards/$AD_OPENSEARCH_DASHBOARDS_PLUGIN_NAME-$plugin_version.zip;" >> Dockerfile-AD-OpenSearch-Dashboards
+            echo "RUN bin/opensearch-dashboards-plugin install file:///usr/share/opensearch-dashboards/$AD_OPENSEARCH_DASHBOARDS_PLUGIN_NAME-$plugin_version.zip;" >> Dockerfile-AD-OpenSearch-Dashboards
 
             ## Create the tagged images
-            docker build -f ./Dockerfile-AD -t opensearch-ad:test .
+            docker build -f ./Dockerfile-AD-OpenSearch -t opensearch-ad:test .
             docker build -f ./Dockerfile-AD-OpenSearch-Dashboards -t opensearch-ad-dashboards:test .
           fi
           docker images
@@ -99,20 +102,23 @@ jobs:
     name: Run e2e tests without security
     strategy:
       matrix:
-        os: [ubuntu-16.04] # use ubuntu-16.04 as required by cypress: https://github.com/marketplace/actions/cypress-io#important
+        os: [ubuntu-latest]
         java: [14]
     runs-on: ${{ matrix.os }}
     steps:
       - name: Pull and Run Docker
         run: |
-          opensearch_version=$OPENSEARCH_VERSION
-          echo opensearch version: $opensearch_version
-          if docker pull opendistroforelasticsearch/opendistroforelasticsearch:$opensearch_version
+          echo opensearch version: $OPENSEARCH_VERSION
+          if docker pull $OPENSEARCH_DOCKER_IMAGE:latest
           then
-            echo "FROM opendistroforelasticsearch/opendistroforelasticsearch:$opensearch_version" >> Dockerfile
+            echo "FROM $OPENSEARCH_DOCKER_IMAGE:latest" >> Dockerfile
             ## The OpenSearch rest test client uses http by default.
             ## Need to disable the security plugin to call the rest api over http.
-            echo "RUN if [ -d /usr/share/OpenSearch/plugins/opensearch-security ]; then /usr/share/OpenSearch/bin/OpenSearch-plugin remove opensearch-security; fi" >> Dockerfile
+            ## Also need to remove any remaining security settings specified in opensearch.yml
+            echo "RUN if [ -d /usr/share/opensearch/plugins/opensearch-security ]; then /usr/share/opensearch/bin/opensearch-plugin remove opensearch-security; fi" >> Dockerfile
+            echo "RUN sed -n -i '1,/Start OpenSearch Security Demo Configuration/p;/End OpenSearch Security Demo Configuration/,\$p'" >> Dockerfile
+            truncate -s -1 Dockerfile
+            echo -n " /usr/share/opensearch/config/opensearch.yml" >> Dockerfile
             docker build -t opensearch-ad:test .
           fi
       - name: Run Docker Image
@@ -125,7 +131,6 @@ jobs:
         with:
           repository: opensearch-project/OpenSearch-Dashboards
           ref: ${{ env.OPENSEARCH_DASHBOARDS_VERSION }}
-          token: ${{ secrets.OPENSEARCH_DASHBOARDS_OSS_ACCESS }}
           path: OpenSearch-Dashboards
       - name: Get node and yarn versions
         id: versions_step
