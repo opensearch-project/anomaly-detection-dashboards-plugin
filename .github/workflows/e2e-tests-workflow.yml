@@ -7,8 +7,7 @@ on:
     branches:
       - main
 env:
-  OPENSEARCH_DASHBOARDS_VERSION: 1.0.0-beta1
-  OPENSEARCH_VERSION: 1.0.0-beta1
+  OPENSEARCH_DASHBOARDS_VERSION: 1.x
   AD_OPENSEARCH_DASHBOARDS_PLUGIN_NAME: anomalyDetectionDashboards
   OPENSEARCH_DOCKER_IMAGE: opensearchstaging/opensearch
   DASHBOARDS_DOCKER_IMAGE: opensearchstaging/opensearch-dashboards
@@ -65,7 +64,6 @@ jobs:
         run: |
           cd OpenSearch-Dashboards/plugins/anomaly-detection-dashboards-plugin
           plugin_version=$(node -pe "require('./package.json').version")
-          echo opensearch version: $OPENSEARCH_VERSION
           echo plugin version: $plugin_version
           echo plugin name: $AD_OPENSEARCH_DASHBOARDS_PLUGIN_NAME
           if docker pull $OPENSEARCH_DOCKER_IMAGE:latest
@@ -108,7 +106,6 @@ jobs:
     steps:
       - name: Pull and Run Docker
         run: |
-          echo opensearch version: $OPENSEARCH_VERSION
           if docker pull $OPENSEARCH_DOCKER_IMAGE:latest
           then
             echo "FROM $OPENSEARCH_DOCKER_IMAGE:latest" >> Dockerfile
