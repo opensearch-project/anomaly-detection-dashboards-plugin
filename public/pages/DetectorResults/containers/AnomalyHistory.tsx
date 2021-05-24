@@ -307,6 +307,9 @@ export const AnomalyHistory = (props: AnomalyHistoryProps) => {
 
   const fetchHCAnomalySummaries = async () => {
     setIsLoadingAnomalyResults(true);
+
+    // This query may work fine. It is doing a terms aggregation based on "entity.value". Combining
+    // these into unique buckets for each combination may not work as expected though
     const query = getTopAnomalousEntitiesQuery(
       dateRange.startDate,
       dateRange.endDate,
@@ -317,12 +320,18 @@ export const AnomalyHistory = (props: AnomalyHistoryProps) => {
       taskId.current
     );
     const result = await dispatch(searchResults(query));
+
+    // This should work as expected. For each bucket, it's parsing to get the summary for each
     const topEnityAnomalySummaries = parseTopEntityAnomalySummaryResults(
       result
     );
     const entities = topEnityAnomalySummaries.map((summary) => summary.entity);
 
     const promises = entities.map(async (entity: Entity) => {
+      // This is getting the anomaly summary per entity
+      // Currently runs a term query to make sure the categorical field (ex: "host") and field value (ex: "i-5xysgt") exist
+      // One soln may be adding additional terms queries for a second categorical field & value. Or, possibly removing
+      // categorical field altogether? Seems the field value may be all that's needed here
       const entityResultQuery = getEntityAnomalySummariesQuery(
         dateRange.startDate,
         dateRange.endDate,
