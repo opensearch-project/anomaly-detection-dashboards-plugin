@@ -56,6 +56,7 @@ import {
 } from '../utils/anomalyChartUtils';
 import { MIN_IN_MILLI_SECS } from '../../../../server/utils/constants';
 import { EntityAnomalySummaries } from '../../../../server/models/interfaces';
+import { HEATMAP_CHART_Y_AXIS_WIDTH } from '../utils/constants';
 
 interface AnomalyHeatmapChartProps {
   title: string;
@@ -542,6 +543,15 @@ export const AnomalyHeatmapChart = React.memo(
                       showline: true,
                       showgrid: false,
                       fixedrange: true,
+                      automargin: true,
+                      tickmode: 'array',
+                      tickvals: heatmapData[0].y,
+                      ticktext: heatmapData[0].y.map((label: string) =>
+                        label.length <= HEATMAP_CHART_Y_AXIS_WIDTH
+                          ? label
+                          : label.substring(0, HEATMAP_CHART_Y_AXIS_WIDTH - 3) +
+                            '...'
+                      ),
                     },
                     margin: {
                       l: 100,
