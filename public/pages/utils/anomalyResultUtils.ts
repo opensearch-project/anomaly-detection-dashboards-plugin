@@ -44,6 +44,8 @@ import {
   DAY_IN_MILLI_SECS,
   SORT_DIRECTION,
   WEEK_IN_MILLI_SECS,
+  MODEL_ID_FIELD,
+  ENTITY_LIST_FIELD,
 } from '../../../server/utils/constants';
 import { toFixedNumberForAnomaly } from '../../../server/utils/helpers';
 import {
@@ -992,64 +994,67 @@ export const getTopAnomalousEntitiesQuery = (
   detectorId: string,
   size: number,
   sortType: AnomalyHeatmapSortType,
+  isMultiCategory: boolean,
   isHistorical?: boolean,
   taskId?: string
 ) => {
   const termField =
     isHistorical && taskId ? { task_id: taskId } : { detector_id: detectorId };
 
-  const requestBody = {
-    size: 0,
-    query: {
-      bool: {
-        filter: [
-          {
-            range: {
-              [AD_DOC_FIELDS.ANOMALY_GRADE]: {
-                gt: 0,
+  // To handle BWC, we will return 2 possible queries based on the # of categorical fields:
+  // (1) legacy way (1 category field): bucket aggregate over the single, nested, 'entity.value' field
+  // (2) new way (>= 2 category fields): bucket aggregate over the new 'model_id' field
+  const requestBody = isMultiCategory
+    ? {
+        size: 0,
+        query: {
+          bool: {
+            filter: [
+              {
+                range: {
+                  [AD_DOC_FIELDS.ANOMALY_GRADE]: {
+                    gt: 0,
+                  },
+                },
               },
-            },
-          },
-          {
-            range: {
-              data_end_time: {
-                gte: startTime,
-                lte: endTime,
+              {
+                range: {
+                  data_end_time: {
+                    gte: startTime,
+                    lte: endTime,
+                  },
+                },
               },
-            },
+              {
+                term: termField,
+              },
+            ],
           },
-          {
-            term: termField,
-          },
-        ],
-      },
-    },
-    aggs: {
-      [TOP_ENTITIES_FIELD]: {
-        nested: {
-          path: ENTITY_FIELD,
         },
         aggs: {
           [TOP_ENTITY_AGGS]: {
             terms: {
-              field: ENTITY_VALUE_PATH_FIELD,
+              field: MODEL_ID_FIELD,
               size: size,
               ...(sortType === AnomalyHeatmapSortType.SEVERITY
                 ? {
                     order: {
-                      [TOP_ANOMALY_GRADE_SORT_AGGS]: SORT_DIRECTION.DESC,
+                      [MAX_ANOMALY_AGGS]: SORT_DIRECTION.DESC,
                     },
                   }
                 : {}),
             },
             aggs: {
-              [TOP_ANOMALY_GRADE_SORT_AGGS]: {
-                reverse_nested: {},
-                aggs: {
-                  [MAX_ANOMALY_AGGS]: {
-                    max: {
-                      field: AD_DOC_FIELDS.ANOMALY_GRADE,
-                    },
+              [MAX_ANOMALY_AGGS]: {
+                max: {
+                  field: AD_DOC_FIELDS.ANOMALY_GRADE,
+                },
+              },
+              [ENTITY_LIST_FIELD]: {
+                top_hits: {
+                  size: 1,
+                  _source: {
+                    include: [ENTITY_FIELD],
                   },
                 },
               },
@@ -1059,7 +1064,7 @@ export const getTopAnomalousEntitiesQuery = (
                       bucket_sort: {
                         sort: [
                           {
-                            [`${TOP_ANOMALY_GRADE_SORT_AGGS}.${MAX_ANOMALY_AGGS}`]: {
+                            [`${MAX_ANOMALY_AGGS}`]: {
                               order: SORT_DIRECTION.DESC,
                             },
                           },
@@ -1071,9 +1076,85 @@ export const getTopAnomalousEntitiesQuery = (
             },
           },
         },
-      },
-    },
-  };
+      }
+    : {
+        size: 0,
+        query: {
+          bool: {
+            filter: [
+              {
+                range: {
+                  [AD_DOC_FIELDS.ANOMALY_GRADE]: {
+                    gt: 0,
+                  },
+                },
+              },
+              {
+                range: {
+                  data_end_time: {
+                    gte: startTime,
+                    lte: endTime,
+                  },
+                },
+              },
+              {
+                term: {
+                  detector_id: detectorId,
+                },
+              },
+            ],
+          },
+        },
+        aggs: {
+          [TOP_ENTITIES_FIELD]: {
+            nested: {
+              path: ENTITY_FIELD,
+            },
+            aggs: {
+              [TOP_ENTITY_AGGS]: {
+                terms: {
+                  field: ENTITY_VALUE_PATH_FIELD,
+                  size: size,
+                  ...(sortType === AnomalyHeatmapSortType.SEVERITY
+                    ? {
+                        order: {
+                          [TOP_ANOMALY_GRADE_SORT_AGGS]: SORT_DIRECTION.DESC,
+                        },
+                      }
+                    : {}),
+                },
+                aggs: {
+                  [TOP_ANOMALY_GRADE_SORT_AGGS]: {
+                    reverse_nested: {},
+                    aggs: {
+                      [MAX_ANOMALY_AGGS]: {
+                        max: {
+                          field: AD_DOC_FIELDS.ANOMALY_GRADE,
+                        },
+                      },
+                    },
+                  },
+                  ...(sortType === AnomalyHeatmapSortType.SEVERITY
+                    ? {
+                        [MAX_ANOMALY_SORT_AGGS]: {
+                          bucket_sort: {
+                            sort: [
+                              {
+                                [`${TOP_ANOMALY_GRADE_SORT_AGGS}.${MAX_ANOMALY_AGGS}`]: {
+                                  order: SORT_DIRECTION.DESC,
+                                },
+                              },
+                            ],
+                          },
+                        },
+                      }
+                    : {}),
+                },
+              },
+            },
+          },
+        },
+      };
 
   if (!isHistorical) {
     requestBody.query.bool = {
@@ -1092,25 +1173,30 @@ export const getTopAnomalousEntitiesQuery = (
 };
 
 export const parseTopEntityAnomalySummaryResults = (
-  result: any
+  result: any,
+  isMultiCategory: boolean
 ): EntityAnomalySummaries[] => {
-  const rawEntityAnomalySummaries = get(
-    result,
-    `response.aggregations.${TOP_ENTITIES_FIELD}.${TOP_ENTITY_AGGS}.buckets`,
-    []
-  ) as any[];
+  const rawEntityAnomalySummaries = isMultiCategory
+    ? get(result, `response.aggregations.${TOP_ENTITY_AGGS}.buckets`, [])
+    : (get(
+        result,
+        `response.aggregations.${TOP_ENTITIES_FIELD}.${TOP_ENTITY_AGGS}.buckets`,
+        []
+      ) as any[]);
   let topEntityAnomalySummaries = [] as EntityAnomalySummaries[];
-  rawEntityAnomalySummaries.forEach((item) => {
+  rawEntityAnomalySummaries.forEach((item: any) => {
     const anomalyCount = get(item, DOC_COUNT_FIELD, 0);
-    const entityValue = get(item, KEY_FIELD, 0);
+    const entityValue = isMultiCategory
+      ? convertToEntityString(
+          get(item, `${ENTITY_LIST_FIELD}.hits.hits.0._source.entity`, [])
+        )
+      : get(item, KEY_FIELD, 0);
     const entity = {
       value: entityValue,
     } as Entity;
-    const maxAnomalyGrade = get(
-      item,
-      [TOP_ANOMALY_GRADE_SORT_AGGS, MAX_ANOMALY_AGGS].join('.'),
-      0
-    );
+    const maxAnomalyGrade = isMultiCategory
+      ? get(item, MAX_ANOMALY_AGGS, 0)
+      : get(item, [TOP_ANOMALY_GRADE_SORT_AGGS, MAX_ANOMALY_AGGS].join('.'), 0);
     const enityAnomalySummary = {
       maxAnomaly: maxAnomalyGrade,
       anomalyCount: anomalyCount,
@@ -1251,18 +1337,27 @@ export const parseEntityAnomalySummaryResults = (
     const anomalyCount = get(item, `${COUNT_ANOMALY_AGGS}.value`, 0);
     const startTime = get(item, 'key', 0);
     const maxAnomalyGrade = get(item, `${MAX_ANOMALY_AGGS}.value`, 0);
-    const enityAnomalySummary = {
+    const entityAnomalySummary = {
       startTime: startTime,
       maxAnomaly: maxAnomalyGrade,
       anomalyCount: anomalyCount,
     } as EntityAnomalySummary;
-    anomalySummaries.push(enityAnomalySummary);
+    anomalySummaries.push(entityAnomalySummary);
   });
-  const enityAnomalySummaries = {
+  const entityAnomalySummaries = {
     entity: entity,
     anomalySummaries: anomalySummaries,
   } as EntityAnomalySummaries;
-  return enityAnomalySummaries;
+  return entityAnomalySummaries;
+};
+
+const convertToEntityString = (entityArray: any[]) => {
+  let entityString = '';
+  entityArray.forEach((entity: any) => {
+    entityString += entity.value;
+    entityString += '/';
+  });
+  return entityString.slice(0, -1);
 };
 
 export const getAnomalyDataRangeQuery = (

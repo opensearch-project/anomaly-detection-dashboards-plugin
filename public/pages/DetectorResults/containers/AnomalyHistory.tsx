@@ -165,6 +165,7 @@ export const AnomalyHistory = (props: AnomalyHistoryProps) => {
 
   const detectorCategoryField = get(props.detector, 'categoryField', []);
   const isHCDetector = !isEmpty(detectorCategoryField);
+  const isMultiCategory = detectorCategoryField.length > 1;
   const backgroundColor = darkModeEnabled() ? '#29017' : '#F7F7F7';
 
   // We load at most 10k AD result data points for one call. If user choose
@@ -308,22 +309,21 @@ export const AnomalyHistory = (props: AnomalyHistoryProps) => {
   const fetchHCAnomalySummaries = async () => {
     setIsLoadingAnomalyResults(true);
 
-    // This query may work fine. It is doing a terms aggregation based on "entity.value". Combining
-    // these into unique buckets for each combination may not work as expected though
     const query = getTopAnomalousEntitiesQuery(
       dateRange.startDate,
       dateRange.endDate,
       props.detector.id,
       heatmapDisplayOption.entityOption.value,
       heatmapDisplayOption.sortType,
+      isMultiCategory,
       props.isHistorical,
       taskId.current
     );
     const result = await dispatch(searchResults(query));
 
-    // This should work as expected. For each bucket, it's parsing to get the summary for each
     const topEnityAnomalySummaries = parseTopEntityAnomalySummaryResults(
-      result
+      result,
+      isMultiCategory
     );
     const entities = topEnityAnomalySummaries.map((summary) => summary.entity);
 
