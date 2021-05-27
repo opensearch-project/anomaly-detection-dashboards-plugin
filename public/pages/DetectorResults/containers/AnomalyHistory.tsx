@@ -173,7 +173,8 @@ export const AnomalyHistory = (props: AnomalyHistoryProps) => {
   // aggregation to load data points in whole time range with larger interval.
   // If entity is specified, we only query AD result data points for this entity.
   async function getBucketizedAnomalyResults(
-    entity: Entity | undefined = undefined
+    entity: Entity | undefined = undefined,
+    modelId?: string
   ) {
     try {
       setIsLoadingAnomalyResults(true);
@@ -185,7 +186,9 @@ export const AnomalyHistory = (props: AnomalyHistoryProps) => {
             props.detector.id,
             entity,
             props.isHistorical,
-            taskId.current
+            taskId.current,
+            isMultiCategory,
+            modelId
           )
         )
       );
@@ -201,7 +204,9 @@ export const AnomalyHistory = (props: AnomalyHistoryProps) => {
             props.detector.id,
             entity,
             props.isHistorical,
-            taskId.current
+            taskId.current,
+            isMultiCategory,
+            modelId
           )
         )
       );
@@ -333,12 +338,11 @@ export const AnomalyHistory = (props: AnomalyHistoryProps) => {
           dateRange.endDate,
           props.detector.id,
           NUM_CELLS,
-          get(props.detector, 'categoryField[0]', ''),
           summary.entity.value,
-          props.isHistorical,
-          taskId.current,
           isMultiCategory,
-          summary.modelId
+          summary.modelId,
+          props.isHistorical,
+          taskId.current
         );
         return dispatch(searchResults(entityResultQuery));
       }
@@ -383,8 +387,10 @@ export const AnomalyHistory = (props: AnomalyHistoryProps) => {
           MAX_ANOMALIES
         )
       ) {
+        // TODO: inject model id in heatmapCell to propagate
         fetchBucketizedEntityAnomalyData(heatmapCell);
       } else {
+        // TODO: inject model id in heatmapCell to propagate
         fetchAllEntityAnomalyData(heatmapCell);
         setBucketizedAnomalyResults(undefined);
       }

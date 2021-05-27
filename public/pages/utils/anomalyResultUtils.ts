@@ -312,7 +312,9 @@ export const getAnomalySummaryQuery = (
   detectorId: string,
   entity: Entity | undefined = undefined,
   isHistorical?: boolean,
-  taskId?: string
+  taskId?: string,
+  isMultiCategory?: boolean,
+  modelId?: string
 ) => {
   const termField =
     isHistorical && taskId ? { task_id: taskId } : { detector_id: detectorId };
@@ -339,34 +341,11 @@ export const getAnomalySummaryQuery = (
           {
             term: termField,
           },
-          ...(entity
-            ? [
-                {
-                  nested: {
-                    path: ENTITY_FIELD,
-                    query: {
-                      term: {
-                        [ENTITY_VALUE_PATH_FIELD]: {
-                          value: entity.value,
-                        },
-                      },
-                    },
-                  },
-                },
-                {
-                  nested: {
-                    path: ENTITY_FIELD,
-                    query: {
-                      term: {
-                        [ENTITY_NAME_PATH_FIELD]: {
-                          value: entity.name,
-                        },
-                      },
-                    },
-                  },
-                },
-              ]
-            : []),
+          getResultFilters(
+            isMultiCategory,
+            modelId,
+            entity ? entity.value : undefined
+          ),
         ],
       },
     },
@@ -434,7 +413,9 @@ export const getBucketizedAnomalyResultsQuery = (
   detectorId: string,
   entity: Entity | undefined = undefined,
   isHistorical?: boolean,
-  taskId?: string
+  taskId?: string,
+  isMultiCategory?: boolean,
+  modelId?: string
 ) => {
   const termField =
     isHistorical && taskId ? { task_id: taskId } : { detector_id: detectorId };
@@ -457,34 +438,11 @@ export const getBucketizedAnomalyResultsQuery = (
           {
             term: termField,
           },
-          ...(entity
-            ? [
-                {
-                  nested: {
-                    path: ENTITY_FIELD,
-                    query: {
-                      term: {
-                        [ENTITY_VALUE_PATH_FIELD]: {
-                          value: entity.value,
-                        },
-                      },
-                    },
-                  },
-                },
-                {
-                  nested: {
-                    path: ENTITY_FIELD,
-                    query: {
-                      term: {
-                        [ENTITY_NAME_PATH_FIELD]: {
-                          value: entity.name,
-                        },
-                      },
-                    },
-                  },
-                },
-              ]
-            : []),
+          getResultFilters(
+            isMultiCategory,
+            modelId,
+            entity ? entity.value : undefined
+          ),
         ],
       },
     },
@@ -1218,12 +1176,11 @@ export const getEntityAnomalySummariesQuery = (
   endTime: number,
   detectorId: string,
   size: number,
-  categoryField: string,
   entityValue: string,
-  isHistorical?: boolean,
-  taskId?: string,
   isMultiCategory: boolean,
-  modelId: string | undefined
+  modelId: string | undefined,
+  isHistorical?: boolean,
+  taskId?: string
 ) => {
   const termField =
     isHistorical && taskId ? { task_id: taskId } : { detector_id: detectorId };
@@ -1237,33 +1194,6 @@ export const getEntityAnomalySummariesQuery = (
   // if startTime is not divisible by fixedInterval, there will be remainder,
   // this can be offset for bucket_key
   const offsetInMillisec = startTime % (fixedInterval * MIN_IN_MILLI_SECS);
-  const entityValueFilter = {
-    nested: {
-      path: ENTITY_FIELD,
-      query: {
-        term: {
-          [ENTITY_VALUE_PATH_FIELD]: {
-            value: entityValue,
-          },
-        },
-      },
-    },
-  };
-  const categoryFieldFilter = {
-    nested: {
-      path: ENTITY_FIELD,
-      query: {
-        term: {
-          [ENTITY_NAME_PATH_FIELD]: { value: categoryField },
-        },
-      },
-    },
-  };
-  const modelIdFilter = {
-    term: {
-      model_id: modelId,
-    },
-  };
 
   const requestBody = {
     size: 0,
@@ -1288,12 +1218,7 @@ export const getEntityAnomalySummariesQuery = (
           {
             term: termField,
           },
-          isMultiCategory
-            ? modelIdFilter
-            : {
-                ...entityValueFilter,
-                ...categoryFieldFilter,
-              },
+          getResultFilters(isMultiCategory, modelId, entityValue),
         ],
       },
     },
@@ -1534,4 +1459,31 @@ export const parseHistoricalAggregatedAnomalies = (
   });
 
   return anomalies;
+};
+// Helper fn to get the correct filters based on how many categorical fields there are.
+// If there are multiple (entity list > 1), filter results by model id.
+// If there is only one (entity list = 1), filter by entity value.
+const getResultFilters = (
+  isMultiCategory: boolean | undefined,
+  modelId: string | undefined,
+  entityValue: string | undefined
+) => {
+  return isMultiCategory === true
+    ? {
+        term: {
+          model_id: modelId,
+        },
+      }
+    : {
+        nested: {
+          path: ENTITY_FIELD,
+          query: {
+            term: {
+              [ENTITY_VALUE_PATH_FIELD]: {
+                value: entityValue,
+              },
+            },
+          },
+        },
+      };
 };

@@ -78,6 +78,7 @@ interface AnomalyHeatmapChartProps {
 export interface HeatmapCell {
   dateRange: DateRange;
   entityValue: string;
+  modelId?: string;
 }
 
 export interface HeatmapDisplayOption {
