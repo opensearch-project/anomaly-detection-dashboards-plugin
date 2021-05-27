@@ -321,29 +321,28 @@ export const AnomalyHistory = (props: AnomalyHistoryProps) => {
     );
     const result = await dispatch(searchResults(query));
 
-    const topEnityAnomalySummaries = parseTopEntityAnomalySummaryResults(
+    const topEntityAnomalySummaries = parseTopEntityAnomalySummaryResults(
       result,
       isMultiCategory
     );
-    const entities = topEnityAnomalySummaries.map((summary) => summary.entity);
 
-    const promises = entities.map(async (entity: Entity) => {
-      // This is getting the anomaly summary per entity
-      // Currently runs a term query to make sure the categorical field (ex: "host") and field value (ex: "i-5xysgt") exist
-      // One soln may be adding additional terms queries for a second categorical field & value. Or, possibly removing
-      // categorical field altogether? Seems the field value may be all that's needed here
-      const entityResultQuery = getEntityAnomalySummariesQuery(
-        dateRange.startDate,
-        dateRange.endDate,
-        props.detector.id,
-        NUM_CELLS,
-        get(props.detector, 'categoryField[0]', ''),
-        entity.value,
-        props.isHistorical,
-        taskId.current
-      );
-      return dispatch(searchResults(entityResultQuery));
-    });
+    const promises = topEntityAnomalySummaries.map(
+      async (summary: EntityAnomalySummaries) => {
+        const entityResultQuery = getEntityAnomalySummariesQuery(
+          dateRange.startDate,
+          dateRange.endDate,
+          props.detector.id,
+          NUM_CELLS,
+          get(props.detector, 'categoryField[0]', ''),
+          summary.entity.value,
+          props.isHistorical,
+          taskId.current,
+          isMultiCategory,
+          summary.modelId
+        );
+        return dispatch(searchResults(entityResultQuery));
+      }
+    );
 
     const allEntityAnomalySummaries = await Promise.all(promises).catch(
       (error) => {
@@ -352,9 +351,15 @@ export const AnomalyHistory = (props: AnomalyHistoryProps) => {
         core.notifications.toasts.addDanger(prettifyErrorMessage(errorMessage));
       }
     );
+
+    console.log('all entity anomaly summaries: ', allEntityAnomalySummaries);
+
     const entitiesAnomalySummaries = [] as EntityAnomalySummaries[];
 
     if (!isEmpty(allEntityAnomalySummaries)) {
+      const entities = topEntityAnomalySummaries.map(
+        (summary) => summary.entity
+      );
       //@ts-ignore
       allEntityAnomalySummaries.forEach((entityResponse, i) => {
         const entityAnomalySummariesResult = parseEntityAnomalySummaryResults(

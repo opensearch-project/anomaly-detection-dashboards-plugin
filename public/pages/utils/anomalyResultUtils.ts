@@ -1197,15 +1197,18 @@ export const parseTopEntityAnomalySummaryResults = (
     const maxAnomalyGrade = isMultiCategory
       ? get(item, MAX_ANOMALY_AGGS, 0)
       : get(item, [TOP_ANOMALY_GRADE_SORT_AGGS, MAX_ANOMALY_AGGS].join('.'), 0);
-    const enityAnomalySummary = {
+    const entityAnomalySummary = {
       maxAnomaly: maxAnomalyGrade,
       anomalyCount: anomalyCount,
     } as EntityAnomalySummary;
-    const enityAnomaliSummaries = {
+    const entityAnomalySummaries = {
       entity: entity,
-      anomalySummaries: [enityAnomalySummary],
+      anomalySummaries: [entityAnomalySummary],
     } as EntityAnomalySummaries;
-    topEntityAnomalySummaries.push(enityAnomaliSummaries);
+    if (isMultiCategory) {
+      entityAnomalySummaries.modelId = get(item, KEY_FIELD, '');
+    }
+    topEntityAnomalySummaries.push(entityAnomalySummaries);
   });
   return topEntityAnomalySummaries;
 };
@@ -1218,7 +1221,9 @@ export const getEntityAnomalySummariesQuery = (
   categoryField: string,
   entityValue: string,
   isHistorical?: boolean,
-  taskId?: string
+  taskId?: string,
+  isMultiCategory: boolean,
+  modelId: string | undefined
 ) => {
   const termField =
     isHistorical && taskId ? { task_id: taskId } : { detector_id: detectorId };
@@ -1232,6 +1237,34 @@ export const getEntityAnomalySummariesQuery = (
   // if startTime is not divisible by fixedInterval, there will be remainder,
   // this can be offset for bucket_key
   const offsetInMillisec = startTime % (fixedInterval * MIN_IN_MILLI_SECS);
+  const entityValueFilter = {
+    nested: {
+      path: ENTITY_FIELD,
+      query: {
+        term: {
+          [ENTITY_VALUE_PATH_FIELD]: {
+            value: entityValue,
+          },
+        },
+      },
+    },
+  };
+  const categoryFieldFilter = {
+    nested: {
+      path: ENTITY_FIELD,
+      query: {
+        term: {
+          [ENTITY_NAME_PATH_FIELD]: { value: categoryField },
+        },
+      },
+    },
+  };
+  const modelIdFilter = {
+    term: {
+      model_id: modelId,
+    },
+  };
+
   const requestBody = {
     size: 0,
     query: {
@@ -1255,30 +1288,12 @@ export const getEntityAnomalySummariesQuery = (
           {
             term: termField,
           },
-          {
-            nested: {
-              path: ENTITY_FIELD,
-              query: {
-                term: {
-                  [ENTITY_VALUE_PATH_FIELD]: {
-                    value: entityValue,
-                  },
-                },
+          isMultiCategory
+            ? modelIdFilter
+            : {
+                ...entityValueFilter,
+                ...categoryFieldFilter,
               },
-            },
-          },
-          {
-            nested: {
-              path: ENTITY_FIELD,
-              query: {
-                term: {
-                  [ENTITY_NAME_PATH_FIELD]: {
-                    value: categoryField,
-                  },
-                },
-              },
-            },
-          },
         ],
       },
     },
