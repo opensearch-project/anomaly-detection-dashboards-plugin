@@ -1297,7 +1297,7 @@ const convertToEntityString = (entityArray: any[]) => {
     entityString += entity.value;
     entityString += '/';
   });
-  return entityString.slice(0, -1);
+  return entityString === '' ? entityString : entityString.slice(0, -1);
 };
 
 export const getAnomalyDataRangeQuery = (
