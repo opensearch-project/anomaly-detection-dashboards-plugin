@@ -11,6 +11,7 @@ env:
   AD_OPENSEARCH_DASHBOARDS_PLUGIN_NAME: anomalyDetectionDashboards
   OPENSEARCH_DOCKER_IMAGE: opensearchstaging/opensearch
   DASHBOARDS_DOCKER_IMAGE: opensearchstaging/opensearch-dashboards
+  DOCKER_TAG: 1.0.0-rc1
 jobs:
   test-with-security:
     name: Run e2e tests with security
@@ -66,14 +67,14 @@ jobs:
           plugin_version=$(node -pe "require('./package.json').version")
           echo plugin version: $plugin_version
           echo plugin name: $AD_OPENSEARCH_DASHBOARDS_PLUGIN_NAME
-          if docker pull $OPENSEARCH_DOCKER_IMAGE:latest
+          if docker pull $OPENSEARCH_DOCKER_IMAGE:$DOCKER_TAG
           then
             ## Populate the Dockerfiles
-            echo "FROM $OPENSEARCH_DOCKER_IMAGE:latest" >> Dockerfile-AD-OpenSearch
-            echo "FROM $DASHBOARDS_DOCKER_IMAGE:latest" >> Dockerfile-AD-OpenSearch-Dashboards
+            echo "FROM $OPENSEARCH_DOCKER_IMAGE:$DOCKER_TAG" >> Dockerfile-AD-OpenSearch
+            echo "FROM $DASHBOARDS_DOCKER_IMAGE:$DOCKER_TAG" >> Dockerfile-AD-OpenSearch-Dashboards
             echo "COPY build/$AD_OPENSEARCH_DASHBOARDS_PLUGIN_NAME-$plugin_version.zip ." >> Dockerfile-AD-OpenSearch-Dashboards
             ## Uninstall existing AD artifact and install new one
-            echo "RUN if [ -d /usr/share/opensearch-dashboards/plugins/$AD_OPENSEARCH_DASHBOARDS_PLUGIN_NAME ]; then /usr/share/opensearch-dashboards/bin/opensearch-dashboards-plugin remove $AD_OPENSEARCH_DASHBOARDS_PLUGIN_NAME; fi" >> Dockerfile-AD-OpenSearch-Dashboards
+            echo "RUN if [ -d /usr/share/opensearch-dashboards/plugins/anomaly-detection-dashboards ]; then /usr/share/opensearch-dashboards/bin/opensearch-dashboards-plugin remove anomaly-detection-dashboards; fi" >> Dockerfile-AD-OpenSearch-Dashboards
             echo "RUN bin/opensearch-dashboards-plugin install file:///usr/share/opensearch-dashboards/$AD_OPENSEARCH_DASHBOARDS_PLUGIN_NAME-$plugin_version.zip;" >> Dockerfile-AD-OpenSearch-Dashboards
 
             ## Create the tagged images
@@ -106,9 +107,9 @@ jobs:
     steps:
       - name: Pull and Run Docker
         run: |
-          if docker pull $OPENSEARCH_DOCKER_IMAGE:latest
+          if docker pull $OPENSEARCH_DOCKER_IMAGE:$DOCKER_TAG
           then
-            echo "FROM $OPENSEARCH_DOCKER_IMAGE:latest" >> Dockerfile
+            echo "FROM $OPENSEARCH_DOCKER_IMAGE:$DOCKER_TAG" >> Dockerfile
             ## The OpenSearch rest test client uses http by default.
             ## Need to disable the security plugin to call the rest api over http.
             ## Also need to remove any remaining security settings specified in opensearch.yml
