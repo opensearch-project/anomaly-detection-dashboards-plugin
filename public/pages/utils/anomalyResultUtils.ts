@@ -310,7 +310,7 @@ export const getAnomalySummaryQuery = (
   startTime: number,
   endTime: number,
   detectorId: string,
-  entity: Entity | undefined = undefined,
+  entityList: Entity[] | undefined = undefined,
   isHistorical?: boolean,
   taskId?: string,
   isMultiCategory?: boolean,
@@ -341,11 +341,7 @@ export const getAnomalySummaryQuery = (
           {
             term: termField,
           },
-          getResultFilters(
-            isMultiCategory,
-            modelId,
-            entity ? entity.value : undefined
-          ),
+          getResultFilters(isMultiCategory, modelId, entityList),
         ],
       },
     },
@@ -411,7 +407,7 @@ export const getBucketizedAnomalyResultsQuery = (
   startTime: number,
   endTime: number,
   detectorId: string,
-  entity: Entity | undefined = undefined,
+  entityList: Entity[] | undefined = undefined,
   isHistorical?: boolean,
   taskId?: string,
   isMultiCategory?: boolean,
@@ -438,11 +434,7 @@ export const getBucketizedAnomalyResultsQuery = (
           {
             term: termField,
           },
-          getResultFilters(
-            isMultiCategory,
-            modelId,
-            entity ? entity.value : undefined
-          ),
+          getResultFilters(isMultiCategory, modelId, entityList),
         ],
       },
     },
@@ -1144,14 +1136,14 @@ export const parseTopEntityAnomalySummaryResults = (
   let topEntityAnomalySummaries = [] as EntityAnomalySummaries[];
   rawEntityAnomalySummaries.forEach((item: any) => {
     const anomalyCount = get(item, DOC_COUNT_FIELD, 0);
-    const entityValue = isMultiCategory
-      ? convertToEntityString(
-          get(item, `${ENTITY_LIST_FIELD}.hits.hits.0._source.entity`, [])
-        )
-      : get(item, KEY_FIELD, 0);
-    const entity = {
-      value: entityValue,
-    } as Entity;
+    const entityList = isMultiCategory
+      ? get(item, `${ENTITY_LIST_FIELD}.hits.hits.0._source.entity`, [])
+      : ([
+          {
+            value: get(item, KEY_FIELD, 0),
+          },
+        ] as Entity[]);
+
     const maxAnomalyGrade = isMultiCategory
       ? get(item, MAX_ANOMALY_AGGS, 0)
       : get(item, [TOP_ANOMALY_GRADE_SORT_AGGS, MAX_ANOMALY_AGGS].join('.'), 0);
@@ -1160,7 +1152,7 @@ export const parseTopEntityAnomalySummaryResults = (
       anomalyCount: anomalyCount,
     } as EntityAnomalySummary;
     const entityAnomalySummaries = {
-      entity: entity,
+      entityList: entityList,
       anomalySummaries: [entityAnomalySummary],
     } as EntityAnomalySummaries;
     if (isMultiCategory) {
@@ -1176,7 +1168,7 @@ export const getEntityAnomalySummariesQuery = (
   endTime: number,
   detectorId: string,
   size: number,
-  entityValue: string,
+  entityList: Entity[],
   isMultiCategory: boolean,
   modelId: string | undefined,
   isHistorical?: boolean,
@@ -1218,7 +1210,7 @@ export const getEntityAnomalySummariesQuery = (
           {
             term: termField,
           },
-          getResultFilters(isMultiCategory, modelId, entityValue),
+          getResultFilters(isMultiCategory, modelId, entityList),
         ],
       },
     },
@@ -1265,7 +1257,7 @@ export const getEntityAnomalySummariesQuery = (
 
 export const parseEntityAnomalySummaryResults = (
   result: any,
-  entity: Entity
+  entityList: Entity[]
 ): EntityAnomalySummaries => {
   const rawEntityAnomalySummaries = get(
     result,
@@ -1285,19 +1277,24 @@ export const parseEntityAnomalySummaryResults = (
     anomalySummaries.push(entityAnomalySummary);
   });
   const entityAnomalySummaries = {
-    entity: entity,
+    entityList: entityList,
     anomalySummaries: anomalySummaries,
   } as EntityAnomalySummaries;
   return entityAnomalySummaries;
 };
 
-const convertToEntityString = (entityArray: any[]) => {
+export const convertToEntityString = (
+  entityArray: any[],
+  delimiter: string
+) => {
   let entityString = '';
   entityArray.forEach((entity: any) => {
     entityString += entity.value;
-    entityString += '/';
+    entityString += delimiter;
   });
-  return entityString === '' ? entityString : entityString.slice(0, -1);
+  return entityString === ''
+    ? entityString
+    : entityString.slice(0, -delimiter.length);
 };
 
 export const getAnomalyDataRangeQuery = (
@@ -1466,7 +1463,7 @@ export const parseHistoricalAggregatedAnomalies = (
 const getResultFilters = (
   isMultiCategory: boolean | undefined,
   modelId: string | undefined,
-  entityValue: string | undefined
+  entityList: Entity[] | undefined
 ) => {
   return isMultiCategory === true
     ? {
@@ -1480,7 +1477,7 @@ const getResultFilters = (
           query: {
             term: {
               [ENTITY_VALUE_PATH_FIELD]: {
-                value: entityValue,
+                value: get(entityList, '0.value', ''),
               },
             },
           },

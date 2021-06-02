@@ -77,6 +77,8 @@ interface AnomalyHeatmapChartProps {
 
 export interface HeatmapCell {
   dateRange: DateRange;
+  // TODO: change this to entityList. Will use entity list as the key to pass
+  // to helper fn to build the query to fetch the results
   entityValue: string;
   modelId?: string;
 }

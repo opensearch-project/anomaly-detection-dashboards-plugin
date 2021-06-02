@@ -173,7 +173,7 @@ export const AnomalyHistory = (props: AnomalyHistoryProps) => {
   // aggregation to load data points in whole time range with larger interval.
   // If entity is specified, we only query AD result data points for this entity.
   async function getBucketizedAnomalyResults(
-    entity: Entity | undefined = undefined,
+    entityList: Entity[] | undefined = undefined,
     modelId?: string
   ) {
     try {
@@ -184,7 +184,7 @@ export const AnomalyHistory = (props: AnomalyHistoryProps) => {
             dateRange.startDate,
             dateRange.endDate,
             props.detector.id,
-            entity,
+            entityList,
             props.isHistorical,
             taskId.current,
             isMultiCategory,
@@ -202,7 +202,7 @@ export const AnomalyHistory = (props: AnomalyHistoryProps) => {
             dateRange.startDate,
             dateRange.endDate,
             props.detector.id,
-            entity,
+            entityList,
             props.isHistorical,
             taskId.current,
             isMultiCategory,
@@ -338,7 +338,7 @@ export const AnomalyHistory = (props: AnomalyHistoryProps) => {
           dateRange.endDate,
           props.detector.id,
           NUM_CELLS,
-          summary.entity.value,
+          summary.entityList,
           isMultiCategory,
           summary.modelId,
           props.isHistorical,
@@ -355,24 +355,22 @@ export const AnomalyHistory = (props: AnomalyHistoryProps) => {
         core.notifications.toasts.addDanger(prettifyErrorMessage(errorMessage));
       }
     );
-
-    console.log('all entity anomaly summaries: ', allEntityAnomalySummaries);
-
     const entitiesAnomalySummaries = [] as EntityAnomalySummaries[];
 
     if (!isEmpty(allEntityAnomalySummaries)) {
-      const entities = topEntityAnomalySummaries.map(
-        (summary) => summary.entity
+      const entityLists = topEntityAnomalySummaries.map(
+        (summary) => summary.entityList
       );
       //@ts-ignore
       allEntityAnomalySummaries.forEach((entityResponse, i) => {
         const entityAnomalySummariesResult = parseEntityAnomalySummaryResults(
           entityResponse,
-          entities[i]
+          entityLists[i]
         );
         entitiesAnomalySummaries.push(entityAnomalySummariesResult);
       });
     }
+
     setEntityAnomalySummaries(entitiesAnomalySummaries);
     setIsLoadingAnomalyResults(false);
   };
@@ -438,11 +436,13 @@ export const AnomalyHistory = (props: AnomalyHistoryProps) => {
   };
 
   const fetchBucketizedEntityAnomalyData = async (heatmapCell: HeatmapCell) => {
-    getBucketizedAnomalyResults({
-      //@ts-ignore
-      name: props.detector.categoryField[0],
-      value: heatmapCell.entityValue,
-    });
+    getBucketizedAnomalyResults([
+      {
+        //@ts-ignore
+        name: props.detector.categoryField[0],
+        value: heatmapCell.entityValue,
+      },
+    ]);
   };
   const [atomicAnomalyResults, setAtomicAnomalyResults] = useState<Anomalies>();
   const [rawAnomalyResults, setRawAnomalyResults] = useState<Anomalies>();

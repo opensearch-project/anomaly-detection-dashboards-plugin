@@ -37,14 +37,17 @@ import { RectAnnotationDatum } from '@elastic/charts';
 import { DEFAULT_ANOMALY_SUMMARY } from './constants';
 import { Datum, PlotData } from 'plotly.js';
 import moment from 'moment';
-import { calculateTimeWindowsWithMaxDataPoints } from '../../utils/anomalyResultUtils';
+import {
+  calculateTimeWindowsWithMaxDataPoints,
+  convertToEntityString,
+} from '../../utils/anomalyResultUtils';
 import { HeatmapCell } from '../containers/AnomalyHeatmapChart';
 import {
   EntityAnomalySummaries,
   EntityAnomalySummary,
 } from '../../../../server/models/interfaces';
 import { toFixedNumberForAnomaly } from '../../../../server/utils/helpers';
-import { ENTITY_VALUE_PATH_FIELD } from '../../../../server/utils/constants';
+import { Entity } from '../../../../server/models/interfaces';
 
 export const convertAlerts = (response: any): MonitorAlert[] => {
   const alerts = get(response, 'response.alerts', []);
@@ -223,6 +226,7 @@ const buildBlankStringWithLength = (length: number) => {
   return result;
 };
 
+// TODO: fix this + its helper fns. Related to preview results
 export const getAnomaliesHeatmapData = (
   anomalies: any[] | undefined,
   dateRange: DateRange,
@@ -291,6 +295,8 @@ export const getAnomaliesHeatmapData = (
     entityValues,
     maxAnomalyGrades,
     numAnomalyGrades,
+    // TODO: change to something like entityListsExpanded in getEntitytAnomaliesHeatmapData
+    [],
     cellTimeInterval
   );
   const resultPlotData = sortHeatmapPlotData(plotData, sortType, displayTopNum);
@@ -301,7 +307,8 @@ const buildHeatmapPlotData = (
   x: any[],
   y: any[],
   z: any[],
-  text: any[],
+  anomalyOccurrences: any[],
+  entityLists: any[],
   cellTimeInterval: number
 ): PlotData => {
   //@ts-ignore
@@ -317,11 +324,13 @@ const buildHeatmapPlotData = (
     xgap: 2,
     ygap: 2,
     opacity: 1,
-    text: text,
+    text: anomalyOccurrences,
+    customdata: entityLists,
     hovertemplate:
       '<b>Time</b>: %{x}<br>' +
       '<b>Max anomaly grade</b>: %{z}<br>' +
-      '<b>Anomaly occurrences</b>: %{text}' +
+      '<b>Anomaly occurrences</b>: %{text}<br>' +
+      '<b>Entities</b>: %{customdata}' +
       '<extra></extra>',
     cellTimeInterval: cellTimeInterval,
   } as PlotData;
@@ -332,7 +341,8 @@ export const getEntitytAnomaliesHeatmapData = (
   entitiesAnomalySummaryResult: EntityAnomalySummaries[],
   displayTopNum: number
 ) => {
-  const entityValues = [] as string[];
+  const entityStrings = [] as string[];
+  const entityLists = [] as any[];
   const maxAnomalyGrades = [] as any[];
   const numAnomalyGrades = [] as any[];
 
@@ -350,9 +360,11 @@ export const getEntitytAnomaliesHeatmapData = (
       // only 1 whitesapce for all entities, to avoid heatmap with single row
       const blankStrValue = buildBlankStringWithLength(i);
       entitiesAnomalySummaries.push({
-        entity: {
-          value: blankStrValue,
-        },
+        entityList: [
+          {
+            value: blankStrValue,
+          },
+        ],
       } as EntityAnomalySummaries);
     }
   } else {
@@ -363,17 +375,23 @@ export const getEntitytAnomaliesHeatmapData = (
     const maxAnomalyGradesForEntity = [] as number[];
     const numAnomalyGradesForEntity = [] as number[];
 
-    const entityValue = get(
-      entityAnomalySummaries,
-      ENTITY_VALUE_PATH_FIELD,
-      ''
+    const entityString = convertToEntityString(
+      get(entityAnomalySummaries, 'entityList', []),
+      ' / '
     ) as string;
     const anomaliesSummary = get(
       entityAnomalySummaries,
       'anomalySummaries',
       []
     ) as EntityAnomalySummary[];
-    entityValues.push(entityValue);
+    entityStrings.push(entityString);
+
+    const entityList = get(
+      entityAnomalySummaries,
+      'entityList',
+      []
+    ) as Entity[];
+    entityLists.push(entityList);
 
     timeWindows.forEach((timeWindow) => {
       const anomalySummaryInTimeRange = anomaliesSummary.filter(
@@ -413,11 +431,23 @@ export const getEntitytAnomaliesHeatmapData = (
   const timeStamps = plotTimes.map((timestamp) =>
     moment(timestamp).format(HEATMAP_X_AXIS_DATE_FORMAT)
   );
+  let entityListsExpanded = [] as any[];
+  entityLists.forEach((entityList: Entity[]) => {
+    const listAsString = convertToEntityString(entityList, ', ');
+    let row = [];
+    var i;
+    for (i = 0; i < NUM_CELLS; i++) {
+      row.push(listAsString);
+    }
+    entityListsExpanded.push(row);
+  });
+
   const plotData = buildHeatmapPlotData(
     timeStamps,
-    entityValues.reverse(),
+    entityStrings.reverse(),
     maxAnomalyGrades.reverse(),
     numAnomalyGrades.reverse(),
+    entityListsExpanded.reverse(),
     timeWindows[0].endDate - timeWindows[0].startDate
   );
   return [plotData];
