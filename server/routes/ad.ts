@@ -24,7 +24,6 @@
  * permissions and limitations under the License.
  */
 
-//@ts-ignore
 import { get, orderBy, pullAll, isEmpty } from 'lodash';
 import { AnomalyResults, SearchResponse } from '../models/interfaces';
 import {
@@ -39,9 +38,6 @@ import { Router } from '../router';
 import {
   SORT_DIRECTION,
   AD_DOC_FIELDS,
-  ENTITY_FIELD,
-  ENTITY_NAME_PATH_FIELD,
-  ENTITY_VALUE_PATH_FIELD,
   DETECTOR_STATE,
 } from '../utils/constants';
 import {
@@ -69,6 +65,7 @@ import {
   processTaskError,
   getLatestDetectorTasksQuery,
   isRealTimeTask,
+  getFiltersFromEntityList,
 } from './utils/adHelpers';
 import { isNumber, set } from 'lodash';
 import {
@@ -701,8 +698,7 @@ export default class AdService {
         endTime = 0,
         fieldName = '',
         anomalyThreshold = -1,
-        entityName = undefined,
-        entityValue = undefined,
+        entityList = '',
       } = request.query as {
         from: number;
         size: number;
@@ -712,9 +708,14 @@ export default class AdService {
         endTime: number;
         fieldName: string;
         anomalyThreshold: number;
-        entityName: string;
-        entityValue: string;
+        entityList: string;
       };
+
+      const entityListAsObj =
+        entityList.length === 0 ? {} : JSON.parse(entityList);
+      const entityFilters = isEmpty(entityListAsObj)
+        ? []
+        : getFiltersFromEntityList(entityListAsObj);
 
       //Allowed sorting columns
       const sortQueryMap = {
@@ -752,37 +753,7 @@ export default class AdService {
                   },
                 },
               },
-              // TODO: here is where we need a helper fn to dynamically create this
-              // filter array based on a list of entity name/value pairs, rather than just one
-              // can make something in adHelpers.tsx to handle this
-              ...(entityName && entityValue
-                ? [
-                    {
-                      nested: {
-                        path: ENTITY_FIELD,
-                        query: {
-                          term: {
-                            [ENTITY_NAME_PATH_FIELD]: {
-                              value: entityName,
-                            },
-                          },
-                        },
-                      },
-                    },
-                    {
-                      nested: {
-                        path: ENTITY_FIELD,
-                        query: {
-                          term: {
-                            [ENTITY_VALUE_PATH_FIELD]: {
-                              value: entityValue,
-                            },
-                          },
-                        },
-                      },
-                    },
-                  ]
-                : []),
+              ...entityFilters,
             ],
           },
         },

@@ -125,9 +125,7 @@ export const buildParamsForGetAnomalyResultsWithDateRange = (
     endTime: endTime,
     fieldName: AD_DOC_FIELDS.DATA_START_TIME,
     anomalyThreshold: anomalyOnly ? 0 : -1,
-    // TODO: change to include all of the entity names & values
-    entityName: get(entityList, '0.name', ''),
-    entityValue: get(entityList, '0.value', ''),
+    entityList: JSON.stringify(entityList),
   };
 };
 
