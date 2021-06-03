@@ -249,8 +249,6 @@ export const AnomaliesChart = React.memo((props: AnomaliesChartProps) => {
                         detectorId={get(props.detector, 'id', '')}
                         detectorName={get(props.detector, 'name', '')}
                         dateRange={props.dateRange}
-                        //@ts-ignore
-                        title={props.detectorCategoryField[0]}
                         anomalies={anomalies}
                         isLoading={props.isLoading}
                         showAlerts={props.showAlerts}

@@ -1462,6 +1462,22 @@ export const parseHistoricalAggregatedAnomalies = (
 
   return anomalies;
 };
+export const convertToCategoryFieldString = (
+  categoryFields: string[],
+  delimiter: string
+) => {
+  let categoryFieldString = '';
+  if (!isEmpty(categoryFields)) {
+    categoryFields.forEach((categoryField: any) => {
+      categoryFieldString += categoryField;
+      categoryFieldString += delimiter;
+    });
+  }
+  return categoryFieldString === ''
+    ? categoryFieldString
+    : categoryFieldString.slice(0, -delimiter.length);
+};
+
 export const convertToCategoryFieldAndEntityString = (entityList: Entity[]) => {
   let entityString = '';
   if (!isEmpty(entityList)) {

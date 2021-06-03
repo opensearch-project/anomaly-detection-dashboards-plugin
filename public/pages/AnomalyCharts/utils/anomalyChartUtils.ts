@@ -330,10 +330,10 @@ const buildHeatmapPlotData = (
     text: anomalyOccurrences,
     customdata: entityLists,
     hovertemplate:
+      '<b>Entities</b>: %{customdata}<br>' +
       '<b>Time</b>: %{x}<br>' +
       '<b>Max anomaly grade</b>: %{z}<br>' +
-      '<b>Anomaly occurrences</b>: %{text}<br>' +
-      '<b>Entities</b>: %{customdata}' +
+      '<b>Anomaly occurrences</b>: %{text}' +
       '<extra></extra>',
     cellTimeInterval: cellTimeInterval,
   } as PlotData;

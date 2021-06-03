@@ -60,10 +60,12 @@ import {
   Entity,
 } from '../../../../server/models/interfaces';
 import { HEATMAP_CHART_Y_AXIS_WIDTH } from '../utils/constants';
-import { convertToEntityList } from '../../utils/anomalyResultUtils';
+import {
+  convertToEntityList,
+  convertToCategoryFieldString,
+} from '../../utils/anomalyResultUtils';
 
 interface AnomalyHeatmapChartProps {
-  title: string;
   detectorId: string;
   detectorName: string;
   anomalies?: any[];
@@ -419,40 +421,53 @@ export const AnomalyHeatmapChart = React.memo(
           </EuiFlexItem>
         </EuiFlexGroup>
         <EuiFlexGroup style={{ padding: '0px' }}>
-          <EuiFlexItem grow={false} style={{ minWidth: '80px' }}>
-            <EuiFlexGroup alignItems="center" justifyContent="flexEnd">
-              <EuiText textAlign="right">
-                <h4>{props.title}</h4>
-              </EuiText>
-            </EuiFlexGroup>
-          </EuiFlexItem>
           <EuiFlexItem style={{ paddingLeft: '5px' }}>
             <EuiFlexGroup
               style={{ padding: '0px' }}
               justifyContent="spaceBetween"
             >
-              <EuiFlexItem grow={false} style={{ marginLeft: '0px' }}>
-                <EuiFlexGroup gutterSize="s" alignItems="center">
-                  <EuiFlexItem style={{ minWidth: 300 }}>
-                    <EuiComboBox
-                      placeholder="Select options"
-                      options={entityViewOptions}
-                      selectedOptions={currentViewOptions}
-                      onChange={(selectedOptions) =>
-                        handleViewEntityOptionsChange(selectedOptions)
-                      }
-                    />
-                  </EuiFlexItem>
-                  <EuiFlexItem style={{ minWidth: 150 }}>
-                    <EuiSuperSelect
-                      options={SORT_BY_FIELD_OPTIONS}
-                      valueOfSelected={sortByFieldValue}
-                      onChange={(value) => handleSortByFieldChange(value)}
-                      hasDividers
-                    />
-                  </EuiFlexItem>
-                </EuiFlexGroup>
-              </EuiFlexItem>
+              <EuiFlexGroup
+                direction="column"
+                justifyContent="spaceBetween"
+                style={{ padding: '12px', marginBottom: '6px' }}
+              >
+                <EuiFlexItem style={{ marginBottom: '0px' }}>
+                  <EuiText>
+                    <h4>
+                      View by:&nbsp;
+                      <b>
+                        {convertToCategoryFieldString(
+                          get(props, 'categoryField', []) as string[],
+                          ', '
+                        )}
+                      </b>
+                    </h4>
+                  </EuiText>
+                </EuiFlexItem>
+
+                <EuiFlexItem grow={false}>
+                  <EuiFlexGroup gutterSize="s" alignItems="center">
+                    <EuiFlexItem style={{ minWidth: 300 }}>
+                      <EuiComboBox
+                        placeholder="Select options"
+                        options={entityViewOptions}
+                        selectedOptions={currentViewOptions}
+                        onChange={(selectedOptions) =>
+                          handleViewEntityOptionsChange(selectedOptions)
+                        }
+                      />
+                    </EuiFlexItem>
+                    <EuiFlexItem style={{ minWidth: 150 }}>
+                      <EuiSuperSelect
+                        options={SORT_BY_FIELD_OPTIONS}
+                        valueOfSelected={sortByFieldValue}
+                        onChange={(value) => handleSortByFieldChange(value)}
+                        hasDividers
+                      />
+                    </EuiFlexItem>
+                  </EuiFlexGroup>
+                </EuiFlexItem>
+              </EuiFlexGroup>
               <EuiFlexItem grow={false}>
                 <EuiFlexGroup alignItems="center">
                   <EuiFlexItem>
