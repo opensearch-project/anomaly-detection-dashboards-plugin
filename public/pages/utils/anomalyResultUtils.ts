@@ -62,7 +62,10 @@ import {
   MISSING_FEATURE_DATA_SEVERITY,
 } from '../../utils/constants';
 import { HeatmapCell } from '../AnomalyCharts/containers/AnomalyHeatmapChart';
-import { AnomalyHeatmapSortType } from '../AnomalyCharts/utils/anomalyChartUtils';
+import {
+  AnomalyHeatmapSortType,
+  NUM_CELLS,
+} from '../AnomalyCharts/utils/anomalyChartUtils';
 import { DETECTOR_INIT_FAILURES } from '../DetectorDetail/utils/constants';
 import {
   COUNT_ANOMALY_AGGS,
@@ -1518,4 +1521,18 @@ const getResultFilters = (
           },
         },
       };
+};
+
+export const transformEntityListsForHeatmap = (entityLists: any[]) => {
+  let transformedEntityLists = [] as any[];
+  entityLists.forEach((entityList: Entity[]) => {
+    const listAsString = convertToEntityString(entityList, ', ');
+    let row = [];
+    var i;
+    for (i = 0; i < NUM_CELLS; i++) {
+      row.push(listAsString);
+    }
+    transformedEntityLists.push(row);
+  });
+  return transformedEntityLists;
 };
