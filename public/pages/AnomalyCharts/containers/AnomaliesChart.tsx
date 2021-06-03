@@ -45,7 +45,10 @@ import {
   Detector,
   Monitor,
 } from '../../../models/interfaces';
-import { generateAnomalyAnnotations } from '../../utils/anomalyResultUtils';
+import {
+  generateAnomalyAnnotations,
+  convertToEntityString,
+} from '../../utils/anomalyResultUtils';
 import { AlertsButton } from '../components/AlertsButton/AlertsButton';
 import { AnomalyDetailsChart } from '../containers/AnomalyDetailsChart';
 import {
@@ -266,6 +269,7 @@ export const AnomaliesChart = React.memo((props: AnomaliesChartProps) => {
                         onDisplayOptionChanged={props.onDisplayOptionChanged}
                         heatmapDisplayOption={props.heatmapDisplayOption}
                         isNotSample={props.isNotSample}
+                        categoryField={get(props.detector, 'categoryField', [])}
                       />,
                       props.isNotSample !== true
                         ? [
@@ -289,10 +293,13 @@ export const AnomaliesChart = React.memo((props: AnomaliesChartProps) => {
                                           'detectorCategoryField.0'
                                         )} `}
                                         <b>
-                                          {
-                                            props.selectedHeatmapCell
-                                              ?.entityValue
-                                          }
+                                          {props.selectedHeatmapCell
+                                            ? convertToEntityString(
+                                                props.selectedHeatmapCell
+                                                  .entityList,
+                                                ' / '
+                                              )
+                                            : '-'}
                                         </b>
                                       </h3>
                                     </EuiTitle>

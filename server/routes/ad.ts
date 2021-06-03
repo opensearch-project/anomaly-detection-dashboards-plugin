@@ -752,6 +752,9 @@ export default class AdService {
                   },
                 },
               },
+              // TODO: here is where we need a helper fn to dynamically create this
+              // filter array based on a list of entity name/value pairs, rather than just one
+              // can make something in adHelpers.tsx to handle this
               ...(entityName && entityValue
                 ? [
                     {

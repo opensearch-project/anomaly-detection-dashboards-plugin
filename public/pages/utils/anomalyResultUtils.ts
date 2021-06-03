@@ -36,7 +36,6 @@ import {
   AD_DOC_FIELDS,
   DOC_COUNT_FIELD,
   ENTITY_FIELD,
-  ENTITY_NAME_PATH_FIELD,
   ENTITY_VALUE_PATH_FIELD,
   KEY_FIELD,
   MIN_IN_MILLI_SECS,
@@ -115,7 +114,7 @@ export const buildParamsForGetAnomalyResultsWithDateRange = (
   startTime: number,
   endTime: number,
   anomalyOnly: boolean = false,
-  entity: Entity | undefined = undefined
+  entityList: Entity[] | undefined = undefined
 ) => {
   return {
     from: 0,
@@ -126,8 +125,9 @@ export const buildParamsForGetAnomalyResultsWithDateRange = (
     endTime: endTime,
     fieldName: AD_DOC_FIELDS.DATA_START_TIME,
     anomalyThreshold: anomalyOnly ? 0 : -1,
-    entityName: entity?.name,
-    entityValue: entity?.value,
+    // TODO: change to include all of the entity names & values
+    entityName: get(entityList, '0.name', ''),
+    entityValue: get(entityList, '0.value', ''),
   };
 };
 
@@ -931,9 +931,11 @@ export const filterWithHeatmapFilter = (
   if (isFilteringWithEntity) {
     data = data
       .filter((anomaly) => !isEmpty(get(anomaly, 'entity', [])))
-      .filter(
-        (anomaly) => get(anomaly, 'entity')[0].value === heatmapCell.entityValue
-      );
+      .filter((anomaly) => {
+        const dataEntityList = get(anomaly, 'entity');
+        const cellEntityList = get(heatmapCell, 'entityList');
+        return entityListsMatch(dataEntityList, cellEntityList);
+      });
   }
   return filterWithDateRange(data, heatmapCell.dateRange, timeField);
 };
@@ -1284,14 +1286,16 @@ export const parseEntityAnomalySummaryResults = (
 };
 
 export const convertToEntityString = (
-  entityArray: any[],
+  entityList: Entity[],
   delimiter: string
 ) => {
   let entityString = '';
-  entityArray.forEach((entity: any) => {
-    entityString += entity.value;
-    entityString += delimiter;
-  });
+  if (!isEmpty(entityList)) {
+    entityList.forEach((entity: any) => {
+      entityString += entity.value;
+      entityString += delimiter;
+    });
+  }
   return entityString === ''
     ? entityString
     : entityString.slice(0, -delimiter.length);
@@ -1457,6 +1461,39 @@ export const parseHistoricalAggregatedAnomalies = (
 
   return anomalies;
 };
+export const convertToEntityList = (
+  entityListAsString: string,
+  categoryFields: string[],
+  delimiter: string
+) => {
+  let entityList = [] as Entity[];
+  const valueArr = entityListAsString.split(delimiter);
+  var i;
+  for (i = 0; i < valueArr.length; i++) {
+    entityList.push({
+      name: categoryFields[i],
+      value: valueArr[i],
+    });
+  }
+  return entityList;
+};
+
+export const entityListsMatch = (
+  entityListA: Entity[],
+  entityListB: Entity[]
+) => {
+  if (get(entityListA, 'length') !== get(entityListB, 'length')) {
+    return false;
+  }
+  var i;
+  for (i = 0; i < entityListA.length; i++) {
+    if (entityListA[i].value !== entityListB[i].value) {
+      return false;
+    }
+  }
+  return true;
+};
+
 // Helper fn to get the correct filters based on how many categorical fields there are.
 // If there are multiple (entity list > 1), filter results by model id.
 // If there is only one (entity list = 1), filter by entity value.

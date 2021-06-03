@@ -55,8 +55,12 @@ import {
   getEntitytAnomaliesHeatmapData,
 } from '../utils/anomalyChartUtils';
 import { MIN_IN_MILLI_SECS } from '../../../../server/utils/constants';
-import { EntityAnomalySummaries } from '../../../../server/models/interfaces';
+import {
+  EntityAnomalySummaries,
+  Entity,
+} from '../../../../server/models/interfaces';
 import { HEATMAP_CHART_Y_AXIS_WIDTH } from '../utils/constants';
+import { convertToEntityList } from '../../utils/anomalyResultUtils';
 
 interface AnomalyHeatmapChartProps {
   title: string;
@@ -73,13 +77,12 @@ interface AnomalyHeatmapChartProps {
   heatmapDisplayOption?: HeatmapDisplayOption;
   entityAnomalySummaries?: EntityAnomalySummaries[];
   isNotSample?: boolean;
+  categoryField?: string[];
 }
 
 export interface HeatmapCell {
   dateRange: DateRange;
-  // TODO: change this to entityList. Will use entity list as the key to pass
-  // to helper fn to build the query to fetch the results
-  entityValue: string;
+  entityList: Entity[];
   modelId?: string;
 }
 
@@ -127,14 +130,15 @@ export const AnomalyHeatmapChart = React.memo(
         //@ts-ignore
         individualEntities = inputHeatmapData[0].y.filter(
           //@ts-ignore
-          (entityValue) => entityValue && entityValue.trim().length > 0
+          (entityListAsString) =>
+            entityListAsString && entityListAsString.trim().length > 0
         );
       }
       const individualEntityOptions = [] as any[];
       //@ts-ignore
-      individualEntities.forEach((entityValue) => {
+      individualEntities.forEach((entityListAsString) => {
         individualEntityOptions.push({
-          label: entityValue,
+          label: entityListAsString,
         });
       });
 
@@ -221,7 +225,7 @@ export const AnomalyHeatmapChart = React.memo(
 
     const handleHeatmapClick = (event: Plotly.PlotMouseEvent) => {
       const selectedCellIndices = get(event, 'points[0].pointIndex', []);
-      const selectedEntity = get(event, 'points[0].y', '');
+      const selectedEntityString = get(event, 'points[0].y', '');
       if (!isEmpty(selectedCellIndices)) {
         let anomalyCount = get(event, 'points[0].text', 0);
         if (
@@ -266,7 +270,11 @@ export const AnomalyHeatmapChart = React.memo(
               startDate: selectedStartDate,
               endDate: selectedEndDate,
             },
-            entityValue: selectedEntity,
+            entityList: convertToEntityList(
+              selectedEntityString,
+              get(props, 'categoryField', []),
+              ' / '
+            ),
           } as HeatmapCell);
         }
       }

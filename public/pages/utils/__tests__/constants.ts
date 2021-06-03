@@ -85,6 +85,6 @@ export const FAKE_ENTITY_ANOMALY_SUMMARY = {
 } as EntityAnomalySummary;
 
 export const FAKE_ENTITY_ANOMALY_SUMMARIES = {
-  entity: FAKE_ENTITY,
+  entityList: [FAKE_ENTITY],
   anomalySummaries: [FAKE_ENTITY_ANOMALY_SUMMARY],
 } as EntityAnomalySummaries;

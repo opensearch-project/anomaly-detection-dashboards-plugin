@@ -68,6 +68,7 @@ import {
   parseTopEntityAnomalySummaryResults,
   getEntityAnomalySummariesQuery,
   parseEntityAnomalySummaryResults,
+  convertToEntityString,
 } from '../../utils/anomalyResultUtils';
 import { AnomalyResultsTable } from './AnomalyResultsTable';
 import { AnomaliesChart } from '../../AnomalyCharts/containers/AnomaliesChart';
@@ -394,7 +395,10 @@ export const AnomalyHistory = (props: AnomalyHistoryProps) => {
       }
     } catch (err) {
       console.error(
-        `Failed to get anomaly results for entity ${heatmapCell.entityValue}`,
+        `Failed to get anomaly results for the following entities: ${convertToEntityString(
+          heatmapCell.entityList,
+          ', '
+        )}`,
         err
       );
     } finally {
@@ -407,11 +411,7 @@ export const AnomalyHistory = (props: AnomalyHistoryProps) => {
       heatmapCell.dateRange.startDate,
       heatmapCell.dateRange.endDate,
       false,
-      {
-        //@ts-ignore
-        name: props.detector.categoryField[0],
-        value: heatmapCell.entityValue,
-      }
+      heatmapCell.entityList
     );
 
     const entityAnomalyResultResponse = await dispatch(
@@ -436,13 +436,7 @@ export const AnomalyHistory = (props: AnomalyHistoryProps) => {
   };
 
   const fetchBucketizedEntityAnomalyData = async (heatmapCell: HeatmapCell) => {
-    getBucketizedAnomalyResults([
-      {
-        //@ts-ignore
-        name: props.detector.categoryField[0],
-        value: heatmapCell.entityValue,
-      },
-    ]);
+    getBucketizedAnomalyResults(heatmapCell.entityList);
   };
   const [atomicAnomalyResults, setAtomicAnomalyResults] = useState<Anomalies>();
   const [rawAnomalyResults, setRawAnomalyResults] = useState<Anomalies>();
@@ -560,39 +554,89 @@ export const AnomalyHistory = (props: AnomalyHistoryProps) => {
         heatmapDisplayOption={heatmapDisplayOption}
         entityAnomalySummaries={entityAnomalySummaries}
       >
-        <div style={{ padding: '20px' }}>
-          {/*
-           TODO: update title and occurrence chart to support multi category field support
-          */}
-          {isHCDetector
-            ? [
-                <AnomalyOccurrenceChart
-                  title={
-                    selectedHeatmapCell && props.detector?.categoryField ? (
-                      <EuiTitle size="s">
-                        <div>
-                          {`${get(props, 'detector.categoryField.0')}`}{' '}
-                          <b>{selectedHeatmapCell?.entityValue}</b>
-                          <EuiSpacer size="s" />
-                        </div>
-                      </EuiTitle>
-                    ) : (
-                      '-'
-                    )
-                  }
-                  dateRange={dateRange}
-                  onDateRangeChange={handleDateRangeChange}
-                  onZoomRangeChange={handleZoomChange}
-                  anomalies={anomalyResults ? anomalyResults.anomalies : []}
-                  bucketizedAnomalies={bucketizedAnomalyResults !== undefined}
-                  anomalySummary={bucketizedAnomalySummary}
-                  isLoading={isLoading || isLoadingAnomalyResults}
-                  anomalyGradeSeriesName="Anomaly grade"
-                  confidenceSeriesName="Confidence"
-                  showAlerts={true}
-                  isNotSample={true}
-                  detector={props.detector}
-                  monitor={props.monitor}
+        <EuiTabs>{renderTabs()}</EuiTabs>
+
+        {isLoading || isLoadingAnomalyResults ? (
+          <EuiFlexGroup
+            justifyContent="spaceAround"
+            style={{ height: '500px', paddingTop: '100px' }}
+          >
+            <EuiFlexItem grow={false}>
+              <EuiLoadingSpinner size="xl" />
+            </EuiFlexItem>
+          </EuiFlexGroup>
+        ) : (
+          <div style={{ padding: '20px', backgroundColor: backgroundColor }}>
+            {selectedTabId === ANOMALY_HISTORY_TABS.FEATURE_BREAKDOWN ? (
+              <FeatureBreakDown
+                detector={props.detector}
+                // @ts-ignore
+                anomaliesResult={anomalyResults}
+                rawAnomalyResults={rawAnomalyResults}
+                annotations={annotations}
+                isLoading={isLoading}
+                dateRange={zoomRange}
+                featureDataSeriesName="Feature output"
+                showFeatureMissingDataPointAnnotation={
+                  props.detector.enabled &&
+                  // disable showing missing feature alert when it is HC Detector
+                  !isHCDetector
+                }
+                isFeatureDataMissing={props.isFeatureDataMissing}
+                isHCDetector={isHCDetector}
+                selectedHeatmapCell={selectedHeatmapCell}
+              />
+            ) : (
+              [
+                isHCDetector
+                  ? [
+                      <AnomalyOccurrenceChart
+                        title={
+                          selectedHeatmapCell
+                            ? convertToEntityString(
+                                selectedHeatmapCell.entityList,
+                                ' / '
+                              )
+                            : '-'
+                        }
+                        dateRange={dateRange}
+                        onDateRangeChange={handleDateRangeChange}
+                        onZoomRangeChange={handleZoomChange}
+                        anomalies={
+                          anomalyResults ? anomalyResults.anomalies : []
+                        }
+                        bucketizedAnomalies={
+                          bucketizedAnomalyResults !== undefined
+                        }
+                        anomalySummary={bucketizedAnomalySummary}
+                        isLoading={isLoading || isLoadingAnomalyResults}
+                        anomalyGradeSeriesName="Anomaly grade"
+                        confidenceSeriesName="Confidence"
+                        showAlerts={true}
+                        isNotSample={true}
+                        detector={props.detector}
+                        monitor={props.monitor}
+                        isHCDetector={isHCDetector}
+                        selectedHeatmapCell={selectedHeatmapCell}
+                      />,
+                      <EuiSpacer size="m" />,
+                    ]
+                  : null,
+                <AnomalyResultsTable
+                  anomalies={filterWithHeatmapFilter(
+                    bucketizedAnomalyResults === undefined
+                      ? anomalyResults
+                        ? filterWithDateRange(
+                            anomalyResults.anomalies,
+                            zoomRange,
+                            'plotTime'
+                          )
+                        : []
+                      : pureAnomalies,
+                    selectedHeatmapCell,
+                    true,
+                    'plotTime'
+                  )}
                   isHCDetector={isHCDetector}
                   isHistorical={props.isHistorical}
                   selectedHeatmapCell={selectedHeatmapCell}
