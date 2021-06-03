@@ -35,13 +35,14 @@ import React, { useEffect, useState } from 'react';
 import { SORT_DIRECTION } from '../../../../server/utils/constants';
 import ContentPanel from '../../../components/ContentPanel/ContentPanel';
 import {
-  entityValueColumn,
-  ENTITY_VALUE_FIELD,
+  categoryFieldsColumn,
   staticColumn,
+  CATEGORY_FIELDS,
 } from '../utils/tableUtils';
 import { DetectorResultsQueryParams } from 'server/models/types';
 import { AnomalyData } from '../../../models/interfaces';
 import { getTitleWithCount } from '../../../utils/utils';
+import { convertToCategoryFieldAndEntityString } from '../../utils/anomalyResultUtils';
 
 interface AnomalyResultsTableProps {
   anomalies: AnomalyData[];
@@ -89,7 +90,9 @@ export function AnomalyResultsTable(props: AnomalyResultsTableProps) {
       anomalies = anomalies.map((anomaly) => {
         return {
           ...anomaly,
-          [ENTITY_VALUE_FIELD]: get(anomaly, 'entity[0].value'),
+          [CATEGORY_FIELDS]: convertToCategoryFieldAndEntityString(
+            get(anomaly, 'entity', [])
+          ),
         };
       });
     }
@@ -155,7 +158,7 @@ export function AnomalyResultsTable(props: AnomalyResultsTableProps) {
             : props.isHCDetector
             ? [
                 ...staticColumn.slice(0, 2),
-                entityValueColumn,
+                categoryFieldsColumn,
                 ...staticColumn.slice(2),
               ]
             : props.isHistorical

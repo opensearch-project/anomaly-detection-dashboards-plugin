@@ -1462,6 +1462,18 @@ export const parseHistoricalAggregatedAnomalies = (
 
   return anomalies;
 };
+export const convertToCategoryFieldAndEntityString = (entityList: Entity[]) => {
+  let entityString = '';
+  if (!isEmpty(entityList)) {
+    entityList.forEach((entity: any) => {
+      entityString += entity.name + ': ' + entity.value;
+      entityString += '\n';
+    });
+    entityString.slice(0, -1);
+  }
+  return entityString;
+};
+
 export const convertToEntityList = (
   entityListAsString: string,
   categoryFields: string[],

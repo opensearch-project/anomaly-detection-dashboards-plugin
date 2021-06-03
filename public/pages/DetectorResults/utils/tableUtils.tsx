@@ -38,7 +38,7 @@ const renderTime = (time: number) => {
   return DEFAULT_EMPTY_DATA;
 };
 
-export const ENTITY_VALUE_FIELD = 'entityValue';
+export const CATEGORY_FIELDS = 'categoryFields';
 
 export const staticColumn = [
   {
@@ -91,10 +91,10 @@ export const staticColumn = [
   },
 ] as EuiBasicTableColumn<any>[];
 
-export const entityValueColumn = {
-  field: ENTITY_VALUE_FIELD,
-  name: 'Entity',
+export const categoryFieldsColumn = {
+  field: CATEGORY_FIELDS,
+  name: 'Category fields',
   sortable: true,
   truncateText: false,
-  dataType: 'number',
+  dataType: 'string',
 } as EuiBasicTableColumn<any>;
