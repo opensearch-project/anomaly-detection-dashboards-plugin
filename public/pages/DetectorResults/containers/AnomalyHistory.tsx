@@ -91,6 +91,7 @@ import {
 import {
   getAnomalyHistoryWording,
   NUM_CELLS,
+  getHCTitle,
 } from '../../AnomalyCharts/utils/anomalyChartUtils';
 import { darkModeEnabled } from '../../../utils/opensearchDashboardsUtils';
 import {
@@ -593,10 +594,7 @@ export const AnomalyHistory = (props: AnomalyHistoryProps) => {
                       <AnomalyOccurrenceChart
                         title={
                           selectedHeatmapCell
-                            ? convertToEntityString(
-                                selectedHeatmapCell.entityList,
-                                ' / '
-                              )
+                            ? getHCTitle(selectedHeatmapCell.entityList)
                             : '-'
                         }
                         dateRange={dateRange}

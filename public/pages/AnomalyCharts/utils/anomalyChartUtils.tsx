@@ -25,6 +25,8 @@
  */
 
 import { cloneDeep, defaultTo, get, isEmpty, orderBy } from 'lodash';
+import React from 'react';
+import { EuiTitle, EuiSpacer } from '@elastic/eui';
 import {
   DateRange,
   Detector,
@@ -671,4 +673,23 @@ export const getDateRangeWithSelectedHeatmapCell = (
     return heatmapCell.dateRange;
   }
   return originalDateRange;
+};
+
+export const getHCTitle = (entityList: Entity[]) => {
+  return (
+    <div>
+      <EuiTitle size="s">
+        <h3>
+          {entityList.map((entity: Entity) => {
+            return (
+              <div>
+                {entity.name}: <b>{entity.value}</b>{' '}
+              </div>
+            );
+          })}
+        </h3>
+      </EuiTitle>
+      <EuiSpacer size="s" />
+    </div>
+  );
 };

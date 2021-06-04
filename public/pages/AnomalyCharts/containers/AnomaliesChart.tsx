@@ -61,6 +61,7 @@ import {
   getConfidenceWording,
   getFeatureBreakdownWording,
   getFeatureDataWording,
+  getHCTitle,
 } from '../utils/anomalyChartUtils';
 import {
   DATE_PICKER_QUICK_OPTIONS,
@@ -292,10 +293,9 @@ export const AnomaliesChart = React.memo((props: AnomaliesChartProps) => {
                                         )} `}
                                         <b>
                                           {props.selectedHeatmapCell
-                                            ? convertToEntityString(
+                                            ? getHCTitle(
                                                 props.selectedHeatmapCell
-                                                  .entityList,
-                                                ' / '
+                                                  .entityList
                                               )
                                             : '-'}
                                         </b>
