@@ -33,7 +33,7 @@ import {
   EuiSuperDatePicker,
   EuiTitle,
 } from '@elastic/eui';
-import { get } from 'lodash';
+import { get, orderBy } from 'lodash';
 import moment, { DurationInputArg2 } from 'moment';
 import React, { useState } from 'react';
 import { EntityAnomalySummaries } from '../../../../server/models/interfaces';
@@ -45,10 +45,7 @@ import {
   Detector,
   Monitor,
 } from '../../../models/interfaces';
-import {
-  generateAnomalyAnnotations,
-  convertToEntityString,
-} from '../../utils/anomalyResultUtils';
+import { generateAnomalyAnnotations } from '../../utils/anomalyResultUtils';
 import { AlertsButton } from '../components/AlertsButton/AlertsButton';
 import { AnomalyDetailsChart } from '../containers/AnomalyDetailsChart';
 import {
@@ -268,7 +265,12 @@ export const AnomaliesChart = React.memo((props: AnomaliesChartProps) => {
                         onDisplayOptionChanged={props.onDisplayOptionChanged}
                         heatmapDisplayOption={props.heatmapDisplayOption}
                         isNotSample={props.isNotSample}
-                        categoryField={get(props.detector, 'categoryField', [])}
+                        // Category fields in HC results are always sorted alphabetically. To make all chart
+                        // wording consistent with the returned results, we sort the given category
+                        // fields in alphabetical order as well.
+                        categoryField={orderBy(props.detectorCategoryField, [
+                          (categoryField) => categoryField.toLowerCase(),
+                        ])}
                       />,
                       props.isNotSample !== true
                         ? [

@@ -52,6 +52,7 @@ import {
   getError,
   validateCategoryField,
 } from '../../../../utils/utils';
+import { MAX_CATEGORY_FIELD_NUM } from '../../../../utils/constants';
 
 interface CategoryFieldProps {
   isHCDetector: boolean;
@@ -152,7 +153,7 @@ export function CategoryField(props: CategoryFieldProps) {
                             (option) => option.label
                           );
                           if (!isEmpty(selection)) {
-                            if (selection.length <= 2) {
+                            if (selection.length <= MAX_CATEGORY_FIELD_NUM) {
                               form.setFieldValue('categoryField', selection);
                               form.setFieldValue(
                                 'shingleSize',

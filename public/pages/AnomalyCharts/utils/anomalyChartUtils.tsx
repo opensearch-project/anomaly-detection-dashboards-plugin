@@ -229,7 +229,6 @@ const buildBlankStringWithLength = (length: number) => {
   return result;
 };
 
-// TODO: fix this + its helper fns. Related to preview results
 export const getAnomaliesHeatmapData = (
   anomalies: any[] | undefined,
   dateRange: DateRange,
