@@ -213,15 +213,6 @@ export const FeatureBreakDown = React.memo((props: FeatureBreakDownProps) => {
                 props.showFeatureMissingDataPointAnnotation
               }
               detectorEnabledTime={props.detector.enabledTime}
-              titlePrefix={
-                props.selectedHeatmapCell &&
-                props.title !== 'Sample feature breakdown'
-                  ? convertToEntityString(
-                      props.selectedHeatmapCell.entityList,
-                      ' / '
-                    )
-                  : undefined
-              }
             />
             {index + 1 ===
             get(props, 'detector.featureAttributes', []).length ? null : (

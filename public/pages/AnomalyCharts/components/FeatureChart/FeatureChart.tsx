@@ -74,7 +74,6 @@ interface FeatureChartProps {
   showFeatureMissingDataPointAnnotation?: boolean;
   detectorEnabledTime?: number;
   rawFeatureData: FeatureAggregationData[];
-  titlePrefix?: string;
 }
 
 export const FeatureChart = (props: FeatureChartProps) => {
@@ -165,10 +164,9 @@ export const FeatureChart = (props: FeatureChartProps) => {
   return (
     <ContentPanel
       title={
-        (props.titlePrefix ? props.titlePrefix + ' - ' : '') +
-        (props.feature.featureEnabled
+        props.feature.featureEnabled
           ? props.feature.featureName
-          : `${props.feature.featureName} (disabled)`)
+          : `${props.feature.featureName} (disabled)`
       }
       bodyStyles={
         !props.feature.featureEnabled

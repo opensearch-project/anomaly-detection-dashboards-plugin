@@ -275,7 +275,7 @@ export const AnomalyHeatmapChart = React.memo(
             entityList: convertToEntityList(
               selectedEntityString,
               get(props, 'categoryField', []),
-              ' / '
+              ', '
             ),
           } as HeatmapCell);
         }
