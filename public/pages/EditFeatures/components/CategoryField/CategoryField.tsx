@@ -30,7 +30,6 @@ import {
   EuiText,
   EuiLink,
   EuiIcon,
-  EuiFormRow,
   EuiPage,
   EuiPageBody,
   EuiComboBox,
@@ -40,7 +39,7 @@ import {
   EuiSpacer,
 } from '@elastic/eui';
 import { Field, FieldProps } from 'formik';
-import { get, isEmpty } from 'lodash';
+import { isEmpty } from 'lodash';
 import {
   MULTI_ENTITY_SHINGLE_SIZE,
   BASE_DOCS_LINK,
@@ -53,6 +52,7 @@ import {
   validateCategoryField,
 } from '../../../../utils/utils';
 import { MAX_CATEGORY_FIELD_NUM } from '../../../../utils/constants';
+import { FormattedFormRow } from '../../../createDetector/components/FormattedFormRow/FormattedFormRow';
 
 interface CategoryFieldProps {
   isHCDetector: boolean;
@@ -81,7 +81,7 @@ export function CategoryField(props: CategoryFieldProps) {
         <ContentPanel
           title={
             <EuiTitle size="s">
-              <h2>Category field </h2>
+              <h2>Categorical fields </h2>
             </EuiTitle>
           }
           subTitle={
@@ -134,8 +134,9 @@ export function CategoryField(props: CategoryFieldProps) {
                 </EuiFlexItem>
                 {enabled && !noCategoryFields ? (
                   <EuiFlexItem>
-                    <EuiFormRow
-                      label="Field"
+                    <FormattedFormRow
+                      title="Select fields"
+                      hint="Choose up to two fields for categorizing anomalies. Adding two fields lets you see results split and aggregated by both fields at the same time."
                       isInvalid={isInvalid(field.name, form)}
                       error={getError(field.name, form)}
                       helpText={`You can only apply the category field to the 'ip' and 'keyword' OpenSearch data types.`}
@@ -181,7 +182,7 @@ export function CategoryField(props: CategoryFieldProps) {
                         singleSelection={false}
                         isClearable={true}
                       />
-                    </EuiFormRow>
+                    </FormattedFormRow>
                   </EuiFlexItem>
                 ) : null}
               </EuiFlexGroup>
