@@ -1294,14 +1294,14 @@ export const convertToEntityString = (
   let entityString = '';
   const delimiterToUse = delimiter ? delimiter : ENTITY_LIST_DELIMITER;
   if (!isEmpty(entityList)) {
-    entityList.forEach((entity: any) => {
+    entityList.forEach((entity: any, index) => {
+      if (index > 0) {
+        entityString += delimiterToUse;
+      }
       entityString += entity.value;
-      entityString += delimiterToUse;
     });
   }
-  return entityString === ''
-    ? entityString
-    : entityString.slice(0, -delimiterToUse.length);
+  return entityString;
 };
 
 export const getAnomalyDataRangeQuery = (
@@ -1470,24 +1470,25 @@ export const convertToCategoryFieldString = (
 ) => {
   let categoryFieldString = '';
   if (!isEmpty(categoryFields)) {
-    categoryFields.forEach((categoryField: any) => {
+    categoryFields.forEach((categoryField: any, index) => {
+      if (index > 0) {
+        categoryFieldString += delimiter;
+      }
       categoryFieldString += categoryField;
-      categoryFieldString += delimiter;
     });
   }
-  return categoryFieldString === ''
-    ? categoryFieldString
-    : categoryFieldString.slice(0, -delimiter.length);
+  return categoryFieldString;
 };
 
 export const convertToCategoryFieldAndEntityString = (entityList: Entity[]) => {
   let entityString = '';
   if (!isEmpty(entityList)) {
-    entityList.forEach((entity: any) => {
+    entityList.forEach((entity: any, index) => {
+      if (index > 0) {
+        entityString += '\n';
+      }
       entityString += entity.name + ': ' + entity.value;
-      entityString += '\n';
     });
-    entityString.slice(0, -1);
   }
   return entityString;
 };

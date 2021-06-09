@@ -362,7 +362,7 @@ export const AnomalyHeatmapChart = React.memo(
 
       setNumEntities(nonCombinedOptions.length);
       const selectedYs = nonCombinedOptions.map((option) =>
-        get(option, 'label', '')
+        get(option, 'label', '').replace(', ', ENTITY_LIST_DELIMITER)
       );
 
       let selectedHeatmapData = filterHeatmapPlotDataByY(
