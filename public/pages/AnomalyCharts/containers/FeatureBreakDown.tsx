@@ -48,7 +48,6 @@ import { HeatmapCell } from './AnomalyHeatmapChart';
 import {
   filterWithHeatmapFilter,
   entityListsMatch,
-  convertToEntityString,
 } from '../../utils/anomalyResultUtils';
 import { getDateRangeWithSelectedHeatmapCell } from '../utils/anomalyChartUtils';
 import { Entity } from '../../../../server/models/interfaces';

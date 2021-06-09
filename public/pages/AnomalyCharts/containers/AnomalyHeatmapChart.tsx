@@ -54,7 +54,10 @@ import {
   filterHeatmapPlotDataByY,
   getEntitytAnomaliesHeatmapData,
 } from '../utils/anomalyChartUtils';
-import { MIN_IN_MILLI_SECS } from '../../../../server/utils/constants';
+import {
+  MIN_IN_MILLI_SECS,
+  ENTITY_LIST_DELIMITER,
+} from '../../../../server/utils/constants';
 import {
   EntityAnomalySummaries,
   Entity,
@@ -138,9 +141,9 @@ export const AnomalyHeatmapChart = React.memo(
       }
       const individualEntityOptions = [] as any[];
       //@ts-ignore
-      individualEntities.forEach((entityListAsString) => {
+      individualEntities.forEach((entityListAsString: string) => {
         individualEntityOptions.push({
-          label: entityListAsString,
+          label: entityListAsString.replace(ENTITY_LIST_DELIMITER, ', '),
         });
       });
 
@@ -275,7 +278,7 @@ export const AnomalyHeatmapChart = React.memo(
             entityList: convertToEntityList(
               selectedEntityString,
               get(props, 'categoryField', []),
-              ', '
+              ENTITY_LIST_DELIMITER
             ),
           } as HeatmapCell);
         }

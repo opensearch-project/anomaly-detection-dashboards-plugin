@@ -380,9 +380,9 @@ export const getEntitytAnomaliesHeatmapData = (
     const numAnomalyGradesForEntity = [] as number[];
 
     const entityString = convertToEntityString(
-      get(entityAnomalySummaries, 'entityList', []),
-      ', '
+      get(entityAnomalySummaries, 'entityList', [])
     ) as string;
+
     const anomaliesSummary = get(
       entityAnomalySummaries,
       'anomalySummaries',
@@ -460,7 +460,7 @@ const getEntityAnomaliesMap = (
     if (isEmpty(entityList)) {
       return;
     }
-    const entityListAsString = convertToEntityString(entityList, ', ');
+    const entityListAsString = convertToEntityString(entityList);
     let singleEntityAnomalies = [];
     if (entityAnomaliesMap.has(entityListAsString)) {
       //@ts-ignore

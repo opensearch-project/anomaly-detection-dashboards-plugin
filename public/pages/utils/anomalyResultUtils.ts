@@ -45,6 +45,7 @@ import {
   WEEK_IN_MILLI_SECS,
   MODEL_ID_FIELD,
   ENTITY_LIST_FIELD,
+  ENTITY_LIST_DELIMITER,
 } from '../../../server/utils/constants';
 import { toFixedNumberForAnomaly } from '../../../server/utils/helpers';
 import {
@@ -1288,18 +1289,19 @@ export const parseEntityAnomalySummaryResults = (
 
 export const convertToEntityString = (
   entityList: Entity[],
-  delimiter: string
+  delimiter?: string
 ) => {
   let entityString = '';
+  const delimiterToUse = delimiter ? delimiter : ENTITY_LIST_DELIMITER;
   if (!isEmpty(entityList)) {
     entityList.forEach((entity: any) => {
       entityString += entity.value;
-      entityString += delimiter;
+      entityString += delimiterToUse;
     });
   }
   return entityString === ''
     ? entityString
-    : entityString.slice(0, -delimiter.length);
+    : entityString.slice(0, -delimiterToUse.length);
 };
 
 export const getAnomalyDataRangeQuery = (

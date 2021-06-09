@@ -106,6 +106,7 @@ export const MODEL_ID_FIELD = 'model_id';
 export const DOC_COUNT_FIELD = 'doc_count';
 export const KEY_FIELD = 'key';
 export const ENTITY_LIST_FIELD = 'entity_list';
+export const ENTITY_LIST_DELIMITER = '<br>';
 
 export const STACK_TRACE_PATTERN = '.java:';
 export const OPENSEARCH_EXCEPTION_PREFIX =
