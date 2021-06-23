@@ -48,7 +48,7 @@ exports[`<CategoryField /> spec hides callout if component is loading 1`] = `
                      
                     <a
                       class="euiLink euiLink--primary"
-                      href="https://docs-beta.opensearch.org/docs/ad"
+                      href="https://docs-beta.opensearch.org/monitoring-plugins/ad/index//ad"
                       rel="noopener noreferrer"
                       target="_blank"
                     >
@@ -177,7 +177,7 @@ exports[`<CategoryField /> spec renders the component when disabled 1`] = `
                      
                     <a
                       class="euiLink euiLink--primary"
-                      href="https://docs-beta.opensearch.org/docs/ad"
+                      href="https://docs-beta.opensearch.org/monitoring-plugins/ad/index//ad"
                       rel="noopener noreferrer"
                       target="_blank"
                     >
@@ -297,7 +297,7 @@ exports[`<CategoryField /> spec renders the component when enabled 1`] = `
                      
                     <a
                       class="euiLink euiLink--primary"
-                      href="https://docs-beta.opensearch.org/docs/ad"
+                      href="https://docs-beta.opensearch.org/monitoring-plugins/ad/index//ad"
                       rel="noopener noreferrer"
                       target="_blank"
                     >
@@ -517,7 +517,7 @@ exports[`<CategoryField /> spec shows callout when there are no available catego
                      
                     <a
                       class="euiLink euiLink--primary"
-                      href="https://docs-beta.opensearch.org/docs/ad"
+                      href="https://docs-beta.opensearch.org/monitoring-plugins/ad/index//ad"
                       rel="noopener noreferrer"
                       target="_blank"
                     >

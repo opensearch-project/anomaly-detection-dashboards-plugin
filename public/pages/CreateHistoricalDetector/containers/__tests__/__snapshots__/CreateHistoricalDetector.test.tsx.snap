@@ -813,7 +813,7 @@ exports[`<CreateHistoricalDetector /> spec create historical detector renders th
                      
                     <a
                       class="euiLink euiLink--primary"
-                      href="https://docs-beta.opensearch.org/docs/ad"
+                      href="https://docs-beta.opensearch.org/monitoring-plugins/ad/index//ad"
                       rel="noopener noreferrer"
                       target="_blank"
                     >
@@ -2271,7 +2271,7 @@ exports[`<CreateHistoricalDetector /> spec edit historical detector renders the 
                      
                     <a
                       class="euiLink euiLink--primary"
-                      href="https://docs-beta.opensearch.org/docs/ad"
+                      href="https://docs-beta.opensearch.org/monitoring-plugins/ad/index//ad"
                       rel="noopener noreferrer"
                       target="_blank"
                     >

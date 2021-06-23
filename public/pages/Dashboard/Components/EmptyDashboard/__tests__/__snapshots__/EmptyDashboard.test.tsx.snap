@@ -29,7 +29,7 @@ exports[`<EmptyDetector /> spec Empty results renders component with empty messa
          
         <a
           class="euiLink euiLink--primary"
-          href="https://docs-beta.opensearch.org/docs/ad"
+          href="https://docs-beta.opensearch.org/monitoring-plugins/ad/index//ad"
           rel="noopener noreferrer"
           target="_blank"
         >

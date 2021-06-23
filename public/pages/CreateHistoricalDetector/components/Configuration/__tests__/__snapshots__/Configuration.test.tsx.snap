@@ -222,7 +222,7 @@ exports[`<Configuration /> spec renders the component in create mode with existi
                    
                   <a
                     class="euiLink euiLink--primary"
-                    href="https://docs-beta.opensearch.org/docs/ad"
+                    href="https://docs-beta.opensearch.org/monitoring-plugins/ad/index//ad"
                     rel="noopener noreferrer"
                     target="_blank"
                   >
@@ -703,7 +703,7 @@ exports[`<Configuration /> spec renders the component in edit mode without exist
                    
                   <a
                     class="euiLink euiLink--primary"
-                    href="https://docs-beta.opensearch.org/docs/ad"
+                    href="https://docs-beta.opensearch.org/monitoring-plugins/ad/index//ad"
                     rel="noopener noreferrer"
                     target="_blank"
                   >
