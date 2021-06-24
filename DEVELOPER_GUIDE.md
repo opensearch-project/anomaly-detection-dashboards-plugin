@@ -45,7 +45,7 @@ Ultimately, your directory structure should look like this:
 
 To build the plugin's distributable zip simply run `yarn build`.
 
-Example output: `./build/anomalyDetectionDashboards-1.0.0.0.zip`
+Example output: `./build/anomaly-detection-dashboards-1.0.0.0.zip`
 
 ### Run
 
