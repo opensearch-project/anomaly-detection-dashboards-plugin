@@ -74,6 +74,7 @@ then
 fi
 
 if [ "$SECURITY_ENABLED" = "true" ]
+then
     yarn cy:run-with-security --config baseurl=http://${BIND_ADDRESS}:${BIND_PORT}
 else
     yarn cy:run --config baseurl=http://${BIND_ADDRESS}:${BIND_PORT}
