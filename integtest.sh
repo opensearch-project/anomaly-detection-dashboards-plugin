@@ -73,6 +73,8 @@ then
   PASSWORD=`echo $CREDENTIAL | awk -F ':' '{print $2}'`
 fi
 
+yarn osd bootstrap
+
 if [ "$SECURITY_ENABLED" = "true" ]
 then
     yarn cy:run-with-security --config baseurl=http://${BIND_ADDRESS}:${BIND_PORT}
