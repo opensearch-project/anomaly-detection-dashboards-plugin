@@ -19,10 +19,8 @@ import {
   EuiSpacer,
   EuiFlexGroup,
   EuiFlexItem,
-  EuiText,
   EuiTitle,
   EuiLoadingSpinner,
-  EuiIcon,
   EuiButtonEmpty,
   EuiOverlayMask,
   EuiBadge,
@@ -156,14 +154,11 @@ export function HistoricalDetectorResults(
           );
         }
       });
-
-      // if (listener) listener.onSuccess();
     } catch (err) {
       core.notifications.toasts.addDanger(
         `There was a problem stopping the historical detector: ` +
           prettifyErrorMessage(getErrorMessage(err, ''))
       );
-      // if (listener) listener.onException();
       fetchDetector();
     } finally {
       setIsStoppingDetector(false);

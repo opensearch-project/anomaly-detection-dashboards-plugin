@@ -15,15 +15,11 @@
 
 import React, { useState } from 'react';
 import {
-  EuiFlexGroup,
-  EuiFlexItem,
   EuiModal,
   EuiModalFooter,
   EuiModalHeader,
   EuiModalHeaderTitle,
   EuiModalBody,
-  EuiSpacer,
-  EuiText,
   EuiButtonEmpty,
   EuiButton,
   EuiSuperDatePicker,
@@ -72,7 +68,7 @@ export const HistoricalRangeModal = (props: HistoricalRangeModalProps) => {
             commonlyUsedRanges={HISTORICAL_DATE_RANGE_COMMON_OPTIONS}
             start={startTime}
             end={endTime}
-            onTimeChange={({ start, end, isInvalid, isQuickSelection }) => {
+            onTimeChange={({ start, end }) => {
               setStartTime(start);
               setEndTime(end);
             }}
