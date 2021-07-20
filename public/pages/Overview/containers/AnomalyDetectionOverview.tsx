@@ -69,7 +69,7 @@ export function AnomalyDetectionOverview(props: AnomalyDetectionOverviewProps) {
     (state: AppState) => state.opensearch.indices
   );
 
-  const allDetectors = Object.values(
+  const allSampleDetectors = Object.values(
     useSelector((state: AppState) => state.ad.detectorList)
   );
 
@@ -182,10 +182,7 @@ export function AnomalyDetectionOverview(props: AnomalyDetectionOverviewProps) {
 
   return props.isLoadingDetectors ? (
     <div>
-      <EuiLoadingSpinner size="s" />
-      &nbsp;&nbsp; <EuiLoadingSpinner size="m" />
-      &nbsp;&nbsp; <EuiLoadingSpinner size="l" />
-      &nbsp;&nbsp; <EuiLoadingSpinner size="xl" />
+      <EuiLoadingSpinner size="xl" />
     </div>
   ) : (
     <Fragment>
@@ -275,11 +272,11 @@ export function AnomalyDetectionOverview(props: AnomalyDetectionOverviewProps) {
               }}
               isLoadingData={isLoadingHttpData}
               isDataLoaded={containsSampleDetector(
-                allDetectors,
+                allSampleDetectors,
                 SAMPLE_TYPE.HTTP_RESPONSES
               )}
               detectorId={getDetectorId(
-                allDetectors,
+                allSampleDetectors,
                 sampleHttpResponses.detectorName
               )}
             />
@@ -305,11 +302,11 @@ export function AnomalyDetectionOverview(props: AnomalyDetectionOverviewProps) {
               }}
               isLoadingData={isLoadingEcommerceData}
               isDataLoaded={containsSampleDetector(
-                allDetectors,
+                allSampleDetectors,
                 SAMPLE_TYPE.ECOMMERCE
               )}
               detectorId={getDetectorId(
-                allDetectors,
+                allSampleDetectors,
                 sampleEcommerce.detectorName
               )}
             />
@@ -335,11 +332,11 @@ export function AnomalyDetectionOverview(props: AnomalyDetectionOverviewProps) {
               }}
               isLoadingData={isLoadingHostHealthData}
               isDataLoaded={containsSampleDetector(
-                allDetectors,
+                allSampleDetectors,
                 SAMPLE_TYPE.HOST_HEALTH
               )}
               detectorId={getDetectorId(
-                allDetectors,
+                allSampleDetectors,
                 sampleHostHealth.detectorName
               )}
             />

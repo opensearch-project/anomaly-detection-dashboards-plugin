@@ -19,7 +19,6 @@ import { Fragment } from 'react';
 
 export interface DetectorStoppedProps {
   onStartDetector(): void;
-  onSwitchToConfiguration(): void;
 }
 
 export const DetectorStopped = (props: DetectorStoppedProps) => {
@@ -34,16 +33,9 @@ export const DetectorStopped = (props: DetectorStoppedProps) => {
       }
       actions={[
         <EuiButton
-          onClick={props.onSwitchToConfiguration}
-          style={{ width: '250px' }}
-        >
-          View detector configuration
-        </EuiButton>,
-        <EuiButton
           fill
           onClick={props.onStartDetector}
-          iconType={'play'}
-          style={{ width: '250px' }}
+          style={{ width: '200px' }}
         >
           Start detector
         </EuiButton>,

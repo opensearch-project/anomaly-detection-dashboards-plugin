@@ -83,13 +83,6 @@ export function Main(props: MainProps) {
     },
   ];
 
-  const getDefaultPage = () => {
-    if (totalRealtimeDetectors == 0 && !isLoadingDetectors) {
-      return APP_PATH.OVERVIEW;
-    }
-    return APP_PATH.DASHBOARD;
-  };
-
   return (
     <CoreServicesConsumer>
       {(core: CoreStart | null) =>

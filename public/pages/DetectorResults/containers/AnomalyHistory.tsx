@@ -423,7 +423,7 @@ export const AnomalyHistory = (props: AnomalyHistoryProps) => {
     ? bucketizedAnomalyResults
     : atomicAnomalyResults;
   const handleDateRangeChange = useCallback(
-    (startDate: number, endDate: number, dateRangeOption?: string) => {
+    (startDate: number, endDate: number) => {
       if (
         !props.isHistorical &&
         startDate < get(props, 'detector.enabledTime') &&
