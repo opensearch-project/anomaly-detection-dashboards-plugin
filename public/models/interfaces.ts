@@ -50,11 +50,14 @@ export enum OPERATORS_MAP {
 }
 
 export type UIFilter = {
-  fieldInfo: FieldInfo[];
-  operator: OPERATORS_MAP;
+  fieldInfo?: FieldInfo[];
+  operator?: OPERATORS_MAP;
   fieldValue?: string | number | null;
   fieldRangeStart?: number;
   fieldRangeEnd?: number;
+  filterType?: FILTER_TYPES;
+  query?: string;
+  label?: string;
 };
 
 export type FeatureAttributes = {
@@ -66,7 +69,7 @@ export type FeatureAttributes = {
 };
 
 export enum UNITS {
-  MINUTES = 'MINUTES',
+  MINUTES = 'Minutes',
 }
 
 export type Schedule = {
@@ -81,7 +84,7 @@ export type UiFeature = {
 };
 
 export type UiMetaData = {
-  filterType: FILTER_TYPES;
+  filterType?: FILTER_TYPES;
   filters: UIFilter[];
   features: {
     [key: string]: UiFeature;
@@ -112,6 +115,7 @@ export type Detector = {
   categoryField?: string[];
   detectionDateRange?: DetectionDateRange;
   taskId?: string;
+  taskState?: DETECTOR_STATE;
   taskProgress?: number;
   taskError?: string;
 };
@@ -153,6 +157,7 @@ export type AnomalyData = {
   plotTime?: number;
   entity?: EntityData[];
   features?: { [key: string]: FeatureAggregationData };
+  aggInterval?: string;
 };
 
 export type FeatureAggregationData = {

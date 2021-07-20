@@ -19,7 +19,6 @@ import { Fragment } from 'react';
 
 export interface DetectorStoppedProps {
   onStartDetector(): void;
-  onSwitchToConfiguration(): void;
 }
 
 export const DetectorStopped = (props: DetectorStoppedProps) => {

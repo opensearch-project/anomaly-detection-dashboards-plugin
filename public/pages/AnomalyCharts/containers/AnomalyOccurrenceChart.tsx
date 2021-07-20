@@ -32,7 +32,7 @@ interface AnomalyOccurrenceChartProps {
     dateRangeOption?: string
   ): void;
   onZoomRangeChange(startDate: number, endDate: number): void;
-  title: string;
+  title: string | React.ReactNode;
   anomalies: any[];
   bucketizedAnomalies: boolean;
   anomalySummary: any;
@@ -45,6 +45,7 @@ interface AnomalyOccurrenceChartProps {
   detector: Detector;
   monitor?: Monitor;
   isHCDetector?: boolean;
+  isHistorical?: boolean;
   selectedHeatmapCell?: HeatmapCell;
 }
 
@@ -99,6 +100,7 @@ export const AnomalyOccurrenceChart = React.memo(
           detector={props.detector}
           monitor={props.monitor}
           isHCDetector={props.isHCDetector}
+          isHistorical={props.isHistorical}
           selectedHeatmapCell={props.selectedHeatmapCell}
         />
         {props.isHCDetector && props.selectedHeatmapCell === undefined ? (
