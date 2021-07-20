@@ -417,6 +417,7 @@ export function AnomalyResults(props: AnomalyResultsProps) {
                     onConfirm={() => {
                       props.onSwitchToHistorical();
                     }}
+                    lastEnabledTime={get(detector, 'enabledTime') as number}
                   />
                 </EuiOverlayMask>
               ) : null}
@@ -542,10 +543,7 @@ export function AnomalyResults(props: AnomalyResultsProps) {
                               ? props.onStopDetector
                               : props.onStartDetector
                           }
-                          disabled={
-                            !detector?.featureAttributes ||
-                            detector?.featureAttributes.length === 0
-                          }
+                          disabled={false}
                         >
                           {detector?.enabled
                             ? 'Stop detector'

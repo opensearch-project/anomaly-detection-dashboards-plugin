@@ -26,10 +26,12 @@ import {
   EuiButtonEmpty,
   EuiButton,
 } from '@elastic/eui';
+import { convertTimestampToString } from '../../../../utils/utils';
 
 interface OutOfRangeModalProps {
   onClose(): void;
   onConfirm(): void;
+  lastEnabledTime: number;
 }
 
 export const OutOfRangeModal = (props: OutOfRangeModalProps) => {
@@ -44,11 +46,11 @@ export const OutOfRangeModal = (props: OutOfRangeModalProps) => {
         <EuiFlexGroup direction="column">
           <EuiFlexItem grow={false}>
             <EuiText>
-              <p>
-                The selected dates are not in the range from when the detector
-                last started streaming data. To see historical data, go to
-                historical analysis.
-              </p>
+              {`The selected dates are not in the range from when the detector
+                last started streaming data (${convertTimestampToString(
+                  props.lastEnabledTime
+                )}). To see historical data, go to
+                historical analysis.`}
             </EuiText>
           </EuiFlexItem>
         </EuiFlexGroup>
