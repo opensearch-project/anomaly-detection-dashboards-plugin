@@ -65,7 +65,7 @@ interface AnomalyDetectionOverviewProps {
 export function AnomalyDetectionOverview(props: AnomalyDetectionOverviewProps) {
   const core = React.useContext(CoreServicesContext) as CoreStart;
   const dispatch = useDispatch();
-  const visibleIndices = useSelector(
+  const visibleSampleIndices = useSelector(
     (state: AppState) => state.opensearch.indices
   );
 
@@ -129,7 +129,7 @@ export function AnomalyDetectionOverview(props: AnomalyDetectionOverviewProps) {
     let errorMessage = '';
 
     // Create the index (if it doesn't exist yet)
-    if (!containsSampleIndex(visibleIndices, sampleType)) {
+    if (!containsSampleIndex(visibleSampleIndices, sampleType)) {
       await dispatch(createIndex(indexConfig)).catch((error: any) => {
         errorDuringAction = true;
         errorMessage =
