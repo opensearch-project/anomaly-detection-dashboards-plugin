@@ -38,7 +38,7 @@ export const BREADCRUMBS = Object.freeze({
   SAMPLE_DETECTORS: { text: 'Sample detectors', href: '#/sample-detectors' },
   CREATE_DETECTOR: { text: 'Create detector' },
   EDIT_DETECTOR: { text: 'Edit detector' },
-  DASHBOARD: { text: 'Dashboard', href: '#/' },
+  DASHBOARD: { text: 'Dashboard', href: '#/dashboard' },
   EDIT_MODEL_CONFIGURATION: { text: 'Edit model configuration' },
   HISTORICAL_DETECTORS: {
     text: 'Historical detectors',
@@ -60,6 +60,8 @@ export const APP_PATH = {
   CREATE_HISTORICAL_DETECTOR: '/create-historical-detector/',
   EDIT_HISTORICAL_DETECTOR: '/historical-detectors/:detectorId/edit',
   HISTORICAL_DETECTOR_DETAIL: '/historical-detectors/:detectorId/details',
+  CREATE_DETECTOR_STEPS: '/create-detector-steps',
+  OVERVIEW: '/overview',
 };
 
 export const OPENSEARCH_DASHBOARDS_PATH = {
@@ -83,6 +85,9 @@ export const MAX_DETECTORS = 1000;
 
 export const MAX_ANOMALIES = 10000;
 
+export const MAX_HISTORICAL_AGG_RESULTS = 10000;
+
+// TODO: get this value from index settings since it is dynamic
 export const MAX_FEATURE_NUM = 5;
 
 export const MAX_FEATURE_NAME_SIZE = 64;

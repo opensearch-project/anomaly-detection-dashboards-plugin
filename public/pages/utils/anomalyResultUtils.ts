@@ -40,7 +40,10 @@ import {
   ENTITY_VALUE_PATH_FIELD,
   KEY_FIELD,
   MIN_IN_MILLI_SECS,
+  HOUR_IN_MILLI_SECS,
+  DAY_IN_MILLI_SECS,
   SORT_DIRECTION,
+  WEEK_IN_MILLI_SECS,
 } from '../../../server/utils/constants';
 import { toFixedNumberForAnomaly } from '../../../server/utils/helpers';
 import {
@@ -68,6 +71,10 @@ import {
   TOP_ANOMALY_GRADE_SORT_AGGS,
   TOP_ENTITIES_FIELD,
   TOP_ENTITY_AGGS,
+  ANOMALY_AGG,
+  AGGREGATED_ANOMALIES,
+  MIN_END_TIME,
+  MAX_END_TIME,
 } from './constants';
 import { dateFormatter, minuteDateFormatter } from './helpers';
 
@@ -307,7 +314,7 @@ export const getAnomalySummaryQuery = (
 ) => {
   const termField =
     isHistorical && taskId ? { task_id: taskId } : { detector_id: detectorId };
-  return {
+  const requestBody = {
     size: MAX_ANOMALIES,
     query: {
       bool: {
@@ -402,6 +409,21 @@ export const getAnomalySummaryQuery = (
       includes: RETURNED_AD_RESULT_FIELDS,
     },
   };
+
+  if (!isHistorical) {
+    requestBody.query.bool = {
+      ...requestBody.query.bool,
+      ...{
+        must_not: {
+          exists: {
+            field: 'task_id',
+          },
+        },
+      },
+    };
+  }
+
+  return requestBody;
 };
 
 export const getBucketizedAnomalyResultsQuery = (
@@ -417,7 +439,7 @@ export const getBucketizedAnomalyResultsQuery = (
   const fixedInterval = Math.ceil(
     (endTime - startTime) / (MIN_IN_MILLI_SECS * MAX_DATA_POINTS)
   );
-  return {
+  const requestBody = {
     size: 0,
     query: {
       bool: {
@@ -490,6 +512,21 @@ export const getBucketizedAnomalyResultsQuery = (
       },
     },
   };
+
+  if (!isHistorical) {
+    requestBody.query.bool = {
+      ...requestBody.query.bool,
+      ...{
+        must_not: {
+          exists: {
+            field: 'task_id',
+          },
+        },
+      },
+    };
+  }
+
+  return requestBody;
 };
 
 export const parseBucketizedAnomalyResults = (result: any): Anomalies => {
@@ -954,9 +991,14 @@ export const getTopAnomalousEntitiesQuery = (
   endTime: number,
   detectorId: string,
   size: number,
-  sortType: AnomalyHeatmapSortType
+  sortType: AnomalyHeatmapSortType,
+  isHistorical?: boolean,
+  taskId?: string
 ) => {
-  return {
+  const termField =
+    isHistorical && taskId ? { task_id: taskId } : { detector_id: detectorId };
+
+  const requestBody = {
     size: 0,
     query: {
       bool: {
@@ -977,9 +1019,7 @@ export const getTopAnomalousEntitiesQuery = (
             },
           },
           {
-            term: {
-              detector_id: detectorId,
-            },
+            term: termField,
           },
         ],
       },
@@ -1034,6 +1074,21 @@ export const getTopAnomalousEntitiesQuery = (
       },
     },
   };
+
+  if (!isHistorical) {
+    requestBody.query.bool = {
+      ...requestBody.query.bool,
+      ...{
+        must_not: {
+          exists: {
+            field: 'task_id',
+          },
+        },
+      },
+    };
+  }
+
+  return requestBody;
 };
 
 export const parseTopEntityAnomalySummaryResults = (
@@ -1075,8 +1130,12 @@ export const getEntityAnomalySummariesQuery = (
   detectorId: string,
   size: number,
   categoryField: string,
-  entityValue: string
+  entityValue: string,
+  isHistorical?: boolean,
+  taskId?: string
 ) => {
+  const termField =
+    isHistorical && taskId ? { task_id: taskId } : { detector_id: detectorId };
   const fixedInterval = Math.max(
     Math.ceil((endTime - startTime) / (size * MIN_IN_MILLI_SECS)),
     1
@@ -1087,7 +1146,7 @@ export const getEntityAnomalySummariesQuery = (
   // if startTime is not divisible by fixedInterval, there will be remainder,
   // this can be offset for bucket_key
   const offsetInMillisec = startTime % (fixedInterval * MIN_IN_MILLI_SECS);
-  return {
+  const requestBody = {
     size: 0,
     query: {
       bool: {
@@ -1108,9 +1167,7 @@ export const getEntityAnomalySummariesQuery = (
             },
           },
           {
-            term: {
-              detector_id: detectorId,
-            },
+            term: termField,
           },
           {
             nested: {
@@ -1161,6 +1218,23 @@ export const getEntityAnomalySummariesQuery = (
       },
     },
   };
+
+  // If querying RT results: remove any results that include a task_id, as this indicates
+  // a historical result from a historical task.
+  if (!isHistorical) {
+    requestBody.query.bool = {
+      ...requestBody.query.bool,
+      ...{
+        must_not: {
+          exists: {
+            field: 'task_id',
+          },
+        },
+      },
+    };
+  }
+
+  return requestBody;
 };
 
 export const parseEntityAnomalySummaryResults = (
@@ -1189,4 +1263,165 @@ export const parseEntityAnomalySummaryResults = (
     anomalySummaries: anomalySummaries,
   } as EntityAnomalySummaries;
   return enityAnomalySummaries;
+};
+
+export const getAnomalyDataRangeQuery = (
+  startTime: number,
+  endTime: number,
+  taskId: string
+) => {
+  return {
+    size: 0,
+    query: {
+      bool: {
+        filter: [
+          {
+            range: {
+              [AD_DOC_FIELDS.ANOMALY_GRADE]: {
+                gte: 0,
+              },
+            },
+          },
+          {
+            range: {
+              data_end_time: {
+                gte: startTime,
+                lte: endTime,
+              },
+            },
+          },
+          {
+            term: {
+              task_id: taskId,
+            },
+          },
+        ],
+      },
+    },
+    aggs: {
+      [MIN_END_TIME]: {
+        min: {
+          field: AD_DOC_FIELDS.DATA_END_TIME,
+        },
+      },
+      [MAX_END_TIME]: {
+        max: {
+          field: AD_DOC_FIELDS.DATA_END_TIME,
+        },
+      },
+    },
+  };
+};
+
+export const getHistoricalAggQuery = (
+  startTime: number,
+  endTime: number,
+  taskId: string,
+  anomalyAgg: ANOMALY_AGG
+) => {
+  // Need to calculate timezone offset before bucketing into days/months/weeks.
+  const timezoneAsIANAString = Intl.DateTimeFormat().resolvedOptions().timeZone;
+
+  return {
+    size: MAX_ANOMALIES,
+    query: {
+      bool: {
+        filter: [
+          {
+            range: {
+              [AD_DOC_FIELDS.ANOMALY_GRADE]: {
+                gt: 0,
+              },
+            },
+          },
+          {
+            range: {
+              data_end_time: {
+                gte: startTime,
+                lte: endTime,
+              },
+            },
+          },
+          {
+            term: {
+              task_id: taskId,
+            },
+          },
+        ],
+      },
+    },
+    aggs: {
+      [AGGREGATED_ANOMALIES]: {
+        date_histogram: {
+          field: AD_DOC_FIELDS.DATA_END_TIME,
+          calendar_interval: anomalyAgg,
+          time_zone: timezoneAsIANAString,
+          extended_bounds: {
+            min: startTime,
+            max: endTime,
+          },
+        },
+        aggs: {
+          [MAX_ANOMALY_AGGS]: {
+            max: {
+              field: AD_DOC_FIELDS.ANOMALY_GRADE,
+            },
+          },
+        },
+      },
+    },
+  };
+};
+
+export const parseHistoricalAggregatedAnomalies = (
+  result: any,
+  anomalyAgg: ANOMALY_AGG
+) => {
+  const resultBuckets = get(
+    result,
+    `response.aggregations.${AGGREGATED_ANOMALIES}.buckets`,
+    []
+  );
+  let anomalies = [] as AnomalyData[];
+  let endTimeOffset = 0;
+  let prefix = '';
+  let dateFormat = '';
+
+  switch (anomalyAgg) {
+    case ANOMALY_AGG.DAILY: {
+      endTimeOffset = DAY_IN_MILLI_SECS;
+      prefix = '';
+      dateFormat = 'MM/DD/YY';
+      break;
+    }
+    case ANOMALY_AGG.WEEKLY: {
+      endTimeOffset = WEEK_IN_MILLI_SECS;
+      prefix = 'Week of ';
+      dateFormat = 'MM/DD/YY';
+      break;
+    }
+    case ANOMALY_AGG.MONTHLY: {
+      // Approximate end time since months don't have even days
+      endTimeOffset = DAY_IN_MILLI_SECS * 30;
+      prefix = '';
+      dateFormat = 'MMM YYYY';
+    }
+  }
+  const plotTimeOffset = endTimeOffset / 2;
+
+  resultBuckets.forEach((bucket: any) => {
+    const timestamp = get(bucket, 'key');
+    let maxGrade = get(bucket, `${MAX_ANOMALY_AGGS}.value`);
+    anomalies.push({
+      anomalyGrade: maxGrade !== null ? maxGrade : 0,
+      //@ts-ignore
+      confidence: undefined,
+      startTime: timestamp,
+      endTime: timestamp + endTimeOffset,
+      plotTime: timestamp + plotTimeOffset,
+      aggInterval: prefix + moment(timestamp).format(dateFormat),
+    });
+  });
+
+  return anomalies;
 };
