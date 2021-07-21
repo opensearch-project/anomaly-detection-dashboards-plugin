@@ -67,7 +67,7 @@ export const EmptyHistoricalDetectorResults = (
             long historical data windows (weeks or months). You can identify
             anomaly patterns, seasonality, and trends.{' '}
             <EuiLink
-              href={`${BASE_DOCS_LINK}/ad/#step-6-analyze-historical-data`}
+              href={`${BASE_DOCS_LINK}/ad/index/#step-6-analyze-historical-data`}
               target="_blank"
             >
               Learn more &nbsp;

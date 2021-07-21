@@ -39,7 +39,7 @@ import {
   FeatureAttributes,
 } from '../../../models/interfaces';
 import { get, isEmpty, sortBy } from 'lodash';
-import { PLUGIN_NAME, BASE_DOCS_LINK } from '../../../utils/constants';
+import { PLUGIN_NAME } from '../../../utils/constants';
 import ContentPanel from '../../../components/ContentPanel/ContentPanel';
 import { CodeModal } from '../components/CodeModal/CodeModal';
 import { getTitleWithCount } from '../../../utils/utils';
