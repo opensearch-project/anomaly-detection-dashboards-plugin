@@ -1,4 +1,15 @@
 /*
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * The OpenSearch Contributors require contributions made to
+ * this file be licensed under the Apache-2.0 license or a
+ * compatible open source license.
+ *
+ * Modifications Copyright OpenSearch Contributors. See
+ * GitHub history for details.
+ */
+
+/*
  * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
@@ -25,7 +36,7 @@ import {
 } from '../../../models/interfaces';
 import { v4 as uuidv4 } from 'uuid';
 import { get, forOwn, cloneDeep, isEmpty } from 'lodash';
-import { DataTypes } from '../../../redux/reducers/elasticsearch';
+import { DataTypes } from '../../../redux/reducers/opensearch';
 import {
   ModelConfigurationFormikValues,
   FeaturesFormikValues,
@@ -245,7 +256,7 @@ export function modelConfigurationToFormik(
   return {
     ...initialValues,
     featureList: featuresToFormik(detector),
-    categoryFieldEnabled: !isEmpty(get(detector, 'categoryField', []))
+    categoryFieldEnabled: !isEmpty(get(detector, 'categoryField', [])),
     categoryField: get(detector, 'categoryField', []),
     shingleSize: get(detector, 'shingleSize', 4),
   };

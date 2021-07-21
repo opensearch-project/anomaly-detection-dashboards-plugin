@@ -1,4 +1,15 @@
 /*
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * The OpenSearch Contributors require contributions made to
+ * this file be licensed under the Apache-2.0 license or a
+ * compatible open source license.
+ *
+ * Modifications Copyright OpenSearch Contributors. See
+ * GitHub history for details.
+ */
+
+/*
  * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
@@ -66,9 +77,6 @@ export const DataFilterList = (props: DataFilterListProps) => {
               hint={[
                 'Choose a subset of your data source to focus your data stream and reduce noisy data.',
               ]}
-              hintLink={
-                'https://opendistro.github.io/for-elasticsearch-docs/docs/ad/'
-              }
             >
               <Fragment>
                 <EuiSpacer size="m" />
@@ -86,10 +94,18 @@ export const DataFilterList = (props: DataFilterListProps) => {
                 ) : null}
                 <EuiFlexGroup direction="row" gutterSize="xs">
                   <EuiFlexItem grow={false}>
-                    <EuiIcon
-                      type="filter"
-                      style={{ marginRight: '8px', marginTop: '2px' }}
-                    />
+                    {values.filters?.length === 0 ||
+                    (values.filters?.length === 1 && isCreatingNewFilter) ? (
+                      <EuiIcon
+                        type="filter"
+                        style={{ marginRight: '-4px', marginTop: '2px' }}
+                      />
+                    ) : (
+                      <EuiIcon
+                        type="filter"
+                        style={{ marginRight: '8px', marginTop: '2px' }}
+                      />
+                    )}
                   </EuiFlexItem>
                   {values.filters.map((filter: UIFilter, index: number) => {
                     return (

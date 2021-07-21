@@ -1,4 +1,15 @@
 /*
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * The OpenSearch Contributors require contributions made to
+ * this file be licensed under the Apache-2.0 license or a
+ * compatible open source license.
+ *
+ * Modifications Copyright OpenSearch Contributors. See
+ * GitHub history for details.
+ */
+
+/*
  * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
@@ -304,7 +315,7 @@ export function HistoricalDetectorList(props: HistoricalDetectorListProps) {
                 itemId here is used to keep track of the selected detectors and render appropriately.
                 Because the item id is dependent on the current time (see getItemID() above), all selected
                 detectors will be deselected once new detectors are retrieved because the page will
-                re-render with a new timestamp. This logic is borrowed from Alerting Kibana plugins'
+                re-render with a new timestamp. This logic is borrowed from Alerting Dashboard plugin's
                 monitors list page.
               */
             itemId={getItemId}

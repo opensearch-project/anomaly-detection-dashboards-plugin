@@ -1,4 +1,15 @@
 /*
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * The OpenSearch Contributors require contributions made to
+ * this file be licensed under the Apache-2.0 license or a
+ * compatible open source license.
+ *
+ * Modifications Copyright OpenSearch Contributors. See
+ * GitHub history for details.
+ */
+
+/*
  * Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
@@ -19,9 +30,9 @@ import { useDispatch, useSelector } from 'react-redux';
 import { Detector } from '../../../models/interfaces';
 import { AppState } from '../../../redux/reducers';
 import { getDetector } from '../../../redux/reducers/ad';
-import { getMappings } from '../../../redux/reducers/elasticsearch';
+import { getMappings } from '../../../redux/reducers/opensearch';
 
-//A hook which gets required info in order to display a detector on kibana.
+//A hook which gets required info in order to display a detector on OpenSearch Dashboards.
 // 1. Get detector
 // 2. Gets index mapping
 export const useFetchDetectorInfo = (
@@ -41,7 +52,7 @@ export const useFetchDetectorInfo = (
     (state: AppState) => state.ad.requesting
   );
   const isIndicesRequesting = useSelector(
-    (state: AppState) => state.elasticsearch.requesting
+    (state: AppState) => state.opensearch.requesting
   );
   const selectedIndices = get(detector, 'indices.0', '');
   useEffect(() => {

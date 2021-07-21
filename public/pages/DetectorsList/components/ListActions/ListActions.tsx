@@ -1,4 +1,15 @@
 /*
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * The OpenSearch Contributors require contributions made to
+ * this file be licensed under the Apache-2.0 license or a
+ * compatible open source license.
+ *
+ * Modifications Copyright OpenSearch Contributors. See
+ * GitHub history for details.
+ */
+
+/*
  * Copyright 2020 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
@@ -62,7 +73,7 @@ export const ListActions = (props: ListActionsProps) => {
               disabled={props.isStartDisabled}
               onClick={props.onStartDetectors}
             >
-              Start
+              Start real-time detectors
             </EuiContextMenuItem>
 
             <EuiContextMenuItem
@@ -71,15 +82,16 @@ export const ListActions = (props: ListActionsProps) => {
               disabled={props.isStopDisabled}
               onClick={props.onStopDetectors}
             >
-              Stop
+              Stop real-time detectors
             </EuiContextMenuItem>
 
             <EuiContextMenuItem
               key="deleteDetectors"
               data-test-subj="deleteDetectors"
               onClick={props.onDeleteDetectors}
+              style={{ color: '#FF6666' }}
             >
-              Delete
+              Delete detectors
             </EuiContextMenuItem>
           </EuiContextMenuPanel>
         </EuiPopover>

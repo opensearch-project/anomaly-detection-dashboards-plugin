@@ -1,4 +1,15 @@
 /*
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * The OpenSearch Contributors require contributions made to
+ * this file be licensed under the Apache-2.0 license or a
+ * compatible open source license.
+ *
+ * Modifications Copyright OpenSearch Contributors. See
+ * GitHub history for details.
+ */
+
+/*
  * Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
@@ -39,7 +50,7 @@ import {
   matchDetector,
   getDetectorCount,
 } from '../../../redux/reducers/ad';
-import { getIndices } from '../../../redux/reducers/elasticsearch';
+import { getIndices } from '../../../redux/reducers/opensearch';
 import { AppState } from '../../../redux/reducers';
 import { BREADCRUMBS, MAX_DETECTORS } from '../../../utils/constants';
 import { getErrorMessage, validateDetectorName } from '../../../utils/utils';
@@ -53,8 +64,8 @@ import { Detector } from '../../../models/interfaces';
 import { Settings } from '../components/Settings/Settings';
 import { useHideSideNavBar } from '../../main/hooks/useHideSideNavBar';
 import { CatIndex } from '../../../../server/models/types';
-import { SampleDataCallout } from '../../SampleData/components/SampleDataCallout/SampleDataCallout';
-import { containsDetectorsIndex } from '../../SampleData/utils/helpers';
+import { SampleDataCallout } from '../../Overview/components/SampleDataCallout/SampleDataCallout';
+import { containsDetectorsIndex } from '../../Overview/utils/helpers';
 import { clearModelConfiguration } from './utils/helpers';
 import { prettifyErrorMessage } from '../../../../server/utils/helpers';
 import { CoreServicesContext } from '../../../components/CoreServices/CoreServices';
@@ -79,7 +90,7 @@ export function CreateDetector(props: CreateADProps) {
     false
   );
   const visibleIndices = useSelector(
-    (state: AppState) => state.elasticsearch.indices
+    (state: AppState) => state.opensearch.indices
   ) as CatIndex[];
   const [newIndexSelected, setNewIndexSelected] = useState<boolean>(false);
 

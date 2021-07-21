@@ -1,4 +1,15 @@
 /*
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * The OpenSearch Contributors require contributions made to
+ * this file be licensed under the Apache-2.0 license or a
+ * compatible open source license.
+ *
+ * Modifications Copyright OpenSearch Contributors. See
+ * GitHub history for details.
+ */
+
+/*
  * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
@@ -13,14 +24,14 @@
  * permissions and limitations under the License.
  */
 
-import { EuiComboBox, EuiCallOut, EuiSpacer, EuiText } from '@elastic/eui';
+import { EuiComboBox, EuiCallOut, EuiSpacer } from '@elastic/eui';
 import { Field, FieldProps, FormikProps } from 'formik';
 import { debounce, get, isEmpty } from 'lodash';
 import React, { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import ContentPanel from '../../../../components/ContentPanel/ContentPanel';
 import { AppState } from '../../../../redux/reducers';
-import { getPrioritizedIndices } from '../../../../redux/reducers/elasticsearch';
+import { getPrioritizedIndices } from '../../../../redux/reducers/opensearch';
 import { FormattedFormRow } from '../../../../components/FormattedFormRow/FormattedFormRow';
 import { sanitizeSearchText } from '../../../utils/helpers';
 import { getError, isInvalid, required } from '../../../../utils/utils';
@@ -32,9 +43,7 @@ interface TimestampProps {
 
 export function Timestamp(props: TimestampProps) {
   const dispatch = useDispatch();
-  const elasticsearchState = useSelector(
-    (state: AppState) => state.elasticsearch
-  );
+  const opensearchState = useSelector((state: AppState) => state.opensearch);
   const selectedIndex = get(props, 'formikProps.values.index.0.label', '');
   const isRemoteIndex = selectedIndex.includes(':');
   const [queryText, setQueryText] = useState('');
@@ -48,7 +57,7 @@ export function Timestamp(props: TimestampProps) {
   }, 300);
 
   const dateFields = Array.from(
-    get(elasticsearchState, 'dataTypes.date', []) as string[]
+    get(opensearchState, 'dataTypes.date', []) as string[]
   );
 
   const timeStampFieldOptions = isEmpty(dateFields)
@@ -59,11 +68,7 @@ export function Timestamp(props: TimestampProps) {
     <ContentPanel
       title="Timestamp"
       titleSize="s"
-      subTitle={
-        <EuiText className="content-panel-subTitle">
-          Select the time field you want to use for the time filter.
-        </EuiText>
-      }
+      subTitle="Select the time field you want to use for the time filter."
     >
       {isRemoteIndex ? (
         <div>

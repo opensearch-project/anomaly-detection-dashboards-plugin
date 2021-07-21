@@ -1,4 +1,15 @@
 /*
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * The OpenSearch Contributors require contributions made to
+ * this file be licensed under the Apache-2.0 license or a
+ * compatible open source license.
+ *
+ * Modifications Copyright OpenSearch Contributors. See
+ * GitHub history for details.
+ */
+
+/*
  * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
@@ -22,6 +33,7 @@ import {
 } from '@elastic/eui';
 import React, { Fragment, useState } from 'react';
 import { Detector } from '../../../../models/interfaces';
+import { BASE_DOCS_LINK } from '../../../../utils/constants';
 import { HistoricalRangeModal } from '../HistoricalRangeModal';
 
 interface EmptyHistoricalDetectorResultsProps {
@@ -55,7 +67,7 @@ export const EmptyHistoricalDetectorResults = (
             long historical data windows (weeks or months). You can identify
             anomaly patterns, seasonality, and trends.{' '}
             <EuiLink
-              href="https://opendistro.github.io/for-elasticsearch-docs/docs/ad/#step-6-analyze-historical-data"
+              href={`${BASE_DOCS_LINK}/ad/#step-6-analyze-historical-data`}
               target="_blank"
             >
               Learn more &nbsp;

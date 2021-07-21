@@ -1,4 +1,15 @@
 /*
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * The OpenSearch Contributors require contributions made to
+ * this file be licensed under the Apache-2.0 license or a
+ * compatible open source license.
+ *
+ * Modifications Copyright OpenSearch Contributors. See
+ * GitHub history for details.
+ */
+
+/*
  * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
@@ -20,7 +31,7 @@ import React, { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import ContentPanel from '../../../../../../components/ContentPanel/ContentPanel';
 import { AppState } from '../../../../../../redux/reducers';
-import { getPrioritizedIndices } from '../../../../../../redux/reducers/elasticsearch';
+import { getPrioritizedIndices } from '../../../../../../redux/reducers/opensearch';
 import { FormattedFormRow } from '../../../../../createDetector/components/FormattedFormRow/FormattedFormRow';
 import { sanitizeSearchText } from '../../../../../utils/helpers';
 import { getError, isInvalid, required } from '../../../../../../utils/utils';
@@ -32,9 +43,7 @@ interface TimestampProps {
 
 export function Timestamp(props: TimestampProps) {
   const dispatch = useDispatch();
-  const elasticsearchState = useSelector(
-    (state: AppState) => state.elasticsearch
-  );
+  const opensearchState = useSelector((state: AppState) => state.opensearch);
   const selectedIndex = get(props.formikProps, 'values.index.0.label', '');
   const isIndexSelected = selectedIndex && selectedIndex.length > 0;
   const isRemoteIndex = selectedIndex.includes(':');
@@ -50,7 +59,7 @@ export function Timestamp(props: TimestampProps) {
   }, 300);
 
   const dateFields = Array.from(
-    get(elasticsearchState, 'dataTypes.date', []) as string[]
+    get(opensearchState, 'dataTypes.date', []) as string[]
   );
 
   const timeStampFieldOptions = isEmpty(dateFields)

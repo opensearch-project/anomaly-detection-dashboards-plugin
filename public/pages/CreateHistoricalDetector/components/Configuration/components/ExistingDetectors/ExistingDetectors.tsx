@@ -1,4 +1,15 @@
 /*
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * The OpenSearch Contributors require contributions made to
+ * this file be licensed under the Apache-2.0 license or a
+ * compatible open source license.
+ *
+ * Modifications Copyright OpenSearch Contributors. See
+ * GitHub history for details.
+ */
+
+/*
  * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
@@ -30,7 +41,7 @@ import {
   getDetectorList,
   getHistoricalDetectorList,
 } from '../../../../../../redux/reducers/ad';
-import { getMappings } from '../../../../../../redux/reducers/elasticsearch';
+import { getMappings } from '../../../../../../redux/reducers/opensearch';
 import { GET_ALL_DETECTORS_QUERY_PARAMS } from '../../../../../utils/constants';
 import { getDetector } from '../../../../../../redux/reducers/ad';
 import { FormattedFormRow } from '../../../../../createDetector/components/FormattedFormRow/FormattedFormRow';
