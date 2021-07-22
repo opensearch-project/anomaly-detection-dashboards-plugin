@@ -1,4 +1,15 @@
 /*
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * The OpenSearch Contributors require contributions made to
+ * this file be licensed under the Apache-2.0 license or a
+ * compatible open source license.
+ *
+ * Modifications Copyright OpenSearch Contributors. See
+ * GitHub history for details.
+ */
+
+/*
  * Copyright 2020 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
@@ -12,31 +23,31 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-import { schema, TypeOf } from '@kbn/config-schema';
+import { schema, TypeOf } from '@osd/config-schema';
 import {
   PluginConfigDescriptor,
   PluginInitializerContext,
 } from '../../../src/core/server';
-import { AnomalyDetectionKibanaPlugin } from './plugin';
+import { AnomalyDetectionOpenSearchDashboardsPlugin } from './plugin';
 
 export const configSchema = schema.object({
   enabled: schema.boolean({ defaultValue: true }),
 });
 
-export type AnomalyDetectionKibanaPluginConfigType = TypeOf<
+export type AnomalyDetectionOpenSearchDashboardsPluginConfigType = TypeOf<
   typeof configSchema
 >;
 
-export const config: PluginConfigDescriptor<AnomalyDetectionKibanaPluginConfigType> = {
+export const config: PluginConfigDescriptor<AnomalyDetectionOpenSearchDashboardsPluginConfigType> = {
   exposeToBrowser: {
     enabled: true,
   },
   schema: configSchema,
 };
 
-export interface AnomalyDetectionKibanaPluginSetup {}
-export interface AnomalyDetectionKibanaPluginStart {}
+export interface AnomalyDetectionOpenSearchDashboardsPluginSetup {}
+export interface AnomalyDetectionOpenSearchDashboardsPluginStart {}
 
 export function plugin(initializerContext: PluginInitializerContext) {
-  return new AnomalyDetectionKibanaPlugin(initializerContext);
+  return new AnomalyDetectionOpenSearchDashboardsPlugin(initializerContext);
 }

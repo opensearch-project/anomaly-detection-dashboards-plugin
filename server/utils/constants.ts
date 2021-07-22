@@ -1,4 +1,15 @@
 /*
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * The OpenSearch Contributors require contributions made to
+ * this file be licensed under the Apache-2.0 license or a
+ * compatible open source license.
+ *
+ * Modifications Copyright OpenSearch Contributors. See
+ * GitHub history for details.
+ */
+
+/*
  * Copyright 2020 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
@@ -15,8 +26,8 @@
 
 import { ADApis, DefaultHeaders } from '../models/interfaces';
 
-export const AD_API_ROUTE_PREFIX = '/_opendistro/_anomaly_detection';
-export const ALERTING_API_ROUTE_PREFIX = '/_opendistro/_alerting';
+export const AD_API_ROUTE_PREFIX = '/_plugins/_anomaly_detection';
+export const ALERTING_API_ROUTE_PREFIX = '/_plugins/_alerting';
 
 export const API: ADApis = {
   DETECTOR_BASE: `${AD_API_ROUTE_PREFIX}/detectors`,
@@ -26,7 +37,7 @@ export const API: ADApis = {
 export const DEFAULT_HEADERS: DefaultHeaders = {
   'Content-Type': 'application/json',
   Accept: 'application/json',
-  'User-Agent': 'Kibana',
+  'User-Agent': 'OpenSearch Dashboards',
 };
 
 export const SEC_IN_MILLI_SECS = 1000;
@@ -95,7 +106,8 @@ export const DOC_COUNT_FIELD = 'doc_count';
 export const KEY_FIELD = 'key';
 
 export const STACK_TRACE_PATTERN = '.java:';
-export const ES_EXCEPTION_PREFIX = 'org.elasticsearch.ElasticsearchException: ';
+export const OPENSEARCH_EXCEPTION_PREFIX =
+  'org.opensearch.OpenSearchException: ';
 
 export const REALTIME_TASK_TYPE_PREFIX = 'REALTIME';
 export const HISTORICAL_TASK_TYPE_PREFIX = 'HISTORICAL';

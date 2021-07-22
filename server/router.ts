@@ -1,4 +1,15 @@
 /*
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * The OpenSearch Contributors require contributions made to
+ * this file be licensed under the Apache-2.0 license or a
+ * compatible open source license.
+ *
+ * Modifications Copyright OpenSearch Contributors. See
+ * GitHub history for details.
+ */
+
+/*
  * Copyright 2020 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
@@ -16,17 +27,17 @@
 import {
   IRouter,
   RequestHandlerContext,
-  KibanaRequest,
-  KibanaResponseFactory,
-  IKibanaResponse,
+  OpenSearchDashboardsRequest,
+  OpenSearchDashboardsResponseFactory,
+  IOpenSearchDashboardsResponse,
 } from '../../../src/core/server';
-import { schema } from '@kbn/config-schema';
+import { schema } from '@osd/config-schema';
 
 type RouteHandler = (
   context: RequestHandlerContext,
-  request: KibanaRequest,
-  response: KibanaResponseFactory
-) => Promise<IKibanaResponse<any>>;
+  request: OpenSearchDashboardsRequest,
+  response: OpenSearchDashboardsResponseFactory
+) => Promise<IOpenSearchDashboardsResponse<any>>;
 
 type Route = (path: string, handler: RouteHandler) => Router;
 
@@ -43,8 +54,8 @@ export default (iRouter: IRouter, basePath: String): Router => {
   }
   const requestHandler = (handler: RouteHandler) => async (
     context: RequestHandlerContext,
-    request: KibanaRequest,
-    response: KibanaResponseFactory
+    request: OpenSearchDashboardsRequest,
+    response: OpenSearchDashboardsResponseFactory
   ) => {
     try {
       return await handler(context, request, response);

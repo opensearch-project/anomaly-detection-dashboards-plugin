@@ -1,4 +1,15 @@
 /*
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * The OpenSearch Contributors require contributions made to
+ * this file be licensed under the Apache-2.0 license or a
+ * compatible open source license.
+ *
+ * Modifications Copyright OpenSearch Contributors. See
+ * GitHub history for details.
+ */
+
+/*
  * Copyright 2020 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
@@ -110,9 +121,9 @@ export default class AdService {
 
   deleteDetector = async (
     context: RequestHandlerContext,
-    request: KibanaRequest,
-    kibanaResponse: KibanaResponseFactory
-  ): Promise<IKibanaResponse<any>> => {
+    request: OpenSearchDashboardsRequest,
+    opensearchDashboardsResponse: OpenSearchDashboardsResponseFactory
+  ): Promise<IOpenSearchDashboardsResponse<any>> => {
     try {
       const { detectorId } = request.params as { detectorId: string };
       const response = await this.client
@@ -120,7 +131,7 @@ export default class AdService {
         .callAsCurrentUser('ad.deleteDetector', {
           detectorId,
         });
-      return kibanaResponse.ok({
+      return opensearchDashboardsResponse.ok({
         body: {
           ok: true,
           response: response,
@@ -128,7 +139,7 @@ export default class AdService {
       });
     } catch (err) {
       console.log('Anomaly detector - deleteDetector', err);
-      return kibanaResponse.ok({
+      return opensearchDashboardsResponse.ok({
         body: {
           ok: false,
           error: getErrorMessage(err),
@@ -139,11 +150,10 @@ export default class AdService {
 
   previewDetector = async (
     context: RequestHandlerContext,
-    request: KibanaRequest,
-    kibanaResponse: KibanaResponseFactory
-  ): Promise<IKibanaResponse<any>> => {
+    request: OpenSearchDashboardsRequest,
+    opensearchDashboardsResponse: OpenSearchDashboardsResponseFactory
+  ): Promise<IOpenSearchDashboardsResponse<any>> => {
     try {
-      const { detectorId } = request.params as { detectorId: string };
       const requestBody = JSON.stringify(
         convertPreviewInputKeysToSnakeCase(request.body)
       );
@@ -153,7 +163,7 @@ export default class AdService {
           body: requestBody,
         });
       const transformedKeys = mapKeysDeep(response, toCamel);
-      return kibanaResponse.ok({
+      return opensearchDashboardsResponse.ok({
         body: {
           ok: true,
           //@ts-ignore
@@ -162,7 +172,7 @@ export default class AdService {
       });
     } catch (err) {
       console.log('Anomaly detector - previewDetector', err);
-      return kibanaResponse.ok({
+      return opensearchDashboardsResponse.ok({
         body: {
           ok: false,
           error: getErrorMessage(err),
@@ -173,9 +183,9 @@ export default class AdService {
 
   putDetector = async (
     context: RequestHandlerContext,
-    request: KibanaRequest,
-    kibanaResponse: KibanaResponseFactory
-  ): Promise<IKibanaResponse<any>> => {
+    request: OpenSearchDashboardsRequest,
+    opensearchDashboardsResponse: OpenSearchDashboardsResponseFactory
+  ): Promise<IOpenSearchDashboardsResponse<any>> => {
     try {
       const { detectorId } = request.params as { detectorId: string };
       //@ts-ignore
@@ -211,7 +221,7 @@ export default class AdService {
         primaryTerm: response._primary_term,
         seqNo: response._seq_no,
       };
-      return kibanaResponse.ok({
+      return opensearchDashboardsResponse.ok({
         body: {
           ok: true,
           response: convertDetectorKeysToCamelCase(resp) as Detector,
@@ -219,7 +229,7 @@ export default class AdService {
       });
     } catch (err) {
       console.log('Anomaly detector - PutDetector', err);
-      return kibanaResponse.ok({
+      return opensearchDashboardsResponse.ok({
         body: {
           ok: false,
           error: getErrorMessage(err),
@@ -230,9 +240,9 @@ export default class AdService {
 
   getDetector = async (
     context: RequestHandlerContext,
-    request: KibanaRequest,
-    kibanaResponse: KibanaResponseFactory
-  ): Promise<IKibanaResponse<any>> => {
+    request: OpenSearchDashboardsRequest,
+    opensearchDashboardsResponse: OpenSearchDashboardsResponseFactory
+  ): Promise<IOpenSearchDashboardsResponse<any>> => {
     try {
       const { detectorId } = request.params as { detectorId: string };
       const response = await this.client
@@ -255,7 +265,7 @@ export default class AdService {
         initProgress: getTaskInitProgress(response.realtime_detection_task),
       };
 
-      return kibanaResponse.ok({
+      return opensearchDashboardsResponse.ok({
         body: {
           ok: true,
           response: convertDetectorKeysToCamelCase(resp) as Detector,
@@ -263,7 +273,7 @@ export default class AdService {
       });
     } catch (err) {
       console.log('Anomaly detector - Unable to get detector', err);
-      return kibanaResponse.ok({
+      return opensearchDashboardsResponse.ok({
         body: {
           ok: false,
           error: getErrorMessage(err),
@@ -274,9 +284,9 @@ export default class AdService {
 
   startDetector = async (
     context: RequestHandlerContext,
-    request: KibanaRequest,
-    kibanaResponse: KibanaResponseFactory
-  ): Promise<IKibanaResponse<any>> => {
+    request: OpenSearchDashboardsRequest,
+    opensearchDashboardsResponse: OpenSearchDashboardsResponseFactory
+  ): Promise<IOpenSearchDashboardsResponse<any>> => {
     try {
       const { detectorId } = request.params as { detectorId: string };
       //@ts-ignore
@@ -299,10 +309,8 @@ export default class AdService {
 
       const response = await this.client
         .asScoped(request)
-        .callAsCurrentUser('ad.startDetector', {
-          detectorId,
-        });
-      return kibanaResponse.ok({
+        .callAsCurrentUser(requestPath, requestParams);
+      return opensearchDashboardsResponse.ok({
         body: {
           ok: true,
           response: response,
@@ -310,7 +318,7 @@ export default class AdService {
       });
     } catch (err) {
       console.log('Anomaly detector - startDetector', err);
-      return kibanaResponse.ok({
+      return opensearchDashboardsResponse.ok({
         body: {
           ok: false,
           error: getErrorMessage(err),
@@ -321,9 +329,9 @@ export default class AdService {
 
   stopDetector = async (
     context: RequestHandlerContext,
-    request: KibanaRequest,
-    kibanaResponse: KibanaResponseFactory
-  ): Promise<IKibanaResponse<any>> => {
+    request: OpenSearchDashboardsRequest,
+    opensearchDashboardsResponse: OpenSearchDashboardsResponseFactory
+  ): Promise<IOpenSearchDashboardsResponse<any>> => {
     try {
       let { detectorId, isHistorical } = request.params as {
         detectorId: string;
@@ -339,7 +347,7 @@ export default class AdService {
         .callAsCurrentUser(requestPath, {
           detectorId,
         });
-      return kibanaResponse.ok({
+      return opensearchDashboardsResponse.ok({
         body: {
           ok: true,
           response: response,
@@ -347,7 +355,7 @@ export default class AdService {
       });
     } catch (err) {
       console.log('Anomaly detector - stopDetector', err);
-      return kibanaResponse.ok({
+      return opensearchDashboardsResponse.ok({
         body: {
           ok: false,
           error: getErrorMessage(err),
@@ -358,9 +366,9 @@ export default class AdService {
 
   getDetectorProfile = async (
     context: RequestHandlerContext,
-    request: KibanaRequest,
-    kibanaResponse: KibanaResponseFactory
-  ): Promise<IKibanaResponse<any>> => {
+    request: OpenSearchDashboardsRequest,
+    opensearchDashboardsResponse: OpenSearchDashboardsResponseFactory
+  ): Promise<IOpenSearchDashboardsResponse<any>> => {
     try {
       const { detectorId } = request.params as { detectorId: string };
       const response = await this.client
@@ -368,7 +376,7 @@ export default class AdService {
         .callAsCurrentUser('ad.detectorProfile', {
           detectorId,
         });
-      return kibanaResponse.ok({
+      return opensearchDashboardsResponse.ok({
         body: {
           ok: true,
           response,
@@ -376,7 +384,7 @@ export default class AdService {
       });
     } catch (err) {
       console.log('Anomaly detector - detectorProfile', err);
-      return kibanaResponse.ok({
+      return opensearchDashboardsResponse.ok({
         body: {
           ok: false,
           error: getErrorMessage(err),
@@ -387,9 +395,9 @@ export default class AdService {
 
   searchDetector = async (
     context: RequestHandlerContext,
-    request: KibanaRequest,
-    kibanaResponse: KibanaResponseFactory
-  ): Promise<IKibanaResponse<any>> => {
+    request: OpenSearchDashboardsRequest,
+    opensearchDashboardsResponse: OpenSearchDashboardsResponseFactory
+  ): Promise<IOpenSearchDashboardsResponse<any>> => {
     try {
       const requestBody = JSON.stringify(request.body);
       const response: SearchResponse<Detector> = await this.client
@@ -402,7 +410,7 @@ export default class AdService {
         seqNo: detector._seq_no,
         primaryTerm: detector._primary_term,
       }));
-      return kibanaResponse.ok({
+      return opensearchDashboardsResponse.ok({
         body: {
           ok: true,
           response: {
@@ -414,11 +422,11 @@ export default class AdService {
     } catch (err) {
       console.log('Anomaly detector - Unable to search detectors', err);
       if (isIndexNotFoundError(err)) {
-        return kibanaResponse.ok({
+        return opensearchDashboardsResponse.ok({
           body: { ok: true, response: { totalDetectors: 0, detectors: [] } },
         });
       }
-      return kibanaResponse.ok({
+      return opensearchDashboardsResponse.ok({
         body: {
           ok: false,
           error: getErrorMessage(err),
@@ -429,9 +437,9 @@ export default class AdService {
 
   searchResults = async (
     context: RequestHandlerContext,
-    request: KibanaRequest,
-    kibanaResponse: KibanaResponseFactory
-  ): Promise<IKibanaResponse<any>> => {
+    request: OpenSearchDashboardsRequest,
+    opensearchDashboardsResponse: OpenSearchDashboardsResponseFactory
+  ): Promise<IOpenSearchDashboardsResponse<any>> => {
     try {
       const requestBody = JSON.stringify(request.body);
       const response = await this.client
@@ -439,7 +447,7 @@ export default class AdService {
         .callAsCurrentUser('ad.searchResults', {
           body: requestBody,
         });
-      return kibanaResponse.ok({
+      return opensearchDashboardsResponse.ok({
         body: {
           ok: true,
           response,
@@ -448,11 +456,11 @@ export default class AdService {
     } catch (err) {
       console.log('Anomaly detector - Unable to search anomaly result', err);
       if (isIndexNotFoundError(err)) {
-        return kibanaResponse.ok({
+        return opensearchDashboardsResponse.ok({
           body: { ok: true, response: { totalDetectors: 0, detectors: [] } },
         });
       }
-      return kibanaResponse.ok({
+      return opensearchDashboardsResponse.ok({
         body: {
           ok: false,
           error: getErrorMessage(err),
@@ -463,9 +471,9 @@ export default class AdService {
 
   getDetectors = async (
     context: RequestHandlerContext,
-    request: KibanaRequest,
-    kibanaResponse: KibanaResponseFactory
-  ): Promise<IKibanaResponse<any>> => {
+    request: OpenSearchDashboardsRequest,
+    opensearchDashboardsResponse: OpenSearchDashboardsResponseFactory
+  ): Promise<IOpenSearchDashboardsResponse<any>> => {
     try {
       const {
         from = 0,
@@ -644,7 +652,7 @@ export default class AdService {
         });
       });
 
-      return kibanaResponse.ok({
+      return opensearchDashboardsResponse.ok({
         body: {
           ok: true,
           response: {
@@ -656,11 +664,11 @@ export default class AdService {
     } catch (err) {
       console.log('Anomaly detector - Unable to search detectors', err);
       if (isIndexNotFoundError(err)) {
-        return kibanaResponse.ok({
+        return opensearchDashboardsResponse.ok({
           body: { ok: true, response: { totalDetectors: 0, detectorList: [] } },
         });
       }
-      return kibanaResponse.ok({
+      return opensearchDashboardsResponse.ok({
         body: {
           ok: false,
           error: getErrorMessage(err),
@@ -671,9 +679,9 @@ export default class AdService {
 
   getAnomalyResults = async (
     context: RequestHandlerContext,
-    request: KibanaRequest,
-    kibanaResponse: KibanaResponseFactory
-  ): Promise<IKibanaResponse<any>> => {
+    request: OpenSearchDashboardsRequest,
+    opensearchDashboardsResponse: OpenSearchDashboardsResponseFactory
+  ): Promise<IOpenSearchDashboardsResponse<any>> => {
     let { id, isHistorical } = request.params as {
       id: string;
       isHistorical: any;
@@ -874,7 +882,7 @@ export default class AdService {
           });
         });
       });
-      return kibanaResponse.ok({
+      return opensearchDashboardsResponse.ok({
         body: {
           ok: true,
           response: {
@@ -886,7 +894,7 @@ export default class AdService {
       });
     } catch (err) {
       console.log('Anomaly detector - Unable to get results', err);
-      return kibanaResponse.ok({
+      return opensearchDashboardsResponse.ok({
         body: {
           ok: false,
           error: getErrorMessage(err),
@@ -897,9 +905,9 @@ export default class AdService {
 
   matchDetector = async (
     context: RequestHandlerContext,
-    request: KibanaRequest,
-    kibanaResponse: KibanaResponseFactory
-  ): Promise<IKibanaResponse<any>> => {
+    request: OpenSearchDashboardsRequest,
+    opensearchDashboardsResponse: OpenSearchDashboardsResponseFactory
+  ): Promise<IOpenSearchDashboardsResponse<any>> => {
     try {
       const { detectorName } = request.params as { detectorName: string };
       const response = await this.client
@@ -907,7 +915,7 @@ export default class AdService {
         .callAsCurrentUser('ad.matchDetector', {
           detectorName,
         });
-      return kibanaResponse.ok({
+      return opensearchDashboardsResponse.ok({
         body: {
           ok: true,
           response: response,
@@ -915,7 +923,7 @@ export default class AdService {
       });
     } catch (err) {
       console.log('Anomaly detector - matchDetector', err);
-      return kibanaResponse.ok({
+      return opensearchDashboardsResponse.ok({
         body: { ok: false, error: getErrorMessage(err) },
       });
     }
@@ -923,14 +931,14 @@ export default class AdService {
 
   getDetectorCount = async (
     context: RequestHandlerContext,
-    request: KibanaRequest,
-    kibanaResponse: KibanaResponseFactory
-  ): Promise<IKibanaResponse<any>> => {
+    request: OpenSearchDashboardsRequest,
+    opensearchDashboardsResponse: OpenSearchDashboardsResponseFactory
+  ): Promise<IOpenSearchDashboardsResponse<any>> => {
     try {
       const response = await this.client
         .asScoped(request)
         .callAsCurrentUser('ad.detectorCount');
-      return kibanaResponse.ok({
+      return opensearchDashboardsResponse.ok({
         body: {
           ok: true,
           response: response,
@@ -938,7 +946,7 @@ export default class AdService {
       });
     } catch (err) {
       console.log('Anomaly detector - getDetectorCount', err);
-      return kibanaResponse.ok({
+      return opensearchDashboardsResponse.ok({
         body: { ok: false, error: getErrorMessage(err) },
       });
     }
@@ -962,9 +970,9 @@ export default class AdService {
 
   getHistoricalDetectors = async (
     context: RequestHandlerContext,
-    request: KibanaRequest,
-    kibanaResponse: KibanaResponseFactory
-  ): Promise<IKibanaResponse<any>> => {
+    request: OpenSearchDashboardsRequest,
+    opensearchDashboardsResponse: OpenSearchDashboardsResponseFactory
+  ): Promise<IOpenSearchDashboardsResponse<any>> => {
     try {
       const {
         from = 0,
@@ -1132,7 +1140,7 @@ export default class AdService {
         detectorResults
       );
 
-      return kibanaResponse.ok({
+      return opensearchDashboardsResponse.ok({
         body: {
           ok: true,
           response: {
@@ -1144,11 +1152,11 @@ export default class AdService {
     } catch (err) {
       console.log('Anomaly detector - Unable to search detectors', err);
       if (isIndexNotFoundError(err)) {
-        return kibanaResponse.ok({
+        return opensearchDashboardsResponse.ok({
           body: { ok: true, response: { totalDetectors: 0, detectorList: [] } },
         });
       }
-      return kibanaResponse.ok({
+      return opensearchDashboardsResponse.ok({
         body: {
           ok: false,
           error: getErrorMessage(err),

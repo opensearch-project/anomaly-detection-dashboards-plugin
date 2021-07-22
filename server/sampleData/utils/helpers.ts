@@ -1,4 +1,15 @@
 /*
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * The OpenSearch Contributors require contributions made to
+ * this file be licensed under the Apache-2.0 license or a
+ * compatible open source license.
+ *
+ * Modifications Copyright OpenSearch Contributors. See
+ * GitHub history for details.
+ */
+
+/*
  * Copyright 2020 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
@@ -16,7 +27,10 @@
 //@ts-ignore
 import moment from 'moment';
 import readline from 'readline';
-import { RequestHandlerContext, KibanaRequest } from '../../../../../src/core/server';
+import {
+  RequestHandlerContext,
+  OpenSearchDashboardsRequest,
+} from '../../../../../src/core/server';
 import fs from 'fs';
 import { createUnzip } from 'zlib';
 import { isEmpty } from 'lodash';
@@ -28,7 +42,7 @@ export const loadSampleData = (
   filePath: string,
   indexName: string,
   client: any,
-  request: KibanaRequest,
+  request: OpenSearchDashboardsRequest
 ) => {
   return new Promise((resolve, reject) => {
     let count: number = 0;
@@ -99,12 +113,9 @@ export const loadSampleData = (
     const bulkInsert = async (docs: any[]) => {
       try {
         const bulkBody = prepareBody(docs, offset);
-        const resp = await client.asScoped(request).callAsCurrentUser(
-          'bulk',
-          {
-            body: bulkBody,
-          }
-        );
+        const resp = await client.asScoped(request).callAsCurrentUser('bulk', {
+          body: bulkBody,
+        });
         if (resp.errors) {
           const errorItems = resp.items;
           const firstErrorReason = isEmpty(errorItems)

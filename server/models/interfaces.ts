@@ -1,4 +1,15 @@
 /*
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * The OpenSearch Contributors require contributions made to
+ * this file be licensed under the Apache-2.0 license or a
+ * compatible open source license.
+ *
+ * Modifications Copyright OpenSearch Contributors. See
+ * GitHub history for details.
+ */
+
+/*
  * Copyright 2020 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
@@ -16,7 +27,7 @@
 export interface DefaultHeaders {
   'Content-Type': 'application/json';
   Accept: 'application/json';
-  'User-Agent': 'Kibana';
+  'User-Agent': 'OpenSearch Dashboards';
 }
 
 export interface SearchResponse<T> {
@@ -70,7 +81,6 @@ export interface AnomalyResults {
 export interface InitProgress {
   percentageStr: string;
   estimatedMinutesLeft: number;
-  neededShingles: number;
 }
 
 export interface EntityAnomalySummary {
