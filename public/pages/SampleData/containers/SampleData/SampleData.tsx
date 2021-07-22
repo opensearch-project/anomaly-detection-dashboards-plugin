@@ -50,14 +50,14 @@ import {
   sampleHttpResponses,
   sampleEcommerce,
   sampleHostHealth,
-} from '../../utils/constants';
+} from '../../../Overview/utils/constants';
 import {
   containsSampleIndex,
   getDetectorId,
   getSampleDetector,
-} from '../../utils/helpers';
-import { SampleDataBox } from '../../components/SampleDataBox/SampleDataBox';
-import { SampleDetailsFlyout } from '../../components/SampleDetailsFlyout/SampleDetailsFlyout';
+} from '../../../Overview/utils/helpers';
+import { SampleDataBox } from '../../../Overview/components/SampleDataBox/SampleDataBox';
+import { SampleDetailsFlyout } from '../../../Overview/components/SampleDetailsFlyout/SampleDetailsFlyout';
 import { prettifyErrorMessage } from '../../../../../server/utils/helpers';
 import { CoreStart } from '../../../../../../../src/core/public';
 import { CoreServicesContext } from '../../../../components/CoreServices/CoreServices';

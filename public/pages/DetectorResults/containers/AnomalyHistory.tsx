@@ -541,6 +541,9 @@ export const AnomalyHistory = (props: AnomalyHistoryProps) => {
         entityAnomalySummaries={entityAnomalySummaries}
       >
         <div style={{ padding: '20px' }}>
+          {/*
+           TODO: update title and occurrence chart to support multi category field support
+          */}
           {isHCDetector
             ? [
                 <AnomalyOccurrenceChart

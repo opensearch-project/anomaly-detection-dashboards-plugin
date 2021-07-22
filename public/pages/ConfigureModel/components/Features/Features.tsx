@@ -1,4 +1,15 @@
 /*
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * The OpenSearch Contributors require contributions made to
+ * this file be licensed under the Apache-2.0 license or a
+ * compatible open source license.
+ *
+ * Modifications Copyright OpenSearch Contributors. See
+ * GitHub history for details.
+ */
+
+/*
  * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
@@ -30,7 +41,7 @@ import React, { Fragment, useEffect } from 'react';
 import ContentPanel from '../../../../components/ContentPanel/ContentPanel';
 import { Detector } from '../../../../models/interfaces';
 import { initialFeatureValue } from '../../utils/helpers';
-import { MAX_FEATURE_NUM } from '../../../../utils/constants';
+import { MAX_FEATURE_NUM, BASE_DOCS_LINK } from '../../../../utils/constants';
 import { FeatureAccordion } from '../FeatureAccordion';
 
 interface FeaturesProps {
@@ -52,13 +63,13 @@ export function Features(props: FeaturesProps) {
       title="Features"
       titleSize="s"
       subTitle={
-        <EuiText className="content-panel-subTitle">
-          Specify an index field that you want to find anomalies for by defining
-          features. You can add up to 5 features.{' '}
-          <EuiLink
-            href="https://opendistro.github.io/for-elasticsearch-docs/docs/ad/"
-            target="_blank"
-          >
+        <EuiText
+          className="content-panel-subTitle"
+          style={{ lineHeight: 'normal' }}
+        >
+          A feature is the field in your index that you use to check for
+          anomalies. You can add up to 5 features.{' '}
+          <EuiLink href={`${BASE_DOCS_LINK}/ad`} target="_blank">
             Learn more <EuiIcon size="s" type="popout" />
           </EuiLink>
         </EuiText>

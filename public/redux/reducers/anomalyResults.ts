@@ -70,16 +70,20 @@ const reducer = handleActions<Anomalies>(
       }),
     },
 
-    //TODO: add requesting and errorMessage
     [SEARCH_ANOMALY_RESULTS]: {
       REQUEST: (state: Anomalies): Anomalies => ({
         ...state,
+        requesting: true,
+        errorMessage: '',
       }),
       SUCCESS: (state: Anomalies, action: APIResponseAction): Anomalies => ({
         ...state,
+        requesting: false,
       }),
-      FAILURE: (state: Anomalies): Anomalies => ({
+      FAILURE: (state: Anomalies, action: APIResponseAction): Anomalies => ({
         ...state,
+        requesting: false,
+        errorMessage: get(action, 'error.error', action.error),
       }),
     },
   },

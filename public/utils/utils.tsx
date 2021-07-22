@@ -34,6 +34,7 @@ import { CoreStart } from '../../../../src/core/public';
 import { CoreServicesContext } from '../components/CoreServices/CoreServices';
 import datemath from '@elastic/datemath';
 import moment from 'moment';
+import { Detector } from '../models/interfaces';
 
 export const validateFeatureName = (
   featureName: string
@@ -129,7 +130,7 @@ export const getAlertingCreateMonitorLink = (
   try {
     const core = React.useContext(CoreServicesContext) as CoreStart;
     const navLinks = get(core, 'chrome.navLinks', undefined);
-    const url = `${navLinks.get(ALERTING_PLUGIN_NAME).url}`;
+    const url = `${navLinks.get(ALERTING_PLUGIN_NAME)?.url}`;
     const alertingRootUrl = getPluginRootPath(url, ALERTING_PLUGIN_NAME);
     return `${alertingRootUrl}#/create-monitor?searchType=ad&adId=${detectorId}&name=${detectorName}&interval=${
       2 * detectorInterval
@@ -189,4 +190,23 @@ export function convertTimestampToNumber(timestamp: number | string) {
     return datemath.parse(timestamp)?.valueOf();
   }
   return timestamp;
+}
+
+export function getHistoricalRangeString(detector: Detector) {
+  if (!detector?.detectionDateRange) {
+    return '-';
+  } else {
+    const startTimeAsNumber = convertTimestampToNumber(
+      get(detector, 'detectionDateRange.startTime', 0)
+    );
+    const endTimeAsNumber = convertTimestampToNumber(
+      get(detector, 'detectionDateRange.endTime', 0)
+    );
+
+    return (
+      moment(startTimeAsNumber).format('MMM DD, YYYY @ hh:mm A') +
+      ' - ' +
+      moment(endTimeAsNumber).format('MMM DD, YYYY @ hh:mm A')
+    );
+  }
 }

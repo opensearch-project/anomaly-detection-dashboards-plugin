@@ -34,7 +34,7 @@ import {
   getCountableFieldOptions,
 } from '../../utils/helpers';
 import { Field, FieldProps } from 'formik';
-import { AGGREGATION_TYPES } from '../../utils/constants';
+import { AGGREGATION_TYPES } from '../../../ConfigureModel/utils/constants';
 import {
   requiredSelectField,
   requiredNonEmptyArray,

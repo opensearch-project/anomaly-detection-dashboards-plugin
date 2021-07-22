@@ -1,4 +1,15 @@
 /*
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * The OpenSearch Contributors require contributions made to
+ * this file be licensed under the Apache-2.0 license or a
+ * compatible open source license.
+ *
+ * Modifications Copyright OpenSearch Contributors. See
+ * GitHub history for details.
+ */
+
+/*
  * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
@@ -26,6 +37,7 @@ import {
   formikToIndices,
   formikToFilterQuery,
 } from '../../ReviewAndCreate/utils/helpers';
+import { SINGLE_ENTITY_SHINGLE_SIZE } from '../../../utils/constants';
 
 export function detectorDefinitionToFormik(
   ad: Detector
@@ -50,7 +62,7 @@ export function detectorDefinitionToFormik(
   };
 }
 
-function filtersToFormik(detector: Detector): UIFilter[] {
+export function filtersToFormik(detector: Detector): UIFilter[] {
   // Detectors created or updated using the API will not have metadata - create a custom filter in this case.
   const noMetadata =
     get(detector, 'uiMetadata.filterType') === undefined &&
@@ -115,4 +127,17 @@ export function formikToDetectorDefinition(
   } as Detector;
 
   return detectorBody;
+}
+
+export function clearModelConfiguration(ad: Detector): Detector {
+  return {
+    ...ad,
+    featureAttributes: [],
+    uiMetadata: {
+      ...ad.uiMetadata,
+      features: {},
+    },
+    categoryField: undefined,
+    shingleSize: SINGLE_ENTITY_SHINGLE_SIZE,
+  };
 }

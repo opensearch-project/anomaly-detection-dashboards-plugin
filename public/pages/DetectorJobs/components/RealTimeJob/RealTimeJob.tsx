@@ -1,4 +1,15 @@
 /*
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * The OpenSearch Contributors require contributions made to
+ * this file be licensed under the Apache-2.0 license or a
+ * compatible open source license.
+ *
+ * Modifications Copyright OpenSearch Contributors. See
+ * GitHub history for details.
+ */
+
+/*
  * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
@@ -25,10 +36,10 @@ import { get } from 'lodash';
 import React, { useState } from 'react';
 import ContentPanel from '../../../../components/ContentPanel/ContentPanel';
 import { DetectorJobsFormikValues } from '../../models/interfaces';
+import { BASE_DOCS_LINK } from '../../../../utils/constants';
 
 interface RealTimeJobProps {
   formikProps: FormikProps<DetectorJobsFormikValues>;
-  realTime: boolean;
   setRealTime(realTime: boolean): void;
 }
 export function RealTimeJob(props: RealTimeJobProps) {
@@ -41,16 +52,16 @@ export function RealTimeJob(props: RealTimeJobProps) {
       title="Real-time detection"
       titleSize="s"
       subTitle={
-        <EuiText className="content-panel-subTitle">
+        <EuiText
+          className="content-panel-subTitle"
+          style={{ lineHeight: 'normal' }}
+        >
           Real-time detection lets you find anomalies in your data in near
           real-time. To receive accurate and real-time anomalies, the detector
           needs to start and collect sufficient data to include your latest
           changes. The earlier the detector starts running, the sooner the
           real-time anomalies will be available.{' '}
-          <EuiLink
-            href="https://opendistro.github.io/for-elasticsearch-docs/docs/ad/"
-            target="_blank"
-          >
+          <EuiLink href={`${BASE_DOCS_LINK}/ad`} target="_blank">
             Learn more <EuiIcon size="s" type="popout" />
           </EuiLink>
         </EuiText>

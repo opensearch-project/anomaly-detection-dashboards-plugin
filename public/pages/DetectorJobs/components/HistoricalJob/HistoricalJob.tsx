@@ -1,4 +1,15 @@
 /*
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * The OpenSearch Contributors require contributions made to
+ * this file be licensed under the Apache-2.0 license or a
+ * compatible open source license.
+ *
+ * Modifications Copyright OpenSearch Contributors. See
+ * GitHub history for details.
+ */
+
+/*
  * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
@@ -29,6 +40,7 @@ import ContentPanel from '../../../../components/ContentPanel/ContentPanel';
 import { FormattedFormRow } from '../../../../components/FormattedFormRow/FormattedFormRow';
 import { DetectorJobsFormikValues } from '../../models/interfaces';
 import { HISTORICAL_DATE_RANGE_COMMON_OPTIONS } from '../../utils/constants';
+import { BASE_DOCS_LINK } from '../../../../utils/constants';
 import {
   isInvalid,
   getError,
@@ -37,7 +49,6 @@ import {
 
 interface HistoricalJobProps {
   formikProps: FormikProps<DetectorJobsFormikValues>;
-  historical: boolean;
   setHistorical(historical: boolean): void;
 }
 export function HistoricalJob(props: HistoricalJobProps) {
@@ -50,14 +61,14 @@ export function HistoricalJob(props: HistoricalJobProps) {
       title="Historical analysis detection"
       titleSize="s"
       subTitle={
-        <EuiText className="content-panel-subTitle">
+        <EuiText
+          className="content-panel-subTitle"
+          style={{ lineHeight: 'normal' }}
+        >
           Historical analysis detection lets you analyze and apply machine
-          learning models over long historical data windows (weeks, months). You
-          can identify anomaly patterns, seasonality, and trends.{' '}
-          <EuiLink
-            href="https://opendistro.github.io/for-elasticsearch-docs/docs/ad/"
-            target="_blank"
-          >
+          learning models over long historical data windows (weeks or months).
+          You can identify anomaly patterns, seasonality, and trends.{' '}
+          <EuiLink href={`${BASE_DOCS_LINK}/ad`} target="_blank">
             Learn more <EuiIcon size="s" type="popout" />
           </EuiLink>
         </EuiText>

@@ -1,4 +1,15 @@
 /*
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * The OpenSearch Contributors require contributions made to
+ * this file be licensed under the Apache-2.0 license or a
+ * compatible open source license.
+ *
+ * Modifications Copyright OpenSearch Contributors. See
+ * GitHub history for details.
+ */
+
+/*
  * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
@@ -13,7 +24,7 @@
  * permissions and limitations under the License.
  */
 
-import { EuiComboBox } from '@elastic/eui';
+import { EuiComboBox, EuiCallOut, EuiSpacer } from '@elastic/eui';
 import { Field, FieldProps, FormikProps } from 'formik';
 import { debounce, get } from 'lodash';
 import React, { useEffect, useState } from 'react';
@@ -25,7 +36,7 @@ import {
   getIndices,
   getMappings,
   getPrioritizedIndices,
-} from '../../../../redux/reducers/elasticsearch';
+} from '../../../../redux/reducers/opensearch';
 import { getError, isInvalid } from '../../../../utils/utils';
 import { IndexOption } from './IndexOption';
 import { getVisibleOptions, sanitizeSearchText } from '../../../utils/helpers';
@@ -33,25 +44,34 @@ import { validateIndex } from '../../../utils/validate';
 import { DataFilterList } from '../DataFilterList/DataFilterList';
 import { FormattedFormRow } from '../../../../components/FormattedFormRow/FormattedFormRow';
 import { DetectorDefinitionFormikValues } from '../../models/interfaces';
+import { ModelConfigurationFormikValues } from '../../../ConfigureModel/models/interfaces';
+import { INITIAL_MODEL_CONFIGURATION_VALUES } from '../../../ConfigureModel/utils/constants';
 
 interface DataSourceProps {
   formikProps: FormikProps<DetectorDefinitionFormikValues>;
   origIndex: string;
   isEdit: boolean;
+  setModelConfigValues?(initialValues: ModelConfigurationFormikValues): void;
+  setNewIndexSelected?(isNew: boolean): void;
 }
 
 export function DataSource(props: DataSourceProps) {
   const dispatch = useDispatch();
-  const [queryText, setQueryText] = useState('');
-  const elasticsearchState = useSelector(
-    (state: AppState) => state.elasticsearch
+  const [indexName, setIndexName] = useState<string>(
+    props.formikProps.values.index[0]?.label
   );
+  const [queryText, setQueryText] = useState('');
+  const opensearchState = useSelector((state: AppState) => state.opensearch);
   useEffect(() => {
     const getInitialIndices = async () => {
       await dispatch(getIndices(queryText));
     };
     getInitialIndices();
   }, []);
+
+  useEffect(() => {
+    setIndexName(props.formikProps.values.index[0]?.label);
+  }, [props.formikProps]);
 
   const handleSearchChange = debounce(async (searchValue: string) => {
     if (searchValue !== queryText) {
@@ -63,16 +83,41 @@ export function DataSource(props: DataSourceProps) {
 
   const handleIndexNameChange = (selectedOptions: any) => {
     const indexName = get(selectedOptions, '0.label', '');
+    setIndexName(indexName);
     if (indexName !== '') {
       dispatch(getMappings(indexName));
     }
+    if (indexName !== props.origIndex) {
+      if (props.setNewIndexSelected) {
+        props.setNewIndexSelected(true);
+      }
+    } else {
+      if (props.setNewIndexSelected) {
+        props.setNewIndexSelected(false);
+      }
+    }
   };
 
-  const visibleIndices = get(elasticsearchState, 'indices', []) as CatIndex[];
-  const visibleAliases = get(elasticsearchState, 'aliases', []) as IndexAlias[];
+  const isDifferentIndex = () => {
+    return props.isEdit && indexName !== props.origIndex;
+  };
+
+  const visibleIndices = get(opensearchState, 'indices', []) as CatIndex[];
+  const visibleAliases = get(opensearchState, 'aliases', []) as IndexAlias[];
 
   return (
     <ContentPanel title="Data Source" titleSize="s">
+      {props.isEdit && isDifferentIndex() ? (
+        <div>
+          <EuiCallOut
+            title="Modifying the selected index resets your detector configuration."
+            color="warning"
+            iconType="alert"
+            size="s"
+          />
+          <EuiSpacer />
+        </div>
+      ) : null}
       <Field name="index" validate={validateIndex}>
         {({ field, form }: FieldProps) => {
           return (
@@ -87,7 +132,7 @@ export function DataSource(props: DataSourceProps) {
                 id="index"
                 placeholder="Find indices"
                 async
-                isLoading={elasticsearchState.requesting}
+                isLoading={opensearchState.requesting}
                 options={getVisibleOptions(visibleIndices, visibleAliases)}
                 onSearchChange={handleSearchChange}
                 onCreateOption={(createdOption: string) => {
@@ -103,6 +148,12 @@ export function DataSource(props: DataSourceProps) {
                 onChange={(options) => {
                   form.setFieldValue('index', options);
                   form.setFieldValue('timeField', undefined);
+                  form.setFieldValue('filters', []);
+                  if (props.setModelConfigValues) {
+                    props.setModelConfigValues(
+                      INITIAL_MODEL_CONFIGURATION_VALUES
+                    );
+                  }
                   handleIndexNameChange(options);
                 }}
                 selectedOptions={field.value}

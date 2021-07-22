@@ -28,7 +28,7 @@ import { cloneDeep, isEmpty, get } from 'lodash';
 import { Detector, FILTER_TYPES } from '../../../../models/interfaces';
 import { ADFormikValues } from '../models/interfaces';
 import { INITIAL_VALUES } from './constant';
-import { getShingleSizeFromObject } from '../../../../pages/EditFeatures/utils/helpers';
+import { getShingleSizeFromObject } from '../../../ConfigureModel/utils/helpers';
 
 export function detectorToFormik(ad: Detector): ADFormikValues {
   const initialValues = cloneDeep(INITIAL_VALUES);

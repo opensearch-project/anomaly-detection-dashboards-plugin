@@ -74,8 +74,8 @@ import {
   FEATURE_DATA_CHECK_WINDOW_OFFSET,
 } from '../../utils/anomalyResultUtils';
 import { getDetectorResults } from '../../../redux/reducers/anomalyResults';
-import { detectorIsSample } from '../../SampleData/utils/helpers';
-import { SampleIndexDetailsCallout } from '../../SampleData/components/SampleIndexDetailsCallout/SampleIndexDetailsCallout';
+import { detectorIsSample } from '../../Overview/utils/helpers';
+import { SampleIndexDetailsCallout } from '../../Overview/components/SampleIndexDetailsCallout/SampleIndexDetailsCallout';
 import { CoreStart } from '../../../../../../src/core/public';
 import { CoreServicesContext } from '../../../components/CoreServices/CoreServices';
 import { getDetectorStateDetails } from '../../DetectorDetail/utils/helpers';

@@ -32,7 +32,7 @@ import {
 } from '@elastic/eui';
 import React from 'react';
 import { ConfirmModal } from '../../../DetectorDetail/components/ConfirmModal/ConfirmModal';
-import { SAVE_FEATURE_OPTIONS } from '../../utils/constants';
+import { SAVE_FEATURE_OPTIONS } from '../../../ConfigureModel/utils/constants';
 
 interface SaveFeaturesConfirmModalProps {
   readyToStartAdJob: boolean;

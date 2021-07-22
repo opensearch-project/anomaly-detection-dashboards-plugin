@@ -1,4 +1,15 @@
 /*
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * The OpenSearch Contributors require contributions made to
+ * this file be licensed under the Apache-2.0 license or a
+ * compatible open source license.
+ *
+ * Modifications Copyright OpenSearch Contributors. See
+ * GitHub history for details.
+ */
+
+/*
  * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
@@ -27,7 +38,12 @@ import {
 } from '@elastic/eui';
 import React, { Fragment, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { APP_PATH, BREADCRUMBS, PLUGIN_NAME } from '../../../utils/constants';
+import {
+  APP_PATH,
+  BREADCRUMBS,
+  PLUGIN_NAME,
+  BASE_DOCS_LINK,
+} from '../../../utils/constants';
 import { SAMPLE_TYPE } from '../../../../server/utils/constants';
 import {
   GET_SAMPLE_DETECTORS_QUERY_PARAMS,
@@ -43,14 +59,14 @@ import {
   sampleHttpResponses,
   sampleEcommerce,
   sampleHostHealth,
-} from '../../SampleData/utils/constants';
+} from '../utils/constants';
 import {
   containsSampleIndex,
-  containsSampleDetector,
   getDetectorId,
-} from '../../SampleData/utils/helpers';
-import { SampleDataBox } from '../../SampleData/components/SampleDataBox/SampleDataBox';
-import { SampleDetailsFlyout } from '../../SampleData/components/SampleDetailsFlyout/SampleDetailsFlyout';
+  getSampleDetector,
+} from '../utils/helpers';
+import { SampleDataBox } from '../components/SampleDataBox/SampleDataBox';
+import { SampleDetailsFlyout } from '../components/SampleDetailsFlyout/SampleDetailsFlyout';
 import { prettifyErrorMessage } from '../../../../server/utils/helpers';
 import { CoreStart } from '../../../../../../src/core/public';
 import { CoreServicesContext } from '../../../components/CoreServices/CoreServices';
@@ -207,10 +223,7 @@ export function AnomalyDetectionOverview(props: AnomalyDetectionOverviewProps) {
       <EuiText>
         The anomaly detection plugin automatically detects anomalies in your
         data in near real-time using the Random Cut Forest (RCF) algorithm.{' '}
-        <EuiLink
-          href="https://opendistro.github.io/for-elasticsearch-docs/docs/ad/"
-          target="_blank"
-        >
+        <EuiLink href={`${BASE_DOCS_LINK}/ad`} target="_blank">
           Learn more <EuiIcon size="s" type="popout" />
         </EuiLink>
       </EuiText>
@@ -271,13 +284,16 @@ export function AnomalyDetectionOverview(props: AnomalyDetectionOverviewProps) {
                 );
               }}
               isLoadingData={isLoadingHttpData}
-              isDataLoaded={containsSampleDetector(
-                allSampleDetectors,
-                SAMPLE_TYPE.HTTP_RESPONSES
-              )}
+              isDataLoaded={
+                getSampleDetector(
+                  allSampleDetectors,
+                  SAMPLE_TYPE.HTTP_RESPONSES
+                ) !== undefined
+              }
               detectorId={getDetectorId(
                 allSampleDetectors,
-                sampleHttpResponses.detectorName
+                sampleHttpResponses.detectorName,
+                sampleHttpResponses.legacyDetectorName
               )}
             />
           </EuiFlexItem>
@@ -301,13 +317,14 @@ export function AnomalyDetectionOverview(props: AnomalyDetectionOverviewProps) {
                 );
               }}
               isLoadingData={isLoadingEcommerceData}
-              isDataLoaded={containsSampleDetector(
-                allSampleDetectors,
-                SAMPLE_TYPE.ECOMMERCE
-              )}
+              isDataLoaded={
+                getSampleDetector(allSampleDetectors, SAMPLE_TYPE.ECOMMERCE) !==
+                undefined
+              }
               detectorId={getDetectorId(
                 allSampleDetectors,
-                sampleEcommerce.detectorName
+                sampleEcommerce.detectorName,
+                sampleEcommerce.legacyDetectorName
               )}
             />
           </EuiFlexItem>
@@ -331,13 +348,16 @@ export function AnomalyDetectionOverview(props: AnomalyDetectionOverviewProps) {
                 );
               }}
               isLoadingData={isLoadingHostHealthData}
-              isDataLoaded={containsSampleDetector(
-                allSampleDetectors,
-                SAMPLE_TYPE.HOST_HEALTH
-              )}
+              isDataLoaded={
+                getSampleDetector(
+                  allSampleDetectors,
+                  SAMPLE_TYPE.HOST_HEALTH
+                ) !== undefined
+              }
               detectorId={getDetectorId(
                 allSampleDetectors,
-                sampleHostHealth.detectorName
+                sampleHostHealth.detectorName,
+                sampleHostHealth.legacyDetectorName
               )}
             />
           </EuiFlexItem>
@@ -348,6 +368,10 @@ export function AnomalyDetectionOverview(props: AnomalyDetectionOverviewProps) {
         <SampleDetailsFlyout
           title="Monitor HTTP responses"
           sampleData={sampleHttpResponses}
+          detector={getSampleDetector(
+            allSampleDetectors,
+            SAMPLE_TYPE.HTTP_RESPONSES
+          )}
           interval={1}
           onClose={() => setShowHttpResponseDetailsFlyout(false)}
         />
@@ -356,6 +380,10 @@ export function AnomalyDetectionOverview(props: AnomalyDetectionOverviewProps) {
         <SampleDetailsFlyout
           title="Monitor eCommerce orders"
           sampleData={sampleEcommerce}
+          detector={getSampleDetector(
+            allSampleDetectors,
+            SAMPLE_TYPE.ECOMMERCE
+          )}
           interval={1}
           onClose={() => setShowEcommerceDetailsFlyout(false)}
         />
@@ -364,6 +392,10 @@ export function AnomalyDetectionOverview(props: AnomalyDetectionOverviewProps) {
         <SampleDetailsFlyout
           title="Monitor host health"
           sampleData={sampleHostHealth}
+          detector={getSampleDetector(
+            allSampleDetectors,
+            SAMPLE_TYPE.HOST_HEALTH
+          )}
           interval={1}
           onClose={() => setShowHostHealthDetailsFlyout(false)}
         />

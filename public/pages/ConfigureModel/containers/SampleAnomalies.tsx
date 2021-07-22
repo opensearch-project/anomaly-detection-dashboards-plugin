@@ -1,4 +1,15 @@
 /*
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * The OpenSearch Contributors require contributions made to
+ * this file be licensed under the Apache-2.0 license or a
+ * compatible open source license.
+ *
+ * Modifications Copyright OpenSearch Contributors. See
+ * GitHub history for details.
+ */
+
+/*
  * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
@@ -45,6 +56,7 @@ import { generateAnomalyAnnotations } from '../../utils/anomalyResultUtils';
 import { focusOnFirstWrongFeature } from '../utils/helpers';
 import { prepareDetector } from '../utils/helpers';
 import { FeaturesFormikValues } from '../models/interfaces';
+import { BASE_DOCS_LINK } from '../../../utils/constants';
 import { prettifyErrorMessage } from '../../../../server/utils/helpers';
 import { CoreStart } from '../../../../../../src/core/public';
 import { CoreServicesContext } from '../../../components/CoreServices/CoreServices';
@@ -186,10 +198,7 @@ export function SampleAnomalies(props: SampleAnomaliesProps) {
               {firstPreview
                 ? 'You can preview how your anomalies may look like from sample feature output and adjust the feature settings as needed.'
                 : 'Use the sample data as a reference to fine tune settings. To see the latest preview with your adjustments, click "Refresh preview". Once you are done with your edits, save your changes and run the detector to see real time anomalies for the new data set.'}{' '}
-              <EuiLink
-                href="https://opendistro.github.io/for-elasticsearch-docs/docs/ad/"
-                target="_blank"
-              >
+              <EuiLink href={`${BASE_DOCS_LINK}/ad`} target="_blank">
                 Learn more <EuiIcon size="s" type="popout" />
               </EuiLink>
             </EuiText>

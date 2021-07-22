@@ -133,16 +133,8 @@ export const AnomaliesDistributionChart = (
     <ContentPanel
       title="Anomalies by index and detector"
       titleSize="s"
-      subTitle={
-        <EuiFlexItem>
-          <EuiText className={'anomaly-distribution-subtitle'}>
-            <p>
-              {'The inner circle shows anomaly distribution by index. ' +
-                'The outer circle shows distribution by detector.'}
-            </p>
-          </EuiText>
-        </EuiFlexItem>
-      }
+      subTitle={`The inner circle shows anomaly distribution by index. 
+      The outer circle shows distribution by detector.`}
       actions={
         <EuiSelect
           style={{ width: 150 }}

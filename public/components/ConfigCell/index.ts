@@ -24,6 +24,4 @@
  * permissions and limitations under the License.
  */
 
-import { CreateHistoricalDetector } from './containers/CreateHistoricalDetector';
-
-export { CreateHistoricalDetector };
+export { ConfigCell, FixedWidthRow } from './ConfigCell';
