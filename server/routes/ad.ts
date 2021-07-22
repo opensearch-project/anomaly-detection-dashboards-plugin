@@ -154,7 +154,6 @@ export default class AdService {
     opensearchDashboardsResponse: OpenSearchDashboardsResponseFactory
   ): Promise<IOpenSearchDashboardsResponse<any>> => {
     try {
-      const { detectorId } = request.params as { detectorId: string };
       const requestBody = JSON.stringify(
         convertPreviewInputKeysToSnakeCase(request.body)
       );
@@ -310,9 +309,7 @@ export default class AdService {
 
       const response = await this.client
         .asScoped(request)
-        .callAsCurrentUser('ad.startDetector', {
-          detectorId,
-        });
+        .callAsCurrentUser(requestPath, requestParams);
       return opensearchDashboardsResponse.ok({
         body: {
           ok: true,
