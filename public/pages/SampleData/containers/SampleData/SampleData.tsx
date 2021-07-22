@@ -1,4 +1,15 @@
 /*
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * The OpenSearch Contributors require contributions made to
+ * this file be licensed under the Apache-2.0 license or a
+ * compatible open source license.
+ *
+ * Modifications Copyright OpenSearch Contributors. See
+ * GitHub history for details.
+ */
+
+/*
  * Copyright 2020 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
@@ -33,23 +44,20 @@ import { AppState } from '../../../../redux/reducers';
 import { getDetectorList } from '../../../../redux/reducers/ad';
 import { createSampleData } from '../../../../redux/reducers/sampleData';
 
-import {
-  getIndices,
-  createIndex,
-} from '../../../../redux/reducers/elasticsearch';
+import { getIndices, createIndex } from '../../../../redux/reducers/opensearch';
 import { createDetector, startDetector } from '../../../../redux/reducers/ad';
 import {
   sampleHttpResponses,
   sampleEcommerce,
   sampleHostHealth,
-} from '../../utils/constants';
+} from '../../../Overview/utils/constants';
 import {
   containsSampleIndex,
-  containsSampleDetector,
   getDetectorId,
-} from '../../utils/helpers';
-import { SampleDataBox } from '../../components/SampleDataBox/SampleDataBox';
-import { SampleDetailsFlyout } from '../../components/SampleDetailsFlyout/SampleDetailsFlyout';
+  getSampleDetector,
+} from '../../../Overview/utils/helpers';
+import { SampleDataBox } from '../../../Overview/components/SampleDataBox/SampleDataBox';
+import { SampleDetailsFlyout } from '../../../Overview/components/SampleDetailsFlyout/SampleDetailsFlyout';
 import { prettifyErrorMessage } from '../../../../../server/utils/helpers';
 import { CoreStart } from '../../../../../../../src/core/public';
 import { CoreServicesContext } from '../../../../components/CoreServices/CoreServices';
@@ -58,7 +66,7 @@ export const SampleData = () => {
   const core = React.useContext(CoreServicesContext) as CoreStart;
   const dispatch = useDispatch();
   const visibleIndices = useSelector(
-    (state: AppState) => state.elasticsearch.indices
+    (state: AppState) => state.opensearch.indices
   );
   const allDetectors = Object.values(
     useSelector((state: AppState) => state.ad.detectorList)
@@ -209,13 +217,14 @@ export const SampleData = () => {
               );
             }}
             isLoadingData={isLoadingHttpData}
-            isDataLoaded={containsSampleDetector(
-              allDetectors,
-              SAMPLE_TYPE.HTTP_RESPONSES
-            )}
+            isDataLoaded={
+              getSampleDetector(allDetectors, SAMPLE_TYPE.HTTP_RESPONSES) !==
+              undefined
+            }
             detectorId={getDetectorId(
               allDetectors,
-              sampleHttpResponses.detectorName
+              sampleHttpResponses.detectorName,
+              sampleHttpResponses.legacyDetectorName
             )}
           />
         </EuiFlexItem>
@@ -239,13 +248,14 @@ export const SampleData = () => {
               );
             }}
             isLoadingData={isLoadingEcommerceData}
-            isDataLoaded={containsSampleDetector(
-              allDetectors,
-              SAMPLE_TYPE.ECOMMERCE
-            )}
+            isDataLoaded={
+              getSampleDetector(allDetectors, SAMPLE_TYPE.ECOMMERCE) !==
+              undefined
+            }
             detectorId={getDetectorId(
               allDetectors,
-              sampleEcommerce.detectorName
+              sampleEcommerce.detectorName,
+              sampleEcommerce.legacyDetectorName
             )}
           />
         </EuiFlexItem>
@@ -269,13 +279,14 @@ export const SampleData = () => {
               );
             }}
             isLoadingData={isLoadingHostHealthData}
-            isDataLoaded={containsSampleDetector(
-              allDetectors,
-              SAMPLE_TYPE.HOST_HEALTH
-            )}
+            isDataLoaded={
+              getSampleDetector(allDetectors, SAMPLE_TYPE.HOST_HEALTH) !==
+              undefined
+            }
             detectorId={getDetectorId(
               allDetectors,
-              sampleHostHealth.detectorName
+              sampleHostHealth.detectorName,
+              sampleHostHealth.legacyDetectorName
             )}
           />
         </EuiFlexItem>
@@ -285,6 +296,7 @@ export const SampleData = () => {
         <SampleDetailsFlyout
           title="Monitor HTTP responses"
           sampleData={sampleHttpResponses}
+          detector={getSampleDetector(allDetectors, SAMPLE_TYPE.HTTP_RESPONSES)}
           interval={1}
           onClose={() => setShowHttpResponseDetailsFlyout(false)}
         />
@@ -293,6 +305,7 @@ export const SampleData = () => {
         <SampleDetailsFlyout
           title="Monitor eCommerce orders"
           sampleData={sampleEcommerce}
+          detector={getSampleDetector(allDetectors, SAMPLE_TYPE.ECOMMERCE)}
           interval={1}
           onClose={() => setShowEcommerceDetailsFlyout(false)}
         />
@@ -301,6 +314,7 @@ export const SampleData = () => {
         <SampleDetailsFlyout
           title="Monitor host health"
           sampleData={sampleHostHealth}
+          detector={getSampleDetector(allDetectors, SAMPLE_TYPE.HOST_HEALTH)}
           interval={1}
           onClose={() => setShowHostHealthDetailsFlyout(false)}
         />

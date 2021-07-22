@@ -1,4 +1,15 @@
 /*
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * The OpenSearch Contributors require contributions made to
+ * this file be licensed under the Apache-2.0 license or a
+ * compatible open source license.
+ *
+ * Modifications Copyright OpenSearch Contributors. See
+ * GitHub history for details.
+ */
+
+/*
  * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
@@ -74,9 +85,9 @@ export const DetectorDefinitionFields = (
         </EuiFlexItem>
         <EuiFlexItem>
           <ConfigCell
-            title="Window delay"
+            title="Detector interval"
             description={toStringConfigCell(
-              get(props, 'detector.windowDelay', 0)
+              get(props, 'detector.detectionInterval', 0)
             )}
           />
         </EuiFlexItem>
@@ -100,14 +111,6 @@ export const DetectorDefinitionFields = (
             description={get(props, 'detector.timeField', '')}
           />
         </EuiFlexItem>
-        <EuiFlexItem>
-          <ConfigCell
-            title="Detector interval"
-            description={toStringConfigCell(
-              get(props, 'detector.detectionInterval', 0)
-            )}
-          />
-        </EuiFlexItem>
         {props.isCreate ? null : (
           <EuiFlexItem>
             <ConfigCell
@@ -118,6 +121,14 @@ export const DetectorDefinitionFields = (
             />
           </EuiFlexItem>
         )}
+        <EuiFlexItem>
+          <ConfigCell
+            title="Window delay"
+            description={toStringConfigCell(
+              get(props, 'detector.windowDelay', 0)
+            )}
+          />
+        </EuiFlexItem>
       </EuiFlexGrid>
     </ContentPanel>
   );

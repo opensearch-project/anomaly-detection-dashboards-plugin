@@ -1,4 +1,15 @@
 /*
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * The OpenSearch Contributors require contributions made to
+ * this file be licensed under the Apache-2.0 license or a
+ * compatible open source license.
+ *
+ * Modifications Copyright OpenSearch Contributors. See
+ * GitHub history for details.
+ */
+
+/*
  * Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
@@ -20,6 +31,7 @@ import {
   EuiHorizontalRule,
   EuiPage,
   EuiPageBody,
+  EuiSpacer,
 } from '@elastic/eui';
 import { debounce, get, isEmpty } from 'lodash';
 import queryString from 'querystring';
@@ -44,7 +56,7 @@ import {
 import {
   getIndices,
   getPrioritizedIndices,
-} from '../../../../redux/reducers/elasticsearch';
+} from '../../../../redux/reducers/opensearch';
 import { APP_PATH, PLUGIN_NAME } from '../../../../utils/constants';
 import { DETECTOR_STATE } from '../../../../../server/utils/constants';
 import { getVisibleOptions, sanitizeSearchText } from '../../../utils/helpers';
@@ -121,9 +133,7 @@ export const DetectorList = (props: ListProps) => {
   const errorGettingDetectors = useSelector(
     (state: AppState) => state.ad.errorMessage
   );
-  const elasticsearchState = useSelector(
-    (state: AppState) => state.elasticsearch
-  );
+  const opensearchState = useSelector((state: AppState) => state.opensearch);
   const isRequestingFromES = useSelector(
     (state: AppState) => state.ad.requesting
   );
@@ -192,8 +202,8 @@ export const DetectorList = (props: ListProps) => {
   }, [errorGettingDetectors]);
 
   // Updating displayed indices (initializing to first 20 for now)
-  const visibleIndices = get(elasticsearchState, 'indices', []) as CatIndex[];
-  const visibleAliases = get(elasticsearchState, 'aliases', []) as IndexAlias[];
+  const visibleIndices = get(opensearchState, 'indices', []) as CatIndex[];
+  const visibleAliases = get(opensearchState, 'aliases', []) as IndexAlias[];
   const indexOptions = getVisibleOptions(visibleIndices, visibleAliases);
 
   const [state, setState] = useState<ListState>({
@@ -676,14 +686,14 @@ export const DetectorList = (props: ListProps) => {
             onSearchIndexChange={handleSearchIndexChange}
             onPageClick={handlePageChange}
           />
-          <EuiHorizontalRule margin="xs" />
+          <EuiSpacer size="m" />
           <EuiBasicTable<any>
             items={isLoading ? [] : detectorsToDisplay}
             /*
               itemId here is used to keep track of the selected detectors and render appropriately.
               Because the item id is dependent on the current time (see getItemID() above), all selected
               detectors will be deselected once new detectors are retrieved because the page will
-              re-render with a new timestamp. This logic is borrowed from Alerting Kibana plugins'
+              re-render with a new timestamp. This logic is borrowed from Alerting Dashboards plugin's
               monitors list page.
             */
             itemId={getItemId}

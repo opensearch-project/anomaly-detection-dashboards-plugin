@@ -1,4 +1,15 @@
 /*
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * The OpenSearch Contributors require contributions made to
+ * this file be licensed under the Apache-2.0 license or a
+ * compatible open source license.
+ *
+ * Modifications Copyright OpenSearch Contributors. See
+ * GitHub history for details.
+ */
+
+/*
  * Copyright 2020 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
@@ -29,6 +40,7 @@ import React from 'react';
 import { EuiIcon } from '@elastic/eui';
 import { Monitor } from '../../../../models/interfaces';
 import { AlertsButton } from '../AlertsButton/AlertsButton';
+import { BASE_DOCS_LINK } from '../../../..//utils/constants';
 
 type AlertsFlyoutProps = {
   detectorId: string;
@@ -86,17 +98,13 @@ export const AlertsFlyout = (props: AlertsFlyoutProps) => {
             <EuiText>
               <p className="alerts_flyout_p">
                 Anomaly detector alerts are powered by the
-                <EuiLink href="https://opendistro.github.io/for-elasticsearch-docs/docs/alerting">
+                <EuiLink href={`${BASE_DOCS_LINK}/alerting`}>
                   {' '}
                   Alerting plugin
                 </EuiLink>
                 . If you don't see <EuiIcon type="bell" />
-                Alerting in your navigation panel,
-                <EuiLink href="https://opendistro.github.io/for-elasticsearch-docs/docs/install/plugins/#alerting">
-                  {' '}
-                  install it first
-                </EuiLink>{' '}
-                and follow the instructions below to set up alerts.
+                Alerting in your navigation panel, install it first and follow
+                the instructions below to set up alerts.
               </p>
             </EuiText>
           </EuiFlexItem>
@@ -109,9 +117,7 @@ export const AlertsFlyout = (props: AlertsFlyoutProps) => {
         <EuiFlexGroup alignItems="center" justifyContent="flexEnd">
           <EuiFlexItem grow={true}>
             <EuiButton
-              href={
-                'https://opendistro.github.io/for-elasticsearch-docs/docs/alerting'
-              }
+              href={`${BASE_DOCS_LINK}/alerting`}
               target="_blank"
               data-test-subj="setUpAlerts"
             >

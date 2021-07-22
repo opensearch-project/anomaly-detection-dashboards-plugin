@@ -1,4 +1,15 @@
 /*
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * The OpenSearch Contributors require contributions made to
+ * this file be licensed under the Apache-2.0 license or a
+ * compatible open source license.
+ *
+ * Modifications Copyright OpenSearch Contributors. See
+ * GitHub history for details.
+ */
+
+/*
  * Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
@@ -39,9 +50,9 @@ import React, { useEffect, Fragment, useState } from 'react';
 import { useSelector } from 'react-redux';
 
 import { UIFilter } from '../../../../models/interfaces';
-import { getAllFields } from '../../../../redux/selectors/elasticsearch';
+import { getAllFields } from '../../../../redux/selectors/opensearch';
 import { DATA_TYPES } from '../../../../utils/constants';
-import { darkModeEnabled } from '../../../../utils/kibanaUtils';
+import { darkModeEnabled } from '../../../../utils/opensearchDashboardsUtils';
 import { getError, isInvalid, required } from '../../../../utils/utils';
 import { ADFormikValues } from '../../containers/models/interfaces';
 import { EMPTY_UI_FILTER } from '../../containers/utils/constant';

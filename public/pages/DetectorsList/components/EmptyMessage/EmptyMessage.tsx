@@ -1,4 +1,15 @@
 /*
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * The OpenSearch Contributors require contributions made to
+ * this file be licensed under the Apache-2.0 license or a
+ * compatible open source license.
+ *
+ * Modifications Copyright OpenSearch Contributors. See
+ * GitHub history for details.
+ */
+
+/*
  * Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
@@ -20,7 +31,9 @@ import { CreateDetectorButtons } from '../../../../components/CreateDetectorButt
 const FILTER_TEXT =
   'There are no detectors matching your applied filters. Reset your filters to view all detectors.';
 const EMPTY_TEXT =
-  'Anomaly detectors take an input of information and discover patterns of anomalies. Create an anomaly detector to get started.';
+  'A detector is an individual anomaly detection task. You can create multiple detectors, ' +
+  'and all the detectors can run simultaneously, with each analyzing data from different sources. ' +
+  'Create an anomaly detector to get started.';
 
 interface EmptyDetectorProps {
   isFilterApplied: boolean;

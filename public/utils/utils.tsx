@@ -1,4 +1,15 @@
 /*
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * The OpenSearch Contributors require contributions made to
+ * this file be licensed under the Apache-2.0 license or a
+ * compatible open source license.
+ *
+ * Modifications Copyright OpenSearch Contributors. See
+ * GitHub history for details.
+ */
+
+/*
  * Copyright 2020 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
@@ -16,13 +27,14 @@
 import { get, isEmpty } from 'lodash';
 import React from 'react';
 import { EuiTitle } from '@elastic/eui';
-import { darkModeEnabled } from '../utils/kibanaUtils';
+import { darkModeEnabled } from './opensearchDashboardsUtils';
 import { ALERTING_PLUGIN_NAME, NAME_REGEX } from './constants';
 import { MAX_FEATURE_NAME_SIZE } from './constants';
 import { CoreStart } from '../../../../src/core/public';
 import { CoreServicesContext } from '../components/CoreServices/CoreServices';
 import datemath from '@elastic/datemath';
 import moment from 'moment';
+import { Detector } from '../models/interfaces';
 
 export const validateFeatureName = (
   featureName: string
@@ -118,7 +130,7 @@ export const getAlertingCreateMonitorLink = (
   try {
     const core = React.useContext(CoreServicesContext) as CoreStart;
     const navLinks = get(core, 'chrome.navLinks', undefined);
-    const url = `${navLinks.get(ALERTING_PLUGIN_NAME).url}`;
+    const url = `${navLinks.get(ALERTING_PLUGIN_NAME)?.url}`;
     const alertingRootUrl = getPluginRootPath(url, ALERTING_PLUGIN_NAME);
     return `${alertingRootUrl}#/create-monitor?searchType=ad&adId=${detectorId}&name=${detectorName}&interval=${
       2 * detectorInterval
@@ -178,4 +190,23 @@ export function convertTimestampToNumber(timestamp: number | string) {
     return datemath.parse(timestamp)?.valueOf();
   }
   return timestamp;
+}
+
+export function getHistoricalRangeString(detector: Detector) {
+  if (!detector?.detectionDateRange) {
+    return '-';
+  } else {
+    const startTimeAsNumber = convertTimestampToNumber(
+      get(detector, 'detectionDateRange.startTime', 0)
+    );
+    const endTimeAsNumber = convertTimestampToNumber(
+      get(detector, 'detectionDateRange.endTime', 0)
+    );
+
+    return (
+      moment(startTimeAsNumber).format('MMM DD, YYYY @ hh:mm A') +
+      ' - ' +
+      moment(endTimeAsNumber).format('MMM DD, YYYY @ hh:mm A')
+    );
+  }
 }

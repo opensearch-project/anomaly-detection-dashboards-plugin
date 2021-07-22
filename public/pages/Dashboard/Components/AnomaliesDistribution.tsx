@@ -1,4 +1,15 @@
 /*
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * The OpenSearch Contributors require contributions made to
+ * this file be licensed under the Apache-2.0 license or a
+ * compatible open source license.
+ *
+ * Modifications Copyright OpenSearch Contributors. See
+ * GitHub history for details.
+ */
+
+/*
  * Copyright 2020 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
@@ -52,6 +63,7 @@ export const AnomaliesDistributionChart = (
   // TODO: try to find a better way of using redux,
   // which can leverage redux, and also get rid of issue with multiple redux on same page,
   // so that we don't need to manualy update loading status
+  // TODO: update issue link to new repo once it is transferred
   // Issue link: https://github.com/opendistro-for-elasticsearch/anomaly-detection-kibana-plugin/issues/23
   const [anomalyResultsLoading, setAnomalyResultsLoading] = useState(true);
   const [finalDetectors, setFinalDetectors] = useState(
@@ -121,16 +133,8 @@ export const AnomaliesDistributionChart = (
     <ContentPanel
       title="Anomalies by index and detector"
       titleSize="s"
-      subTitle={
-        <EuiFlexItem>
-          <EuiText className={'anomaly-distribution-subtitle'}>
-            <p>
-              {'The inner circle shows anomaly distribution by index. ' +
-                'The outer circle shows distribution by detector.'}
-            </p>
-          </EuiText>
-        </EuiFlexItem>
-      }
+      subTitle={`The inner circle shows anomaly distribution by index. 
+      The outer circle shows distribution by detector.`}
       actions={
         <EuiSelect
           style={{ width: 150 }}

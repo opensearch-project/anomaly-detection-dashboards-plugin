@@ -1,4 +1,15 @@
 /*
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * The OpenSearch Contributors require contributions made to
+ * this file be licensed under the Apache-2.0 license or a
+ * compatible open source license.
+ *
+ * Modifications Copyright OpenSearch Contributors. See
+ * GitHub history for details.
+ */
+
+/*
  * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
@@ -18,19 +29,20 @@ import {
   EuiFlexGroup,
   EuiText,
   EuiLink,
-  EuiIcon,
-  EuiFormRow,
   EuiTitle,
   EuiFieldNumber,
+  EuiSpacer,
 } from '@elastic/eui';
 import { Field, FieldProps } from 'formik';
 import React, { useState } from 'react';
 import ContentPanel from '../../../../components/ContentPanel/ContentPanel';
+import { BASE_DOCS_LINK } from '../../../../utils/constants';
 import {
   isInvalid,
   getError,
   validatePositiveInteger,
 } from '../../../../utils/utils';
+import { FormattedFormRow } from '../../../../components/FormattedFormRow/FormattedFormRow';
 
 interface AdvancedSettingsProps {}
 
@@ -42,42 +54,38 @@ export function AdvancedSettings(props: AdvancedSettingsProps) {
   return (
     <ContentPanel
       title={
-        <EuiTitle size="s">
-          <h2>Advanced settings </h2>
-        </EuiTitle>
+        <EuiFlexGroup direction="row" style={{ margin: '0px' }}>
+          <EuiTitle size="s">
+            <h2>Advanced settings </h2>
+          </EuiTitle>
+          <EuiText
+            size="m"
+            style={{ marginLeft: '18px', marginTop: '5px' }}
+            onClick={() => {
+              setShowAdvancedSettings(!showAdvancedSettings);
+            }}
+          >
+            <EuiLink>{showAdvancedSettings ? 'Hide' : 'Show'}</EuiLink>
+          </EuiText>
+        </EuiFlexGroup>
       }
-      subTitle={
-        <EuiText
-          className="content-panel-subTitle"
-          onClick={() => {
-            setShowAdvancedSettings(!showAdvancedSettings);
-          }}
-        >
-          <EuiLink>{showAdvancedSettings ? 'Hide' : 'Show'}</EuiLink>
-        </EuiText>
-      }
+      hideBody={!showAdvancedSettings}
+      bodyStyles={{ marginTop: '-16px' }}
     >
+      {showAdvancedSettings ? <EuiSpacer size="m" /> : null}
       {showAdvancedSettings ? (
         <Field name="shingleSize" validate={validatePositiveInteger}>
           {({ field, form }: FieldProps) => (
-            <EuiFormRow
-              label="Window size"
-              helpText={
-                <EuiText className="content-panel-subTitle">
-                  Set the number of intervals to consider in a detection window.
-                  We recommend you choose this value based on your actual data.
-                  If you expect missing values in your data or if you want the
-                  anomalies based on the current interval, choose 1. If your
-                  data is continuously ingested and you want the anomalies based
-                  on multiple intervals, choose a larger window size.{' '}
-                  <EuiLink
-                    href="https://opendistro.github.io/for-elasticsearch-docs/docs/ad/"
-                    target="_blank"
-                  >
-                    Learn more <EuiIcon size="s" type="popout" />
-                  </EuiLink>
-                </EuiText>
-              }
+            <FormattedFormRow
+              title="Window size"
+              hint={[
+                `Set the number of intervals to consider in a detection 
+                window for your model. We recommend using a window size 
+                between 1 and 16. If you expect missing values or if you 
+                want the anomalies exclusively based on the current interval, 
+                choose 1.`,
+              ]}
+              hintLink={`${BASE_DOCS_LINK}/ad`}
               isInvalid={isInvalid(field.name, form)}
               error={getError(field.name, form)}
             >
@@ -96,7 +104,7 @@ export function AdvancedSettings(props: AdvancedSettingsProps) {
                   </EuiText>
                 </EuiFlexItem>
               </EuiFlexGroup>
-            </EuiFormRow>
+            </FormattedFormRow>
           )}
         </Field>
       ) : null}

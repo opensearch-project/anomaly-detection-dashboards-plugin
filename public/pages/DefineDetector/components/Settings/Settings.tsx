@@ -1,4 +1,15 @@
 /*
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * The OpenSearch Contributors require contributions made to
+ * this file be licensed under the Apache-2.0 license or a
+ * compatible open source license.
+ *
+ * Modifications Copyright OpenSearch Contributors. See
+ * GitHub history for details.
+ */
+
+/*
  * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
@@ -28,6 +39,7 @@ import {
   validatePositiveInteger,
   validateNonNegativeInteger,
 } from '../../../../utils/utils';
+import { BASE_DOCS_LINK } from '../../../../utils/constants';
 import { FormattedFormRow } from '../../../../components/FormattedFormRow/FormattedFormRow';
 
 export const Settings = () => {
@@ -41,12 +53,10 @@ export const Settings = () => {
                 fullWidth
                 title="Detector interval"
                 hint="Define how often the detector collects data to generate
-                anomalies. Shorter intervals generate more detector results and 
-                therefore require more computing resources. The detector interval,
-                together with data ingestion speed, also determines the
-                preparation time of the detector. Long intervals and slow
-                ingestion speed means the detector takes longer time to
-                collect sufficient data to generate anomalies."
+                anomalies. The shorter the interval is, the more real time the 
+                detector results will be, and the more computing resources the 
+                detector will need."
+                hintLink={`${BASE_DOCS_LINK}/ad`}
                 isInvalid={isInvalid(field.name, form)}
                 error={getError(field.name, form)}
               >
@@ -79,6 +89,7 @@ export const Settings = () => {
             title="Window delay"
             hint="Specify a window of delay for a detector to fetch data, if you
             need to account for extra processing time."
+            hintLink={`${BASE_DOCS_LINK}/ad`}
             isInvalid={isInvalid(field.name, form)}
             error={getError(field.name, form)}
             style={{ marginTop: '16px' }}

@@ -1,4 +1,15 @@
 /*
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * The OpenSearch Contributors require contributions made to
+ * this file be licensed under the Apache-2.0 license or a
+ * compatible open source license.
+ *
+ * Modifications Copyright OpenSearch Contributors. See
+ * GitHub history for details.
+ */
+
+/*
  * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
@@ -24,6 +35,9 @@ import {
   EuiTitle,
   EuiButtonEmpty,
   EuiSpacer,
+  EuiText,
+  EuiLink,
+  EuiIcon,
 } from '@elastic/eui';
 import { FormikProps, Formik } from 'formik';
 import { get, isEmpty } from 'lodash';
@@ -31,9 +45,9 @@ import React, { Fragment, useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { RouteComponentProps } from 'react-router-dom';
 import { AppState } from '../../../redux/reducers';
-import { getMappings } from '../../../redux/reducers/elasticsearch';
+import { getMappings } from '../../../redux/reducers/opensearch';
 import { useFetchDetectorInfo } from '../../CreateDetectorSteps/hooks/useFetchDetectorInfo';
-import { BREADCRUMBS } from '../../../utils/constants';
+import { BREADCRUMBS, BASE_DOCS_LINK } from '../../../utils/constants';
 import { useHideSideNavBar } from '../../main/hooks/useHideSideNavBar';
 import { updateDetector } from '../../../redux/reducers/ad';
 import {
@@ -80,13 +94,13 @@ export function ConfigureModel(props: ConfigureModelProps) {
   const detectorId = get(props, 'match.params.detectorId', '');
   const { detector, hasError } = useFetchDetectorInfo(detectorId);
   const indexDataTypes = useSelector(
-    (state: AppState) => state.elasticsearch.dataTypes
+    (state: AppState) => state.opensearch.dataTypes
   );
   const [isHCDetector, setIsHCDetector] = useState<boolean>(
     props.initialValues ? props.initialValues.categoryFieldEnabled : false
   );
   const isLoading = useSelector(
-    (state: AppState) => state.elasticsearch.requesting
+    (state: AppState) => state.opensearch.requesting
   );
   const originalShingleSize = getShingleSizeFromObject(detector, isHCDetector);
 
@@ -238,6 +252,21 @@ export function ConfigureModel(props: ConfigureModelProps) {
                         : 'Configure model'}{' '}
                     </h1>
                   </EuiTitle>
+                  <Fragment>
+                    <EuiSpacer size="s" />
+                    <EuiText>
+                      Set the index fields that you want to find anomalies for
+                      by defining the model features. You can also set other
+                      model parameters such as category field and window size
+                      for more granular views. After you set the model features
+                      and other optional parameters, you can preview your
+                      anomalies from a sample feature output.{' '}
+                      <EuiLink href={`${BASE_DOCS_LINK}/ad`} target="_blank">
+                        Learn more <EuiIcon size="s" type="popout" />
+                      </EuiLink>
+                    </EuiText>
+                    <EuiSpacer size="s" />
+                  </Fragment>
                 </EuiPageHeaderSection>
               </EuiPageHeader>
               <Features detector={detector} formikProps={formikProps} />

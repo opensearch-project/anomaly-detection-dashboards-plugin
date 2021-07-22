@@ -1,4 +1,15 @@
 /*
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * The OpenSearch Contributors require contributions made to
+ * this file be licensed under the Apache-2.0 license or a
+ * compatible open source license.
+ *
+ * Modifications Copyright OpenSearch Contributors. See
+ * GitHub history for details.
+ */
+
+/*
  * Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
@@ -26,13 +37,13 @@ import { CatIndex, IndexAlias } from '../../../server/models/types';
 import { AD_NODE_API } from '../../../utils/constants';
 import { get } from 'lodash';
 
-const GET_INDICES = 'elasticsearch/GET_INDICES';
-const GET_ALIASES = 'elasticsearch/GET_ALIASES';
-const GET_MAPPINGS = 'elasticsearch/GET_MAPPINGS';
-const SEARCH_ES = 'elasticsearch/SEARCH_ES';
-const CREATE_INDEX = 'elasticsearch/CREATE_INDEX';
-const BULK = 'elasticsearch/BULK';
-const DELETE_INDEX = 'elasticsearch/DELETE_INDEX';
+const GET_INDICES = 'opensearch/GET_INDICES';
+const GET_ALIASES = 'opensearch/GET_ALIASES';
+const GET_MAPPINGS = 'opensearch/GET_MAPPINGS';
+const SEARCH_OPENSEARCH = 'opensearch/SEARCH_OPENSEARCH';
+const CREATE_INDEX = 'opensearch/CREATE_INDEX';
+const BULK = 'opensearch/BULK';
+const DELETE_INDEX = 'opensearch/DELETE_INDEX';
 
 export type Mappings = {
   [key: string]: any;
@@ -58,7 +69,7 @@ export interface DataTypes {
   [key: string]: any; // Any new or unknown
 }
 
-interface ElasticsearchState {
+interface OpenSearchState {
   indices: CatIndex[];
   aliases: IndexAlias[];
   dataTypes: DataTypes;
@@ -66,7 +77,7 @@ interface ElasticsearchState {
   searchResult: object;
   errorMessage: string;
 }
-export const initialState: ElasticsearchState = {
+export const initialState: OpenSearchState = {
   indices: [],
   aliases: [],
   dataTypes: {},
@@ -75,16 +86,16 @@ export const initialState: ElasticsearchState = {
   errorMessage: '',
 };
 
-const reducer = handleActions<ElasticsearchState>(
+const reducer = handleActions<OpenSearchState>(
   {
     [GET_INDICES]: {
-      REQUEST: (state: ElasticsearchState): ElasticsearchState => {
+      REQUEST: (state: OpenSearchState): OpenSearchState => {
         return { ...state, requesting: true, errorMessage: '' };
       },
       SUCCESS: (
-        state: ElasticsearchState,
+        state: OpenSearchState,
         action: APIResponseAction
-      ): ElasticsearchState => {
+      ): OpenSearchState => {
         return {
           ...state,
           requesting: false,
@@ -92,24 +103,24 @@ const reducer = handleActions<ElasticsearchState>(
         };
       },
       FAILURE: (
-        state: ElasticsearchState,
+        state: OpenSearchState,
         action: APIErrorAction
-      ): ElasticsearchState => ({
+      ): OpenSearchState => ({
         ...state,
         requesting: false,
         errorMessage: get(action, 'error.error', action.error),
       }),
     },
     [GET_ALIASES]: {
-      REQUEST: (state: ElasticsearchState): ElasticsearchState => ({
+      REQUEST: (state: OpenSearchState): OpenSearchState => ({
         ...state,
         requesting: true,
         errorMessage: '',
       }),
       SUCCESS: (
-        state: ElasticsearchState,
+        state: OpenSearchState,
         action: APIResponseAction
-      ): ElasticsearchState => {
+      ): OpenSearchState => {
         return {
           ...state,
           requesting: false,
@@ -117,24 +128,24 @@ const reducer = handleActions<ElasticsearchState>(
         };
       },
       FAILURE: (
-        state: ElasticsearchState,
+        state: OpenSearchState,
         action: APIErrorAction
-      ): ElasticsearchState => ({
+      ): OpenSearchState => ({
         ...state,
         requesting: false,
         errorMessage: get(action, 'error.error', action.error),
       }),
     },
-    [SEARCH_ES]: {
-      REQUEST: (state: ElasticsearchState): ElasticsearchState => ({
+    [SEARCH_OPENSEARCH]: {
+      REQUEST: (state: OpenSearchState): OpenSearchState => ({
         ...state,
         requesting: true,
         errorMessage: '',
       }),
       SUCCESS: (
-        state: ElasticsearchState,
+        state: OpenSearchState,
         action: APIResponseAction
-      ): ElasticsearchState => {
+      ): OpenSearchState => {
         return {
           ...state,
           requesting: false,
@@ -142,24 +153,24 @@ const reducer = handleActions<ElasticsearchState>(
         };
       },
       FAILURE: (
-        state: ElasticsearchState,
+        state: OpenSearchState,
         action: APIErrorAction
-      ): ElasticsearchState => ({
+      ): OpenSearchState => ({
         ...state,
         requesting: false,
         errorMessage: get(action, 'error.error', action.error),
       }),
     },
     [GET_MAPPINGS]: {
-      REQUEST: (state: ElasticsearchState): ElasticsearchState => ({
+      REQUEST: (state: OpenSearchState): OpenSearchState => ({
         ...state,
         requesting: true,
         errorMessage: '',
       }),
       SUCCESS: (
-        state: ElasticsearchState,
+        state: OpenSearchState,
         action: APIResponseAction
-      ): ElasticsearchState => {
+      ): OpenSearchState => {
         return {
           ...state,
           requesting: false,
@@ -169,9 +180,9 @@ const reducer = handleActions<ElasticsearchState>(
         };
       },
       FAILURE: (
-        state: ElasticsearchState,
+        state: OpenSearchState,
         action: APIErrorAction
-      ): ElasticsearchState => ({
+      ): OpenSearchState => ({
         ...state,
         requesting: false,
         errorMessage: get(action, 'error.error', action.error),
@@ -179,13 +190,13 @@ const reducer = handleActions<ElasticsearchState>(
       }),
     },
     [CREATE_INDEX]: {
-      REQUEST: (state: ElasticsearchState): ElasticsearchState => {
+      REQUEST: (state: OpenSearchState): OpenSearchState => {
         return { ...state, requesting: true, errorMessage: '' };
       },
       SUCCESS: (
-        state: ElasticsearchState,
+        state: OpenSearchState,
         action: APIResponseAction
-      ): ElasticsearchState => {
+      ): OpenSearchState => {
         return {
           ...state,
           requesting: false,
@@ -193,44 +204,44 @@ const reducer = handleActions<ElasticsearchState>(
         };
       },
       FAILURE: (
-        state: ElasticsearchState,
+        state: OpenSearchState,
         action: APIErrorAction
-      ): ElasticsearchState => ({
+      ): OpenSearchState => ({
         ...state,
         requesting: false,
         errorMessage: get(action, 'error.error', action.error),
       }),
     },
     [BULK]: {
-      REQUEST: (state: ElasticsearchState): ElasticsearchState => {
+      REQUEST: (state: OpenSearchState): OpenSearchState => {
         return { ...state, requesting: true, errorMessage: '' };
       },
       SUCCESS: (
-        state: ElasticsearchState,
+        state: OpenSearchState,
         action: APIResponseAction
-      ): ElasticsearchState => {
+      ): OpenSearchState => {
         return {
           ...state,
           requesting: false,
         };
       },
       FAILURE: (
-        state: ElasticsearchState,
+        state: OpenSearchState,
         action: APIErrorAction
-      ): ElasticsearchState => ({
+      ): OpenSearchState => ({
         ...state,
         requesting: false,
         errorMessage: get(action, 'error.error', action.error),
       }),
     },
     [DELETE_INDEX]: {
-      REQUEST: (state: ElasticsearchState): ElasticsearchState => {
+      REQUEST: (state: OpenSearchState): OpenSearchState => {
         return { ...state, requesting: true, errorMessage: '' };
       },
       SUCCESS: (
-        state: ElasticsearchState,
+        state: OpenSearchState,
         action: APIResponseAction
-      ): ElasticsearchState => {
+      ): OpenSearchState => {
         return {
           ...state,
           requesting: false,
@@ -238,9 +249,9 @@ const reducer = handleActions<ElasticsearchState>(
         };
       },
       FAILURE: (
-        state: ElasticsearchState,
+        state: OpenSearchState,
         action: APIErrorAction
-      ): ElasticsearchState => ({
+      ): OpenSearchState => ({
         ...state,
         requesting: false,
         errorMessage: get(action, 'error.error', action.error),
@@ -270,8 +281,8 @@ export const getMappings = (searchKey: string = ''): APIAction => ({
     }),
 });
 
-export const searchES = (requestData: any): APIAction => ({
-  type: SEARCH_ES,
+export const searchOpenSearch = (requestData: any): APIAction => ({
+  type: SEARCH_OPENSEARCH,
   request: (client: HttpSetup) =>
     client.post(`..${AD_NODE_API._SEARCH}`, {
       body: JSON.stringify(requestData),
@@ -305,9 +316,9 @@ export const getPrioritizedIndices = (searchKey: string): ThunkAction => async (
   //Fetch Indices and Aliases with text provided
   await dispatch(getIndices(searchKey));
   await dispatch(getAliases(searchKey));
-  const esState = getState().elasticsearch;
-  const exactMatchedIndices = esState.indices;
-  const exactMatchedAliases = esState.aliases;
+  const osState = getState().opensearch;
+  const exactMatchedIndices = osState.indices;
+  const exactMatchedAliases = osState.aliases;
   if (exactMatchedAliases.length || exactMatchedIndices.length) {
     //If we have exact match just return that
     return {
@@ -318,9 +329,9 @@ export const getPrioritizedIndices = (searchKey: string): ThunkAction => async (
     //No results found for exact match, append wildCard and get partial matches if exists
     await dispatch(getIndices(`${searchKey}*`));
     await dispatch(getAliases(`${searchKey}*`));
-    const esState = getState().elasticsearch;
-    const partialMatchedIndices = esState.indices;
-    const partialMatchedAliases = esState.aliases;
+    const osState = getState().opensearch;
+    const partialMatchedIndices = osState.indices;
+    const partialMatchedAliases = osState.aliases;
     if (partialMatchedAliases.length || partialMatchedIndices.length) {
       return {
         indices: partialMatchedIndices,

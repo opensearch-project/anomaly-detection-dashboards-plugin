@@ -1,4 +1,15 @@
 /*
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * The OpenSearch Contributors require contributions made to
+ * this file be licensed under the Apache-2.0 license or a
+ * compatible open source license.
+ *
+ * Modifications Copyright OpenSearch Contributors. See
+ * GitHub history for details.
+ */
+
+/*
  * Copyright 2020 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
@@ -70,14 +81,14 @@ export const GET_ALL_DETECTORS_QUERY_PARAMS = {
 
 export const GET_SAMPLE_DETECTORS_QUERY_PARAMS = {
   from: 0,
-  search: 'opendistro-sample',
+  search: 'sample',
   indices: '',
   size: MAX_DETECTORS,
   sortDirection: SORT_DIRECTION.ASC,
   sortField: 'name',
 };
 
-export const GET_SAMPLE_INDICES_QUERY = 'opendistro-sample-*';
+export const GET_SAMPLE_INDICES_QUERY = '*sample-*';
 
 export const TOP_ENTITIES_FIELD = 'top_entities';
 export const TOP_ENTITY_AGGS = 'top_entity_aggs';

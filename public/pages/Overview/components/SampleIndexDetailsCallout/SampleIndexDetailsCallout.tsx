@@ -1,4 +1,15 @@
 /*
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * The OpenSearch Contributors require contributions made to
+ * this file be licensed under the Apache-2.0 license or a
+ * compatible open source license.
+ *
+ * Modifications Copyright OpenSearch Contributors. See
+ * GitHub history for details.
+ */
+
+/*
  * Copyright 2020 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
@@ -15,7 +26,10 @@
 
 import React from 'react';
 import { EuiCallOut, EuiLink } from '@elastic/eui';
-import { KIBANA_NAME, KIBANA_PATH } from '../../../../utils/constants';
+import {
+  OPENSEARCH_DASHBOARDS_NAME,
+  OPENSEARCH_DASHBOARDS_PATH,
+} from '../../../../utils/constants';
 
 interface SampleIndexDetailsCalloutProps {
   indexName: string;
@@ -33,10 +47,10 @@ export const SampleIndexDetailsCallout = (
       <p>
         Check out the{' '}
         <EuiLink
-          href={`${KIBANA_NAME}#${KIBANA_PATH.DISCOVER}`}
+          href={`${OPENSEARCH_DASHBOARDS_NAME}#${OPENSEARCH_DASHBOARDS_PATH.DISCOVER}`}
           target="_blank"
         >
-          Kibana Discover app
+          OpenSearch Dashboards Discover app
         </EuiLink>
         {''} to view the raw data for sample index '{props.indexName}'.
       </p>

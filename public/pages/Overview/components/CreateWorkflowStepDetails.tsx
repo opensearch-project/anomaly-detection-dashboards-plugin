@@ -21,6 +21,7 @@ import {
   EuiIcon,
 } from '@elastic/eui';
 import React from 'react';
+import { BASE_DOCS_LINK } from '../../../utils/constants';
 
 interface CreateWorkflowStepDetailsProps {
   title: string;
@@ -39,10 +40,7 @@ export const CreateWorkflowStepDetails = (
         <EuiFlexItem grow={false} style={{ marginTop: '0px' }}>
           <EuiText style={{ fontSize: '14px' }}>
             {props.content}{' '}
-            <EuiLink
-              href="https://opendistro.github.io/for-elasticsearch-docs/docs/ad/"
-              target="_blank"
-            >
+            <EuiLink href={`${BASE_DOCS_LINK}/ad`} target="_blank">
               Learn more <EuiIcon size="s" type="popout" />
             </EuiLink>
           </EuiText>

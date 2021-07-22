@@ -1,4 +1,15 @@
 /*
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * The OpenSearch Contributors require contributions made to
+ * this file be licensed under the Apache-2.0 license or a
+ * compatible open source license.
+ *
+ * Modifications Copyright OpenSearch Contributors. See
+ * GitHub history for details.
+ */
+
+/*
  * Copyright 2020 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
@@ -47,7 +58,7 @@ import { RouteComponentProps } from 'react-router-dom';
 import ContentPanel from '../../../components/ContentPanel/ContentPanel';
 import { AppState } from '../../../redux/reducers';
 import { updateDetector, startDetector } from '../../../redux/reducers/ad';
-import { getMappings } from '../../../redux/reducers/elasticsearch';
+import { getMappings } from '../../../redux/reducers/opensearch';
 import {
   getErrorMessage,
   validatePositiveInteger,
@@ -60,13 +71,12 @@ import { useFetchDetectorInfo } from '../../createDetector/hooks/useFetchDetecto
 import {
   BREADCRUMBS,
   MAX_FEATURE_NUM,
-  MULTI_ENTITY_SHINGLE_SIZE,
+  BASE_DOCS_LINK,
 } from '../../../utils/constants';
 import { useHideSideNavBar } from '../../main/hooks/useHideSideNavBar';
 import { FeatureAccordion } from '../components/FeatureAccordion/FeatureAccordion';
 import { SaveFeaturesConfirmModal } from '../components/ConfirmModal/SaveFeaturesConfirmModal';
 import { SAVE_FEATURE_OPTIONS } from '../utils/constants';
-import { SINGLE_ENTITY_SHINGLE_SIZE } from '../../../utils/constants';
 import {
   initialFeatureValue,
   generateInitialFeatures,
@@ -95,7 +105,7 @@ export function EditFeatures(props: EditFeaturesProps) {
   const detectorId = get(props, 'match.params.detectorId', '');
   const { detector, hasError } = useFetchDetectorInfo(detectorId);
   const indexDataTypes = useSelector(
-    (state: AppState) => state.elasticsearch.dataTypes
+    (state: AppState) => state.opensearch.dataTypes
   );
   const [showSaveConfirmation, setShowSaveConfirmation] = useState<boolean>(
     false
@@ -110,8 +120,7 @@ export function EditFeatures(props: EditFeaturesProps) {
   );
   const [isHCDetector, setIsHCDetector] = useState<boolean>(false);
   const isLoading =
-    useSelector((state: AppState) => state.elasticsearch.requesting) ||
-    firstLoad;
+    useSelector((state: AppState) => state.opensearch.requesting) || firstLoad;
 
   // When detector is loaded: get any category fields (if applicable) and
   // get all index mappings based on detector's selected index
@@ -146,10 +155,7 @@ export function EditFeatures(props: EditFeaturesProps) {
     <EuiText className="content-panel-subTitle">
       Specify an index field that you want to find anomalies for by defining
       features. You can add up to 5 features.{' '}
-      <EuiLink
-        href="https://opendistro.github.io/for-elasticsearch-docs/docs/ad/"
-        target="_blank"
-      >
+      <EuiLink href={`${BASE_DOCS_LINK}/ad`} target="_blank">
         Learn more <EuiIcon size="s" type="popout" />
       </EuiLink>
     </EuiText>
@@ -337,10 +343,7 @@ export function EditFeatures(props: EditFeaturesProps) {
               based on the current interval, choose 1. If your data is
               continuously ingested and you want the anomalies based on multiple
               intervals, choose a larger window size.{' '}
-              <EuiLink
-                href="https://opendistro.github.io/for-elasticsearch-docs/docs/ad/"
-                target="_blank"
-              >
+              <EuiLink href={`${BASE_DOCS_LINK}/ad`} target="_blank">
                 Learn more <EuiIcon size="s" type="popout" />
               </EuiLink>
             </EuiText>

@@ -1,4 +1,15 @@
 /*
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * The OpenSearch Contributors require contributions made to
+ * this file be licensed under the Apache-2.0 license or a
+ * compatible open source license.
+ *
+ * Modifications Copyright OpenSearch Contributors. See
+ * GitHub history for details.
+ */
+
+/*
  * Copyright 2020 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
@@ -15,7 +26,11 @@
 
 import React from 'react';
 import { EuiCallOut, EuiLink } from '@elastic/eui';
-import { APP_PATH, PLUGIN_NAME } from '../../../../utils/constants';
+import {
+  APP_PATH,
+  PLUGIN_NAME,
+  BASE_DOCS_LINK,
+} from '../../../../utils/constants';
 
 export const SampleDataCallout = () => {
   return (
@@ -26,10 +41,7 @@ export const SampleDataCallout = () => {
     >
       <p>
         Read the{' '}
-        <EuiLink
-          href="https://opendistro.github.io/for-elasticsearch-docs/docs/ad/"
-          target="_blank"
-        >
+        <EuiLink href={`${BASE_DOCS_LINK}/ad`} target="_blank">
           documentation
         </EuiLink>{' '}
         or create a{' '}

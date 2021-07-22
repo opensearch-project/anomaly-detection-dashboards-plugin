@@ -1,4 +1,15 @@
 /*
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * The OpenSearch Contributors require contributions made to
+ * this file be licensed under the Apache-2.0 license or a
+ * compatible open source license.
+ *
+ * Modifications Copyright OpenSearch Contributors. See
+ * GitHub history for details.
+ */
+
+/*
  * Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
@@ -59,16 +70,20 @@ const reducer = handleActions<Anomalies>(
       }),
     },
 
-    //TODO: add requesting and errorMessage
     [SEARCH_ANOMALY_RESULTS]: {
       REQUEST: (state: Anomalies): Anomalies => ({
         ...state,
+        requesting: true,
+        errorMessage: '',
       }),
       SUCCESS: (state: Anomalies, action: APIResponseAction): Anomalies => ({
         ...state,
+        requesting: false,
       }),
-      FAILURE: (state: Anomalies): Anomalies => ({
+      FAILURE: (state: Anomalies, action: APIResponseAction): Anomalies => ({
         ...state,
+        requesting: false,
+        errorMessage: get(action, 'error.error', action.error),
       }),
     },
   },

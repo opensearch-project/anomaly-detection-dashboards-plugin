@@ -1,4 +1,15 @@
 /*
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * The OpenSearch Contributors require contributions made to
+ * this file be licensed under the Apache-2.0 license or a
+ * compatible open source license.
+ *
+ * Modifications Copyright OpenSearch Contributors. See
+ * GitHub history for details.
+ */
+
+/*
  * Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
@@ -37,7 +48,7 @@ export const QueryDataFilter = (props: QueryDataFilterProps) => {
           {({ field, form }: FieldProps) => (
             <EuiFormRow
               fullWidth
-              label="Use Elasticsearch query DSL to write a custom filter."
+              label="Use OpenSearch query DSL to write a custom filter."
               isInvalid={isInvalid(field.name, form)}
               error={getError(field.name, form)}
             >

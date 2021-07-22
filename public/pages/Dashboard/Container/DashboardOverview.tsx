@@ -1,4 +1,15 @@
 /*
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * The OpenSearch Contributors require contributions made to
+ * this file be licensed under the Apache-2.0 license or a
+ * compatible open source license.
+ *
+ * Modifications Copyright OpenSearch Contributors. See
+ * GitHub history for details.
+ */
+
+/*
  * Copyright 2020 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
@@ -20,7 +31,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { get, isEmpty, cloneDeep } from 'lodash';
 
 import { DetectorListItem } from '../../../models/interfaces';
-import { getIndices, getAliases } from '../../../redux/reducers/elasticsearch';
+import { getIndices, getAliases } from '../../../redux/reducers/opensearch';
 import { getDetectorList } from '../../../redux/reducers/ad';
 import {
   EuiFlexGroup,
@@ -112,15 +123,13 @@ export function DashboardOverview() {
     setAllDetectorStatesSelected(isEmpty(selectedStates));
   };
 
-  const elasticsearchState = useSelector(
-    (state: AppState) => state.elasticsearch
-  );
+  const opensearchState = useSelector((state: AppState) => state.opensearch);
 
   const [selectedIndices, setSelectedIndices] = useState([] as string[]);
   const [allIndicesSelected, setAllIndicesSelected] = useState(true);
 
-  const visibleIndices = get(elasticsearchState, 'indices', []) as CatIndex[];
-  const visibleAliases = get(elasticsearchState, 'aliases', []) as IndexAlias[];
+  const visibleIndices = get(opensearchState, 'indices', []) as CatIndex[];
+  const visibleAliases = get(opensearchState, 'aliases', []) as IndexAlias[];
 
   const handleIndicesFilterChange = (
     options: EuiComboBoxOptionProps[]

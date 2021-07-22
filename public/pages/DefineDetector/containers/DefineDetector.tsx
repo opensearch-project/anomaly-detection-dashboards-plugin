@@ -1,4 +1,15 @@
 /*
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * The OpenSearch Contributors require contributions made to
+ * this file be licensed under the Apache-2.0 license or a
+ * compatible open source license.
+ *
+ * Modifications Copyright OpenSearch Contributors. See
+ * GitHub history for details.
+ */
+
+/*
  * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
@@ -13,7 +24,7 @@
  * permissions and limitations under the License.
  */
 
-import React, { Fragment, useEffect } from 'react';
+import React, { Fragment, useEffect, useState } from 'react';
 import { RouteComponentProps } from 'react-router';
 import { useDispatch } from 'react-redux';
 import { Dispatch } from 'redux';
@@ -43,12 +54,16 @@ import { NameAndDescription } from '../components/NameAndDescription';
 import { DataSource } from '../components/Datasource/DataSource';
 import { Timestamp } from '../components/Timestamp';
 import { Settings } from '../components/Settings';
-import { detectorDefinitionToFormik } from '../utils/helpers';
-import { formikToDetectorDefinition } from '../utils/helpers';
+import {
+  detectorDefinitionToFormik,
+  formikToDetectorDefinition,
+  clearModelConfiguration,
+} from '../utils/helpers';
 import { DetectorDefinitionFormikValues } from '../models/interfaces';
 import { Detector } from '../../../models/interfaces';
 import { prettifyErrorMessage } from '../../../../server/utils/helpers';
 import { DETECTOR_STATE } from '../../../../server/utils/constants';
+import { ModelConfigurationFormikValues } from 'public/pages/ConfigureModel/models/interfaces';
 
 interface DefineDetectorRouterProps {
   detectorId?: string;
@@ -60,6 +75,7 @@ interface DefineDetectorProps
   setStep?(stepNumber: number): void;
   initialValues?: DetectorDefinitionFormikValues;
   setInitialValues?(initialValues: DetectorDefinitionFormikValues): void;
+  setModelConfigValues?(initialValues: ModelConfigurationFormikValues): void;
 }
 
 export const DefineDetector = (props: DefineDetectorProps) => {
@@ -68,6 +84,7 @@ export const DefineDetector = (props: DefineDetectorProps) => {
   useHideSideNavBar(true, false);
   const detectorId: string = get(props, 'match.params.detectorId', '');
   const { detector, hasError } = useFetchDetectorInfo(detectorId);
+  const [newIndexSelected, setNewIndexSelected] = useState<boolean>(false);
 
   // Jump to top of page on first load
   useEffect(() => {
@@ -170,7 +187,11 @@ export const DefineDetector = (props: DefineDetectorProps) => {
   };
 
   const handleUpdateDetector = async (detectorToUpdate: Detector) => {
-    dispatch(updateDetector(detectorId, detectorToUpdate))
+    // If a new index was selected: clear any existing features and category fields
+    const preparedDetector = newIndexSelected
+      ? clearModelConfiguration(detectorToUpdate)
+      : detectorToUpdate;
+    dispatch(updateDetector(detectorId, preparedDetector))
       .then((response: any) => {
         core.notifications.toasts.addSuccess(
           `Detector updated: ${response.response.name}`
@@ -233,6 +254,8 @@ export const DefineDetector = (props: DefineDetectorProps) => {
                     props.isEdit ? get(detector, 'indices.0', '') : null
                   }
                   isEdit={props.isEdit}
+                  setModelConfigValues={props.setModelConfigValues}
+                  setNewIndexSelected={setNewIndexSelected}
                 />
                 <EuiSpacer />
                 <Timestamp formikProps={formikProps} />
