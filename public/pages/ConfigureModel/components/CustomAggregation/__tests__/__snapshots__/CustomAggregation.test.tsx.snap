@@ -139,7 +139,7 @@ exports[`<CustomAggregation /> spec renders the component 1`] = `
         class="euiFormHelpText euiFormRow__text"
         id="random_html_id-help"
       >
-        Custom expression uses the Elasticsearch query DSL.
+        Custom expression uses the OpenSearch query DSL.
       </div>
     </div>
   </div>

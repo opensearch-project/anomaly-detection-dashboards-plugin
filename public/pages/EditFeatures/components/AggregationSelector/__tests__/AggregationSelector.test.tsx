@@ -1,4 +1,15 @@
 /*
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * The OpenSearch Contributors require contributions made to
+ * this file be licensed under the Apache-2.0 license or a
+ * compatible open source license.
+ *
+ * Modifications Copyright OpenSearch Contributors. See
+ * GitHub history for details.
+ */
+
+/*
  * Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
@@ -18,20 +29,28 @@ import { render } from '@testing-library/react';
 import { Provider } from 'react-redux';
 import { Formik } from 'formik';
 import { AggregationSelector } from '../AggregationSelector';
+import { FEATURE_TYPE } from '../../../../../models/interfaces';
 import {
   initialState,
   mockedStore,
 } from '../../../../../redux/utils/testUtils';
 import { FeaturesFormikValues } from '../../../containers/utils/formikToFeatures';
-import { INITIAL_VALUES } from '../../../utils/constants';
+
+const INITIAL_VALUES = {
+  featureId: 'test-id',
+  featureName: 'test-feature',
+  featureType: FEATURE_TYPE.SIMPLE,
+  featureEnabled: true,
+  aggregationQuery: '',
+};
 
 const renderAggregationSelector = (initialValue: FeaturesFormikValues) => ({
   ...render(
     <Provider
       store={mockedStore({
         ...initialState,
-        elasticsearch: {
-          ...initialState.elasticsearch,
+        opensearch: {
+          ...initialState.opensearch,
           dataTypes: {
             keyword: ['cityName.keyword'],
             integer: ['age'],
@@ -41,7 +60,7 @@ const renderAggregationSelector = (initialValue: FeaturesFormikValues) => ({
       })}
     >
       <Formik initialValues={initialValue} onSubmit={jest.fn()}>
-        {formikProps => (
+        {(formikProps) => (
           <div>
             <AggregationSelector />
           </div>

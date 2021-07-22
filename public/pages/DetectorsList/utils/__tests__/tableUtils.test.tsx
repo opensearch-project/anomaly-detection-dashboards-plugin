@@ -1,4 +1,15 @@
 /*
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * The OpenSearch Contributors require contributions made to
+ * this file be licensed under the Apache-2.0 license or a
+ * compatible open source license.
+ *
+ * Modifications Copyright OpenSearch Contributors. See
+ * GitHub history for details.
+ */
+
+/*
  * Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
@@ -31,22 +42,27 @@ describe('tableUtils spec', () => {
     test('detector state column', () => {
       const result = staticColumn;
       const { getByText } = render(result[2].name);
-      getByText('Detector state');
+      getByText('Real-time state');
     });
-    test('total anomalies column', () => {
+    test('historical analysis column', () => {
       const result = staticColumn;
       const { getByText } = render(result[3].name);
-      getByText('Anomalies last 24 hours');
+      getByText('Historical analysis');
     });
-    test('last active anomaly column', () => {
+    test('anomalies last 24 hrs column', () => {
       const result = staticColumn;
       const { getByText } = render(result[4].name);
-      getByText('Last anomaly occurrence');
+      getByText('Anomalies last 24 hours');
     });
-    test('last enabled time column', () => {
+    test('last RT occurrence column', () => {
       const result = staticColumn;
       const { getByText } = render(result[5].name);
-      getByText('Last enabled time');
+      getByText('Last real-time occurrence');
+    });
+    test('last started time column', () => {
+      const result = staticColumn;
+      const { getByText } = render(result[6].name);
+      getByText('Last started');
     });
   });
 });

@@ -1,4 +1,15 @@
 /*
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * The OpenSearch Contributors require contributions made to
+ * this file be licensed under the Apache-2.0 license or a
+ * compatible open source license.
+ *
+ * Modifications Copyright OpenSearch Contributors. See
+ * GitHub history for details.
+ */
+
+/*
  * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
@@ -38,6 +49,11 @@ describe('<CategoryField /> spec', () => {
                 }}
                 isLoading={false}
                 originalShingleSize={1}
+                formikProps={{
+                  values: {
+                    categoryFieldEnabled: false,
+                  },
+                }}
               />
             </Form>
           </Fragment>
@@ -47,7 +63,7 @@ describe('<CategoryField /> spec', () => {
     expect(container).toMatchSnapshot();
     expect(queryByTestId('noCategoryFieldsCallout')).toBeNull();
     expect(queryByTestId('categoryFieldComboBox')).toBeNull();
-    expect(queryByText('Enable category field')).not.toBeNull();
+    expect(queryByText('Enable categorical field')).not.toBeNull();
   });
   test('renders the component when enabled', () => {
     const { container, queryByText, queryByTestId } = render(
@@ -68,6 +84,11 @@ describe('<CategoryField /> spec', () => {
                 }}
                 isLoading={false}
                 originalShingleSize={1}
+                formikProps={{
+                  values: {
+                    categoryFieldEnabled: true,
+                  },
+                }}
               />
             </Form>
           </Fragment>
@@ -77,7 +98,7 @@ describe('<CategoryField /> spec', () => {
     expect(container).toMatchSnapshot();
     expect(queryByTestId('noCategoryFieldsCallout')).toBeNull();
     expect(queryByTestId('categoryFieldComboBox')).not.toBeNull();
-    expect(queryByText('Enable category field')).not.toBeNull();
+    expect(queryByText('Enable categorical field')).not.toBeNull();
   });
   test('shows callout when there are no available category fields', () => {
     const { container, queryByText, queryByTestId } = render(
@@ -98,6 +119,11 @@ describe('<CategoryField /> spec', () => {
                 }}
                 isLoading={false}
                 originalShingleSize={1}
+                formikProps={{
+                  values: {
+                    categoryFieldEnabled: true,
+                  },
+                }}
               />
             </Form>
           </Fragment>
@@ -107,7 +133,7 @@ describe('<CategoryField /> spec', () => {
     expect(container).toMatchSnapshot();
     expect(queryByTestId('noCategoryFieldsCallout')).not.toBeNull();
     expect(queryByTestId('categoryFieldComboBox')).toBeNull();
-    expect(queryByText('Enable category field')).not.toBeNull();
+    expect(queryByText('Enable categorical field')).not.toBeNull();
   });
   test('hides callout if component is loading', () => {
     const { container, queryByText, queryByTestId } = render(
@@ -128,6 +154,11 @@ describe('<CategoryField /> spec', () => {
                 }}
                 isLoading={true}
                 originalShingleSize={1}
+                formikProps={{
+                  values: {
+                    categoryFieldEnabled: true,
+                  },
+                }}
               />
             </Form>
           </Fragment>
@@ -136,6 +167,6 @@ describe('<CategoryField /> spec', () => {
     );
     expect(container).toMatchSnapshot();
     expect(queryByTestId('noCategoryFieldsCallout')).toBeNull();
-    expect(queryByText('Enable category field')).not.toBeNull();
+    expect(queryByText('Enable categorical field')).not.toBeNull();
   });
 });

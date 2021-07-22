@@ -39,7 +39,8 @@ exports[`<CategoryField /> spec hides callout if component is loading 1`] = `
                 class="euiFlexGroup euiFlexGroup--gutterLarge euiFlexGroup--directionRow euiFlexGroup--responsive"
               >
                 <div
-                  class="euiFlexItem"
+                  class="euiFlexItem content-panel-subTitle"
+                  style="line-height: normal; max-width: 75%;"
                 >
                   <div
                     class="euiText euiText--medium content-panel-subTitle"
@@ -48,7 +49,7 @@ exports[`<CategoryField /> spec hides callout if component is loading 1`] = `
                      
                     <a
                       class="euiLink euiLink--primary"
-                      href="https://opendistro.github.io/for-elasticsearch-docs/docs/ad/"
+                      href="https://opensearch.org/docs/monitoring-plugins/ad"
                       rel="noopener noreferrer"
                       target="_blank"
                     >
@@ -76,7 +77,7 @@ exports[`<CategoryField /> spec hides callout if component is loading 1`] = `
               class="euiFlexItem euiFlexItem--flexGrowZero"
             >
               <div
-                class="euiFlexGroup euiFlexGroup--gutterLarge euiFlexGroup--alignItemsCenter euiFlexGroup--justifyContentSpaceBetween euiFlexGroup--directionRow euiFlexGroup--responsive"
+                class="euiFlexGroup euiFlexGroup--gutterMedium euiFlexGroup--alignItemsCenter euiFlexGroup--justifyContentSpaceBetween euiFlexGroup--directionRow euiFlexGroup--responsive"
               >
                 <div
                   class="euiFlexItem"
@@ -84,40 +85,42 @@ exports[`<CategoryField /> spec hides callout if component is loading 1`] = `
               </div>
             </div>
           </div>
-          <hr
-            class="euiHorizontalRule euiHorizontalRule--full euiHorizontalRule--marginXSmall"
-          />
-          <div
-            style="padding: 10px 0px;"
-          >
-            <div
-              class="euiSpacer euiSpacer--m"
+          <div>
+            <hr
+              class="euiHorizontalRule euiHorizontalRule--full euiHorizontalRule--marginSmall"
             />
             <div
-              class="euiFlexGroup euiFlexGroup--gutterLarge euiFlexGroup--directionColumn euiFlexGroup--responsive"
+              style="padding: 10px 0px;"
             >
               <div
-                class="euiFlexItem"
+                class="euiSpacer euiSpacer--m"
+              />
+              <div
+                class="euiFlexGroup euiFlexGroup--gutterLarge euiFlexGroup--directionColumn euiFlexGroup--responsive"
               >
                 <div
-                  class="euiCheckbox"
+                  class="euiFlexItem"
                 >
-                  <input
-                    checked=""
-                    class="euiCheckbox__input"
-                    disabled=""
-                    id="categoryFieldCheckbox"
-                    type="checkbox"
-                  />
                   <div
-                    class="euiCheckbox__square"
-                  />
-                  <label
-                    class="euiCheckbox__label"
-                    for="categoryFieldCheckbox"
+                    class="euiCheckbox"
                   >
-                    Enable category field
-                  </label>
+                    <input
+                      checked=""
+                      class="euiCheckbox__input"
+                      disabled=""
+                      id="categoryFieldCheckbox"
+                      type="checkbox"
+                    />
+                    <div
+                      class="euiCheckbox__square"
+                    />
+                    <label
+                      class="euiCheckbox__label"
+                      for="categoryFieldCheckbox"
+                    >
+                      Enable category field
+                    </label>
+                  </div>
                 </div>
               </div>
             </div>
@@ -168,7 +171,8 @@ exports[`<CategoryField /> spec renders the component when disabled 1`] = `
                 class="euiFlexGroup euiFlexGroup--gutterLarge euiFlexGroup--directionRow euiFlexGroup--responsive"
               >
                 <div
-                  class="euiFlexItem"
+                  class="euiFlexItem content-panel-subTitle"
+                  style="line-height: normal; max-width: 75%;"
                 >
                   <div
                     class="euiText euiText--medium content-panel-subTitle"
@@ -177,7 +181,7 @@ exports[`<CategoryField /> spec renders the component when disabled 1`] = `
                      
                     <a
                       class="euiLink euiLink--primary"
-                      href="https://opendistro.github.io/for-elasticsearch-docs/docs/ad/"
+                      href="https://opensearch.org/docs/monitoring-plugins/ad"
                       rel="noopener noreferrer"
                       target="_blank"
                     >
@@ -201,7 +205,7 @@ exports[`<CategoryField /> spec renders the component when disabled 1`] = `
               class="euiFlexItem euiFlexItem--flexGrowZero"
             >
               <div
-                class="euiFlexGroup euiFlexGroup--gutterLarge euiFlexGroup--alignItemsCenter euiFlexGroup--justifyContentSpaceBetween euiFlexGroup--directionRow euiFlexGroup--responsive"
+                class="euiFlexGroup euiFlexGroup--gutterMedium euiFlexGroup--alignItemsCenter euiFlexGroup--justifyContentSpaceBetween euiFlexGroup--directionRow euiFlexGroup--responsive"
               >
                 <div
                   class="euiFlexItem"
@@ -209,35 +213,37 @@ exports[`<CategoryField /> spec renders the component when disabled 1`] = `
               </div>
             </div>
           </div>
-          <hr
-            class="euiHorizontalRule euiHorizontalRule--full euiHorizontalRule--marginXSmall"
-          />
-          <div
-            style="padding: 10px 0px;"
-          >
+          <div>
+            <hr
+              class="euiHorizontalRule euiHorizontalRule--full euiHorizontalRule--marginSmall"
+            />
             <div
-              class="euiFlexGroup euiFlexGroup--gutterLarge euiFlexGroup--directionColumn euiFlexGroup--responsive"
+              style="padding: 10px 0px;"
             >
               <div
-                class="euiFlexItem"
+                class="euiFlexGroup euiFlexGroup--gutterLarge euiFlexGroup--directionColumn euiFlexGroup--responsive"
               >
                 <div
-                  class="euiCheckbox"
+                  class="euiFlexItem"
                 >
-                  <input
-                    class="euiCheckbox__input"
-                    id="categoryFieldCheckbox"
-                    type="checkbox"
-                  />
                   <div
-                    class="euiCheckbox__square"
-                  />
-                  <label
-                    class="euiCheckbox__label"
-                    for="categoryFieldCheckbox"
+                    class="euiCheckbox"
                   >
-                    Enable category field
-                  </label>
+                    <input
+                      class="euiCheckbox__input"
+                      id="categoryFieldCheckbox"
+                      type="checkbox"
+                    />
+                    <div
+                      class="euiCheckbox__square"
+                    />
+                    <label
+                      class="euiCheckbox__label"
+                      for="categoryFieldCheckbox"
+                    >
+                      Enable category field
+                    </label>
+                  </div>
                 </div>
               </div>
             </div>
@@ -288,7 +294,8 @@ exports[`<CategoryField /> spec renders the component when enabled 1`] = `
                 class="euiFlexGroup euiFlexGroup--gutterLarge euiFlexGroup--directionRow euiFlexGroup--responsive"
               >
                 <div
-                  class="euiFlexItem"
+                  class="euiFlexItem content-panel-subTitle"
+                  style="line-height: normal; max-width: 75%;"
                 >
                   <div
                     class="euiText euiText--medium content-panel-subTitle"
@@ -297,7 +304,7 @@ exports[`<CategoryField /> spec renders the component when enabled 1`] = `
                      
                     <a
                       class="euiLink euiLink--primary"
-                      href="https://opendistro.github.io/for-elasticsearch-docs/docs/ad/"
+                      href="https://opensearch.org/docs/monitoring-plugins/ad"
                       rel="noopener noreferrer"
                       target="_blank"
                     >
@@ -325,7 +332,7 @@ exports[`<CategoryField /> spec renders the component when enabled 1`] = `
               class="euiFlexItem euiFlexItem--flexGrowZero"
             >
               <div
-                class="euiFlexGroup euiFlexGroup--gutterLarge euiFlexGroup--alignItemsCenter euiFlexGroup--justifyContentSpaceBetween euiFlexGroup--directionRow euiFlexGroup--responsive"
+                class="euiFlexGroup euiFlexGroup--gutterMedium euiFlexGroup--alignItemsCenter euiFlexGroup--justifyContentSpaceBetween euiFlexGroup--directionRow euiFlexGroup--responsive"
               >
                 <div
                   class="euiFlexItem"
@@ -333,129 +340,131 @@ exports[`<CategoryField /> spec renders the component when enabled 1`] = `
               </div>
             </div>
           </div>
-          <hr
-            class="euiHorizontalRule euiHorizontalRule--full euiHorizontalRule--marginXSmall"
-          />
-          <div
-            style="padding: 10px 0px;"
-          >
+          <div>
+            <hr
+              class="euiHorizontalRule euiHorizontalRule--full euiHorizontalRule--marginSmall"
+            />
             <div
-              class="euiFlexGroup euiFlexGroup--gutterLarge euiFlexGroup--directionColumn euiFlexGroup--responsive"
+              style="padding: 10px 0px;"
             >
               <div
-                class="euiFlexItem"
+                class="euiFlexGroup euiFlexGroup--gutterLarge euiFlexGroup--directionColumn euiFlexGroup--responsive"
               >
                 <div
-                  class="euiCheckbox"
-                >
-                  <input
-                    checked=""
-                    class="euiCheckbox__input"
-                    id="categoryFieldCheckbox"
-                    type="checkbox"
-                  />
-                  <div
-                    class="euiCheckbox__square"
-                  />
-                  <label
-                    class="euiCheckbox__label"
-                    for="categoryFieldCheckbox"
-                  >
-                    Enable category field
-                  </label>
-                </div>
-              </div>
-              <div
-                class="euiFlexItem"
-              >
-                <div
-                  class="euiFormRow"
-                  id="random_html_id-row"
+                  class="euiFlexItem"
                 >
                   <div
-                    class="euiFormRow__labelWrapper"
+                    class="euiCheckbox"
                   >
+                    <input
+                      checked=""
+                      class="euiCheckbox__input"
+                      id="categoryFieldCheckbox"
+                      type="checkbox"
+                    />
+                    <div
+                      class="euiCheckbox__square"
+                    />
                     <label
-                      aria-invalid="false"
-                      class="euiFormLabel euiFormRow__label"
-                      for="random_html_id"
+                      class="euiCheckbox__label"
+                      for="categoryFieldCheckbox"
                     >
-                      Field
+                      Enable category field
                     </label>
                   </div>
+                </div>
+                <div
+                  class="euiFlexItem"
+                >
                   <div
-                    class="euiFormRow__fieldWrapper"
+                    class="euiFormRow"
+                    id="random_html_id-row"
                   >
                     <div
-                      aria-describedby="random_html_id-help"
-                      aria-expanded="false"
-                      aria-haspopup="listbox"
-                      class="euiComboBox"
-                      data-test-subj="categoryFieldComboBox"
-                      role="combobox"
+                      class="euiFormRow__labelWrapper"
+                    >
+                      <label
+                        aria-invalid="false"
+                        class="euiFormLabel euiFormRow__label"
+                        for="random_html_id"
+                      >
+                        Field
+                      </label>
+                    </div>
+                    <div
+                      class="euiFormRow__fieldWrapper"
                     >
                       <div
-                        class="euiFormControlLayout"
+                        aria-describedby="random_html_id-help"
+                        aria-expanded="false"
+                        aria-haspopup="listbox"
+                        class="euiComboBox"
+                        data-test-subj="categoryFieldComboBox"
+                        role="combobox"
                       >
                         <div
-                          class="euiFormControlLayout__childrenWrapper"
+                          class="euiFormControlLayout"
                         >
                           <div
-                            class="euiComboBox__inputWrap euiComboBox__inputWrap--noWrap euiComboBox__inputWrap-isClearable"
-                            data-test-subj="comboBoxInput"
-                            tabindex="-1"
+                            class="euiFormControlLayout__childrenWrapper"
                           >
-                            <p
-                              class="euiComboBoxPlaceholder"
-                            >
-                              Select your category field
-                            </p>
                             <div
-                              class="euiComboBox__input"
-                              style="font-size: 14px; display: inline-block;"
+                              class="euiComboBox__inputWrap euiComboBox__inputWrap--noWrap euiComboBox__inputWrap-isClearable"
+                              data-test-subj="comboBoxInput"
+                              tabindex="-1"
                             >
-                              <input
-                                aria-controls=""
-                                data-test-subj="comboBoxSearchInput"
-                                id="random_html_id"
-                                role="textbox"
-                                style="box-sizing: content-box; width: 2px;"
-                                value=""
-                              />
+                              <p
+                                class="euiComboBoxPlaceholder"
+                              >
+                                Select your category field
+                              </p>
                               <div
-                                style="position: absolute; top: 0px; left: 0px; visibility: hidden; height: 0px; overflow: scroll; white-space: pre; font-family: -webkit-small-control; letter-spacing: normal; text-transform: none;"
-                              />
+                                class="euiComboBox__input"
+                                style="font-size: 14px; display: inline-block;"
+                              >
+                                <input
+                                  aria-controls=""
+                                  data-test-subj="comboBoxSearchInput"
+                                  id="random_html_id"
+                                  role="textbox"
+                                  style="box-sizing: content-box; width: 2px;"
+                                  value=""
+                                />
+                                <div
+                                  style="position: absolute; top: 0px; left: 0px; visibility: hidden; height: 0px; overflow: scroll; white-space: pre; font-family: -webkit-small-control; letter-spacing: normal; text-transform: none;"
+                                />
+                              </div>
                             </div>
-                          </div>
-                          <div
-                            class="euiFormControlLayoutIcons euiFormControlLayoutIcons--right"
-                          >
-                            <button
-                              aria-label="Open list of options"
-                              class="euiFormControlLayoutCustomIcon euiFormControlLayoutCustomIcon--clickable"
-                              data-test-subj="comboBoxToggleListButton"
-                              type="button"
+                            <div
+                              class="euiFormControlLayoutIcons euiFormControlLayoutIcons--right"
                             >
-                              <svg
-                                aria-hidden="true"
-                                class="euiIcon euiIcon--medium euiIcon-isLoading euiFormControlLayoutCustomIcon__icon"
-                                focusable="false"
-                                height="16"
-                                role="img"
-                                viewBox="0 0 16 16"
-                                width="16"
-                                xmlns="http://www.w3.org/2000/svg"
-                              />
-                            </button>
+                              <button
+                                aria-label="Open list of options"
+                                class="euiFormControlLayoutCustomIcon euiFormControlLayoutCustomIcon--clickable"
+                                data-test-subj="comboBoxToggleListButton"
+                                type="button"
+                              >
+                                <svg
+                                  aria-hidden="true"
+                                  class="euiIcon euiIcon--medium euiIcon-isLoading euiFormControlLayoutCustomIcon__icon"
+                                  focusable="false"
+                                  height="16"
+                                  role="img"
+                                  viewBox="0 0 16 16"
+                                  width="16"
+                                  xmlns="http://www.w3.org/2000/svg"
+                                />
+                              </button>
+                            </div>
                           </div>
                         </div>
                       </div>
-                    </div>
-                    <div
-                      class="euiFormHelpText euiFormRow__text"
-                      id="random_html_id-help"
-                    >
-                      You can only apply the category field to the 'ip' and 'keyword' Elasticsearch data types.
+                      <div
+                        class="euiFormHelpText euiFormRow__text"
+                        id="random_html_id-help"
+                      >
+                        You can only apply the category field to the 'ip' and 'keyword' OpenSearch data types.
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -508,7 +517,8 @@ exports[`<CategoryField /> spec shows callout when there are no available catego
                 class="euiFlexGroup euiFlexGroup--gutterLarge euiFlexGroup--directionRow euiFlexGroup--responsive"
               >
                 <div
-                  class="euiFlexItem"
+                  class="euiFlexItem content-panel-subTitle"
+                  style="line-height: normal; max-width: 75%;"
                 >
                   <div
                     class="euiText euiText--medium content-panel-subTitle"
@@ -517,7 +527,7 @@ exports[`<CategoryField /> spec shows callout when there are no available catego
                      
                     <a
                       class="euiLink euiLink--primary"
-                      href="https://opendistro.github.io/for-elasticsearch-docs/docs/ad/"
+                      href="https://opensearch.org/docs/monitoring-plugins/ad"
                       rel="noopener noreferrer"
                       target="_blank"
                     >
@@ -545,7 +555,7 @@ exports[`<CategoryField /> spec shows callout when there are no available catego
               class="euiFlexItem euiFlexItem--flexGrowZero"
             >
               <div
-                class="euiFlexGroup euiFlexGroup--gutterLarge euiFlexGroup--alignItemsCenter euiFlexGroup--justifyContentSpaceBetween euiFlexGroup--directionRow euiFlexGroup--responsive"
+                class="euiFlexGroup euiFlexGroup--gutterMedium euiFlexGroup--alignItemsCenter euiFlexGroup--justifyContentSpaceBetween euiFlexGroup--directionRow euiFlexGroup--responsive"
               >
                 <div
                   class="euiFlexItem"
@@ -553,64 +563,66 @@ exports[`<CategoryField /> spec shows callout when there are no available catego
               </div>
             </div>
           </div>
-          <hr
-            class="euiHorizontalRule euiHorizontalRule--full euiHorizontalRule--marginXSmall"
-          />
-          <div
-            style="padding: 10px 0px;"
-          >
-            <div
-              class="euiCallOut euiCallOut--warning"
-              data-test-subj="noCategoryFieldsCallout"
-            >
-              <div
-                class="euiCallOutHeader"
-              >
-                <svg
-                  aria-hidden="true"
-                  class="euiIcon euiIcon--medium euiIcon-isLoading euiCallOutHeader__icon"
-                  focusable="false"
-                  height="16"
-                  role="img"
-                  viewBox="0 0 16 16"
-                  width="16"
-                  xmlns="http://www.w3.org/2000/svg"
-                />
-                <span
-                  class="euiCallOutHeader__title"
-                >
-                  There are no available category fields for the selected index
-                </span>
-              </div>
-            </div>
-            <div
-              class="euiSpacer euiSpacer--m"
+          <div>
+            <hr
+              class="euiHorizontalRule euiHorizontalRule--full euiHorizontalRule--marginSmall"
             />
             <div
-              class="euiFlexGroup euiFlexGroup--gutterLarge euiFlexGroup--directionColumn euiFlexGroup--responsive"
+              style="padding: 10px 0px;"
             >
               <div
-                class="euiFlexItem"
+                class="euiCallOut euiCallOut--warning"
+                data-test-subj="noCategoryFieldsCallout"
               >
                 <div
-                  class="euiCheckbox"
+                  class="euiCallOutHeader"
                 >
-                  <input
-                    checked=""
-                    class="euiCheckbox__input"
-                    disabled=""
-                    id="categoryFieldCheckbox"
-                    type="checkbox"
+                  <svg
+                    aria-hidden="true"
+                    class="euiIcon euiIcon--medium euiIcon-isLoading euiCallOutHeader__icon"
+                    focusable="false"
+                    height="16"
+                    role="img"
+                    viewBox="0 0 16 16"
+                    width="16"
+                    xmlns="http://www.w3.org/2000/svg"
                   />
-                  <div
-                    class="euiCheckbox__square"
-                  />
-                  <label
-                    class="euiCheckbox__label"
-                    for="categoryFieldCheckbox"
+                  <span
+                    class="euiCallOutHeader__title"
                   >
-                    Enable category field
-                  </label>
+                    There are no available category fields for the selected index
+                  </span>
+                </div>
+              </div>
+              <div
+                class="euiSpacer euiSpacer--m"
+              />
+              <div
+                class="euiFlexGroup euiFlexGroup--gutterLarge euiFlexGroup--directionColumn euiFlexGroup--responsive"
+              >
+                <div
+                  class="euiFlexItem"
+                >
+                  <div
+                    class="euiCheckbox"
+                  >
+                    <input
+                      checked=""
+                      class="euiCheckbox__input"
+                      disabled=""
+                      id="categoryFieldCheckbox"
+                      type="checkbox"
+                    />
+                    <div
+                      class="euiCheckbox__square"
+                    />
+                    <label
+                      class="euiCheckbox__label"
+                      for="categoryFieldCheckbox"
+                    >
+                      Enable category field
+                    </label>
+                  </div>
                 </div>
               </div>
             </div>
