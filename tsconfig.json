@@ -3,8 +3,8 @@
     "skipLibCheck": true,
     "baseUrl": ".",
     "paths": {
-      // Allows for importing from `kibana` package for the exported types.
-      "kibana": ["./kibana"],
+      // Allows for importing from `opensearch-dashboards` package for the exported types.
+      "opensearch-dashboards": ["./opensearch_dashboards"],
       "ui/*": ["src/legacy/ui/public/*"],
       "test_utils/*": ["src/test_utils/public/*"]
     },
