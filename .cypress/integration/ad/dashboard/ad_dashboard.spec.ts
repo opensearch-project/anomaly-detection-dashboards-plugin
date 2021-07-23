@@ -1,4 +1,15 @@
 /*
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * The OpenSearch Contributors require contributions made to
+ * this file be licensed under the Apache-2.0 license or a
+ * compatible open source license.
+ *
+ * Modifications Copyright OpenSearch Contributors. See
+ * GitHub history for details.
+ */
+
+/*
  * Copyright 2020 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
@@ -31,16 +42,13 @@ context('AD Dashboard', () => {
     cy.contains('h2', 'You have no detectors');
   });
 
-  it('AD dashboard - single stopped detector', () => {
-    cy.mockGetDetectorOnAction('single_stopped_detector_response.json', () => {
+  it('AD dashboard - single running detector', () => {
+    cy.mockGetDetectorOnAction('single_running_detector_response.json', () => {
       cy.visit(buildAdAppUrl(DASHBOARD));
     });
 
     cy.contains('h3', 'Live anomalies');
-    cy.contains(
-      'p',
-      'All matching detectors are under initialization or stopped for the last 30 minutes. Please adjust filters or come back later.'
-    );
+    cy.contains('a', 'running-detector');
   });
 
   it('AD dashboard - redirect to create detector', () => {
@@ -54,7 +62,7 @@ context('AD Dashboard', () => {
       });
     });
 
-    cy.contains('h1', 'Create detector');
+    cy.contains('span', 'Create detector');
   });
 
   it('Filter by detector', () => {

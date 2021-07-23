@@ -1,4 +1,15 @@
 /*
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * The OpenSearch Contributors require contributions made to
+ * this file be licensed under the Apache-2.0 license or a
+ * compatible open source license.
+ *
+ * Modifications Copyright OpenSearch Contributors. See
+ * GitHub history for details.
+ */
+
+/*
  * Copyright 2020 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
@@ -50,7 +61,7 @@ Cypress.Commands.add('mockGetDetectorOnAction', function (
   funcMockedOn: VoidFunction
 ) {
   cy.server();
-  cy.route2(buildAdApiUrl(DETECTORS + '*'), {fixture: fixtureFileName}).as(
+  cy.route2(buildAdApiUrl(DETECTORS + '*'), { fixture: fixtureFileName }).as(
     'getDetectors'
   );
 
@@ -64,7 +75,7 @@ Cypress.Commands.add('mockCreateDetectorOnAction', function (
   funcMockedOn: VoidFunction
 ) {
   cy.server();
-  cy.route2(buildAdApiUrl(DETECTORS + '*'), {fixture: fixtureFileName}).as(
+  cy.route2(buildAdApiUrl(DETECTORS + '*'), { fixture: fixtureFileName }).as(
     'createDetector'
   );
 
@@ -78,7 +89,7 @@ Cypress.Commands.add('mockSearchIndexOnAction', function (
   funcMockedOn: VoidFunction
 ) {
   cy.server();
-  cy.route2(buildAdApiUrl(INDICES_PATH + '*'), {fixture: fixtureFileName}).as(
+  cy.route2(buildAdApiUrl(INDICES_PATH + '*'), { fixture: fixtureFileName }).as(
     'getIndices'
   );
 
@@ -92,13 +103,13 @@ Cypress.Commands.add('mockSearchOnAction', function (
   funcMockedOn: VoidFunction
 ) {
   cy.server();
-  cy.route2(buildAdApiUrl(SEARCH_PATH), {fixture: fixtureFileName}).as(
-    'searchES'
+  cy.route2(buildAdApiUrl(SEARCH_PATH), { fixture: fixtureFileName }).as(
+    'searchOpenSearch'
   );
 
   funcMockedOn();
 
-  cy.wait('@searchES');
+  cy.wait('@searchOpenSearch');
 });
 
 Cypress.Commands.add('mockGetIndexMappingsOnAction', function (
@@ -106,10 +117,9 @@ Cypress.Commands.add('mockGetIndexMappingsOnAction', function (
   funcMockedOn: VoidFunction
 ) {
   cy.server();
-  cy.route2(
-    buildAdApiUrl(MAPPINGS_PATH + '*'),
-    {fixture: fixtureFileName}
-  ).as('getMappings');
+  cy.route2(buildAdApiUrl(MAPPINGS_PATH + '*'), {
+    fixture: fixtureFileName,
+  }).as('getMappings');
 
   funcMockedOn();
 
@@ -122,10 +132,9 @@ Cypress.Commands.add('mockStartDetectorOnAction', function (
   funcMockedOn: VoidFunction
 ) {
   cy.server();
-  cy.route2(
-    buildAdApiUrl([DETECTORS, detectorId, START_PATH].join(SLASH)),
-    {fixture: fixtureFileName}
-  ).as('startDetector');
+  cy.route2(buildAdApiUrl([DETECTORS, detectorId, START_PATH].join(SLASH)), {
+    fixture: fixtureFileName,
+  }).as('startDetector');
 
   funcMockedOn();
 
@@ -138,10 +147,9 @@ Cypress.Commands.add('mockStopDetectorOnAction', function (
   funcMockedOn: VoidFunction
 ) {
   cy.server();
-  cy.route2(
-    buildAdApiUrl([DETECTORS, detectorId, STOP_PATH].join(SLASH)),
-    {fixture: fixtureFileName}
-  ).as('stopDetector');
+  cy.route2(buildAdApiUrl([DETECTORS, detectorId, STOP_PATH].join(SLASH)), {
+    fixture: fixtureFileName,
+  }).as('stopDetector');
 
   funcMockedOn();
 
@@ -154,10 +162,9 @@ Cypress.Commands.add('mockDeleteDetectorOnAction', function (
   funcMockedOn: VoidFunction
 ) {
   cy.server();
-  cy.route2(
-    buildAdApiUrl([DETECTORS, detectorId].join(SLASH)),
-    {fixture: fixtureFileName}
-  ).as('deleteDetector');
+  cy.route2(buildAdApiUrl([DETECTORS, detectorId].join(SLASH)), {
+    fixture: fixtureFileName,
+  }).as('deleteDetector');
 
   funcMockedOn();
 
