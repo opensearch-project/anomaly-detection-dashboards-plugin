@@ -27,8 +27,7 @@
 import React from 'react';
 import { render } from '@testing-library/react';
 import { SaveFeaturesConfirmModal } from '../SaveFeaturesConfirmModal';
-import { SAVE_FEATURE_OPTIONS } from '../../../../EditFeatures/utils/constants';
-
+import { SAVE_FEATURE_OPTIONS } from '../../../../ConfigureModel/utils/constants';
 
 describe('<SaveFeaturesConfirmModal /> spec', () => {
   test('renders the component with ready to start job', () => {
@@ -44,5 +43,4 @@ describe('<SaveFeaturesConfirmModal /> spec', () => {
     );
     expect(container.firstChild).toMatchSnapshot();
   });
-  
 });

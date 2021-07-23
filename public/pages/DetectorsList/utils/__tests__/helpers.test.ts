@@ -79,13 +79,14 @@ describe('helpers spec', () => {
   describe('getDetectorStateOptions spec', () => {
     test('should return all detector states', () => {
       const result = getDetectorStateOptions();
-      expect(result.length).toEqual(6);
+      expect(result.length).toEqual(7);
       expect(result[0].label).toEqual(DETECTOR_STATE.DISABLED);
       expect(result[1].label).toEqual(DETECTOR_STATE.INIT);
       expect(result[2].label).toEqual(DETECTOR_STATE.RUNNING);
       expect(result[3].label).toEqual(DETECTOR_STATE.FEATURE_REQUIRED);
       expect(result[4].label).toEqual(DETECTOR_STATE.INIT_FAILURE);
       expect(result[5].label).toEqual(DETECTOR_STATE.UNEXPECTED_FAILURE);
+      expect(result[6].label).toEqual(DETECTOR_STATE.FAILED);
     });
   });
 

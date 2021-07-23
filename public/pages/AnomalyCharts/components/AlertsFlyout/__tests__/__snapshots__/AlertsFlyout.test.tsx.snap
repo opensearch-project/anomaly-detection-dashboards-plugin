@@ -78,7 +78,7 @@ exports[`<AlertsFlyout /> spec Alerts Flyout renders component with monitor 1`] 
                       Anomaly detector alerts are powered by the
                       <a
                         class="euiLink euiLink--primary"
-                        href="https://docs-beta.opensearch.org/monitoring-plugins/ad/index//alerting"
+                        href="https://opensearch.org/docs/monitoring-plugins/alerting"
                         rel="noreferrer"
                       >
                          
@@ -95,17 +95,7 @@ exports[`<AlertsFlyout /> spec Alerts Flyout renders component with monitor 1`] 
                         width="16"
                         xmlns="http://www.w3.org/2000/svg"
                       />
-                      Alerting in your navigation panel,
-                      <a
-                        class="euiLink euiLink--primary"
-                        href="https://docs-beta.opensearch.org/monitoring-plugins/ad/index//opensearch/install/plugins/#alerting"
-                        rel="noreferrer"
-                      >
-                         
-                        install it first
-                      </a>
-                       
-                      and follow the instructions below to set up alerts.
+                      Alerting in your navigation panel, install it first and follow the instructions below to set up alerts.
                     </p>
                   </div>
                 </div>
@@ -217,7 +207,7 @@ exports[`<AlertsFlyout /> spec Alerts Flyout renders component with monitor 1`] 
               <a
                 class="euiButton euiButton--primary"
                 data-test-subj="setUpAlerts"
-                href="https://docs-beta.opensearch.org/monitoring-plugins/ad/index//alerting"
+                href="https://opensearch.org/docs/monitoring-plugins/alerting"
                 rel="noopener noreferrer"
                 target="_blank"
               >
@@ -363,7 +353,7 @@ exports[`<AlertsFlyout /> spec Alerts Flyout renders component with undefined mo
                       Anomaly detector alerts are powered by the
                       <a
                         class="euiLink euiLink--primary"
-                        href="https://docs-beta.opensearch.org/monitoring-plugins/ad/index//alerting"
+                        href="https://opensearch.org/docs/monitoring-plugins/alerting"
                         rel="noreferrer"
                       >
                          
@@ -385,17 +375,7 @@ exports[`<AlertsFlyout /> spec Alerts Flyout renders component with undefined mo
                           fill-rule="evenodd"
                         />
                       </svg>
-                      Alerting in your navigation panel,
-                      <a
-                        class="euiLink euiLink--primary"
-                        href="https://docs-beta.opensearch.org/monitoring-plugins/ad/index//opensearch/install/plugins/#alerting"
-                        rel="noreferrer"
-                      >
-                         
-                        install it first
-                      </a>
-                       
-                      and follow the instructions below to set up alerts.
+                      Alerting in your navigation panel, install it first and follow the instructions below to set up alerts.
                     </p>
                   </div>
                 </div>
@@ -507,7 +487,7 @@ exports[`<AlertsFlyout /> spec Alerts Flyout renders component with undefined mo
               <a
                 class="euiButton euiButton--primary"
                 data-test-subj="setUpAlerts"
-                href="https://docs-beta.opensearch.org/monitoring-plugins/ad/index//alerting"
+                href="https://opensearch.org/docs/monitoring-plugins/alerting"
                 rel="noopener noreferrer"
                 target="_blank"
               >

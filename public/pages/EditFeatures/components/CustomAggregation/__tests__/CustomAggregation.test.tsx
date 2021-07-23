@@ -31,9 +31,17 @@ import { Provider } from 'react-redux';
 import { mockedStore } from '../../../../../redux/utils/testUtils';
 import { Formik } from 'formik';
 import { FeaturesFormikValues } from '../../../../EditFeatures/containers/utils/formikToFeatures';
-import { INITIAL_VALUES } from '../../../../EditFeatures/utils/constants';
+import { FEATURE_TYPE } from '../../../../../models/interfaces';
 import { CoreServicesContext } from '../../../../../components/CoreServices/CoreServices';
 import { coreServicesMock } from '../../../../../../test/mocks';
+
+const INITIAL_VALUES = {
+  featureId: 'test-id',
+  featureName: 'test-feature',
+  featureType: FEATURE_TYPE.SIMPLE,
+  featureEnabled: true,
+  aggregationQuery: '',
+};
 
 const renderWithFormik = (initialValue: FeaturesFormikValues) => ({
   ...render(

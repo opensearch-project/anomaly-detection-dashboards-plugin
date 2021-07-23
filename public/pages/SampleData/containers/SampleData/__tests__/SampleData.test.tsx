@@ -40,7 +40,7 @@ import {
   Detectors,
   initialDetectorsState,
 } from '../../../../../redux/reducers/ad';
-import { sampleHttpResponses } from '../../../utils/constants';
+import { sampleHttpResponses } from '../../../../Overview/utils/constants';
 import { CoreServicesContext } from '../../../../../components/CoreServices/CoreServices';
 
 const renderWithRouter = (
@@ -70,12 +70,10 @@ describe('<SampleData /> spec', () => {
   jest.clearAllMocks();
   describe('No sample detectors created', () => {
     test('renders component', async () => {
-      httpClientMock.get = jest
-        .fn()
-        .mockResolvedValue({
-          ok: true,
-          response: { detectorList: [], totalDetectors: 0 },
-        });
+      httpClientMock.get = jest.fn().mockResolvedValue({
+        ok: true,
+        response: { detectorList: [], totalDetectors: 0 },
+      });
       const { container, getByText, queryByText } = renderWithRouter();
       expect(container).toMatchSnapshot();
       getByText('Sample detectors');

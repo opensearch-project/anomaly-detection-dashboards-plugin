@@ -29,12 +29,20 @@ import { render } from '@testing-library/react';
 import { Provider } from 'react-redux';
 import { Formik } from 'formik';
 import { AggregationSelector } from '../AggregationSelector';
+import { FEATURE_TYPE } from '../../../../../models/interfaces';
 import {
   initialState,
   mockedStore,
 } from '../../../../../redux/utils/testUtils';
 import { FeaturesFormikValues } from '../../../containers/utils/formikToFeatures';
-import { INITIAL_VALUES } from '../../../utils/constants';
+
+const INITIAL_VALUES = {
+  featureId: 'test-id',
+  featureName: 'test-feature',
+  featureType: FEATURE_TYPE.SIMPLE,
+  featureEnabled: true,
+  aggregationQuery: '',
+};
 
 const renderAggregationSelector = (initialValue: FeaturesFormikValues) => ({
   ...render(
