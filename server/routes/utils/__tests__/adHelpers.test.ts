@@ -1,4 +1,15 @@
 /*
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * The OpenSearch Contributors require contributions made to
+ * this file be licensed under the Apache-2.0 license or a
+ * compatible open source license.
+ *
+ * Modifications Copyright OpenSearch Contributors. See
+ * GitHub history for details.
+ */
+
+/*
  * Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
@@ -15,7 +26,7 @@
 
 import {
   SORT_DIRECTION,
-  ES_EXCEPTION_PREFIX,
+  OPENSEARCH_EXCEPTION_PREFIX,
   DETECTOR_STATE,
 } from '../../../utils/constants';
 import {
@@ -24,7 +35,7 @@ import {
   getResultAggregationQuery,
   convertPreviewInputKeysToSnakeCase,
   processTaskError,
-  getHistoricalDetectorState,
+  getTaskState,
 } from '../adHelpers';
 
 describe('adHelpers', () => {
@@ -435,6 +446,11 @@ describe('adHelpers', () => {
               { terms: { detector_id: ['detector_1', 'detector_2'] } },
               { range: { anomaly_grade: { gt: 0 } } },
             ],
+            must_not: {
+              exists: {
+                field: 'task_id',
+              },
+            },
           },
         },
         aggs: {
@@ -475,6 +491,11 @@ describe('adHelpers', () => {
               { terms: { detector_id: ['detector_1', 'detector_2'] } },
               { range: { anomaly_grade: { gt: 0 } } },
             ],
+            must_not: {
+              exists: {
+                field: 'task_id',
+              },
+            },
           },
         },
         aggs: {
@@ -515,6 +536,11 @@ describe('adHelpers', () => {
               { terms: { detector_id: ['detector_1'] } },
               { range: { anomaly_grade: { gt: 0 } } },
             ],
+            must_not: {
+              exists: {
+                field: 'task_id',
+              },
+            },
           },
         },
         aggs: {
@@ -555,6 +581,11 @@ describe('adHelpers', () => {
               { terms: { detector_id: ['detector_1'] } },
               { range: { anomaly_grade: { gt: 0 } } },
             ],
+            must_not: {
+              exists: {
+                field: 'task_id',
+              },
+            },
           },
         },
         aggs: {
@@ -579,50 +610,48 @@ describe('adHelpers', () => {
       });
     });
   });
-  describe('getHistoricalDetectorState', () => {
+  describe('getTaskState', () => {
     test('should convert to disabled if no task', () => {
       const task = null;
-      expect(getHistoricalDetectorState(task)).toEqual(DETECTOR_STATE.DISABLED);
+      expect(getTaskState(task)).toEqual(DETECTOR_STATE.DISABLED);
     });
     test('should convert to unexpected failure if failed and error message is stack trace', () => {
       const task = {
         state: 'FAILED',
         error: `at some.stack.trace(SomeFile.java:50)`,
       };
-      expect(getHistoricalDetectorState(task)).toEqual(
-        DETECTOR_STATE.UNEXPECTED_FAILURE
-      );
+      expect(getTaskState(task)).toEqual(DETECTOR_STATE.UNEXPECTED_FAILURE);
     });
     test('should convert to failed if failed and error message is not stack trace', () => {
       const task = {
         state: 'FAILED',
         error: 'Some regular error message',
       };
-      expect(getHistoricalDetectorState(task)).toEqual(DETECTOR_STATE.FAILED);
+      expect(getTaskState(task)).toEqual(DETECTOR_STATE.FAILED);
     });
     test('should convert to initializing if in created state', () => {
       const task = {
         state: 'CREATED',
       };
-      expect(getHistoricalDetectorState(task)).toEqual(DETECTOR_STATE.INIT);
+      expect(getTaskState(task)).toEqual(DETECTOR_STATE.INIT);
     });
     test('should convert to disabled if in stopped state', () => {
       const task = {
         state: 'STOPPED',
       };
-      expect(getHistoricalDetectorState(task)).toEqual(DETECTOR_STATE.DISABLED);
+      expect(getTaskState(task)).toEqual(DETECTOR_STATE.DISABLED);
     });
     test('should not convert if in running state', () => {
       const task = {
         state: 'RUNNING',
       };
-      expect(getHistoricalDetectorState(task)).toEqual(DETECTOR_STATE.RUNNING);
+      expect(getTaskState(task)).toEqual(DETECTOR_STATE.RUNNING);
     });
     test('should not convert if in finished state', () => {
       const task = {
         state: 'FINISHED',
       };
-      expect(getHistoricalDetectorState(task)).toEqual(DETECTOR_STATE.FINISHED);
+      expect(getTaskState(task)).toEqual(DETECTOR_STATE.FINISHED);
     });
   });
   describe('processTaskError', () => {
@@ -632,10 +661,10 @@ describe('adHelpers', () => {
     test('should not add punctuation if it exists', () => {
       expect(processTaskError('Some failure.')).toEqual('Some failure.');
     });
-    test('should remove ES exception prefix if it exists', () => {
-      expect(processTaskError(ES_EXCEPTION_PREFIX + 'Some failure.')).toEqual(
-        'Some failure.'
-      );
+    test('should remove OpenSearch exception prefix if it exists', () => {
+      expect(
+        processTaskError(OPENSEARCH_EXCEPTION_PREFIX + 'Some failure.')
+      ).toEqual('Some failure.');
     });
   });
 });

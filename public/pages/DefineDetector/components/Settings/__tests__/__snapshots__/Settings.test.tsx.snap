@@ -1,0 +1,252 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`<Settings /> spec renders the component 1`] = `
+<div>
+  <div
+    class="euiPanel euiPanel--paddingMedium"
+    style="padding: 20px;"
+  >
+    <div
+      class="euiFlexGroup euiFlexGroup--gutterLarge euiFlexGroup--alignItemsCenter euiFlexGroup--justifyContentSpaceBetween euiFlexGroup--directionRow euiFlexGroup--responsive"
+      style="padding: 0px;"
+    >
+      <div
+        class="euiFlexItem"
+      >
+        <h3
+          class="euiTitle euiTitle--small"
+        >
+          Operation settings
+        </h3>
+        <div
+          class="euiFlexGroup euiFlexGroup--gutterLarge euiFlexGroup--directionRow euiFlexGroup--responsive"
+        >
+          <div
+            class="euiFlexItem content-panel-subTitle"
+            style="line-height: normal; max-width: 75%;"
+          />
+        </div>
+      </div>
+      <div
+        class="euiFlexItem euiFlexItem--flexGrowZero"
+      >
+        <div
+          class="euiFlexGroup euiFlexGroup--gutterMedium euiFlexGroup--alignItemsCenter euiFlexGroup--justifyContentSpaceBetween euiFlexGroup--directionRow euiFlexGroup--responsive"
+        >
+          <div
+            class="euiFlexItem"
+          />
+        </div>
+      </div>
+    </div>
+    <div>
+      <hr
+        class="euiHorizontalRule euiHorizontalRule--full euiHorizontalRule--marginSmall"
+      />
+      <div
+        style="padding: 10px 0px;"
+      >
+        <div
+          class="euiFlexGroup euiFlexGroup--gutterLarge euiFlexGroup--directionRow euiFlexGroup--responsive"
+        >
+          <div
+            class="euiFlexItem"
+            style="max-width: 70%;"
+          >
+            <div
+              class="euiFormRow euiFormRow--fullWidth"
+              hint="Define how often the detector collects data to generate anomalies. The shorter the interval is, the more real time the  detector results will be, and the more computing resources the  detector will need."
+              hintlink="https://opensearch.org/docs/monitoring-plugins/ad"
+              id="random_html_id-row"
+              title="Detector interval"
+            >
+              <div
+                class="euiFormRow__labelWrapper"
+              >
+                <label
+                  aria-invalid="false"
+                  class="euiFormLabel euiFormRow__label"
+                  for="random_html_id"
+                >
+                  <div
+                    style="line-height: 8px;"
+                  >
+                    <p>
+                      Detector interval
+                    </p>
+                    <br />
+                    <div
+                      class="euiText euiText--medium sublabel"
+                      style="max-width: 400px;"
+                    >
+                      Define how often the detector collects data to generate anomalies. The shorter the interval is, the more real time the  detector results will be, and the more computing resources the  detector will need.
+                       
+                      <a
+                        class="euiLink euiLink--primary"
+                        href="https://opensearch.org/docs/monitoring-plugins/ad"
+                        rel="noopener noreferrer"
+                        target="_blank"
+                      >
+                        Learn more 
+                        <svg
+                          aria-hidden="true"
+                          class="euiIcon euiIcon--small euiIcon-isLoading"
+                          focusable="false"
+                          height="16"
+                          role="img"
+                          viewBox="0 0 16 16"
+                          width="16"
+                          xmlns="http://www.w3.org/2000/svg"
+                        />
+                      </a>
+                    </div>
+                  </div>
+                </label>
+              </div>
+              <div
+                class="euiFormRow__fieldWrapper"
+              >
+                <div
+                  class="euiFlexGroup euiFlexGroup--gutterSmall euiFlexGroup--alignItemsCenter euiFlexGroup--directionRow euiFlexGroup--responsive"
+                  id="random_html_id"
+                >
+                  <div
+                    class="euiFlexItem euiFlexItem--flexGrowZero"
+                  >
+                    <div
+                      class="euiFormControlLayout"
+                    >
+                      <div
+                        class="euiFormControlLayout__childrenWrapper"
+                      >
+                        <input
+                          class="euiFieldNumber"
+                          data-test-subj="detectionInterval"
+                          id="detectionInterval"
+                          min="1"
+                          name="interval"
+                          placeholder="Detector interval"
+                          type="number"
+                          value=""
+                        />
+                      </div>
+                    </div>
+                  </div>
+                  <div
+                    class="euiFlexItem"
+                  >
+                    <div
+                      class="euiText euiText--medium"
+                    >
+                      <p
+                        class="minutes"
+                      >
+                        minutes
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div
+          class="euiFormRow euiFormRow--fullWidth"
+          hint="Specify a window of delay for a detector to fetch data, if you need to account for extra processing time."
+          hintlink="https://opensearch.org/docs/monitoring-plugins/ad"
+          id="random_html_id-row"
+          style="margin-top: 16px;"
+          title="Window delay"
+        >
+          <div
+            class="euiFormRow__labelWrapper"
+          >
+            <label
+              aria-invalid="false"
+              class="euiFormLabel euiFormRow__label"
+              for="random_html_id"
+            >
+              <div
+                style="line-height: 8px;"
+              >
+                <p>
+                  Window delay
+                </p>
+                <br />
+                <div
+                  class="euiText euiText--medium sublabel"
+                  style="max-width: 400px;"
+                >
+                  Specify a window of delay for a detector to fetch data, if you need to account for extra processing time.
+                   
+                  <a
+                    class="euiLink euiLink--primary"
+                    href="https://opensearch.org/docs/monitoring-plugins/ad"
+                    rel="noopener noreferrer"
+                    target="_blank"
+                  >
+                    Learn more 
+                    <svg
+                      aria-hidden="true"
+                      class="euiIcon euiIcon--small euiIcon-isLoading"
+                      focusable="false"
+                      height="16"
+                      role="img"
+                      viewBox="0 0 16 16"
+                      width="16"
+                      xmlns="http://www.w3.org/2000/svg"
+                    />
+                  </a>
+                </div>
+              </div>
+            </label>
+          </div>
+          <div
+            class="euiFormRow__fieldWrapper"
+          >
+            <div
+              class="euiFlexGroup euiFlexGroup--gutterSmall euiFlexGroup--alignItemsCenter euiFlexGroup--directionRow euiFlexGroup--responsive"
+              id="random_html_id"
+            >
+              <div
+                class="euiFlexItem euiFlexItem--flexGrowZero"
+              >
+                <div
+                  class="euiFormControlLayout"
+                >
+                  <div
+                    class="euiFormControlLayout__childrenWrapper"
+                  >
+                    <input
+                      class="euiFieldNumber"
+                      data-test-subj="windowDelay"
+                      id="windowDelay"
+                      name="windowDelay"
+                      placeholder="Window delay"
+                      type="number"
+                      value=""
+                    />
+                  </div>
+                </div>
+              </div>
+              <div
+                class="euiFlexItem"
+              >
+                <div
+                  class="euiText euiText--medium"
+                >
+                  <p
+                    class="minutes"
+                  >
+                    minutes
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+`;

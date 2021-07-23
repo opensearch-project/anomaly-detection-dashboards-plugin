@@ -1,4 +1,15 @@
 /*
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * The OpenSearch Contributors require contributions made to
+ * this file be licensed under the Apache-2.0 license or a
+ * compatible open source license.
+ *
+ * Modifications Copyright OpenSearch Contributors. See
+ * GitHub history for details.
+ */
+
+/*
  * Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
@@ -20,9 +31,17 @@ import { Provider } from 'react-redux';
 import { mockedStore } from '../../../../../redux/utils/testUtils';
 import { Formik } from 'formik';
 import { FeaturesFormikValues } from '../../../../EditFeatures/containers/utils/formikToFeatures';
-import { INITIAL_VALUES } from '../../../../EditFeatures/utils/constants';
+import { FEATURE_TYPE } from '../../../../../models/interfaces';
 import { CoreServicesContext } from '../../../../../components/CoreServices/CoreServices';
 import { coreServicesMock } from '../../../../../../test/mocks';
+
+const INITIAL_VALUES = {
+  featureId: 'test-id',
+  featureName: 'test-feature',
+  featureType: FEATURE_TYPE.SIMPLE,
+  featureEnabled: true,
+  aggregationQuery: '',
+};
 
 const renderWithFormik = (initialValue: FeaturesFormikValues) => ({
   ...render(

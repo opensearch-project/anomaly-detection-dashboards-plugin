@@ -1,4 +1,15 @@
 /*
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * The OpenSearch Contributors require contributions made to
+ * this file be licensed under the Apache-2.0 license or a
+ * compatible open source license.
+ *
+ * Modifications Copyright OpenSearch Contributors. See
+ * GitHub history for details.
+ */
+
+/*
  * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
@@ -32,12 +43,12 @@ describe('<NameAndDescription /> spec', () => {
     );
     expect(container.firstChild).toMatchSnapshot();
   });
-  test('shows error for detector Name input when toggling focus/bur', async () => {
+  test('shows error for detector name input when toggling focus/blur', async () => {
     const handleValidateName = jest.fn().mockImplementation(() => {
       throw 'Required';
     });
     const { queryByText, findByText, getByPlaceholderText } = render(
-      <Formik initialValues={{ detectorName: '' }} onSubmit={jest.fn()}>
+      <Formik initialValues={{ name: '' }} onSubmit={jest.fn()}>
         {() => (
           <div>
             <NameAndDescription onValidateDetectorName={handleValidateName} />
@@ -56,7 +67,7 @@ describe('<NameAndDescription /> spec', () => {
   test('shows error for detector description input when toggling focus/bur', async () => {
     const { queryByText, findByText, getByPlaceholderText } = render(
       <Formik
-        initialValues={{ detectorName: '', detectorDescription: '' }}
+        initialValues={{ name: '', description: '' }}
         onSubmit={jest.fn()}
       >
         {() => (
