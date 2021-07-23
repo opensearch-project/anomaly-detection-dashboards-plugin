@@ -1,6 +1,6 @@
 # The overall template of the release notes
 template: |
-  Compatible with Kibana (**set version here**).
+  Compatible with OpenSearch Dashboards (**set version here**).
   $CHANGES
 
 # Setting the formatting and sorting for the release notes body
@@ -12,7 +12,7 @@ replacers:
   - search: '##'
     replace: '###'
 
-# Organizing the tagged PRs into unified ODFE categories
+# Organizing the tagged PRs into unified OpenSearch categories
 categories:
   - title: 'Breaking changes'
     labels:
@@ -39,7 +39,7 @@ categories:
   - title: 'Maintenance'
     labels:
       - 'version upgrade'
-      - 'odfe release'
+      - 'opensearch release'
   - title: 'Refactoring'
     labels:
       - 'refactor'

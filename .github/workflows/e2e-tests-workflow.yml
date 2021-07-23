@@ -3,32 +3,36 @@ on:
   push:
     branches:
       - main
+  pull_request:
+    branches:
+      - main
 env:
-  KIBANA_VERSION: 7.10.2
-  ODFE_VERSION: 1.13.1
-  AD_KIBANA_PLUGIN_NAME: opendistroAnomalyDetectionKibana
+  OPENSEARCH_DASHBOARDS_VERSION: '1.0'
+  AD_OPENSEARCH_DASHBOARDS_PLUGIN_NAME: anomaly-detection-dashboards
+  OPENSEARCH_DOCKER_IMAGE: opensearchstaging/opensearch
+  DASHBOARDS_DOCKER_IMAGE: opensearchstaging/opensearch-dashboards
+  DOCKER_TAG: 1.0.0-rc1
 jobs:
   test-with-security:
     name: Run e2e tests with security
     strategy:
       matrix:
-        os: [ubuntu-16.04] # use ubuntu-16.04 as required by cypress: https://github.com/marketplace/actions/cypress-io#important
+        os: [ubuntu-latest]
         java: [14]
     runs-on: ${{ matrix.os }}
     steps:
-      - name: Checkout Kibana
+      - name: Checkout OpenSearch Dashboards
         uses: actions/checkout@v2
         with:
-          repository: opendistro-for-elasticsearch/kibana-oss
-          ref: ${{ env.KIBANA_VERSION }}
-          token: ${{ secrets.KIBANA_OSS_ACCESS }}
-          path: kibana
+          repository: opensearch-project/OpenSearch-Dashboards
+          ref: ${{ env.OPENSEARCH_DASHBOARDS_VERSION }}
+          path: OpenSearch-Dashboards
 
       - name: Get node and yarn versions
         id: versions_step
         run: |
-          echo "::set-output name=node_version::$(node -p "(require('./kibana/package.json').engines.node).match(/[.0-9]+/)[0]")"
-          echo "::set-output name=yarn_version::$(node -p "(require('./kibana/package.json').engines.yarn).match(/[.0-9]+/)[0]")"
+          echo "::set-output name=node_version::$(node -p "(require('./OpenSearch-Dashboards/package.json').engines.node).match(/[.0-9]+/)[0]")"
+          echo "::set-output name=yarn_version::$(node -p "(require('./OpenSearch-Dashboards/package.json').engines.yarn).match(/[.0-9]+/)[0]")"
 
       - name: Setup node
         uses: actions/setup-node@v1
@@ -36,54 +40,52 @@ jobs:
           node-version: ${{ steps.versions_step.outputs.node_version }}
           registry-url: 'https://registry.npmjs.org'
 
-      - name: Install correct yarn version for Kibana
+      - name: Install correct yarn version for OpenSearch Dashboards
         run: |
           npm uninstall -g yarn
           echo "Installing yarn ${{ steps.versions_step.outputs.yarn_version }}"
           npm i -g yarn@${{ steps.versions_step.outputs.yarn_version }}
 
-      - name: Checkout Anomaly Detection Kibana plugin
+      - name: Checkout Anomaly Detection OpenSearch Dashboards plugin
         uses: actions/checkout@v2
         with:
-          path: kibana/plugins/anomaly-detection-kibana-plugin
+          path: OpenSearch-Dashboards/plugins/anomaly-detection-dashboards-plugin
 
       - name: Bootstrap the plugin
         run: |
-          cd kibana/plugins/anomaly-detection-kibana-plugin
-          yarn kbn bootstrap
+          cd OpenSearch-Dashboards/plugins/anomaly-detection-dashboards-plugin
+          yarn osd bootstrap
 
       - name: Build the artifact
         run: |
-          cd kibana/plugins/anomaly-detection-kibana-plugin
+          cd OpenSearch-Dashboards/plugins/anomaly-detection-dashboards-plugin
           yarn build
 
-      - name: Create tagged images for ES and Kibana
+      - name: Create tagged images for OpenSearch and OpenSearch Dashboards
         run: |
-          cd kibana/plugins/anomaly-detection-kibana-plugin
-          odfe_version=$ODFE_VERSION
+          cd OpenSearch-Dashboards/plugins/anomaly-detection-dashboards-plugin
           plugin_version=$(node -pe "require('./package.json').version")
-          echo odfe version: $odfe_version
           echo plugin version: $plugin_version
-          echo plugin name: $AD_KIBANA_PLUGIN_NAME
-          if docker pull opendistroforelasticsearch/opendistroforelasticsearch:$odfe_version
+          echo plugin name: $AD_OPENSEARCH_DASHBOARDS_PLUGIN_NAME
+          if docker pull $OPENSEARCH_DOCKER_IMAGE:$DOCKER_TAG
           then
             ## Populate the Dockerfiles
-            echo "FROM opendistroforelasticsearch/opendistroforelasticsearch:$odfe_version" >> Dockerfile-AD
-            echo "FROM opendistroforelasticsearch/opendistroforelasticsearch-kibana:$odfe_version" >> Dockerfile-AD-Kibana
-            echo "COPY build/$AD_KIBANA_PLUGIN_NAME-$plugin_version.zip ." >> Dockerfile-AD-Kibana
+            echo "FROM $OPENSEARCH_DOCKER_IMAGE:$DOCKER_TAG" >> Dockerfile-AD-OpenSearch
+            echo "FROM $DASHBOARDS_DOCKER_IMAGE:$DOCKER_TAG" >> Dockerfile-AD-OpenSearch-Dashboards
+            echo "COPY build/$AD_OPENSEARCH_DASHBOARDS_PLUGIN_NAME-$plugin_version.zip ." >> Dockerfile-AD-OpenSearch-Dashboards
             ## Uninstall existing AD artifact and install new one
-            echo "RUN if [ -d /usr/share/kibana/plugins/$AD_KIBANA_PLUGIN_NAME ]; then /usr/share/kibana/bin/kibana-plugin remove $AD_KIBANA_PLUGIN_NAME; fi" >> Dockerfile-AD-Kibana
-            echo "RUN bin/kibana-plugin install file:///usr/share/kibana/$AD_KIBANA_PLUGIN_NAME-$plugin_version.zip;" >> Dockerfile-AD-Kibana
+            echo "RUN if [ -d /usr/share/opensearch-dashboards/plugins/anomaly-detection-dashboards ]; then /usr/share/opensearch-dashboards/bin/opensearch-dashboards-plugin remove anomaly-detection-dashboards; fi" >> Dockerfile-AD-OpenSearch-Dashboards
+            echo "RUN bin/opensearch-dashboards-plugin install file:///usr/share/opensearch-dashboards/$AD_OPENSEARCH_DASHBOARDS_PLUGIN_NAME-$plugin_version.zip;" >> Dockerfile-AD-OpenSearch-Dashboards
 
             ## Create the tagged images
-            docker build -f ./Dockerfile-AD -t odfe-ad:test .
-            docker build -f ./Dockerfile-AD-Kibana -t odfe-ad-kibana:test .
+            docker build -f ./Dockerfile-AD-OpenSearch -t opensearch-ad:test .
+            docker build -f ./Dockerfile-AD-OpenSearch-Dashboards -t opensearch-ad-dashboards:test .
           fi
           docker images
 
-      - name: Start ES and Kibana
+      - name: Start OpenSearch and OpenSearch Dashboards
         run: |
-          cd kibana/plugins/anomaly-detection-kibana-plugin/.github/configurations
+          cd OpenSearch-Dashboards/plugins/anomaly-detection-dashboards-plugin/.github/configurations
           ## Need to increase max map count for running the docker container
           sudo sysctl -w vm.max_map_count=262144
           docker-compose up -d
@@ -92,66 +94,67 @@ jobs:
       - name: Run e2e tests
         uses: cypress-io/github-action@v2.5.0
         with:
-          working-directory: kibana/plugins/anomaly-detection-kibana-plugin
+          working-directory: OpenSearch-Dashboards/plugins/anomaly-detection-dashboards-plugin
           command: yarn cy:run --env SECURITY_ENABLED=true
 
   test-without-security:
     name: Run e2e tests without security
     strategy:
       matrix:
-        os: [ubuntu-16.04] # use ubuntu-16.04 as required by cypress: https://github.com/marketplace/actions/cypress-io#important
+        os: [ubuntu-latest]
         java: [14]
     runs-on: ${{ matrix.os }}
     steps:
       - name: Pull and Run Docker
         run: |
-          odfe_version=$ODFE_VERSION
-          echo odfe version: $odfe_version
-          if docker pull opendistroforelasticsearch/opendistroforelasticsearch:$odfe_version
+          if docker pull $OPENSEARCH_DOCKER_IMAGE:$DOCKER_TAG
           then
-            echo "FROM opendistroforelasticsearch/opendistroforelasticsearch:$odfe_version" >> Dockerfile
-            ## The ESRestTest Client uses http by default.
+            echo "FROM $OPENSEARCH_DOCKER_IMAGE:$DOCKER_TAG" >> Dockerfile
+            ## The OpenSearch rest test client uses http by default.
             ## Need to disable the security plugin to call the rest api over http.
-            echo "RUN if [ -d /usr/share/elasticsearch/plugins/opendistro-security ]; then /usr/share/elasticsearch/bin/elasticsearch-plugin remove opendistro-security; fi" >> Dockerfile
-            docker build -t odfe-ad:test .
+            ## Also need to remove any remaining security settings specified in opensearch.yml
+            echo "RUN if [ -d /usr/share/opensearch/plugins/opensearch-security ]; then /usr/share/opensearch/bin/opensearch-plugin remove opensearch-security; fi" >> Dockerfile
+            echo "RUN sed -n -i '1,/Start OpenSearch Security Demo Configuration/p;/End OpenSearch Security Demo Configuration/,\$p'" >> Dockerfile
+            truncate -s -1 Dockerfile
+            echo -n " /usr/share/opensearch/config/opensearch.yml" >> Dockerfile
+            docker build -t opensearch-ad:test .
           fi
       - name: Run Docker Image
         run: |
-          docker run -p 9200:9200 -d -p 9600:9600 -e "discovery.type=single-node" odfe-ad:test
-          sleep 90
+          docker run -p 9200:9200 -d -p 9600:9600 -e "discovery.type=single-node" opensearch-ad:test
+          sleep 180
           curl -XGET http://localhost:9200/_cat/plugins
-      - name: Checkout Kibana
+      - name: Checkout OpenSearch Dashboards
         uses: actions/checkout@v2
         with:
-          repository: opendistro-for-elasticsearch/kibana-oss
-          ref: ${{ env.KIBANA_VERSION }}
-          token: ${{ secrets.KIBANA_OSS_ACCESS }}
-          path: kibana
+          repository: opensearch-project/OpenSearch-Dashboards
+          ref: ${{ env.OPENSEARCH_DASHBOARDS_VERSION }}
+          path: OpenSearch-Dashboards
       - name: Get node and yarn versions
         id: versions_step
         run: |
-          echo "::set-output name=node_version::$(node -p "(require('./kibana/package.json').engines.node).match(/[.0-9]+/)[0]")"
-          echo "::set-output name=yarn_version::$(node -p "(require('./kibana/package.json').engines.yarn).match(/[.0-9]+/)[0]")"
+          echo "::set-output name=node_version::$(node -p "(require('./OpenSearch-Dashboards/package.json').engines.node).match(/[.0-9]+/)[0]")"
+          echo "::set-output name=yarn_version::$(node -p "(require('./OpenSearch-Dashboards/package.json').engines.yarn).match(/[.0-9]+/)[0]")"
       - name: Setup node
         uses: actions/setup-node@v1
         with:
           node-version: ${{ steps.versions_step.outputs.node_version }}
           registry-url: 'https://registry.npmjs.org'
-      - name: Install correct yarn version for Kibana
+      - name: Install correct yarn version for OpenSearch Dashboards
         run: |
           npm uninstall -g yarn
           echo "Installing yarn ${{ steps.versions_step.outputs.yarn_version }}"
           npm i -g yarn@${{ steps.versions_step.outputs.yarn_version }}
-      - name: Checkout Anomaly Detection Kibana plugin
+      - name: Checkout Anomaly Detection OpenSearch Dashboards plugin
         uses: actions/checkout@v2
         with:
-          path: kibana/plugins/anomaly-detection-kibana-plugin
+          path: OpenSearch-Dashboards/plugins/anomaly-detection-dashboards-plugin
       - name: Bootstrap the plugin
         run: |
-          cd kibana/plugins/anomaly-detection-kibana-plugin
-          yarn kbn bootstrap
+          cd OpenSearch-Dashboards/plugins/anomaly-detection-dashboards-plugin
+          yarn osd bootstrap
       - name: Run e2e tests
         uses: cypress-io/github-action@v2.5.0
         with:
-          working-directory: kibana/plugins/anomaly-detection-kibana-plugin
+          working-directory: OpenSearch-Dashboards/plugins/anomaly-detection-dashboards-plugin
           command: yarn test:e2e
