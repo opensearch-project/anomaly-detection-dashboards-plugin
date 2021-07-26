@@ -24,23 +24,14 @@
  * permissions and limitations under the License.
  */
 
-import { Switch, Route, RouteComponentProps, Redirect } from 'react-router-dom';
+import { Switch, Route, RouteComponentProps } from 'react-router-dom';
 import React from 'react';
 import { AppState } from '../../redux/reducers';
 import { DetectorList } from '../DetectorsList';
 import { SampleData } from '../SampleData';
 import { ListRouterParams } from '../DetectorsList/containers/List/List';
-import { HistoricalDetectorList } from '../HistoricalDetectorList';
-import { HistoricalDetectorListRouterParams } from '../HistoricalDetectorList/containers/HistoricalDetectorList';
-import { HistoricalDetectorDetail } from '../HistoricalDetectorDetail';
 import { CreateDetectorSteps } from '../CreateDetectorSteps';
-import {
-  EuiSideNav,
-  EuiPage,
-  EuiPageBody,
-  EuiPageSideBar,
-  EuiLoadingSpinner,
-} from '@elastic/eui';
+import { EuiSideNav, EuiPage, EuiPageBody, EuiPageSideBar } from '@elastic/eui';
 import { useSelector } from 'react-redux';
 import { APP_PATH } from '../../utils/constants';
 import { DetectorDetail } from '../DetectorDetail';
@@ -117,11 +108,6 @@ export function Main(props: MainProps) {
                 />
                 <Route
                   exact
-                  path={APP_PATH.SAMPLE_DETECTORS}
-                  render={() => <SampleData />}
-                />
-                <Route
-                  exact
                   path={APP_PATH.CREATE_DETECTOR}
                   render={(props: RouteComponentProps) => (
                     <CreateDetectorSteps {...props} />
@@ -145,22 +131,6 @@ export function Main(props: MainProps) {
                   path={APP_PATH.DETECTOR_DETAIL}
                   render={(props: RouteComponentProps) => (
                     <DetectorDetail {...props} />
-                  )}
-                />
-                <Route
-                  exact
-                  path={APP_PATH.LIST_HISTORICAL_DETECTORS}
-                  render={(
-                    props: RouteComponentProps<
-                      HistoricalDetectorListRouterParams
-                    >
-                  ) => <HistoricalDetectorList {...props} />}
-                />
-                <Route
-                  exact
-                  path={APP_PATH.HISTORICAL_DETECTOR_DETAIL}
-                  render={(props: RouteComponentProps) => (
-                    <HistoricalDetectorDetail {...props} />
                   )}
                 />
                 <Route

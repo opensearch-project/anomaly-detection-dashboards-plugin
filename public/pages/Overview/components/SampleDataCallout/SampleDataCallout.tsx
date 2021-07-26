@@ -45,7 +45,7 @@ export const SampleDataCallout = () => {
           documentation
         </EuiLink>{' '}
         or create a{' '}
-        <EuiLink href={`${PLUGIN_NAME}#${APP_PATH.SAMPLE_DETECTORS}`}>
+        <EuiLink href={`${PLUGIN_NAME}#${APP_PATH.OVERVIEW}`}>
           sample detector
         </EuiLink>{' '}
         to get started.
