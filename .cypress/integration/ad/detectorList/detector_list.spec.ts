@@ -29,16 +29,18 @@ import { DETECTOR_STATE } from '../../../../server/utils/constants';
 import { buildAdAppUrl } from '../../../utils/helpers';
 
 context('Detector list', () => {
+  const EMPTY_MESSAGE =
+    'A detector is an individual anomaly detection task. You can create multiple detectors, ' +
+    'and all the detectors can run simultaneously, with each analyzing data from different sources. ' +
+    'Create an anomaly detector to get started.';
+
   it('Empty detectors - no detector index', () => {
     cy.mockGetDetectorOnAction('no_detector_index_response.json', () => {
       cy.visit(buildAdAppUrl(DETECTORS));
     });
 
     cy.contains('p', '(0)');
-    cy.contains(
-      'p',
-      'Anomaly detectors take an input of information and discover patterns of anomalies. Create an anomaly detector to get started.'
-    );
+    cy.contains('p', EMPTY_MESSAGE);
     cy.get('.euiButton--primary.euiButton--fill').should(
       'have.length.at.least',
       2
@@ -51,10 +53,7 @@ context('Detector list', () => {
     });
 
     cy.contains('p', '(0)');
-    cy.contains(
-      'p',
-      'Anomaly detectors take an input of information and discover patterns of anomalies. Create an anomaly detector to get started.'
-    );
+    cy.contains('p', EMPTY_MESSAGE);
     cy.get('.euiButton--primary.euiButton--fill').should(
       'have.length.at.least',
       2
@@ -105,7 +104,7 @@ context('Detector list', () => {
       cy.visit(buildAdAppUrl(DETECTORS));
     });
     cy.get('[data-test-subj=addDetector]').click({ force: true });
-    cy.contains('h1', 'Create detector');
+    cy.contains('span', 'Create detector');
   });
 
   it('Start single detector', () => {
