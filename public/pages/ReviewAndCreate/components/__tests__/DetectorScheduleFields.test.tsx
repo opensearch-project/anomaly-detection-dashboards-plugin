@@ -38,7 +38,7 @@ describe('<DetectorScheduleFields /> spec', () => {
       realTime: true,
       historical: true,
     } as DetectorJobsFormikValues;
-    const { container, getByText } = render(
+    const { getByText } = render(
       <Formik initialValues={{}} onSubmit={jest.fn()}>
         {() => (
           <div>
@@ -50,7 +50,6 @@ describe('<DetectorScheduleFields /> spec', () => {
         )}
       </Formik>
     );
-    expect(container.firstChild).toMatchSnapshot();
     getByText('Start automatically');
     getByText('Enabled');
   });
@@ -60,7 +59,7 @@ describe('<DetectorScheduleFields /> spec', () => {
       realTime: false,
       historical: false,
     } as DetectorJobsFormikValues;
-    const { container, getByText } = render(
+    const { getByText } = render(
       <Formik initialValues={{}} onSubmit={jest.fn()}>
         {() => (
           <div>
@@ -72,7 +71,6 @@ describe('<DetectorScheduleFields /> spec', () => {
         )}
       </Formik>
     );
-    expect(container.firstChild).toMatchSnapshot();
     getByText('Start manually');
     getByText('Disabled');
   });

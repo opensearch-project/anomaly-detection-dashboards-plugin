@@ -63,7 +63,10 @@ import {
 } from '../utils/utils';
 import { getDetector } from '../../../redux/reducers/ad';
 import { MIN_IN_MILLI_SECS } from '../../../../server/utils/constants';
-import { getInitFailureMessageAndActionItem } from '../../DetectorDetail/utils/helpers';
+import {
+  getInitFailureMessageAndActionItem,
+  getDetectorStateDetails,
+} from '../../DetectorDetail/utils/helpers';
 import moment from 'moment';
 import { DateRange } from '../../../models/interfaces';
 import {
@@ -78,7 +81,6 @@ import { detectorIsSample } from '../../Overview/utils/helpers';
 import { SampleIndexDetailsCallout } from '../../Overview/components/SampleIndexDetailsCallout/SampleIndexDetailsCallout';
 import { CoreStart } from '../../../../../../src/core/public';
 import { CoreServicesContext } from '../../../components/CoreServices/CoreServices';
-import { getDetectorStateDetails } from '../../DetectorDetail/utils/helpers';
 import { OutOfRangeModal } from '../components/OutOfRangeModal';
 
 interface AnomalyResultsProps extends RouteComponentProps {
