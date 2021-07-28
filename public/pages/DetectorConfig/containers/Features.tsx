@@ -44,7 +44,7 @@ import ContentPanel from '../../../components/ContentPanel/ContentPanel';
 import { CodeModal } from '../components/CodeModal/CodeModal';
 import { getTitleWithCount } from '../../../utils/utils';
 import { AdditionalSettings } from '../components/AdditionalSettings/AdditionalSettings';
-import { getShingleSizeFromObject } from '../../../pages/EditFeatures/utils/helpers';
+import { getShingleSizeFromObject } from '../../ConfigureModel/utils/helpers';
 
 interface FeaturesProps {
   detectorId: string;
@@ -207,17 +207,6 @@ export const Features = (props: FeaturesProps) => {
     <ContentPanel
       title="Model configuration"
       titleSize="s"
-      subTitle={
-        <EuiText className="anomaly-distribution-subtitle">
-          <p>
-            {`${setParamsText} ${previewText} `}
-            <EuiLink href={`${BASE_DOCS_LINK}/ad`} target="_blank">
-              Learn more &nbsp;
-              <EuiIcon size="s" type="popout" />
-            </EuiLink>
-          </p>
-        </EuiText>
-      }
       actions={[<EuiButton onClick={props.onEditFeatures}>Edit</EuiButton>]}
     >
       {featureNum == 0 ? (

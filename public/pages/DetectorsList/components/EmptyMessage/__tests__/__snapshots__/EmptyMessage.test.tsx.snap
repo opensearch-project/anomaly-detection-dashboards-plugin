@@ -15,7 +15,7 @@ exports[`<EmptyDetectorMessage /> spec Empty results renders component with empt
         class="euiText euiText--medium"
       >
         <p>
-          Anomaly detectors take an input of information and discover patterns of anomalies. Create an anomaly detector to get started.
+          A detector is an individual anomaly detection task. You can create multiple detectors, and all the detectors can run simultaneously, with each analyzing data from different sources. Create an anomaly detector to get started.
         </p>
       </div>
     </div>
@@ -35,7 +35,7 @@ exports[`<EmptyDetectorMessage /> spec Empty results renders component with empt
       <a
         class="euiButton euiButton--primary"
         data-test-subj="sampleDetectorButton"
-        href="anomaly-detection-dashboards#/sample-detectors"
+        href="anomaly-detection-dashboards#/overview"
         rel="noreferrer"
         style="width: 200px;"
       >

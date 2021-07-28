@@ -35,13 +35,9 @@ import {
   EuiButton,
   EuiFormRowProps,
 } from '@elastic/eui';
-import {
-  Detector,
-  FILTER_TYPES,
-  UIFilter,
-} from '../../../models/interfaces';
+import { Detector, FILTER_TYPES, UIFilter } from '../../../models/interfaces';
 import React, { Component, FunctionComponent } from 'react';
-import { displayText } from '../../createDetector/components/DataFilters/utils/helpers';
+import { displayText } from '../../DefineDetector/components/DataFilterList/utils/helpers';
 import { CodeModal } from '../components/CodeModal/CodeModal';
 import moment from 'moment';
 

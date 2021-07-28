@@ -64,18 +64,14 @@ export const getURLQueryParams = (location: {
   };
 };
 
-// For realtime detectors: cannot have 'Completed' nor 'No data' states
+// For realtime detectors: cannot have 'Finished' state
 export const getDetectorStateOptions = () => {
   return Object.values(DETECTOR_STATE)
     .map((detectorState) => ({
       label: detectorState,
       text: detectorState,
     }))
-    .filter(
-      (option) =>
-        option.label !== DETECTOR_STATE.FINISHED &&
-        option.label !== DETECTOR_STATE.FAILED
-    );
+    .filter((option) => option.label !== DETECTOR_STATE.FINISHED);
 };
 
 export const getDetectorsForAction = (
@@ -88,7 +84,8 @@ export const getDetectorsForAction = (
         (detector) =>
           detector.curState === DETECTOR_STATE.DISABLED ||
           detector.curState === DETECTOR_STATE.INIT_FAILURE ||
-          detector.curState === DETECTOR_STATE.UNEXPECTED_FAILURE
+          detector.curState === DETECTOR_STATE.UNEXPECTED_FAILURE ||
+          detector.curState === DETECTOR_STATE.FAILED
       );
       return detectorsForAction;
     }

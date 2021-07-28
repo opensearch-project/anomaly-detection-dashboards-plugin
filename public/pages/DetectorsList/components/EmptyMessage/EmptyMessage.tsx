@@ -31,7 +31,9 @@ import { CreateDetectorButtons } from '../../../../components/CreateDetectorButt
 const FILTER_TEXT =
   'There are no detectors matching your applied filters. Reset your filters to view all detectors.';
 const EMPTY_TEXT =
-  'Anomaly detectors take an input of information and discover patterns of anomalies. Create an anomaly detector to get started.';
+  'A detector is an individual anomaly detection task. You can create multiple detectors, ' +
+  'and all the detectors can run simultaneously, with each analyzing data from different sources. ' +
+  'Create an anomaly detector to get started.';
 
 interface EmptyDetectorProps {
   isFilterApplied: boolean;

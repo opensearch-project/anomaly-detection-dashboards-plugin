@@ -49,7 +49,9 @@ const UPDATE_DETECTOR = 'ad/UPDATE_DETECTOR';
 const SEARCH_DETECTOR = 'ad/SEARCH_DETECTOR';
 const DELETE_DETECTOR = 'ad/DELETE_DETECTOR';
 const START_DETECTOR = 'ad/START_DETECTOR';
+const START_HISTORICAL_DETECTOR = 'ad/START_HISTORICAL_DETECTOR';
 const STOP_DETECTOR = 'ad/STOP_DETECTOR';
+const STOP_HISTORICAL_DETECTOR = 'ad/STOP_HISTORICAL_DETECTOR';
 const GET_DETECTOR_PROFILE = 'ad/GET_DETECTOR_PROFILE';
 const MATCH_DETECTOR = 'ad/MATCH_DETECTOR';
 const GET_DETECTOR_COUNT = 'ad/GET_DETECTOR_COUNT';
@@ -142,7 +144,33 @@ const reducer = handleActions<Detectors>(
         errorMessage: action.error,
       }),
     },
-
+    [START_HISTORICAL_DETECTOR]: {
+      REQUEST: (state: Detectors): Detectors => {
+        const newState = { ...state, requesting: true, errorMessage: '' };
+        return newState;
+      },
+      SUCCESS: (state: Detectors, action: APIResponseAction): Detectors => ({
+        ...state,
+        requesting: false,
+        detectors: {
+          ...state.detectors,
+          [action.detectorId]: {
+            ...state.detectors[action.detectorId],
+            taskState: DETECTOR_STATE.INIT,
+            detectionDateRange: {
+              startTime: action.startTime,
+              endTime: action.endTime,
+            },
+            taskError: '',
+          },
+        },
+      }),
+      FAILURE: (state: Detectors, action: APIErrorAction): Detectors => ({
+        ...state,
+        requesting: false,
+        errorMessage: action.error,
+      }),
+    },
     [STOP_DETECTOR]: {
       REQUEST: (state: Detectors): Detectors => {
         const newState = { ...state, requesting: true, errorMessage: '' };
@@ -160,6 +188,28 @@ const reducer = handleActions<Detectors>(
             curState: DETECTOR_STATE.DISABLED,
             stateError: '',
             initProgress: undefined,
+          },
+        },
+      }),
+      FAILURE: (state: Detectors, action: APIErrorAction): Detectors => ({
+        ...state,
+        requesting: false,
+        errorMessage: action.error,
+      }),
+    },
+    [STOP_HISTORICAL_DETECTOR]: {
+      REQUEST: (state: Detectors): Detectors => {
+        const newState = { ...state, requesting: true, errorMessage: '' };
+        return newState;
+      },
+      SUCCESS: (state: Detectors, action: APIResponseAction): Detectors => ({
+        ...state,
+        requesting: false,
+        detectors: {
+          ...state.detectors,
+          [action.detectorId]: {
+            ...state.detectors[action.detectorId],
+            taskError: '',
           },
         },
       }),
@@ -408,10 +458,35 @@ export const startDetector = (detectorId: string): APIAction => ({
   detectorId,
 });
 
+export const startHistoricalDetector = (
+  detectorId: string,
+  startTime: number,
+  endTime: number
+): APIAction => ({
+  type: START_HISTORICAL_DETECTOR,
+  request: (client: HttpSetup) =>
+    client.post(`..${AD_NODE_API.DETECTOR}/${detectorId}/start`, {
+      body: JSON.stringify({
+        startTime: startTime,
+        endTime: endTime,
+      }),
+    }),
+  detectorId,
+  startTime,
+  endTime,
+});
+
 export const stopDetector = (detectorId: string): APIAction => ({
   type: STOP_DETECTOR,
   request: (client: HttpSetup) =>
-    client.post(`..${AD_NODE_API.DETECTOR}/${detectorId}/stop`),
+    client.post(`..${AD_NODE_API.DETECTOR}/${detectorId}/stop/${false}`),
+  detectorId,
+});
+
+export const stopHistoricalDetector = (detectorId: string): APIAction => ({
+  type: STOP_HISTORICAL_DETECTOR,
+  request: (client: HttpSetup) =>
+    client.post(`..${AD_NODE_API.DETECTOR}/${detectorId}/stop/${true}`),
   detectorId,
 });
 

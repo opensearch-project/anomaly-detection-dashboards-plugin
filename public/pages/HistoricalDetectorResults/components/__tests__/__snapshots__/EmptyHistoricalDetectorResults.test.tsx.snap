@@ -1,0 +1,67 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`<EmptyHistoricalDetectorResults /> spec renders component 1`] = `
+<div
+  class="euiEmptyPrompt"
+>
+  <span
+    class="euiTextColor euiTextColor--subdued"
+  >
+    <h2
+      class="euiTitle euiTitle--medium"
+    >
+      You haven't yet set up historical analysis
+    </h2>
+    <div
+      class="euiSpacer euiSpacer--m"
+    />
+    <div
+      class="euiText euiText--medium"
+    >
+      <p>
+        Historical analysis lets you apply anomaly detection models over long historical data windows (weeks or months). You can identify anomaly patterns, seasonality, and trends.
+         
+        <a
+          class="euiLink euiLink--primary"
+          href="https://opensearch.org/docs/monitoring-plugins/ad/index/#step-6-analyze-historical-data"
+          rel="noopener noreferrer"
+          target="_blank"
+        >
+          Learn more  
+          <svg
+            aria-hidden="true"
+            class="euiIcon euiIcon--small euiIcon-isLoading"
+            focusable="false"
+            height="16"
+            role="img"
+            viewBox="0 0 16 16"
+            width="16"
+            xmlns="http://www.w3.org/2000/svg"
+          />
+        </a>
+         
+      </p>
+    </div>
+  </span>
+  <div
+    class="euiSpacer euiSpacer--l"
+  />
+  <div
+    class="euiSpacer euiSpacer--s"
+  />
+  <button
+    class="euiButton euiButton--primary euiButton--fill"
+    type="button"
+  >
+    <span
+      class="euiButtonContent euiButton__content"
+    >
+      <span
+        class="euiButton__text"
+      >
+        Run historical analysis
+      </span>
+    </span>
+  </button>
+</div>
+`;

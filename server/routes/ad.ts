@@ -25,9 +25,7 @@
  */
 
 //@ts-ignore
-import get from 'lodash/get';
-import orderBy from 'lodash/orderBy';
-import pullAll from 'lodash/pullAll';
+import { get, orderBy, pullAll, isEmpty } from 'lodash';
 import { AnomalyResults, SearchResponse } from '../models/interfaces';
 import {
   AnomalyResult,
@@ -59,7 +57,7 @@ import {
   getResultAggregationQuery,
   getFinalDetectorStates,
   getDetectorsWithJob,
-  getDetectorInitProgress,
+  getTaskInitProgress,
   isIndexNotFoundError,
   getErrorMessage,
   getRealtimeDetectors,
@@ -67,8 +65,10 @@ import {
   getDetectorTasks,
   appendTaskInfo,
   getDetectorResults,
-  getHistoricalDetectorState,
+  getTaskState,
   processTaskError,
+  getLatestDetectorTasksQuery,
+  isRealTimeTask,
 } from './utils/adHelpers';
 import { isNumber, set } from 'lodash';
 import {
@@ -92,14 +92,17 @@ export function registerADRoutes(apiRouter: Router, adService: AdService) {
   apiRouter.post('/detectors/results/_search', adService.searchResults);
   apiRouter.get('/detectors/{detectorId}', adService.getDetector);
   apiRouter.get('/detectors', adService.getDetectors);
-  apiRouter.post('/detectors/{detectorId}/preview', adService.previewDetector);
+  apiRouter.post('/detectors/preview', adService.previewDetector);
   apiRouter.get(
     '/detectors/{id}/results/{isHistorical}',
     adService.getAnomalyResults
   );
   apiRouter.delete('/detectors/{detectorId}', adService.deleteDetector);
   apiRouter.post('/detectors/{detectorId}/start', adService.startDetector);
-  apiRouter.post('/detectors/{detectorId}/stop', adService.stopDetector);
+  apiRouter.post(
+    '/detectors/{detectorId}/stop/{isHistorical}',
+    adService.stopDetector
+  );
   apiRouter.get(
     '/detectors/{detectorId}/_profile',
     adService.getDetectorProfile
@@ -151,14 +154,12 @@ export default class AdService {
     opensearchDashboardsResponse: OpenSearchDashboardsResponseFactory
   ): Promise<IOpenSearchDashboardsResponse<any>> => {
     try {
-      const { detectorId } = request.params as { detectorId: string };
       const requestBody = JSON.stringify(
         convertPreviewInputKeysToSnakeCase(request.body)
       );
       const response = await this.client
         .asScoped(request)
         .callAsCurrentUser('ad.previewDetector', {
-          detectorId,
           body: requestBody,
         });
       const transformedKeys = mapKeysDeep(response, toCamel);
@@ -250,89 +251,18 @@ export default class AdService {
           detectorId,
         });
 
-      // Considering any detector with no detection date range to be a realtime detector
-      const isRealtimeDetector =
-        get(response, 'anomaly_detector.detection_date_range', null) === null;
-      const task = get(response, 'anomaly_detection_task', null);
-      const taskId = get(response, 'anomaly_detection_task.task_id', null);
-      const taskProgress = get(
-        response,
-        'anomaly_detection_task.task_progress',
-        null
-      );
-      const taskError = processTaskError(
-        get(response, 'anomaly_detection_task.error', '')
-      );
-
-      // Getting detector state, depending on realtime or historical
-      let detectorState;
-      if (isRealtimeDetector) {
-        try {
-          const detectorStateResp = await this.client
-            .asScoped(request)
-            .callAsCurrentUser('ad.detectorProfile', {
-              detectorId: detectorId,
-            });
-          const detectorStates = getFinalDetectorStates(
-            [detectorStateResp],
-            [convertDetectorKeysToCamelCase(response.anomaly_detector)]
-          );
-          detectorState = detectorStates[0];
-        } catch (err) {
-          console.log(
-            'Anomaly detector - Unable to retrieve detector state',
-            err
-          );
-        }
-      } else {
-        detectorState = { state: getHistoricalDetectorState(task) };
-      }
-
-      // Getting the detector job, depending on realtime or historical
-      let adJob = get(response, 'anomaly_detector_job', null);
-      if (task && adJob === null) {
-        adJob = {
-          name: get(response, '_id'),
-          schedule: {
-            interval: {
-              start_time: get(task, 'last_update_time'),
-              period: 1,
-              unit: 'Minutes',
-            },
-          },
-          window_delay: get(response, 'anomaly_detector.window_delay'),
-          enabled: detectorState === DETECTOR_STATE.RUNNING ? true : false,
-          enabled_time: get(task, 'execution_start_time'),
-          disabled_time: get(task, 'execution_end_time')
-            ? get(task, 'execution_end_time')
-            : get(task, 'last_update_time'),
-          last_update_time: get(task, 'last_update_time'),
-          lock_duration_seconds: 60,
-        };
-      }
-
-      const resp = {
+      let resp = {
         ...response.anomaly_detector,
         id: response._id,
         primaryTerm: response._primary_term,
         seqNo: response._seq_no,
-        adJob: { ...adJob },
-        ...(isRealtimeDetector
-          ? {
-              curState: detectorState.state,
-              stateError: detectorState.error,
-              initProgress: getDetectorInitProgress(detectorState),
-            }
-          : {
-              curState: detectorState.state,
-            }),
-        ...(!isRealtimeDetector
-          ? {
-              taskId: taskId,
-              taskProgress: taskProgress,
-              taskError: taskError,
-            }
-          : {}),
+        adJob: { ...response.anomaly_detector_job },
+        historicalTask: { ...response.historical_analysis_task },
+        curState: getTaskState(response.realtime_detection_task),
+        stateError: processTaskError(
+          get(response, 'realtime_detection_task.error', '')
+        ),
+        initProgress: getTaskInitProgress(response.realtime_detection_task),
       };
 
       return opensearchDashboardsResponse.ok({
@@ -359,11 +289,27 @@ export default class AdService {
   ): Promise<IOpenSearchDashboardsResponse<any>> => {
     try {
       const { detectorId } = request.params as { detectorId: string };
+      //@ts-ignore
+      const startTime = request.body?.startTime;
+      //@ts-ignore
+      const endTime = request.body?.endTime;
+      let requestParams = { detectorId: detectorId } as {};
+      let requestPath = 'ad.startDetector';
+      // If a start and end time are passed: we want to start a historical detector
+      if (isNumber(startTime) && isNumber(endTime)) {
+        requestParams = {
+          ...requestParams,
+          body: {
+            start_time: startTime,
+            end_time: endTime,
+          },
+        };
+        requestPath = 'ad.startHistoricalDetector';
+      }
+
       const response = await this.client
         .asScoped(request)
-        .callAsCurrentUser('ad.startDetector', {
-          detectorId,
-        });
+        .callAsCurrentUser(requestPath, requestParams);
       return opensearchDashboardsResponse.ok({
         body: {
           ok: true,
@@ -387,10 +333,18 @@ export default class AdService {
     opensearchDashboardsResponse: OpenSearchDashboardsResponseFactory
   ): Promise<IOpenSearchDashboardsResponse<any>> => {
     try {
-      const { detectorId } = request.params as { detectorId: string };
+      let { detectorId, isHistorical } = request.params as {
+        detectorId: string;
+        isHistorical: any;
+      };
+      isHistorical = JSON.parse(isHistorical) as boolean;
+      const requestPath = isHistorical
+        ? 'ad.stopHistoricalDetector'
+        : 'ad.stopDetector';
+
       const response = await this.client
         .asScoped(request)
-        .callAsCurrentUser('ad.stopDetector', {
+        .callAsCurrentUser(requestPath, {
           detectorId,
         });
       return opensearchDashboardsResponse.ok({
@@ -656,68 +610,46 @@ export default class AdService {
           );
       }
 
-      // Get detector state as well: loop through the ids to get each detector's state using profile api
-      const allIds = finalDetectors.map((detector) => detector.id);
+      // Get real-time and historical task info by looping through each ID & retrieving
+      //    - curState by getting real-time task state
+      //    - enabledTime by getting real-time task's execution_start time
+      //    - taskId by getting historical task's _id
+      const latestDetectorTasksQuery = getLatestDetectorTasksQuery();
+      const detectorTasksResponse: any = await this.client
+        .asScoped(request)
+        .callAsCurrentUser('ad.searchTasks', {
+          body: latestDetectorTasksQuery,
+        });
 
-      const detectorStatePromises = allIds.map(async (id: string) => {
-        try {
-          const detectorStateResp = await this.client
-            .asScoped(request)
-            .callAsCurrentUser('ad.detectorProfile', {
-              detectorId: id,
-            });
-          return detectorStateResp;
-        } catch (err) {
-          console.log('Error getting detector profile ', err);
-          return Promise.reject(
-            new Error(
-              'Error retrieving all detector states: ' + getErrorMessage(err)
-            )
-          );
-        }
-      });
-      const detectorStateResponses = await Promise.all(
-        detectorStatePromises
-      ).catch((err) => {
-        throw err;
-      });
-      const finalDetectorStates = getFinalDetectorStates(
-        detectorStateResponses,
-        finalDetectors
-      );
-      // update the final detectors to include the detector state
-      finalDetectors.forEach((detector, i) => {
-        detector.curState = finalDetectorStates[i].state;
-      });
+      // Convert response to a map of each detector ID => list of latest tasks (historical & real-time)
+      const detectorTasks = get(
+        detectorTasksResponse,
+        'aggregations.detectors.buckets',
+        []
+      ).reduce((acc: any, bucket: any) => {
+        return {
+          ...acc,
+          [bucket.key]: {
+            tasks: bucket.latest_tasks.hits.hits,
+          },
+        };
+      }, {});
 
-      // get ad job
-      const detectorsWithJobPromises = allIds.map(async (id: string) => {
-        try {
-          const detectorResp = await this.client
-            .asScoped(request)
-            .callAsCurrentUser('ad.getDetector', {
-              detectorId: id,
-            });
-          return detectorResp;
-        } catch (err) {
-          console.log('Error getting detector ', err);
-          return Promise.reject(
-            new Error('Error retrieving all detectors: ' + getErrorMessage(err))
-          );
-        }
-      });
-      const detectorsWithJobResponses = await Promise.all(
-        detectorsWithJobPromises
-      ).catch((err) => {
-        throw err;
-      });
-      const finalDetectorsWithJob = getDetectorsWithJob(
-        detectorsWithJobResponses
-      );
+      finalDetectors.forEach((detector) => {
+        // Set default values for the task-related fields,
+        // override if latest tasks were found
+        detector.curState = DETECTOR_STATE.DISABLED;
+        detector.enabledTime = undefined;
+        detector.taskId = undefined;
 
-      // update the final detectors to include the detector enabledTime
-      finalDetectors.forEach((detector, i) => {
-        detector.enabledTime = finalDetectorsWithJob[i].enabledTime;
+        get(detectorTasks[detector.id], 'tasks', []).forEach((task: any) => {
+          if (isRealTimeTask(task._source)) {
+            detector.curState = getTaskState(task._source);
+            detector.enabledTime = task._source.execution_start_time;
+          } else {
+            detector.taskId = task._id;
+          }
+        });
       });
 
       return opensearchDashboardsResponse.ok({
@@ -852,6 +784,21 @@ export default class AdService {
           },
         },
       };
+
+      // If querying RT results: remove any results that include a task_id, as this indicates
+      // a historical result from a historical task.
+      if (!isHistorical) {
+        requestBody.query.bool = {
+          ...requestBody.query.bool,
+          ...{
+            must_not: {
+              exists: {
+                field: 'task_id',
+              },
+            },
+          },
+        };
+      }
 
       try {
         const filterSize = requestBody.query.bool.filter.length;

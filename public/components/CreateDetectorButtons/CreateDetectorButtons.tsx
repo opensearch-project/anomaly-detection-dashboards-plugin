@@ -34,7 +34,7 @@ export const CreateDetectorButtons = () => {
       <EuiFlexItem grow={false}>
         <EuiButton
           style={{ width: '200px' }}
-          href={`${PLUGIN_NAME}#${APP_PATH.SAMPLE_DETECTORS}`}
+          href={`${PLUGIN_NAME}#${APP_PATH.OVERVIEW}`}
           data-test-subj="sampleDetectorButton"
         >
           Try a sample detector

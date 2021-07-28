@@ -31,6 +31,7 @@ import {
   EuiHorizontalRule,
   EuiPage,
   EuiPageBody,
+  EuiSpacer,
 } from '@elastic/eui';
 import { debounce, get, isEmpty } from 'lodash';
 import queryString from 'querystring';
@@ -685,7 +686,7 @@ export const DetectorList = (props: ListProps) => {
             onSearchIndexChange={handleSearchIndexChange}
             onPageClick={handlePageChange}
           />
-          <EuiHorizontalRule margin="xs" />
+          <EuiSpacer size="m" />
           <EuiBasicTable<any>
             items={isLoading ? [] : detectorsToDisplay}
             /*

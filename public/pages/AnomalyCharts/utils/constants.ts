@@ -38,6 +38,7 @@ export enum CHART_FIELDS {
   ANOMALY_GRADE = 'anomalyGrade',
   CONFIDENCE = 'confidence',
   DATA = 'data',
+  AGG_INTERVAL = 'aggInterval',
 }
 
 export enum CHART_COLORS {

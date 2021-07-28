@@ -39,7 +39,6 @@ import {
   ENTITY_VALUE_FIELD,
   staticColumn,
 } from '../utils/tableUtils';
-import { ListControls } from '../components/ListControls/ListControls';
 import { DetectorResultsQueryParams } from 'server/models/types';
 import { AnomalyData } from '../../../models/interfaces';
 import { getTitleWithCount } from '../../../utils/utils';
@@ -112,10 +111,6 @@ export function AnomalyResultsTable(props: AnomalyResultsTableProps) {
 
   const isLoading = false;
 
-  const handlePageChange = (pageNumber: number) => {
-    setState({ ...state, page: pageNumber });
-  };
-
   const handleTableChange = ({ page: tablePage = {}, sort = {} }: any) => {
     const { index: page, size } = tablePage;
     const { field: sortField, direction: sortDirection } = sort;
@@ -148,18 +143,16 @@ export function AnomalyResultsTable(props: AnomalyResultsTableProps) {
       titleSize="xs"
       titleClassName="preview-title"
     >
-      <ListControls
-        activePage={state.page}
-        pageCount={
-          Math.ceil(totalAnomalies.length / state.queryParams.size) || 1
-        }
-        onPageClick={handlePageChange}
-      />
-
       <EuiBasicTable
         items={targetAnomalies}
         columns={
-          props.isHCDetector
+          props.isHCDetector && props.isHistorical
+            ? [
+                ...staticColumn.slice(0, 2),
+                entityValueColumn,
+                ...staticColumn.slice(3),
+              ]
+            : props.isHCDetector
             ? [
                 ...staticColumn.slice(0, 2),
                 entityValueColumn,
