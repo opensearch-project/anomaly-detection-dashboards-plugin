@@ -42,6 +42,7 @@ describe('<CategoryField /> spec', () => {
           <Fragment>
             <Form>
               <CategoryField
+                isEdit={false}
                 isHCDetector={false}
                 categoryFieldOptions={['option 1', 'option 2']}
                 setIsHCDetector={(isHCDetector: boolean) => {
@@ -63,7 +64,7 @@ describe('<CategoryField /> spec', () => {
     expect(container).toMatchSnapshot();
     expect(queryByTestId('noCategoryFieldsCallout')).toBeNull();
     expect(queryByTestId('categoryFieldComboBox')).toBeNull();
-    expect(queryByText('Enable categorical field')).not.toBeNull();
+    expect(queryByText('Enable categorical fields')).not.toBeNull();
   });
   test('renders the component when enabled', () => {
     const {
@@ -83,6 +84,7 @@ describe('<CategoryField /> spec', () => {
           <Fragment>
             <Form>
               <CategoryField
+                isEdit={false}
                 isHCDetector={true}
                 categoryFieldOptions={['a', 'b']}
                 setIsHCDetector={(isHCDetector: boolean) => {
@@ -104,7 +106,7 @@ describe('<CategoryField /> spec', () => {
     expect(container).toMatchSnapshot();
     expect(queryByTestId('noCategoryFieldsCallout')).toBeNull();
     expect(queryByTestId('categoryFieldComboBox')).not.toBeNull();
-    expect(queryByText('Enable categorical field')).not.toBeNull();
+    expect(queryByText('Enable categorical fields')).not.toBeNull();
     fireEvent.click(getByTestId('comboBoxToggleListButton'));
     getByText('a');
     getByText('b');
@@ -121,6 +123,7 @@ describe('<CategoryField /> spec', () => {
           <Fragment>
             <Form>
               <CategoryField
+                isEdit={false}
                 isHCDetector={true}
                 categoryFieldOptions={[]}
                 setIsHCDetector={(isHCDetector: boolean) => {
@@ -142,7 +145,7 @@ describe('<CategoryField /> spec', () => {
     expect(container).toMatchSnapshot();
     expect(queryByTestId('noCategoryFieldsCallout')).not.toBeNull();
     expect(queryByTestId('categoryFieldComboBox')).toBeNull();
-    expect(queryByText('Enable categorical field')).not.toBeNull();
+    expect(queryByText('Enable categorical fields')).not.toBeNull();
   });
   test('hides callout if component is loading', () => {
     const { container, queryByText, queryByTestId } = render(
@@ -156,6 +159,7 @@ describe('<CategoryField /> spec', () => {
           <Fragment>
             <Form>
               <CategoryField
+                isEdit={false}
                 isHCDetector={true}
                 categoryFieldOptions={[]}
                 setIsHCDetector={(isHCDetector: boolean) => {
@@ -176,7 +180,7 @@ describe('<CategoryField /> spec', () => {
     );
     expect(container).toMatchSnapshot();
     expect(queryByTestId('noCategoryFieldsCallout')).toBeNull();
-    expect(queryByText('Enable categorical field')).not.toBeNull();
+    expect(queryByText('Enable categorical fields')).not.toBeNull();
   });
   test(`limits selection to a maximum of 2 entities`, () => {
     const { getAllByRole, getByTestId, queryByText } = render(
@@ -190,6 +194,7 @@ describe('<CategoryField /> spec', () => {
           <Fragment>
             <Form>
               <CategoryField
+                isEdit={false}
                 isHCDetector={true}
                 categoryFieldOptions={['a', 'b', 'c']}
                 setIsHCDetector={(isHCDetector: boolean) => {
@@ -197,6 +202,11 @@ describe('<CategoryField /> spec', () => {
                 }}
                 isLoading={false}
                 originalShingleSize={1}
+                formikProps={{
+                  values: {
+                    categoryFieldEnabled: true,
+                  },
+                }}
               />
             </Form>
           </Fragment>
