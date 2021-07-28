@@ -46,13 +46,7 @@ export default function adPlugin(Client: any, config: any, components: any) {
 
   ad.previewDetector = ca({
     url: {
-      fmt: `${API.DETECTOR_BASE}/<%=detectorId%>/_preview`,
-      req: {
-        detectorId: {
-          type: 'string',
-          required: true,
-        },
-      },
+      fmt: `${API.DETECTOR_BASE}/_preview`,
     },
     needBody: true,
     method: 'POST',
@@ -67,6 +61,13 @@ export default function adPlugin(Client: any, config: any, components: any) {
   ad.searchDetector = ca({
     url: {
       fmt: `${API.DETECTOR_BASE}/_search`,
+    },
+    needBody: true,
+    method: 'POST',
+  });
+  ad.searchTasks = ca({
+    url: {
+      fmt: `${API.DETECTOR_BASE}/tasks/_search`,
     },
     needBody: true,
     method: 'POST',
@@ -125,9 +126,36 @@ export default function adPlugin(Client: any, config: any, components: any) {
     method: 'POST',
   });
 
+  ad.startHistoricalDetector = ca({
+    url: {
+      fmt: `${API.DETECTOR_BASE}/<%=detectorId%>/_start`,
+      req: {
+        detectorId: {
+          type: 'string',
+          required: true,
+        },
+      },
+      needBody: true,
+    },
+    method: 'POST',
+  });
+
   ad.stopDetector = ca({
     url: {
       fmt: `${API.DETECTOR_BASE}/<%=detectorId%>/_stop`,
+      req: {
+        detectorId: {
+          type: 'string',
+          required: true,
+        },
+      },
+    },
+    method: 'POST',
+  });
+
+  ad.stopHistoricalDetector = ca({
+    url: {
+      fmt: `${API.DETECTOR_BASE}/<%=detectorId%>/_stop?historical=true`,
       req: {
         detectorId: {
           type: 'string',

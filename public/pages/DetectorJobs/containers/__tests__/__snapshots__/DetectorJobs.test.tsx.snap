@@ -1,0 +1,224 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`<DetectorJobs /> spec configuring detector jobs renders the component 1`] = `
+<div
+  class="euiPage"
+  style="margin-top: -24px;"
+>
+  <main
+    class="euiPageBody"
+  >
+    <div
+      class="euiPageHeader euiPageHeader--responsive"
+    >
+      <div
+        class="euiPageHeaderSection"
+      >
+        <h1
+          class="euiTitle euiTitle--large"
+        >
+          Set up detector jobs 
+        </h1>
+      </div>
+    </div>
+    <div
+      class="euiPanel euiPanel--paddingMedium"
+      style="padding: 20px;"
+    >
+      <div
+        class="euiFlexGroup euiFlexGroup--gutterLarge euiFlexGroup--alignItemsCenter euiFlexGroup--justifyContentSpaceBetween euiFlexGroup--directionRow euiFlexGroup--responsive"
+        style="padding: 0px;"
+      >
+        <div
+          class="euiFlexItem"
+        >
+          <h3
+            class="euiTitle euiTitle--small"
+          >
+            Real-time detection
+          </h3>
+          <div
+            class="euiFlexGroup euiFlexGroup--gutterLarge euiFlexGroup--directionRow euiFlexGroup--responsive"
+          >
+            <div
+              class="euiFlexItem content-panel-subTitle"
+              style="line-height: normal; max-width: 75%;"
+            >
+              <div
+                class="euiText euiText--medium content-panel-subTitle"
+                style="line-height: normal;"
+              >
+                Real-time detection lets you find anomalies in your data in near real-time. To receive accurate and real-time anomalies, the detector needs to start and collect sufficient data to include your latest changes. The earlier the detector starts running, the sooner the real-time anomalies will be available.
+                 
+                <a
+                  class="euiLink euiLink--primary"
+                  href="https://opensearch.org/docs/monitoring-plugins/ad"
+                  rel="noopener noreferrer"
+                  target="_blank"
+                >
+                  Learn more 
+                  <svg
+                    aria-hidden="true"
+                    class="euiIcon euiIcon--small euiIcon-isLoading"
+                    focusable="false"
+                    height="16"
+                    role="img"
+                    viewBox="0 0 16 16"
+                    width="16"
+                    xmlns="http://www.w3.org/2000/svg"
+                  />
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div
+          class="euiFlexItem euiFlexItem--flexGrowZero"
+        >
+          <div
+            class="euiFlexGroup euiFlexGroup--gutterMedium euiFlexGroup--alignItemsCenter euiFlexGroup--justifyContentSpaceBetween euiFlexGroup--directionRow euiFlexGroup--responsive"
+          >
+            <div
+              class="euiFlexItem"
+            />
+          </div>
+        </div>
+      </div>
+      <div>
+        <hr
+          class="euiHorizontalRule euiHorizontalRule--full euiHorizontalRule--marginSmall"
+        />
+        <div
+          style="padding: 10px 0px;"
+        >
+          <div
+            class="euiFlexItem"
+          >
+            <div
+              class="euiCheckbox"
+            >
+              <input
+                checked=""
+                class="euiCheckbox__input"
+                id="realTimeCheckbox"
+                type="checkbox"
+              />
+              <div
+                class="euiCheckbox__square"
+              />
+              <label
+                class="euiCheckbox__label"
+                for="realTimeCheckbox"
+              >
+                Start real-time detector automatically (recommended)
+              </label>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div
+      class="euiSpacer euiSpacer--l"
+    />
+    <div
+      class="euiPanel euiPanel--paddingMedium"
+      style="padding: 20px;"
+    >
+      <div
+        class="euiFlexGroup euiFlexGroup--gutterLarge euiFlexGroup--alignItemsCenter euiFlexGroup--justifyContentSpaceBetween euiFlexGroup--directionRow euiFlexGroup--responsive"
+        style="padding: 0px;"
+      >
+        <div
+          class="euiFlexItem"
+        >
+          <h3
+            class="euiTitle euiTitle--small"
+          >
+            Historical analysis detection
+          </h3>
+          <div
+            class="euiFlexGroup euiFlexGroup--gutterLarge euiFlexGroup--directionRow euiFlexGroup--responsive"
+          >
+            <div
+              class="euiFlexItem content-panel-subTitle"
+              style="line-height: normal; max-width: 75%;"
+            >
+              <div
+                class="euiText euiText--medium content-panel-subTitle"
+                style="line-height: normal;"
+              >
+                Historical analysis detection lets you analyze and apply machine learning models over long historical data windows (weeks or months). You can identify anomaly patterns, seasonality, and trends.
+                 
+                <a
+                  class="euiLink euiLink--primary"
+                  href="https://opensearch.org/docs/monitoring-plugins/ad"
+                  rel="noopener noreferrer"
+                  target="_blank"
+                >
+                  Learn more 
+                  <svg
+                    aria-hidden="true"
+                    class="euiIcon euiIcon--small euiIcon-isLoading"
+                    focusable="false"
+                    height="16"
+                    role="img"
+                    viewBox="0 0 16 16"
+                    width="16"
+                    xmlns="http://www.w3.org/2000/svg"
+                  />
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div
+          class="euiFlexItem euiFlexItem--flexGrowZero"
+        >
+          <div
+            class="euiFlexGroup euiFlexGroup--gutterMedium euiFlexGroup--alignItemsCenter euiFlexGroup--justifyContentSpaceBetween euiFlexGroup--directionRow euiFlexGroup--responsive"
+          >
+            <div
+              class="euiFlexItem"
+            />
+          </div>
+        </div>
+      </div>
+      <div>
+        <hr
+          class="euiHorizontalRule euiHorizontalRule--full euiHorizontalRule--marginSmall"
+        />
+        <div
+          style="padding: 10px 0px;"
+        >
+          <div
+            class="euiFlexGroup euiFlexGroup--gutterLarge euiFlexGroup--directionColumn euiFlexGroup--responsive"
+          >
+            <div
+              class="euiFlexItem"
+            >
+              <div
+                class="euiCheckbox"
+              >
+                <input
+                  class="euiCheckbox__input"
+                  id="historicalCheckbox"
+                  type="checkbox"
+                />
+                <div
+                  class="euiCheckbox__square"
+                />
+                <label
+                  class="euiCheckbox__label"
+                  for="historicalCheckbox"
+                >
+                  Run historical analysis detection
+                </label>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+`;

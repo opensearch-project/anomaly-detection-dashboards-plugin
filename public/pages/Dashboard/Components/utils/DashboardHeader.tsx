@@ -43,7 +43,7 @@ export const DashboardHeader = (props: DashboardHeaderProps) => {
       <EuiFlexGroup justifyContent="spaceBetween">
         <EuiFlexItem grow={false}>
           <EuiTitle size="l">
-            <h1>Dashboard</h1>
+            <h1>Real-time dashboard</h1>
           </EuiTitle>
         </EuiFlexItem>
         {props.hasDetectors ? (

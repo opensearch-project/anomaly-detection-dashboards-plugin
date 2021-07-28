@@ -43,11 +43,12 @@ import {
   EuiIcon,
   EuiLoadingChart,
   EuiStat,
+  EuiButtonGroup,
 } from '@elastic/eui';
 import { get } from 'lodash';
 import moment from 'moment';
 import React, { useEffect, useState } from 'react';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { useDelayedLoader } from '../../../hooks/useDelayedLoader';
 import {
   AnomalySummary,
@@ -56,11 +57,15 @@ import {
   Monitor,
   MonitorAlert,
 } from '../../../models/interfaces';
+import { AppState } from '../../../redux/reducers';
 import { searchAlerts } from '../../../redux/reducers/alerting';
 import { darkModeEnabled } from '../../../utils/opensearchDashboardsUtils';
 import {
   filterWithDateRange,
   prepareDataForChart,
+  getAnomalyDataRangeQuery,
+  getHistoricalAggQuery,
+  parseHistoricalAggregatedAnomalies,
 } from '../../utils/anomalyResultUtils';
 import { AlertsFlyout } from '../components/AlertsFlyout/AlertsFlyout';
 import {
@@ -83,6 +88,14 @@ import {
   INITIAL_ANOMALY_SUMMARY,
 } from '../utils/constants';
 import { HeatmapCell } from './AnomalyHeatmapChart';
+import { ANOMALY_AGG, MIN_END_TIME, MAX_END_TIME } from '../../utils/constants';
+import { MAX_HISTORICAL_AGG_RESULTS } from '../../../utils/constants';
+import { searchResults } from '../../../redux/reducers/anomalyResults';
+import {
+  DAY_IN_MILLI_SECS,
+  WEEK_IN_MILLI_SECS,
+  DETECTOR_STATE,
+} from '../../../../server/utils/constants';
 
 interface AnomalyDetailsChartProps {
   onDateRangeChange(
@@ -126,13 +139,151 @@ export const AnomalyDetailsChart = React.memo(
     });
     const [zoomedAnomalies, setZoomedAnomalies] = useState<any[]>([]);
 
+    const [aggregatedAnomalies, setAggregatedAnomalies] = useState<any[]>([]);
+    const [selectedAggId, setSelectedAggId] = useState<ANOMALY_AGG>(
+      ANOMALY_AGG.RAW
+    );
+    const [disabledAggsMap, setDisabledAggsMap] = useState<
+      { [key in ANOMALY_AGG]: boolean }
+    >({
+      raw: false,
+      day: true,
+      week: true,
+      month: true,
+    });
+
     const DEFAULT_DATE_PICKER_RANGE = {
       start: moment().subtract(7, 'days').valueOf(),
       end: moment().valueOf(),
     };
 
+    const taskId = get(props, 'detector.taskId');
+    const taskState = get(props, 'detector.taskState');
+
+    const isRequestingAnomalyResults = useSelector(
+      (state: AppState) => state.anomalyResults.requesting
+    );
+
+    const getAggregatedAnomalies = async () => {
+      const anomalyDataRangeQuery = getAnomalyDataRangeQuery(
+        zoomRange.startDate,
+        zoomRange.endDate,
+        taskId
+      );
+      dispatch(searchResults(anomalyDataRangeQuery))
+        .then((response: any) => {
+          // Only retrieve buckets that are in the anomaly results range. This is so
+          // we don't show aggregate results for where there is no data at all
+          const dataStartDate = get(
+            response,
+            `response.aggregations.${MIN_END_TIME}.value`
+          );
+          const dataEndDate = get(
+            response,
+            `response.aggregations.${MAX_END_TIME}.value`
+          );
+
+          const historicalAggQuery = getHistoricalAggQuery(
+            dataStartDate,
+            dataEndDate,
+            taskId,
+            selectedAggId
+          );
+          dispatch(searchResults(historicalAggQuery))
+            .then((response: any) => {
+              const aggregatedAnomalies = parseHistoricalAggregatedAnomalies(
+                response,
+                selectedAggId
+              );
+              setAggregatedAnomalies(aggregatedAnomalies);
+            })
+            .catch((e: any) => {
+              console.error(
+                `Error getting aggregated anomaly results for detector ${props.detector?.id}: `,
+                e
+              );
+            });
+        })
+        .catch((e: any) => {
+          console.error(
+            `Error getting aggregated anomaly results for detector ${props.detector?.id}: `,
+            e
+          );
+        });
+    };
+
     useEffect(() => {
-      const anomalies = prepareDataForChart(props.anomalies, zoomRange);
+      setZoomRange(props.dateRange);
+    }, [props.dateRange]);
+
+    // Hook to check if any of the aggregation tabs should be disabled or not.
+    // Currently support up to 10k results, which = 10k day/week/month aggregate results
+    useEffect(() => {
+      if (props.isHistorical) {
+        const anomalyDataRangeQuery = getAnomalyDataRangeQuery(
+          zoomRange.startDate,
+          zoomRange.endDate,
+          taskId
+        );
+        dispatch(searchResults(anomalyDataRangeQuery))
+          .then((response: any) => {
+            const dataStartDate = get(
+              response,
+              `response.aggregations.${MIN_END_TIME}.value`
+            );
+            const dataEndDate = get(
+              response,
+              `response.aggregations.${MAX_END_TIME}.value`
+            );
+
+            // Note that the monthly interval is approximate. 365 / 12 = 30.41 days, rounded up to 31 means
+            // there will be <= 10k monthly-aggregate buckets
+            const numDailyBuckets =
+              (dataEndDate - dataStartDate) / DAY_IN_MILLI_SECS;
+            const numWeeklyBuckets =
+              (dataEndDate - dataStartDate) / WEEK_IN_MILLI_SECS;
+            const numMonthlyBuckets =
+              (dataEndDate - dataStartDate) / (31 * DAY_IN_MILLI_SECS);
+            const newAggId =
+              (numDailyBuckets > MAX_HISTORICAL_AGG_RESULTS &&
+                selectedAggId === ANOMALY_AGG.DAILY) ||
+              (numWeeklyBuckets > MAX_HISTORICAL_AGG_RESULTS &&
+                selectedAggId === ANOMALY_AGG.WEEKLY) ||
+              (numMonthlyBuckets > MAX_HISTORICAL_AGG_RESULTS &&
+                selectedAggId === ANOMALY_AGG.MONTHLY)
+                ? ANOMALY_AGG.RAW
+                : (selectedAggId as ANOMALY_AGG);
+            setSelectedAggId(newAggId);
+            setDisabledAggsMap({
+              raw: false,
+              day: numDailyBuckets > MAX_HISTORICAL_AGG_RESULTS,
+              week: numWeeklyBuckets > MAX_HISTORICAL_AGG_RESULTS,
+              month: numMonthlyBuckets > MAX_HISTORICAL_AGG_RESULTS,
+            });
+          })
+          .catch((e: any) => {
+            console.error(
+              `Error getting aggregated anomaly results for detector ${props.detector?.id}: `,
+              e
+            );
+          });
+      }
+    }, [zoomRange]);
+
+    useEffect(() => {
+      if (selectedAggId !== ANOMALY_AGG.RAW) {
+        getAggregatedAnomalies();
+      }
+    }, [selectedAggId, zoomRange, props.anomalies]);
+
+    useEffect(() => {
+      // Aggregated anomalies are already formatted differently
+      // in parseHistoricalAggregatedAnomalies(). Only raw anomalies
+      // are formatted with prepareDataForChart().
+      const anomalies =
+        selectedAggId === ANOMALY_AGG.RAW
+          ? prepareDataForChart(props.anomalies, zoomRange)
+          : aggregatedAnomalies;
       setZoomedAnomalies(anomalies);
       setAnomalySummary(
         !props.bucketizedAnomalies
@@ -144,11 +295,7 @@ export const AnomalyDetailsChart = React.memo(
       setTotalAlerts(
         filterWithDateRange(alerts, zoomRange, 'startTime').length
       );
-    }, [props.anomalies, zoomRange, props.dateRange]);
-
-    useEffect(() => {
-      setZoomRange(props.dateRange);
-    }, [props.dateRange]);
+    }, [props.anomalies, zoomRange, aggregatedAnomalies, selectedAggId]);
 
     const handleZoomRangeChange = (start: number, end: number) => {
       setZoomRange({
@@ -204,8 +351,12 @@ export const AnomalyDetailsChart = React.memo(
       handleZoomRangeChange(startDate, endDate);
     };
 
-    const isLoading = props.isLoading || isLoadingAlerts;
+    const isLoading =
+      props.isLoading || isLoadingAlerts || isRequestingAnomalyResults;
+    const isInitializingHistorical = taskState === DETECTOR_STATE.INIT;
     const showLoader = useDelayedLoader(isLoading);
+    const showAggregateResults =
+      props.isHistorical && selectedAggId !== ANOMALY_AGG.RAW;
 
     return (
       <React.Fragment>
@@ -217,18 +368,17 @@ export const AnomalyDetailsChart = React.memo(
               titleSize="s"
             />
           </EuiFlexItem>
-          <EuiFlexItem>
-            <AnomalyStatWithTooltip
-              isLoading={isLoading}
-              minValue={anomalySummary.minAnomalyGrade}
-              maxValue={anomalySummary.maxAnomalyGrade}
-              description={getAnomalyGradeWording(props.isNotSample)}
-              tooltip="Indicates the extent to which a data point is anomalous. Higher grades indicate more unusual data."
-            />
-          </EuiFlexItem>
-          {
-            // If historical: only show the average grade, and don't show the confidence or last anomaly occurrence stats
-          }
+          {props.isHistorical ? null : (
+            <EuiFlexItem>
+              <AnomalyStatWithTooltip
+                isLoading={isLoading}
+                minValue={anomalySummary.minAnomalyGrade}
+                maxValue={anomalySummary.maxAnomalyGrade}
+                description={getAnomalyGradeWording(props.isNotSample)}
+                tooltip="Indicates the extent to which a data point is anomalous. Higher grades indicate more unusual data."
+              />
+            </EuiFlexItem>
+          )}
           {props.isHistorical ? (
             <EuiFlexItem>
               <EuiStat
@@ -268,7 +418,56 @@ export const AnomalyDetailsChart = React.memo(
               />
             </EuiFlexItem>
           ) : null}
+          {props.isHistorical && !props.isHCDetector ? (
+            <EuiFlexItem
+              grow={false}
+              style={{ width: '450px', marginRight: '4px' }}
+            >
+              <EuiButtonGroup
+                type="single"
+                legend="Aggregation button group"
+                buttonSize="compressed"
+                isFullWidth
+                options={[
+                  {
+                    id: ANOMALY_AGG.RAW,
+                    label: 'Raw',
+                    isDisabled: disabledAggsMap['raw'] || isLoading,
+                  },
+                  {
+                    id: ANOMALY_AGG.DAILY,
+                    label: 'Daily max',
+                    isDisabled:
+                      disabledAggsMap['day'] ||
+                      isLoading ||
+                      isInitializingHistorical,
+                  },
+                  {
+                    id: ANOMALY_AGG.WEEKLY,
+                    label: 'Weekly max',
+                    isDisabled:
+                      disabledAggsMap['week'] ||
+                      isLoading ||
+                      isInitializingHistorical,
+                  },
+                  {
+                    id: ANOMALY_AGG.MONTHLY,
+                    label: 'Monthly max',
+                    isDisabled:
+                      disabledAggsMap['month'] ||
+                      isLoading ||
+                      isInitializingHistorical,
+                  },
+                ]}
+                idSelected={selectedAggId}
+                onChange={(aggId) => {
+                  setSelectedAggId(aggId as ANOMALY_AGG);
+                }}
+              />
+            </EuiFlexItem>
+          ) : null}
         </EuiFlexGroup>
+
         <EuiFlexGroup>
           <EuiFlexItem grow={true}>
             <div
@@ -344,14 +543,23 @@ export const AnomalyDetailsChart = React.memo(
                       marker={<EuiIcon type="bell" />}
                     />
                   ) : null}
-                  <Axis
-                    id="bottom"
-                    position="bottom"
-                    tickFormat={anomalyChartTimeFormatter}
-                  />
+                  {showAggregateResults ? (
+                    <Axis id="bottom" position="bottom" />
+                  ) : (
+                    <Axis
+                      id="bottom"
+                      position="bottom"
+                      tickFormat={anomalyChartTimeFormatter}
+                    />
+                  )}
+
                   <Axis
                     id="left"
-                    title={'Anomaly grade / confidence'}
+                    title={
+                      props.isHistorical
+                        ? 'Anomaly grade'
+                        : 'Anomaly grade / Confidence'
+                    }
                     position="left"
                     domain={{ min: 0, max: 1 }}
                     showGridLines
@@ -372,11 +580,18 @@ export const AnomalyDetailsChart = React.memo(
                   )}
                   <LineSeries
                     id="anomalyGrade"
+                    color={'red'}
                     name={props.anomalyGradeSeriesName}
                     data={zoomedAnomalies}
-                    xScaleType={ScaleType.Time}
+                    xScaleType={
+                      showAggregateResults ? ScaleType.Ordinal : ScaleType.Time
+                    }
                     yScaleType={ScaleType.Linear}
-                    xAccessor={CHART_FIELDS.PLOT_TIME}
+                    xAccessor={
+                      showAggregateResults
+                        ? CHART_FIELDS.AGG_INTERVAL
+                        : CHART_FIELDS.PLOT_TIME
+                    }
                     yAccessors={[CHART_FIELDS.ANOMALY_GRADE]}
                   />
                 </Chart>

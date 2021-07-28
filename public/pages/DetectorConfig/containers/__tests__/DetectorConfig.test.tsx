@@ -47,8 +47,8 @@ import { getRandomDetector } from '../../../../redux/reducers/__tests__/utils';
 import { coreServicesMock } from '../../../../../test/mocks';
 import { toString } from '../MetaData';
 import { DATA_TYPES } from '../../../../utils/constants';
-import { OPERATORS_MAP } from '../../../createDetector/components/DataFilters/utils/constant';
-import { displayText } from '../../../createDetector/components/DataFilters/utils/helpers';
+import { OPERATORS_MAP } from '../../../../models/interfaces';
+import { displayText } from '../../../DefineDetector/components/DataFilterList/utils/helpers';
 import { mockedStore, initialState } from '../../../../redux/utils/testUtils';
 import { CoreServicesContext } from '../../../../components/CoreServices/CoreServices';
 
@@ -183,64 +183,6 @@ describe('<DetectorConfig /> spec', () => {
     });
   });
 
-  test('renders empty features and one simple filter', async () => {
-    const randomDetector = {
-      ...getRandomDetector(true),
-      uiMetadata: {
-        filterType: FILTER_TYPES.SIMPLE,
-        filters: [filters[0]],
-      } as UiMetaData,
-      featureAttributes: [],
-    };
-    const { getByText } = renderWithRouter(randomDetector);
-    await wait(() => {
-      getByText(displayText(filters[0]));
-    });
-  });
-
-  test('renders empty features and two simple filters', async () => {
-    const randomDetector = {
-      ...getRandomDetector(true),
-      uiMetadata: {
-        filterType: FILTER_TYPES.SIMPLE,
-        filters: filters,
-      } as UiMetaData,
-      featureAttributes: [],
-    };
-    const { getByText } = renderWithRouter(randomDetector);
-    await wait(() => {
-      // filter should be -
-      getByText(displayText(filters[0]));
-      getByText(displayText(filters[1]));
-    });
-  });
-
-  test('renders empty features and a custom filter', async () => {
-    const randomDetector = {
-      ...getRandomDetector(true),
-      uiMetadata: {
-        filterType: FILTER_TYPES.CUSTOM,
-        filters: [filters[0]],
-      } as UiMetaData,
-      featureAttributes: [],
-    };
-    const { getByTestId, getByText, queryByText } = renderWithRouter(
-      randomDetector
-    );
-    await wait(() => {
-      // filter should be -
-      getByText('Custom expression:');
-      expect(queryByText(fieldInFilter)).toBeNull();
-      expect(queryByText('filter')).toBeNull();
-    });
-
-    fireEvent.click(getByTestId('viewFilter'));
-    await wait(() => {
-      queryByText(fieldInFilter);
-      queryByText('filter');
-    });
-  });
-
   describe('test 1 simple feature enabled/disabled', () => {
     test.each([
       [true, 'Enabled'],
@@ -268,11 +210,11 @@ describe('<DetectorConfig /> spec', () => {
             },
           } as UiMetaData,
         };
-        const { getByText } = renderWithRouter(randomDetector);
+        const { getByText, getAllByText } = renderWithRouter(randomDetector);
         await wait(() => {
           getByText('Field: value');
           getByText('Aggregation method: avg');
-          getByText(enabledInRender);
+          getAllByText(enabledInRender);
         });
       }
     );

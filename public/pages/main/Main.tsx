@@ -24,26 +24,23 @@
  * permissions and limitations under the License.
  */
 
-import { Switch, Route, RouteComponentProps, Redirect } from 'react-router-dom';
+import { Switch, Route, RouteComponentProps } from 'react-router-dom';
 import React from 'react';
 import { AppState } from '../../redux/reducers';
-import { CreateDetector } from '../createDetector';
 import { DetectorList } from '../DetectorsList';
 import { SampleData } from '../SampleData';
 import { ListRouterParams } from '../DetectorsList/containers/List/List';
-import { HistoricalDetectorList } from '../HistoricalDetectorList';
-import { HistoricalDetectorListRouterParams } from '../HistoricalDetectorList/containers/HistoricalDetectorList';
-import { CreateHistoricalDetector } from '../CreateHistoricalDetector';
-import { HistoricalDetectorDetail } from '../HistoricalDetectorDetail';
-// @ts-ignore
+import { CreateDetectorSteps } from '../CreateDetectorSteps';
 import { EuiSideNav, EuiPage, EuiPageBody, EuiPageSideBar } from '@elastic/eui';
 import { useSelector } from 'react-redux';
 import { APP_PATH } from '../../utils/constants';
 import { DetectorDetail } from '../DetectorDetail';
-import { EditFeatures } from '../EditFeatures/containers/EditFeatures';
+import { DefineDetector } from '../DefineDetector/containers/DefineDetector';
+import { ConfigureModel } from '../ConfigureModel/containers/ConfigureModel';
 import { DashboardOverview } from '../Dashboard/Container/DashboardOverview';
 import { CoreServicesConsumer } from '../../components/CoreServices/CoreServices';
 import { CoreStart } from '../../../../../src/core/public';
+import { AnomalyDetectionOverview } from '../Overview';
 
 enum Navigation {
   AnomalyDetection = 'Anomaly detection',
@@ -52,13 +49,7 @@ enum Navigation {
   Detectors = 'Detectors',
   HistoricalDetectors = 'Historical detectors',
   SampleDetectors = 'Sample detectors',
-}
-
-enum Pathname {
-  Dashboard = '/dashboard',
-  Detectors = '/detectors',
-  HistoricalDetectors = '/historical-detectors',
-  SampleDetectors = '/sample-detectors',
+  CreateDetectorSteps = 'Create detector steps',
 }
 
 interface MainProps extends RouteComponentProps {}
@@ -67,42 +58,28 @@ export function Main(props: MainProps) {
   const hideSideNavBar = useSelector(
     (state: AppState) => state.adApp.hideSideNavBar
   );
+
+  const adState = useSelector((state: AppState) => state.ad);
+  const totalRealtimeDetectors = adState.totalDetectors;
+  const errorGettingDetectors = adState.errorMessage;
+  const isLoadingDetectors = adState.requesting;
   const sideNav = [
     {
       name: Navigation.AnomalyDetection,
       id: 0,
-      href: `#${Pathname.Dashboard}`,
+      href: `#${APP_PATH.OVERVIEW}`,
       items: [
         {
-          name: Navigation.Realtime,
+          name: Navigation.Dashboard,
           id: 1,
-          forceOpen: true,
-          items: [
-            {
-              name: Navigation.Dashboard,
-              id: 2,
-              href: `#${Pathname.Dashboard}`,
-              isSelected: props.location.pathname === Pathname.Dashboard,
-            },
-            {
-              name: Navigation.Detectors,
-              id: 3,
-              href: `#${Pathname.Detectors}`,
-              isSelected: props.location.pathname === Pathname.Detectors,
-            },
-            {
-              name: Navigation.SampleDetectors,
-              id: 4,
-              href: `#${Pathname.SampleDetectors}`,
-              isSelected: props.location.pathname === Pathname.SampleDetectors,
-            },
-          ],
+          href: `#${APP_PATH.DASHBOARD}`,
+          isSelected: props.location.pathname === APP_PATH.DASHBOARD,
         },
         {
-          name: Navigation.HistoricalDetectors,
-          id: 5,
-          href: `#${Pathname.HistoricalDetectors}`,
-          isSelected: props.location.pathname === Pathname.HistoricalDetectors,
+          name: Navigation.Detectors,
+          id: 2,
+          href: `#${APP_PATH.LIST_DETECTORS}`,
+          isSelected: props.location.pathname === APP_PATH.LIST_DETECTORS,
         },
       ],
     },
@@ -131,28 +108,23 @@ export function Main(props: MainProps) {
                 />
                 <Route
                   exact
-                  path={APP_PATH.SAMPLE_DETECTORS}
-                  render={() => <SampleData />}
-                />
-                <Route
-                  exact
                   path={APP_PATH.CREATE_DETECTOR}
                   render={(props: RouteComponentProps) => (
-                    <CreateDetector {...props} isEdit={false} />
+                    <CreateDetectorSteps {...props} />
                   )}
                 />
                 <Route
                   exact
                   path={APP_PATH.EDIT_DETECTOR}
                   render={(props: RouteComponentProps) => (
-                    <CreateDetector {...props} isEdit={true} />
+                    <DefineDetector {...props} isEdit={true} />
                   )}
                 />
                 <Route
                   exact
                   path={APP_PATH.EDIT_FEATURES}
                   render={(props: RouteComponentProps) => (
-                    <EditFeatures {...props} />
+                    <ConfigureModel {...props} isEdit={true} />
                   )}
                 />
                 <Route
@@ -163,35 +135,29 @@ export function Main(props: MainProps) {
                 />
                 <Route
                   exact
-                  path={APP_PATH.LIST_HISTORICAL_DETECTORS}
-                  render={(
-                    props: RouteComponentProps<
-                      HistoricalDetectorListRouterParams
-                    >
-                  ) => <HistoricalDetectorList {...props} />}
-                />
-                <Route
-                  exact
-                  path={APP_PATH.CREATE_HISTORICAL_DETECTOR}
+                  path={APP_PATH.CREATE_DETECTOR_STEPS}
                   render={(props: RouteComponentProps) => (
-                    <CreateHistoricalDetector {...props} isEdit={false} />
+                    <CreateDetectorSteps {...props} />
                   )}
                 />
                 <Route
-                  exact
-                  path={APP_PATH.EDIT_HISTORICAL_DETECTOR}
-                  render={(props: RouteComponentProps) => (
-                    <CreateHistoricalDetector {...props} isEdit={true} />
+                  path={APP_PATH.OVERVIEW}
+                  render={() => (
+                    <AnomalyDetectionOverview
+                      isLoadingDetectors={isLoadingDetectors}
+                    />
                   )}
                 />
-                <Route
-                  exact
-                  path={APP_PATH.HISTORICAL_DETECTOR_DETAIL}
-                  render={(props: RouteComponentProps) => (
-                    <HistoricalDetectorDetail {...props} />
+                <Route path="/">
+                  {totalRealtimeDetectors > 0 ? (
+                    // </div>
+                    <DashboardOverview />
+                  ) : (
+                    <AnomalyDetectionOverview
+                      isLoadingDetectors={isLoadingDetectors}
+                    />
                   )}
-                />
-                <Redirect from="/" to={APP_PATH.DASHBOARD} />
+                </Route>
               </Switch>
             </EuiPageBody>
           </EuiPage>

@@ -177,7 +177,9 @@ export const FeatureChart = (props: FeatureChartProps) => {
       }
       subTitle={featureDescription()}
       actions={
-        props.edit ? <EuiButton onClick={props.onEdit}>Edit</EuiButton> : null
+        props.edit ? (
+          <EuiButton onClick={props.onEdit}>Edit feature</EuiButton>
+        ) : null
       }
     >
       <div

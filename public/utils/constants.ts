@@ -35,31 +35,21 @@ export enum DATA_TYPES {
 export const BREADCRUMBS = Object.freeze({
   ANOMALY_DETECTOR: { text: 'Anomaly detection', href: '#/' },
   DETECTORS: { text: 'Detectors', href: '#/detectors' },
-  SAMPLE_DETECTORS: { text: 'Sample detectors', href: '#/sample-detectors' },
   CREATE_DETECTOR: { text: 'Create detector' },
   EDIT_DETECTOR: { text: 'Edit detector' },
-  DASHBOARD: { text: 'Dashboard', href: '#/' },
+  DASHBOARD: { text: 'Dashboard', href: '#/dashboard' },
   EDIT_MODEL_CONFIGURATION: { text: 'Edit model configuration' },
-  HISTORICAL_DETECTORS: {
-    text: 'Historical detectors',
-    href: '#/historical-detectors',
-  },
-  CREATE_HISTORICAL_DETECTOR: { text: 'Create historical detector' },
-  EDIT_HISTORICAL_DETECTOR: { text: 'Edit historical detector' },
 });
 
 export const APP_PATH = {
   DASHBOARD: '/dashboard',
   LIST_DETECTORS: '/detectors',
-  SAMPLE_DETECTORS: '/sample-detectors',
   CREATE_DETECTOR: '/create-ad/',
   EDIT_DETECTOR: '/detectors/:detectorId/edit',
   EDIT_FEATURES: '/detectors/:detectorId/features/',
   DETECTOR_DETAIL: '/detectors/:detectorId/',
-  LIST_HISTORICAL_DETECTORS: '/historical-detectors',
-  CREATE_HISTORICAL_DETECTOR: '/create-historical-detector/',
-  EDIT_HISTORICAL_DETECTOR: '/historical-detectors/:detectorId/edit',
-  HISTORICAL_DETECTOR_DETAIL: '/historical-detectors/:detectorId/details',
+  CREATE_DETECTOR_STEPS: '/create-detector-steps',
+  OVERVIEW: '/overview',
 };
 
 export const OPENSEARCH_DASHBOARDS_PATH = {
@@ -76,13 +66,15 @@ export const ANOMALY_DETECTORS_INDEX = '.opendistro-anomaly-detectors';
 
 export const ANOMALY_RESULT_INDEX = '.opendistro-anomaly-results';
 
-export const BASE_DOCS_LINK =
-  'https://docs-beta.opensearch.org/monitoring-plugins/ad/index/';
+export const BASE_DOCS_LINK = 'https://opensearch.org/docs/monitoring-plugins';
 
 export const MAX_DETECTORS = 1000;
 
 export const MAX_ANOMALIES = 10000;
 
+export const MAX_HISTORICAL_AGG_RESULTS = 10000;
+
+// TODO: get this value from index settings since it is dynamic
 export const MAX_FEATURE_NUM = 5;
 
 export const MAX_FEATURE_NAME_SIZE = 64;

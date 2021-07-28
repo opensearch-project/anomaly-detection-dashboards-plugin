@@ -43,7 +43,7 @@ import {
   EntityData,
 } from '../../../models/interfaces';
 import { NoFeaturePrompt } from '../components/FeatureChart/NoFeaturePrompt';
-import { focusOnFeatureAccordion } from '../../EditFeatures/utils/helpers';
+import { focusOnFeatureAccordion } from '../../ConfigureModel/utils/helpers';
 import moment from 'moment';
 import { HeatmapCell } from './AnomalyHeatmapChart';
 import { filterWithHeatmapFilter } from '../../utils/anomalyResultUtils';
@@ -201,18 +201,22 @@ export const FeatureBreakDown = React.memo((props: FeatureBreakDownProps) => {
               }
               detectorEnabledTime={props.detector.enabledTime}
               titlePrefix={
-                props.selectedHeatmapCell
+                props.selectedHeatmapCell &&
+                props.title !== 'Sample feature breakdown'
                   ? props.selectedHeatmapCell.entityValue
                   : undefined
               }
             />
-            <EuiSpacer size="m" />
+            {index + 1 ===
+            get(props, 'detector.featureAttributes', []).length ? null : (
+              <EuiSpacer size="l" />
+            )}
           </React.Fragment>
         )
       )}
       {!props.isLoading &&
       get(props, 'detector.featureAttributes.length', 0) === 0 ? (
-        <NoFeaturePrompt detectorId={props.detector.id} />
+        <NoFeaturePrompt detectorId={props.detector?.id} />
       ) : null}
     </React.Fragment>
   );

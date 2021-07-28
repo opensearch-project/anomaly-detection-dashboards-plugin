@@ -218,12 +218,6 @@ export function DashboardOverview() {
         <DashboardHeader hasDetectors={totalRealtimeDetectors > 0} />
         {isLoadingDetectors ? (
           <div>
-            <EuiLoadingSpinner size="s" />
-            &nbsp;&nbsp;
-            <EuiLoadingSpinner size="m" />
-            &nbsp;&nbsp;
-            <EuiLoadingSpinner size="l" />
-            &nbsp;&nbsp;
             <EuiLoadingSpinner size="xl" />
           </div>
         ) : totalRealtimeDetectors === 0 ? (

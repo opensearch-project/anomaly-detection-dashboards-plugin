@@ -31,6 +31,7 @@ import {
   EuiLoadingChart,
   EuiSpacer,
   EuiSuperDatePicker,
+  EuiTitle,
 } from '@elastic/eui';
 import { get } from 'lodash';
 import moment, { DurationInputArg2 } from 'moment';
@@ -157,6 +158,7 @@ export const AnomaliesChart = React.memo((props: AnomaliesChartProps) => {
       isLoading={props.isLoading}
       start={datePickerRange.start}
       end={datePickerRange.end}
+      showUpdateButton={props.isNotSample}
       onTimeChange={({ start, end, isInvalid, isQuickSelection }) => {
         setDatePickerRange({ start: start, end: end });
         handleDatePickerDateRangeChange(start, end);
@@ -210,6 +212,7 @@ export const AnomaliesChart = React.memo((props: AnomaliesChartProps) => {
           props.entityAnomalySummaries))
     );
   };
+
   return (
     <React.Fragment>
       <ContentPanel
@@ -264,14 +267,40 @@ export const AnomaliesChart = React.memo((props: AnomaliesChartProps) => {
                         heatmapDisplayOption={props.heatmapDisplayOption}
                         isNotSample={props.isNotSample}
                       />,
-                      props.showAlerts !== true
+                      props.isNotSample !== true
                         ? [
                             <EuiSpacer size="m" />,
                             <AnomalyOccurrenceChart
                               title={
-                                props.selectedHeatmapCell
-                                  ? props.selectedHeatmapCell.entityValue
-                                  : '-'
+                                props.selectedHeatmapCell &&
+                                props.isHCDetector ? (
+                                  <div>
+                                    <EuiTitle
+                                      size="s"
+                                      className="preview-title"
+                                    >
+                                      <h4>Sample anomaly occurrences</h4>
+                                    </EuiTitle>
+                                    <EuiSpacer size="s" />
+                                    <EuiTitle size="s">
+                                      <h3>
+                                        {`${get(
+                                          props,
+                                          'detectorCategoryField.0'
+                                        )} `}
+                                        <b>
+                                          {
+                                            props.selectedHeatmapCell
+                                              ?.entityValue
+                                          }
+                                        </b>
+                                      </h3>
+                                    </EuiTitle>
+                                    <EuiSpacer size="s" />
+                                  </div>
+                                ) : (
+                                  '-'
+                                )
                               }
                               dateRange={props.dateRange}
                               onDateRangeChange={props.onDateRangeChange}
@@ -290,6 +319,7 @@ export const AnomaliesChart = React.memo((props: AnomaliesChartProps) => {
                               isNotSample={props.isNotSample}
                               detector={props.detector}
                               isHCDetector={props.isHCDetector}
+                              isHistorical={props.isHistorical}
                               selectedHeatmapCell={props.selectedHeatmapCell}
                             />,
                             <EuiSpacer size="m" />,
@@ -312,6 +342,10 @@ export const AnomaliesChart = React.memo((props: AnomaliesChartProps) => {
                               )}
                               isHCDetector={props.isHCDetector}
                               selectedHeatmapCell={props.selectedHeatmapCell}
+                              // Disable missing feature data annotations if viewing historical results
+                              showFeatureMissingDataPointAnnotation={
+                                !props.isHistorical
+                              }
                             />,
                           ]
                         : null,

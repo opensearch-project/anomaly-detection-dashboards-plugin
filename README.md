@@ -1,7 +1,7 @@
 [![Unit tests](https://github.com/opensearch-project/anomaly-detection-dashboards-plugin/workflows/Unit%20tests%20workflow/badge.svg)](https://github.com/opensearch-project/anomaly-detection-dashboards-plugin/actions?query=workflow%3A%22Unit+tests+workflow%22)
 [![Integration tests](https://github.com/opensearch-project/anomaly-detection-dashboards-plugin/workflows/E2E%20tests%20workflow/badge.svg)](https://github.com/opensearch-project/anomaly-detection-dashboards-plugin/actions?query=workflow%3A%22E2E+tests+workflow%22)
 [![codecov](https://codecov.io/gh/opensearch-project/anomaly-detection-dashboards-plugin/branch/main/graph/badge.svg)](https://codecov.io/gh/opensearch-project/anomaly-detection-dashboards-plugin)
-[![Documentation](https://img.shields.io/badge/doc-reference-blue)](https://docs-beta.opensearch.org/monitoring-plugins/ad/index/)
+[![Documentation](https://img.shields.io/badge/doc-reference-blue)](https://opensearch.org/docs/monitoring-plugins/ad)
 [![Forum](https://img.shields.io/badge/chat-on%20forums-blue)](https://discuss.opendistrocommunity.dev/c/Use-this-category-for-all-questions-around-machine-learning-plugins)
 ![PRs welcome!](https://img.shields.io/badge/PRs-welcome!-success)
 
@@ -17,7 +17,7 @@
 
 ## OpenSearch Anomaly Detection Dashboards Plugin
 
-The OpenSearch Anomaly Detection Dashboards plugin enables you to leverage Machine Learning based algorithms to automatically detect anomalies as your log data is ingested. Combined with [Alerting](https://docs-beta.opensearch.org/monitoring-plugins/alerting/index/), you can monitor your data in near real time and automatically send alert notifications. With an intuitive OpenSearch Dashboards interface and a powerful API, it is easy to set up, tune, and monitor your anomaly detectors.
+The OpenSearch Anomaly Detection Dashboards plugin enables you to leverage Machine Learning based algorithms to automatically detect anomalies as your log data is ingested. Combined with [Alerting](https://opensearch.org/docs/monitoring-plugins/alerting), you can monitor your data in near real time and automatically send alert notifications. With an intuitive OpenSearch Dashboards interface and a powerful API, it is easy to set up, tune, and monitor your anomaly detectors.
 
 Anomaly detection uses the Random Cut Forest (RCF) algorithm for detecting anomalous data points.
 
@@ -25,7 +25,7 @@ You should use the plugin with the same version of the [OpenSearch Alerting Dash
 
 ## Documentation
 
-Please see our [documentation](https://docs-beta.opensearch.org/monitoring-plugins/ad/index/).
+Please see our [documentation](https://opensearch.org/docs/monitoring-plugins/ad).
 
 ## Contributing
 

@@ -236,18 +236,10 @@ export const AnomaliesLiveChart = (props: AnomaliesLiveChartProps) => {
           </h3>
         </EuiTitle>
       }
-      subTitle={
-        <EuiFlexItem>
-          <EuiText className={'live-anomaly-results-subtile'}>
-            <p>
-              {'Live anomaly results across detectors for the last 30 minutes. ' +
-                'The results refresh every 1 minute. ' +
-                'For each detector, if an anomaly occurrence is detected at the end of the detector interval, ' +
-                'you will see a bar representing its anomaly grade.'}
-            </p>
-          </EuiText>
-        </EuiFlexItem>
-      }
+      subTitle={`Live anomaly results across detectors for the last 30 minutes.  
+                'The results refresh every 1 minute. 
+                'For each detector, if an anomaly occurrence is detected at the end of the detector interval, 
+                'you will see a bar representing its anomaly grade.`}
       actions={[fullScreenButton()]}
       contentPanelClassName={isFullScreen ? 'full-screen' : undefined}
     >

@@ -41,7 +41,7 @@ import { httpClientMock, coreServicesMock } from '../../../../../test/mocks';
 import { CoreServicesContext } from '../../../../components/CoreServices/CoreServices';
 
 jest.mock('../../hooks/useFetchMonitorInfo');
-jest.mock('../../../createDetector/hooks/useFetchDetectorInfo');
+jest.mock('../../../CreateDetectorSteps/hooks/useFetchDetectorInfo');
 
 const detectorId = '4QY4YHEB5W9C7vlb3Mou';
 

@@ -29,7 +29,7 @@ exports[`<EmptyDetector /> spec Empty results renders component with empty messa
          
         <a
           class="euiLink euiLink--primary"
-          href="https://docs-beta.opensearch.org/monitoring-plugins/ad/index//ad"
+          href="https://opensearch.org/docs/monitoring-plugins/ad"
           rel="noopener noreferrer"
           target="_blank"
         >
@@ -64,7 +64,7 @@ exports[`<EmptyDetector /> spec Empty results renders component with empty messa
       <a
         class="euiButton euiButton--primary"
         data-test-subj="sampleDetectorButton"
-        href="anomaly-detection-dashboards#/sample-detectors"
+        href="anomaly-detection-dashboards#/overview"
         rel="noreferrer"
         style="width: 200px;"
       >

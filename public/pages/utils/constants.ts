@@ -97,5 +97,15 @@ export const MAX_ANOMALY_AGGS = 'max_anomaly_aggs';
 export const COUNT_ANOMALY_AGGS = 'count_anomaly_aggs';
 export const MAX_ANOMALY_SORT_AGGS = 'max_anomaly_sort_aggs';
 export const ENTITY_DATE_BUCKET_ANOMALY_AGGS = 'entity_date_bucket_anomaly';
+export const AGGREGATED_ANOMALIES = 'aggregated_anomalies';
+export const MIN_END_TIME = 'min_end_time';
+export const MAX_END_TIME = 'max_end_time';
 
 export const SINGLE_DETECTOR_NOT_FOUND_MSG = `Can't find detector with id`;
+
+export enum ANOMALY_AGG {
+  RAW = 'raw',
+  DAILY = 'day',
+  WEEKLY = 'week',
+  MONTHLY = 'month',
+}

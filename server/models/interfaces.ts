@@ -81,7 +81,6 @@ export interface AnomalyResults {
 export interface InitProgress {
   percentageStr: string;
   estimatedMinutesLeft: number;
-  neededShingles: number;
 }
 
 export interface EntityAnomalySummary {

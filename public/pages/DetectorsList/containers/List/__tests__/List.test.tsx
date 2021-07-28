@@ -96,7 +96,7 @@ describe('<DetectorList /> spec', () => {
       });
       await wait();
       getByText(
-        'Anomaly detectors take an input of information and discover patterns of anomalies. Create an anomaly detector to get started.'
+        `A detector is an individual anomaly detection task. You can create multiple detectors, and all the detectors can run simultaneously, with each analyzing data from different sources. Create an anomaly detector to get started.`
       );
     });
   });
@@ -413,7 +413,7 @@ describe('<DetectorList /> spec', () => {
       await wait();
       userEvent.click(getAllByRole('checkbox')[0]);
       userEvent.click(getByTestId('listActionsButton'));
-      userEvent.click(getByText('Start'));
+      userEvent.click(getByText('Start real-time detectors'));
       expect(
         queryByText('Are you sure you want to start the selected detectors?')
       ).toBeNull();
@@ -441,7 +441,7 @@ describe('<DetectorList /> spec', () => {
       await wait();
       userEvent.click(getAllByRole('checkbox')[0]);
       userEvent.click(getByTestId('listActionsButton'));
-      userEvent.click(getByText('Start'));
+      userEvent.click(getByText('Start real-time detectors'));
       getByText('Are you sure you want to start the selected detectors?');
       getByText('Start detectors');
     });
@@ -473,7 +473,7 @@ describe('<DetectorList /> spec', () => {
       await wait();
       userEvent.click(getAllByRole('checkbox')[0]);
       userEvent.click(getByTestId('listActionsButton'));
-      userEvent.click(getByText('Stop'));
+      userEvent.click(getByText('Stop real-time detectors'));
       expect(
         queryByText('Are you sure you want to stop the selected detectors?')
       ).toBeNull();
@@ -501,7 +501,7 @@ describe('<DetectorList /> spec', () => {
       await wait();
       userEvent.click(getAllByRole('checkbox')[0]);
       userEvent.click(getByTestId('listActionsButton'));
-      userEvent.click(getByText('Stop'));
+      userEvent.click(getByText('Stop real-time detectors'));
       getByText('Are you sure you want to stop the selected detectors?');
       getByText('Stop detectors');
     });

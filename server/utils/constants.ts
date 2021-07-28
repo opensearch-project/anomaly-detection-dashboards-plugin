@@ -44,6 +44,12 @@ export const SEC_IN_MILLI_SECS = 1000;
 
 export const MIN_IN_MILLI_SECS = 60 * SEC_IN_MILLI_SECS;
 
+export const HOUR_IN_MILLI_SECS = 60 * MIN_IN_MILLI_SECS;
+
+export const DAY_IN_MILLI_SECS = 24 * HOUR_IN_MILLI_SECS;
+
+export const WEEK_IN_MILLI_SECS = 7 * DAY_IN_MILLI_SECS;
+
 export enum CLUSTER {
   ADMIN = 'admin',
   AES_AD = 'aes_ad',
@@ -59,12 +65,15 @@ export enum AD_DOC_FIELDS {
   DATA_START_TIME = 'data_start_time',
   DATA_END_TIME = 'data_end_time',
   DETECTOR_ID = 'detector_id',
+  TASK_ID = 'task_id',
   DETECTOR_NAME = 'name',
   PLOT_TIME = 'plot_time',
   ANOMALY_GRADE = 'anomaly_grade',
   ERROR = 'error',
   INDICES = 'indices',
 }
+
+export const MAX_DETECTORS = 1000;
 
 export const MAX_MONITORS = 1000;
 
@@ -99,3 +108,6 @@ export const KEY_FIELD = 'key';
 export const STACK_TRACE_PATTERN = '.java:';
 export const OPENSEARCH_EXCEPTION_PREFIX =
   'org.opensearch.OpenSearchException: ';
+
+export const REALTIME_TASK_TYPE_PREFIX = 'REALTIME';
+export const HISTORICAL_TASK_TYPE_PREFIX = 'HISTORICAL';
