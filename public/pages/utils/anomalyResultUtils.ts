@@ -1052,9 +1052,7 @@ export const getTopAnomalousEntitiesQuery = (
                 },
               },
               {
-                term: {
-                  detector_id: detectorId,
-                },
+                term: termField,
               },
             ],
           },

@@ -497,15 +497,18 @@ export const filterHeatmapPlotDataByY = (
   const originalYs = cloneDeep(heatmapData.y);
   const originalZs = cloneDeep(heatmapData.z);
   const originalTexts = cloneDeep(heatmapData.text);
+  const originalEntityLists = cloneDeep(heatmapData.customdata);
   const resultYs = [];
   const resultZs = [];
   const resultTexts = [];
+  const resultEntityLists = [];
   for (let i = 0; i < originalYs.length; i++) {
     //@ts-ignore
     if (selectedYs.includes(originalYs[i])) {
       resultYs.push(originalYs[i]);
       resultZs.push(originalZs[i]);
       resultTexts.push(originalTexts[i]);
+      resultEntityLists.push(originalEntityLists[i]);
     }
   }
   const updateHeatmapPlotData = {
@@ -513,6 +516,7 @@ export const filterHeatmapPlotDataByY = (
     y: resultYs,
     z: resultZs,
     text: resultTexts,
+    customdata: resultEntityLists,
   } as PlotData;
   return sortHeatmapPlotData(
     updateHeatmapPlotData,
