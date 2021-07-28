@@ -289,10 +289,6 @@ export const AnomaliesChart = React.memo((props: AnomaliesChartProps) => {
                                     <EuiSpacer size="s" />
                                     <EuiTitle size="s">
                                       <h3>
-                                        {`${get(
-                                          props,
-                                          'detectorCategoryField.0'
-                                        )} `}
                                         <b>
                                           {props.selectedHeatmapCell
                                             ? getHCTitle(
