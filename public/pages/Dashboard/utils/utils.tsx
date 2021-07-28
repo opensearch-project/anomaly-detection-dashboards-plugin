@@ -25,7 +25,7 @@
  */
 
 import React from 'react';
-import { EuiLink } from '@elastic/eui';
+import { EuiLink, EuiText } from '@elastic/eui';
 import {
   AD_DOC_FIELDS,
   SORT_DIRECTION,
@@ -364,6 +364,23 @@ export const anomalousDetectorsStaticColumn = [
     ),
   },
   {
+    field: 'task',
+    name: 'Historical analysis',
+    sortable: false,
+    truncateText: false,
+    textOnly: true,
+    align: 'left',
+    render: (name: string, detector: Detector) => {
+      return !isEmpty(detector.taskId) ? (
+        <EuiLink href={`${PLUGIN_NAME}#/detectors/${detector.id}/historical`}>
+          View results
+        </EuiLink>
+      ) : (
+        <EuiText>-</EuiText>
+      );
+    },
+  },
+  {
     field: 'featureAttributes',
     name: 'Features',
     sortable: false,
@@ -429,6 +446,11 @@ export const buildGetAnomalyResultQueryByRange = (
           {
             exists: {
               field: AD_DOC_FIELDS.ERROR,
+            },
+          },
+          {
+            exists: {
+              field: AD_DOC_FIELDS.TASK_ID,
             },
           },
         ],

@@ -42,22 +42,27 @@ describe('tableUtils spec', () => {
     test('detector state column', () => {
       const result = staticColumn;
       const { getByText } = render(result[2].name);
-      getByText('Detector state');
+      getByText('Real-time state');
     });
-    test('total anomalies column', () => {
+    test('historical analysis column', () => {
       const result = staticColumn;
       const { getByText } = render(result[3].name);
-      getByText('Anomalies last 24 hours');
+      getByText('Historical analysis');
     });
-    test('last active anomaly column', () => {
+    test('anomalies last 24 hrs column', () => {
       const result = staticColumn;
       const { getByText } = render(result[4].name);
-      getByText('Last anomaly occurrence');
+      getByText('Anomalies last 24 hours');
     });
-    test('last enabled time column', () => {
+    test('last RT occurrence column', () => {
       const result = staticColumn;
       const { getByText } = render(result[5].name);
-      getByText('Last enabled time');
+      getByText('Last real-time occurrence');
+    });
+    test('last started time column', () => {
+      const result = staticColumn;
+      const { getByText } = render(result[6].name);
+      getByText('Last started');
     });
   });
 });

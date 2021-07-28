@@ -51,12 +51,7 @@ export const DetectorStateDetails = (props: DetectorStateDetailsProp) => {
 
   switch (currentState) {
     case DETECTOR_STATE.DISABLED:
-      return (
-        <DetectorStopped
-          onStartDetector={props.onStartDetector}
-          onSwitchToConfiguration={props.onSwitchToConfiguration}
-        />
-      );
+      return <DetectorStopped onStartDetector={props.onStartDetector} />;
     case DETECTOR_STATE.FEATURE_REQUIRED:
       return (
         <DetectorFeatureRequired

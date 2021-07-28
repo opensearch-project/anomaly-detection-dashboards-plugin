@@ -73,7 +73,7 @@ export const ListActions = (props: ListActionsProps) => {
               disabled={props.isStartDisabled}
               onClick={props.onStartDetectors}
             >
-              Start
+              Start real-time detectors
             </EuiContextMenuItem>
 
             <EuiContextMenuItem
@@ -82,15 +82,16 @@ export const ListActions = (props: ListActionsProps) => {
               disabled={props.isStopDisabled}
               onClick={props.onStopDetectors}
             >
-              Stop
+              Stop real-time detectors
             </EuiContextMenuItem>
 
             <EuiContextMenuItem
               key="deleteDetectors"
               data-test-subj="deleteDetectors"
               onClick={props.onDeleteDetectors}
+              style={{ color: '#FF6666' }}
             >
-              Delete
+              Delete detectors
             </EuiContextMenuItem>
           </EuiContextMenuPanel>
         </EuiPopover>

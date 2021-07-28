@@ -66,9 +66,9 @@ describe('<ListActions /> spec', () => {
       expect(queryByText('Delete')).toBeNull();
       fireEvent.click(getByTestId('listActionsButton'));
       await wait();
-      expect(queryByText('Start')).not.toBeNull();
-      expect(queryByText('Stop')).not.toBeNull();
-      expect(queryByText('Delete')).not.toBeNull();
+      expect(queryByText('Start real-time detectors')).not.toBeNull();
+      expect(queryByText('Stop real-time detectors')).not.toBeNull();
+      expect(queryByText('Delete detectors')).not.toBeNull();
     });
     test('should call onStartDetectors when clicking on start action', async () => {
       const { getByTestId } = render(

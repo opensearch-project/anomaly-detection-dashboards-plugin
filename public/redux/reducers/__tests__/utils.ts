@@ -22,6 +22,7 @@ import {
 } from '../../../models/interfaces';
 import moment from 'moment';
 import { DETECTOR_STATE } from '../../../../server/utils/constants';
+import { SINGLE_ENTITY_SHINGLE_SIZE } from '../../../utils/constants';
 
 const detectorFaker = new chance('seed');
 
@@ -76,7 +77,6 @@ const getUIMetadata = (features: FeatureAttributes[]) => {
     {}
   );
   return {
-    filterType: FILTER_TYPES.SIMPLE,
     features: metaFeatures,
     filters: [],
   } as UiMetaData;
@@ -115,6 +115,7 @@ export const getRandomDetector = (isCreate: boolean = true): Detector => {
     disabledTime: moment(1586823218000).subtract(1, 'days').valueOf(),
     curState: DETECTOR_STATE.INIT,
     stateError: '',
+    shingleSize: SINGLE_ENTITY_SHINGLE_SIZE,
   };
 };
 

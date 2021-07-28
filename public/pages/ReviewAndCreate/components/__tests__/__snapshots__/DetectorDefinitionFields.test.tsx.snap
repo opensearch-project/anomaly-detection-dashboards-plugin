@@ -1,0 +1,689 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`<AdditionalSettings /> spec renders the component in create mode (no ID) 1`] = `
+<div>
+  <div
+    class="euiPanel euiPanel--paddingMedium"
+    style="padding: 20px; margin: 0px;"
+  >
+    <div
+      class="euiFlexGroup euiFlexGroup--gutterLarge euiFlexGroup--alignItemsCenter euiFlexGroup--justifyContentSpaceBetween euiFlexGroup--directionRow euiFlexGroup--responsive"
+      style="padding: 0px;"
+    >
+      <div
+        class="euiFlexItem"
+      >
+        <h3
+          class="euiTitle euiTitle--small"
+        >
+          Detector settings
+        </h3>
+        <div
+          class="euiFlexGroup euiFlexGroup--gutterLarge euiFlexGroup--directionRow euiFlexGroup--responsive"
+        >
+          <div
+            class="euiFlexItem content-panel-subTitle"
+            style="line-height: normal; max-width: 75%;"
+          />
+        </div>
+      </div>
+      <div
+        class="euiFlexItem euiFlexItem--flexGrowZero"
+      >
+        <div
+          class="euiFlexGroup euiFlexGroup--gutterMedium euiFlexGroup--alignItemsCenter euiFlexGroup--justifyContentSpaceBetween euiFlexGroup--directionRow euiFlexGroup--responsive"
+        >
+          <div
+            class="euiFlexItem"
+          >
+            <button
+              class="euiButton euiButton--primary"
+              data-test-subj="editDetectorButton"
+              type="button"
+            >
+              <span
+                class="euiButtonContent euiButton__content"
+              >
+                <span
+                  class="euiButton__text"
+                >
+                  Edit
+                </span>
+              </span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div
+      class="euiSpacer euiSpacer--s"
+    />
+    <div>
+      <hr
+        class="euiHorizontalRule euiHorizontalRule--full euiHorizontalRule--marginSmall"
+      />
+      <div
+        style="padding: 10px 0px;"
+      >
+        <div
+          class="euiFlexGrid euiFlexGrid--gutterLarge euiFlexGrid--wrap euiFlexGrid--responsive"
+        >
+          <div
+            class="euiFlexItem"
+          >
+            <div
+              class="euiFormRow"
+              id="random_html_id-row"
+              style="width: 250px;"
+            >
+              <div
+                class="euiFormRow__labelWrapper"
+              >
+                <label
+                  class="euiFormLabel euiFormRow__label"
+                  for="random_html_id"
+                >
+                  Name
+                </label>
+              </div>
+              <div
+                class="euiFormRow__fieldWrapper"
+              >
+                <div
+                  class="euiText euiText--medium"
+                  id="random_html_id"
+                >
+                  <p
+                    class="enabled"
+                  >
+                    test-detector
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div
+            class="euiFlexItem"
+          >
+            <div
+              class="euiFormRow"
+              id="random_html_id-row"
+              style="width: 250px;"
+            >
+              <div
+                class="euiFormRow__labelWrapper"
+              >
+                <label
+                  class="euiFormLabel euiFormRow__label"
+                  for="random_html_id"
+                >
+                  Data source index
+                </label>
+              </div>
+              <div
+                class="euiFormRow__fieldWrapper"
+              >
+                <div
+                  class="euiText euiText--medium"
+                  id="random_html_id"
+                >
+                  <p
+                    class="enabled"
+                  >
+                    test-index
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div
+            class="euiFlexItem"
+          >
+            <div
+              class="euiFormRow"
+              id="random_html_id-row"
+              style="width: 250px;"
+            >
+              <div
+                class="euiFormRow__labelWrapper"
+              >
+                <label
+                  class="euiFormLabel euiFormRow__label"
+                  for="random_html_id"
+                >
+                  Data filter
+                </label>
+              </div>
+              <div
+                class="euiFormRow__fieldWrapper"
+              >
+                <ol>
+                  <li
+                    class="enabled"
+                  >
+                    test-filter-field is null
+                  </li>
+                </ol>
+              </div>
+            </div>
+          </div>
+          <div
+            class="euiFlexItem"
+          >
+            <div
+              class="euiFormRow"
+              id="random_html_id-row"
+              style="width: 250px;"
+            >
+              <div
+                class="euiFormRow__labelWrapper"
+              >
+                <label
+                  class="euiFormLabel euiFormRow__label"
+                  for="random_html_id"
+                >
+                  Detector interval
+                </label>
+              </div>
+              <div
+                class="euiFormRow__fieldWrapper"
+              >
+                <div
+                  class="euiText euiText--medium"
+                  id="random_html_id"
+                >
+                  <p
+                    class="enabled"
+                  >
+                    10 Minutes
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div
+            class="euiFlexItem"
+          >
+            <div
+              class="euiFormRow"
+              id="random_html_id-row"
+              style="width: 250px;"
+            >
+              <div
+                class="euiFormRow__labelWrapper"
+              >
+                <label
+                  class="euiFormLabel euiFormRow__label"
+                  for="random_html_id"
+                >
+                  Description
+                </label>
+              </div>
+              <div
+                class="euiFormRow__fieldWrapper"
+              >
+                <div
+                  class="euiText euiText--medium"
+                  id="random_html_id"
+                >
+                  <p
+                    class="enabled"
+                  >
+                    test-description
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div
+            class="euiFlexItem"
+          >
+            <div
+              class="euiFormRow"
+              id="random_html_id-row"
+              style="width: 250px;"
+            >
+              <div
+                class="euiFormRow__labelWrapper"
+              >
+                <label
+                  class="euiFormLabel euiFormRow__label"
+                  for="random_html_id"
+                >
+                  Timestamp
+                </label>
+              </div>
+              <div
+                class="euiFormRow__fieldWrapper"
+              >
+                <div
+                  class="euiText euiText--medium"
+                  id="random_html_id"
+                >
+                  <p
+                    class="enabled"
+                  >
+                    test-timefield
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div
+            class="euiFlexItem"
+          >
+            <div
+              class="euiFormRow"
+              id="random_html_id-row"
+              style="width: 250px;"
+            >
+              <div
+                class="euiFormRow__labelWrapper"
+              >
+                <label
+                  class="euiFormLabel euiFormRow__label"
+                  for="random_html_id"
+                >
+                  Window delay
+                </label>
+              </div>
+              <div
+                class="euiFormRow__fieldWrapper"
+              >
+                <div
+                  class="euiText euiText--medium"
+                  id="random_html_id"
+                >
+                  <p
+                    class="enabled"
+                  >
+                    1 Minutes
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`<AdditionalSettings /> spec renders the component in edit mode (with ID) 1`] = `
+<div>
+  <div
+    class="euiPanel euiPanel--paddingMedium"
+    style="padding: 20px; margin: 0px;"
+  >
+    <div
+      class="euiFlexGroup euiFlexGroup--gutterLarge euiFlexGroup--alignItemsCenter euiFlexGroup--justifyContentSpaceBetween euiFlexGroup--directionRow euiFlexGroup--responsive"
+      style="padding: 0px;"
+    >
+      <div
+        class="euiFlexItem"
+      >
+        <h3
+          class="euiTitle euiTitle--small"
+        >
+          Detector settings
+        </h3>
+        <div
+          class="euiFlexGroup euiFlexGroup--gutterLarge euiFlexGroup--directionRow euiFlexGroup--responsive"
+        >
+          <div
+            class="euiFlexItem content-panel-subTitle"
+            style="line-height: normal; max-width: 75%;"
+          />
+        </div>
+      </div>
+      <div
+        class="euiFlexItem euiFlexItem--flexGrowZero"
+      >
+        <div
+          class="euiFlexGroup euiFlexGroup--gutterMedium euiFlexGroup--alignItemsCenter euiFlexGroup--justifyContentSpaceBetween euiFlexGroup--directionRow euiFlexGroup--responsive"
+        >
+          <div
+            class="euiFlexItem"
+          >
+            <button
+              class="euiButton euiButton--primary"
+              data-test-subj="editDetectorButton"
+              type="button"
+            >
+              <span
+                class="euiButtonContent euiButton__content"
+              >
+                <span
+                  class="euiButton__text"
+                >
+                  Edit
+                </span>
+              </span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div
+      class="euiSpacer euiSpacer--s"
+    />
+    <div>
+      <hr
+        class="euiHorizontalRule euiHorizontalRule--full euiHorizontalRule--marginSmall"
+      />
+      <div
+        style="padding: 10px 0px;"
+      >
+        <div
+          class="euiFlexGrid euiFlexGrid--gutterLarge euiFlexGrid--wrap euiFlexGrid--responsive"
+        >
+          <div
+            class="euiFlexItem"
+          >
+            <div
+              class="euiFormRow"
+              id="random_html_id-row"
+              style="width: 250px;"
+            >
+              <div
+                class="euiFormRow__labelWrapper"
+              >
+                <label
+                  class="euiFormLabel euiFormRow__label"
+                  for="random_html_id"
+                >
+                  Name
+                </label>
+              </div>
+              <div
+                class="euiFormRow__fieldWrapper"
+              >
+                <div
+                  class="euiText euiText--medium"
+                  id="random_html_id"
+                >
+                  <p
+                    class="enabled"
+                  >
+                    test-detector
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div
+            class="euiFlexItem"
+          >
+            <div
+              class="euiFormRow"
+              id="random_html_id-row"
+              style="width: 250px;"
+            >
+              <div
+                class="euiFormRow__labelWrapper"
+              >
+                <label
+                  class="euiFormLabel euiFormRow__label"
+                  for="random_html_id"
+                >
+                  Data source index
+                </label>
+              </div>
+              <div
+                class="euiFormRow__fieldWrapper"
+              >
+                <div
+                  class="euiText euiText--medium"
+                  id="random_html_id"
+                >
+                  <p
+                    class="enabled"
+                  >
+                    test-index
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div
+            class="euiFlexItem"
+          >
+            <div
+              class="euiFormRow"
+              id="random_html_id-row"
+              style="width: 250px;"
+            >
+              <div
+                class="euiFormRow__labelWrapper"
+              >
+                <label
+                  class="euiFormLabel euiFormRow__label"
+                  for="random_html_id"
+                >
+                  Data filter
+                </label>
+              </div>
+              <div
+                class="euiFormRow__fieldWrapper"
+              >
+                <ol>
+                  <li
+                    class="enabled"
+                  >
+                    test-filter-field is null
+                  </li>
+                </ol>
+              </div>
+            </div>
+          </div>
+          <div
+            class="euiFlexItem"
+          >
+            <div
+              class="euiFormRow"
+              id="random_html_id-row"
+              style="width: 250px;"
+            >
+              <div
+                class="euiFormRow__labelWrapper"
+              >
+                <label
+                  class="euiFormLabel euiFormRow__label"
+                  for="random_html_id"
+                >
+                  Detector interval
+                </label>
+              </div>
+              <div
+                class="euiFormRow__fieldWrapper"
+              >
+                <div
+                  class="euiText euiText--medium"
+                  id="random_html_id"
+                >
+                  <p
+                    class="enabled"
+                  >
+                    10 Minutes
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div
+            class="euiFlexItem"
+          >
+            <div
+              class="euiFormRow"
+              id="random_html_id-row"
+              style="width: 250px;"
+            >
+              <div
+                class="euiFormRow__labelWrapper"
+              >
+                <label
+                  class="euiFormLabel euiFormRow__label"
+                  for="random_html_id"
+                >
+                  ID
+                </label>
+              </div>
+              <div
+                class="euiFormRow__fieldWrapper"
+              >
+                <div
+                  class="euiText euiText--medium"
+                  id="random_html_id"
+                >
+                  <p
+                    class="enabled"
+                  >
+                    test-id
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div
+            class="euiFlexItem"
+          >
+            <div
+              class="euiFormRow"
+              id="random_html_id-row"
+              style="width: 250px;"
+            >
+              <div
+                class="euiFormRow__labelWrapper"
+              >
+                <label
+                  class="euiFormLabel euiFormRow__label"
+                  for="random_html_id"
+                >
+                  Description
+                </label>
+              </div>
+              <div
+                class="euiFormRow__fieldWrapper"
+              >
+                <div
+                  class="euiText euiText--medium"
+                  id="random_html_id"
+                >
+                  <p
+                    class="enabled"
+                  >
+                    test-description
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div
+            class="euiFlexItem"
+          >
+            <div
+              class="euiFormRow"
+              id="random_html_id-row"
+              style="width: 250px;"
+            >
+              <div
+                class="euiFormRow__labelWrapper"
+              >
+                <label
+                  class="euiFormLabel euiFormRow__label"
+                  for="random_html_id"
+                >
+                  Timestamp
+                </label>
+              </div>
+              <div
+                class="euiFormRow__fieldWrapper"
+              >
+                <div
+                  class="euiText euiText--medium"
+                  id="random_html_id"
+                >
+                  <p
+                    class="enabled"
+                  >
+                    test-timefield
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div
+            class="euiFlexItem"
+          >
+            <div
+              class="euiFormRow"
+              id="random_html_id-row"
+              style="width: 250px;"
+            >
+              <div
+                class="euiFormRow__labelWrapper"
+              >
+                <label
+                  class="euiFormLabel euiFormRow__label"
+                  for="random_html_id"
+                >
+                  Last Updated
+                </label>
+              </div>
+              <div
+                class="euiFormRow__fieldWrapper"
+              >
+                <div
+                  class="euiText euiText--medium"
+                  id="random_html_id"
+                >
+                  <p
+                    class="enabled"
+                  >
+                    -
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div
+            class="euiFlexItem"
+          >
+            <div
+              class="euiFormRow"
+              id="random_html_id-row"
+              style="width: 250px;"
+            >
+              <div
+                class="euiFormRow__labelWrapper"
+              >
+                <label
+                  class="euiFormLabel euiFormRow__label"
+                  for="random_html_id"
+                >
+                  Window delay
+                </label>
+              </div>
+              <div
+                class="euiFormRow__fieldWrapper"
+              >
+                <div
+                  class="euiText euiText--medium"
+                  id="random_html_id"
+                >
+                  <p
+                    class="enabled"
+                  >
+                    1 Minutes
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+`;

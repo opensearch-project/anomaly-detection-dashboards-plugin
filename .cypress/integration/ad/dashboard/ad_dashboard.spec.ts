@@ -62,7 +62,7 @@ context('AD Dashboard', () => {
       });
     });
 
-    cy.contains('h1', 'Create detector');
+    cy.contains('span', 'Create detector');
   });
 
   it('Filter by detector', () => {

@@ -103,12 +103,8 @@ export const AlertsFlyout = (props: AlertsFlyoutProps) => {
                   Alerting plugin
                 </EuiLink>
                 . If you don't see <EuiIcon type="bell" />
-                Alerting in your navigation panel,
-                <EuiLink href={`${BASE_DOCS_LINK}/opensearch/install/plugins/#alerting`}>
-                  {' '}
-                  install it first
-                </EuiLink>{' '}
-                and follow the instructions below to set up alerts.
+                Alerting in your navigation panel, install it first and follow
+                the instructions below to set up alerts.
               </p>
             </EuiText>
           </EuiFlexItem>

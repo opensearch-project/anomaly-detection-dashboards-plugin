@@ -37,6 +37,8 @@ import {
   EuiFlexItem,
   EuiText,
   EuiLoadingSpinner,
+  EuiTitle,
+  EuiOverlayMask,
 } from '@elastic/eui';
 import { get, isEmpty } from 'lodash';
 import React, { useEffect, Fragment, useState } from 'react';
@@ -61,7 +63,10 @@ import {
 } from '../utils/utils';
 import { getDetector } from '../../../redux/reducers/ad';
 import { MIN_IN_MILLI_SECS } from '../../../../server/utils/constants';
-import { getInitFailureMessageAndActionItem } from '../../DetectorDetail/utils/helpers';
+import {
+  getInitFailureMessageAndActionItem,
+  getDetectorStateDetails,
+} from '../../DetectorDetail/utils/helpers';
 import moment from 'moment';
 import { DateRange } from '../../../models/interfaces';
 import {
@@ -72,15 +77,18 @@ import {
   FEATURE_DATA_CHECK_WINDOW_OFFSET,
 } from '../../utils/anomalyResultUtils';
 import { getDetectorResults } from '../../../redux/reducers/anomalyResults';
-import { detectorIsSample } from '../../SampleData/utils/helpers';
-import { SampleIndexDetailsCallout } from '../../SampleData/components/SampleIndexDetailsCallout/SampleIndexDetailsCallout';
+import { detectorIsSample } from '../../Overview/utils/helpers';
+import { SampleIndexDetailsCallout } from '../../Overview/components/SampleIndexDetailsCallout/SampleIndexDetailsCallout';
 import { CoreStart } from '../../../../../../src/core/public';
 import { CoreServicesContext } from '../../../components/CoreServices/CoreServices';
+import { OutOfRangeModal } from '../components/OutOfRangeModal';
 
 interface AnomalyResultsProps extends RouteComponentProps {
   detectorId: string;
   onStartDetector(): void;
+  onStopDetector(): void;
   onSwitchToConfiguration(): void;
+  onSwitchToHistorical(): void;
 }
 
 export function AnomalyResults(props: AnomalyResultsProps) {
@@ -89,6 +97,9 @@ export function AnomalyResults(props: AnomalyResultsProps) {
   const detectorId = props.detectorId;
   const detector = useSelector(
     (state: AppState) => state.ad.detectors[detectorId]
+  );
+  const [outOfRangeModalOpen, setOutOfRangeModalOpen] = useState<boolean>(
+    false
   );
 
   useEffect(() => {
@@ -299,8 +310,9 @@ export function AnomalyResults(props: AnomalyResultsProps) {
             <EuiText>
               <p>
                 Attempting to initialize the detector with historical data. This
-                will take approximately{' '}
-                {detector.detectionInterval.period.interval} minutes.
+                initializing process takes approximately{' '}
+                {get(detector, 'detectionInterval.period.interval', 10)}{' '}
+                minutes.
               </p>
             </EuiText>
           </EuiFlexGroup>
@@ -400,6 +412,17 @@ export function AnomalyResults(props: AnomalyResultsProps) {
           <EuiSpacer size="l" />
           {
             <Fragment>
+              {outOfRangeModalOpen ? (
+                <EuiOverlayMask>
+                  <OutOfRangeModal
+                    onClose={() => setOutOfRangeModalOpen(false)}
+                    onConfirm={() => {
+                      props.onSwitchToHistorical();
+                    }}
+                    lastEnabledTime={get(detector, 'enabledTime') as number}
+                  />
+                </EuiOverlayMask>
+              ) : null}
               {isDetectorRunning ||
               isDetectorPaused ||
               isDetectorInitializing ||
@@ -486,13 +509,50 @@ export function AnomalyResults(props: AnomalyResultsProps) {
                         <EuiButton
                           color={isDetectorFailed ? 'danger' : 'warning'}
                           onClick={props.onStartDetector}
-                          iconType={'play'}
                           style={{ marginLeft: '8px' }}
                         >
                           Restart detector
                         </EuiButton>
                       ) : null}
                     </EuiCallOut>
+                  ) : null}
+                  {detector ? (
+                    <EuiFlexGroup
+                      justifyContent="spaceBetween"
+                      style={{ marginBottom: '18px' }}
+                    >
+                      <EuiFlexItem grow={false}>
+                        <EuiTitle size="m">
+                          {
+                            <h1>
+                              {'Real-time results'}{' '}
+                              {getDetectorStateDetails(
+                                detector,
+                                isHCDetector,
+                                false,
+                                false
+                              )}
+                            </h1>
+                          }
+                        </EuiTitle>
+                      </EuiFlexItem>
+
+                      <EuiFlexItem grow={false}>
+                        <EuiButton
+                          data-test-subj="stopDetectorButton"
+                          onClick={
+                            detector?.enabled
+                              ? props.onStopDetector
+                              : props.onStartDetector
+                          }
+                          disabled={false}
+                        >
+                          {detector?.enabled
+                            ? 'Stop detector'
+                            : 'Start detector'}
+                        </EuiButton>
+                      </EuiFlexItem>
+                    </EuiFlexGroup>
                   ) : null}
                   <AnomalyResultsLiveChart detector={detector} />
                   <EuiSpacer size="l" />
@@ -501,6 +561,8 @@ export function AnomalyResults(props: AnomalyResultsProps) {
                     monitor={monitor}
                     isFeatureDataMissing={isDetectorMissingData}
                     isNotSample={true}
+                    isHistorical={false}
+                    openOutOfRangeModal={() => setOutOfRangeModalOpen(true)}
                   />
                 </Fragment>
               ) : detector ? (

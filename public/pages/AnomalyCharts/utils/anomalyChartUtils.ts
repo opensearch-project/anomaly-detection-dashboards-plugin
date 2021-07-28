@@ -622,8 +622,15 @@ export const getAnomalyOccurrenceWording = (
   return isNotSample ? 'Anomaly occurrences' : 'Sample anomaly occurrences';
 };
 
-export const getAnomalyHistoryWording = (isNotSample: boolean | undefined) => {
-  return isNotSample ? 'Anomaly history' : 'Sample anomaly history';
+export const getAnomalyHistoryWording = (
+  isNotSample: boolean | undefined,
+  isHistorical: boolean | undefined
+) => {
+  return isNotSample
+    ? isHistorical
+      ? 'Anomaly history'
+      : 'Anomaly overview'
+    : 'Sample anomaly history';
 };
 
 export const getDateRangeWithSelectedHeatmapCell = (
