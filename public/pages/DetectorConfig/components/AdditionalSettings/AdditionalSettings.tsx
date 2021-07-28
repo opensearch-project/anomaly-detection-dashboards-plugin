@@ -45,7 +45,7 @@ export function AdditionalSettings(props: AdditionalSettingsProps) {
     },
   ];
   const tableColumns = [
-    { name: 'Category fields', field: 'categoryField' },
+    { name: 'Categorical fields', field: 'categoryField' },
     { name: 'Window size', field: 'windowSize' },
   ];
   return (

@@ -555,93 +555,94 @@ export const AnomalyHistory = (props: AnomalyHistoryProps) => {
         heatmapDisplayOption={heatmapDisplayOption}
         entityAnomalySummaries={entityAnomalySummaries}
       >
-        <EuiTabs>{renderTabs()}</EuiTabs>
-
-        {isLoading || isLoadingAnomalyResults ? (
-          <EuiFlexGroup
-            justifyContent="spaceAround"
-            style={{ height: '500px', paddingTop: '100px' }}
-          >
-            <EuiFlexItem grow={false}>
-              <EuiLoadingSpinner size="xl" />
-            </EuiFlexItem>
-          </EuiFlexGroup>
-        ) : (
-          <div style={{ padding: '20px', backgroundColor: backgroundColor }}>
-            {selectedTabId === ANOMALY_HISTORY_TABS.FEATURE_BREAKDOWN ? (
-              <FeatureBreakDown
-                detector={props.detector}
-                // @ts-ignore
-                anomaliesResult={anomalyResults}
-                rawAnomalyResults={rawAnomalyResults}
-                annotations={annotations}
-                isLoading={isLoading}
-                dateRange={zoomRange}
-                featureDataSeriesName="Feature output"
-                showFeatureMissingDataPointAnnotation={
-                  props.detector.enabled &&
-                  // disable showing missing feature alert when it is HC Detector
-                  !isHCDetector
-                }
-                isFeatureDataMissing={props.isFeatureDataMissing}
-                isHCDetector={isHCDetector}
-                selectedHeatmapCell={selectedHeatmapCell}
-              />
-            ) : (
-              [
-                isHCDetector
-                  ? [
-                      <AnomalyOccurrenceChart
-                        title={
-                          selectedHeatmapCell
-                            ? getHCTitle(selectedHeatmapCell.entityList)
-                            : '-'
-                        }
-                        dateRange={dateRange}
-                        onDateRangeChange={handleDateRangeChange}
-                        onZoomRangeChange={handleZoomChange}
-                        anomalies={
-                          anomalyResults ? anomalyResults.anomalies : []
-                        }
-                        bucketizedAnomalies={
-                          bucketizedAnomalyResults !== undefined
-                        }
-                        anomalySummary={bucketizedAnomalySummary}
-                        isLoading={isLoading || isLoadingAnomalyResults}
-                        anomalyGradeSeriesName="Anomaly grade"
-                        confidenceSeriesName="Confidence"
-                        showAlerts={true}
-                        isNotSample={true}
-                        detector={props.detector}
-                        monitor={props.monitor}
-                        isHCDetector={isHCDetector}
-                        selectedHeatmapCell={selectedHeatmapCell}
-                      />,
-                      <EuiSpacer size="m" />,
-                    ]
-                  : null,
-                <AnomalyResultsTable
-                  anomalies={filterWithHeatmapFilter(
-                    bucketizedAnomalyResults === undefined
-                      ? anomalyResults
-                        ? filterWithDateRange(
-                            anomalyResults.anomalies,
-                            zoomRange,
-                            'plotTime'
-                          )
-                        : []
-                      : pureAnomalies,
-                    selectedHeatmapCell,
-                    true,
-                    'plotTime'
-                  )}
+        <div style={{ padding: '20px' }}>
+          {isHCDetector
+            ? [
+                <AnomalyOccurrenceChart
+                  title={
+                    selectedHeatmapCell
+                      ? getHCTitle(selectedHeatmapCell.entityList)
+                      : '-'
+                  }
+                  dateRange={dateRange}
+                  onDateRangeChange={handleDateRangeChange}
+                  onZoomRangeChange={handleZoomChange}
+                  anomalies={anomalyResults ? anomalyResults.anomalies : []}
+                  bucketizedAnomalies={bucketizedAnomalyResults !== undefined}
+                  anomalySummary={bucketizedAnomalySummary}
+                  isLoading={isLoading || isLoadingAnomalyResults}
+                  anomalyGradeSeriesName="Anomaly grade"
+                  confidenceSeriesName="Confidence"
+                  showAlerts={true}
+                  isNotSample={true}
+                  detector={props.detector}
+                  monitor={props.monitor}
                   isHCDetector={isHCDetector}
-                  isHistorical={props.isHistorical}
+                  selectedHeatmapCell={selectedHeatmapCell}
                 />,
+                <EuiSpacer size="m" />,
               ]
-            )}
-          </div>
-        )}
+            : null}
+          <EuiTabs>{renderTabs()}</EuiTabs>
+
+          {isLoading || isLoadingAnomalyResults ? (
+            <EuiFlexGroup
+              justifyContent="spaceAround"
+              style={{ height: '500px', paddingTop: '100px' }}
+            >
+              <EuiFlexItem grow={false}>
+                <EuiLoadingSpinner size="xl" />
+              </EuiFlexItem>
+            </EuiFlexGroup>
+          ) : (
+            <div style={{ backgroundColor: backgroundColor }}>
+              <EuiPanel
+                title=""
+                style={{ padding: '20px', backgroundColor: backgroundColor }}
+              >
+                {selectedTabId === ANOMALY_HISTORY_TABS.FEATURE_BREAKDOWN ? (
+                  <FeatureBreakDown
+                    detector={props.detector}
+                    // @ts-ignore
+                    anomaliesResult={anomalyResults}
+                    rawAnomalyResults={rawAnomalyResults}
+                    annotations={annotations}
+                    isLoading={isLoading}
+                    dateRange={zoomRange}
+                    featureDataSeriesName="Feature output"
+                    showFeatureMissingDataPointAnnotation={
+                      props.detector.enabled &&
+                      // disable showing missing feature alert when it is HC Detector
+                      !isHCDetector
+                    }
+                    isFeatureDataMissing={props.isFeatureDataMissing}
+                    isHCDetector={isHCDetector}
+                    selectedHeatmapCell={selectedHeatmapCell}
+                  />
+                ) : (
+                  <AnomalyResultsTable
+                    anomalies={filterWithHeatmapFilter(
+                      bucketizedAnomalyResults === undefined
+                        ? anomalyResults
+                          ? filterWithDateRange(
+                              anomalyResults.anomalies,
+                              zoomRange,
+                              'plotTime'
+                            )
+                          : []
+                        : pureAnomalies,
+                      selectedHeatmapCell,
+                      true,
+                      'plotTime'
+                    )}
+                    isHCDetector={isHCDetector}
+                    isHistorical={props.isHistorical}
+                  />
+                )}
+              </EuiPanel>
+            </div>
+          )}
+        </div>
       </AnomaliesChart>
     </Fragment>
   );
