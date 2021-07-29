@@ -178,7 +178,7 @@ export const AnomalyHeatmapChart = React.memo(
           getEntitytAnomaliesHeatmapData(
             props.dateRange,
             props.entityAnomalySummaries,
-            props.heatmapDisplayOption.entityOption.value
+            props.heatmapDisplayOption?.entityOption.value
           )
         : // use anomalies data in case of sample result
           getAnomaliesHeatmapData(
@@ -197,7 +197,7 @@ export const AnomalyHeatmapChart = React.memo(
       AnomalyHeatmapSortType
     >(
       props.isNotSample
-        ? props.heatmapDisplayOption.sortType
+        ? props.heatmapDisplayOption?.sortType
         : SORT_BY_FIELD_OPTIONS[0].value
     );
 

@@ -68,7 +68,7 @@ import { AnomalyOccurrenceChart } from './AnomalyOccurrenceChart';
 import { FeatureBreakDown } from './FeatureBreakDown';
 import { convertTimestampToString } from '../../../utils/utils';
 
-interface AnomaliesChartProps {
+export interface AnomaliesChartProps {
   onDateRangeChange(
     startDate: number,
     endDate: number,
