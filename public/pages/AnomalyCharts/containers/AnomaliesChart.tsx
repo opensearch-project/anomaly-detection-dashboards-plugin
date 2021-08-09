@@ -246,6 +246,12 @@ export const AnomaliesChart = React.memo((props: AnomaliesChartProps) => {
                       <AnomalyHeatmapChart
                         detectorId={get(props.detector, 'id', '')}
                         detectorName={get(props.detector, 'name', '')}
+                        detectorTaskProgress={get(
+                          props.detector,
+                          'taskProgress',
+                          0
+                        )}
+                        isHistorical={props.isHistorical}
                         dateRange={props.dateRange}
                         anomalies={anomalies}
                         isLoading={props.isLoading}

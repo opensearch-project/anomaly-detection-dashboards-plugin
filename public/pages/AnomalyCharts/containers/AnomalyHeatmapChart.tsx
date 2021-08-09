@@ -24,8 +24,7 @@
  * permissions and limitations under the License.
  */
 
-import React, { useState } from 'react';
-
+import React, { useState, useEffect } from 'react';
 import moment from 'moment';
 import Plotly, { PlotData } from 'plotly.js-dist';
 import plotComponentFactory from 'react-plotly.js/factory';
@@ -71,6 +70,8 @@ import {
 interface AnomalyHeatmapChartProps {
   detectorId: string;
   detectorName: string;
+  detectorTaskProgress?: number;
+  isHistorical?: boolean;
   anomalies?: any[];
   dateRange: DateRange;
   isLoading: boolean;
@@ -227,6 +228,23 @@ export const AnomalyHeatmapChart = React.memo(
       }
       return false;
     };
+
+    // Custom hook to refresh all of the heatmap data when running a historical task
+    useEffect(() => {
+      if (props.isHistorical) {
+        console.log('updating partial HC results');
+        const updateHeatmapPlotData = getAnomaliesHeatmapData(
+          props.anomalies,
+          props.dateRange,
+          sortByFieldValue,
+          get(COMBINED_OPTIONS.options[0], 'value')
+        );
+        setOriginalHeatmapData(updateHeatmapPlotData);
+        setHeatmapData(updateHeatmapPlotData);
+        setNumEntities(updateHeatmapPlotData[0].y.length);
+        setEntityViewOptions(getViewEntityOptions(updateHeatmapPlotData));
+      }
+    }, [props.detectorTaskProgress]);
 
     const handleHeatmapClick = (event: Plotly.PlotMouseEvent) => {
       const selectedCellIndices = get(event, 'points[0].pointIndex', []);
