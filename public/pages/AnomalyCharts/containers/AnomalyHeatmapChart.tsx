@@ -232,7 +232,6 @@ export const AnomalyHeatmapChart = React.memo(
     // Custom hook to refresh all of the heatmap data when running a historical task
     useEffect(() => {
       if (props.isHistorical) {
-        console.log('updating partial HC results');
         const updateHeatmapPlotData = getAnomaliesHeatmapData(
           props.anomalies,
           props.dateRange,
