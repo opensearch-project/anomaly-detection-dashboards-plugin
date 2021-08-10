@@ -315,7 +315,6 @@ export const getAnomalySummaryQuery = (
   entityList: Entity[] | undefined = undefined,
   isHistorical?: boolean,
   taskId?: string,
-  isMultiCategory?: boolean,
   modelId?: string
 ) => {
   const termField =
@@ -343,7 +342,6 @@ export const getAnomalySummaryQuery = (
           {
             term: termField,
           },
-          getResultFilters(isMultiCategory, modelId, entityList),
         ],
       },
     },
@@ -389,6 +387,8 @@ export const getAnomalySummaryQuery = (
     },
   };
 
+  // If querying RT results: remove any results that include a task_id, as this indicates
+  // a historical result from a historical task.
   if (!isHistorical) {
     requestBody.query.bool = {
       ...requestBody.query.bool,
@@ -402,6 +402,12 @@ export const getAnomalySummaryQuery = (
     };
   }
 
+  // Add entity filters if this is a HC detector
+  if (entityList !== undefined && entityList.length > 0) {
+    //@ts-ignore
+    requestBody.query.bool.filter.push(getEntityFilters(modelId, entityList));
+  }
+
   return requestBody;
 };
 
@@ -412,7 +418,6 @@ export const getBucketizedAnomalyResultsQuery = (
   entityList: Entity[] | undefined = undefined,
   isHistorical?: boolean,
   taskId?: string,
-  isMultiCategory?: boolean,
   modelId?: string
 ) => {
   const termField =
@@ -436,7 +441,6 @@ export const getBucketizedAnomalyResultsQuery = (
           {
             term: termField,
           },
-          getResultFilters(isMultiCategory, modelId, entityList),
         ],
       },
     },
@@ -467,6 +471,8 @@ export const getBucketizedAnomalyResultsQuery = (
     },
   };
 
+  // If querying RT results: remove any results that include a task_id, as this indicates
+  // a historical result from a historical task.
   if (!isHistorical) {
     requestBody.query.bool = {
       ...requestBody.query.bool,
@@ -478,6 +484,12 @@ export const getBucketizedAnomalyResultsQuery = (
         },
       },
     };
+  }
+
+  // Add entity filters if this is a HC detector
+  if (entityList !== undefined && entityList.length > 0) {
+    //@ts-ignore
+    requestBody.query.bool.filter.push(getEntityFilters(modelId, entityList));
   }
 
   return requestBody;
@@ -1171,7 +1183,6 @@ export const getEntityAnomalySummariesQuery = (
   detectorId: string,
   size: number,
   entityList: Entity[],
-  isMultiCategory: boolean,
   modelId: string | undefined,
   isHistorical?: boolean,
   taskId?: string
@@ -1212,7 +1223,6 @@ export const getEntityAnomalySummariesQuery = (
           {
             term: termField,
           },
-          getResultFilters(isMultiCategory, modelId, entityList),
         ],
       },
     },
@@ -1252,6 +1262,12 @@ export const getEntityAnomalySummariesQuery = (
         },
       },
     };
+  }
+
+  // Add entity filters if this is a HC detector
+  if (entityList !== undefined && entityList.length > 0) {
+    //@ts-ignore
+    requestBody.query.bool.filter.push(getEntityFilters(modelId, entityList));
   }
 
   return requestBody;
@@ -1525,14 +1541,11 @@ export const entityListsMatch = (
 };
 
 // Helper fn to get the correct filters based on how many categorical fields there are.
-// If there are multiple (entity list > 1), filter results by model id.
-// If there is only one (entity list = 1), filter by entity value.
-const getResultFilters = (
-  isMultiCategory: boolean | undefined,
+const getEntityFilters = (
   modelId: string | undefined,
-  entityList: Entity[] | undefined
+  entityList: Entity[]
 ) => {
-  return isMultiCategory === true
+  return entityList.length > 1
     ? {
         term: {
           model_id: modelId,

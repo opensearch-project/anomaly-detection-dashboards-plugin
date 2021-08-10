@@ -189,7 +189,6 @@ export const AnomalyHistory = (props: AnomalyHistoryProps) => {
             entityList,
             props.isHistorical,
             taskId.current,
-            isMultiCategory,
             modelId
           )
         )
@@ -207,7 +206,6 @@ export const AnomalyHistory = (props: AnomalyHistoryProps) => {
             entityList,
             props.isHistorical,
             taskId.current,
-            isMultiCategory,
             modelId
           )
         )
@@ -341,7 +339,6 @@ export const AnomalyHistory = (props: AnomalyHistoryProps) => {
           props.detector.id,
           NUM_CELLS,
           summary.entityList,
-          isMultiCategory,
           summary.modelId,
           props.isHistorical,
           taskId.current
