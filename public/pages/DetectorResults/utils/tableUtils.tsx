@@ -97,4 +97,6 @@ export const entityValueColumn = {
   sortable: true,
   truncateText: false,
   dataType: 'string',
+  // To render newline character correctly
+  style: { whiteSpace: 'pre-wrap' },
 } as EuiBasicTableColumn<any>;
