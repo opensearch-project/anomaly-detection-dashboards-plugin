@@ -296,20 +296,6 @@ export const getErrorMessage = (err: any) => {
     : get(err, 'message');
 };
 
-// Currently: detector w/ detection date range is considered a 'historical' detector
-export const getHistoricalDetectors = (detectors: Detector[]) => {
-  return detectors.filter(
-    (detector) => detector.detectionDateRange !== undefined
-  );
-};
-
-// Currently: detector w/ no detection date range is considered a 'realtime' detector
-export const getRealtimeDetectors = (detectors: Detector[]) => {
-  return detectors.filter(
-    (detector) => detector.detectionDateRange === undefined
-  );
-};
-
 export const getDetectorTasks = (detectorTaskResponses: any[]) => {
   const detectorToTaskMap = {} as { [key: string]: any };
   detectorTaskResponses.forEach((response) => {
