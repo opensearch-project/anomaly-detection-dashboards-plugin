@@ -114,7 +114,7 @@ export function formikToDetectorDefinition(
     indices: formikToIndices(values.index),
     filterQuery: formikToFilterQuery(values),
     uiMetadata: {
-      ...detector.uiMetadata,
+      features: get(detector, 'uiMetadata.features', {}),
       filters: get(values, 'filters', []),
     },
     timeField: values.timeField,

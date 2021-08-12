@@ -40,6 +40,7 @@ export const FilterDisplayList = (props: FilterDisplayListProps) => {
   const [showCodeModal, setShowCodeModal] = useState<boolean>(false);
   const [filterIndex, setFilterIndex] = useState<number>(-1);
   let filters = get(props, 'uiMetadata.filters', []);
+  const oldFilterType = get(props, 'uiMetadata.filterType', undefined);
 
   if (isEmpty(filters)) {
     return (
@@ -51,7 +52,10 @@ export const FilterDisplayList = (props: FilterDisplayListProps) => {
   return (
     <ol>
       {filters.map((filter: UIFilter, index: number) => {
-        if (filter.filterType === FILTER_TYPES.SIMPLE) {
+        if (
+          filter.filterType === FILTER_TYPES.SIMPLE ||
+          oldFilterType === FILTER_TYPES.SIMPLE
+        ) {
           return (
             <li className="enabled" key={index}>
               {displayText(filter)}
@@ -78,7 +82,7 @@ export const FilterDisplayList = (props: FilterDisplayListProps) => {
               </EuiText>
               {showCodeModal && filterIndex === index ? (
                 <CodeModal
-                  code={filter.query}
+                  code={get(filter, 'query', props.filterQuery)}
                   title="Filter query"
                   subtitle="Custom expression"
                   closeModal={() => setShowCodeModal(false)}
