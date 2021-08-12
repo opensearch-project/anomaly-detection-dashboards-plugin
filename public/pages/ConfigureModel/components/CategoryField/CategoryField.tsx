@@ -93,7 +93,7 @@ export function CategoryField(props: CategoryFieldProps) {
           style={{ lineHeight: 'normal' }}
         >
           Split a single time series into multiple time series based on
-          categorical fields.{' '}
+          categorical fields. You can select up to 2.{' '}
           <EuiLink href={`${BASE_DOCS_LINK}/ad`} target="_blank">
             Learn more <EuiIcon size="s" type="popout" />
           </EuiLink>

@@ -41,7 +41,7 @@ exports[`<CategoryField /> spec hides callout if component is loading 1`] = `
                 class="euiText euiText--medium content-panel-subTitle"
                 style="line-height: normal;"
               >
-                Split a single time series into multiple time series based on categorical fields.
+                Split a single time series into multiple time series based on categorical fields. You can select up to 2.
                  
                 <a
                   class="euiLink euiLink--primary"
@@ -167,7 +167,7 @@ exports[`<CategoryField /> spec renders the component when disabled 1`] = `
                 class="euiText euiText--medium content-panel-subTitle"
                 style="line-height: normal;"
               >
-                Split a single time series into multiple time series based on categorical fields.
+                Split a single time series into multiple time series based on categorical fields. You can select up to 2.
                  
                 <a
                   class="euiLink euiLink--primary"
@@ -284,7 +284,7 @@ exports[`<CategoryField /> spec renders the component when enabled 1`] = `
                 class="euiText euiText--medium content-panel-subTitle"
                 style="line-height: normal;"
               >
-                Split a single time series into multiple time series based on categorical fields.
+                Split a single time series into multiple time series based on categorical fields. You can select up to 2.
                  
                 <a
                   class="euiLink euiLink--primary"
@@ -501,7 +501,7 @@ exports[`<CategoryField /> spec shows callout when there are no available catego
                 class="euiText euiText--medium content-panel-subTitle"
                 style="line-height: normal;"
               >
-                Split a single time series into multiple time series based on categorical fields.
+                Split a single time series into multiple time series based on categorical fields. You can select up to 2.
                  
                 <a
                   class="euiLink euiLink--primary"

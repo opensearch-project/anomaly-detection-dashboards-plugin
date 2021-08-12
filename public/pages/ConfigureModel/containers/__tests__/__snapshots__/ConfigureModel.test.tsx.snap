@@ -599,7 +599,7 @@ exports[`<ConfigureModel /> spec creating model configuration renders the compon
                 class="euiText euiText--medium content-panel-subTitle"
                 style="line-height: normal;"
               >
-                Split a single time series into multiple time series based on categorical fields.
+                Split a single time series into multiple time series based on categorical fields. You can select up to 2.
                  
                 <a
                   class="euiLink euiLink--primary"
@@ -1530,7 +1530,7 @@ exports[`<ConfigureModel /> spec editing model configuration renders the compone
                 class="euiText euiText--medium content-panel-subTitle"
                 style="line-height: normal;"
               >
-                Split a single time series into multiple time series based on categorical fields.
+                Split a single time series into multiple time series based on categorical fields. You can select up to 2.
                  
                 <a
                   class="euiLink euiLink--primary"
