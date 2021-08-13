@@ -88,14 +88,15 @@ const renderWithRouter = (detector: Detector) => ({
 const fieldInFilter = 'age';
 const filters = [
   {
+    filterType: FILTER_TYPES.SIMPLE,
     fieldInfo: [{ label: fieldInFilter, type: DATA_TYPES.NUMBER }],
     operator: OPERATORS_MAP.IN_RANGE,
     fieldRangeStart: 20,
     fieldRangeEnd: 40,
   },
   {
-    fieldInfo: [{ label: fieldInFilter, type: DATA_TYPES.NUMBER }],
-    operator: OPERATORS_MAP.IS_NOT_NULL,
+    filterType: FILTER_TYPES.CUSTOM,
+    query: { some: 'query' },
   },
 ] as UIFilter[];
 
@@ -231,8 +232,7 @@ describe('<DetectorConfig /> spec', () => {
         },
       ] as FeatureAttributes[],
       uiMetadata: {
-        filterType: FILTER_TYPES.SIMPLE,
-        filters: [],
+        filters: [filters[0]] as UIFilter[],
         features: {
           value: {
             featureType: FEATURE_TYPE.CUSTOM,
