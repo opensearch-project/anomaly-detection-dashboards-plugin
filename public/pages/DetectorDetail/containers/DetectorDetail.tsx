@@ -49,6 +49,7 @@ import {
   deleteDetector,
   startDetector,
   stopDetector,
+  getDetector,
 } from '../../../redux/reducers/ad';
 import { getErrorMessage, Listener } from '../../../utils/utils';
 import { darkModeEnabled } from '../../../utils/opensearchDashboardsUtils';
@@ -226,6 +227,7 @@ export const DetectorDetail = (props: DetectorDetailProps) => {
   const handleStartAdJob = async (detectorId: string) => {
     try {
       await dispatch(startDetector(detectorId));
+      dispatch(getDetector(detectorId));
       core.notifications.toasts.addSuccess(
         `Successfully started the detector job`
       );

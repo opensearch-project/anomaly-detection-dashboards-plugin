@@ -118,6 +118,88 @@ export const convertDetectorKeysToCamelCase = (response: object) => {
   return camelCaseResponse;
 };
 
+// Converts the static detector fields into camelcase. Ignores any job or task-related fields
+export const convertStaticFieldsToCamelCase = (response: object) => {
+  return {
+    ...mapKeysDeep(
+      omit(response, [
+        'filter_query',
+        'feature_query',
+        'feature_attributes',
+        'ui_metadata',
+        'anomaly_detector_job',
+        'anomaly_detection_task',
+        'realtime_detection_task',
+        'historical_analysis_task',
+      ]),
+      toCamel
+    ),
+    filterQuery: get(response, 'filter_query', {}),
+    featureAttributes: get(response, 'feature_attributes', []).map(
+      (feature: any) => ({
+        ...mapKeysDeep({ ...omit(feature, ['aggregation_query']) }, toCamel),
+        aggregationQuery: feature.aggregation_query,
+      })
+    ),
+    uiMetadata: get(response, 'ui_metadata', {}),
+  };
+};
+
+// Converts the task-related detector fields into camelcase
+export const convertTaskAndJobFieldsToCamelCase = (
+  taskList: object[],
+  detectorJob: object
+) => {
+  let response = {};
+  const realtimeTask = get(
+    taskList.filter((task: any) => isRealTimeTask(task)),
+    0
+  );
+  const historicalTask = get(
+    taskList.filter((task: any) => !isRealTimeTask(task)),
+    0
+  );
+
+  // Populate AD job fields
+  response = {
+    ...response,
+    enabled: get(detectorJob, 'enabled', false),
+    enabledTime: get(detectorJob, 'enabled_time'),
+    disabledTime: get(detectorJob, 'disabled_time'),
+  };
+
+  // Populate RT-task-related fields
+  response =
+    realtimeTask !== undefined
+      ? {
+          ...response,
+          curState: getTaskState(realtimeTask),
+          stateError: processTaskError(get(realtimeTask, 'error', '')),
+          initProgress: getTaskInitProgress(realtimeTask),
+        }
+      : {
+          ...response,
+          curState: get(detectorJob, 'enabled', false)
+            ? DETECTOR_STATE.RUNNING
+            : DETECTOR_STATE.DISABLED,
+        };
+
+  // Populate historical-task-related fields
+  response = {
+    ...response,
+    taskId: get(historicalTask, 'id'),
+    taskState: getTaskState(historicalTask),
+    taskProgress: get(historicalTask, 'task_progress'),
+    taskError: processTaskError(get(historicalTask, 'error', '')),
+    detectionDateRange: {
+      startTime: get(historicalTask, 'detection_date_range.start_time'),
+      endTime: get(historicalTask, 'detection_date_range.end_time'),
+    },
+  };
+
+  return response;
+};
+
 export const getResultAggregationQuery = (
   detectors: string[],
   queryParams: GetDetectorsQueryParams
@@ -455,4 +537,36 @@ export const getFiltersFromEntityList = (entityListAsObj: object) => {
     });
   });
   return filters;
+};
+
+export const getLatestTasksForDetectorQuery = (detectorId: string) => {
+  return {
+    size: 2,
+    query: {
+      bool: {
+        filter: [
+          {
+            term: {
+              detector_id: detectorId,
+            },
+          },
+          {
+            term: {
+              is_latest: 'true',
+            },
+          },
+          {
+            terms: {
+              task_type: [
+                'REALTIME_HC_DETECTOR',
+                'REALTIME_SINGLE_ENTITY',
+                'HISTORICAL_SINGLE_ENTITY',
+                'HISTORICAL_HC_DETECTOR',
+              ],
+            },
+          },
+        ],
+      },
+    },
+  };
 };

@@ -64,6 +64,9 @@ import {
   getLatestDetectorTasksQuery,
   isRealTimeTask,
   getFiltersFromEntityList,
+  convertStaticFieldsToCamelCase,
+  getLatestTasksForDetectorQuery,
+  convertTaskAndJobFieldsToCamelCase,
 } from './utils/adHelpers';
 import { isNumber, set } from 'lodash';
 import {
@@ -239,30 +242,54 @@ export default class AdService {
   ): Promise<IOpenSearchDashboardsResponse<any>> => {
     try {
       const { detectorId } = request.params as { detectorId: string };
-      const response = await this.client
+      const detectorResponse = await this.client
         .asScoped(request)
         .callAsCurrentUser('ad.getDetector', {
           detectorId,
         });
 
-      let resp = {
-        ...response.anomaly_detector,
-        id: response._id,
-        primaryTerm: response._primary_term,
-        seqNo: response._seq_no,
-        adJob: { ...response.anomaly_detector_job },
-        historicalTask: { ...response.historical_analysis_task },
-        curState: getTaskState(response.realtime_detection_task),
-        stateError: processTaskError(
-          get(response, 'realtime_detection_task.error', '')
-        ),
-        initProgress: getTaskInitProgress(response.realtime_detection_task),
+      // Populating static detector fields
+      const staticFields = {
+        id: detectorResponse._id,
+        primaryTerm: detectorResponse._primary_term,
+        seqNo: detectorResponse._seq_no,
+        ...convertStaticFieldsToCamelCase(detectorResponse.anomaly_detector),
+      };
+
+      // Get real-time and historical task info to populate the
+      // task and job-related fields
+      const latestDetectorTasksQuery = getLatestTasksForDetectorQuery(
+        detectorId
+      );
+      const detectorTasksResponse: any = await this.client
+        .asScoped(request)
+        .callAsCurrentUser('ad.searchTasks', {
+          body: latestDetectorTasksQuery,
+        });
+      const taskList = get(detectorTasksResponse, 'hits.hits', []).map(
+        (taskResponse: any) => {
+          return {
+            id: get(taskResponse, '_id'),
+            ...get(taskResponse, '_source'),
+          };
+        }
+      );
+      const taskAndJobFields = convertTaskAndJobFieldsToCamelCase(
+        taskList,
+        detectorResponse.anomaly_detector_job
+      );
+
+      // Combine the static and task-and-job-related fields into
+      // a final response
+      const finalResponse = {
+        ...staticFields,
+        ...taskAndJobFields,
       };
 
       return opensearchDashboardsResponse.ok({
         body: {
           ok: true,
-          response: convertDetectorKeysToCamelCase(resp) as Detector,
+          response: finalResponse,
         },
       });
     } catch (err) {
