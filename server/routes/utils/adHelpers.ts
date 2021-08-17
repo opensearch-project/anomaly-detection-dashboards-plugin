@@ -151,14 +151,8 @@ export const convertTaskAndJobFieldsToCamelCase = (
   detectorJob: object
 ) => {
   let response = {};
-  const realtimeTask = get(
-    taskList.filter((task: any) => isRealTimeTask(task)),
-    0
-  );
-  const historicalTask = get(
-    taskList.filter((task: any) => !isRealTimeTask(task)),
-    0
-  );
+  const realtimeTask = getLatestRealtimeTask(taskList);
+  const historicalTask = getLatestHistoricalTask(taskList);
 
   // Populate AD job fields
   response = {
@@ -184,6 +178,13 @@ export const convertTaskAndJobFieldsToCamelCase = (
             : DETECTOR_STATE.DISABLED,
         };
 
+  // Detection date range field is stored under the 'detector' field in legacy historical tasks.
+  // To handle this, need to add a check to fetch the date range from the correct place
+  const isLegacyHistorical =
+    get(historicalTask, 'detection_date_range') === undefined &&
+    get(historicalTask, 'detector.detection_date_range') !== undefined;
+  const legacyDateRangePrefix = isLegacyHistorical ? 'detector.' : '';
+
   // Populate historical-task-related fields
   response = {
     ...response,
@@ -192,8 +193,14 @@ export const convertTaskAndJobFieldsToCamelCase = (
     taskProgress: get(historicalTask, 'task_progress'),
     taskError: processTaskError(get(historicalTask, 'error', '')),
     detectionDateRange: {
-      startTime: get(historicalTask, 'detection_date_range.start_time'),
-      endTime: get(historicalTask, 'detection_date_range.end_time'),
+      startTime: get(
+        historicalTask,
+        `${legacyDateRangePrefix}detection_date_range.start_time`
+      ),
+      endTime: get(
+        historicalTask,
+        `${legacyDateRangePrefix}detection_date_range.end_time`
+      ),
     },
   };
 
@@ -480,6 +487,7 @@ export const getLatestDetectorTasksQuery = () => {
                 'REALTIME_SINGLE_ENTITY',
                 'HISTORICAL_SINGLE_ENTITY',
                 'HISTORICAL_HC_DETECTOR',
+                'HISTORICAL',
               ],
             },
           },
@@ -495,7 +503,7 @@ export const getLatestDetectorTasksQuery = () => {
         aggs: {
           latest_tasks: {
             top_hits: {
-              size: 2,
+              size: 3,
             },
           },
         },
@@ -541,7 +549,7 @@ export const getFiltersFromEntityList = (entityListAsObj: object) => {
 
 export const getLatestTasksForDetectorQuery = (detectorId: string) => {
   return {
-    size: 2,
+    size: 3,
     query: {
       bool: {
         filter: [
@@ -562,6 +570,7 @@ export const getLatestTasksForDetectorQuery = (detectorId: string) => {
                 'REALTIME_SINGLE_ENTITY',
                 'HISTORICAL_SINGLE_ENTITY',
                 'HISTORICAL_HC_DETECTOR',
+                'HISTORICAL',
               ],
             },
           },
@@ -569,4 +578,27 @@ export const getLatestTasksForDetectorQuery = (detectorId: string) => {
       },
     },
   };
+};
+
+// Helper fn to get the latest realtime task for some detector.
+// It is possible that the backend returns multiple realtime tasks
+// set to 'is_latest=true' when backfilling legacy realtime detectors.
+export const getLatestRealtimeTask = (taskList: any[]) => {
+  const realtimeTaskList = taskList.filter((task: any) => isRealTimeTask(task));
+  let realtimeTask = get(realtimeTaskList, 0);
+  if (get(realtimeTaskList, 'length', 0) > 1) {
+    realtimeTask =
+      get(realtimeTaskList, '0.execution_start_time') >
+      get(realtimeTaskList, '1.execution_start_time')
+        ? realtimeTaskList[0]
+        : realtimeTaskList[1];
+  }
+  return realtimeTask;
+};
+
+export const getLatestHistoricalTask = (taskList: any[]) => {
+  return get(
+    taskList.filter((task: any) => !isRealTimeTask(task)),
+    0
+  );
 };

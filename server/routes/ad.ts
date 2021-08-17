@@ -67,6 +67,7 @@ import {
   convertStaticFieldsToCamelCase,
   getLatestTasksForDetectorQuery,
   convertTaskAndJobFieldsToCamelCase,
+  getLatestRealtimeTask,
 } from './utils/adHelpers';
 import { isNumber, set } from 'lodash';
 import {
@@ -655,20 +656,25 @@ export default class AdService {
       }, {});
 
       finalDetectors.forEach((detector) => {
-        // Set default values for the task-related fields,
-        // override if latest tasks were found
-        detector.curState = DETECTOR_STATE.DISABLED;
-        detector.enabledTime = undefined;
         detector.taskId = undefined;
 
-        get(detectorTasks[detector.id], 'tasks', []).forEach((task: any) => {
-          if (isRealTimeTask(task._source)) {
-            detector.curState = getTaskState(task._source);
-            detector.enabledTime = task._source.execution_start_time;
-          } else {
-            detector.taskId = task._id;
+        const taskList = get(detectorTasks[detector.id], 'tasks', []).map(
+          (taskResponse: any) => taskResponse._source
+        );
+        const realtimeTask = getLatestRealtimeTask(taskList);
+        detector.curState = getTaskState(realtimeTask);
+        detector.enabledTime = get(realtimeTask, 'execution_start_time');
+
+        // Loop through the responses and set the taskId if
+        // a historical task was found
+        detector.taskId = undefined;
+        get(detectorTasks[detector.id], 'tasks', []).forEach(
+          (taskResponse: any) => {
+            if (!isRealTimeTask(taskResponse._source)) {
+              detector.taskId = taskResponse._id;
+            }
           }
-        });
+        );
       });
 
       return opensearchDashboardsResponse.ok({
