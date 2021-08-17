@@ -464,7 +464,7 @@ export const getTaskState = (task: any) => {
 
 export const processTaskError = (error: string) => {
   const errorWithPrefixRemoved = error.replace(OPENSEARCH_EXCEPTION_PREFIX, '');
-  return errorWithPrefixRemoved.endsWith('.')
+  return isEmpty(errorWithPrefixRemoved) || errorWithPrefixRemoved.endsWith('.')
     ? errorWithPrefixRemoved
     : errorWithPrefixRemoved + '.';
 };
