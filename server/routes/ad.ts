@@ -550,16 +550,16 @@ export default class AdService {
         .callAsCurrentUser('ad.searchDetector', { body: requestBody });
 
       const totalDetectors = get(response, 'hits.total.value', 0);
+
       //Get all detectors from search detector API
       const allDetectors = get(response, 'hits.hits', []).reduce(
-        (acc: any, detector: any) => ({
+        (acc: any, detectorResponse: any) => ({
           ...acc,
-          [detector._id]: {
-            id: detector._id,
-            description: get(detector, '_source.description', ''),
-            indices: get(detector, '_source.indices', []),
-            lastUpdateTime: get(detector, '_source.last_update_time', 0),
-            ...convertDetectorKeysToCamelCase(get(detector, '_source', {})),
+          [detectorResponse._id]: {
+            id: detectorResponse._id,
+            primaryTerm: detectorResponse._primary_term,
+            seqNo: detectorResponse._seq_no,
+            ...convertStaticFieldsToCamelCase(detectorResponse._source),
           },
         }),
         {}
