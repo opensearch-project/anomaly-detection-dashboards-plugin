@@ -60,7 +60,7 @@ import {
   clearModelConfiguration,
 } from '../utils/helpers';
 import { DetectorDefinitionFormikValues } from '../models/interfaces';
-import { Detector } from '../../../models/interfaces';
+import { Detector, FILTER_TYPES } from '../../../models/interfaces';
 import { prettifyErrorMessage } from '../../../../server/utils/helpers';
 import { DETECTOR_STATE } from '../../../../server/utils/constants';
 import { ModelConfigurationFormikValues } from 'public/pages/ConfigureModel/models/interfaces';
@@ -85,6 +85,24 @@ export const DefineDetector = (props: DefineDetectorProps) => {
   const detectorId: string = get(props, 'match.params.detectorId', '');
   const { detector, hasError } = useFetchDetectorInfo(detectorId);
   const [newIndexSelected, setNewIndexSelected] = useState<boolean>(false);
+
+  // To handle backward compatibility, we need to pass some fields via
+  // props to the subcomponents so they can render correctly
+  //
+  // oldFilterType: there used to only be one filter type per detector.
+  // Now, the filter type is on a per-filter granularity, and each type
+  // is stored within each filter in the filters array.
+  //
+  // oldFilterQuery: the custom filter query used to be stored here.
+  // Now, the same field is repurposed in the new changes, but has a different meaning,
+  // since it is a dynamically built query based on each individually-created filter.
+  // See formikToFilterQuery() in public/pages/ReviewAndCreate/utils/helpers.ts for details.
+  const oldFilterType = get(
+    detector,
+    'uiMetadata.filterType',
+    undefined
+  ) as FILTER_TYPES;
+  const oldFilterQuery = get(detector, 'filterQuery', undefined);
 
   // Jump to top of page on first load
   useEffect(() => {
@@ -256,6 +274,8 @@ export const DefineDetector = (props: DefineDetectorProps) => {
                   isEdit={props.isEdit}
                   setModelConfigValues={props.setModelConfigValues}
                   setNewIndexSelected={setNewIndexSelected}
+                  oldFilterType={oldFilterType}
+                  oldFilterQuery={oldFilterQuery}
                 />
                 <EuiSpacer />
                 <Timestamp formikProps={formikProps} />

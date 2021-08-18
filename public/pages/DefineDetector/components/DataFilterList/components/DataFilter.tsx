@@ -61,6 +61,8 @@ interface DataFilterProps {
   openPopoverIndex: number;
   setOpenPopoverIndex(index: number): void;
   isNewFilter: boolean;
+  oldFilterType: FILTER_TYPES;
+  oldFilterQuery: any;
 }
 
 export const DataFilter = (props: DataFilterProps) => {
@@ -70,7 +72,9 @@ export const DataFilter = (props: DataFilterProps) => {
   const [isClosing, setIsClosing] = useState<boolean>(false);
   const [origFilter, setOrigFilter] = useState<UIFilter | undefined>(undefined);
   const [filterType, setFilterType] = useState<FILTER_TYPES>(
-    get(props, 'filter.filterType', FILTER_TYPES.SIMPLE)
+    props.oldFilterType !== undefined
+      ? props.oldFilterType
+      : get(props, 'filter.filterType', FILTER_TYPES.SIMPLE)
   );
   const [isCustomLabel, setIsCustomLabel] = useState<boolean>(false);
   const [customLabel, setCustomLabel] = useState<string>(
@@ -87,7 +91,11 @@ export const DataFilter = (props: DataFilterProps) => {
     setIsSaving(false);
     setIsClosing(false);
     setOrigFilter(props.filter);
-    setFilterType(get(props, 'filter.filterType', FILTER_TYPES.SIMPLE));
+    setFilterType(
+      props.oldFilterType !== undefined
+        ? props.oldFilterType
+        : get(props, 'filter.filterType', FILTER_TYPES.SIMPLE)
+    );
     setIsCustomLabel(get(props, 'filter.label', '').length > 0);
     setCustomLabel(get(props, 'filter.label', ''));
   };
@@ -140,7 +148,13 @@ export const DataFilter = (props: DataFilterProps) => {
       if (isCustomLabel && customLabel.length > 0) {
         setLabelToDisplay(customLabel);
       } else {
-        setLabelToDisplay(getFilterLabel(props.filter));
+        setLabelToDisplay(
+          getFilterLabel(
+            props.filter,
+            props.oldFilterType,
+            props.oldFilterQuery
+          )
+        );
       }
     }
   }, [isClosing]);
@@ -153,7 +167,13 @@ export const DataFilter = (props: DataFilterProps) => {
         //@ts-ignore
         setLabelToDisplay(props.filter.label);
       } else {
-        setLabelToDisplay(getFilterLabel(props.filter));
+        setLabelToDisplay(
+          getFilterLabel(
+            props.filter,
+            props.oldFilterType,
+            props.oldFilterQuery
+          )
+        );
       }
     }
   }, [props.filter]);

@@ -45,7 +45,7 @@ import {
 } from '../../../../models/interfaces';
 import { getRandomDetector } from '../../../../redux/reducers/__tests__/utils';
 import { coreServicesMock } from '../../../../../test/mocks';
-import { toString } from '../MetaData';
+import { toStringConfigCell } from '../../../ReviewAndCreate/utils/helpers';
 import { DATA_TYPES } from '../../../../utils/constants';
 import { OPERATORS_MAP } from '../../../../models/interfaces';
 import { displayText } from '../../../DefineDetector/components/DataFilterList/utils/helpers';
@@ -88,14 +88,15 @@ const renderWithRouter = (detector: Detector) => ({
 const fieldInFilter = 'age';
 const filters = [
   {
+    filterType: FILTER_TYPES.SIMPLE,
     fieldInfo: [{ label: fieldInFilter, type: DATA_TYPES.NUMBER }],
     operator: OPERATORS_MAP.IN_RANGE,
     fieldRangeStart: 20,
     fieldRangeEnd: 40,
   },
   {
-    fieldInfo: [{ label: fieldInFilter, type: DATA_TYPES.NUMBER }],
-    operator: OPERATORS_MAP.IS_NOT_NULL,
+    filterType: FILTER_TYPES.CUSTOM,
+    query: { some: 'query' },
   },
 ] as UIFilter[];
 
@@ -172,10 +173,10 @@ describe('<DetectorConfig /> spec', () => {
       getByText('Model configuration');
       getByText(randomDetector.name);
       getByText(randomDetector.indices[0]);
-      getByText(toString(randomDetector.detectionInterval));
-      getByText(toString(randomDetector.lastUpdateTime));
+      getByText(toStringConfigCell(randomDetector.detectionInterval));
+      getByText(toStringConfigCell(randomDetector.lastUpdateTime));
       getByText(randomDetector.id);
-      getByText(toString(randomDetector.windowDelay));
+      getByText(toStringConfigCell(randomDetector.windowDelay));
       getByText(randomDetector.description);
       // filter should be -
       getByText('-');
@@ -231,8 +232,7 @@ describe('<DetectorConfig /> spec', () => {
         },
       ] as FeatureAttributes[],
       uiMetadata: {
-        filterType: FILTER_TYPES.SIMPLE,
-        filters: [],
+        filters: [filters[0]] as UIFilter[],
         features: {
           value: {
             featureType: FEATURE_TYPE.CUSTOM,
