@@ -67,6 +67,8 @@ export function filtersToFormik(detector: Detector): UIFilter[] {
   const noMetadata =
     get(detector, 'uiMetadata.filterType') === undefined &&
     get(detector, 'uiMetadata.filters') === undefined;
+  const isOldDetector = get(detector, 'uiMetadata.filterType') !== undefined;
+
   if (noMetadata) {
     return [
       {
@@ -82,23 +84,32 @@ export function filtersToFormik(detector: Detector): UIFilter[] {
 
   const curFilterType = get(detector, 'uiMetadata.filterType');
   const curFilters = get(detector, 'uiMetadata.filters', []);
-  const curFilterQuery = JSON.stringify(
-    get(detector, 'filterQuery', { match_all: {} }),
-    null,
-    4
-  );
 
-  // If this is an old detector (has a base filter type): modify it by injecting that
-  // filter type into each existing filter
-  if (curFilterType !== undefined) {
-    curFilters.forEach((filter: UIFilter) => {
-      return {
-        ...filter,
-        filterType: curFilterType,
-        query:
-          curFilterType === FILTER_TYPES.CUSTOM ? curFilterQuery : undefined,
-      };
-    });
+  // If this is an old detector:
+  // If filters is empty: it means it was a custom filter. Convert to a single filter array with a
+  // query value equal to the existing filterQuery
+  // If a set of simple filters: modify them by injecting the filter type
+  // into each existing filter
+  if (isOldDetector) {
+    if (isEmpty(curFilters)) {
+      return [
+        {
+          filterType: FILTER_TYPES.CUSTOM,
+          query: JSON.stringify(
+            get(detector, 'filterQuery', { match_all: {} }),
+            null,
+            4
+          ),
+        },
+      ];
+    } else {
+      curFilters.forEach((filter: UIFilter) => {
+        return {
+          ...filter,
+          filterType: curFilterType,
+        };
+      });
+    }
   }
   return curFilters;
 }
@@ -114,7 +125,7 @@ export function formikToDetectorDefinition(
     indices: formikToIndices(values.index),
     filterQuery: formikToFilterQuery(values),
     uiMetadata: {
-      ...detector.uiMetadata,
+      features: get(detector, 'uiMetadata.features', {}),
       filters: get(values, 'filters', []),
     },
     timeField: values.timeField,

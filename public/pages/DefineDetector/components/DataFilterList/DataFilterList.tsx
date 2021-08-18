@@ -36,7 +36,7 @@ import { FieldArray, FieldArrayRenderProps, FormikProps } from 'formik';
 import React, { useState, Fragment } from 'react';
 import { get } from 'lodash';
 import { DetectorDefinitionFormikValues } from '../../models/interfaces';
-import { UIFilter } from '../../../../models/interfaces';
+import { UIFilter, FILTER_TYPES } from '../../../../models/interfaces';
 import { DataFilter } from './components/DataFilter';
 
 import { FormattedFormRow } from '../../../../components/FormattedFormRow/FormattedFormRow';
@@ -44,6 +44,8 @@ import { EMPTY_UI_FILTER } from '../../utils/constants';
 
 interface DataFilterListProps {
   formikProps: FormikProps<DetectorDefinitionFormikValues>;
+  oldFilterType: FILTER_TYPES;
+  oldFilterQuery: any;
 }
 
 export const DataFilterList = (props: DataFilterListProps) => {
@@ -138,6 +140,8 @@ export const DataFilterList = (props: DataFilterListProps) => {
                             ? true
                             : false
                         }
+                        oldFilterType={props.oldFilterType}
+                        oldFilterQuery={props.oldFilterQuery}
                       />
                     );
                   })}

@@ -40,54 +40,88 @@ export const FilterDisplayList = (props: FilterDisplayListProps) => {
   const [showCodeModal, setShowCodeModal] = useState<boolean>(false);
   const [filterIndex, setFilterIndex] = useState<number>(-1);
   let filters = get(props, 'uiMetadata.filters', []);
+  const oldFilterType = get(props, 'uiMetadata.filterType', undefined);
+  const isOldDetector = !isEmpty(oldFilterType);
 
-  if (isEmpty(filters)) {
+  // Old detectors with custom filters will have no filter list, but
+  // will have a populated filter query
+  if (isEmpty(filters) && isOldDetector && !isEmpty(props.filterQuery)) {
+    return (
+      <div>
+        <EuiText>
+          <p className="enabled">
+            {'Custom expression:'}{' '}
+            <EuiLink
+              data-test-subj="viewFilter"
+              onClick={() => {
+                setShowCodeModal(true);
+              }}
+            >
+              View code
+            </EuiLink>
+          </p>
+        </EuiText>
+        {showCodeModal ? (
+          <CodeModal
+            code={props.filterQuery}
+            title="Filter query"
+            subtitle="Custom expression"
+            closeModal={() => setShowCodeModal(false)}
+          />
+        ) : null}
+      </div>
+    );
+  } else if (isEmpty(filters)) {
     return (
       <EuiText>
         <p className="enabled">-</p>
       </EuiText>
     );
+  } else {
+    return (
+      <ol>
+        {filters.map((filter: UIFilter, index: number) => {
+          if (
+            filter.filterType === FILTER_TYPES.SIMPLE ||
+            oldFilterType === FILTER_TYPES.SIMPLE
+          ) {
+            return (
+              <li className="enabled" key={index}>
+                {displayText(filter)}
+              </li>
+            );
+          } else {
+            return (
+              <div>
+                <EuiText>
+                  <p className="enabled">
+                    {!isEmpty(filter.label)
+                      ? `${filter.label}:`
+                      : 'Custom expression:'}{' '}
+                    <EuiLink
+                      data-test-subj="viewFilter"
+                      onClick={() => {
+                        setShowCodeModal(true);
+                        setFilterIndex(index);
+                      }}
+                    >
+                      View code
+                    </EuiLink>
+                  </p>
+                </EuiText>
+                {showCodeModal && filterIndex === index ? (
+                  <CodeModal
+                    code={get(filter, 'query', props.filterQuery)}
+                    title="Filter query"
+                    subtitle="Custom expression"
+                    closeModal={() => setShowCodeModal(false)}
+                  />
+                ) : null}
+              </div>
+            );
+          }
+        })}
+      </ol>
+    );
   }
-  return (
-    <ol>
-      {filters.map((filter: UIFilter, index: number) => {
-        if (filter.filterType === FILTER_TYPES.SIMPLE) {
-          return (
-            <li className="enabled" key={index}>
-              {displayText(filter)}
-            </li>
-          );
-        } else {
-          return (
-            <div>
-              <EuiText>
-                <p className="enabled">
-                  {!isEmpty(filter.label)
-                    ? `${filter.label}:`
-                    : 'Custom expression:'}{' '}
-                  <EuiLink
-                    data-test-subj="viewFilter"
-                    onClick={() => {
-                      setShowCodeModal(true);
-                      setFilterIndex(index);
-                    }}
-                  >
-                    View code
-                  </EuiLink>
-                </p>
-              </EuiText>
-              {showCodeModal && filterIndex === index ? (
-                <CodeModal
-                  code={filter.query}
-                  title="Filter query"
-                  subtitle="Custom expression"
-                  closeModal={() => setShowCodeModal(false)}
-                />
-              ) : null}
-            </div>
-          );
-        }
-      })}
-    </ol>
-  );
 };

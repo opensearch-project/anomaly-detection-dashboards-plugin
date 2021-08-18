@@ -123,10 +123,17 @@ export const validateFilterQuery = (value: string) => {
   }
 };
 
-export const getFilterLabel = (filter: UIFilter) => {
-  return filter.filterType === FILTER_TYPES.SIMPLE
+export const getFilterLabel = (
+  filter: UIFilter,
+  oldFilterType: FILTER_TYPES,
+  oldFilterQuery: any
+) => {
+  return filter.filterType === FILTER_TYPES.SIMPLE ||
+    oldFilterType === FILTER_TYPES.SIMPLE
     ? displayText(filter)
     : !isEmpty(filter.query)
     ? filter.query
+    : !isEmpty(oldFilterQuery)
+    ? oldFilterQuery
     : 'Custom query';
 };

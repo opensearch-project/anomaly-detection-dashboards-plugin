@@ -46,6 +46,7 @@ import { FormattedFormRow } from '../../../../components/FormattedFormRow/Format
 import { DetectorDefinitionFormikValues } from '../../models/interfaces';
 import { ModelConfigurationFormikValues } from '../../../ConfigureModel/models/interfaces';
 import { INITIAL_MODEL_CONFIGURATION_VALUES } from '../../../ConfigureModel/utils/constants';
+import { FILTER_TYPES } from '../../../../models/interfaces';
 
 interface DataSourceProps {
   formikProps: FormikProps<DetectorDefinitionFormikValues>;
@@ -53,6 +54,8 @@ interface DataSourceProps {
   isEdit: boolean;
   setModelConfigValues?(initialValues: ModelConfigurationFormikValues): void;
   setNewIndexSelected?(isNew: boolean): void;
+  oldFilterType: FILTER_TYPES;
+  oldFilterQuery: any;
 }
 
 export function DataSource(props: DataSourceProps) {
@@ -171,7 +174,11 @@ export function DataSource(props: DataSourceProps) {
           );
         }}
       </Field>
-      <DataFilterList formikProps={props.formikProps} />
+      <DataFilterList
+        formikProps={props.formikProps}
+        oldFilterType={props.oldFilterType}
+        oldFilterQuery={props.oldFilterQuery}
+      />
     </ContentPanel>
   );
 }
