@@ -93,8 +93,10 @@ export const staticColumn = [
 
 export const entityValueColumn = {
   field: ENTITY_VALUE_FIELD,
-  name: 'Entity',
+  name: 'Entities',
   sortable: true,
   truncateText: false,
-  dataType: 'number',
+  dataType: 'string',
+  // To render newline character correctly
+  style: { whiteSpace: 'pre-wrap' },
 } as EuiBasicTableColumn<any>;

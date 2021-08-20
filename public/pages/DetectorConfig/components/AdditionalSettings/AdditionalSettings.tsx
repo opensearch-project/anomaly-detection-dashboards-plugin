@@ -25,9 +25,10 @@
  */
 
 import React from 'react';
-import { get } from 'lodash';
+import { get, isEmpty } from 'lodash';
 import { EuiBasicTable } from '@elastic/eui';
 import ContentPanel from '../../../../components/ContentPanel/ContentPanel';
+import { convertToCategoryFieldString } from '../../../utils/anomalyResultUtils';
 
 interface AdditionalSettingsProps {
   shingleSize: number;
@@ -37,12 +38,14 @@ interface AdditionalSettingsProps {
 export function AdditionalSettings(props: AdditionalSettingsProps) {
   const tableItems = [
     {
-      categoryField: get(props.categoryField, 0, '-'),
+      categoryField: isEmpty(get(props, 'categoryField', []))
+        ? '-'
+        : convertToCategoryFieldString(props.categoryField, ', '),
       windowSize: props.shingleSize,
     },
   ];
   const tableColumns = [
-    { name: 'Category field', field: 'categoryField' },
+    { name: 'Categorical fields', field: 'categoryField' },
     { name: 'Window size', field: 'windowSize' },
   ];
   return (

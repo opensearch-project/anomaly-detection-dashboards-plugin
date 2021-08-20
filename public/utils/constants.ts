@@ -79,6 +79,8 @@ export const MAX_FEATURE_NUM = 5;
 
 export const MAX_FEATURE_NAME_SIZE = 64;
 
+export const MAX_CATEGORY_FIELD_NUM = 2;
+
 export const NAME_REGEX = RegExp('^[a-zA-Z0-9._-]+$');
 
 //https://github.com/opensearch-project/anomaly-detection/blob/main/src/main/java/com/amazon/opendistroforelasticsearch/ad/settings/AnomalyDetectorSettings.java

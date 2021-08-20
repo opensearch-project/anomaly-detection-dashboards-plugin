@@ -84,7 +84,7 @@ export function CategoryField(props: CategoryFieldProps) {
     <ContentPanel
       title={
         <EuiTitle size="s" id={'categoryFieldTitle'}>
-          <h2>Categorical field </h2>
+          <h2>Categorical fields </h2>
         </EuiTitle>
       }
       subTitle={
@@ -92,8 +92,8 @@ export function CategoryField(props: CategoryFieldProps) {
           className="content-panel-subTitle"
           style={{ lineHeight: 'normal' }}
         >
-          Split a single time series into multiple time series based on a
-          categorical field.{' '}
+          Split a single time series into multiple time series based on
+          categorical fields. You can select up to 2.{' '}
           <EuiLink href={`${BASE_DOCS_LINK}/ad`} target="_blank">
             Learn more <EuiIcon size="s" type="popout" />
           </EuiLink>
@@ -119,7 +119,7 @@ export function CategoryField(props: CategoryFieldProps) {
             <EuiFlexItem>
               <EuiCheckbox
                 id={'categoryFieldCheckbox'}
-                label="Enable categorical field"
+                label="Enable categorical fields"
                 checked={enabled}
                 disabled={noCategoryFields}
                 onChange={() => {
@@ -144,24 +144,26 @@ export function CategoryField(props: CategoryFieldProps) {
                   label="Field"
                   isInvalid={isInvalid(field.name, form)}
                   error={getError(field.name, form)}
-                  helpText={`You can only apply the category field to the 'ip' and 'keyword' OpenSearch data types.`}
+                  helpText={`You can only apply the categorical fields to the 'ip' and 'keyword' OpenSearch data types.`}
                 >
                   <EuiComboBox
                     data-test-subj="categoryFieldComboBox"
                     id="categoryField"
-                    placeholder="Select your category field"
+                    placeholder="Select your categorical fields"
                     options={convertedOptions}
                     onBlur={() => {
                       form.setFieldTouched('categoryField', true);
                     }}
                     onChange={(options) => {
-                      const selection = get(options, '0.label');
-                      if (selection) {
-                        form.setFieldValue('categoryField', [selection]);
-                        form.setFieldValue(
-                          'shingleSize',
-                          MULTI_ENTITY_SHINGLE_SIZE
-                        );
+                      const selection = options.map((option) => option.label);
+                      if (!isEmpty(selection)) {
+                        if (selection.length <= 2) {
+                          form.setFieldValue('categoryField', selection);
+                          form.setFieldValue(
+                            'shingleSize',
+                            MULTI_ENTITY_SHINGLE_SIZE
+                          );
+                        }
                       } else {
                         form.setFieldValue('categoryField', []);
 
@@ -172,9 +174,15 @@ export function CategoryField(props: CategoryFieldProps) {
                       }
                     }}
                     selectedOptions={
-                      (field.value[0] && [{ label: field.value[0] }]) || []
+                      field.value
+                        ? field.value.map((value: any) => {
+                            return {
+                              label: value,
+                            };
+                          })
+                        : []
                     }
-                    singleSelection={{ asPlainText: true }}
+                    singleSelection={false}
                     isClearable={true}
                   />
                 </EuiFormRow>

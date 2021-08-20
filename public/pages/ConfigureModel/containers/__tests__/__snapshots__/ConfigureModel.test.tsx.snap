@@ -584,7 +584,7 @@ exports[`<ConfigureModel /> spec creating model configuration renders the compon
                 class="euiTitle euiTitle--small"
                 id="categoryFieldTitle"
               >
-                Categorical field 
+                Categorical fields 
               </h2>
             </div>
           </div>
@@ -599,7 +599,7 @@ exports[`<ConfigureModel /> spec creating model configuration renders the compon
                 class="euiText euiText--medium content-panel-subTitle"
                 style="line-height: normal;"
               >
-                Split a single time series into multiple time series based on a categorical field.
+                Split a single time series into multiple time series based on categorical fields. You can select up to 2.
                  
                 <a
                   class="euiLink euiLink--primary"
@@ -691,7 +691,7 @@ exports[`<ConfigureModel /> spec creating model configuration renders the compon
                   class="euiCheckbox__label"
                   for="categoryFieldCheckbox"
                 >
-                  Enable categorical field
+                  Enable categorical fields
                 </label>
               </div>
             </div>
@@ -1515,7 +1515,7 @@ exports[`<ConfigureModel /> spec editing model configuration renders the compone
                 class="euiTitle euiTitle--small"
                 id="categoryFieldTitle"
               >
-                Categorical field 
+                Categorical fields 
               </h2>
             </div>
           </div>
@@ -1530,7 +1530,7 @@ exports[`<ConfigureModel /> spec editing model configuration renders the compone
                 class="euiText euiText--medium content-panel-subTitle"
                 style="line-height: normal;"
               >
-                Split a single time series into multiple time series based on a categorical field.
+                Split a single time series into multiple time series based on categorical fields. You can select up to 2.
                  
                 <a
                   class="euiLink euiLink--primary"
@@ -1631,7 +1631,7 @@ exports[`<ConfigureModel /> spec editing model configuration renders the compone
                   class="euiCheckbox__label"
                   for="categoryFieldCheckbox"
                 >
-                  Enable categorical field
+                  Enable categorical fields
                 </label>
               </div>
             </div>

@@ -25,6 +25,8 @@
  */
 
 import { cloneDeep, defaultTo, get, isEmpty, orderBy } from 'lodash';
+import React from 'react';
+import { EuiTitle, EuiSpacer } from '@elastic/eui';
 import {
   DateRange,
   Detector,
@@ -37,14 +39,18 @@ import { RectAnnotationDatum } from '@elastic/charts';
 import { DEFAULT_ANOMALY_SUMMARY } from './constants';
 import { Datum, PlotData } from 'plotly.js';
 import moment from 'moment';
-import { calculateTimeWindowsWithMaxDataPoints } from '../../utils/anomalyResultUtils';
+import {
+  calculateTimeWindowsWithMaxDataPoints,
+  convertToEntityString,
+  transformEntityListsForHeatmap,
+} from '../../utils/anomalyResultUtils';
 import { HeatmapCell } from '../containers/AnomalyHeatmapChart';
 import {
   EntityAnomalySummaries,
   EntityAnomalySummary,
 } from '../../../../server/models/interfaces';
 import { toFixedNumberForAnomaly } from '../../../../server/utils/helpers';
-import { ENTITY_VALUE_PATH_FIELD } from '../../../../server/utils/constants';
+import { Entity } from '../../../../server/models/interfaces';
 
 export const convertAlerts = (response: any): MonitorAlert[] => {
   const alerts = get(response, 'response.alerts', []);
@@ -243,7 +249,13 @@ export const getAnomaliesHeatmapData = (
     }
   }
 
-  const entityValues = [] as string[];
+  // entityStrings are the string representations used as y-axis labels for the heatmap,
+  // and only contain the entity values.
+  // entityLists are the entity objects (containing name and value) which are
+  // populated in each of the heatmap cells, and used to fetch model-specific results when
+  // a user clicks on a particular cell
+  const entityStrings = [] as string[];
+  const entityLists = [] as any[];
   const maxAnomalyGrades = [] as any[];
   const numAnomalyGrades = [] as any[];
 
@@ -252,11 +264,12 @@ export const getAnomaliesHeatmapData = (
     dateRange
   );
 
-  entityAnomaliesMap.forEach((entityAnomalies, entity) => {
+  entityAnomaliesMap.forEach((entityAnomalies, entityListAsString) => {
     const maxAnomalyGradesForEntity = [] as number[];
     const numAnomalyGradesForEntity = [] as number[];
 
-    entityValues.push(entity);
+    entityStrings.push(entityListAsString);
+    entityLists.push(get(entityAnomalies, '0.entity', {}));
     timeWindows.forEach((timeWindow) => {
       const anomaliesInWindow = entityAnomalies.filter(
         (anomaly) =>
@@ -286,11 +299,13 @@ export const getAnomaliesHeatmapData = (
     moment(timestamp).format(HEATMAP_X_AXIS_DATE_FORMAT)
   );
   const cellTimeInterval = timeWindows[0].endDate - timeWindows[0].startDate;
+  const entityListsTransformed = transformEntityListsForHeatmap(entityLists);
   const plotData = buildHeatmapPlotData(
     plotTimesInString,
-    entityValues,
+    entityStrings,
     maxAnomalyGrades,
     numAnomalyGrades,
+    entityListsTransformed,
     cellTimeInterval
   );
   const resultPlotData = sortHeatmapPlotData(plotData, sortType, displayTopNum);
@@ -301,7 +316,8 @@ const buildHeatmapPlotData = (
   x: any[],
   y: any[],
   z: any[],
-  text: any[],
+  anomalyOccurrences: any[],
+  entityLists: any[],
   cellTimeInterval: number
 ): PlotData => {
   //@ts-ignore
@@ -317,8 +333,10 @@ const buildHeatmapPlotData = (
     xgap: 2,
     ygap: 2,
     opacity: 1,
-    text: text,
+    text: anomalyOccurrences,
+    customdata: entityLists,
     hovertemplate:
+      '<b>Entities</b>: %{customdata}<br>' +
       '<b>Time</b>: %{x}<br>' +
       '<b>Max anomaly grade</b>: %{z}<br>' +
       '<b>Anomaly occurrences</b>: %{text}' +
@@ -332,7 +350,8 @@ export const getEntitytAnomaliesHeatmapData = (
   entitiesAnomalySummaryResult: EntityAnomalySummaries[],
   displayTopNum: number
 ) => {
-  const entityValues = [] as string[];
+  const entityStrings = [] as string[];
+  const entityLists = [] as any[];
   const maxAnomalyGrades = [] as any[];
   const numAnomalyGrades = [] as any[];
 
@@ -350,9 +369,11 @@ export const getEntitytAnomaliesHeatmapData = (
       // only 1 whitesapce for all entities, to avoid heatmap with single row
       const blankStrValue = buildBlankStringWithLength(i);
       entitiesAnomalySummaries.push({
-        entity: {
-          value: blankStrValue,
-        },
+        entityList: [
+          {
+            value: blankStrValue,
+          },
+        ],
       } as EntityAnomalySummaries);
     }
   } else {
@@ -363,17 +384,23 @@ export const getEntitytAnomaliesHeatmapData = (
     const maxAnomalyGradesForEntity = [] as number[];
     const numAnomalyGradesForEntity = [] as number[];
 
-    const entityValue = get(
-      entityAnomalySummaries,
-      ENTITY_VALUE_PATH_FIELD,
-      ''
+    const entityString = convertToEntityString(
+      get(entityAnomalySummaries, 'entityList', [])
     ) as string;
+
     const anomaliesSummary = get(
       entityAnomalySummaries,
       'anomalySummaries',
       []
     ) as EntityAnomalySummary[];
-    entityValues.push(entityValue);
+    entityStrings.push(entityString);
+
+    const entityList = get(
+      entityAnomalySummaries,
+      'entityList',
+      []
+    ) as Entity[];
+    entityLists.push(entityList);
 
     timeWindows.forEach((timeWindow) => {
       const anomalySummaryInTimeRange = anomaliesSummary.filter(
@@ -413,11 +440,14 @@ export const getEntitytAnomaliesHeatmapData = (
   const timeStamps = plotTimes.map((timestamp) =>
     moment(timestamp).format(HEATMAP_X_AXIS_DATE_FORMAT)
   );
+  const entityListsTransformed = transformEntityListsForHeatmap(entityLists);
+
   const plotData = buildHeatmapPlotData(
     timeStamps,
-    entityValues.reverse(),
+    entityStrings.reverse(),
     maxAnomalyGrades.reverse(),
     numAnomalyGrades.reverse(),
+    entityListsTransformed.reverse(),
     timeWindows[0].endDate - timeWindows[0].startDate
   );
   return [plotData];
@@ -431,18 +461,18 @@ const getEntityAnomaliesMap = (
     return entityAnomaliesMap;
   }
   anomalies.forEach((anomaly) => {
-    const entity = get(anomaly, 'entity', [] as EntityData[]);
-    if (isEmpty(entity)) {
+    const entityList = get(anomaly, 'entity', [] as EntityData[]);
+    if (isEmpty(entityList)) {
       return;
     }
-    const entityValue = entity[0].value;
+    const entityListAsString = convertToEntityString(entityList);
     let singleEntityAnomalies = [];
-    if (entityAnomaliesMap.has(entityValue)) {
+    if (entityAnomaliesMap.has(entityListAsString)) {
       //@ts-ignore
-      singleEntityAnomalies = entityAnomaliesMap.get(entityValue);
+      singleEntityAnomalies = entityAnomaliesMap.get(entityListAsString);
     }
     singleEntityAnomalies.push(anomaly);
-    entityAnomaliesMap.set(entityValue, singleEntityAnomalies);
+    entityAnomaliesMap.set(entityListAsString, singleEntityAnomalies);
   });
   return entityAnomaliesMap;
 };
@@ -472,15 +502,18 @@ export const filterHeatmapPlotDataByY = (
   const originalYs = cloneDeep(heatmapData.y);
   const originalZs = cloneDeep(heatmapData.z);
   const originalTexts = cloneDeep(heatmapData.text);
+  const originalEntityLists = cloneDeep(heatmapData.customdata);
   const resultYs = [];
   const resultZs = [];
   const resultTexts = [];
+  const resultEntityLists = [];
   for (let i = 0; i < originalYs.length; i++) {
     //@ts-ignore
     if (selectedYs.includes(originalYs[i])) {
       resultYs.push(originalYs[i]);
       resultZs.push(originalZs[i]);
       resultTexts.push(originalTexts[i]);
+      resultEntityLists.push(originalEntityLists[i]);
     }
   }
   const updateHeatmapPlotData = {
@@ -488,6 +521,7 @@ export const filterHeatmapPlotDataByY = (
     y: resultYs,
     z: resultZs,
     text: resultTexts,
+    customdata: resultEntityLists,
   } as PlotData;
   return sortHeatmapPlotData(
     updateHeatmapPlotData,
@@ -504,6 +538,8 @@ export const sortHeatmapPlotData = (
   const originalYs = cloneDeep(heatmapData.y);
   const originalZs = cloneDeep(heatmapData.z);
   const originalTexts = cloneDeep(heatmapData.text);
+  const originalEntityLists = cloneDeep(heatmapData.customdata);
+
   const originalValuesToSort =
     sortType === AnomalyHeatmapSortType.SEVERITY
       ? cloneDeep(originalZs)
@@ -531,17 +567,20 @@ export const sortHeatmapPlotData = (
   const resultYs = [] as any[];
   const resultZs = [] as any[];
   const resultTexts = [] as any[];
+  const resultEntityLists = [] as any[];
   for (let i = sortedYIndices.length - 1; i >= 0; i--) {
     const index = get(sortedYIndices[i], 'index', 0);
     resultYs.push(originalYs[index]);
     resultZs.push(originalZs[index]);
     resultTexts.push(originalTexts[index]);
+    resultEntityLists.push(originalEntityLists[index]);
   }
   return {
     ...cloneDeep(heatmapData),
     y: resultYs,
     z: resultZs,
     text: resultTexts,
+    customdata: resultEntityLists,
   } as PlotData;
 };
 
@@ -642,4 +681,23 @@ export const getDateRangeWithSelectedHeatmapCell = (
     return heatmapCell.dateRange;
   }
   return originalDateRange;
+};
+
+export const getHCTitle = (entityList: Entity[]) => {
+  return (
+    <div>
+      <EuiTitle size="s">
+        <h3>
+          {entityList.map((entity: Entity) => {
+            return (
+              <div>
+                {entity.name}: <b>{entity.value}</b>{' '}
+              </div>
+            );
+          })}
+        </h3>
+      </EuiTitle>
+      <EuiSpacer size="s" />
+    </div>
+  );
 };

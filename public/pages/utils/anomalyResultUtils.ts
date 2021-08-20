@@ -36,7 +36,6 @@ import {
   AD_DOC_FIELDS,
   DOC_COUNT_FIELD,
   ENTITY_FIELD,
-  ENTITY_NAME_PATH_FIELD,
   ENTITY_VALUE_PATH_FIELD,
   KEY_FIELD,
   MIN_IN_MILLI_SECS,
@@ -44,6 +43,9 @@ import {
   DAY_IN_MILLI_SECS,
   SORT_DIRECTION,
   WEEK_IN_MILLI_SECS,
+  MODEL_ID_FIELD,
+  ENTITY_LIST_FIELD,
+  ENTITY_LIST_DELIMITER,
 } from '../../../server/utils/constants';
 import { toFixedNumberForAnomaly } from '../../../server/utils/helpers';
 import {
@@ -61,7 +63,10 @@ import {
   MISSING_FEATURE_DATA_SEVERITY,
 } from '../../utils/constants';
 import { HeatmapCell } from '../AnomalyCharts/containers/AnomalyHeatmapChart';
-import { AnomalyHeatmapSortType } from '../AnomalyCharts/utils/anomalyChartUtils';
+import {
+  AnomalyHeatmapSortType,
+  NUM_CELLS,
+} from '../AnomalyCharts/utils/anomalyChartUtils';
 import { DETECTOR_INIT_FAILURES } from '../DetectorDetail/utils/constants';
 import {
   COUNT_ANOMALY_AGGS,
@@ -113,7 +118,7 @@ export const buildParamsForGetAnomalyResultsWithDateRange = (
   startTime: number,
   endTime: number,
   anomalyOnly: boolean = false,
-  entity: Entity | undefined = undefined
+  entityList: Entity[] | undefined = undefined
 ) => {
   return {
     from: 0,
@@ -124,8 +129,7 @@ export const buildParamsForGetAnomalyResultsWithDateRange = (
     endTime: endTime,
     fieldName: AD_DOC_FIELDS.DATA_START_TIME,
     anomalyThreshold: anomalyOnly ? 0 : -1,
-    entityName: entity?.name,
-    entityValue: entity?.value,
+    entityList: JSON.stringify(entityList),
   };
 };
 
@@ -308,9 +312,10 @@ export const getAnomalySummaryQuery = (
   startTime: number,
   endTime: number,
   detectorId: string,
-  entity: Entity | undefined = undefined,
+  entityList: Entity[] | undefined = undefined,
   isHistorical?: boolean,
-  taskId?: string
+  taskId?: string,
+  modelId?: string
 ) => {
   const termField =
     isHistorical && taskId ? { task_id: taskId } : { detector_id: detectorId };
@@ -337,34 +342,6 @@ export const getAnomalySummaryQuery = (
           {
             term: termField,
           },
-          ...(entity
-            ? [
-                {
-                  nested: {
-                    path: ENTITY_FIELD,
-                    query: {
-                      term: {
-                        [ENTITY_VALUE_PATH_FIELD]: {
-                          value: entity.value,
-                        },
-                      },
-                    },
-                  },
-                },
-                {
-                  nested: {
-                    path: ENTITY_FIELD,
-                    query: {
-                      term: {
-                        [ENTITY_NAME_PATH_FIELD]: {
-                          value: entity.name,
-                        },
-                      },
-                    },
-                  },
-                },
-              ]
-            : []),
         ],
       },
     },
@@ -410,6 +387,8 @@ export const getAnomalySummaryQuery = (
     },
   };
 
+  // If querying RT results: remove any results that include a task_id, as this indicates
+  // a historical result from a historical task.
   if (!isHistorical) {
     requestBody.query.bool = {
       ...requestBody.query.bool,
@@ -423,6 +402,12 @@ export const getAnomalySummaryQuery = (
     };
   }
 
+  // Add entity filters if this is a HC detector
+  if (entityList !== undefined && entityList.length > 0) {
+    //@ts-ignore
+    requestBody.query.bool.filter.push(getEntityFilters(modelId, entityList));
+  }
+
   return requestBody;
 };
 
@@ -430,9 +415,10 @@ export const getBucketizedAnomalyResultsQuery = (
   startTime: number,
   endTime: number,
   detectorId: string,
-  entity: Entity | undefined = undefined,
+  entityList: Entity[] | undefined = undefined,
   isHistorical?: boolean,
-  taskId?: string
+  taskId?: string,
+  modelId?: string
 ) => {
   const termField =
     isHistorical && taskId ? { task_id: taskId } : { detector_id: detectorId };
@@ -455,34 +441,6 @@ export const getBucketizedAnomalyResultsQuery = (
           {
             term: termField,
           },
-          ...(entity
-            ? [
-                {
-                  nested: {
-                    path: ENTITY_FIELD,
-                    query: {
-                      term: {
-                        [ENTITY_VALUE_PATH_FIELD]: {
-                          value: entity.value,
-                        },
-                      },
-                    },
-                  },
-                },
-                {
-                  nested: {
-                    path: ENTITY_FIELD,
-                    query: {
-                      term: {
-                        [ENTITY_NAME_PATH_FIELD]: {
-                          value: entity.name,
-                        },
-                      },
-                    },
-                  },
-                },
-              ]
-            : []),
         ],
       },
     },
@@ -513,6 +471,8 @@ export const getBucketizedAnomalyResultsQuery = (
     },
   };
 
+  // If querying RT results: remove any results that include a task_id, as this indicates
+  // a historical result from a historical task.
   if (!isHistorical) {
     requestBody.query.bool = {
       ...requestBody.query.bool,
@@ -524,6 +484,12 @@ export const getBucketizedAnomalyResultsQuery = (
         },
       },
     };
+  }
+
+  // Add entity filters if this is a HC detector
+  if (entityList !== undefined && entityList.length > 0) {
+    //@ts-ignore
+    requestBody.query.bool.filter.push(getEntityFilters(modelId, entityList));
   }
 
   return requestBody;
@@ -979,9 +945,11 @@ export const filterWithHeatmapFilter = (
   if (isFilteringWithEntity) {
     data = data
       .filter((anomaly) => !isEmpty(get(anomaly, 'entity', [])))
-      .filter(
-        (anomaly) => get(anomaly, 'entity')[0].value === heatmapCell.entityValue
-      );
+      .filter((anomaly) => {
+        const dataEntityList = get(anomaly, 'entity');
+        const cellEntityList = get(heatmapCell, 'entityList');
+        return entityListsMatch(dataEntityList, cellEntityList);
+      });
   }
   return filterWithDateRange(data, heatmapCell.dateRange, timeField);
 };
@@ -992,64 +960,67 @@ export const getTopAnomalousEntitiesQuery = (
   detectorId: string,
   size: number,
   sortType: AnomalyHeatmapSortType,
+  isMultiCategory: boolean,
   isHistorical?: boolean,
   taskId?: string
 ) => {
   const termField =
     isHistorical && taskId ? { task_id: taskId } : { detector_id: detectorId };
 
-  const requestBody = {
-    size: 0,
-    query: {
-      bool: {
-        filter: [
-          {
-            range: {
-              [AD_DOC_FIELDS.ANOMALY_GRADE]: {
-                gt: 0,
+  // To handle BWC, we will return 2 possible queries based on the # of categorical fields:
+  // (1) legacy way (1 category field): bucket aggregate over the single, nested, 'entity.value' field
+  // (2) new way (>= 2 category fields): bucket aggregate over the new 'model_id' field
+  const requestBody = isMultiCategory
+    ? {
+        size: 0,
+        query: {
+          bool: {
+            filter: [
+              {
+                range: {
+                  [AD_DOC_FIELDS.ANOMALY_GRADE]: {
+                    gt: 0,
+                  },
+                },
               },
-            },
-          },
-          {
-            range: {
-              data_end_time: {
-                gte: startTime,
-                lte: endTime,
+              {
+                range: {
+                  data_end_time: {
+                    gte: startTime,
+                    lte: endTime,
+                  },
+                },
               },
-            },
+              {
+                term: termField,
+              },
+            ],
           },
-          {
-            term: termField,
-          },
-        ],
-      },
-    },
-    aggs: {
-      [TOP_ENTITIES_FIELD]: {
-        nested: {
-          path: ENTITY_FIELD,
         },
         aggs: {
           [TOP_ENTITY_AGGS]: {
             terms: {
-              field: ENTITY_VALUE_PATH_FIELD,
+              field: MODEL_ID_FIELD,
               size: size,
               ...(sortType === AnomalyHeatmapSortType.SEVERITY
                 ? {
                     order: {
-                      [TOP_ANOMALY_GRADE_SORT_AGGS]: SORT_DIRECTION.DESC,
+                      [MAX_ANOMALY_AGGS]: SORT_DIRECTION.DESC,
                     },
                   }
                 : {}),
             },
             aggs: {
-              [TOP_ANOMALY_GRADE_SORT_AGGS]: {
-                reverse_nested: {},
-                aggs: {
-                  [MAX_ANOMALY_AGGS]: {
-                    max: {
-                      field: AD_DOC_FIELDS.ANOMALY_GRADE,
-                    },
+              [MAX_ANOMALY_AGGS]: {
+                max: {
+                  field: AD_DOC_FIELDS.ANOMALY_GRADE,
+                },
+              },
+              [ENTITY_LIST_FIELD]: {
+                top_hits: {
+                  size: 1,
+                  _source: {
+                    include: [ENTITY_FIELD],
                   },
                 },
               },
@@ -1059,7 +1030,7 @@ export const getTopAnomalousEntitiesQuery = (
                       bucket_sort: {
                         sort: [
                           {
-                            [`${TOP_ANOMALY_GRADE_SORT_AGGS}.${MAX_ANOMALY_AGGS}`]: {
+                            [`${MAX_ANOMALY_AGGS}`]: {
                               order: SORT_DIRECTION.DESC,
                             },
                           },
@@ -1071,9 +1042,83 @@ export const getTopAnomalousEntitiesQuery = (
             },
           },
         },
-      },
-    },
-  };
+      }
+    : {
+        size: 0,
+        query: {
+          bool: {
+            filter: [
+              {
+                range: {
+                  [AD_DOC_FIELDS.ANOMALY_GRADE]: {
+                    gt: 0,
+                  },
+                },
+              },
+              {
+                range: {
+                  data_end_time: {
+                    gte: startTime,
+                    lte: endTime,
+                  },
+                },
+              },
+              {
+                term: termField,
+              },
+            ],
+          },
+        },
+        aggs: {
+          [TOP_ENTITIES_FIELD]: {
+            nested: {
+              path: ENTITY_FIELD,
+            },
+            aggs: {
+              [TOP_ENTITY_AGGS]: {
+                terms: {
+                  field: ENTITY_VALUE_PATH_FIELD,
+                  size: size,
+                  ...(sortType === AnomalyHeatmapSortType.SEVERITY
+                    ? {
+                        order: {
+                          [TOP_ANOMALY_GRADE_SORT_AGGS]: SORT_DIRECTION.DESC,
+                        },
+                      }
+                    : {}),
+                },
+                aggs: {
+                  [TOP_ANOMALY_GRADE_SORT_AGGS]: {
+                    reverse_nested: {},
+                    aggs: {
+                      [MAX_ANOMALY_AGGS]: {
+                        max: {
+                          field: AD_DOC_FIELDS.ANOMALY_GRADE,
+                        },
+                      },
+                    },
+                  },
+                  ...(sortType === AnomalyHeatmapSortType.SEVERITY
+                    ? {
+                        [MAX_ANOMALY_SORT_AGGS]: {
+                          bucket_sort: {
+                            sort: [
+                              {
+                                [`${TOP_ANOMALY_GRADE_SORT_AGGS}.${MAX_ANOMALY_AGGS}`]: {
+                                  order: SORT_DIRECTION.DESC,
+                                },
+                              },
+                            ],
+                          },
+                        },
+                      }
+                    : {}),
+                },
+              },
+            },
+          },
+        },
+      };
 
   if (!isHistorical) {
     requestBody.query.bool = {
@@ -1092,34 +1137,42 @@ export const getTopAnomalousEntitiesQuery = (
 };
 
 export const parseTopEntityAnomalySummaryResults = (
-  result: any
+  result: any,
+  isMultiCategory: boolean
 ): EntityAnomalySummaries[] => {
-  const rawEntityAnomalySummaries = get(
-    result,
-    `response.aggregations.${TOP_ENTITIES_FIELD}.${TOP_ENTITY_AGGS}.buckets`,
-    []
-  ) as any[];
+  const rawEntityAnomalySummaries = isMultiCategory
+    ? get(result, `response.aggregations.${TOP_ENTITY_AGGS}.buckets`, [])
+    : (get(
+        result,
+        `response.aggregations.${TOP_ENTITIES_FIELD}.${TOP_ENTITY_AGGS}.buckets`,
+        []
+      ) as any[]);
   let topEntityAnomalySummaries = [] as EntityAnomalySummaries[];
-  rawEntityAnomalySummaries.forEach((item) => {
+  rawEntityAnomalySummaries.forEach((item: any) => {
     const anomalyCount = get(item, DOC_COUNT_FIELD, 0);
-    const entityValue = get(item, KEY_FIELD, 0);
-    const entity = {
-      value: entityValue,
-    } as Entity;
-    const maxAnomalyGrade = get(
-      item,
-      [TOP_ANOMALY_GRADE_SORT_AGGS, MAX_ANOMALY_AGGS].join('.'),
-      0
-    );
-    const enityAnomalySummary = {
+    const entityList = isMultiCategory
+      ? get(item, `${ENTITY_LIST_FIELD}.hits.hits.0._source.entity`, [])
+      : ([
+          {
+            value: get(item, KEY_FIELD, 0),
+          },
+        ] as Entity[]);
+
+    const maxAnomalyGrade = isMultiCategory
+      ? get(item, MAX_ANOMALY_AGGS, 0)
+      : get(item, [TOP_ANOMALY_GRADE_SORT_AGGS, MAX_ANOMALY_AGGS].join('.'), 0);
+    const entityAnomalySummary = {
       maxAnomaly: maxAnomalyGrade,
       anomalyCount: anomalyCount,
     } as EntityAnomalySummary;
-    const enityAnomaliSummaries = {
-      entity: entity,
-      anomalySummaries: [enityAnomalySummary],
+    const entityAnomalySummaries = {
+      entityList: entityList,
+      anomalySummaries: [entityAnomalySummary],
     } as EntityAnomalySummaries;
-    topEntityAnomalySummaries.push(enityAnomaliSummaries);
+    if (isMultiCategory) {
+      entityAnomalySummaries.modelId = get(item, KEY_FIELD, '');
+    }
+    topEntityAnomalySummaries.push(entityAnomalySummaries);
   });
   return topEntityAnomalySummaries;
 };
@@ -1129,8 +1182,8 @@ export const getEntityAnomalySummariesQuery = (
   endTime: number,
   detectorId: string,
   size: number,
-  categoryField: string,
-  entityValue: string,
+  entityList: Entity[],
+  modelId: string | undefined,
   isHistorical?: boolean,
   taskId?: string
 ) => {
@@ -1146,6 +1199,7 @@ export const getEntityAnomalySummariesQuery = (
   // if startTime is not divisible by fixedInterval, there will be remainder,
   // this can be offset for bucket_key
   const offsetInMillisec = startTime % (fixedInterval * MIN_IN_MILLI_SECS);
+
   const requestBody = {
     size: 0,
     query: {
@@ -1168,30 +1222,6 @@ export const getEntityAnomalySummariesQuery = (
           },
           {
             term: termField,
-          },
-          {
-            nested: {
-              path: ENTITY_FIELD,
-              query: {
-                term: {
-                  [ENTITY_VALUE_PATH_FIELD]: {
-                    value: entityValue,
-                  },
-                },
-              },
-            },
-          },
-          {
-            nested: {
-              path: ENTITY_FIELD,
-              query: {
-                term: {
-                  [ENTITY_NAME_PATH_FIELD]: {
-                    value: categoryField,
-                  },
-                },
-              },
-            },
           },
         ],
       },
@@ -1234,12 +1264,18 @@ export const getEntityAnomalySummariesQuery = (
     };
   }
 
+  // Add entity filters if this is a HC detector
+  if (entityList !== undefined && entityList.length > 0) {
+    //@ts-ignore
+    requestBody.query.bool.filter.push(getEntityFilters(modelId, entityList));
+  }
+
   return requestBody;
 };
 
 export const parseEntityAnomalySummaryResults = (
   result: any,
-  entity: Entity
+  entityList: Entity[]
 ): EntityAnomalySummaries => {
   const rawEntityAnomalySummaries = get(
     result,
@@ -1251,18 +1287,35 @@ export const parseEntityAnomalySummaryResults = (
     const anomalyCount = get(item, `${COUNT_ANOMALY_AGGS}.value`, 0);
     const startTime = get(item, 'key', 0);
     const maxAnomalyGrade = get(item, `${MAX_ANOMALY_AGGS}.value`, 0);
-    const enityAnomalySummary = {
+    const entityAnomalySummary = {
       startTime: startTime,
       maxAnomaly: maxAnomalyGrade,
       anomalyCount: anomalyCount,
     } as EntityAnomalySummary;
-    anomalySummaries.push(enityAnomalySummary);
+    anomalySummaries.push(entityAnomalySummary);
   });
-  const enityAnomalySummaries = {
-    entity: entity,
+  const entityAnomalySummaries = {
+    entityList: entityList,
     anomalySummaries: anomalySummaries,
   } as EntityAnomalySummaries;
-  return enityAnomalySummaries;
+  return entityAnomalySummaries;
+};
+
+export const convertToEntityString = (
+  entityList: Entity[],
+  delimiter?: string
+) => {
+  let entityString = '';
+  const delimiterToUse = delimiter ? delimiter : ENTITY_LIST_DELIMITER;
+  if (!isEmpty(entityList)) {
+    entityList.forEach((entity: any, index) => {
+      if (index > 0) {
+        entityString += delimiterToUse;
+      }
+      entityString += entity.value;
+    });
+  }
+  return entityString;
 };
 
 export const getAnomalyDataRangeQuery = (
@@ -1424,4 +1477,104 @@ export const parseHistoricalAggregatedAnomalies = (
   });
 
   return anomalies;
+};
+export const convertToCategoryFieldString = (
+  categoryFields: string[],
+  delimiter: string
+) => {
+  let categoryFieldString = '';
+  if (!isEmpty(categoryFields)) {
+    categoryFields.forEach((categoryField: any, index) => {
+      if (index > 0) {
+        categoryFieldString += delimiter;
+      }
+      categoryFieldString += categoryField;
+    });
+  }
+  return categoryFieldString;
+};
+
+export const convertToCategoryFieldAndEntityString = (entityList: Entity[]) => {
+  let entityString = '';
+  if (!isEmpty(entityList)) {
+    entityList.forEach((entity: any, index) => {
+      if (index > 0) {
+        entityString += '\n';
+      }
+      entityString += entity.name + ': ' + entity.value;
+    });
+  }
+  return entityString;
+};
+
+export const convertToEntityList = (
+  entityListAsString: string,
+  categoryFields: string[],
+  delimiter: string
+) => {
+  let entityList = [] as Entity[];
+  const valueArr = entityListAsString.split(delimiter);
+  var i;
+  for (i = 0; i < valueArr.length; i++) {
+    entityList.push({
+      name: categoryFields[i],
+      value: valueArr[i],
+    });
+  }
+  return entityList;
+};
+
+export const entityListsMatch = (
+  entityListA: Entity[],
+  entityListB: Entity[]
+) => {
+  if (get(entityListA, 'length') !== get(entityListB, 'length')) {
+    return false;
+  }
+  var i;
+  for (i = 0; i < entityListA.length; i++) {
+    if (entityListA[i].value !== entityListB[i].value) {
+      return false;
+    }
+  }
+  return true;
+};
+
+// Helper fn to get the correct filters based on how many categorical fields there are.
+const getEntityFilters = (
+  modelId: string | undefined,
+  entityList: Entity[]
+) => {
+  return entityList.length > 1
+    ? {
+        term: {
+          model_id: modelId,
+        },
+      }
+    : {
+        nested: {
+          path: ENTITY_FIELD,
+          query: {
+            term: {
+              [ENTITY_VALUE_PATH_FIELD]: {
+                value: get(entityList, '0.value', ''),
+              },
+            },
+          },
+        },
+      };
+};
+
+export const transformEntityListsForHeatmap = (entityLists: any[]) => {
+  let transformedEntityLists = [] as any[];
+  entityLists.forEach((entityList: Entity[]) => {
+    const listAsString = convertToEntityString(entityList, ', ');
+    let row = [];
+    var i;
+    for (i = 0; i < NUM_CELLS; i++) {
+      row.push(listAsString);
+    }
+    transformedEntityLists.push(row);
+  });
+  return transformedEntityLists;
 };

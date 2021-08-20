@@ -33,7 +33,7 @@ import {
   EuiSuperDatePicker,
   EuiTitle,
 } from '@elastic/eui';
-import { get } from 'lodash';
+import { get, orderBy } from 'lodash';
 import moment, { DurationInputArg2 } from 'moment';
 import React, { useState } from 'react';
 import { EntityAnomalySummaries } from '../../../../server/models/interfaces';
@@ -58,6 +58,7 @@ import {
   getConfidenceWording,
   getFeatureBreakdownWording,
   getFeatureDataWording,
+  getHCTitle,
 } from '../utils/anomalyChartUtils';
 import {
   DATE_PICKER_QUICK_OPTIONS,
@@ -67,7 +68,7 @@ import { AnomalyOccurrenceChart } from './AnomalyOccurrenceChart';
 import { FeatureBreakDown } from './FeatureBreakDown';
 import { convertTimestampToString } from '../../../utils/utils';
 
-interface AnomaliesChartProps {
+export interface AnomaliesChartProps {
   onDateRangeChange(
     startDate: number,
     endDate: number,
@@ -245,9 +246,13 @@ export const AnomaliesChart = React.memo((props: AnomaliesChartProps) => {
                       <AnomalyHeatmapChart
                         detectorId={get(props.detector, 'id', '')}
                         detectorName={get(props.detector, 'name', '')}
+                        detectorTaskProgress={get(
+                          props.detector,
+                          'taskProgress',
+                          0
+                        )}
+                        isHistorical={props.isHistorical}
                         dateRange={props.dateRange}
-                        //@ts-ignore
-                        title={props.detectorCategoryField[0]}
                         anomalies={anomalies}
                         isLoading={props.isLoading}
                         showAlerts={props.showAlerts}
@@ -266,6 +271,12 @@ export const AnomaliesChart = React.memo((props: AnomaliesChartProps) => {
                         onDisplayOptionChanged={props.onDisplayOptionChanged}
                         heatmapDisplayOption={props.heatmapDisplayOption}
                         isNotSample={props.isNotSample}
+                        // Category fields in HC results are always sorted alphabetically. To make all chart
+                        // wording consistent with the returned results, we sort the given category
+                        // fields in alphabetical order as well.
+                        categoryField={orderBy(props.detectorCategoryField, [
+                          (categoryField) => categoryField.toLowerCase(),
+                        ])}
                       />,
                       props.isNotSample !== true
                         ? [
@@ -284,15 +295,13 @@ export const AnomaliesChart = React.memo((props: AnomaliesChartProps) => {
                                     <EuiSpacer size="s" />
                                     <EuiTitle size="s">
                                       <h3>
-                                        {`${get(
-                                          props,
-                                          'detectorCategoryField.0'
-                                        )} `}
                                         <b>
-                                          {
-                                            props.selectedHeatmapCell
-                                              ?.entityValue
-                                          }
+                                          {props.selectedHeatmapCell
+                                            ? getHCTitle(
+                                                props.selectedHeatmapCell
+                                                  .entityList
+                                              )
+                                            : '-'}
                                         </b>
                                       </h3>
                                     </EuiTitle>
