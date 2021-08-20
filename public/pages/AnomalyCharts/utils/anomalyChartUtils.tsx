@@ -249,6 +249,11 @@ export const getAnomaliesHeatmapData = (
     }
   }
 
+  // entityStrings are the string representations used as y-axis labels for the heatmap,
+  // and only contain the entity values.
+  // entityLists are the entity objects (containing name and value) which are
+  // populated in each of the heatmap cells, and used to fetch model-specific results when
+  // a user clicks on a particular cell
   const entityStrings = [] as string[];
   const entityLists = [] as any[];
   const maxAnomalyGrades = [] as any[];

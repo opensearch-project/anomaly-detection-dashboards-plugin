@@ -52,6 +52,7 @@ import { getDetectorStateDetails } from '../../DetectorDetail/utils/helpers';
 import { HistoricalRangeModal } from '../components/HistoricalRangeModal';
 import {
   HISTORICAL_DETECTOR_RESULT_REFRESH_RATE,
+  HISTORICAL_HC_DETECTOR_RESULT_REFRESH_RATE,
   HISTORICAL_DETECTOR_STOP_THRESHOLD,
 } from '../utils/constants';
 import { CoreStart } from '../../../../../../src/core/public';
@@ -115,7 +116,9 @@ export function HistoricalDetectorResults(
     ) {
       const intervalId = setInterval(
         fetchDetector,
-        HISTORICAL_DETECTOR_RESULT_REFRESH_RATE
+        isHCDetector
+          ? HISTORICAL_HC_DETECTOR_RESULT_REFRESH_RATE
+          : HISTORICAL_DETECTOR_RESULT_REFRESH_RATE
       );
       return () => {
         clearInterval(intervalId);
