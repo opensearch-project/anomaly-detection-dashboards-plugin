@@ -90,6 +90,7 @@ export interface EntityAnomalySummary {
 }
 
 export interface EntityAnomalySummaries {
-  entity: Entity;
+  entityList: Entity[];
   anomalySummaries: EntityAnomalySummary[];
+  modelId?: string;
 }

@@ -25,7 +25,7 @@
  */
 
 import { get, omit, cloneDeep, isEmpty } from 'lodash';
-import { AnomalyResults } from '../../models/interfaces';
+import { AnomalyResults, Entity } from '../../models/interfaces';
 import { GetDetectorsQueryParams, Detector } from '../../models/types';
 import { mapKeysDeep, toCamel, toSnake } from '../../utils/helpers';
 import {
@@ -33,6 +33,9 @@ import {
   STACK_TRACE_PATTERN,
   OPENSEARCH_EXCEPTION_PREFIX,
   REALTIME_TASK_TYPE_PREFIX,
+  ENTITY_FIELD,
+  ENTITY_NAME_PATH_FIELD,
+  ENTITY_VALUE_PATH_FIELD,
 } from '../../utils/constants';
 import { InitProgress } from '../../models/interfaces';
 import { MAX_DETECTORS } from '../../utils/constants';
@@ -293,20 +296,6 @@ export const getErrorMessage = (err: any) => {
     : get(err, 'message');
 };
 
-// Currently: detector w/ detection date range is considered a 'historical' detector
-export const getHistoricalDetectors = (detectors: Detector[]) => {
-  return detectors.filter(
-    (detector) => detector.detectionDateRange !== undefined
-  );
-};
-
-// Currently: detector w/ no detection date range is considered a 'realtime' detector
-export const getRealtimeDetectors = (detectors: Detector[]) => {
-  return detectors.filter(
-    (detector) => detector.detectionDateRange === undefined
-  );
-};
-
 export const getDetectorTasks = (detectorTaskResponses: any[]) => {
   const detectorToTaskMap = {} as { [key: string]: any };
   detectorTaskResponses.forEach((response) => {
@@ -435,4 +424,35 @@ export const getLatestDetectorTasksQuery = () => {
 
 export const isRealTimeTask = (task: any) => {
   return get(task, 'task_type', '').includes(REALTIME_TASK_TYPE_PREFIX);
+};
+
+export const getFiltersFromEntityList = (entityListAsObj: object) => {
+  let filters = [] as any[];
+  Object.values(entityListAsObj).forEach((entity: Entity) => {
+    filters.push({
+      nested: {
+        path: ENTITY_FIELD,
+        query: {
+          term: {
+            [ENTITY_NAME_PATH_FIELD]: {
+              value: entity.name,
+            },
+          },
+        },
+      },
+    });
+    filters.push({
+      nested: {
+        path: ENTITY_FIELD,
+        query: {
+          term: {
+            [ENTITY_VALUE_PATH_FIELD]: {
+              value: entity.value,
+            },
+          },
+        },
+      },
+    });
+  });
+  return filters;
 };

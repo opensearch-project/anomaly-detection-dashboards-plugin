@@ -106,3 +106,5 @@ export const DEFAULT_ANOMALY_SUMMARY = {
   maxConfidence: 0,
   lastAnomalyOccurrence: '-',
 };
+
+export const HEATMAP_CHART_Y_AXIS_WIDTH = 30;

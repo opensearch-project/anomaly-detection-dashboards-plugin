@@ -68,6 +68,7 @@ import {
   parseTopEntityAnomalySummaryResults,
   getEntityAnomalySummariesQuery,
   parseEntityAnomalySummaryResults,
+  convertToEntityString,
 } from '../../utils/anomalyResultUtils';
 import { AnomalyResultsTable } from './AnomalyResultsTable';
 import { AnomaliesChart } from '../../AnomalyCharts/containers/AnomaliesChart';
@@ -90,6 +91,7 @@ import {
 import {
   getAnomalyHistoryWording,
   NUM_CELLS,
+  getHCTitle,
 } from '../../AnomalyCharts/utils/anomalyChartUtils';
 import { darkModeEnabled } from '../../../utils/opensearchDashboardsUtils';
 import {
@@ -165,6 +167,7 @@ export const AnomalyHistory = (props: AnomalyHistoryProps) => {
 
   const detectorCategoryField = get(props.detector, 'categoryField', []);
   const isHCDetector = !isEmpty(detectorCategoryField);
+  const isMultiCategory = detectorCategoryField.length > 1;
   const backgroundColor = darkModeEnabled() ? '#29017' : '#F7F7F7';
 
   // We load at most 10k AD result data points for one call. If user choose
@@ -172,7 +175,8 @@ export const AnomalyHistory = (props: AnomalyHistoryProps) => {
   // aggregation to load data points in whole time range with larger interval.
   // If entity is specified, we only query AD result data points for this entity.
   async function getBucketizedAnomalyResults(
-    entity: Entity | undefined = undefined
+    entityList: Entity[] | undefined = undefined,
+    modelId?: string
   ) {
     try {
       setIsLoadingAnomalyResults(true);
@@ -182,9 +186,10 @@ export const AnomalyHistory = (props: AnomalyHistoryProps) => {
             dateRange.startDate,
             dateRange.endDate,
             props.detector.id,
-            entity,
+            entityList,
             props.isHistorical,
-            taskId.current
+            taskId.current,
+            modelId
           )
         )
       );
@@ -198,9 +203,10 @@ export const AnomalyHistory = (props: AnomalyHistoryProps) => {
             dateRange.startDate,
             dateRange.endDate,
             props.detector.id,
-            entity,
+            entityList,
             props.isHistorical,
-            taskId.current
+            taskId.current,
+            modelId
           )
         )
       );
@@ -307,34 +313,39 @@ export const AnomalyHistory = (props: AnomalyHistoryProps) => {
 
   const fetchHCAnomalySummaries = async () => {
     setIsLoadingAnomalyResults(true);
+
     const query = getTopAnomalousEntitiesQuery(
       dateRange.startDate,
       dateRange.endDate,
       props.detector.id,
       heatmapDisplayOption.entityOption.value,
       heatmapDisplayOption.sortType,
+      isMultiCategory,
       props.isHistorical,
       taskId.current
     );
     const result = await dispatch(searchResults(query));
-    const topEnityAnomalySummaries = parseTopEntityAnomalySummaryResults(
-      result
-    );
-    const entities = topEnityAnomalySummaries.map((summary) => summary.entity);
 
-    const promises = entities.map(async (entity: Entity) => {
-      const entityResultQuery = getEntityAnomalySummariesQuery(
-        dateRange.startDate,
-        dateRange.endDate,
-        props.detector.id,
-        NUM_CELLS,
-        get(props.detector, 'categoryField[0]', ''),
-        entity.value,
-        props.isHistorical,
-        taskId.current
-      );
-      return dispatch(searchResults(entityResultQuery));
-    });
+    const topEntityAnomalySummaries = parseTopEntityAnomalySummaryResults(
+      result,
+      isMultiCategory
+    );
+
+    const promises = topEntityAnomalySummaries.map(
+      async (summary: EntityAnomalySummaries) => {
+        const entityResultQuery = getEntityAnomalySummariesQuery(
+          dateRange.startDate,
+          dateRange.endDate,
+          props.detector.id,
+          NUM_CELLS,
+          summary.entityList,
+          summary.modelId,
+          props.isHistorical,
+          taskId.current
+        );
+        return dispatch(searchResults(entityResultQuery));
+      }
+    );
 
     const allEntityAnomalySummaries = await Promise.all(promises).catch(
       (error) => {
@@ -346,15 +357,19 @@ export const AnomalyHistory = (props: AnomalyHistoryProps) => {
     const entitiesAnomalySummaries = [] as EntityAnomalySummaries[];
 
     if (!isEmpty(allEntityAnomalySummaries)) {
+      const entityLists = topEntityAnomalySummaries.map(
+        (summary) => summary.entityList
+      );
       //@ts-ignore
       allEntityAnomalySummaries.forEach((entityResponse, i) => {
         const entityAnomalySummariesResult = parseEntityAnomalySummaryResults(
           entityResponse,
-          entities[i]
+          entityLists[i]
         );
         entitiesAnomalySummaries.push(entityAnomalySummariesResult);
       });
     }
+
     setEntityAnomalySummaries(entitiesAnomalySummaries);
     setIsLoadingAnomalyResults(false);
   };
@@ -369,14 +384,19 @@ export const AnomalyHistory = (props: AnomalyHistoryProps) => {
           MAX_ANOMALIES
         )
       ) {
+        // TODO: inject model id in heatmapCell to propagate
         fetchBucketizedEntityAnomalyData(heatmapCell);
       } else {
+        // TODO: inject model id in heatmapCell to propagate
         fetchAllEntityAnomalyData(heatmapCell);
         setBucketizedAnomalyResults(undefined);
       }
     } catch (err) {
       console.error(
-        `Failed to get anomaly results for entity ${heatmapCell.entityValue}`,
+        `Failed to get anomaly results for the following entities: ${convertToEntityString(
+          heatmapCell.entityList,
+          ', '
+        )}`,
         err
       );
     } finally {
@@ -389,11 +409,7 @@ export const AnomalyHistory = (props: AnomalyHistoryProps) => {
       heatmapCell.dateRange.startDate,
       heatmapCell.dateRange.endDate,
       false,
-      {
-        //@ts-ignore
-        name: props.detector.categoryField[0],
-        value: heatmapCell.entityValue,
-      }
+      heatmapCell.entityList
     );
 
     const entityAnomalyResultResponse = await dispatch(
@@ -418,11 +434,7 @@ export const AnomalyHistory = (props: AnomalyHistoryProps) => {
   };
 
   const fetchBucketizedEntityAnomalyData = async (heatmapCell: HeatmapCell) => {
-    getBucketizedAnomalyResults({
-      //@ts-ignore
-      name: props.detector.categoryField[0],
-      value: heatmapCell.entityValue,
-    });
+    getBucketizedAnomalyResults(heatmapCell.entityList);
   };
   const [atomicAnomalyResults, setAtomicAnomalyResults] = useState<Anomalies>();
   const [rawAnomalyResults, setRawAnomalyResults] = useState<Anomalies>();
@@ -541,24 +553,13 @@ export const AnomalyHistory = (props: AnomalyHistoryProps) => {
         entityAnomalySummaries={entityAnomalySummaries}
       >
         <div style={{ padding: '20px' }}>
-          {/*
-           TODO: update title and occurrence chart to support multi category field support
-          */}
           {isHCDetector
             ? [
                 <AnomalyOccurrenceChart
                   title={
-                    selectedHeatmapCell && props.detector?.categoryField ? (
-                      <EuiTitle size="s">
-                        <div>
-                          {`${get(props, 'detector.categoryField.0')}`}{' '}
-                          <b>{selectedHeatmapCell?.entityValue}</b>
-                          <EuiSpacer size="s" />
-                        </div>
-                      </EuiTitle>
-                    ) : (
-                      '-'
-                    )
+                    selectedHeatmapCell
+                      ? getHCTitle(selectedHeatmapCell.entityList)
+                      : '-'
                   }
                   dateRange={dateRange}
                   onDateRangeChange={handleDateRangeChange}
@@ -574,7 +575,6 @@ export const AnomalyHistory = (props: AnomalyHistoryProps) => {
                   detector={props.detector}
                   monitor={props.monitor}
                   isHCDetector={isHCDetector}
-                  isHistorical={props.isHistorical}
                   selectedHeatmapCell={selectedHeatmapCell}
                 />,
                 <EuiSpacer size="m" />,
@@ -608,12 +608,9 @@ export const AnomalyHistory = (props: AnomalyHistoryProps) => {
                     dateRange={zoomRange}
                     featureDataSeriesName="Feature output"
                     showFeatureMissingDataPointAnnotation={
-                      // disable showing missing feature alert when it is HC or historical
-                      props.isHistorical
-                        ? false
-                        : props.detector.enabled && !isHCDetector
-                        ? true
-                        : false
+                      props.detector.enabled &&
+                      // disable showing missing feature alert when it is HC Detector
+                      !isHCDetector
                     }
                     isFeatureDataMissing={props.isFeatureDataMissing}
                     isHCDetector={isHCDetector}

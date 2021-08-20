@@ -26,7 +26,7 @@ exports[`<CategoryField /> spec hides callout if component is loading 1`] = `
                 class="euiTitle euiTitle--small"
                 id="categoryFieldTitle"
               >
-                Categorical field 
+                Categorical fields 
               </h2>
             </div>
           </div>
@@ -41,7 +41,7 @@ exports[`<CategoryField /> spec hides callout if component is loading 1`] = `
                 class="euiText euiText--medium content-panel-subTitle"
                 style="line-height: normal;"
               >
-                Split a single time series into multiple time series based on a categorical field.
+                Split a single time series into multiple time series based on categorical fields. You can select up to 2.
                  
                 <a
                   class="euiLink euiLink--primary"
@@ -114,7 +114,7 @@ exports[`<CategoryField /> spec hides callout if component is loading 1`] = `
                   class="euiCheckbox__label"
                   for="categoryFieldCheckbox"
                 >
-                  Enable categorical field
+                  Enable categorical fields
                 </label>
               </div>
             </div>
@@ -152,7 +152,7 @@ exports[`<CategoryField /> spec renders the component when disabled 1`] = `
                 class="euiTitle euiTitle--small"
                 id="categoryFieldTitle"
               >
-                Categorical field 
+                Categorical fields 
               </h2>
             </div>
           </div>
@@ -167,7 +167,7 @@ exports[`<CategoryField /> spec renders the component when disabled 1`] = `
                 class="euiText euiText--medium content-panel-subTitle"
                 style="line-height: normal;"
               >
-                Split a single time series into multiple time series based on a categorical field.
+                Split a single time series into multiple time series based on categorical fields. You can select up to 2.
                  
                 <a
                   class="euiLink euiLink--primary"
@@ -231,7 +231,7 @@ exports[`<CategoryField /> spec renders the component when disabled 1`] = `
                   class="euiCheckbox__label"
                   for="categoryFieldCheckbox"
                 >
-                  Enable categorical field
+                  Enable categorical fields
                 </label>
               </div>
             </div>
@@ -269,7 +269,7 @@ exports[`<CategoryField /> spec renders the component when enabled 1`] = `
                 class="euiTitle euiTitle--small"
                 id="categoryFieldTitle"
               >
-                Categorical field 
+                Categorical fields 
               </h2>
             </div>
           </div>
@@ -284,7 +284,7 @@ exports[`<CategoryField /> spec renders the component when enabled 1`] = `
                 class="euiText euiText--medium content-panel-subTitle"
                 style="line-height: normal;"
               >
-                Split a single time series into multiple time series based on a categorical field.
+                Split a single time series into multiple time series based on categorical fields. You can select up to 2.
                  
                 <a
                   class="euiLink euiLink--primary"
@@ -353,7 +353,7 @@ exports[`<CategoryField /> spec renders the component when enabled 1`] = `
                   class="euiCheckbox__label"
                   for="categoryFieldCheckbox"
                 >
-                  Enable categorical field
+                  Enable categorical fields
                 </label>
               </div>
             </div>
@@ -393,14 +393,14 @@ exports[`<CategoryField /> spec renders the component when enabled 1`] = `
                         class="euiFormControlLayout__childrenWrapper"
                       >
                         <div
-                          class="euiComboBox__inputWrap euiComboBox__inputWrap--noWrap euiComboBox__inputWrap-isClearable"
+                          class="euiComboBox__inputWrap euiComboBox__inputWrap-isClearable"
                           data-test-subj="comboBoxInput"
                           tabindex="-1"
                         >
                           <p
                             class="euiComboBoxPlaceholder"
                           >
-                            Select your category field
+                            Select your categorical fields
                           </p>
                           <div
                             class="euiComboBox__input"
@@ -447,7 +447,7 @@ exports[`<CategoryField /> spec renders the component when enabled 1`] = `
                     class="euiFormHelpText euiFormRow__text"
                     id="random_html_id-help"
                   >
-                    You can only apply the category field to the 'ip' and 'keyword' OpenSearch data types.
+                    You can only apply the categorical fields to the 'ip' and 'keyword' OpenSearch data types.
                   </div>
                 </div>
               </div>
@@ -486,7 +486,7 @@ exports[`<CategoryField /> spec shows callout when there are no available catego
                 class="euiTitle euiTitle--small"
                 id="categoryFieldTitle"
               >
-                Categorical field 
+                Categorical fields 
               </h2>
             </div>
           </div>
@@ -501,7 +501,7 @@ exports[`<CategoryField /> spec shows callout when there are no available catego
                 class="euiText euiText--medium content-panel-subTitle"
                 style="line-height: normal;"
               >
-                Split a single time series into multiple time series based on a categorical field.
+                Split a single time series into multiple time series based on categorical fields. You can select up to 2.
                  
                 <a
                   class="euiLink euiLink--primary"
@@ -598,7 +598,7 @@ exports[`<CategoryField /> spec shows callout when there are no available catego
                   class="euiCheckbox__label"
                   for="categoryFieldCheckbox"
                 >
-                  Enable categorical field
+                  Enable categorical fields
                 </label>
               </div>
             </div>
