@@ -28,7 +28,6 @@ import { Switch, Route, RouteComponentProps } from 'react-router-dom';
 import React from 'react';
 import { AppState } from '../../redux/reducers';
 import { DetectorList } from '../DetectorsList';
-import { SampleData } from '../SampleData';
 import { ListRouterParams } from '../DetectorsList/containers/List/List';
 import { CreateDetectorSteps } from '../CreateDetectorSteps';
 import { EuiSideNav, EuiPage, EuiPageBody, EuiPageSideBar } from '@elastic/eui';
@@ -44,12 +43,8 @@ import { AnomalyDetectionOverview } from '../Overview';
 
 enum Navigation {
   AnomalyDetection = 'Anomaly detection',
-  Realtime = 'Real-time',
   Dashboard = 'Dashboard',
   Detectors = 'Detectors',
-  HistoricalDetectors = 'Historical detectors',
-  SampleDetectors = 'Sample detectors',
-  CreateDetectorSteps = 'Create detector steps',
 }
 
 interface MainProps extends RouteComponentProps {}
@@ -60,7 +55,7 @@ export function Main(props: MainProps) {
   );
 
   const adState = useSelector((state: AppState) => state.ad);
-  const totalRealtimeDetectors = adState.totalDetectors;
+  const totalDetectors = adState.totalDetectors;
   const errorGettingDetectors = adState.errorMessage;
   const isLoadingDetectors = adState.requesting;
   const sideNav = [
@@ -149,7 +144,7 @@ export function Main(props: MainProps) {
                   )}
                 />
                 <Route path="/">
-                  {totalRealtimeDetectors > 0 ? (
+                  {totalDetectors > 0 ? (
                     // </div>
                     <DashboardOverview />
                   ) : (

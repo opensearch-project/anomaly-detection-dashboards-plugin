@@ -24,8 +24,7 @@
  * permissions and limitations under the License.
  */
 
-import React, { useState } from 'react';
-
+import React, { useState, useEffect } from 'react';
 import moment from 'moment';
 import Plotly, { PlotData } from 'plotly.js-dist';
 import plotComponentFactory from 'react-plotly.js/factory';
@@ -54,13 +53,25 @@ import {
   filterHeatmapPlotDataByY,
   getEntitytAnomaliesHeatmapData,
 } from '../utils/anomalyChartUtils';
-import { MIN_IN_MILLI_SECS } from '../../../../server/utils/constants';
-import { EntityAnomalySummaries } from '../../../../server/models/interfaces';
+import {
+  MIN_IN_MILLI_SECS,
+  ENTITY_LIST_DELIMITER,
+} from '../../../../server/utils/constants';
+import {
+  EntityAnomalySummaries,
+  Entity,
+} from '../../../../server/models/interfaces';
+import { HEATMAP_CHART_Y_AXIS_WIDTH } from '../utils/constants';
+import {
+  convertToEntityList,
+  convertToCategoryFieldString,
+} from '../../utils/anomalyResultUtils';
 
 interface AnomalyHeatmapChartProps {
-  title: string;
   detectorId: string;
   detectorName: string;
+  detectorTaskProgress?: number;
+  isHistorical?: boolean;
   anomalies?: any[];
   dateRange: DateRange;
   isLoading: boolean;
@@ -72,11 +83,13 @@ interface AnomalyHeatmapChartProps {
   heatmapDisplayOption?: HeatmapDisplayOption;
   entityAnomalySummaries?: EntityAnomalySummaries[];
   isNotSample?: boolean;
+  categoryField?: string[];
 }
 
 export interface HeatmapCell {
   dateRange: DateRange;
-  entityValue: string;
+  entityList: Entity[];
+  modelId?: string;
 }
 
 export interface HeatmapDisplayOption {
@@ -123,14 +136,15 @@ export const AnomalyHeatmapChart = React.memo(
         //@ts-ignore
         individualEntities = inputHeatmapData[0].y.filter(
           //@ts-ignore
-          (entityValue) => entityValue && entityValue.trim().length > 0
+          (entityListAsString) =>
+            entityListAsString && entityListAsString.trim().length > 0
         );
       }
       const individualEntityOptions = [] as any[];
       //@ts-ignore
-      individualEntities.forEach((entityValue) => {
+      individualEntities.forEach((entityListAsString: string) => {
         individualEntityOptions.push({
-          label: entityValue,
+          label: entityListAsString.replace(ENTITY_LIST_DELIMITER, ', '),
         });
       });
 
@@ -165,7 +179,7 @@ export const AnomalyHeatmapChart = React.memo(
           getEntitytAnomaliesHeatmapData(
             props.dateRange,
             props.entityAnomalySummaries,
-            props.heatmapDisplayOption.entityOption.value
+            props.heatmapDisplayOption?.entityOption.value
           )
         : // use anomalies data in case of sample result
           getAnomaliesHeatmapData(
@@ -184,7 +198,7 @@ export const AnomalyHeatmapChart = React.memo(
       AnomalyHeatmapSortType
     >(
       props.isNotSample
-        ? props.heatmapDisplayOption.sortType
+        ? props.heatmapDisplayOption?.sortType
         : SORT_BY_FIELD_OPTIONS[0].value
     );
 
@@ -215,9 +229,25 @@ export const AnomalyHeatmapChart = React.memo(
       return false;
     };
 
+    // Custom hook to refresh all of the heatmap data when running a historical task
+    useEffect(() => {
+      if (props.isHistorical) {
+        const updateHeatmapPlotData = getAnomaliesHeatmapData(
+          props.anomalies,
+          props.dateRange,
+          sortByFieldValue,
+          get(COMBINED_OPTIONS.options[0], 'value')
+        );
+        setOriginalHeatmapData(updateHeatmapPlotData);
+        setHeatmapData(updateHeatmapPlotData);
+        setNumEntities(updateHeatmapPlotData[0].y.length);
+        setEntityViewOptions(getViewEntityOptions(updateHeatmapPlotData));
+      }
+    }, [props.detectorTaskProgress]);
+
     const handleHeatmapClick = (event: Plotly.PlotMouseEvent) => {
       const selectedCellIndices = get(event, 'points[0].pointIndex', []);
-      const selectedEntity = get(event, 'points[0].y', '');
+      const selectedEntityString = get(event, 'points[0].y', '');
       if (!isEmpty(selectedCellIndices)) {
         let anomalyCount = get(event, 'points[0].text', 0);
         if (
@@ -262,7 +292,11 @@ export const AnomalyHeatmapChart = React.memo(
               startDate: selectedStartDate,
               endDate: selectedEndDate,
             },
-            entityValue: selectedEntity,
+            entityList: convertToEntityList(
+              selectedEntityString,
+              get(props, 'categoryField', []),
+              ENTITY_LIST_DELIMITER
+            ),
           } as HeatmapCell);
         }
       }
@@ -345,7 +379,7 @@ export const AnomalyHeatmapChart = React.memo(
 
       setNumEntities(nonCombinedOptions.length);
       const selectedYs = nonCombinedOptions.map((option) =>
-        get(option, 'label', '')
+        get(option, 'label', '').replace(', ', ENTITY_LIST_DELIMITER)
       );
 
       let selectedHeatmapData = filterHeatmapPlotDataByY(
@@ -407,40 +441,53 @@ export const AnomalyHeatmapChart = React.memo(
           </EuiFlexItem>
         </EuiFlexGroup>
         <EuiFlexGroup style={{ padding: '0px' }}>
-          <EuiFlexItem grow={false} style={{ minWidth: '80px' }}>
-            <EuiFlexGroup alignItems="center" justifyContent="flexEnd">
-              <EuiText textAlign="right">
-                <h4>{props.title}</h4>
-              </EuiText>
-            </EuiFlexGroup>
-          </EuiFlexItem>
           <EuiFlexItem style={{ paddingLeft: '5px' }}>
             <EuiFlexGroup
               style={{ padding: '0px' }}
               justifyContent="spaceBetween"
             >
-              <EuiFlexItem grow={false} style={{ marginLeft: '0px' }}>
-                <EuiFlexGroup gutterSize="s" alignItems="center">
-                  <EuiFlexItem style={{ minWidth: 300 }}>
-                    <EuiComboBox
-                      placeholder="Select options"
-                      options={entityViewOptions}
-                      selectedOptions={currentViewOptions}
-                      onChange={(selectedOptions) =>
-                        handleViewEntityOptionsChange(selectedOptions)
-                      }
-                    />
-                  </EuiFlexItem>
-                  <EuiFlexItem style={{ minWidth: 150 }}>
-                    <EuiSuperSelect
-                      options={SORT_BY_FIELD_OPTIONS}
-                      valueOfSelected={sortByFieldValue}
-                      onChange={(value) => handleSortByFieldChange(value)}
-                      hasDividers
-                    />
-                  </EuiFlexItem>
-                </EuiFlexGroup>
-              </EuiFlexItem>
+              <EuiFlexGroup
+                direction="column"
+                justifyContent="spaceBetween"
+                style={{ padding: '12px', marginBottom: '6px' }}
+              >
+                <EuiFlexItem style={{ marginBottom: '0px' }}>
+                  <EuiText>
+                    <h4>
+                      View by:&nbsp;
+                      <b>
+                        {convertToCategoryFieldString(
+                          get(props, 'categoryField', []) as string[],
+                          ', '
+                        )}
+                      </b>
+                    </h4>
+                  </EuiText>
+                </EuiFlexItem>
+
+                <EuiFlexItem grow={false}>
+                  <EuiFlexGroup gutterSize="s" alignItems="center">
+                    <EuiFlexItem style={{ minWidth: 300 }}>
+                      <EuiComboBox
+                        placeholder="Select options"
+                        options={entityViewOptions}
+                        selectedOptions={currentViewOptions}
+                        onChange={(selectedOptions) =>
+                          handleViewEntityOptionsChange(selectedOptions)
+                        }
+                      />
+                    </EuiFlexItem>
+                    <EuiFlexItem style={{ minWidth: 150 }}>
+                      <EuiSuperSelect
+                        options={SORT_BY_FIELD_OPTIONS}
+                        valueOfSelected={sortByFieldValue}
+                        onChange={(value) => handleSortByFieldChange(value)}
+                        hasDividers
+                      />
+                    </EuiFlexItem>
+                  </EuiFlexGroup>
+                </EuiFlexItem>
+              </EuiFlexGroup>
               <EuiFlexItem grow={false}>
                 <EuiFlexGroup alignItems="center">
                   <EuiFlexItem>
@@ -542,6 +589,15 @@ export const AnomalyHeatmapChart = React.memo(
                       showline: true,
                       showgrid: false,
                       fixedrange: true,
+                      automargin: true,
+                      tickmode: 'array',
+                      tickvals: heatmapData[0].y,
+                      ticktext: heatmapData[0].y.map((label: string) =>
+                        label.length <= HEATMAP_CHART_Y_AXIS_WIDTH
+                          ? label
+                          : label.substring(0, HEATMAP_CHART_Y_AXIS_WIDTH - 3) +
+                            '...'
+                      ),
                     },
                     margin: {
                       l: 100,

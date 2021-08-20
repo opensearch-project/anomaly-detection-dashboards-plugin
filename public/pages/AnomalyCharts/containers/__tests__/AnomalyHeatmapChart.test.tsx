@@ -24,7 +24,7 @@
  * permissions and limitations under the License.
  */
 
-import { render } from '@testing-library/react';
+import { render, getByText } from '@testing-library/react';
 import React from 'react';
 import {
   AnomalyHeatmapChart,
@@ -78,5 +78,49 @@ describe('<AnomalyHeatmapChart /> spec', () => {
       />
     );
     expect(container).toMatchSnapshot();
+  });
+  test('AnomalyHeatmapChart with one category field', () => {
+    const { container, getByText } = render(
+      <AnomalyHeatmapChart
+        title={'test-tile'}
+        detectorId="test-detector-id"
+        detectorName="test-detector-name"
+        detectorInterval={1}
+        unit="Minutes"
+        dateRange={FAKE_DATE_RANGE}
+        isLoading={false}
+        onHeatmapCellSelected={jest.fn()}
+        onDisplayOptionChanged={jest.fn()}
+        isNotSample={true}
+        entityAnomalySummaries={[FAKE_ENTITY_ANOMALY_SUMMARIES]}
+        heatmapDisplayOption={INITIAL_HEATMAP_DISPLAY_OPTION}
+        categoryField={['test-field']}
+      />
+    );
+    expect(container).toMatchSnapshot();
+    getByText('View by:');
+    getByText('test-field');
+  });
+  test('AnomalyHeatmapChart with multiple category fields', () => {
+    const { container, getByText } = render(
+      <AnomalyHeatmapChart
+        title={'test-tile'}
+        detectorId="test-detector-id"
+        detectorName="test-detector-name"
+        detectorInterval={1}
+        unit="Minutes"
+        dateRange={FAKE_DATE_RANGE}
+        isLoading={false}
+        onHeatmapCellSelected={jest.fn()}
+        onDisplayOptionChanged={jest.fn()}
+        isNotSample={true}
+        entityAnomalySummaries={[FAKE_ENTITY_ANOMALY_SUMMARIES]}
+        heatmapDisplayOption={INITIAL_HEATMAP_DISPLAY_OPTION}
+        categoryField={['test-field-1', 'test-field-2']}
+      />
+    );
+    expect(container).toMatchSnapshot();
+    getByText('View by:');
+    getByText('test-field-1, test-field-2');
   });
 });
