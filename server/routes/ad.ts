@@ -65,9 +65,8 @@ import {
   isRealTimeTask,
   getFiltersFromEntityList,
   convertStaticFieldsToCamelCase,
-  getLatestTasksForDetectorQuery,
+  getLatestTaskForDetectorQuery,
   convertTaskAndJobFieldsToCamelCase,
-  getLatestRealtimeTask,
 } from './utils/adHelpers';
 import { isNumber, set } from 'lodash';
 import {
@@ -259,24 +258,41 @@ export default class AdService {
 
       // Get real-time and historical task info to populate the
       // task and job-related fields
-      const latestDetectorTasksQuery = getLatestTasksForDetectorQuery(
-        detectorId
-      );
-      const detectorTasksResponse: any = await this.client
+      const realtimeTaskResponse: any = await this.client
         .asScoped(request)
         .callAsCurrentUser('ad.searchTasks', {
-          body: latestDetectorTasksQuery,
+          body: getLatestTaskForDetectorQuery(detectorId, true),
         });
-      const taskList = get(detectorTasksResponse, 'hits.hits', []).map(
-        (taskResponse: any) => {
+      const historicalTaskResponse: any = await this.client
+        .asScoped(request)
+        .callAsCurrentUser('ad.searchTasks', {
+          body: getLatestTaskForDetectorQuery(detectorId, false),
+        });
+
+      const realtimeTask = get(
+        get(realtimeTaskResponse, 'hits.hits', []).map((taskResponse: any) => {
           return {
             id: get(taskResponse, '_id'),
             ...get(taskResponse, '_source'),
           };
-        }
+        }),
+        0
       );
+      const historicalTask = get(
+        get(historicalTaskResponse, 'hits.hits', []).map(
+          (taskResponse: any) => {
+            return {
+              id: get(taskResponse, '_id'),
+              ...get(taskResponse, '_source'),
+            };
+          }
+        ),
+        0
+      );
+
       const taskAndJobFields = convertTaskAndJobFieldsToCamelCase(
-        taskList,
+        realtimeTask,
+        historicalTask,
         detectorResponse.anomaly_detector_job
       );
 
@@ -630,50 +646,59 @@ export default class AdService {
           );
       }
 
-      // Get real-time and historical task info by looping through each ID & retrieving
-      //    - curState by getting real-time task state
-      //    - enabledTime by getting real-time task's execution_start time
-      //    - taskId by getting historical task's _id
-      const latestDetectorTasksQuery = getLatestDetectorTasksQuery();
-      const detectorTasksResponse: any = await this.client
+      // Fetch the latest realtime and historical tasks for all detectors
+      // using terms aggregations
+      const realtimeTasksResponse: any = await this.client
         .asScoped(request)
         .callAsCurrentUser('ad.searchTasks', {
-          body: latestDetectorTasksQuery,
+          body: getLatestDetectorTasksQuery(true),
+        });
+      const historicalTasksResponse: any = await this.client
+        .asScoped(request)
+        .callAsCurrentUser('ad.searchTasks', {
+          body: getLatestDetectorTasksQuery(false),
         });
 
-      // Convert response to a map of each detector ID => list of latest tasks (historical & real-time)
-      const detectorTasks = get(
-        detectorTasksResponse,
+      const realtimeTasks = get(
+        realtimeTasksResponse,
         'aggregations.detectors.buckets',
         []
       ).reduce((acc: any, bucket: any) => {
         return {
           ...acc,
           [bucket.key]: {
-            tasks: bucket.latest_tasks.hits.hits,
+            realtimeTask: get(bucket, 'latest_tasks.hits.hits.0', undefined),
           },
         };
       }, {});
 
-      finalDetectors.forEach((detector) => {
-        detector.taskId = undefined;
+      const historicalTasks = get(
+        historicalTasksResponse,
+        'aggregations.detectors.buckets',
+        []
+      ).reduce((acc: any, bucket: any) => {
+        return {
+          ...acc,
+          [bucket.key]: {
+            historicalTask: get(bucket, 'latest_tasks.hits.hits.0', undefined),
+          },
+        };
+      }, {});
 
-        const taskList = get(detectorTasks[detector.id], 'tasks', []).map(
-          (taskResponse: any) => taskResponse._source
+      // Get real-time and historical task info by looping through each detector & retrieving
+      //    - curState by getting real-time task state
+      //    - enabledTime by getting real-time task's execution_start time
+      //    - taskId by getting historical task's _id
+      finalDetectors.forEach((detector) => {
+        const realtimeTask = get(
+          realtimeTasks[detector.id],
+          'realtimeTask._source'
         );
-        const realtimeTask = getLatestRealtimeTask(taskList);
         detector.curState = getTaskState(realtimeTask);
         detector.enabledTime = get(realtimeTask, 'execution_start_time');
-
-        // Loop through the responses and set the taskId if
-        // a historical task was found
-        detector.taskId = undefined;
-        get(detectorTasks[detector.id], 'tasks', []).forEach(
-          (taskResponse: any) => {
-            if (!isRealTimeTask(taskResponse._source)) {
-              detector.taskId = taskResponse._id;
-            }
-          }
+        detector.taskId = get(
+          historicalTasks[detector.id],
+          'historicalTask._id'
         );
       });
 

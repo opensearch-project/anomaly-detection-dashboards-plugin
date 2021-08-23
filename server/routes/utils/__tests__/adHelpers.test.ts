@@ -40,8 +40,6 @@ import {
   getTaskState,
   convertStaticFieldsToCamelCase,
   convertTaskAndJobFieldsToCamelCase,
-  getLatestRealtimeTask,
-  getLatestHistoricalTask,
 } from '../adHelpers';
 
 describe('adHelpers', () => {
@@ -799,14 +797,13 @@ describe('adHelpers', () => {
   describe('convertTaskAndJobFieldsToCamelcase', () => {
     test('only realtime task and job passed', () => {
       const response = convertTaskAndJobFieldsToCamelCase(
-        [
-          {
-            id: 'test-realtime',
-            execution_start_time: 1,
-            task_type: REALTIME_TASK_TYPE_PREFIX,
-            state: 'RUNNING',
-          },
-        ],
+        {
+          id: 'test-realtime',
+          execution_start_time: 1,
+          task_type: REALTIME_TASK_TYPE_PREFIX,
+          state: 'RUNNING',
+        },
+        undefined,
         {
           enabled: true,
           enabled_time: 1,
@@ -828,25 +825,23 @@ describe('adHelpers', () => {
     });
     test('realtime task, historical task, & job passed', () => {
       const response = convertTaskAndJobFieldsToCamelCase(
-        [
-          {
-            id: 'test-realtime',
-            execution_start_time: 1,
-            task_type: REALTIME_TASK_TYPE_PREFIX,
-            state: 'RUNNING',
+        {
+          id: 'test-realtime',
+          execution_start_time: 1,
+          task_type: REALTIME_TASK_TYPE_PREFIX,
+          state: 'RUNNING',
+        },
+        {
+          id: 'test-historical',
+          execution_start_time: 1,
+          task_type: HISTORICAL_TASK_TYPE_PREFIX,
+          detection_date_range: {
+            start_time: 1,
+            end_time: 2,
           },
-          {
-            id: 'test-historical',
-            execution_start_time: 1,
-            task_type: HISTORICAL_TASK_TYPE_PREFIX,
-            detection_date_range: {
-              start_time: 1,
-              end_time: 2,
-            },
-            state: 'FINISHED',
-            task_progress: 1,
-          },
-        ],
+          state: 'FINISHED',
+          task_progress: 1,
+        },
         {
           enabled: true,
           enabled_time: 1,
@@ -871,11 +866,15 @@ describe('adHelpers', () => {
       });
     });
     test('just job passed (old realtime detector)', () => {
-      const response = convertTaskAndJobFieldsToCamelCase([], {
-        enabled: true,
-        enabled_time: 1,
-        disabled_time: 2,
-      });
+      const response = convertTaskAndJobFieldsToCamelCase(
+        undefined,
+        undefined,
+        {
+          enabled: true,
+          enabled_time: 1,
+          disabled_time: 2,
+        }
+      );
       expect(response).toEqual({
         curState: 'Running',
         enabled: true,
@@ -885,87 +884,6 @@ describe('adHelpers', () => {
         taskError: '',
         taskProgress: undefined,
         taskState: 'Stopped',
-      });
-    });
-  });
-  describe('getLatestRealtimeTask', () => {
-    test('should return undefined if the no realtime task found', () => {
-      const response = getLatestRealtimeTask([
-        {
-          id: 'test-historical',
-          execution_start_time: 1,
-          task_type: HISTORICAL_TASK_TYPE_PREFIX,
-        },
-      ]);
-      expect(response).toEqual(undefined);
-    });
-    test('should return realtime task if found', () => {
-      const response = getLatestRealtimeTask([
-        {
-          id: 'test-realtime',
-          execution_start_time: 1,
-          task_type: REALTIME_TASK_TYPE_PREFIX,
-        },
-        {
-          id: 'test-historical',
-          execution_start_time: 1,
-          task_type: HISTORICAL_TASK_TYPE_PREFIX,
-        },
-      ]);
-      expect(response).toEqual({
-        id: 'test-realtime',
-        execution_start_time: 1,
-        task_type: REALTIME_TASK_TYPE_PREFIX,
-      });
-    });
-    test('should return latest realtime task if multiple found', () => {
-      const response = getLatestRealtimeTask([
-        {
-          id: 'test-realtime',
-          execution_start_time: 1,
-          task_type: REALTIME_TASK_TYPE_PREFIX,
-        },
-        {
-          id: 'test-realtime-newer',
-          execution_start_time: 2,
-          task_type: REALTIME_TASK_TYPE_PREFIX,
-        },
-      ]);
-      expect(response).toEqual({
-        id: 'test-realtime-newer',
-        execution_start_time: 2,
-        task_type: REALTIME_TASK_TYPE_PREFIX,
-      });
-    });
-  });
-  describe('getLatestHistoricalTask', () => {
-    test('should return undefined if the no historical task found', () => {
-      const response = getLatestHistoricalTask([
-        {
-          id: 'test-realtime',
-          execution_start_time: 1,
-          task_type: REALTIME_TASK_TYPE_PREFIX,
-        },
-      ]);
-      expect(response).toEqual(undefined);
-    });
-    test('should return historical task if found', () => {
-      const response = getLatestHistoricalTask([
-        {
-          id: 'test-realtime',
-          execution_start_time: 1,
-          task_type: REALTIME_TASK_TYPE_PREFIX,
-        },
-        {
-          id: 'test-historical',
-          execution_start_time: 1,
-          task_type: HISTORICAL_TASK_TYPE_PREFIX,
-        },
-      ]);
-      expect(response).toEqual({
-        id: 'test-historical',
-        execution_start_time: 1,
-        task_type: HISTORICAL_TASK_TYPE_PREFIX,
       });
     });
   });
