@@ -815,10 +815,6 @@ describe('adHelpers', () => {
       );
       expect(response).toEqual({
         curState: 'Running',
-        detectionDateRange: {
-          startTime: undefined,
-          endTime: undefined,
-        },
         stateError: '',
         initProgress: undefined,
         enabled: true,
@@ -882,10 +878,6 @@ describe('adHelpers', () => {
       });
       expect(response).toEqual({
         curState: 'Running',
-        detectionDateRange: {
-          startTime: undefined,
-          endTime: undefined,
-        },
         enabled: true,
         enabledTime: 1,
         disabledTime: 2,

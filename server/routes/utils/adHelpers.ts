@@ -204,6 +204,11 @@ export const convertTaskAndJobFieldsToCamelCase = (
     },
   };
 
+  if (isEmpty(historicalTask)) {
+    //@ts-ignore
+    delete response.detectionDateRange;
+  }
+
   return response;
 };
 
