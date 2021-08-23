@@ -102,7 +102,6 @@ export function ConfigureModel(props: ConfigureModelProps) {
   const isLoading = useSelector(
     (state: AppState) => state.opensearch.requesting
   );
-  const originalShingleSize = getShingleSizeFromObject(detector, isHCDetector);
 
   // Jump to top of page on first load
   useEffect(() => {
@@ -277,7 +276,6 @@ export function ConfigureModel(props: ConfigureModelProps) {
                 categoryFieldOptions={getCategoryFields(indexDataTypes)}
                 setIsHCDetector={setIsHCDetector}
                 isLoading={isLoading}
-                originalShingleSize={originalShingleSize}
                 formikProps={formikProps}
               />
               <EuiSpacer />

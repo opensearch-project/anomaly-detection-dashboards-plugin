@@ -30,7 +30,7 @@ import {
   FEATURE_TYPE,
   FeatureAttributes,
 } from '../../../../models/interfaces';
-import { get, isEmpty, sortBy } from 'lodash';
+import { get, sortBy } from 'lodash';
 import ContentPanel from '../../../../components/ContentPanel/ContentPanel';
 import { CodeModal } from '../../../../components/CodeModal/CodeModal';
 import { AdditionalSettings } from '../AdditionalSettings/AdditionalSettings';
@@ -100,8 +100,7 @@ export const ModelConfigurationFields = (
     return sorted;
   };
   const featureAttributes = get(props.detector, 'featureAttributes', []);
-  const isHCDetector = !isEmpty(get(props.detector, 'categoryField', []));
-  const shingleSize = getShingleSizeFromObject(props.detector, isHCDetector);
+  const shingleSize = getShingleSizeFromObject(props.detector);
 
   const sorting = {
     sort: {

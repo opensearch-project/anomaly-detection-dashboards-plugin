@@ -29,12 +29,13 @@ import {
   ModelConfigurationFormikValues,
   FeaturesFormikValues,
 } from '../../ConfigureModel/models/interfaces';
+import { DEFAULT_SHINGLE_SIZE } from '../../../utils/constants';
 
 export const INITIAL_MODEL_CONFIGURATION_VALUES: ModelConfigurationFormikValues = {
   featureList: [],
   categoryFieldEnabled: false,
   categoryField: [],
-  shingleSize: 4,
+  shingleSize: DEFAULT_SHINGLE_SIZE,
 };
 
 export const INITIAL_FEATURE_VALUES: FeaturesFormikValues = {
