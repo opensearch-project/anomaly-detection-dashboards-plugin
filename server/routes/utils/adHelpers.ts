@@ -476,6 +476,10 @@ export const processTaskError = (error: string) => {
     : errorWithPrefixRemoved + '.';
 };
 
+// Filtering by 'is_latest=true' is not enough here. During backfilling of legacy
+// realtime detectors on the backend, it is possible that multiple realtime
+// tasks with 'is_latest=true' are created. We sort by latest execution_start_time
+// (which is equivalent to it's creation timestamp), and only return the latest one.
 export const getLatestDetectorTasksQuery = (realtime: boolean) => {
   const taskTypes = realtime ? REALTIME_TASK_TYPES : HISTORICAL_TASK_TYPES;
   return {
@@ -552,6 +556,10 @@ export const getFiltersFromEntityList = (entityListAsObj: object) => {
   return filters;
 };
 
+// Filtering by 'is_latest=true' is not enough here. During backfilling of legacy
+// realtime detectors on the backend, it is possible that multiple realtime
+// tasks with 'is_latest=true' are created. We sort by latest execution_start_time
+// (which is equivalent to it's creation timestamp), and only return the latest one.
 export const getLatestTaskForDetectorQuery = (
   detectorId: string,
   realtime: boolean
