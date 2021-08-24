@@ -105,8 +105,7 @@ export const Features = (props: FeaturesProps) => {
     return sorted;
   };
   const featureAttributes = get(props.detector, 'featureAttributes', []);
-  const isHCDetector = !isEmpty(get(props.detector, 'categoryField', []));
-  const shingleSize = getShingleSizeFromObject(props.detector, isHCDetector);
+  const shingleSize = getShingleSizeFromObject(props.detector);
 
   const sorting = {
     sort: {
