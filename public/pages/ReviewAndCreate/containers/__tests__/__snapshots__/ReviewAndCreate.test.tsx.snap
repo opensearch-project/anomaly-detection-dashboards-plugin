@@ -486,7 +486,7 @@ exports[`<ReviewAndCreate /> spec renders the component 1`] = `
                           <span
                             class="euiTableCellContent__text"
                           >
-                            4
+                            8
                           </span>
                         </div>
                       </td>

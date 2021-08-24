@@ -84,9 +84,7 @@ export const MAX_CATEGORY_FIELD_NUM = 2;
 export const NAME_REGEX = RegExp('^[a-zA-Z0-9._-]+$');
 
 //https://github.com/opensearch-project/anomaly-detection/blob/main/src/main/java/com/amazon/opendistroforelasticsearch/ad/settings/AnomalyDetectorSettings.java
-export const SINGLE_ENTITY_SHINGLE_SIZE = 8;
-
-export const MULTI_ENTITY_SHINGLE_SIZE = 4;
+export const DEFAULT_SHINGLE_SIZE = 8;
 
 export const FEATURE_DATA_POINTS_WINDOW = 3;
 

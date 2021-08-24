@@ -37,7 +37,7 @@ import {
   formikToIndices,
   formikToFilterQuery,
 } from '../../ReviewAndCreate/utils/helpers';
-import { SINGLE_ENTITY_SHINGLE_SIZE } from '../../../utils/constants';
+import { DEFAULT_SHINGLE_SIZE } from '../../../utils/constants';
 
 export function detectorDefinitionToFormik(
   ad: Detector
@@ -149,6 +149,6 @@ export function clearModelConfiguration(ad: Detector): Detector {
       features: {},
     },
     categoryField: undefined,
-    shingleSize: SINGLE_ENTITY_SHINGLE_SIZE,
+    shingleSize: DEFAULT_SHINGLE_SIZE,
   };
 }

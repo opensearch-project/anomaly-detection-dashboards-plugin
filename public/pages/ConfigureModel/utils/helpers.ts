@@ -24,11 +24,7 @@
  * permissions and limitations under the License.
  */
 
-import {
-  DATA_TYPES,
-  MULTI_ENTITY_SHINGLE_SIZE,
-  SINGLE_ENTITY_SHINGLE_SIZE,
-} from '../../../utils/constants';
+import { DATA_TYPES, DEFAULT_SHINGLE_SIZE } from '../../../utils/constants';
 import {
   FEATURE_TYPE,
   FeatureAttributes,
@@ -222,15 +218,8 @@ export const getCategoryFields = (dataTypes: DataTypes) => {
   return keywordFields.concat(ipFields);
 };
 
-export const getShingleSizeFromObject = (
-  obj: object,
-  isHCDetector: boolean
-) => {
-  return get(
-    obj,
-    'shingleSize',
-    isHCDetector ? MULTI_ENTITY_SHINGLE_SIZE : SINGLE_ENTITY_SHINGLE_SIZE
-  );
+export const getShingleSizeFromObject = (obj: object) => {
+  return get(obj, 'shingleSize', DEFAULT_SHINGLE_SIZE);
 };
 
 export function clearModelConfiguration(ad: Detector): Detector {
@@ -242,7 +231,7 @@ export function clearModelConfiguration(ad: Detector): Detector {
       features: {},
     },
     categoryField: undefined,
-    shingleSize: SINGLE_ENTITY_SHINGLE_SIZE,
+    shingleSize: DEFAULT_SHINGLE_SIZE,
   };
 }
 
@@ -258,7 +247,7 @@ export function modelConfigurationToFormik(
     featureList: featuresToFormik(detector),
     categoryFieldEnabled: !isEmpty(get(detector, 'categoryField', [])),
     categoryField: get(detector, 'categoryField', []),
-    shingleSize: get(detector, 'shingleSize', 4),
+    shingleSize: get(detector, 'shingleSize', DEFAULT_SHINGLE_SIZE),
   };
 }
 
