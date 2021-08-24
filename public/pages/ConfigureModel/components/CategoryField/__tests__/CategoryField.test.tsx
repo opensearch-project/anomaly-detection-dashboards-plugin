@@ -49,7 +49,6 @@ describe('<CategoryField /> spec', () => {
                   return;
                 }}
                 isLoading={false}
-                originalShingleSize={1}
                 formikProps={{
                   values: {
                     categoryFieldEnabled: false,
@@ -91,7 +90,6 @@ describe('<CategoryField /> spec', () => {
                   return;
                 }}
                 isLoading={false}
-                originalShingleSize={1}
                 formikProps={{
                   values: {
                     categoryFieldEnabled: true,
@@ -130,7 +128,6 @@ describe('<CategoryField /> spec', () => {
                   return;
                 }}
                 isLoading={false}
-                originalShingleSize={1}
                 formikProps={{
                   values: {
                     categoryFieldEnabled: true,
@@ -166,7 +163,6 @@ describe('<CategoryField /> spec', () => {
                   return;
                 }}
                 isLoading={true}
-                originalShingleSize={1}
                 formikProps={{
                   values: {
                     categoryFieldEnabled: true,
@@ -201,7 +197,6 @@ describe('<CategoryField /> spec', () => {
                   return;
                 }}
                 isLoading={false}
-                originalShingleSize={1}
                 formikProps={{
                   values: {
                     categoryFieldEnabled: true,

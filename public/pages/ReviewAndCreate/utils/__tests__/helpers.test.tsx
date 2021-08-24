@@ -25,7 +25,7 @@
  */
 
 import { INITIAL_DETECTOR_DEFINITION_VALUES } from '../../../DefineDetector/utils/constants';
-import { SINGLE_ENTITY_SHINGLE_SIZE } from '../../../../utils/constants';
+import { DEFAULT_SHINGLE_SIZE } from '../../../../utils/constants';
 import { getRandomDetector } from '../../../../redux/reducers/__tests__/utils';
 import { formikToDetector, formikToFilterQuery } from '../../utils/helpers';
 import {
@@ -56,7 +56,7 @@ describe('formikToDetector', () => {
       featureList: [],
       categoryFieldEnabled: false,
       categoryField: [],
-      shingleSize: SINGLE_ENTITY_SHINGLE_SIZE,
+      shingleSize: DEFAULT_SHINGLE_SIZE,
       realTime: false,
       historical: false,
       startTime: undefined,
@@ -101,7 +101,7 @@ describe('formikToDetector', () => {
           unit: UNITS.MINUTES,
         },
       },
-      shingleSize: SINGLE_ENTITY_SHINGLE_SIZE,
+      shingleSize: DEFAULT_SHINGLE_SIZE,
       categoryField: undefined,
     });
   });
