@@ -28,6 +28,8 @@ import {
   SORT_DIRECTION,
   OPENSEARCH_EXCEPTION_PREFIX,
   DETECTOR_STATE,
+  REALTIME_TASK_TYPE_PREFIX,
+  HISTORICAL_TASK_TYPE_PREFIX,
 } from '../../../utils/constants';
 import {
   convertDetectorKeysToCamelCase,
@@ -36,6 +38,8 @@ import {
   convertPreviewInputKeysToSnakeCase,
   processTaskError,
   getTaskState,
+  convertStaticFieldsToCamelCase,
+  convertTaskAndJobFieldsToCamelCase,
 } from '../adHelpers';
 
 describe('adHelpers', () => {
@@ -655,6 +659,9 @@ describe('adHelpers', () => {
     });
   });
   describe('processTaskError', () => {
+    test('should return empty if error is empty', () => {
+      expect(processTaskError('')).toEqual('');
+    });
     test('should add punctuation if none exists', () => {
       expect(processTaskError('Some failure')).toEqual('Some failure.');
     });
@@ -665,6 +672,219 @@ describe('adHelpers', () => {
       expect(
         processTaskError(OPENSEARCH_EXCEPTION_PREFIX + 'Some failure.')
       ).toEqual('Some failure.');
+    });
+  });
+  describe('convertStaticFieldsToCamelCase', () => {
+    test('should convert keys to camelCase, set default fields to empty values', () => {
+      const camelCase = convertStaticFieldsToCamelCase({
+        hello_world: 'value',
+      });
+      expect(camelCase).toEqual({
+        helloWorld: 'value',
+        filterQuery: {},
+        featureAttributes: [],
+        uiMetadata: {},
+      });
+    });
+    test('should ignore task-and-job-related fields', () => {
+      const camelCase = convertStaticFieldsToCamelCase({
+        hello_world: 'value',
+        anomaly_detector_job: 'value',
+        anomaly_detection_task: 'value',
+        realtime_detection_task: 'value',
+        historical_analysis_task: 'value',
+      });
+      expect(camelCase).toEqual({
+        helloWorld: 'value',
+        filterQuery: {},
+        featureAttributes: [],
+        uiMetadata: {},
+      });
+    });
+    test('should convert filter query correctly', () => {
+      const camelCase = convertStaticFieldsToCamelCase({
+        feature_attributes: [
+          {
+            feature_id: 'WDO-lm0BL33kEAPF5moe',
+            feature_name: 'Hello World',
+            feature_enabled: true,
+            aggregation_query: {
+              hello_world: {
+                avg: {
+                  field: 'bytes',
+                },
+              },
+            },
+          },
+        ],
+        filter_query: {
+          query: {
+            aggs: { sum_aggregation: { sum: { field: 'totalSales' } } },
+          },
+        },
+        ui_metadata: {
+          features: {
+            f: {
+              aggregation_by: 'sum',
+              aggregation_of: 'FlightDelayMin',
+              feature_type: 'simple_aggs',
+            },
+          },
+          filters: [
+            {
+              query: '',
+              label: '',
+              filter_type: 'simple_filter',
+              field_info: [
+                {
+                  label: 'test-label',
+                  type: 'boolean',
+                },
+              ],
+              field_value: 'false',
+              operator: 'is',
+            },
+          ],
+        },
+      });
+      expect(camelCase).toEqual({
+        featureAttributes: [
+          {
+            featureId: 'WDO-lm0BL33kEAPF5moe',
+            featureName: 'Hello World',
+            featureEnabled: true,
+            aggregationQuery: {
+              hello_world: {
+                avg: {
+                  field: 'bytes',
+                },
+              },
+            },
+          },
+        ],
+        filterQuery: {
+          query: {
+            aggs: { sum_aggregation: { sum: { field: 'totalSales' } } },
+          },
+        },
+        uiMetadata: {
+          features: {
+            f: {
+              aggregation_by: 'sum',
+              aggregation_of: 'FlightDelayMin',
+              feature_type: 'simple_aggs',
+            },
+          },
+          filters: [
+            {
+              query: '',
+              label: '',
+              filter_type: 'simple_filter',
+              field_info: [
+                {
+                  label: 'test-label',
+                  type: 'boolean',
+                },
+              ],
+              field_value: 'false',
+              operator: 'is',
+            },
+          ],
+        },
+      });
+    });
+  });
+  describe('convertTaskAndJobFieldsToCamelcase', () => {
+    test('only realtime task and job passed', () => {
+      const response = convertTaskAndJobFieldsToCamelCase(
+        {
+          id: 'test-realtime',
+          execution_start_time: 1,
+          task_type: REALTIME_TASK_TYPE_PREFIX,
+          state: 'RUNNING',
+        },
+        undefined,
+        {
+          enabled: true,
+          enabled_time: 1,
+          disabled_time: 2,
+        }
+      );
+      expect(response).toEqual({
+        curState: 'Running',
+        stateError: '',
+        initProgress: undefined,
+        enabled: true,
+        enabledTime: 1,
+        disabledTime: 2,
+        taskError: '',
+        taskId: undefined,
+        taskProgress: undefined,
+        taskState: 'Stopped',
+      });
+    });
+    test('realtime task, historical task, & job passed', () => {
+      const response = convertTaskAndJobFieldsToCamelCase(
+        {
+          id: 'test-realtime',
+          execution_start_time: 1,
+          task_type: REALTIME_TASK_TYPE_PREFIX,
+          state: 'RUNNING',
+        },
+        {
+          id: 'test-historical',
+          execution_start_time: 1,
+          task_type: HISTORICAL_TASK_TYPE_PREFIX,
+          detection_date_range: {
+            start_time: 1,
+            end_time: 2,
+          },
+          state: 'FINISHED',
+          task_progress: 1,
+        },
+        {
+          enabled: true,
+          enabled_time: 1,
+          disabled_time: 2,
+        }
+      );
+      expect(response).toEqual({
+        curState: 'Running',
+        detectionDateRange: {
+          startTime: 1,
+          endTime: 2,
+        },
+        stateError: '',
+        initProgress: undefined,
+        enabled: true,
+        enabledTime: 1,
+        disabledTime: 2,
+        taskError: '',
+        taskId: 'test-historical',
+        taskProgress: 1,
+        taskState: 'Finished',
+      });
+    });
+    test('just job passed (old realtime detector)', () => {
+      const response = convertTaskAndJobFieldsToCamelCase(
+        undefined,
+        undefined,
+        {
+          enabled: true,
+          enabled_time: 1,
+          disabled_time: 2,
+        }
+      );
+      expect(response).toEqual({
+        curState: 'Running',
+        enabled: true,
+        enabledTime: 1,
+        disabledTime: 2,
+        taskId: undefined,
+        taskError: '',
+        taskProgress: undefined,
+        taskState: 'Stopped',
+      });
     });
   });
 });

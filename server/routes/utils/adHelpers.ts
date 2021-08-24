@@ -36,6 +36,9 @@ import {
   ENTITY_FIELD,
   ENTITY_NAME_PATH_FIELD,
   ENTITY_VALUE_PATH_FIELD,
+  SORT_DIRECTION,
+  REALTIME_TASK_TYPES,
+  HISTORICAL_TASK_TYPES,
 } from '../../utils/constants';
 import { InitProgress } from '../../models/interfaces';
 import { MAX_DETECTORS } from '../../utils/constants';
@@ -116,6 +119,99 @@ export const convertDetectorKeysToCamelCase = (response: object) => {
     };
   }
   return camelCaseResponse;
+};
+
+// Converts the static detector fields into camelcase. Ignores any job or task-related fields
+export const convertStaticFieldsToCamelCase = (response: object) => {
+  return {
+    ...mapKeysDeep(
+      omit(response, [
+        'filter_query',
+        'feature_query',
+        'feature_attributes',
+        'ui_metadata',
+        'anomaly_detector_job',
+        'anomaly_detection_task',
+        'realtime_detection_task',
+        'historical_analysis_task',
+      ]),
+      toCamel
+    ),
+    filterQuery: get(response, 'filter_query', {}),
+    featureAttributes: get(response, 'feature_attributes', []).map(
+      (feature: any) => ({
+        ...mapKeysDeep({ ...omit(feature, ['aggregation_query']) }, toCamel),
+        aggregationQuery: feature.aggregation_query,
+      })
+    ),
+    uiMetadata: get(response, 'ui_metadata', {}),
+  };
+};
+
+// Converts the task-related detector fields into camelcase
+export const convertTaskAndJobFieldsToCamelCase = (
+  realtimeTask: any,
+  historicalTask: any,
+  detectorJob: object
+) => {
+  let response = {};
+
+  // Populate AD job fields
+  response = {
+    ...response,
+    enabled: get(detectorJob, 'enabled', false),
+    enabledTime: get(detectorJob, 'enabled_time'),
+    disabledTime: get(detectorJob, 'disabled_time'),
+  };
+
+  // Populate RT-task-related fields
+  response =
+    realtimeTask !== undefined
+      ? {
+          ...response,
+          curState: getTaskState(realtimeTask),
+          stateError: processTaskError(get(realtimeTask, 'error', '')),
+          initProgress: getTaskInitProgress(realtimeTask),
+        }
+      : {
+          ...response,
+          curState: get(detectorJob, 'enabled', false)
+            ? DETECTOR_STATE.RUNNING
+            : DETECTOR_STATE.DISABLED,
+        };
+
+  // Detection date range field is stored under the 'detector' field in legacy historical tasks.
+  // To handle this, need to add a check to fetch the date range from the correct place
+  const isLegacyHistorical =
+    get(historicalTask, 'detection_date_range') === undefined &&
+    get(historicalTask, 'detector.detection_date_range') !== undefined;
+  const legacyDateRangePrefix = isLegacyHistorical ? 'detector.' : '';
+
+  // Populate historical-task-related fields
+  response = {
+    ...response,
+    taskId: get(historicalTask, 'id'),
+    taskState: getTaskState(historicalTask),
+    taskProgress: get(historicalTask, 'task_progress'),
+    taskError: processTaskError(get(historicalTask, 'error', '')),
+    detectionDateRange: {
+      startTime: get(
+        historicalTask,
+        `${legacyDateRangePrefix}detection_date_range.start_time`
+      ),
+      endTime: get(
+        historicalTask,
+        `${legacyDateRangePrefix}detection_date_range.end_time`
+      ),
+    },
+  };
+
+  if (isEmpty(historicalTask)) {
+    //@ts-ignore
+    delete response.detectionDateRange;
+  }
+
+  return response;
 };
 
 export const getResultAggregationQuery = (
@@ -375,12 +471,17 @@ export const getTaskState = (task: any) => {
 
 export const processTaskError = (error: string) => {
   const errorWithPrefixRemoved = error.replace(OPENSEARCH_EXCEPTION_PREFIX, '');
-  return errorWithPrefixRemoved.endsWith('.')
+  return isEmpty(errorWithPrefixRemoved) || errorWithPrefixRemoved.endsWith('.')
     ? errorWithPrefixRemoved
     : errorWithPrefixRemoved + '.';
 };
 
-export const getLatestDetectorTasksQuery = () => {
+// Filtering by 'is_latest=true' is not enough here. During backfilling of legacy
+// realtime detectors on the backend, it is possible that multiple realtime
+// tasks with 'is_latest=true' are created. We sort by latest execution_start_time
+// (which is equivalent to it's creation timestamp), and only return the latest one.
+export const getLatestDetectorTasksQuery = (realtime: boolean) => {
+  const taskTypes = realtime ? REALTIME_TASK_TYPES : HISTORICAL_TASK_TYPES;
   return {
     size: 0,
     query: {
@@ -393,12 +494,7 @@ export const getLatestDetectorTasksQuery = () => {
           },
           {
             terms: {
-              task_type: [
-                'REALTIME_HC_DETECTOR',
-                'REALTIME_SINGLE_ENTITY',
-                'HISTORICAL_SINGLE_ENTITY',
-                'HISTORICAL_HC_DETECTOR',
-              ],
+              task_type: taskTypes,
             },
           },
         ],
@@ -413,7 +509,10 @@ export const getLatestDetectorTasksQuery = () => {
         aggs: {
           latest_tasks: {
             top_hits: {
-              size: 2,
+              size: 1,
+              sort: {
+                execution_start_time: SORT_DIRECTION.DESC,
+              },
             },
           },
         },
@@ -455,4 +554,42 @@ export const getFiltersFromEntityList = (entityListAsObj: object) => {
     });
   });
   return filters;
+};
+
+// Filtering by 'is_latest=true' is not enough here. During backfilling of legacy
+// realtime detectors on the backend, it is possible that multiple realtime
+// tasks with 'is_latest=true' are created. We sort by latest execution_start_time
+// (which is equivalent to it's creation timestamp), and only return the latest one.
+export const getLatestTaskForDetectorQuery = (
+  detectorId: string,
+  realtime: boolean
+) => {
+  const taskTypes = realtime ? REALTIME_TASK_TYPES : HISTORICAL_TASK_TYPES;
+  return {
+    size: 1,
+    sort: {
+      execution_start_time: SORT_DIRECTION.DESC,
+    },
+    query: {
+      bool: {
+        filter: [
+          {
+            term: {
+              detector_id: detectorId,
+            },
+          },
+          {
+            term: {
+              is_latest: 'true',
+            },
+          },
+          {
+            terms: {
+              task_type: taskTypes,
+            },
+          },
+        ],
+      },
+    },
+  };
 };
