@@ -54,7 +54,7 @@ describe('<DetectorJobs /> spec', () => {
     getByText('Real-time detector');
     getByText(DETECTOR_STATE.INIT);
   });
-  test('renders with disabled historical detector', () => {
+  test('renders with disabled historical analysis', () => {
     const { getByText } = render(
       <DetectorJobs
         detector={{

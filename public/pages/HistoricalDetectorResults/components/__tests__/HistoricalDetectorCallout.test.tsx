@@ -40,7 +40,7 @@ describe('<HistoricalDetectorCallout /> spec', () => {
         isStoppingDetector={false}
       />
     );
-    getByText(`Initializing the historical detector.`);
+    getByText(`Initializing the historical analysis.`);
   });
   test('renders component when running and partial progress', () => {
     const { getByText } = render(
@@ -53,8 +53,8 @@ describe('<HistoricalDetectorCallout /> spec', () => {
         isStoppingDetector={false}
       />
     );
-    getByText('Running the historical detector');
-    getByText('Stop historical detector');
+    getByText('Running the historical analysis');
+    getByText('Stop historical analysis');
     getByText('50%');
   });
   test('shows task failure if failed', () => {
@@ -81,7 +81,7 @@ describe('<HistoricalDetectorCallout /> spec', () => {
       />
     );
     getByText(
-      `The historical detector has failed unexpectedly. Try restarting the detector.`
+      `The historical analysis has failed unexpectedly. Try restarting the detector.`
     );
   });
 });

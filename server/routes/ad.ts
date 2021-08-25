@@ -333,7 +333,7 @@ export default class AdService {
       const endTime = request.body?.endTime;
       let requestParams = { detectorId: detectorId } as {};
       let requestPath = 'ad.startDetector';
-      // If a start and end time are passed: we want to start a historical detector
+      // If a start and end time are passed: we want to start a historical analysis
       if (isNumber(startTime) && isNumber(endTime)) {
         requestParams = {
           ...requestParams,
