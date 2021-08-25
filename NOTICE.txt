@@ -1,2 +1,2 @@
 OpenSearch Anomaly Detection Dashboards
-Copyright 2021 OpenSearch Contributors
+Copyright OpenSearch Contributors
