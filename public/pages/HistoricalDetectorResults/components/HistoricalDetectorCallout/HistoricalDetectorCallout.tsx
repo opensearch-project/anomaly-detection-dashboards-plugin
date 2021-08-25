@@ -65,7 +65,7 @@ export const HistoricalDetectorCallout = (
             <EuiFlexGroup direction="row" gutterSize="xs">
               <EuiLoadingSpinner size="l" style={{ marginRight: '8px' }} />
               <EuiText>
-                <p>Stopping the historical detector</p>
+                <p>Stopping the historical analysis</p>
               </EuiText>
             </EuiFlexGroup>
           </div>
@@ -78,7 +78,7 @@ export const HistoricalDetectorCallout = (
     case DETECTOR_STATE.DISABLED:
       return (
         <EuiCallOut
-          title="The historical detector is stopped"
+          title="The historical analysis is stopped"
           color="primary"
           iconType="alert"
         />
@@ -91,7 +91,7 @@ export const HistoricalDetectorCallout = (
               <EuiFlexGroup direction="row" gutterSize="xs">
                 <EuiLoadingSpinner size="l" style={{ marginRight: '8px' }} />
                 <EuiText>
-                  <p>Initializing the historical detector.</p>
+                  <p>Initializing the historical analysis.</p>
                 </EuiText>
               </EuiFlexGroup>
             </div>
@@ -110,7 +110,7 @@ export const HistoricalDetectorCallout = (
                   style={{ marginRight: '8px', marginTop: '4px' }}
                 />
                 <EuiText>
-                  <p>Running the historical detector</p>
+                  <p>Running the historical analysis</p>
                 </EuiText>
               </EuiFlexGroup>
               {runningProgress ? (
@@ -137,7 +137,7 @@ export const HistoricalDetectorCallout = (
               <EuiSpacer size="s" />
               <EuiFlexItem grow={false} style={{ marginLeft: '22px' }}>
                 <EuiButton fill={false} onClick={() => props.onStopDetector()}>
-                  Stop historical detector
+                  Stop historical analysis
                 </EuiButton>
               </EuiFlexItem>
             </div>
@@ -158,7 +158,7 @@ export const HistoricalDetectorCallout = (
         <EuiCallOut
           title={
             <EuiText>
-              The historical detector has failed unexpectedly. Try restarting
+              The historical analysis has failed unexpectedly. Try restarting
               the detector.
             </EuiText>
           }
