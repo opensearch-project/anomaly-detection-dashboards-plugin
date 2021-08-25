@@ -131,7 +131,7 @@ export function ReviewAndCreate(props: ReviewAndCreateProps) {
             )
               .then((response: any) => {
                 core.notifications.toasts.addSuccess(
-                  `Successfully started the historical detector`
+                  `Successfully started the historical analysis`
                 );
               })
               .catch((err: any) => {
@@ -139,7 +139,7 @@ export function ReviewAndCreate(props: ReviewAndCreateProps) {
                   prettifyErrorMessage(
                     getErrorMessage(
                       err,
-                      'There was a problem starting the historical detector'
+                      'There was a problem starting the historical analysis'
                     )
                   )
                 );
