@@ -57,11 +57,10 @@ export const OutOfRangeModal = (props: OutOfRangeModalProps) => {
         <EuiFlexGroup direction="column">
           <EuiFlexItem grow={false}>
             <EuiText>
-              {`The selected dates are not in the range from when the detector
+              {`Your selected dates are not in the range from when the detector
                 last started streaming data (${convertTimestampToString(
                   props.lastEnabledTime
-                )}). To see historical data, go to
-                historical analysis.`}
+                )}).`}
             </EuiText>
           </EuiFlexItem>
         </EuiFlexGroup>

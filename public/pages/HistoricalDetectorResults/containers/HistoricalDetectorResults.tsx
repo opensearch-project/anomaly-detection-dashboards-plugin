@@ -133,7 +133,7 @@ export function HistoricalDetectorResults(
         .then((response: any) => {
           setTaskId(get(response, 'response._id'));
           core.notifications.toasts.addSuccess(
-            `Successfully started the historical detector`
+            `Successfully started the historical analysis`
           );
         })
         .catch((err: any) => {
@@ -141,7 +141,7 @@ export function HistoricalDetectorResults(
             prettifyErrorMessage(
               getErrorMessage(
                 err,
-                'There was a problem starting the historical detector'
+                'There was a problem starting the historical analysis'
               )
             )
           );
@@ -152,7 +152,7 @@ export function HistoricalDetectorResults(
   };
 
   // We query the task state 5s after making the stop detector call. If the task is still running,
-  // then it is assumed there was an error stopping this task / historical detector.
+  // then it is assumed there was an error stopping this task / historical analysis.
   // TODO: change this from await dispatch() to using .then(), .catch(), etc.
   const onStopDetector = async () => {
     try {
@@ -164,13 +164,13 @@ export function HistoricalDetectorResults(
           throw 'please try again.';
         } else {
           core.notifications.toasts.addSuccess(
-            'Successfully stopped the historical detector'
+            'Successfully stopped the historical analysis'
           );
         }
       });
     } catch (err) {
       core.notifications.toasts.addDanger(
-        `There was a problem stopping the historical detector: ` +
+        `There was a problem stopping the historical analysis: ` +
           prettifyErrorMessage(getErrorMessage(err, ''))
       );
       fetchDetector();
