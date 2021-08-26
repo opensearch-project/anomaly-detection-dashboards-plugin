@@ -26,7 +26,7 @@ exports[`<ConfigureModel /> spec creating model configuration renders the compon
         <div
           class="euiText euiText--medium"
         >
-          Set the index fields that you want to find anomalies for by defining the model features. You can also set other model parameters such as category field and window size for more granular views. After you set the model features and other optional parameters, you can preview your anomalies from a sample feature output.
+          Set the index fields that you want to find anomalies for by defining the model features. You can also set other model parameters such as category field and shingle size for more granular views. After you set the model features and other optional parameters, you can preview your anomalies from a sample feature output.
            
           <a
             class="euiLink euiLink--primary"
@@ -929,7 +929,7 @@ exports[`<ConfigureModel /> spec editing model configuration renders the compone
         <div
           class="euiText euiText--medium"
         >
-          Set the index fields that you want to find anomalies for by defining the model features. You can also set other model parameters such as category field and window size for more granular views. After you set the model features and other optional parameters, you can preview your anomalies from a sample feature output.
+          Set the index fields that you want to find anomalies for by defining the model features. You can also set other model parameters such as category field and shingle size for more granular views. After you set the model features and other optional parameters, you can preview your anomalies from a sample feature output.
            
           <a
             class="euiLink euiLink--primary"

@@ -37,12 +37,12 @@ export function AdditionalSettings(props: AdditionalSettingsProps) {
   const tableItems = [
     {
       categoryField: get(props, 'categoryField.0', '-'),
-      windowSize: props.shingleSize,
+      shingleSize: props.shingleSize,
     },
   ];
   const tableColumns = [
     { name: 'Category field', field: 'categoryField' },
-    { name: 'Window size', field: 'windowSize' },
+    { name: 'Shingle size', field: 'shingleSize' },
   ];
   return (
     <EuiBasicTable

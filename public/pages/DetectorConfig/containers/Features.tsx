@@ -197,7 +197,7 @@ export const Features = (props: FeaturesProps) => {
 
   const setParamsText = `Set the index fields that you want to find anomalies for by defining
                            the model features. You can also set other model parameters such as
-                           window size.`;
+                           shingle size.`;
 
   const previewText = `After you set the model features and other optional parameters, you can
                          preview your anomalies from a sample feature output.`;
