@@ -41,12 +41,12 @@ export function AdditionalSettings(props: AdditionalSettingsProps) {
       categoryField: isEmpty(get(props, 'categoryField', []))
         ? '-'
         : convertToCategoryFieldString(props.categoryField, ', '),
-      windowSize: props.shingleSize,
+      shingleSize: props.shingleSize,
     },
   ];
   const tableColumns = [
     { name: 'Categorical fields', field: 'categoryField' },
-    { name: 'Window size', field: 'windowSize' },
+    { name: 'Shingle size', field: 'shingleSize' },
   ];
   return (
     <ContentPanel title="Additional settings" titleSize="s">

@@ -43,7 +43,7 @@ describe('<AdditionalSettings /> spec', () => {
     );
     expect(container.firstChild).toMatchSnapshot();
     getAllByText('Category field');
-    getAllByText('Window size');
+    getAllByText('Shingle size');
     getByText('-');
     getByText('8');
   });
@@ -62,7 +62,7 @@ describe('<AdditionalSettings /> spec', () => {
     );
     expect(container.firstChild).toMatchSnapshot();
     getAllByText('Category field');
-    getAllByText('Window size');
+    getAllByText('Shingle size');
     getByText('test_field');
     getByText('8');
   });

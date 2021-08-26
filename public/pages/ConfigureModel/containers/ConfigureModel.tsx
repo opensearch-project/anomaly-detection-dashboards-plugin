@@ -256,7 +256,7 @@ export function ConfigureModel(props: ConfigureModelProps) {
                     <EuiText>
                       Set the index fields that you want to find anomalies for
                       by defining the model features. You can also set other
-                      model parameters such as category field and window size
+                      model parameters such as category field and shingle size
                       for more granular views. After you set the model features
                       and other optional parameters, you can preview your
                       anomalies from a sample feature output.{' '}

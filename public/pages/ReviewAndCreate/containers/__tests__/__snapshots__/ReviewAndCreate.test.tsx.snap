@@ -433,7 +433,7 @@ exports[`<ReviewAndCreate /> spec renders the component 1`] = `
                       </th>
                       <th
                         class="euiTableHeaderCell"
-                        data-test-subj="tableHeaderCell_windowSize_1"
+                        data-test-subj="tableHeaderCell_shingleSize_1"
                         role="columnheader"
                         scope="col"
                       >
@@ -442,9 +442,9 @@ exports[`<ReviewAndCreate /> spec renders the component 1`] = `
                         >
                           <span
                             class="euiTableCellContent__text"
-                            title="Window size"
+                            title="Shingle size"
                           >
-                            Window size
+                            Shingle size
                           </span>
                         </div>
                       </th>
@@ -478,7 +478,7 @@ exports[`<ReviewAndCreate /> spec renders the component 1`] = `
                         <div
                           class="euiTableRowCell__mobileHeader euiTableRowCell--hideForDesktop"
                         >
-                          Window size
+                          Shingle size
                         </div>
                         <div
                           class="euiTableCellContent"

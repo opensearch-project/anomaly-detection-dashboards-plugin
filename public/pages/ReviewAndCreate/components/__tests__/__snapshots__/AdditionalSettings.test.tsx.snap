@@ -49,7 +49,7 @@ exports[`<AdditionalSettings /> spec renders the component with high cardinality
             </th>
             <th
               class="euiTableHeaderCell"
-              data-test-subj="tableHeaderCell_windowSize_1"
+              data-test-subj="tableHeaderCell_shingleSize_1"
               role="columnheader"
               scope="col"
             >
@@ -58,9 +58,9 @@ exports[`<AdditionalSettings /> spec renders the component with high cardinality
               >
                 <span
                   class="euiTableCellContent__text"
-                  title="Window size"
+                  title="Shingle size"
                 >
-                  Window size
+                  Shingle size
                 </span>
               </div>
             </th>
@@ -94,7 +94,7 @@ exports[`<AdditionalSettings /> spec renders the component with high cardinality
               <div
                 class="euiTableRowCell__mobileHeader euiTableRowCell--hideForDesktop"
               >
-                Window size
+                Shingle size
               </div>
               <div
                 class="euiTableCellContent"
@@ -163,7 +163,7 @@ exports[`<AdditionalSettings /> spec renders the component with high cardinality
             </th>
             <th
               class="euiTableHeaderCell"
-              data-test-subj="tableHeaderCell_windowSize_1"
+              data-test-subj="tableHeaderCell_shingleSize_1"
               role="columnheader"
               scope="col"
             >
@@ -172,9 +172,9 @@ exports[`<AdditionalSettings /> spec renders the component with high cardinality
               >
                 <span
                   class="euiTableCellContent__text"
-                  title="Window size"
+                  title="Shingle size"
                 >
-                  Window size
+                  Shingle size
                 </span>
               </div>
             </th>
@@ -208,7 +208,7 @@ exports[`<AdditionalSettings /> spec renders the component with high cardinality
               <div
                 class="euiTableRowCell__mobileHeader euiTableRowCell--hideForDesktop"
               >
-                Window size
+                Shingle size
               </div>
               <div
                 class="euiTableCellContent"
