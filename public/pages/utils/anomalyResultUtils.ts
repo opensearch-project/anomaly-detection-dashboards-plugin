@@ -146,18 +146,18 @@ export const calculateTimeWindowsWithMaxDataPoints = (
 ): DateRange[] => {
   const resultSampleWindows = [] as DateRange[];
   const rangeInMilliSec = dateRange.endDate - dateRange.startDate;
-  const windowSizeinMilliSec = Math.max(
+  const shingleSizeinMilliSec = Math.max(
     Math.ceil(rangeInMilliSec / maxDataPoints),
     MIN_IN_MILLI_SECS
   );
   for (
     let currentTime = dateRange.startDate;
     currentTime < dateRange.endDate;
-    currentTime += windowSizeinMilliSec
+    currentTime += shingleSizeinMilliSec
   ) {
     resultSampleWindows.push({
       startDate: currentTime,
-      endDate: Math.min(currentTime + windowSizeinMilliSec, dateRange.endDate),
+      endDate: Math.min(currentTime + shingleSizeinMilliSec, dateRange.endDate),
     } as DateRange);
   }
   return resultSampleWindows;

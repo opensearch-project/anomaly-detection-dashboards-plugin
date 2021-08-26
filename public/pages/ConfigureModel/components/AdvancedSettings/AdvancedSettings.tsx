@@ -77,13 +77,15 @@ export function AdvancedSettings(props: AdvancedSettingsProps) {
         <Field name="shingleSize" validate={validatePositiveInteger}>
           {({ field, form }: FieldProps) => (
             <FormattedFormRow
-              title="Window size"
+              title="Shingle size"
               hint={[
-                `Set the number of intervals to consider in a detection 
-                window for your model. We recommend using a window size 
-                between 1 and 16. If you expect missing values or if you 
-                want the anomalies exclusively based on the current interval, 
-                choose 1.`,
+                `Set the number of intervals to consider in a detection
+                window for your model. The anomaly detector expects the
+                shingle size to be in the range of 1 and 60. The default
+                shingle size is 8. We recommend that you don’t choose 1
+                unless you have two or more features. Smaller values might
+                increase recall but also false positives. Larger values
+                might be useful for ignoring noise in a signal.`,
               ]}
               hintLink={`${BASE_DOCS_LINK}/ad`}
               isInvalid={isInvalid(field.name, form)}
@@ -93,7 +95,7 @@ export function AdvancedSettings(props: AdvancedSettingsProps) {
                 <EuiFlexItem grow={false}>
                   <EuiFieldNumber
                     id="shingleSize"
-                    placeholder="Window size"
+                    placeholder="Shingle size"
                     data-test-subj="shingleSize"
                     {...field}
                   />
