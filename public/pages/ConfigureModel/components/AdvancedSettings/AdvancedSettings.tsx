@@ -95,7 +95,7 @@ export function AdvancedSettings(props: AdvancedSettingsProps) {
                 <EuiFlexItem grow={false}>
                   <EuiFieldNumber
                     id="shingleSize"
-                    placeholder="Window size"
+                    placeholder="Shingle size"
                     data-test-subj="shingleSize"
                     {...field}
                   />
