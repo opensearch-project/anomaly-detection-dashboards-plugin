@@ -180,6 +180,14 @@ export const DetectorDetail = (props: DetectorDetailProps) => {
     }
   }, [detector]);
 
+  // If the detector state was changed after opening the stop detector modal,
+  // re-check if any jobs are running, and close the modal if it's not needed anymore
+  useEffect(() => {
+    if (!isRTJobRunning && !isHistoricalJobRunning) {
+      hideStopDetectorModal();
+    }
+  }, [detector]);
+
   const handleSwitchToConfigurationTab = useCallback(() => {
     setDetectorDetailModel({
       ...detectorDetailModel,
