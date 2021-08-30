@@ -306,6 +306,10 @@ export const AnomalyHistory = (props: AnomalyHistoryProps) => {
   useEffect(() => {
     if (selectedHeatmapCell) {
       fetchEntityAnomalyData(selectedHeatmapCell);
+      handleZoomChange(
+        selectedHeatmapCell.dateRange.startDate,
+        selectedHeatmapCell.dateRange.endDate
+      );
     } else {
       setAtomicAnomalyResults(hcDetectorAnomalyResults);
     }
@@ -634,6 +638,7 @@ export const AnomalyHistory = (props: AnomalyHistoryProps) => {
                     )}
                     isHCDetector={isHCDetector}
                     isHistorical={props.isHistorical}
+                    selectedHeatmapCell={selectedHeatmapCell}
                   />
                 )}
               </EuiPanel>
