@@ -575,6 +575,7 @@ export const AnomalyHistory = (props: AnomalyHistoryProps) => {
                   detector={props.detector}
                   monitor={props.monitor}
                   isHCDetector={isHCDetector}
+                  isHistorical={props.isHistorical}
                   selectedHeatmapCell={selectedHeatmapCell}
                 />,
                 <EuiSpacer size="m" />,
