@@ -108,7 +108,7 @@ export function CategoryField(props: CategoryFieldProps) {
       {noCategoryFields ? <EuiSpacer size="m" /> : null}
       {props.isEdit ? (
         <EuiCallOut
-          data-test-subj="noCategoryFieldsCallout"
+          data-test-subj="categoryFieldReadOnlyCallout"
           title="<Placeholder for text when editing>"
           color="primary"
           iconType="iInCircle"
@@ -116,7 +116,7 @@ export function CategoryField(props: CategoryFieldProps) {
         ></EuiCallOut>
       ) : (
         <EuiCallOut
-          data-test-subj="noCategoryFieldsCallout"
+          data-test-subj="cannotEditCategoryFieldCallout"
           title="<Placeholder for text when creating>"
           color="warning"
           iconType="alert"
