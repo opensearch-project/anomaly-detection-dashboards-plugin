@@ -50,6 +50,7 @@ import {
   startDetector,
   stopDetector,
   getDetector,
+  stopHistoricalDetector,
 } from '../../../redux/reducers/ad';
 import { getErrorMessage, Listener } from '../../../utils/utils';
 import { darkModeEnabled } from '../../../utils/opensearchDashboardsUtils';
@@ -66,6 +67,7 @@ import {
   NO_PERMISSIONS_KEY_WORD,
   prettifyErrorMessage,
 } from '../../../../server/utils/helpers';
+import { DETECTOR_STATE } from '../../../../server/utils/constants';
 
 export interface DetectorRouterProps {
   detectorId?: string;
@@ -120,6 +122,20 @@ export const DetectorDetail = (props: DetectorDetailProps) => {
   const { monitor, fetchMonitorError, isLoadingMonitor } = useFetchMonitorInfo(
     detectorId
   );
+  // String to set in the modal if the realtime detector and/or historical analysis
+  // are running when the user tries to edit the detector details or model config
+  const isRTJobRunning = get(detector, 'enabled');
+  const isHistoricalJobRunning =
+    get(detector, 'taskState') === DETECTOR_STATE.RUNNING ||
+    get(detector, 'taskState') === DETECTOR_STATE.INIT;
+  const runningJobsAsString =
+    isRTJobRunning && isHistoricalJobRunning
+      ? 'detector and historical analysis'
+      : isRTJobRunning
+      ? 'detector'
+      : isHistoricalJobRunning
+      ? 'historical analysis'
+      : '';
 
   //TODO: test dark mode once detector configuration and AD result page merged
   const isDark = darkModeEnabled();
@@ -161,6 +177,14 @@ export const DetectorDetail = (props: DetectorDetailProps) => {
         BREADCRUMBS.DETECTORS,
         { text: detector ? detector.name : '' },
       ]);
+    }
+  }, [detector]);
+
+  // If the detector state was changed after opening the stop detector modal,
+  // re-check if any jobs are running, and close the modal if it's not needed anymore
+  useEffect(() => {
+    if (!isRTJobRunning && !isHistoricalJobRunning) {
+      hideStopDetectorModal();
     }
   }, [detector]);
 
@@ -245,15 +269,23 @@ export const DetectorDetail = (props: DetectorDetailProps) => {
 
   const handleStopAdJob = async (detectorId: string, listener?: Listener) => {
     try {
-      await dispatch(stopDetector(detectorId));
+      if (isRTJobRunning) {
+        await dispatch(stopDetector(detectorId));
+      }
+      if (isHistoricalJobRunning) {
+        await dispatch(stopHistoricalDetector(detectorId));
+      }
       core.notifications.toasts.addSuccess(
-        'Successfully stopped the detector job'
+        `Successfully stopped the ${runningJobsAsString}`
       );
       if (listener) listener.onSuccess();
     } catch (err) {
       core.notifications.toasts.addDanger(
         prettifyErrorMessage(
-          getErrorMessage(err, 'There was a problem stopping the detector job')
+          getErrorMessage(
+            err,
+            `There was a problem stopping the ${runningJobsAsString}`
+          )
         )
       );
       if (listener) listener.onException();
@@ -277,7 +309,7 @@ export const DetectorDetail = (props: DetectorDetailProps) => {
   }, []);
 
   const handleEditDetector = () => {
-    detector.enabled
+    isRTJobRunning || isHistoricalJobRunning
       ? setDetectorDetailModel({
           ...detectorDetailModel,
           showStopDetectorModalFor: 'detector',
@@ -286,7 +318,7 @@ export const DetectorDetail = (props: DetectorDetailProps) => {
   };
 
   const handleEditFeature = () => {
-    detector.enabled
+    isRTJobRunning || isHistoricalJobRunning
       ? setDetectorDetailModel({
           ...detectorDetailModel,
           showStopDetectorModalFor: 'features',
@@ -301,15 +333,14 @@ export const DetectorDetail = (props: DetectorDetailProps) => {
     <MonitorCallout monitorId={monitor.id} monitorName={monitor.name} />
   ) : null;
 
-  const deleteDetectorCallout = detector.enabled ? (
-    <EuiCallOut
-      title="The detector is running. Are you sure you want to proceed?"
-      color="warning"
-      iconType="alert"
-    ></EuiCallOut>
-  ) : null;
-
-  const isHCDetector = !isEmpty(get(detector, 'categoryField', []));
+  const deleteDetectorCallout =
+    isRTJobRunning || isHistoricalJobRunning ? (
+      <EuiCallOut
+        title={`The ${runningJobsAsString} is running. Are you sure you want to proceed?`}
+        color="warning"
+        iconType="alert"
+      ></EuiCallOut>
+    ) : null;
 
   return (
     <React.Fragment>
@@ -454,8 +485,7 @@ export const DetectorDetail = (props: DetectorDetailProps) => {
         <EuiOverlayMask>
           <ConfirmModal
             title="Stop detector to proceed?"
-            description="You must stop the detector to change its 
-                      configuration. After you reconfigure the detector, be sure to restart it."
+            description={`You must stop the ${runningJobsAsString} to change its configuration. After you reconfigure the detector, be sure to restart it.`}
             callout={monitorCallout}
             confirmButtonText="Stop and proceed to edit"
             confirmButtonColor="primary"
