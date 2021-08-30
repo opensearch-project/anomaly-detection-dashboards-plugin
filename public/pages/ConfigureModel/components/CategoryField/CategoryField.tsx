@@ -106,6 +106,24 @@ export function CategoryField(props: CategoryFieldProps) {
         ></EuiCallOut>
       ) : null}
       {noCategoryFields ? <EuiSpacer size="m" /> : null}
+      {props.isEdit ? (
+        <EuiCallOut
+          data-test-subj="noCategoryFieldsCallout"
+          title="<Placeholder for text when editing>"
+          color="primary"
+          iconType="iInCircle"
+          size="s"
+        ></EuiCallOut>
+      ) : (
+        <EuiCallOut
+          data-test-subj="noCategoryFieldsCallout"
+          title="<Placeholder for text when creating>"
+          color="warning"
+          iconType="alert"
+          size="s"
+        ></EuiCallOut>
+      )}
+      <EuiSpacer size="m" />
       <Field
         name="categoryField"
         validate={enabled ? validateCategoryField : null}
@@ -117,7 +135,7 @@ export function CategoryField(props: CategoryFieldProps) {
                 id={'categoryFieldCheckbox'}
                 label="Enable categorical fields"
                 checked={enabled}
-                disabled={noCategoryFields}
+                disabled={noCategoryFields || props.isEdit}
                 onChange={() => {
                   if (!enabled) {
                     props.setIsHCDetector(true);
@@ -167,6 +185,7 @@ export function CategoryField(props: CategoryFieldProps) {
                     }
                     singleSelection={false}
                     isClearable={true}
+                    isDisabled={props.isEdit}
                   />
                 </EuiFormRow>
               </EuiFlexItem>
