@@ -49,7 +49,6 @@ import {
   filterWithHeatmapFilter,
   entityListsMatch,
 } from '../../utils/anomalyResultUtils';
-import { getDateRangeWithSelectedHeatmapCell } from '../utils/anomalyChartUtils';
 import { Entity } from '../../../../server/models/interfaces';
 
 interface FeatureBreakDownProps {
@@ -97,9 +96,8 @@ export const FeatureBreakDown = React.memo((props: FeatureBreakDownProps) => {
             !isEmpty(dataEntityList) &&
             entityListsMatch(dataEntityList, cellEntityList) &&
             get(currentAnomalyData, 'plotTime', 0) >=
-              props.selectedHeatmapCell.dateRange.startDate &&
-            get(currentAnomalyData, 'plotTime', 0) <=
-              props.selectedHeatmapCell.dateRange.endDate
+              props.dateRange.startDate &&
+            get(currentAnomalyData, 'plotTime', 0) <= props.dateRange.endDate
           ) {
             filteredFeatureData.push(originalFeatureData[i]);
           }
@@ -169,11 +167,7 @@ export const FeatureBreakDown = React.memo((props: FeatureBreakDownProps) => {
               )}
               annotations={getAnnotationData()}
               isLoading={props.isLoading}
-              dateRange={getDateRangeWithSelectedHeatmapCell(
-                props.dateRange,
-                props.isHCDetector,
-                props.selectedHeatmapCell
-              )}
+              dateRange={props.dateRange}
               featureType={
                 get(
                   props,
