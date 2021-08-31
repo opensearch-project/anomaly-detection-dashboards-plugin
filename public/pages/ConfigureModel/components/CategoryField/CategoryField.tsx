@@ -106,6 +106,16 @@ export function CategoryField(props: CategoryFieldProps) {
         ></EuiCallOut>
       ) : null}
       {noCategoryFields ? <EuiSpacer size="m" /> : null}
+      {props.isEdit ? (
+        <EuiCallOut
+          data-test-subj="categoryFieldReadOnlyCallout"
+          title="Category fields cannot be changed once the detector is created"
+          color="primary"
+          iconType="iInCircle"
+          size="s"
+        ></EuiCallOut>
+      ) : null}
+      {props.isEdit ? <EuiSpacer size="m" /> : null}
       <Field
         name="categoryField"
         validate={enabled ? validateCategoryField : null}
@@ -117,7 +127,7 @@ export function CategoryField(props: CategoryFieldProps) {
                 id={'categoryFieldCheckbox'}
                 label="Enable categorical fields"
                 checked={enabled}
-                disabled={noCategoryFields}
+                disabled={noCategoryFields || props.isEdit}
                 onChange={() => {
                   if (!enabled) {
                     props.setIsHCDetector(true);
@@ -130,6 +140,17 @@ export function CategoryField(props: CategoryFieldProps) {
                 }}
               />
             </EuiFlexItem>
+            {enabled && !props.isEdit ? (
+              <EuiFlexItem>
+                <EuiCallOut
+                  data-test-subj="cannotEditCategoryFieldCallout"
+                  title="Category fields cannot be changed once the detector is created. Please ensure that you select the fields necessary for your case."
+                  color="warning"
+                  iconType="alert"
+                  size="s"
+                ></EuiCallOut>
+              </EuiFlexItem>
+            ) : null}
             {enabled && !noCategoryFields ? (
               <EuiFlexItem>
                 <EuiFormRow
@@ -167,6 +188,7 @@ export function CategoryField(props: CategoryFieldProps) {
                     }
                     singleSelection={false}
                     isClearable={true}
+                    isDisabled={props.isEdit}
                   />
                 </EuiFormRow>
               </EuiFlexItem>
