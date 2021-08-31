@@ -314,7 +314,7 @@ describe('<CategoryField /> spec', () => {
                 isLoading={false}
                 formikProps={{
                   values: {
-                    categoryFieldEnabled: true,
+                    categoryFieldEnabled: false,
                   },
                 }}
               />
@@ -323,7 +323,7 @@ describe('<CategoryField /> spec', () => {
         </Formik>
       </Fragment>
     );
-    expect(queryByTestId('cannotEditCategoryFieldCallout')).not.toBeNull();
+    expect(queryByTestId('cannotEditCategoryFieldCallout')).toBeNull();
   });
   test('shows info callout and hides warning callout if editing', () => {
     const { queryByTestId } = render(
