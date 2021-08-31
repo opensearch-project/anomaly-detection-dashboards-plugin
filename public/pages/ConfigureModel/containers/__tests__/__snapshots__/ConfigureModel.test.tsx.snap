@@ -1610,6 +1610,33 @@ exports[`<ConfigureModel /> spec editing model configuration renders the compone
             class="euiSpacer euiSpacer--m"
           />
           <div
+            class="euiCallOut euiCallOut--primary euiCallOut--small"
+            data-test-subj="categoryFieldReadOnlyCallout"
+          >
+            <div
+              class="euiCallOutHeader"
+            >
+              <svg
+                aria-hidden="true"
+                class="euiIcon euiIcon--medium euiIcon-isLoading euiCallOutHeader__icon"
+                focusable="false"
+                height="16"
+                role="img"
+                viewBox="0 0 16 16"
+                width="16"
+                xmlns="http://www.w3.org/2000/svg"
+              />
+              <span
+                class="euiCallOutHeader__title"
+              >
+                Category fields cannot be changed once the detector is created
+              </span>
+            </div>
+          </div>
+          <div
+            class="euiSpacer euiSpacer--m"
+          />
+          <div
             class="euiFlexGroup euiFlexGroup--gutterLarge euiFlexGroup--directionColumn euiFlexGroup--responsive"
           >
             <div

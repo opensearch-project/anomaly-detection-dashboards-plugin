@@ -25,7 +25,7 @@
  */
 
 import React, { Fragment } from 'react';
-import { render, fireEvent, getByRole } from '@testing-library/react';
+import { render, fireEvent } from '@testing-library/react';
 import { Form, Formik } from 'formik';
 import { CategoryField } from '../CategoryField';
 
@@ -110,7 +110,7 @@ describe('<CategoryField /> spec', () => {
     getByText('b');
   });
   test('shows callout when there are no available category fields', () => {
-    const { container, queryByText, queryByTestId } = render(
+    const { queryByText, queryByTestId } = render(
       <Fragment>
         <Formik
           initialValues={{
@@ -139,13 +139,12 @@ describe('<CategoryField /> spec', () => {
         </Formik>
       </Fragment>
     );
-    expect(container).toMatchSnapshot();
     expect(queryByTestId('noCategoryFieldsCallout')).not.toBeNull();
     expect(queryByTestId('categoryFieldComboBox')).toBeNull();
     expect(queryByText('Enable categorical fields')).not.toBeNull();
   });
   test('hides callout if component is loading', () => {
-    const { container, queryByText, queryByTestId } = render(
+    const { queryByText, queryByTestId } = render(
       <Fragment>
         <Formik
           initialValues={{
@@ -174,7 +173,6 @@ describe('<CategoryField /> spec', () => {
         </Formik>
       </Fragment>
     );
-    expect(container).toMatchSnapshot();
     expect(queryByTestId('noCategoryFieldsCallout')).toBeNull();
     expect(queryByText('Enable categorical fields')).not.toBeNull();
   });
@@ -226,5 +224,138 @@ describe('<CategoryField /> spec', () => {
     expect(queryByText('a')).not.toBeNull();
     expect(queryByText('b')).not.toBeNull();
     expect(queryByText('c')).toBeNull();
+  });
+  test(`fields are readonly if editing`, () => {
+    const { getByTestId, queryByText } = render(
+      <Fragment>
+        <Formik
+          initialValues={{
+            categoryField: [],
+          }}
+          onSubmit={() => {}}
+        >
+          <Fragment>
+            <Form>
+              <CategoryField
+                isEdit={true}
+                isHCDetector={true}
+                categoryFieldOptions={['a', 'b', 'c']}
+                setIsHCDetector={(isHCDetector: boolean) => {
+                  return;
+                }}
+                isLoading={false}
+                formikProps={{
+                  values: {
+                    categoryFieldEnabled: true,
+                  },
+                }}
+              />
+            </Form>
+          </Fragment>
+        </Formik>
+      </Fragment>
+    );
+    // try to open combo box. options should not show since the box is readonly
+    fireEvent.click(getByTestId('comboBoxToggleListButton'));
+    expect(queryByText('a')).toBeNull();
+    expect(queryByText('b')).toBeNull();
+    expect(queryByText('c')).toBeNull();
+  });
+  test('shows warning callout if creating & category field enabled', () => {
+    const { queryByTestId } = render(
+      <Fragment>
+        <Formik
+          initialValues={{
+            categoryField: [],
+          }}
+          onSubmit={() => {}}
+        >
+          <Fragment>
+            <Form>
+              <CategoryField
+                isEdit={false}
+                isHCDetector={true}
+                categoryFieldOptions={[]}
+                setIsHCDetector={(isHCDetector: boolean) => {
+                  return;
+                }}
+                isLoading={false}
+                formikProps={{
+                  values: {
+                    categoryFieldEnabled: true,
+                  },
+                }}
+              />
+            </Form>
+          </Fragment>
+        </Formik>
+      </Fragment>
+    );
+    expect(queryByTestId('cannotEditCategoryFieldCallout')).not.toBeNull();
+  });
+  test('hides warning callout if creating & category field disabled', () => {
+    const { queryByTestId } = render(
+      <Fragment>
+        <Formik
+          initialValues={{
+            categoryField: [],
+          }}
+          onSubmit={() => {}}
+        >
+          <Fragment>
+            <Form>
+              <CategoryField
+                isEdit={false}
+                isHCDetector={true}
+                categoryFieldOptions={[]}
+                setIsHCDetector={(isHCDetector: boolean) => {
+                  return;
+                }}
+                isLoading={false}
+                formikProps={{
+                  values: {
+                    categoryFieldEnabled: false,
+                  },
+                }}
+              />
+            </Form>
+          </Fragment>
+        </Formik>
+      </Fragment>
+    );
+    expect(queryByTestId('cannotEditCategoryFieldCallout')).toBeNull();
+  });
+  test('shows info callout and hides warning callout if editing', () => {
+    const { queryByTestId } = render(
+      <Fragment>
+        <Formik
+          initialValues={{
+            categoryField: [],
+          }}
+          onSubmit={() => {}}
+        >
+          <Fragment>
+            <Form>
+              <CategoryField
+                isEdit={true}
+                isHCDetector={true}
+                categoryFieldOptions={[]}
+                setIsHCDetector={(isHCDetector: boolean) => {
+                  return;
+                }}
+                isLoading={false}
+                formikProps={{
+                  values: {
+                    categoryFieldEnabled: true,
+                  },
+                }}
+              />
+            </Form>
+          </Fragment>
+        </Formik>
+      </Fragment>
+    );
+    expect(queryByTestId('categoryFieldReadOnlyCallout')).not.toBeNull();
+    expect(queryByTestId('cannotEditCategoryFieldCallout')).toBeNull();
   });
 });
