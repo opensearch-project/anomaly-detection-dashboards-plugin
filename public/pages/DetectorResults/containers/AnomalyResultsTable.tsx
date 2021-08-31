@@ -43,11 +43,13 @@ import { DetectorResultsQueryParams } from 'server/models/types';
 import { AnomalyData } from '../../../models/interfaces';
 import { getTitleWithCount } from '../../../utils/utils';
 import { convertToCategoryFieldAndEntityString } from '../../utils/anomalyResultUtils';
+import { HeatmapCell } from '../../AnomalyCharts/containers/AnomalyHeatmapChart';
 
 interface AnomalyResultsTableProps {
   anomalies: AnomalyData[];
   isHCDetector?: boolean;
   isHistorical?: boolean;
+  selectedHeatmapCell?: HeatmapCell | undefined;
 }
 
 interface ListState {
@@ -67,9 +69,13 @@ export function AnomalyResultsTable(props: AnomalyResultsTableProps) {
     },
   });
   const [targetAnomalies, setTargetAnomalies] = useState<any[]>([] as any[]);
-  const totalAnomalies = props.anomalies
-    ? props.anomalies.filter((anomaly) => anomaly.anomalyGrade > 0)
-    : [];
+
+  // Only return anomalies if they exist. If high-cardinality: only show when a heatmap cell is selected
+  const totalAnomalies =
+    props.anomalies &&
+    ((props.isHCDetector && props.selectedHeatmapCell) || !props.isHCDetector)
+      ? props.anomalies.filter((anomaly) => anomaly.anomalyGrade > 0)
+      : [];
 
   const sortFieldCompare = (field: string, sortDirection: SORT_DIRECTION) => {
     return (a: any, b: any) => {
@@ -82,9 +88,12 @@ export function AnomalyResultsTable(props: AnomalyResultsTableProps) {
   };
 
   useEffect(() => {
-    let anomalies = props.anomalies
-      ? props.anomalies.filter((anomaly) => anomaly.anomalyGrade > 0)
-      : [];
+    // Only return anomalies if they exist. If high-cardinality: only show when a heatmap cell is selected
+    let anomalies =
+      props.anomalies &&
+      ((props.isHCDetector && props.selectedHeatmapCell) || !props.isHCDetector)
+        ? props.anomalies.filter((anomaly) => anomaly.anomalyGrade > 0)
+        : [];
 
     if (props.isHCDetector) {
       anomalies = anomalies.map((anomaly) => {

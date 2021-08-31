@@ -494,28 +494,24 @@ export const AnomalyDetailsChart = React.memo(
                     //TODO: research more why only set this old property will work.
                     showLegendDisplayValue={false}
                     legendPosition={Position.Right}
-                    onBrushEnd={
-                      props.isHCDetector
-                        ? undefined
-                        : (brushArea: XYBrushArea) => {
-                            const start = get(
-                              brushArea,
-                              'x.0',
-                              DEFAULT_DATE_PICKER_RANGE.start
-                            );
-                            const end = get(
-                              brushArea,
-                              'x.1',
-                              DEFAULT_DATE_PICKER_RANGE.start
-                            );
-                            !props.bucketizedAnomalies
-                              ? handleZoomRangeChange(start, end)
-                              : handleDateRangeChange(start, end);
-                            if (props.onDatePickerRangeChange) {
-                              props.onDatePickerRangeChange(start, end);
-                            }
-                          }
-                    }
+                    onBrushEnd={(brushArea: XYBrushArea) => {
+                      const start = get(
+                        brushArea,
+                        'x.0',
+                        DEFAULT_DATE_PICKER_RANGE.start
+                      );
+                      const end = get(
+                        brushArea,
+                        'x.1',
+                        DEFAULT_DATE_PICKER_RANGE.start
+                      );
+                      !props.bucketizedAnomalies
+                        ? handleZoomRangeChange(start, end)
+                        : handleDateRangeChange(start, end);
+                      if (props.onDatePickerRangeChange) {
+                        props.onDatePickerRangeChange(start, end);
+                      }
+                    }}
                     theme={ANOMALY_CHART_THEME}
                   />
                   {(props.isHCDetector && !props.selectedHeatmapCell) ||
