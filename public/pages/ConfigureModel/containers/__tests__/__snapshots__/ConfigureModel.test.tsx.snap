@@ -670,33 +670,6 @@ exports[`<ConfigureModel /> spec creating model configuration renders the compon
             class="euiSpacer euiSpacer--m"
           />
           <div
-            class="euiCallOut euiCallOut--warning euiCallOut--small"
-            data-test-subj="cannotEditCategoryFieldCallout"
-          >
-            <div
-              class="euiCallOutHeader"
-            >
-              <svg
-                aria-hidden="true"
-                class="euiIcon euiIcon--medium euiIcon-isLoading euiCallOutHeader__icon"
-                focusable="false"
-                height="16"
-                role="img"
-                viewBox="0 0 16 16"
-                width="16"
-                xmlns="http://www.w3.org/2000/svg"
-              />
-              <span
-                class="euiCallOutHeader__title"
-              >
-                &lt;Placeholder for text when creating&gt;
-              </span>
-            </div>
-          </div>
-          <div
-            class="euiSpacer euiSpacer--m"
-          />
-          <div
             class="euiFlexGroup euiFlexGroup--gutterLarge euiFlexGroup--directionColumn euiFlexGroup--responsive"
           >
             <div
@@ -1656,7 +1629,7 @@ exports[`<ConfigureModel /> spec editing model configuration renders the compone
               <span
                 class="euiCallOutHeader__title"
               >
-                &lt;Placeholder for text when editing&gt;
+                Category fields cannot be changed once the detector is created
               </span>
             </div>
           </div>

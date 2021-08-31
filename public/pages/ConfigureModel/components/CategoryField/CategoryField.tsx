@@ -109,21 +109,13 @@ export function CategoryField(props: CategoryFieldProps) {
       {props.isEdit ? (
         <EuiCallOut
           data-test-subj="categoryFieldReadOnlyCallout"
-          title="<Placeholder for text when editing>"
+          title="Category fields cannot be changed once the detector is created"
           color="primary"
           iconType="iInCircle"
           size="s"
         ></EuiCallOut>
-      ) : (
-        <EuiCallOut
-          data-test-subj="cannotEditCategoryFieldCallout"
-          title="<Placeholder for text when creating>"
-          color="warning"
-          iconType="alert"
-          size="s"
-        ></EuiCallOut>
-      )}
-      <EuiSpacer size="m" />
+      ) : null}
+      {props.isEdit ? <EuiSpacer size="m" /> : null}
       <Field
         name="categoryField"
         validate={enabled ? validateCategoryField : null}
@@ -148,6 +140,17 @@ export function CategoryField(props: CategoryFieldProps) {
                 }}
               />
             </EuiFlexItem>
+            {enabled && !props.isEdit ? (
+              <EuiFlexItem>
+                <EuiCallOut
+                  data-test-subj="cannotEditCategoryFieldCallout"
+                  title="Category fields cannot be changed once the detector is created. Please ensure that you select the fields necessary for your case."
+                  color="warning"
+                  iconType="alert"
+                  size="s"
+                ></EuiCallOut>
+              </EuiFlexItem>
+            ) : null}
             {enabled && !noCategoryFields ? (
               <EuiFlexItem>
                 <EuiFormRow

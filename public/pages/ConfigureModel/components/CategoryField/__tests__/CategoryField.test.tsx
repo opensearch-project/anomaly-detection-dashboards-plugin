@@ -261,7 +261,7 @@ describe('<CategoryField /> spec', () => {
     expect(queryByText('b')).toBeNull();
     expect(queryByText('c')).toBeNull();
   });
-  test('shows warning callout if creating', () => {
+  test('shows warning callout if creating & category field enabled', () => {
     const { queryByTestId } = render(
       <Fragment>
         <Formik
@@ -293,7 +293,39 @@ describe('<CategoryField /> spec', () => {
     );
     expect(queryByTestId('cannotEditCategoryFieldCallout')).not.toBeNull();
   });
-  test('shows info callout if editing', () => {
+  test('hides warning callout if creating & category field disabled', () => {
+    const { queryByTestId } = render(
+      <Fragment>
+        <Formik
+          initialValues={{
+            categoryField: [],
+          }}
+          onSubmit={() => {}}
+        >
+          <Fragment>
+            <Form>
+              <CategoryField
+                isEdit={false}
+                isHCDetector={true}
+                categoryFieldOptions={[]}
+                setIsHCDetector={(isHCDetector: boolean) => {
+                  return;
+                }}
+                isLoading={false}
+                formikProps={{
+                  values: {
+                    categoryFieldEnabled: true,
+                  },
+                }}
+              />
+            </Form>
+          </Fragment>
+        </Formik>
+      </Fragment>
+    );
+    expect(queryByTestId('cannotEditCategoryFieldCallout')).not.toBeNull();
+  });
+  test('shows info callout and hides warning callout if editing', () => {
     const { queryByTestId } = render(
       <Fragment>
         <Formik
@@ -324,5 +356,6 @@ describe('<CategoryField /> spec', () => {
       </Fragment>
     );
     expect(queryByTestId('categoryFieldReadOnlyCallout')).not.toBeNull();
+    expect(queryByTestId('cannotEditCategoryFieldCallout')).toBeNull();
   });
 });

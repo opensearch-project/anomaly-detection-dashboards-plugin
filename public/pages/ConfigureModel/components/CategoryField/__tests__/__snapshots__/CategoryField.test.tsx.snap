@@ -85,33 +85,6 @@ exports[`<CategoryField /> spec renders the component when disabled 1`] = `
           style="padding: 10px 0px;"
         >
           <div
-            class="euiCallOut euiCallOut--warning euiCallOut--small"
-            data-test-subj="cannotEditCategoryFieldCallout"
-          >
-            <div
-              class="euiCallOutHeader"
-            >
-              <svg
-                aria-hidden="true"
-                class="euiIcon euiIcon--medium euiIcon-isLoading euiCallOutHeader__icon"
-                focusable="false"
-                height="16"
-                role="img"
-                viewBox="0 0 16 16"
-                width="16"
-                xmlns="http://www.w3.org/2000/svg"
-              />
-              <span
-                class="euiCallOutHeader__title"
-              >
-                &lt;Placeholder for text when creating&gt;
-              </span>
-            </div>
-          </div>
-          <div
-            class="euiSpacer euiSpacer--m"
-          />
-          <div
             class="euiFlexGroup euiFlexGroup--gutterLarge euiFlexGroup--directionColumn euiFlexGroup--responsive"
           >
             <div
@@ -233,38 +206,6 @@ exports[`<CategoryField /> spec renders the component when enabled 1`] = `
           style="padding: 10px 0px;"
         >
           <div
-            class="euiCallOut euiCallOut--warning euiCallOut--small"
-            data-test-subj="cannotEditCategoryFieldCallout"
-          >
-            <div
-              class="euiCallOutHeader"
-            >
-              <svg
-                aria-hidden="true"
-                class="euiIcon euiIcon--medium euiCallOutHeader__icon"
-                focusable="false"
-                height="16"
-                role="img"
-                viewBox="0 0 16 16"
-                width="16"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path
-                  d="M7.59 10.059L7.35 5.18h1.3L8.4 10.06h-.81zm.394 1.901a.61.61 0 01-.448-.186.606.606 0 01-.186-.444c0-.174.062-.323.186-.446a.614.614 0 01.448-.184c.169 0 .315.06.44.182.124.122.186.27.186.448a.6.6 0 01-.189.446.607.607 0 01-.437.184zM2 14a1 1 0 01-.878-1.479l6-11a1 1 0 011.756 0l6 11A1 1 0 0114 14H2zm0-1h12L8 2 2 13z"
-                  fill-rule="evenodd"
-                />
-              </svg>
-              <span
-                class="euiCallOutHeader__title"
-              >
-                &lt;Placeholder for text when creating&gt;
-              </span>
-            </div>
-          </div>
-          <div
-            class="euiSpacer euiSpacer--m"
-          />
-          <div
             class="euiFlexGroup euiFlexGroup--gutterLarge euiFlexGroup--directionColumn euiFlexGroup--responsive"
           >
             <div
@@ -288,6 +229,34 @@ exports[`<CategoryField /> spec renders the component when enabled 1`] = `
                 >
                   Enable categorical fields
                 </label>
+              </div>
+            </div>
+            <div
+              class="euiFlexItem"
+            >
+              <div
+                class="euiCallOut euiCallOut--warning euiCallOut--small"
+                data-test-subj="cannotEditCategoryFieldCallout"
+              >
+                <div
+                  class="euiCallOutHeader"
+                >
+                  <svg
+                    aria-hidden="true"
+                    class="euiIcon euiIcon--medium euiIcon-isLoading euiCallOutHeader__icon"
+                    focusable="false"
+                    height="16"
+                    role="img"
+                    viewBox="0 0 16 16"
+                    width="16"
+                    xmlns="http://www.w3.org/2000/svg"
+                  />
+                  <span
+                    class="euiCallOutHeader__title"
+                  >
+                    Category fields cannot be changed once the detector is created. Please ensure that you select the fields necessary for your case.
+                  </span>
+                </div>
               </div>
             </div>
             <div
