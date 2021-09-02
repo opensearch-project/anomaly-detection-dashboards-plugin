@@ -7,11 +7,11 @@ on:
     branches:
       - main
 env:
-  OPENSEARCH_DASHBOARDS_VERSION: '1.0'
+  OPENSEARCH_DASHBOARDS_VERSION: '1.x'
   AD_OPENSEARCH_DASHBOARDS_PLUGIN_NAME: anomaly-detection-dashboards
   OPENSEARCH_DOCKER_IMAGE: opensearchstaging/opensearch
   DASHBOARDS_DOCKER_IMAGE: opensearchstaging/opensearch-dashboards
-  DOCKER_TAG: 1.0.0-rc1
+  DOCKER_TAG: 1.1.0
 jobs:
   test-with-security:
     name: Run e2e tests with security
