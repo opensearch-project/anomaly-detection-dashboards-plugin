@@ -109,7 +109,7 @@ export function CategoryField(props: CategoryFieldProps) {
       {props.isEdit ? (
         <EuiCallOut
           data-test-subj="categoryFieldReadOnlyCallout"
-          title="Category fields cannot be changed once the detector is created"
+          title="You can't change the category fields after you create the detector."
           color="primary"
           iconType="iInCircle"
           size="s"
@@ -144,7 +144,7 @@ export function CategoryField(props: CategoryFieldProps) {
               <EuiFlexItem>
                 <EuiCallOut
                   data-test-subj="cannotEditCategoryFieldCallout"
-                  title="Category fields cannot be changed once the detector is created. Please ensure that you select the fields necessary for your case."
+                  title="You can't change the category fields after you create the detector. Make sure that you only select the fields necessary for your use case."
                   color="warning"
                   iconType="alert"
                   size="s"
