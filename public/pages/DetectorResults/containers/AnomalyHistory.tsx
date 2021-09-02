@@ -462,6 +462,9 @@ export const AnomalyHistory = (props: AnomalyHistoryProps) => {
         startDate: startDate,
         endDate: endDate,
       });
+      if (isHCDetector) {
+        setSelectedHeatmapCell(undefined);
+      }
     },
     []
   );
