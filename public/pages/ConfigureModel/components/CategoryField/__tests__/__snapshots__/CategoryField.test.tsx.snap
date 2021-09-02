@@ -254,7 +254,7 @@ exports[`<CategoryField /> spec renders the component when enabled 1`] = `
                   <span
                     class="euiCallOutHeader__title"
                   >
-                    Category fields cannot be changed once the detector is created. Please ensure that you select the fields necessary for your case.
+                    You can't change the category fields after you create the detector. Make sure that you only select the fields necessary for your use case.
                   </span>
                 </div>
               </div>
