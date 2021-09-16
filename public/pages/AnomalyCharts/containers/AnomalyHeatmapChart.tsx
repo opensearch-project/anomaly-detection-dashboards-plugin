@@ -230,13 +230,22 @@ export const AnomalyHeatmapChart = React.memo(
     };
 
     // Custom hook to refresh all of the heatmap data when running a historical task
+    //
+    // TODO: this hook is actually getting updated more often than just when there
+    // is a change to the props.detectorTaskProgress. This is due to a remounting
+    // issue that is triggering this after every AnomaliesChart re-render. More details here:
+    // https://github.com/opensearch-project/anomaly-detection-dashboards-plugin/issues/90
     useEffect(() => {
       if (props.isHistorical) {
         const updateHeatmapPlotData = getAnomaliesHeatmapData(
           props.anomalies,
           props.dateRange,
           sortByFieldValue,
-          get(COMBINED_OPTIONS.options[0], 'value')
+          get(
+            currentViewOptions[0],
+            'value',
+            get(COMBINED_OPTIONS.options[0], 'value')
+          )
         );
         setOriginalHeatmapData(updateHeatmapPlotData);
         setHeatmapData(updateHeatmapPlotData);
