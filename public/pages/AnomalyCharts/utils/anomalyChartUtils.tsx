@@ -26,7 +26,14 @@
 
 import { cloneDeep, defaultTo, get, isEmpty, orderBy } from 'lodash';
 import React from 'react';
-import { EuiTitle, EuiSpacer } from '@elastic/eui';
+import {
+  EuiTitle,
+  EuiSpacer,
+  EuiText,
+  EuiFlexGroup,
+  EuiFlexItem,
+  EuiComboBox,
+} from '@elastic/eui';
 import {
   DateRange,
   Detector,
@@ -699,5 +706,89 @@ export const getHCTitle = (entityList: Entity[]) => {
       </EuiTitle>
       <EuiSpacer size="s" />
     </div>
+  );
+};
+
+export const getCategoryFieldOptions = (categoryFields: string[]) => {
+  const categoryFieldOptions = [] as any[];
+  if (categoryFields !== undefined) {
+    categoryFields.forEach((categoryField: string) => {
+      categoryFieldOptions.push({
+        label: categoryField,
+      });
+    });
+  }
+  return categoryFieldOptions;
+};
+
+const getMultiCategoryFilterPrefix = (prefilteredEntities: Entity[]) => {
+  return (
+    <EuiText>
+      <h3>
+        Viewing results for&nbsp;
+        {prefilteredEntities.map((entity: Entity) => {
+          return (
+            <span>
+              {entity.name} <b>{entity.value}</b>
+              {''}
+            </span>
+          );
+        })}
+      </h3>
+    </EuiText>
+  );
+};
+
+export const getMultiCategoryFilter = (
+  entityList: Entity[],
+  selectedCategoryFields: string[]
+) => {
+  // TODO: shouldn't need the prefiltered/unfiltered. When the new API is added,
+  // the heatmap cell should only include the prefiltered entities; the unfiltered entities
+  // will be the set difference of prefiltered entities & category fields
+  const prefilteredEntities = entityList.filter((entity: Entity) =>
+    selectedCategoryFields.includes(entity.name)
+  );
+  const unfilteredEntities = entityList
+    .filter((entity: Entity) => !selectedCategoryFields.includes(entity.name))
+    .map((entity: Entity) => entity.name);
+
+  return (
+    <EuiFlexGroup
+      gutterSize="s"
+      alignItems="center"
+      style={{ marginBottom: '4px' }}
+    >
+      <EuiFlexItem grow={false}>
+        {getMultiCategoryFilterPrefix(prefilteredEntities)}
+      </EuiFlexItem>
+      {unfilteredEntities.map((unfilteredEntity: string) => {
+        return (
+          <div style={{ display: 'flex', alignItems: 'center' }}>
+            <EuiFlexItem>
+              <EuiText>
+                <h3>and&nbsp;{unfilteredEntity}&nbsp;&nbsp;</h3>
+              </EuiText>
+            </EuiFlexItem>
+            <EuiFlexItem style={{ minWidth: 300 }}>
+              <EuiComboBox
+                placeholder="Select categorical fields"
+                options={[
+                  {
+                    label: 'some-value',
+                  },
+                ]}
+                selectedOptions={[
+                  {
+                    label: 'some-selected-value',
+                  },
+                ]}
+                onChange={() => {}}
+              />
+            </EuiFlexItem>
+          </div>
+        );
+      })}
+    </EuiFlexGroup>
   );
 };

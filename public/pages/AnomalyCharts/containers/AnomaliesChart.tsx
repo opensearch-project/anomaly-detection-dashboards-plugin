@@ -96,6 +96,8 @@ export interface AnomaliesChartProps {
   anomaliesResult: Anomalies | undefined;
   heatmapDisplayOption?: HeatmapDisplayOption;
   entityAnomalySummaries?: EntityAnomalySummaries[];
+  selectedCategoryFields?: any[];
+  handleCategoryFieldsChange(selectedOptions: any[]): void;
 }
 
 export const AnomaliesChart = React.memo((props: AnomaliesChartProps) => {
@@ -277,6 +279,10 @@ export const AnomaliesChart = React.memo((props: AnomaliesChartProps) => {
                         categoryField={orderBy(props.detectorCategoryField, [
                           (categoryField) => categoryField.toLowerCase(),
                         ])}
+                        selectedCategoryFields={props.selectedCategoryFields}
+                        handleCategoryFieldsChange={
+                          props.handleCategoryFieldsChange
+                        }
                       />,
                       props.isNotSample !== true
                         ? [

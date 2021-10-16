@@ -41,7 +41,6 @@ import {
   EuiLoadingSpinner,
   EuiSpacer,
   EuiPanel,
-  EuiTitle,
 } from '@elastic/eui';
 import moment from 'moment';
 import { useDispatch } from 'react-redux';
@@ -92,6 +91,8 @@ import {
   getAnomalyHistoryWording,
   NUM_CELLS,
   getHCTitle,
+  getCategoryFieldOptions,
+  getMultiCategoryFilter,
 } from '../../AnomalyCharts/utils/anomalyChartUtils';
 import { darkModeEnabled } from '../../../utils/opensearchDashboardsUtils';
 import {
@@ -165,6 +166,26 @@ export const AnomalyHistory = (props: AnomalyHistoryProps) => {
   const isMultiCategory = detectorCategoryField.length > 1;
   const backgroundColor = darkModeEnabled() ? '#29017' : '#F7F7F7';
   const resultIndex = get(props, 'detector.resultIndex', '');
+
+  const [selectedCategoryFields, setSelectedCategoryFields] = useState(
+    getCategoryFieldOptions(detectorCategoryField)
+  );
+
+  const handleCategoryFieldsChange = (selectedCategoryFieldOptions: any[]) => {
+    // if clearing: default to all category fields
+    if (isEmpty(selectedCategoryFieldOptions)) {
+      setSelectedCategoryFields(getCategoryFieldOptions(detectorCategoryField));
+    } else {
+      setSelectedCategoryFields(selectedCategoryFieldOptions);
+    }
+
+    // TODO: need to make a new request to get fresh anomalies here.
+    // anomalies are currently passed via props and are in the form
+    // { anomalyGrade, confidence, entity, features, startTime, endTime, plotTime }
+    // note that features can be ignored since this is just at a per-row, hierarchical view
+    // once a user selects a cell, then the possible combos will be displayed, where those will
+    // query the actual feature values for the individual entity / models
+  };
 
   // We load at most 10k AD result data points for one call. If user choose
   // a big time range which may have more than 10k AD results, will use bucket
@@ -560,6 +581,8 @@ export const AnomalyHistory = (props: AnomalyHistoryProps) => {
         onDisplayOptionChanged={handleHeatmapDisplayOptionChanged}
         heatmapDisplayOption={heatmapDisplayOption}
         entityAnomalySummaries={entityAnomalySummaries}
+        selectedCategoryFields={selectedCategoryFields}
+        handleCategoryFieldsChange={handleCategoryFieldsChange}
       >
         <div style={{ padding: '20px' }}>
           {isHCDetector
@@ -567,7 +590,18 @@ export const AnomalyHistory = (props: AnomalyHistoryProps) => {
                 <AnomalyOccurrenceChart
                   title={
                     selectedHeatmapCell
-                      ? getHCTitle(selectedHeatmapCell.entityList)
+                      ? // if a subset of category fields is selected for multi-HC detectors: show combo box to select
+                        // individual entity combos / times series
+                        isMultiCategory &&
+                        get(selectedCategoryFields, 'length', 0) <
+                          get(detectorCategoryField, 'length', 0)
+                        ? getMultiCategoryFilter(
+                            selectedHeatmapCell.entityList,
+                            selectedCategoryFields.map(
+                              (categoryField) => categoryField.label
+                            )
+                          )
+                        : getHCTitle(selectedHeatmapCell.entityList)
                       : '-'
                   }
                   dateRange={dateRange}

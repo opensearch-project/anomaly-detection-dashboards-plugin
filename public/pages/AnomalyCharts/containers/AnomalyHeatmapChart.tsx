@@ -52,6 +52,7 @@ import {
   sortHeatmapPlotData,
   filterHeatmapPlotDataByY,
   getEntitytAnomaliesHeatmapData,
+  getCategoryFieldOptions,
 } from '../utils/anomalyChartUtils';
 import {
   MIN_IN_MILLI_SECS,
@@ -62,10 +63,7 @@ import {
   Entity,
 } from '../../../../server/models/interfaces';
 import { HEATMAP_CHART_Y_AXIS_WIDTH } from '../utils/constants';
-import {
-  convertToEntityList,
-  convertToCategoryFieldString,
-} from '../../utils/anomalyResultUtils';
+import { convertToEntityList } from '../../utils/anomalyResultUtils';
 
 interface AnomalyHeatmapChartProps {
   detectorId: string;
@@ -84,6 +82,8 @@ interface AnomalyHeatmapChartProps {
   entityAnomalySummaries?: EntityAnomalySummaries[];
   isNotSample?: boolean;
   categoryField?: string[];
+  selectedCategoryFields?: any[];
+  handleCategoryFieldsChange(selectedOptions: any[]): void;
 }
 
 export interface HeatmapCell {
@@ -460,22 +460,25 @@ export const AnomalyHeatmapChart = React.memo(
                 justifyContent="spaceBetween"
                 style={{ padding: '12px', marginBottom: '6px' }}
               >
-                <EuiFlexItem style={{ marginBottom: '0px' }}>
-                  <EuiText>
-                    <h4>
-                      View by:&nbsp;
-                      <b>
-                        {convertToCategoryFieldString(
-                          get(props, 'categoryField', []) as string[],
-                          ', '
-                        )}
-                      </b>
-                    </h4>
-                  </EuiText>
-                </EuiFlexItem>
-
                 <EuiFlexItem grow={false}>
                   <EuiFlexGroup gutterSize="s" alignItems="center">
+                    <EuiFlexItem style={{ marginBottom: '0px' }} grow={false}>
+                      <EuiText>
+                        <h4>View by:</h4>
+                      </EuiText>
+                    </EuiFlexItem>
+                    <EuiFlexItem style={{ minWidth: 300 }}>
+                      <EuiComboBox
+                        placeholder="Select categorical fields"
+                        options={getCategoryFieldOptions(
+                          get(props, 'categoryField', [])
+                        )}
+                        selectedOptions={props.selectedCategoryFields}
+                        onChange={(selectedOptions) =>
+                          props.handleCategoryFieldsChange(selectedOptions)
+                        }
+                      />
+                    </EuiFlexItem>
                     <EuiFlexItem style={{ minWidth: 300 }}>
                       <EuiComboBox
                         placeholder="Select options"
