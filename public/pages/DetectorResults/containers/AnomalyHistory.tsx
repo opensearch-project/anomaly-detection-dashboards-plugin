@@ -80,6 +80,7 @@ import { MAX_ANOMALIES } from '../../../utils/constants';
 import {
   searchResults,
   getDetectorResults,
+  getTopAnomalyResults,
 } from '../../../redux/reducers/anomalyResults';
 import { AnomalyOccurrenceChart } from '../../AnomalyCharts/containers/AnomalyOccurrenceChart';
 import {
@@ -164,6 +165,7 @@ export const AnomalyHistory = (props: AnomalyHistoryProps) => {
   const detectorCategoryField = get(props.detector, 'categoryField', []);
   const isHCDetector = !isEmpty(detectorCategoryField);
   const isMultiCategory = detectorCategoryField.length > 1;
+  const detectorId = get(props.detector, 'id', '');
   const backgroundColor = darkModeEnabled() ? '#29017' : '#F7F7F7';
   const resultIndex = get(props, 'detector.resultIndex', '');
 
@@ -319,6 +321,50 @@ export const AnomalyHistory = (props: AnomalyHistoryProps) => {
       }
     }
   };
+
+  const fetchAggregateHCAnomalySummaries = async () => {
+    // fetch the new way. using dummy data for now
+    const query = {
+      category_field: ['ip'],
+      order: 'occurrence',
+      size: 10,
+      start_time_ms: 1631249040000,
+      end_time_ms: 1631853840000,
+    };
+
+    dispatch(
+      getTopAnomalyResults(detectorId, get(props, 'isHistorical', false), query)
+    )
+      .then((result: any) => {
+        console.log('result (in frontend): ', result);
+      })
+      .catch((e: any) =>
+        console.error(
+          `Error fetching top anomaly results for detector ${detectorId}: `,
+          e
+        )
+      );
+  };
+
+  useEffect(() => {
+    // For any change, we will want to clear any selected heatmap cell to clear any populated charts / graphs
+    setSelectedHeatmapCell(undefined);
+
+    // Only call the new multi-category filtering API when a subset of category fields is requested.
+    // If getting results when all category fields are selected (at a per-model granulariy),
+    // it is cheaper to continue with the terms aggregation on model ID, rather than call the new API,
+    // which will run the composite query and multiple terms aggregation using runtime fields under the hood.
+    if (
+      isMultiCategory &&
+      get(selectedCategoryFields, 'length', 0) <
+        get(detectorCategoryField, 'length', 0)
+    ) {
+      fetchAggregateHCAnomalySummaries();
+    } else {
+      // fetch the original way
+      fetchHCAnomalySummaries();
+    }
+  }, [selectedCategoryFields]);
 
   useEffect(() => {
     if (isHCDetector) {
