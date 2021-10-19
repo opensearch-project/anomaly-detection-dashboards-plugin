@@ -64,7 +64,7 @@ import {
 } from '../../../../server/models/interfaces';
 import { HEATMAP_CHART_Y_AXIS_WIDTH } from '../utils/constants';
 import {
-  convertToEntityList,
+  convertHeatmapCellEntityStringToEntityList,
   convertToCategoryFieldString,
 } from '../../utils/anomalyResultUtils';
 
@@ -275,7 +275,7 @@ export const AnomalyHeatmapChart = React.memo(
 
     const handleHeatmapClick = (event: Plotly.PlotMouseEvent) => {
       const selectedCellIndices = get(event, 'points[0].pointIndex', []);
-      const selectedEntityString = get(event, 'points[0].y', '');
+      const selectedEntityString = get(event, 'points[0].customdata', '');
       if (!isEmpty(selectedCellIndices)) {
         let anomalyCount = get(event, 'points[0].text', 0);
         if (
@@ -320,10 +320,8 @@ export const AnomalyHeatmapChart = React.memo(
               startDate: selectedStartDate,
               endDate: selectedEndDate,
             },
-            entityList: convertToEntityList(
-              selectedEntityString,
-              get(props, 'categoryField', []),
-              ENTITY_LIST_DELIMITER
+            entityList: convertHeatmapCellEntityStringToEntityList(
+              selectedEntityString
             ),
           } as HeatmapCell);
         }

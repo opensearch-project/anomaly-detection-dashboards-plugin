@@ -640,9 +640,7 @@ export const AnomalyHistory = (props: AnomalyHistoryProps) => {
                           get(detectorCategoryField, 'length', 0)
                         ? getMultiCategoryFilter(
                             selectedHeatmapCell.entityList,
-                            selectedCategoryFields.map(
-                              (categoryField) => categoryField.label
-                            )
+                            detectorCategoryField
                           )
                         : getHCTitle(selectedHeatmapCell.entityList)
                       : '-'

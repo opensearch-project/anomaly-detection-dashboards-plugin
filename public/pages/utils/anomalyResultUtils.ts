@@ -46,6 +46,8 @@ import {
   MODEL_ID_FIELD,
   ENTITY_LIST_FIELD,
   ENTITY_LIST_DELIMITER,
+  HEATMAP_CELL_ENTITY_DELIMITER,
+  HEATMAP_CALL_ENTITY_KEY_VALUE_DELIMITER,
 } from '../../../server/utils/constants';
 import { toFixedNumberForAnomaly } from '../../../server/utils/helpers';
 import {
@@ -1530,31 +1532,41 @@ export const convertToCategoryFieldString = (
   return categoryFieldString;
 };
 
-export const convertToCategoryFieldAndEntityString = (entityList: Entity[]) => {
+export const convertToCategoryFieldAndEntityString = (
+  entityList: Entity[],
+  delimiter: string = '\n'
+) => {
   let entityString = '';
   if (!isEmpty(entityList)) {
     entityList.forEach((entity: any, index) => {
       if (index > 0) {
-        entityString += '\n';
+        entityString += delimiter;
       }
-      entityString += entity.name + ': ' + entity.value;
+      entityString +=
+        entity.name +
+        `${HEATMAP_CALL_ENTITY_KEY_VALUE_DELIMITER} ` +
+        entity.value;
     });
   }
   return entityString;
 };
 
-export const convertToEntityList = (
-  entityListAsString: string,
-  categoryFields: string[],
-  delimiter: string
+export const convertHeatmapCellEntityStringToEntityList = (
+  heatmapCellEntityString: string
 ) => {
   let entityList = [] as Entity[];
-  const valueArr = entityListAsString.split(delimiter);
+  const entitiesAsStringList = heatmapCellEntityString.split(
+    HEATMAP_CELL_ENTITY_DELIMITER
+  );
   var i;
-  for (i = 0; i < valueArr.length; i++) {
+  for (i = 0; i < entitiesAsStringList.length; i++) {
+    const entityAsString = entitiesAsStringList[i];
+    const entityAsFieldValuePair = entityAsString.split(
+      HEATMAP_CALL_ENTITY_KEY_VALUE_DELIMITER
+    );
     entityList.push({
-      name: categoryFields[i],
-      value: valueArr[i],
+      name: entityAsFieldValuePair[0],
+      value: entityAsFieldValuePair[1],
     });
   }
   return entityList;
@@ -1604,7 +1616,10 @@ const getEntityFilters = (
 export const transformEntityListsForHeatmap = (entityLists: any[]) => {
   let transformedEntityLists = [] as any[];
   entityLists.forEach((entityList: Entity[]) => {
-    const listAsString = convertToEntityString(entityList, ', ');
+    const listAsString = convertToCategoryFieldAndEntityString(
+      entityList,
+      ', '
+    );
     let row = [];
     var i;
     for (i = 0; i < NUM_CELLS; i++) {

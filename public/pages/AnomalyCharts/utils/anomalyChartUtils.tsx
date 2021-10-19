@@ -740,18 +740,15 @@ const getMultiCategoryFilterPrefix = (prefilteredEntities: Entity[]) => {
 };
 
 export const getMultiCategoryFilter = (
-  entityList: Entity[],
-  selectedCategoryFields: string[]
+  prefilteredEntities: Entity[],
+  allCategoryFields: string[]
 ) => {
-  // TODO: shouldn't need the prefiltered/unfiltered. When the new API is added,
-  // the heatmap cell should only include the prefiltered entities; the unfiltered entities
-  // will be the set difference of prefiltered entities & category fields
-  const prefilteredEntities = entityList.filter((entity: Entity) =>
-    selectedCategoryFields.includes(entity.name)
+  const prefilteredEntityFields = prefilteredEntities.map(
+    (entity: Entity) => entity.name
   );
-  const unfilteredEntities = entityList
-    .filter((entity: Entity) => !selectedCategoryFields.includes(entity.name))
-    .map((entity: Entity) => entity.name);
+  const unfilteredCategoryFields = allCategoryFields.filter(
+    (categoryField: string) => !prefilteredEntityFields.includes(categoryField)
+  );
 
   return (
     <EuiFlexGroup
@@ -762,7 +759,7 @@ export const getMultiCategoryFilter = (
       <EuiFlexItem grow={false}>
         {getMultiCategoryFilterPrefix(prefilteredEntities)}
       </EuiFlexItem>
-      {unfilteredEntities.map((unfilteredEntity: string) => {
+      {unfilteredCategoryFields.map((unfilteredEntity: string) => {
         return (
           <div style={{ display: 'flex', alignItems: 'center' }}>
             <EuiFlexItem>
