@@ -68,6 +68,7 @@ import {
   getEntityAnomalySummariesQuery,
   parseEntityAnomalySummaryResults,
   convertToEntityString,
+  parseAggTopEntityAnomalySummaryResults,
 } from '../../utils/anomalyResultUtils';
 import { AnomalyResultsTable } from './AnomalyResultsTable';
 import { AnomaliesChart } from '../../AnomalyCharts/containers/AnomaliesChart';
@@ -94,6 +95,7 @@ import {
   getHCTitle,
   getCategoryFieldOptions,
   getMultiCategoryFilter,
+  AnomalyHeatmapSortType,
 } from '../../AnomalyCharts/utils/anomalyChartUtils';
 import { darkModeEnabled } from '../../../utils/opensearchDashboardsUtils';
 import {
@@ -146,21 +148,26 @@ export const AnomalyHistory = (props: AnomalyHistoryProps) => {
   const [selectedTabId, setSelectedTabId] = useState<string>(
     ANOMALY_HISTORY_TABS.ANOMALY_OCCURRENCE
   );
-  const [isLoadingAnomalyResults, setIsLoadingAnomalyResults] =
-    useState<boolean>(false);
-  const [bucketizedAnomalyResults, setBucketizedAnomalyResults] =
-    useState<Anomalies>();
+  const [isLoadingAnomalyResults, setIsLoadingAnomalyResults] = useState<
+    boolean
+  >(false);
+  const [bucketizedAnomalyResults, setBucketizedAnomalyResults] = useState<
+    Anomalies
+  >();
   const [pureAnomalies, setPureAnomalies] = useState<AnomalyData[]>([]);
-  const [bucketizedAnomalySummary, setBucketizedAnomalySummary] =
-    useState<AnomalySummary>(INITIAL_ANOMALY_SUMMARY);
+  const [bucketizedAnomalySummary, setBucketizedAnomalySummary] = useState<
+    AnomalySummary
+  >(INITIAL_ANOMALY_SUMMARY);
 
   const [selectedHeatmapCell, setSelectedHeatmapCell] = useState<HeatmapCell>();
 
-  const [entityAnomalySummaries, setEntityAnomalySummaries] =
-    useState<EntityAnomalySummaries[]>();
+  const [entityAnomalySummaries, setEntityAnomalySummaries] = useState<
+    EntityAnomalySummaries[]
+  >();
 
-  const [heatmapDisplayOption, setHeatmapDisplayOption] =
-    useState<HeatmapDisplayOption>(INITIAL_HEATMAP_DISPLAY_OPTION);
+  const [heatmapDisplayOption, setHeatmapDisplayOption] = useState<
+    HeatmapDisplayOption
+  >(INITIAL_HEATMAP_DISPLAY_OPTION);
 
   const detectorCategoryField = get(props.detector, 'categoryField', []);
   const isHCDetector = !isEmpty(detectorCategoryField);
@@ -180,13 +187,6 @@ export const AnomalyHistory = (props: AnomalyHistoryProps) => {
     } else {
       setSelectedCategoryFields(selectedCategoryFieldOptions);
     }
-
-    // TODO: need to make a new request to get fresh anomalies here.
-    // anomalies are currently passed via props and are in the form
-    // { anomalyGrade, confidence, entity, features, startTime, endTime, plotTime }
-    // note that features can be ignored since this is just at a per-row, hierarchical view
-    // once a user selects a cell, then the possible combos will be displayed, where those will
-    // query the actual feature values for the individual entity / models
   };
 
   // We load at most 10k AD result data points for one call. If user choose
@@ -322,48 +322,10 @@ export const AnomalyHistory = (props: AnomalyHistoryProps) => {
     }
   };
 
-  const fetchAggregateHCAnomalySummaries = async () => {
-    // fetch the new way. using dummy data for now
-    const query = {
-      category_field: ['ip'],
-      order: 'occurrence',
-      size: 10,
-      start_time_ms: 1631249040000,
-      end_time_ms: 1631853840000,
-    };
-
-    dispatch(
-      getTopAnomalyResults(detectorId, get(props, 'isHistorical', false), query)
-    )
-      .then((result: any) => {
-        console.log('result (in frontend): ', result);
-      })
-      .catch((e: any) =>
-        console.error(
-          `Error fetching top anomaly results for detector ${detectorId}: `,
-          e
-        )
-      );
-  };
-
   useEffect(() => {
     // For any change, we will want to clear any selected heatmap cell to clear any populated charts / graphs
     setSelectedHeatmapCell(undefined);
-
-    // Only call the new multi-category filtering API when a subset of category fields is requested.
-    // If getting results when all category fields are selected (at a per-model granulariy),
-    // it is cheaper to continue with the terms aggregation on model ID, rather than call the new API,
-    // which will run the composite query and multiple terms aggregation using runtime fields under the hood.
-    if (
-      isMultiCategory &&
-      get(selectedCategoryFields, 'length', 0) <
-        get(detectorCategoryField, 'length', 0)
-    ) {
-      fetchAggregateHCAnomalySummaries();
-    } else {
-      // fetch the original way
-      fetchHCAnomalySummaries();
-    }
+    fetchHCAnomalySummaries();
   }, [selectedCategoryFields]);
 
   useEffect(() => {
@@ -387,22 +349,56 @@ export const AnomalyHistory = (props: AnomalyHistoryProps) => {
   const fetchHCAnomalySummaries = async () => {
     setIsLoadingAnomalyResults(true);
 
-    const query = getTopAnomalousEntitiesQuery(
-      dateRange.startDate,
-      dateRange.endDate,
-      props.detector.id,
-      heatmapDisplayOption.entityOption.value,
-      heatmapDisplayOption.sortType,
-      isMultiCategory,
-      props.isHistorical,
-      taskId.current
-    );
-    const result = await dispatch(searchResults(query, resultIndex));
-
-    const topEntityAnomalySummaries = parseTopEntityAnomalySummaryResults(
-      result,
-      isMultiCategory
-    );
+    // Only call the new multi-category filtering API when a subset of category fields is requested.
+    // If getting results when all category fields are selected (at a per-model granulariy),
+    // it is cheaper to continue with the terms aggregation on model ID, rather than call the new API,
+    // which will run the composite query and multiple terms aggregation using runtime fields under the hood.
+    let topEntityAnomalySummaries = [] as EntityAnomalySummaries[];
+    if (
+      isMultiCategory &&
+      get(selectedCategoryFields, 'length', 0) <
+        get(detectorCategoryField, 'length', 0)
+    ) {
+      const query = {
+        category_field: selectedCategoryFields.map(
+          (categoryFieldOption: any) => categoryFieldOption.label
+        ),
+        order: get(
+          heatmapDisplayOption,
+          'sortType',
+          AnomalyHeatmapSortType.SEVERITY
+        ),
+        size: get(heatmapDisplayOption, 'entityOption.value', 10),
+        start_time_ms: dateRange.startDate,
+        end_time_ms: dateRange.endDate,
+      };
+      const result = await dispatch(
+        getTopAnomalyResults(
+          detectorId,
+          get(props, 'isHistorical', false),
+          query
+        )
+      );
+      topEntityAnomalySummaries = parseAggTopEntityAnomalySummaryResults(
+        result
+      );
+    } else {
+      const query = getTopAnomalousEntitiesQuery(
+        dateRange.startDate,
+        dateRange.endDate,
+        props.detector.id,
+        heatmapDisplayOption.entityOption.value,
+        heatmapDisplayOption.sortType,
+        isMultiCategory,
+        props.isHistorical,
+        taskId.current
+      );
+      const result = await dispatch(searchResults(query, resultIndex));
+      topEntityAnomalySummaries = parseTopEntityAnomalySummaryResults(
+        result,
+        isMultiCategory
+      );
+    }
 
     const promises = topEntityAnomalySummaries.map(
       async (summary: EntityAnomalySummaries) => {
@@ -512,8 +508,9 @@ export const AnomalyHistory = (props: AnomalyHistoryProps) => {
   };
   const [atomicAnomalyResults, setAtomicAnomalyResults] = useState<Anomalies>();
   const [rawAnomalyResults, setRawAnomalyResults] = useState<Anomalies>();
-  const [hcDetectorAnomalyResults, setHCDetectorAnomalyResults] =
-    useState<Anomalies>();
+  const [hcDetectorAnomalyResults, setHCDetectorAnomalyResults] = useState<
+    Anomalies
+  >();
 
   const anomalyResults = bucketizedAnomalyResults
     ? bucketizedAnomalyResults

@@ -1179,6 +1179,40 @@ export const parseTopEntityAnomalySummaryResults = (
   return topEntityAnomalySummaries;
 };
 
+export const parseAggTopEntityAnomalySummaryResults = (
+  result: any
+): EntityAnomalySummaries[] => {
+  const rawEntityAnomalySummaries = get(result, `response.buckets`, []);
+  let topEntityAnomalySummaries = [] as EntityAnomalySummaries[];
+  rawEntityAnomalySummaries.forEach((item: any) => {
+    // Loop through the K/V pairs in the "key" dict returned in the composite
+    // agg bucket key from multi-category filter API
+    const entityListAsKey = get(item, `${KEY_FIELD}`, {}) as {
+      [key: string]: string;
+    };
+    let entityList = [] as Entity[];
+    for (var entity in entityListAsKey) {
+      entityList.push({
+        name: entity,
+        value: entityListAsKey[entity] as string,
+      });
+    }
+
+    const anomalyCount = get(item, DOC_COUNT_FIELD, 0);
+    const maxAnomalyGrade = get(item, 'max_anomaly_grade', 0);
+    const entityAnomalySummary = {
+      maxAnomaly: maxAnomalyGrade,
+      anomalyCount: anomalyCount,
+    } as EntityAnomalySummary;
+    const entityAnomalySummaries = {
+      entityList: entityList,
+      anomalySummaries: [entityAnomalySummary],
+    } as EntityAnomalySummaries;
+    topEntityAnomalySummaries.push(entityAnomalySummaries);
+  });
+  return topEntityAnomalySummaries;
+};
+
 export const getEntityAnomalySummariesQuery = (
   startTime: number,
   endTime: number,

@@ -197,8 +197,8 @@ export const ANOMALY_HEATMAP_COLORSCALE = [
 ];
 
 export enum AnomalyHeatmapSortType {
-  SEVERITY = 'by_severity',
-  OCCURRENCES = 'by_occurrences',
+  SEVERITY = 'severity',
+  OCCURRENCES = 'occurrence',
 }
 
 const getHeatmapColorByValue = (value: number) => {
@@ -236,7 +236,7 @@ const buildBlankStringWithLength = (length: number) => {
   return result;
 };
 
-export const getAnomaliesHeatmapData = (
+export const getSampleAnomaliesHeatmapData = (
   anomalies: any[] | undefined,
   dateRange: DateRange,
   sortType: AnomalyHeatmapSortType = AnomalyHeatmapSortType.SEVERITY,
@@ -352,7 +352,7 @@ const buildHeatmapPlotData = (
   } as PlotData;
 };
 
-export const getEntitytAnomaliesHeatmapData = (
+export const getEntityAnomaliesHeatmapData = (
   dateRange: DateRange,
   entitiesAnomalySummaryResult: EntityAnomalySummaries[],
   displayTopNum: number
