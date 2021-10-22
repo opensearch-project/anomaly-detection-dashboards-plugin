@@ -69,12 +69,17 @@ import {
   parseEntityAnomalySummaryResults,
   convertToEntityString,
   parseAggTopEntityAnomalySummaryResults,
+  parseTopChildEntityCombos,
 } from '../../utils/anomalyResultUtils';
 import { AnomalyResultsTable } from './AnomalyResultsTable';
 import { AnomaliesChart } from '../../AnomalyCharts/containers/AnomaliesChart';
 import { FeatureBreakDown } from '../../AnomalyCharts/containers/FeatureBreakDown';
 import { minuteDateFormatter } from '../../utils/helpers';
-import { ANOMALY_HISTORY_TABS } from '../utils/constants';
+import {
+  ANOMALY_HISTORY_TABS,
+  DEFAULT_TOP_CHILD_ENTITIES_TO_DISPLAY,
+  DEFAULT_TOP_CHILD_ENTITIES_TO_FETCH,
+} from '../utils/constants';
 import { MIN_IN_MILLI_SECS } from '../../../../server/utils/constants';
 import { INITIAL_ANOMALY_SUMMARY } from '../../AnomalyCharts/utils/constants';
 import { MAX_ANOMALIES } from '../../../utils/constants';
@@ -94,8 +99,9 @@ import {
   NUM_CELLS,
   getHCTitle,
   getCategoryFieldOptions,
-  getMultiCategoryFilter,
+  getMultiCategoryFilters,
   AnomalyHeatmapSortType,
+  getAllEntityCombos,
 } from '../../AnomalyCharts/utils/anomalyChartUtils';
 import { darkModeEnabled } from '../../../utils/opensearchDashboardsUtils';
 import {
@@ -168,6 +174,12 @@ export const AnomalyHistory = (props: AnomalyHistoryProps) => {
   const [heatmapDisplayOption, setHeatmapDisplayOption] = useState<
     HeatmapDisplayOption
   >(INITIAL_HEATMAP_DISPLAY_OPTION);
+
+  const [childEntityCombos, setChildEntityCombos] = useState<Entity[][]>([]);
+
+  const [selectedChildEntities, setSelectedChildEntities] = useState<{
+    [childCategoryField: string]: { label: string }[];
+  }>({});
 
   const detectorCategoryField = get(props.detector, 'categoryField', []);
   const isHCDetector = !isEmpty(detectorCategoryField);
@@ -336,11 +348,21 @@ export const AnomalyHistory = (props: AnomalyHistoryProps) => {
 
   useEffect(() => {
     if (selectedHeatmapCell) {
-      fetchEntityAnomalyData(selectedHeatmapCell);
-      handleZoomChange(
-        selectedHeatmapCell.dateRange.startDate,
-        selectedHeatmapCell.dateRange.endDate
-      );
+      // If subset: only get the possible entity pairs. Set them in some state variable
+      // If not a subset: fetch data like normal / before
+      if (
+        isMultiCategory &&
+        get(selectedCategoryFields, 'length', 0) <
+          get(detectorCategoryField, 'length', 0)
+      ) {
+        fetchTopEntityCombinations(selectedHeatmapCell);
+      } else {
+        fetchEntityAnomalyData(selectedHeatmapCell);
+        handleZoomChange(
+          selectedHeatmapCell.dateRange.startDate,
+          selectedHeatmapCell.dateRange.endDate
+        );
+      }
     } else {
       setAtomicAnomalyResults(hcDetectorAnomalyResults);
     }
@@ -453,10 +475,8 @@ export const AnomalyHistory = (props: AnomalyHistoryProps) => {
           MAX_ANOMALIES
         )
       ) {
-        // TODO: inject model id in heatmapCell to propagate
         fetchBucketizedEntityAnomalyData(heatmapCell);
       } else {
-        // TODO: inject model id in heatmapCell to propagate
         fetchAllEntityAnomalyData(heatmapCell);
         setBucketizedAnomalyResults(undefined);
       }
@@ -534,6 +554,62 @@ export const AnomalyHistory = (props: AnomalyHistoryProps) => {
     },
     []
   );
+
+  const fetchTopEntityCombinations = async (heatmapCell: HeatmapCell) => {
+    const query = getTopAnomalousEntitiesQuery(
+      dateRange.startDate,
+      dateRange.endDate,
+      props.detector.id,
+      DEFAULT_TOP_CHILD_ENTITIES_TO_FETCH,
+      heatmapDisplayOption.sortType,
+      isMultiCategory,
+      props.isHistorical,
+      taskId.current,
+      heatmapCell.entityList
+    );
+    const result = await dispatch(searchResults(query));
+    const topChildEntities = parseTopChildEntityCombos(
+      result,
+      heatmapCell.entityList
+    );
+    setChildEntityCombos(topChildEntities);
+
+    // When first populating the child entity filters, set up the selected child entities map
+    const parentEntityFields = heatmapCell.entityList.map(
+      (entity: Entity) => entity.name
+    );
+    const childCategoryFields = detectorCategoryField.filter(
+      (categoryField: string) => !parentEntityFields.includes(categoryField)
+    );
+    const selectedChildEntitiesMap = {};
+    childCategoryFields.forEach((childCategoryField: string) => {
+      //@ts-ignore
+      selectedChildEntitiesMap[childCategoryField] = [];
+    });
+    setSelectedChildEntities(selectedChildEntitiesMap);
+  };
+
+  const handleChildEntitiesOptionChanged = (
+    childCategoryField: string,
+    options: { label: string }[]
+  ) => {
+    const curSelectedChildEntities = {
+      ...selectedChildEntities,
+      [childCategoryField]: options,
+    };
+    setSelectedChildEntities(curSelectedChildEntities);
+
+    // Get a list of entity lists, where each list represents a unique entity combination of
+    // all parent + child entities (a single model). And, for each one of these lists, fetch the time series data.
+    const entityCombosToFetch = getAllEntityCombos(
+      get(selectedHeatmapCell, 'entityList', []),
+      curSelectedChildEntities
+    );
+
+    // TODO: use these entity combos to fetch individual time series for each, and send to
+    // child components to show on the charts
+    console.log('entity combos to fetch: ', entityCombosToFetch);
+  };
 
   const handleZoomChange = useCallback((startDate: number, endDate: number) => {
     setZoomRange({
@@ -638,9 +714,12 @@ export const AnomalyHistory = (props: AnomalyHistoryProps) => {
                         isMultiCategory &&
                         get(selectedCategoryFields, 'length', 0) <
                           get(detectorCategoryField, 'length', 0)
-                        ? getMultiCategoryFilter(
+                        ? getMultiCategoryFilters(
                             selectedHeatmapCell.entityList,
-                            detectorCategoryField
+                            childEntityCombos,
+                            detectorCategoryField,
+                            selectedChildEntities,
+                            handleChildEntitiesOptionChanged
                           )
                         : getHCTitle(selectedHeatmapCell.entityList)
                       : '-'

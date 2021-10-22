@@ -48,6 +48,7 @@ import {
   ENTITY_LIST_DELIMITER,
   HEATMAP_CELL_ENTITY_DELIMITER,
   HEATMAP_CALL_ENTITY_KEY_VALUE_DELIMITER,
+  ENTITY_NAME_PATH_FIELD,
 } from '../../../server/utils/constants';
 import { toFixedNumberForAnomaly } from '../../../server/utils/helpers';
 import {
@@ -408,7 +409,7 @@ export const getAnomalySummaryQuery = (
   // Add entity filters if this is a HC detector
   if (entityList !== undefined && entityList.length > 0) {
     //@ts-ignore
-    requestBody.query.bool.filter.push(getEntityFilters(modelId, entityList));
+    requestBody.query.bool.filter.push(getHCFilters(modelId, entityList));
   }
 
   return requestBody;
@@ -492,7 +493,7 @@ export const getBucketizedAnomalyResultsQuery = (
   // Add entity filters if this is a HC detector
   if (entityList !== undefined && entityList.length > 0) {
     //@ts-ignore
-    requestBody.query.bool.filter.push(getEntityFilters(modelId, entityList));
+    requestBody.query.bool.filter.push(getHCFilters(modelId, entityList));
   }
 
   return requestBody;
@@ -957,6 +958,8 @@ export const filterWithHeatmapFilter = (
   return filterWithDateRange(data, heatmapCell.dateRange, timeField);
 };
 
+// Generates query to get the top anomalous entities (or entity pairs)
+// for some detector, sorting by severity or occurrence.
 export const getTopAnomalousEntitiesQuery = (
   startTime: number,
   endTime: number,
@@ -965,7 +968,8 @@ export const getTopAnomalousEntitiesQuery = (
   sortType: AnomalyHeatmapSortType,
   isMultiCategory: boolean,
   isHistorical?: boolean,
-  taskId?: string
+  taskId?: string,
+  includedEntities?: Entity[]
 ) => {
   const termField =
     isHistorical && taskId ? { task_id: taskId } : { detector_id: detectorId };
@@ -1137,6 +1141,46 @@ export const getTopAnomalousEntitiesQuery = (
     };
   }
 
+  // In the HC filtering case, in order to fetch the top entity combos after a specific entity has been selected,
+  // we need to add a filter to only match results that include at least the user-specified entity values.
+  // Consider a detector with category fields [region, IP]. If user selects region 'us-west-1' and wants
+  // top IPs from that region, we return the top entity combos that have a region set to 'us-west-1', such as
+  // ('us-west-1', '1.2.3.4), ('us-west-1', '5.6.7.8'), and so on.
+  if (includedEntities !== undefined && !isEmpty(includedEntities)) {
+    includedEntities.forEach((entity: Entity) => {
+      // Add filters for entity name (like 'region'), and value (like 'us-west-1')
+      const entityNameFilter = {
+        nested: {
+          path: ENTITY_FIELD,
+          query: {
+            term: {
+              [ENTITY_NAME_PATH_FIELD]: {
+                value: entity.name,
+              },
+            },
+          },
+        },
+      };
+      const entityValueFilter = {
+        nested: {
+          path: ENTITY_FIELD,
+          query: {
+            term: {
+              [ENTITY_VALUE_PATH_FIELD]: {
+                value: entity.value,
+              },
+            },
+          },
+        },
+      };
+
+      //@ts-ignore
+      requestBody.query.bool.filter.push(entityNameFilter);
+      //@ts-ignore
+      requestBody.query.bool.filter.push(entityValueFilter);
+    });
+  }
+
   return requestBody;
 };
 
@@ -1305,7 +1349,7 @@ export const getEntityAnomalySummariesQuery = (
   // Add entity filters if this is a HC detector
   if (entityList !== undefined && entityList.length > 0) {
     //@ts-ignore
-    requestBody.query.bool.filter.push(getEntityFilters(modelId, entityList));
+    requestBody.query.bool.filter.push(getHCFilters(modelId, entityList));
   }
 
   return requestBody;
@@ -1544,7 +1588,7 @@ export const convertToCategoryFieldAndEntityString = (
       }
       entityString +=
         entity.name +
-        `${HEATMAP_CALL_ENTITY_KEY_VALUE_DELIMITER} ` +
+        `${HEATMAP_CALL_ENTITY_KEY_VALUE_DELIMITER}` +
         entity.value;
     });
   }
@@ -1589,10 +1633,7 @@ export const entityListsMatch = (
 };
 
 // Helper fn to get the correct filters based on how many categorical fields there are.
-const getEntityFilters = (
-  modelId: string | undefined,
-  entityList: Entity[]
-) => {
+const getHCFilters = (modelId: string | undefined, entityList: Entity[]) => {
   return entityList.length > 1
     ? {
         term: {
@@ -1628,4 +1669,43 @@ export const transformEntityListsForHeatmap = (entityLists: any[]) => {
     transformedEntityLists.push(row);
   });
   return transformedEntityLists;
+};
+
+export const parseTopChildEntityCombos = (
+  result: any,
+  parentEntities: Entity[]
+) => {
+  const resultBuckets = get(
+    result,
+    `response.aggregations.${TOP_ENTITY_AGGS}.buckets`,
+    []
+  );
+
+  const topChildEntityCombos = [] as Entity[][];
+  // Each result bucket represents a unique entity combination. Loop through them
+  // to gather the unique child entity combinations (remove all parent entities).
+  resultBuckets.forEach((bucket: any) => {
+    const entities = get(
+      bucket,
+      `${ENTITY_LIST_FIELD}.hits.hits.0._source.${ENTITY_FIELD}`
+    ) as Entity[];
+    const childEntities = entities.filter(
+      (entity: Entity) => !containsEntity(entity, parentEntities)
+    );
+    topChildEntityCombos.push(childEntities);
+  });
+  return topChildEntityCombos;
+};
+
+const containsEntity = (entity: Entity, entities: Entity[]) => {
+  let contains = false;
+  entities.forEach((entityInList: Entity) => {
+    if (
+      entity.name === entityInList.name &&
+      entity.value === entityInList.value
+    ) {
+      contains = true;
+    }
+  });
+  return contains;
 };

@@ -60,3 +60,6 @@ export const NO_DATA_IN_WINDOW_ERROR_MESSAGE =
 //https://github.com/opensearch-project/anomaly-detection/blob/master/src/main/java/com/amazon/opendistroforelasticsearch/ad/transport/AnomalyResultTransportAction.java#L81
 export const NO_RCF_MODEL_ERROR_MESSAGE =
   'No RCF models are available either because RCF models are not ready or all nodes are unresponsive or the system might have bugs';
+
+export const DEFAULT_TOP_CHILD_ENTITIES_TO_FETCH = 10;
+export const DEFAULT_TOP_CHILD_ENTITIES_TO_DISPLAY = 5;

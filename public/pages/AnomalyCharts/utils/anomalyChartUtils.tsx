@@ -721,12 +721,12 @@ export const getCategoryFieldOptions = (categoryFields: string[]) => {
   return categoryFieldOptions;
 };
 
-const getMultiCategoryFilterPrefix = (prefilteredEntities: Entity[]) => {
+const getMultiCategoryFilterPrefix = (parentEntities: Entity[]) => {
   return (
     <EuiText>
       <h3>
         Viewing results for&nbsp;
-        {prefilteredEntities.map((entity: Entity) => {
+        {parentEntities.map((entity: Entity) => {
           return (
             <span>
               {entity.name} <b>{entity.value}</b>
@@ -739,15 +739,52 @@ const getMultiCategoryFilterPrefix = (prefilteredEntities: Entity[]) => {
   );
 };
 
-export const getMultiCategoryFilter = (
-  prefilteredEntities: Entity[],
-  allCategoryFields: string[]
+// Split up the child entity values into their respective category fields, to pass as options to the dropdowns.
+// For example, given child category fields ['A', 'B'], and child entity values
+// [ [ { name: 'A', value: 'A1' }, { name: 'B', value: 'B1' } ], [ { name: 'A', value: 'A2' }, { name: 'B', value: 'B1' } ] ],
+// => { [A]: [ { label: 'A1' }, { label: 'A2' } ], [B]: [ { label: B1 } ] }
+const getChildEntities = (
+  childCategoryFields: string[],
+  childEntityCombos: Entity[][]
 ) => {
-  const prefilteredEntityFields = prefilteredEntities.map(
+  const childEntityOptionsMap = {} as {
+    [categoryField: string]: { label: string }[];
+  };
+  childCategoryFields.forEach((categoryField: string) => {
+    // init the map for each category field
+    childEntityOptionsMap[categoryField] = [] as { label: string }[];
+    childEntityCombos.forEach((childEntityCombo: Entity[]) => {
+      childEntityCombo.forEach((childEntity: Entity) => {
+        if (categoryField === childEntity.name) {
+          childEntityOptionsMap[categoryField].push({
+            label: childEntity.value,
+          });
+        }
+      });
+    });
+  });
+  return childEntityOptionsMap;
+};
+
+export const getMultiCategoryFilters = (
+  parentEntities: Entity[],
+  childEntities: Entity[][],
+  allCategoryFields: string[],
+  selectedChildEntities: {
+    [childCategoryField: string]: { label: string }[];
+  },
+  onSelectedOptionsChange: (childCategoryField: string, options: any[]) => void
+) => {
+  const parentEntityFields = parentEntities.map(
     (entity: Entity) => entity.name
   );
-  const unfilteredCategoryFields = allCategoryFields.filter(
-    (categoryField: string) => !prefilteredEntityFields.includes(categoryField)
+  const childCategoryFields = allCategoryFields.filter(
+    (categoryField: string) => !parentEntityFields.includes(categoryField)
+  );
+
+  const childEntityOptions = getChildEntities(
+    childCategoryFields,
+    childEntities
   );
 
   return (
@@ -757,35 +794,74 @@ export const getMultiCategoryFilter = (
       style={{ marginBottom: '4px' }}
     >
       <EuiFlexItem grow={false}>
-        {getMultiCategoryFilterPrefix(prefilteredEntities)}
+        {getMultiCategoryFilterPrefix(parentEntities)}
       </EuiFlexItem>
-      {unfilteredCategoryFields.map((unfilteredEntity: string) => {
+      {childCategoryFields.map((childCategoryField: string) => {
         return (
           <div style={{ display: 'flex', alignItems: 'center' }}>
             <EuiFlexItem>
               <EuiText>
-                <h3>and&nbsp;{unfilteredEntity}&nbsp;&nbsp;</h3>
+                <h3>and&nbsp;{childCategoryField}&nbsp;&nbsp;</h3>
               </EuiText>
             </EuiFlexItem>
             <EuiFlexItem style={{ minWidth: 300 }}>
               <EuiComboBox
                 placeholder="Select categorical fields"
-                options={[
-                  {
-                    label: 'some-value',
-                  },
-                ]}
-                selectedOptions={[
-                  {
-                    label: 'some-selected-value',
-                  },
-                ]}
-                onChange={() => {}}
+                options={childEntityOptions[childCategoryField]}
+                selectedOptions={selectedChildEntities[childCategoryField]}
+                onChange={(options: any[]) =>
+                  onSelectedOptionsChange(childCategoryField, options)
+                }
               />
             </EuiFlexItem>
           </div>
         );
       })}
     </EuiFlexGroup>
+  );
+};
+
+// Get a list of entity lists, where each list represents a unique entity combination of
+// all parent + child entities (a single model).
+// In order to get all unique results, we first gather all of the entity sources, then get the cartesian product
+// of such sources. Each "source" here represents unique entities for a single category field. For example,
+// consider category field A with entities [A1, A2], and category field B with entities [B1, B2].
+// The sources would be: [[A1, A2], [B1, B2]]
+// The cartesian product would be [[A1, B1], [A1, B2], [A2, B1], [A2, B2]]
+export const getAllEntityCombos = (
+  parentEntities: Entity[],
+  childEntities: { [childCategoryField: string]: { label: string }[] }
+) => {
+  let entitySources = [] as Entity[][];
+  // getting parent sources
+  entitySources.push(parentEntities);
+
+  // getting all child sources
+  for (var childCategoryField in childEntities) {
+    let curChildEntities = [] as Entity[];
+    childEntities[childCategoryField].forEach(
+      (childEntityValue: { label: string }) => {
+        const childEntity = {
+          name: childCategoryField,
+          value: childEntityValue.label,
+        } as Entity;
+        curChildEntities.push(childEntity);
+      }
+    );
+    entitySources.push(curChildEntities);
+  }
+
+  // Common JS pattern to return a cartesian product of an array of arrays, by iterating through
+  // pairs of results, and appending all values of the current array to all values in the previous array.
+  //
+  // reduce(): set a custom fn to perform on the current and previous values in the array
+  // map(): set a custom fn on the current value in the array
+  // flatMap(): similar to map(), but flattens the result into a single-depth array
+  //
+  // More info: https://stackoverflow.com/questions/12303989/cartesian-product-of-multiple-arrays-in-javascript
+  return entitySources.reduce(
+    //@ts-ignore
+    (a, b) => a.flatMap((x) => b.map((y) => [...x, y])),
+    [[]]
   );
 };
