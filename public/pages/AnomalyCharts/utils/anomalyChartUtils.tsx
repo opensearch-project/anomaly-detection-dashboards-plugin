@@ -40,6 +40,8 @@ import {
   MonitorAlert,
   AnomalySummary,
   EntityData,
+  EntityOptionsMap,
+  EntityOption,
 } from '../../../models/interfaces';
 import { dateFormatter, minuteDateFormatter } from '../../utils/helpers';
 import { RectAnnotationDatum } from '@elastic/charts';
@@ -747,12 +749,10 @@ const getChildEntities = (
   childCategoryFields: string[],
   childEntityCombos: Entity[][]
 ) => {
-  const childEntityOptionsMap = {} as {
-    [categoryField: string]: { label: string }[];
-  };
+  const childEntityOptionsMap = {} as EntityOptionsMap;
   childCategoryFields.forEach((categoryField: string) => {
     // init the map for each category field
-    childEntityOptionsMap[categoryField] = [] as { label: string }[];
+    childEntityOptionsMap[categoryField] = [] as EntityOption[];
     childEntityCombos.forEach((childEntityCombo: Entity[]) => {
       childEntityCombo.forEach((childEntity: Entity) => {
         if (categoryField === childEntity.name) {
@@ -770,9 +770,7 @@ export const getMultiCategoryFilters = (
   parentEntities: Entity[],
   childEntities: Entity[][],
   allCategoryFields: string[],
-  selectedChildEntities: {
-    [childCategoryField: string]: { label: string }[];
-  },
+  selectedChildEntities: EntityOptionsMap,
   onSelectedOptionsChange: (childCategoryField: string, options: any[]) => void
 ) => {
   const parentEntityFields = parentEntities.map(
@@ -830,7 +828,7 @@ export const getMultiCategoryFilters = (
 // The cartesian product would be [[A1, B1], [A1, B2], [A2, B1], [A2, B2]]
 export const getAllEntityCombos = (
   parentEntities: Entity[],
-  childEntities: { [childCategoryField: string]: { label: string }[] }
+  childEntities: EntityOptionsMap
 ) => {
   let entitySources = [] as Entity[][];
   // getting parent sources
@@ -840,7 +838,7 @@ export const getAllEntityCombos = (
   for (var childCategoryField in childEntities) {
     let curChildEntities = [] as Entity[];
     childEntities[childCategoryField].forEach(
-      (childEntityValue: { label: string }) => {
+      (childEntityValue: EntityOption) => {
         const childEntity = {
           name: childCategoryField,
           value: childEntityValue.label,
@@ -863,5 +861,5 @@ export const getAllEntityCombos = (
     //@ts-ignore
     (a, b) => a.flatMap((x) => b.map((y) => [...x, y])),
     [[]]
-  );
+  ) as Entity[][];
 };

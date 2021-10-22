@@ -65,7 +65,7 @@ import {
   MAX_ANOMALIES,
   MISSING_FEATURE_DATA_SEVERITY,
 } from '../../utils/constants';
-import { HeatmapCell } from '../AnomalyCharts/containers/AnomalyHeatmapChart';
+//import { HeatmapCell } from '../AnomalyCharts/containers/AnomalyHeatmapChart';
 import {
   AnomalyHeatmapSortType,
   NUM_CELLS,
@@ -936,27 +936,26 @@ export const getFeatureDataMissingMessageAndActionItem = (
   }
 };
 
-export const filterWithHeatmapFilter = (
-  data: any[],
-  heatmapCell: HeatmapCell | undefined,
-  isFilteringWithEntity: boolean = true,
-  timeField: string = 'plotTime'
-) => {
-  if (!heatmapCell) {
-    return data;
-  }
+// export const filterWithHeatmapFilter = (
+//   data: any[],
+//   heatmapCell: HeatmapCell | undefined,
+//   selectedEntitites: Entity[],
+//   isFilteringWithEntity: boolean = true,
+//   timeField: string = 'plotTime'
+// ) => {
+//   if (!heatmapCell) {
+//     return data;
+//   }
 
-  if (isFilteringWithEntity) {
-    data = data
-      .filter((anomaly) => !isEmpty(get(anomaly, 'entity', [])))
-      .filter((anomaly) => {
-        const dataEntityList = get(anomaly, 'entity');
-        const cellEntityList = get(heatmapCell, 'entityList');
-        return entityListsMatch(dataEntityList, cellEntityList);
-      });
-  }
-  return filterWithDateRange(data, heatmapCell.dateRange, timeField);
-};
+//   if (isFilteringWithEntity) {
+//     data = data
+//       .filter((anomaly) => !isEmpty(get(anomaly, 'entity', [])))
+//       .filter((anomaly) => {
+//         return entityListsMatch(get(anomaly, 'entity'), selectedEntitites);
+//       });
+//   }
+//   return filterWithDateRange(data, heatmapCell.dateRange, timeField);
+// };
 
 // Generates query to get the top anomalous entities (or entity pairs)
 // for some detector, sorting by severity or occurrence.
@@ -1616,21 +1615,21 @@ export const convertHeatmapCellEntityStringToEntityList = (
   return entityList;
 };
 
-export const entityListsMatch = (
-  entityListA: Entity[],
-  entityListB: Entity[]
-) => {
-  if (get(entityListA, 'length') !== get(entityListB, 'length')) {
-    return false;
-  }
-  var i;
-  for (i = 0; i < entityListA.length; i++) {
-    if (entityListA[i].value !== entityListB[i].value) {
-      return false;
-    }
-  }
-  return true;
-};
+// export const entityListsMatch = (
+//   entityListA: Entity[],
+//   entityListB: Entity[]
+// ) => {
+//   if (get(entityListA, 'length') !== get(entityListB, 'length')) {
+//     return false;
+//   }
+//   var i;
+//   for (i = 0; i < entityListA.length; i++) {
+//     if (entityListA[i].value !== entityListB[i].value) {
+//       return false;
+//     }
+//   }
+//   return true;
+// };
 
 // Helper fn to get the correct filters based on how many categorical fields there are.
 const getHCFilters = (modelId: string | undefined, entityList: Entity[]) => {

@@ -45,11 +45,6 @@ import { NoFeaturePrompt } from '../components/FeatureChart/NoFeaturePrompt';
 import { focusOnFeatureAccordion } from '../../ConfigureModel/utils/helpers';
 import moment from 'moment';
 import { HeatmapCell } from './AnomalyHeatmapChart';
-import {
-  filterWithHeatmapFilter,
-  entityListsMatch,
-} from '../../utils/anomalyResultUtils';
-import { Entity } from '../../../../server/models/interfaces';
 
 interface FeatureBreakDownProps {
   title?: string;
@@ -71,60 +66,14 @@ export const FeatureBreakDown = React.memo((props: FeatureBreakDownProps) => {
     anomaliesResult: Anomalies,
     featureId: string
   ) => {
-    const originalFeatureData = get(
-      anomaliesResult,
-      `featureData.${featureId}`,
-      []
-    );
-    if (props.isHCDetector) {
-      if (props.selectedHeatmapCell) {
-        const anomaliesFound = get(anomaliesResult, 'anomalies', []);
-        const filteredFeatureData = [];
-        for (let i = 0; i < anomaliesFound.length; i++) {
-          const currentAnomalyData = anomaliesResult.anomalies[i];
-          const dataEntityList = get(
-            currentAnomalyData,
-            'entity',
-            []
-          ) as Entity[];
-          const cellEntityList = get(
-            props,
-            'selectedHeatmapCell.entityList',
-            []
-          ) as Entity[];
-          if (
-            !isEmpty(dataEntityList) &&
-            entityListsMatch(dataEntityList, cellEntityList) &&
-            get(currentAnomalyData, 'plotTime', 0) >=
-              props.dateRange.startDate &&
-            get(currentAnomalyData, 'plotTime', 0) <= props.dateRange.endDate
-          ) {
-            filteredFeatureData.push(originalFeatureData[i]);
-          }
-        }
-        return filteredFeatureData;
-      } else {
-        return [];
-      }
-    } else {
-      return originalFeatureData;
-    }
+    return props.isHCDetector && !props.selectedHeatmapCell
+      ? []
+      : get(anomaliesResult, `featureData.${featureId}`, []);
   };
   const getAnnotationData = () => {
-    if (props.isHCDetector) {
-      if (props.selectedHeatmapCell) {
-        return filterWithHeatmapFilter(
-          props.annotations,
-          props.selectedHeatmapCell,
-          true,
-          'coordinates.x0'
-        );
-      } else {
-        return [];
-      }
-    } else {
-      return props.annotations;
-    }
+    return props.isHCDetector && !props.selectedHeatmapCell
+      ? []
+      : props.annotations;
   };
 
   return (
