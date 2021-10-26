@@ -95,12 +95,9 @@ export function ReviewAndCreate(props: ReviewAndCreateProps) {
 
   }, []);
 
-  //const handleDifferentValidationIssueTypes = ()
-
   useEffect(() => {
     dispatch(validateDetector(formikToDetector(props.values)))
       .then((resp: any) => {
-        console.log("resp.response " + JSON.stringify(resp.response));
         if (!Object.keys(resp.response).length) {
           setValidDetectorSettings(true);
           setValidModelConfigurations(true);
@@ -138,31 +135,11 @@ export function ReviewAndCreate(props: ReviewAndCreateProps) {
                   setDetectorMessageResponse(detectorSettingIssue)
               }
             }
-            // const issueTypeResponse = resp.response.detector;
-            // if (issueTypeResponse.hasOwnProperty('feature_attributes')) {
-            //   const featureResp = resp.response.detector.feature_attributes as validationFeatureResponse;
-            //   setFeatureResponse(featureResp)
-            //   setValidDetectorSettings(true);
-            //   setValidModelConfigurations(false);
-            // } else {
-            //   console.log("inside not feature attributes");
-            //   const issueType = Object.keys(resp.response.detector)[0];
-            //   const validationMessage = resp.response.detector[issueType].message;
-            //   const detectorSettingIssue: validationSettingResponse = {
-            //     issueType: issueType,
-            //     message: validationMessage
-            //   }
-            //   setValidModelConfigurations(true);
-            //   setValidDetectorSettings(false);
-            //   setDetectorMessageResponse(detectorSettingIssue)
-            // }
           }
         }
       })
       .catch((err: any) => {
-        console.log("error: " + err);
         setValidationError(true);
-        console.log("error from validation itself");
         core.notifications.toasts.addDanger(
           prettifyErrorMessage(
             getErrorMessage(

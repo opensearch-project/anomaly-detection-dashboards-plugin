@@ -77,7 +77,6 @@ export const DetectorDefinitionFields = (
     }
     if (props.validationResponse != undefined) {
       if (props.validationError) {
-        console.log("went inside here")
         return null;
       } else if (props.validDetectorSettings) {
         return (

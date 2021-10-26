@@ -255,9 +255,6 @@ export default class AdService {
         .callAsCurrentUser('ad.validateDetector', {
           body: requestBody,
         });
-
-      console.log('response: ', response);
-
       return opensearchDashboardsResponse.ok({
         body: {
           ok: true,

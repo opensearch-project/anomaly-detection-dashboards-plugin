@@ -242,7 +242,6 @@ export const ModelConfigurationFields = (
       />)
     }
     if (props.validationError) {
-      console.log("went inside here")
       return null;
     } else if (props.validModel) {
       return (
@@ -269,10 +268,7 @@ export const ModelConfigurationFields = (
       return null;
     }
   }
-
   const featureNum = Object.keys(featureAttributes).length;
-  console.log("number of keys: " + Object.keys(props.validationFeatureResponse).length);
-  console.log("valid model: " + props.validModel)
   return (
     <ContentPanel
       title="Model configuration"
