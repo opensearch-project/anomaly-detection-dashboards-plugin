@@ -25,18 +25,22 @@
  */
 
 import ContentPanel from '../../../../components/ContentPanel/ContentPanel';
-import { EuiFlexGrid, EuiFlexItem, EuiButton } from '@elastic/eui';
+import { EuiFlexGrid, EuiFlexItem, EuiButton, EuiCallOut, EuiLoadingSpinner, EuiFlexGroup, EuiText } from '@elastic/eui';
 import React from 'react';
 import { get } from 'lodash';
-import { Detector } from '../../../../models/interfaces';
+import { Detector, validationSettingResponse } from '../../../../models/interfaces';
 import { FilterDisplayList } from '../FilterDisplayList';
 import { ConfigCell, FixedWidthRow } from '../../../../components/ConfigCell';
 import { toStringConfigCell } from '../../utils/helpers';
 
 interface DetectorDefinitionFieldsProps {
-  onEditDetectorDefinition(): void;
   detector: Detector;
+  onEditDetectorDefinition(): void;
   isCreate: boolean;
+  validationError?: boolean;
+  validDetectorSettings?: boolean;
+  validationResponse?: validationSettingResponse;
+  isLoading?: boolean;
 }
 
 export const DetectorDefinitionFields = (
@@ -51,7 +55,62 @@ export const DetectorDefinitionFields = (
     ),
   };
 
+  const handleCalloutGeneralLogic = () => {
+    //display nothing when rendering page and no featureResponse has been populated yet
+    // or if tehre is a validation error
+    if (props.isLoading) {
+      return (<EuiCallOut
+        title={
+          <div>
+            <EuiFlexGroup direction="row" gutterSize="xs">
+              <EuiLoadingSpinner size="l" style={{ marginRight: '12px' }} />
+              <EuiText>
+                <p>Validating detector configurations</p>
+              </EuiText>
+            </EuiFlexGroup>
+          </div>
+        }
+        style={{ marginBottom: '10px' }}
+        size="s"
+        color="primary"
+      />)
+    }
+    if (props.validationResponse != undefined) {
+      if (props.validationError) {
+        console.log("went inside here")
+        return null;
+      } else if (props.validDetectorSettings) {
+        return (
+          <EuiCallOut
+            title="Detector settings are validated"
+            color="success"
+            iconType="check"
+            size="s"
+            style={{ marginBottom: '10px' }}
+          ></EuiCallOut>
+        )
+      } else if (!props.validDetectorSettings && props.validationResponse.hasOwnProperty('message')) {
+        return (
+          <EuiCallOut
+            title="Issues found in the detector settings"
+            color="danger"
+            iconType="alert"
+            size="s"
+            style={{ marginBottom: '10px' }}
+          >
+            <ul>
+              <li>{props.validationResponse.message}</li>
+            </ul>
+          </EuiCallOut>
+        )
+      } else {
+        return <EuiLoadingSpinner size="xl" />;
+      }
+    }
+  }
+
   return (
+
     <ContentPanel
       title="Detector settings"
       titleSize="s"
@@ -65,6 +124,7 @@ export const DetectorDefinitionFields = (
         </EuiButton>,
       ]}
     >
+      {props.isCreate ? handleCalloutGeneralLogic(): null}
       <EuiFlexGrid columns={0} gutterSize="l" style={{ border: 'none' }}>
         <EuiFlexItem>
           <ConfigCell

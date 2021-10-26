@@ -105,10 +105,14 @@ export function registerADRoutes(apiRouter: Router, adService: AdService) {
   );
   apiRouter.get('/detectors/{detectorName}/_match', adService.matchDetector);
   apiRouter.get('/detectors/_count', adService.getDetectorCount);
+<<<<<<< HEAD
   apiRouter.post(
     '/detectors/{detectorId}/_topAnomalies/{isHistorical}',
     adService.getTopAnomalyResults
   );
+=======
+  apiRouter.post('/detectors/_validate', adService.validateDetector);
+>>>>>>> f276f5b (added validate API to routes, redux and added validate check to last step of detector creation)
 }
 
 export default class AdService {
@@ -236,6 +240,40 @@ export default class AdService {
       });
     }
   };
+
+  validateDetector = async (
+    context: RequestHandlerContext,
+    request: OpenSearchDashboardsRequest,
+    opensearchDashboardsResponse: OpenSearchDashboardsResponseFactory
+  ): Promise<IOpenSearchDashboardsResponse<any>> => {
+    try {
+      const requestBody = JSON.stringify(
+        convertPreviewInputKeysToSnakeCase(request.body)
+      );
+      const response = await this.client
+        .asScoped(request)
+        .callAsCurrentUser('ad.validateDetector', {
+          body: requestBody,
+        });
+
+      console.log('response: ', response);
+
+      return opensearchDashboardsResponse.ok({
+        body: {
+          ok: true,
+          response: response,
+        },
+      });
+    } catch (err) {
+      console.log('Anomaly detector - validateDetector', err);
+      return opensearchDashboardsResponse.ok({
+        body: {
+          ok: false,
+          error: getErrorMessage(err),
+        },
+      });
+    }
+  }
 
   getDetector = async (
     context: RequestHandlerContext,

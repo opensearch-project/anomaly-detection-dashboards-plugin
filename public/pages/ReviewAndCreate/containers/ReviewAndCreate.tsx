@@ -35,18 +35,21 @@ import {
   EuiTitle,
   EuiButtonEmpty,
   EuiSpacer,
+  EuiCallOut,
 } from '@elastic/eui';
 import {
   createDetector,
   getDetectorCount,
   startDetector,
   startHistoricalDetector,
+  validateDetector
 } from '../../../redux/reducers/ad';
 import { Formik, FormikHelpers } from 'formik';
 import { get } from 'lodash';
-import React, { Fragment, useEffect } from 'react';
+import React, { Fragment, useEffect, useState } from 'react';
 import { RouteComponentProps } from 'react-router';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
+import { AppState } from '../../../redux/reducers';
 import { BREADCRUMBS, MAX_DETECTORS } from '../../../utils/constants';
 import { useHideSideNavBar } from '../../main/hooks/useHideSideNavBar';
 import { CoreStart } from '../../../../../../src/core/public';
@@ -61,21 +64,117 @@ import {
 } from '../../../utils/utils';
 import { prettifyErrorMessage } from '../../../../server/utils/helpers';
 import { DetectorScheduleFields } from '../components/DetectorScheduleFields';
+import { validationFeatureResponse, validationSettingResponse, VALIDATION_ISSUE_TYPES } from '../../../models/interfaces'
 
 interface ReviewAndCreateProps extends RouteComponentProps {
   setStep(stepNumber: number): void;
   values: CreateDetectorFormikValues;
 }
 
+
+
+
+
 export function ReviewAndCreate(props: ReviewAndCreateProps) {
   const core = React.useContext(CoreServicesContext) as CoreStart;
   const dispatch = useDispatch();
   useHideSideNavBar(true, false);
 
+  const [validDetectorSettings, setValidDetectorSettings] = useState(false);
+  const [validModelConfigurations, setValidModelConfigurations] = useState(false);
+  const [validationError, setValidationError] = useState(false);
+  const [settingsResponse, setDetectorMessageResponse] = useState<validationSettingResponse>({} as validationSettingResponse);
+  const [featureResponse, setFeatureResponse] = useState<validationFeatureResponse>({} as validationFeatureResponse);
+  const isLoading = useSelector(
+    (state: AppState) => state.ad.requesting
+  );
+
   // Jump to top of page on first load
   useEffect(() => {
     scroll(0, 0);
+
   }, []);
+
+  //const handleDifferentValidationIssueTypes = ()
+
+  useEffect(() => {
+    dispatch(validateDetector(formikToDetector(props.values)))
+      .then((resp: any) => {
+        console.log("resp.response " + JSON.stringify(resp.response));
+        if (!Object.keys(resp.response).length) {
+          setValidDetectorSettings(true);
+          setValidModelConfigurations(true);
+        } else {
+          if (resp.response.hasOwnProperty('detector')) {
+            const issueType = Object.keys(resp.response.detector)[0];
+            if (resp.response.detector[issueType].hasOwnProperty('message')) {
+              const validationMessage = resp.response.detector[issueType].message;
+              const detectorSettingIssue: validationSettingResponse = {
+                issueType: issueType,
+                message: validationMessage
+              }
+              switch (issueType) {
+                case VALIDATION_ISSUE_TYPES.FEATURE_ATTRIBUTES:
+                  const featureResp = resp.response.detector.feature_attributes as validationFeatureResponse;
+                  setFeatureResponse(featureResp)
+                  setValidDetectorSettings(true);
+                  setValidModelConfigurations(false);
+                  break;
+                // case VALIDATION_ISSUE_TYPES.CATEGORY:
+                //   break;
+                // case VALIDATION_ISSUE_TYPES.SHINGLE_SIZE_FIELD:
+                //   break;
+                case VALIDATION_ISSUE_TYPES.PARSING_ISSUE:
+                  detectorSettingIssue.message = "Custom query error: " + detectorSettingIssue.message;
+                  setValidModelConfigurations(true);
+                  setValidDetectorSettings(false);
+                  setDetectorMessageResponse(detectorSettingIssue)
+                  break;
+                // this includes all other detector setting issues that don't need
+                // anything else added to their message
+                default:
+                  setValidModelConfigurations(true);
+                  setValidDetectorSettings(false);
+                  setDetectorMessageResponse(detectorSettingIssue)
+              }
+            }
+            // const issueTypeResponse = resp.response.detector;
+            // if (issueTypeResponse.hasOwnProperty('feature_attributes')) {
+            //   const featureResp = resp.response.detector.feature_attributes as validationFeatureResponse;
+            //   setFeatureResponse(featureResp)
+            //   setValidDetectorSettings(true);
+            //   setValidModelConfigurations(false);
+            // } else {
+            //   console.log("inside not feature attributes");
+            //   const issueType = Object.keys(resp.response.detector)[0];
+            //   const validationMessage = resp.response.detector[issueType].message;
+            //   const detectorSettingIssue: validationSettingResponse = {
+            //     issueType: issueType,
+            //     message: validationMessage
+            //   }
+            //   setValidModelConfigurations(true);
+            //   setValidDetectorSettings(false);
+            //   setDetectorMessageResponse(detectorSettingIssue)
+            // }
+          }
+        }
+      })
+      .catch((err: any) => {
+        console.log("error: " + err);
+        setValidationError(true);
+        console.log("error from validation itself");
+        core.notifications.toasts.addDanger(
+          prettifyErrorMessage(
+            getErrorMessage(
+              err,
+              'There was a problem validating the detector'
+            )
+          )
+        );
+      });
+  }, []); // <-- Have to pass in [] here!
+
+
 
   useEffect(() => {
     core.chrome.setBreadcrumbs([
@@ -156,8 +255,8 @@ export function ReviewAndCreate(props: ReviewAndCreateProps) {
             if (totalDetectors === MAX_DETECTORS) {
               core.notifications.toasts.addDanger(
                 'Cannot create detector - limit of ' +
-                  MAX_DETECTORS +
-                  ' detectors reached'
+                MAX_DETECTORS +
+                ' detectors reached'
               );
             } else {
               core.notifications.toasts.addDanger(
@@ -201,15 +300,24 @@ export function ReviewAndCreate(props: ReviewAndCreateProps) {
                   </EuiTitle>
                 </EuiPageHeaderSection>
               </EuiPageHeader>
+
               <DetectorDefinitionFields
+                validationError={validationError}
+                validDetectorSettings={validDetectorSettings}
+                validationResponse={settingsResponse}
                 onEditDetectorDefinition={() => props.setStep(1)}
                 detector={detectorToCreate}
                 isCreate={true}
+                isLoading={isLoading}
               />
               <EuiSpacer />
               <ModelConfigurationFields
-                onEditModelConfiguration={() => props.setStep(2)}
                 detector={detectorToCreate}
+                onEditModelConfiguration={() => props.setStep(2)}
+                validationFeatureResponse={featureResponse}
+                validModel={validModelConfigurations}
+                validationError={validationError}
+                isLoading={isLoading}
               />
               <EuiSpacer />
               <DetectorScheduleFields

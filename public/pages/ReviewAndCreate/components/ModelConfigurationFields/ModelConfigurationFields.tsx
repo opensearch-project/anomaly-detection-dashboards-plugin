@@ -24,11 +24,12 @@
  * permissions and limitations under the License.
  */
 import React, { useState } from 'react';
-import { EuiBasicTable, EuiLink, EuiButton, EuiSpacer } from '@elastic/eui';
+import { EuiBasicTable, EuiLink, EuiButton, EuiSpacer, EuiCallOut, EuiLoadingSpinner, EuiFlexGroup, EuiText } from '@elastic/eui';
 import {
   Detector,
   FEATURE_TYPE,
   FeatureAttributes,
+  validationFeatureResponse
 } from '../../../../models/interfaces';
 import { get, sortBy } from 'lodash';
 import ContentPanel from '../../../../components/ContentPanel/ContentPanel';
@@ -41,6 +42,10 @@ import { SORT_DIRECTION } from '../../../../../server/utils/constants';
 interface ModelConfigurationFieldsProps {
   detector: Detector;
   onEditModelConfiguration(): void;
+  validationFeatureResponse: validationFeatureResponse;
+  validModel: Boolean;
+  validationError: Boolean;
+  isLoading: Boolean
 }
 
 interface ModelConfigurationFieldsState {
@@ -48,6 +53,10 @@ interface ModelConfigurationFieldsState {
   sortField: string;
   sortDirection: SORT_DIRECTION;
 }
+
+
+
+
 
 export const ModelConfigurationFields = (
   props: ModelConfigurationFieldsProps
@@ -188,8 +197,82 @@ export const ModelConfigurationFields = (
     };
   };
 
-  const featureNum = Object.keys(featureAttributes).length;
+  const handleFeatureAttributesCallout = (issueResponse: validationFeatureResponse) => {
+    if (issueResponse != undefined && issueResponse != null) {
+      if (issueResponse.sub_issues != undefined) {
+        const renderList = (
+          Object.keys(issueResponse.sub_issues).map(key => {
+            if (issueResponse.sub_issues != undefined) {
+              return <li>{"The \"" + key + "\" " + issueResponse.sub_issues[key]}</li>
+            }
+          })
+        )
+        return (
+          <ul>
+            {renderList}
+          </ul>);
 
+      } else {
+        return (
+          <ul>
+            <li>{JSON.stringify(props.validationFeatureResponse.message)}</li>
+          </ul>
+        )
+      }
+    } else {
+      return null;
+    }
+  }
+  const handleCalloutGeneralLogic = () => {
+    if (props.isLoading) {
+      return (<EuiCallOut
+        title={
+          <div>
+            <EuiFlexGroup direction="row" gutterSize="xs">
+              <EuiLoadingSpinner size="l" style={{ marginRight: '12px' }} />
+              <EuiText>
+                <p>Validating model configurations</p>
+              </EuiText>
+            </EuiFlexGroup>
+          </div>
+        }
+        style={{ marginBottom: '10px' }}
+        size="s"
+        color="primary"
+      />)
+    }
+    if (props.validationError) {
+      console.log("went inside here")
+      return null;
+    } else if (props.validModel) {
+      return (
+        <EuiCallOut
+          title="Model configurations are validated"
+          color="success"
+          iconType="check"
+          size="s"
+          style={{ marginBottom: '10px' }}>
+        </EuiCallOut>
+      )
+    } else if (!props.validModel && props.validationFeatureResponse.hasOwnProperty('message')){
+      return (
+        <EuiCallOut
+          title="issues found in the model configuration"
+          color="danger"
+          iconType="alert"
+          size="s"
+          style={{ marginBottom: '10px' }}>
+          {handleFeatureAttributesCallout(props.validationFeatureResponse)}
+        </EuiCallOut>
+      )
+    } else {
+      return null;
+    }
+  }
+
+  const featureNum = Object.keys(featureAttributes).length;
+  console.log("number of keys: " + Object.keys(props.validationFeatureResponse).length);
+  console.log("valid model: " + props.validModel)
   return (
     <ContentPanel
       title="Model configuration"
@@ -198,6 +281,8 @@ export const ModelConfigurationFields = (
         <EuiButton onClick={props.onEditModelConfiguration}>Edit</EuiButton>,
       ]}
     >
+      {handleCalloutGeneralLogic()}
+
       <div>
         <AdditionalSettings
           shingleSize={shingleSize}
