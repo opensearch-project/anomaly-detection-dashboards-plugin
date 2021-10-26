@@ -41,6 +41,7 @@ import ContentPanel from '../../../components/ContentPanel/ContentPanel';
 import { useDelayedLoader } from '../../../hooks/useDelayedLoader';
 import {
   Anomalies,
+  AnomalyData,
   DateRange,
   Detector,
   Monitor,
@@ -93,7 +94,7 @@ export interface AnomaliesChartProps {
   selectedHeatmapCell?: HeatmapCell;
   newDetector?: Detector;
   zoomRange?: DateRange;
-  anomaliesResult: Anomalies | undefined;
+  anomalyAndFeatureResults: Anomalies[] | undefined;
   heatmapDisplayOption?: HeatmapDisplayOption;
   entityAnomalySummaries?: EntityAnomalySummaries[];
   selectedCategoryFields?: any[];
@@ -110,7 +111,13 @@ export const AnomaliesChart = React.memo((props: AnomaliesChartProps) => {
       : 'now',
   });
 
-  const anomalies = get(props.anomaliesResult, 'anomalies', []);
+  // for each time series of results, get the anomalies, ignoring feature data
+  let anomalyResults = [] as AnomalyData[][];
+  get(props, 'anomalyAndFeatureResults', []).forEach(
+    (anomalyAndFeatureResult: Anomalies) => {
+      anomalyResults.push(anomalyAndFeatureResult.anomalies);
+    }
+  );
 
   const handleDateRangeChange = (startDate: number, endDate: number) => {
     props.onDateRangeChange(startDate, endDate);
@@ -255,7 +262,11 @@ export const AnomaliesChart = React.memo((props: AnomaliesChartProps) => {
                         )}
                         isHistorical={props.isHistorical}
                         dateRange={props.dateRange}
-                        anomalies={anomalies}
+                        // Raw anomalies only passed here for building the plot data for sample
+                        // results, so we will only pass a single time series here,
+                        // since we don't currently support sub-aggregation and multi-time-series
+                        // for sample data charts. See comments in AnomalyHeatmapChart for details
+                        anomalies={get(anomalyResults, 0, [])}
                         isLoading={props.isLoading}
                         showAlerts={props.showAlerts}
                         monitor={props.monitor}
@@ -320,9 +331,9 @@ export const AnomaliesChart = React.memo((props: AnomaliesChartProps) => {
                               dateRange={props.dateRange}
                               onDateRangeChange={props.onDateRangeChange}
                               onZoomRangeChange={props.onZoomRangeChange}
-                              anomalies={anomalies}
+                              anomalies={anomalyResults}
                               bucketizedAnomalies={false}
-                              anomalySummary={INITIAL_ANOMALY_SUMMARY}
+                              anomalySummary={props.anomalySummary}
                               isLoading={props.isLoading}
                               anomalyGradeSeriesName={getAnomalyGradeWording(
                                 props.isNotSample
@@ -345,9 +356,11 @@ export const AnomaliesChart = React.memo((props: AnomaliesChartProps) => {
                               //@ts-ignore
                               detector={props.newDetector}
                               //@ts-ignore
-                              anomaliesResult={props.anomaliesResult}
+                              anomalyAndFeatureResults={
+                                props.anomalyAndFeatureResults
+                              }
                               annotations={generateAnomalyAnnotations(
-                                get(props.anomaliesResult, 'anomalies', [])
+                                anomalyResults
                               )}
                               isLoading={props.isLoading}
                               //@ts-ignore
@@ -374,7 +387,7 @@ export const AnomaliesChart = React.memo((props: AnomaliesChartProps) => {
               dateRange={props.dateRange}
               onDateRangeChange={handleDateRangeChange}
               onZoomRangeChange={props.onZoomRangeChange}
-              anomalies={anomalies}
+              anomalies={anomalyResults}
               bucketizedAnomalies={props.bucketizedAnomalies}
               anomalySummary={props.anomalySummary}
               isLoading={props.isLoading}

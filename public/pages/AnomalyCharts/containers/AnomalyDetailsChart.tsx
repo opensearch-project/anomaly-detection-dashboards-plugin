@@ -51,11 +51,11 @@ import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useDelayedLoader } from '../../../hooks/useDelayedLoader';
 import {
-  AnomalySummary,
   DateRange,
   Detector,
   Monitor,
   MonitorAlert,
+  AnomalyData,
 } from '../../../models/interfaces';
 import { AppState } from '../../../redux/reducers';
 import { searchAlerts } from '../../../redux/reducers/alerting';
@@ -66,6 +66,7 @@ import {
   getAnomalyDataRangeQuery,
   getHistoricalAggQuery,
   parseHistoricalAggregatedAnomalies,
+  convertToEntityString,
 } from '../../utils/anomalyResultUtils';
 import { AlertsFlyout } from '../components/AlertsFlyout/AlertsFlyout';
 import {
@@ -78,13 +79,13 @@ import {
   generateAlertAnnotations,
   getAnomalyGradeWording,
   getAnomalyOccurrenceWording,
-  getAnomalySummary,
   getConfidenceWording,
   getLastAnomalyOccurrenceWording,
 } from '../utils/anomalyChartUtils';
 import {
   ANOMALY_CHART_THEME,
   CHART_FIELDS,
+  CHART_COLORS,
   INITIAL_ANOMALY_SUMMARY,
 } from '../utils/constants';
 import { HeatmapCell } from './AnomalyHeatmapChart';
@@ -96,6 +97,7 @@ import {
   WEEK_IN_MILLI_SECS,
   DETECTOR_STATE,
 } from '../../../../server/utils/constants';
+import { ENTITY_COLORS } from '../../DetectorResults/utils/constants';
 
 interface AnomalyDetailsChartProps {
   onDateRangeChange(
@@ -104,7 +106,7 @@ interface AnomalyDetailsChartProps {
     dateRangeOption?: string
   ): void;
   onZoomRangeChange(startDate: number, endDate: number): void;
-  anomalies: any[];
+  anomalies: AnomalyData[][];
   bucketizedAnomalies: boolean;
   anomalySummary: any;
   dateRange: DateRange;
@@ -124,9 +126,6 @@ interface AnomalyDetailsChartProps {
 export const AnomalyDetailsChart = React.memo(
   (props: AnomalyDetailsChartProps) => {
     const dispatch = useDispatch();
-    const [anomalySummary, setAnomalySummary] = useState<AnomalySummary>(
-      INITIAL_ANOMALY_SUMMARY
-    );
     const [showAlertsFlyout, setShowAlertsFlyout] = useState<boolean>(false);
     const [alertAnnotations, setAlertAnnotations] = useState<any[]>([]);
     const [isLoadingAlerts, setIsLoadingAlerts] = useState<boolean>(false);
@@ -137,7 +136,7 @@ export const AnomalyDetailsChart = React.memo(
     const [zoomRange, setZoomRange] = useState<DateRange>({
       ...props.dateRange,
     });
-    const [zoomedAnomalies, setZoomedAnomalies] = useState<any[]>([]);
+    const [zoomedAnomalies, setZoomedAnomalies] = useState<AnomalyData[][]>([]);
 
     const [aggregatedAnomalies, setAggregatedAnomalies] = useState<any[]>([]);
     const [selectedAggId, setSelectedAggId] = useState<ANOMALY_AGG>(
@@ -151,6 +150,12 @@ export const AnomalyDetailsChart = React.memo(
       week: true,
       month: true,
     });
+
+    const anomalySummary = get(
+      props,
+      'anomalySummary',
+      INITIAL_ANOMALY_SUMMARY
+    );
 
     const DEFAULT_DATE_PICKER_RANGE = {
       start: moment().subtract(7, 'days').valueOf(),
@@ -197,7 +202,7 @@ export const AnomalyDetailsChart = React.memo(
                 response,
                 selectedAggId
               );
-              setAggregatedAnomalies(aggregatedAnomalies);
+              setAggregatedAnomalies([aggregatedAnomalies]);
             })
             .catch((e: any) => {
               console.error(
@@ -287,14 +292,9 @@ export const AnomalyDetailsChart = React.memo(
           ? prepareDataForChart(props.anomalies, zoomRange)
           : aggregatedAnomalies;
       setZoomedAnomalies(anomalies);
-      setAnomalySummary(
-        !props.bucketizedAnomalies
-          ? getAnomalySummary(
-              filterWithDateRange(props.anomalies, zoomRange, 'plotTime')
-            )
-          : props.anomalySummary
-      );
       setTotalAlerts(
+        // TODO: handle alerts to only show if the selected time series is selected,
+        // like in the multi-category filtering case where it may not be
         filterWithDateRange(alerts, zoomRange, 'startTime').length
       );
     }, [props.anomalies, zoomRange, aggregatedAnomalies, selectedAggId]);
@@ -347,11 +347,6 @@ export const AnomalyDetailsChart = React.memo(
       zoomRange.startDate,
       zoomRange.endDate,
     ]);
-
-    const handleDateRangeChange = (startDate: number, endDate: number) => {
-      props.onDateRangeChange(startDate, endDate);
-      handleZoomRangeChange(startDate, endDate);
-    };
 
     const isLoading =
       props.isLoading || isLoadingAlerts || isRequestingAnomalyResults;
@@ -507,9 +502,7 @@ export const AnomalyDetailsChart = React.memo(
                         'x.1',
                         DEFAULT_DATE_PICKER_RANGE.start
                       );
-                      !props.bucketizedAnomalies
-                        ? handleZoomRangeChange(start, end)
-                        : handleDateRangeChange(start, end);
+                      handleZoomRangeChange(start, end);
                       if (props.onDatePickerRangeChange) {
                         props.onDatePickerRangeChange(start, end);
                       }
@@ -565,33 +558,55 @@ export const AnomalyDetailsChart = React.memo(
                   {
                     // If historical: don't show the confidence line chart
                   }
-                  {props.isHistorical ? null : (
-                    <LineSeries
-                      id="confidence"
-                      name={props.confidenceSeriesName}
-                      xScaleType={ScaleType.Time}
-                      yScaleType={ScaleType.Linear}
-                      xAccessor={CHART_FIELDS.PLOT_TIME}
-                      yAccessors={[CHART_FIELDS.CONFIDENCE]}
-                      data={zoomedAnomalies}
-                    />
+                  {zoomedAnomalies.forEach((anomalySeries: AnomalyData[]) => {
+                    return props.isHistorical ? null : (
+                      <LineSeries
+                        id="confidence"
+                        name={props.confidenceSeriesName}
+                        xScaleType={ScaleType.Time}
+                        yScaleType={ScaleType.Linear}
+                        xAccessor={CHART_FIELDS.PLOT_TIME}
+                        yAccessors={[CHART_FIELDS.CONFIDENCE]}
+                        data={anomalySeries}
+                      />
+                    );
+                  })}
+                  {zoomedAnomalies.map(
+                    (anomalySeries: AnomalyData[], index) => {
+                      const multipleTimeSeries = zoomedAnomalies.length > 1;
+                      const seriesKey = multipleTimeSeries
+                        ? convertToEntityString(
+                            get(anomalySeries, '1.entity', []),
+                            ', '
+                          )
+                        : 'Anomaly grade';
+
+                      return (
+                        <LineSeries
+                          id={seriesKey}
+                          color={
+                            multipleTimeSeries
+                              ? ENTITY_COLORS[index]
+                              : CHART_COLORS.ANOMALY_GRADE_COLOR
+                          }
+                          name={seriesKey}
+                          data={anomalySeries}
+                          xScaleType={
+                            showAggregateResults
+                              ? ScaleType.Ordinal
+                              : ScaleType.Time
+                          }
+                          yScaleType={ScaleType.Linear}
+                          xAccessor={
+                            showAggregateResults
+                              ? CHART_FIELDS.AGG_INTERVAL
+                              : CHART_FIELDS.PLOT_TIME
+                          }
+                          yAccessors={[CHART_FIELDS.ANOMALY_GRADE]}
+                        />
+                      );
+                    }
                   )}
-                  <LineSeries
-                    id="anomalyGrade"
-                    color={'red'}
-                    name={props.anomalyGradeSeriesName}
-                    data={zoomedAnomalies}
-                    xScaleType={
-                      showAggregateResults ? ScaleType.Ordinal : ScaleType.Time
-                    }
-                    yScaleType={ScaleType.Linear}
-                    xAccessor={
-                      showAggregateResults
-                        ? CHART_FIELDS.AGG_INTERVAL
-                        : CHART_FIELDS.PLOT_TIME
-                    }
-                    yAccessors={[CHART_FIELDS.ANOMALY_GRADE]}
-                  />
                 </Chart>
               )}
             </div>

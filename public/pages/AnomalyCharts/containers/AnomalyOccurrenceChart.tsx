@@ -27,7 +27,12 @@
 import React from 'react';
 import { EuiBadge } from '@elastic/eui';
 import ContentPanel from '../../../components/ContentPanel/ContentPanel';
-import { Monitor, Detector, DateRange } from '../../../models/interfaces';
+import {
+  Monitor,
+  Detector,
+  DateRange,
+  AnomalyData,
+} from '../../../models/interfaces';
 import { AnomalyDetailsChart } from './AnomalyDetailsChart';
 import { HeatmapCell } from './AnomalyHeatmapChart';
 import { getDateRangeWithSelectedHeatmapCell } from '../utils/anomalyChartUtils';
@@ -40,7 +45,7 @@ interface AnomalyOccurrenceChartProps {
   ): void;
   onZoomRangeChange(startDate: number, endDate: number): void;
   title: string | React.ReactNode;
-  anomalies: any[];
+  anomalies: AnomalyData[][];
   bucketizedAnomalies: boolean;
   anomalySummary: any;
   dateRange: DateRange;

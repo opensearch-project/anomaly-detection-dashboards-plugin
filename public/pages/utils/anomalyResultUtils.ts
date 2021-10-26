@@ -59,6 +59,7 @@ import {
   Detector,
   FeatureAggregationData,
   FeatureAttributes,
+  MonitorAlert,
 } from '../../models/interfaces';
 import { getDetectorLiveResults } from '../../redux/reducers/liveAnomalyResults';
 import {
@@ -235,58 +236,91 @@ export const prepareDataForLiveChart = (
   return anomalies;
 };
 
+// Converts all anomaly results or feature aggregation results time series and filters out data
+// that is out of range, or shifts the timestamps if there is padding
 export const prepareDataForChart = (
-  data: any[],
+  data: any[][],
   dateRange: DateRange,
   withoutPadding?: boolean
 ) => {
-  let anomalies = [];
-  if (data && data.length > 0) {
-    anomalies = data.filter(
-      (anomaly) =>
-        anomaly.plotTime >= dateRange.startDate &&
-        anomaly.plotTime <= dateRange.endDate
-    );
-    if (anomalies.length > MAX_DATA_POINTS) {
-      anomalies = sampleMaxAnomalyGrade(anomalies);
+  let preparedData = [] as any[][];
+  data.forEach((timeSeries: any[]) => {
+    if (timeSeries && timeSeries.length > 0) {
+      timeSeries = timeSeries.filter(
+        (data: AnomalyData | FeatureAggregationData) =>
+          data.plotTime >= dateRange.startDate &&
+          data.plotTime <= dateRange.endDate
+      );
+      if (timeSeries.length > MAX_DATA_POINTS) {
+        timeSeries = sampleMaxAnomalyGrade(timeSeries);
+      }
     }
-  }
-  if (withoutPadding) {
-    // just return result if padding/placeholder data is not needed
-    return anomalies;
-  }
-  anomalies.push({
-    startTime: dateRange.startDate,
-    endTime: dateRange.startDate,
-    plotTime: dateRange.startDate,
-    confidence: null,
-    anomalyGrade: null,
+    if (withoutPadding) {
+      // just return result if padding/placeholder data is not needed
+      preparedData.push(timeSeries);
+    }
+    timeSeries.push({
+      startTime: dateRange.startDate,
+      endTime: dateRange.startDate,
+      plotTime: dateRange.startDate,
+      confidence: null,
+      anomalyGrade: null,
+    });
+    timeSeries.unshift({
+      startTime: dateRange.endDate,
+      endTime: dateRange.endDate,
+      plotTime: dateRange.endDate,
+      confidence: null,
+      anomalyGrade: null,
+    });
+    preparedData.push(timeSeries);
   });
-  anomalies.unshift({
-    startTime: dateRange.endDate,
-    endTime: dateRange.endDate,
-    plotTime: dateRange.endDate,
-    confidence: null,
-    anomalyGrade: null,
-  });
-  return anomalies;
+  return preparedData;
 };
 
-export const generateAnomalyAnnotations = (anomalies: any[]): any[] => {
-  return anomalies
-    .filter((anomaly: AnomalyData) => anomaly.anomalyGrade > 0)
-    .map((anomaly: AnomalyData) => ({
-      coordinates: {
-        x0: anomaly.startTime,
-        x1: anomaly.endTime,
-      },
-      details: `There is an anomaly with confidence ${
-        anomaly.confidence
-      } between ${moment(anomaly.startTime).format(
-        'MM/DD/YY h:mm A'
-      )} and ${moment(anomaly.endTime).format('MM/DD/YY h:mm A')}`,
-      entity: get(anomaly, 'entity', []),
-    }));
+export const generateAnomalyAnnotations = (
+  anomalies: AnomalyData[][]
+): any[][] => {
+  let annotations = [] as any[];
+  anomalies.forEach((anomalies: AnomalyData[]) => {
+    annotations.push(
+      anomalies
+        .filter((anomaly: AnomalyData) => anomaly.anomalyGrade > 0)
+        .map((anomaly: AnomalyData) => ({
+          coordinates: {
+            x0: anomaly.startTime,
+            x1: anomaly.endTime,
+          },
+          details: `There is an anomaly with confidence ${
+            anomaly.confidence
+          } between ${moment(anomaly.startTime).format(
+            'MM/DD/YY h:mm A'
+          )} and ${moment(anomaly.endTime).format('MM/DD/YY h:mm A')}`,
+          entity: get(anomaly, 'entity', []),
+        }))
+    );
+  });
+  return annotations;
+};
+
+export const filterAnomaliesWithDateRange = (
+  data: AnomalyData[][],
+  dateRange: DateRange,
+  timeField: string
+) => {
+  let filteredData = [] as AnomalyData[][];
+  data.forEach((anomalySeries: AnomalyData[]) => {
+    const filteredAnomalies = anomalySeries
+      ? anomalySeries.filter((anomaly: AnomalyData) => {
+          const time = get(anomaly, `${timeField}`);
+          return (
+            time && time >= dateRange.startDate && time <= dateRange.endDate
+          );
+        })
+      : [];
+    filteredData.push(filteredAnomalies);
+  });
+  return filteredData;
 };
 
 export const filterWithDateRange = (
@@ -294,13 +328,13 @@ export const filterWithDateRange = (
   dateRange: DateRange,
   timeField: string
 ) => {
-  const anomalies = data
+  const filteredData = data
     ? data.filter((item) => {
         const time = get(item, `${timeField}`);
         return time && time >= dateRange.startDate && time <= dateRange.endDate;
       })
     : [];
-  return anomalies;
+  return filteredData;
 };
 
 export const RETURNED_AD_RESULT_FIELDS = [
@@ -323,7 +357,7 @@ export const getAnomalySummaryQuery = (
 ) => {
   const termField =
     isHistorical && taskId ? { task_id: taskId } : { detector_id: detectorId };
-  const requestBody = {
+  let requestBody = {
     size: MAX_ANOMALIES,
     query: {
       bool: {
@@ -408,10 +442,8 @@ export const getAnomalySummaryQuery = (
 
   // Add entity filters if this is a HC detector
   if (entityList !== undefined && entityList.length > 0) {
-    //@ts-ignore
-    requestBody.query.bool.filter.push(getHCFilters(modelId, entityList));
+    requestBody = appendEntityFilters(requestBody, entityList);
   }
-
   return requestBody;
 };
 
@@ -429,7 +461,7 @@ export const getBucketizedAnomalyResultsQuery = (
   const fixedInterval = Math.ceil(
     (endTime - startTime) / (MIN_IN_MILLI_SECS * MAX_DATA_POINTS)
   );
-  const requestBody = {
+  let requestBody = {
     size: 0,
     query: {
       bool: {
@@ -492,10 +524,8 @@ export const getBucketizedAnomalyResultsQuery = (
 
   // Add entity filters if this is a HC detector
   if (entityList !== undefined && entityList.length > 0) {
-    //@ts-ignore
-    requestBody.query.bool.filter.push(getHCFilters(modelId, entityList));
+    requestBody = appendEntityFilters(requestBody, entityList);
   }
-
   return requestBody;
 };
 
@@ -936,27 +966,6 @@ export const getFeatureDataMissingMessageAndActionItem = (
   }
 };
 
-// export const filterWithHeatmapFilter = (
-//   data: any[],
-//   heatmapCell: HeatmapCell | undefined,
-//   selectedEntitites: Entity[],
-//   isFilteringWithEntity: boolean = true,
-//   timeField: string = 'plotTime'
-// ) => {
-//   if (!heatmapCell) {
-//     return data;
-//   }
-
-//   if (isFilteringWithEntity) {
-//     data = data
-//       .filter((anomaly) => !isEmpty(get(anomaly, 'entity', [])))
-//       .filter((anomaly) => {
-//         return entityListsMatch(get(anomaly, 'entity'), selectedEntitites);
-//       });
-//   }
-//   return filterWithDateRange(data, heatmapCell.dateRange, timeField);
-// };
-
 // Generates query to get the top anomalous entities (or entity pairs)
 // for some detector, sorting by severity or occurrence.
 export const getTopAnomalousEntitiesQuery = (
@@ -1281,7 +1290,7 @@ export const getEntityAnomalySummariesQuery = (
   // this can be offset for bucket_key
   const offsetInMillisec = startTime % (fixedInterval * MIN_IN_MILLI_SECS);
 
-  const requestBody = {
+  let requestBody = {
     size: 0,
     query: {
       bool: {
@@ -1347,8 +1356,7 @@ export const getEntityAnomalySummariesQuery = (
 
   // Add entity filters if this is a HC detector
   if (entityList !== undefined && entityList.length > 0) {
-    //@ts-ignore
-    requestBody.query.bool.filter.push(getHCFilters(modelId, entityList));
+    requestBody = appendEntityFilters(requestBody, entityList);
   }
 
   return requestBody;
@@ -1632,25 +1640,41 @@ export const convertHeatmapCellEntityStringToEntityList = (
 // };
 
 // Helper fn to get the correct filters based on how many categorical fields there are.
-const getHCFilters = (modelId: string | undefined, entityList: Entity[]) => {
-  return entityList.length > 1
-    ? {
-        term: {
-          model_id: modelId,
-        },
-      }
-    : {
+const appendEntityFilters = (requestBody: any, entityList: Entity[]) => {
+  if (entityList !== undefined && !isEmpty(entityList)) {
+    entityList.forEach((entity: Entity) => {
+      // Add filters for entity name (like 'region'), and value (like 'us-west-1')
+      const entityNameFilter = {
         nested: {
           path: ENTITY_FIELD,
           query: {
             term: {
-              [ENTITY_VALUE_PATH_FIELD]: {
-                value: get(entityList, '0.value', ''),
+              [ENTITY_NAME_PATH_FIELD]: {
+                value: entity.name,
               },
             },
           },
         },
       };
+      const entityValueFilter = {
+        nested: {
+          path: ENTITY_FIELD,
+          query: {
+            term: {
+              [ENTITY_VALUE_PATH_FIELD]: {
+                value: entity.value,
+              },
+            },
+          },
+        },
+      };
+      //@ts-ignore
+      requestBody.query.bool.filter.push(entityNameFilter);
+      //@ts-ignore
+      requestBody.query.bool.filter.push(entityValueFilter);
+    });
+  }
+  return requestBody;
 };
 
 export const transformEntityListsForHeatmap = (entityLists: any[]) => {
@@ -1707,4 +1731,15 @@ const containsEntity = (entity: Entity, entities: Entity[]) => {
     }
   });
   return contains;
+};
+
+// Flatten 2D array into 1D array
+export const flattenData = (data: any[][]) => {
+  let flattenedData = [] as any[];
+  if (!isEmpty(data)) {
+    data.forEach((childArray: any[]) => {
+      flattenedData.push(...childArray);
+    });
+  }
+  return flattenedData;
 };

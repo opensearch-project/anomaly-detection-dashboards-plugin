@@ -249,7 +249,7 @@ export function SampleAnomalies(props: SampleAnomaliesProps) {
             selectedHeatmapCell={selectedHeatmapCell}
             newDetector={newDetector}
             zoomRange={zoomRange}
-            anomaliesResult={anomaliesResult}
+            anomalyAndFeatureResults={[anomaliesResult]}
             showAlerts={false}
             isNotSample={false}
           />
@@ -267,10 +267,10 @@ export function SampleAnomalies(props: SampleAnomaliesProps) {
             <FeatureBreakDown
               title={getFeatureBreakdownWording(false)}
               detector={newDetector}
-              anomaliesResult={anomaliesResult}
-              annotations={generateAnomalyAnnotations(
-                get(anomaliesResult, 'anomalies', [])
-              )}
+              anomalyAndFeatureResults={[anomaliesResult]}
+              annotations={generateAnomalyAnnotations([
+                get(anomaliesResult, 'anomalies', []),
+              ])}
               isLoading={isLoading}
               dateRange={zoomRange}
               featureDataSeriesName={getFeatureDataWording(false)}
