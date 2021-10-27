@@ -189,6 +189,7 @@ export const FeatureBreakDown = React.memo((props: FeatureBreakDownProps) => {
               }
               detectorEnabledTime={props.detector.enabledTime}
               entityData={getEntityDataForChart(props.anomalyAndFeatureResults)}
+              isHCDetector={props.isHCDetector}
             />
             {index + 1 ===
             get(props, 'detector.featureAttributes', []).length ? null : (

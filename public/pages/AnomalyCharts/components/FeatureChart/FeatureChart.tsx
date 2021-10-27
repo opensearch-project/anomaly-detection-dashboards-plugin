@@ -83,6 +83,7 @@ interface FeatureChartProps {
   detectorEnabledTime?: number;
   rawFeatureData: FeatureAggregationData[][];
   entityData: EntityData[][];
+  isHCDetector?: boolean;
 }
 
 export const FeatureChart = (props: FeatureChartProps) => {
@@ -174,6 +175,8 @@ export const FeatureChart = (props: FeatureChartProps) => {
     props.dateRange
   ) as FeatureAggregationData[][];
 
+  const multipleTimeSeries = get(featureData, 'length', 0) > 1;
+
   return (
     <ContentPanel
       title={
@@ -200,7 +203,7 @@ export const FeatureChart = (props: FeatureChartProps) => {
           opacity: showLoader ? 0.2 : 1,
         }}
       >
-        <Chart>
+        <Chart key={`${featureData}`}>
           <Settings
             showLegend
             showLegendExtra={false}
@@ -258,9 +261,11 @@ export const FeatureChart = (props: FeatureChartProps) => {
           }
           {featureData.map(
             (featureTimeSeries: FeatureAggregationData[], index) => {
-              const multipleTimeSeries = get(props, 'entityData.length', 0) > 1;
-              const seriesKey = multipleTimeSeries
-                ? convertToEntityString(props.entityData[index], ', ')
+              const seriesKey = props.isHCDetector
+                ? `${props.featureDataSeriesName} (${convertToEntityString(
+                    props.entityData[index],
+                    ', '
+                  )})`
                 : props.featureDataSeriesName;
               return (
                 <LineSeries

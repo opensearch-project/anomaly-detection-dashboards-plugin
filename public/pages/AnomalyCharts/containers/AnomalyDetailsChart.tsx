@@ -136,7 +136,9 @@ export const AnomalyDetailsChart = React.memo(
     const [zoomRange, setZoomRange] = useState<DateRange>({
       ...props.dateRange,
     });
-    const [zoomedAnomalies, setZoomedAnomalies] = useState<AnomalyData[][]>([]);
+    const [zoomedAnomalies, setZoomedAnomalies] = useState<AnomalyData[][]>(
+      props.anomalies
+    );
 
     const [aggregatedAnomalies, setAggregatedAnomalies] = useState<any[]>([]);
     const [selectedAggId, setSelectedAggId] = useState<ANOMALY_AGG>(
@@ -354,6 +356,7 @@ export const AnomalyDetailsChart = React.memo(
     const showLoader = useDelayedLoader(isLoading);
     const showAggregateResults =
       props.isHistorical && selectedAggId !== ANOMALY_AGG.RAW;
+    const multipleTimeSeries = zoomedAnomalies.length > 1;
 
     return (
       <React.Fragment>
@@ -484,7 +487,7 @@ export const AnomalyDetailsChart = React.memo(
                   </EuiFlexItem>
                 </EuiFlexGroup>
               ) : (
-                <Chart>
+                <Chart key={`${zoomedAnomalies}`}>
                   <Settings
                     showLegend
                     showLegendExtra={false}
@@ -558,38 +561,58 @@ export const AnomalyDetailsChart = React.memo(
                   {
                     // If historical: don't show the confidence line chart
                   }
-                  {zoomedAnomalies.forEach((anomalySeries: AnomalyData[]) => {
-                    return props.isHistorical ? null : (
-                      <LineSeries
-                        id="confidence"
-                        name={props.confidenceSeriesName}
-                        xScaleType={ScaleType.Time}
-                        yScaleType={ScaleType.Linear}
-                        xAccessor={CHART_FIELDS.PLOT_TIME}
-                        yAccessors={[CHART_FIELDS.CONFIDENCE]}
-                        data={anomalySeries}
-                      />
-                    );
-                  })}
+                  {zoomedAnomalies.forEach(
+                    (anomalySeries: AnomalyData[], index) => {
+                      if (props.isHistorical) {
+                        return null;
+                      } else {
+                        const seriesKey = props.isHCDetector
+                          ? `${
+                              props.confidenceSeriesName
+                            } (${convertToEntityString(
+                              get(anomalySeries, '1.entity', []),
+                              ', '
+                            )}`
+                          : props.confidenceSeriesName;
+                        return (
+                          <LineSeries
+                            id={seriesKey}
+                            name={seriesKey}
+                            color={
+                              multipleTimeSeries
+                                ? ENTITY_COLORS[index]
+                                : CHART_COLORS.ANOMALY_GRADE_COLOR
+                            }
+                            xScaleType={ScaleType.Time}
+                            yScaleType={ScaleType.Linear}
+                            xAccessor={CHART_FIELDS.PLOT_TIME}
+                            yAccessors={[CHART_FIELDS.CONFIDENCE]}
+                            data={anomalySeries}
+                          />
+                        );
+                      }
+                    }
+                  )}
                   {zoomedAnomalies.map(
                     (anomalySeries: AnomalyData[], index) => {
-                      const multipleTimeSeries = zoomedAnomalies.length > 1;
-                      const seriesKey = multipleTimeSeries
-                        ? convertToEntityString(
+                      const seriesKey = props.isHCDetector
+                        ? `${
+                            props.anomalyGradeSeriesName
+                          } (${convertToEntityString(
                             get(anomalySeries, '1.entity', []),
                             ', '
-                          )
-                        : 'Anomaly grade';
+                          )}`
+                        : props.anomalyGradeSeriesName;
 
                       return (
                         <LineSeries
                           id={seriesKey}
+                          name={seriesKey}
                           color={
                             multipleTimeSeries
                               ? ENTITY_COLORS[index]
                               : CHART_COLORS.ANOMALY_GRADE_COLOR
                           }
-                          name={seriesKey}
                           data={anomalySeries}
                           xScaleType={
                             showAggregateResults
