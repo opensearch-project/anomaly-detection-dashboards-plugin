@@ -1129,6 +1129,14 @@ export const getTopAnomalousEntitiesQuery = (
                         },
                       }
                     : {}),
+                  [ENTITY_LIST_FIELD]: {
+                    top_hits: {
+                      size: 1,
+                      _source: {
+                        include: [ENTITY_FIELD],
+                      },
+                    },
+                  },
                 },
               },
             },
@@ -1209,9 +1217,7 @@ export const parseTopEntityAnomalySummaryResults = (
     const entityList = isMultiCategory
       ? get(item, `${ENTITY_LIST_FIELD}.hits.hits.0._source.entity`, [])
       : ([
-          {
-            value: get(item, KEY_FIELD, 0),
-          },
+          get(item, `${ENTITY_LIST_FIELD}.hits.hits.0._source`, {}),
         ] as Entity[]);
 
     const maxAnomalyGrade = isMultiCategory
@@ -1623,23 +1629,7 @@ export const convertHeatmapCellEntityStringToEntityList = (
   return entityList;
 };
 
-// export const entityListsMatch = (
-//   entityListA: Entity[],
-//   entityListB: Entity[]
-// ) => {
-//   if (get(entityListA, 'length') !== get(entityListB, 'length')) {
-//     return false;
-//   }
-//   var i;
-//   for (i = 0; i < entityListA.length; i++) {
-//     if (entityListA[i].value !== entityListB[i].value) {
-//       return false;
-//     }
-//   }
-//   return true;
-// };
-
-// Helper fn to get the correct filters based on how many categorical fields there are.
+// Adding filters for all entity values
 const appendEntityFilters = (requestBody: any, entityList: Entity[]) => {
   if (entityList !== undefined && !isEmpty(entityList)) {
     entityList.forEach((entity: Entity) => {
