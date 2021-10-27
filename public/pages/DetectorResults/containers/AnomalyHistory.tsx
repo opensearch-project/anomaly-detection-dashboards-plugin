@@ -49,7 +49,6 @@ import {
   Detector,
   Monitor,
   DateRange,
-  AnomalySummary,
   Anomalies,
   EntityOptionsMap,
   EntityOption,
@@ -59,7 +58,6 @@ import {
   getAnomalySummaryQuery,
   getBucketizedAnomalyResultsQuery,
   parseBucketizedAnomalyResults,
-  parseAnomalySummary,
   parsePureAnomalies,
   buildParamsForGetAnomalyResultsWithDateRange,
   FEATURE_DATA_CHECK_WINDOW_OFFSET,
@@ -910,7 +908,12 @@ export const AnomalyHistory = (props: AnomalyHistoryProps) => {
                             childEntityCombos,
                             detectorCategoryField,
                             selectedChildEntities,
-                            handleChildEntitiesOptionChanged
+                            handleChildEntitiesOptionChanged,
+                            get(
+                              heatmapDisplayOption,
+                              'sortType',
+                              AnomalyHeatmapSortType.SEVERITY
+                            )
                           )
                         : getHCTitle(selectedHeatmapCell.entityList)
                       : '-'

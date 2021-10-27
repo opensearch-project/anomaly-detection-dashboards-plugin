@@ -52,6 +52,7 @@ import {
   calculateTimeWindowsWithMaxDataPoints,
   convertToEntityString,
   transformEntityListsForHeatmap,
+  convertToCategoryFieldString,
 } from '../../utils/anomalyResultUtils';
 import { HeatmapCell } from '../containers/AnomalyHeatmapChart';
 import {
@@ -60,6 +61,7 @@ import {
 } from '../../../../server/models/interfaces';
 import { toFixedNumberForAnomaly } from '../../../../server/utils/helpers';
 import { Entity } from '../../../../server/models/interfaces';
+import { TOP_CHILD_ENTITIES_TO_FETCH } from '../../DetectorResults/utils/constants';
 
 export const convertAlerts = (response: any): MonitorAlert[] => {
   const alerts = get(response, 'response.alerts', []);
@@ -766,12 +768,16 @@ const getChildEntities = (
   return childEntityOptionsMap;
 };
 
+// Returns a string list of selected parent entities (populated from the selected heatmap cell)
+// + an array of comboboxes, one for each child category field. Populates the top
+// child entities per combo box.
 export const getMultiCategoryFilters = (
   parentEntities: Entity[],
   childEntities: Entity[][],
   allCategoryFields: string[],
   selectedChildEntities: EntityOptionsMap,
-  onSelectedOptionsChange: (childCategoryField: string, options: any[]) => void
+  onSelectedOptionsChange: (childCategoryField: string, options: any[]) => void,
+  sortType: AnomalyHeatmapSortType
 ) => {
   const parentEntityFields = parentEntities.map(
     (entity: Entity) => entity.name
@@ -780,6 +786,8 @@ export const getMultiCategoryFilters = (
     (categoryField: string) => !parentEntityFields.includes(categoryField)
   );
 
+  // Based on the available child entities, categorize them into their appropriate category field
+  // so each combo box can be filled with the appopriate entity options
   const childEntityOptions = getChildEntities(
     childCategoryFields,
     childEntities
@@ -815,6 +823,18 @@ export const getMultiCategoryFilters = (
           </div>
         );
       })}
+      <EuiFlexItem>
+        <EuiText
+          className="sublabel"
+          style={{ marginLeft: '8px', marginBottom: '0px', maxWidth: 300 }}
+        >
+          {`The top ${TOP_CHILD_ENTITIES_TO_FETCH} values of ${convertToCategoryFieldString(
+            childCategoryFields,
+            ', '
+          )} sorted by anomaly ${sortType} are available to
+          view.`}
+        </EuiText>
+      </EuiFlexItem>
     </EuiFlexGroup>
   );
 };

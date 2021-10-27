@@ -295,8 +295,6 @@ export const AnomalyDetailsChart = React.memo(
           : aggregatedAnomalies;
       setZoomedAnomalies(anomalies);
       setTotalAlerts(
-        // TODO: handle alerts to only show if the selected time series is selected,
-        // like in the multi-category filtering case where it may not be
         filterWithDateRange(alerts, zoomRange, 'startTime').length
       );
     }, [props.anomalies, zoomRange, aggregatedAnomalies, selectedAggId]);
