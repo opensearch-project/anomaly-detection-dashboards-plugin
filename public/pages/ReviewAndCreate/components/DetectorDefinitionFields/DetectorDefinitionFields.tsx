@@ -41,6 +41,7 @@ interface DetectorDefinitionFieldsProps {
   validDetectorSettings?: boolean;
   validationResponse?: validationSettingResponse;
   isLoading?: boolean;
+  isCreatingDetector?: boolean;
 }
 
 export const DetectorDefinitionFields = (
@@ -56,9 +57,9 @@ export const DetectorDefinitionFields = (
   };
 
   const handleCalloutGeneralLogic = () => {
-    //display nothing when rendering page and no featureResponse has been populated yet
-    // or if tehre is a validation error
-    if (props.isLoading) {
+    //When validation response is loading then displaying loading spinner, don't display
+    // after clicking on "create detector" button as isLoading will be true from that request
+    if (props.isLoading && !props.isCreatingDetector) {
       return (<EuiCallOut
         title={
           <div>
@@ -75,10 +76,10 @@ export const DetectorDefinitionFields = (
         color="primary"
       />)
     }
-    if (props.validationResponse != undefined) {
-      if (props.validationError) {
-        return null;
-      } else if (props.validDetectorSettings) {
+    // if validationResponse is not undefined and there was no error from validation display one
+    // of the callout options.
+    if (props.validationResponse != undefined && !props.validationError) {
+      if (props.validDetectorSettings) {
         return (
           <EuiCallOut
             title="Detector settings are validated"
@@ -103,7 +104,7 @@ export const DetectorDefinitionFields = (
           </EuiCallOut>
         )
       } else {
-        return <EuiLoadingSpinner size="xl" />;
+        return null;
       }
     }
   }

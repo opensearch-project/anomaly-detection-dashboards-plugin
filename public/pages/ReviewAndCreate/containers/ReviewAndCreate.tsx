@@ -64,7 +64,7 @@ import {
 } from '../../../utils/utils';
 import { prettifyErrorMessage } from '../../../../server/utils/helpers';
 import { DetectorScheduleFields } from '../components/DetectorScheduleFields';
-import { validationFeatureResponse, validationSettingResponse, VALIDATION_ISSUE_TYPES } from '../../../models/interfaces'
+import { validationModelResponse, validationSettingResponse, VALIDATION_ISSUE_TYPES } from '../../../models/interfaces'
 
 interface ReviewAndCreateProps extends RouteComponentProps {
   setStep(stepNumber: number): void;
@@ -84,7 +84,8 @@ export function ReviewAndCreate(props: ReviewAndCreateProps) {
   const [validModelConfigurations, setValidModelConfigurations] = useState(false);
   const [validationError, setValidationError] = useState(false);
   const [settingsResponse, setDetectorMessageResponse] = useState<validationSettingResponse>({} as validationSettingResponse);
-  const [featureResponse, setFeatureResponse] = useState<validationFeatureResponse>({} as validationFeatureResponse);
+  const [featureResponse, setFeatureResponse] = useState<validationModelResponse>({} as validationModelResponse);
+  const [isCreatingDetector, setIsCreatingDetector] = useState(false);
   const isLoading = useSelector(
     (state: AppState) => state.ad.requesting
   );
@@ -111,21 +112,13 @@ export function ReviewAndCreate(props: ReviewAndCreateProps) {
                 message: validationMessage
               }
               switch (issueType) {
-                case VALIDATION_ISSUE_TYPES.FEATURE_ATTRIBUTES:
-                  const featureResp = resp.response.detector.feature_attributes as validationFeatureResponse;
-                  setFeatureResponse(featureResp)
+                case VALIDATION_ISSUE_TYPES.FEATURE_ATTRIBUTES: 
+                case VALIDATION_ISSUE_TYPES.CATEGORY: 
+                case VALIDATION_ISSUE_TYPES.SHINGLE_SIZE_FIELD:
+                  const modelResp = resp.response.detector[issueType] as validationModelResponse;
+                  setFeatureResponse(modelResp)
                   setValidDetectorSettings(true);
                   setValidModelConfigurations(false);
-                  break;
-                // case VALIDATION_ISSUE_TYPES.CATEGORY:
-                //   break;
-                // case VALIDATION_ISSUE_TYPES.SHINGLE_SIZE_FIELD:
-                //   break;
-                case VALIDATION_ISSUE_TYPES.PARSING_ISSUE:
-                  detectorSettingIssue.message = "Custom query error: " + detectorSettingIssue.message;
-                  setValidModelConfigurations(true);
-                  setValidDetectorSettings(false);
-                  setDetectorMessageResponse(detectorSettingIssue)
                   break;
                 // this includes all other detector setting issues that don't need
                 // anything else added to their message
@@ -166,6 +159,7 @@ export function ReviewAndCreate(props: ReviewAndCreateProps) {
     formikHelpers: FormikHelpers<CreateDetectorFormikValues>
   ) => {
     try {
+      setIsCreatingDetector(true);
       formikHelpers.setSubmitting(true);
       const detectorToCreate = formikToDetector(values);
       dispatch(createDetector(detectorToCreate))
@@ -277,7 +271,6 @@ export function ReviewAndCreate(props: ReviewAndCreateProps) {
                   </EuiTitle>
                 </EuiPageHeaderSection>
               </EuiPageHeader>
-
               <DetectorDefinitionFields
                 validationError={validationError}
                 validDetectorSettings={validDetectorSettings}
@@ -286,6 +279,7 @@ export function ReviewAndCreate(props: ReviewAndCreateProps) {
                 detector={detectorToCreate}
                 isCreate={true}
                 isLoading={isLoading}
+                isCreatingDetector={isCreatingDetector}
               />
               <EuiSpacer />
               <ModelConfigurationFields
@@ -295,6 +289,7 @@ export function ReviewAndCreate(props: ReviewAndCreateProps) {
                 validModel={validModelConfigurations}
                 validationError={validationError}
                 isLoading={isLoading}
+                isCreatingDetector={isCreatingDetector}
               />
               <EuiSpacer />
               <DetectorScheduleFields

@@ -29,7 +29,7 @@ import {
   Detector,
   FEATURE_TYPE,
   FeatureAttributes,
-  validationFeatureResponse
+  validationModelResponse
 } from '../../../../models/interfaces';
 import { get, sortBy } from 'lodash';
 import ContentPanel from '../../../../components/ContentPanel/ContentPanel';
@@ -42,10 +42,11 @@ import { SORT_DIRECTION } from '../../../../../server/utils/constants';
 interface ModelConfigurationFieldsProps {
   detector: Detector;
   onEditModelConfiguration(): void;
-  validationFeatureResponse: validationFeatureResponse;
+  validationFeatureResponse: validationModelResponse;
   validModel: Boolean;
   validationError: Boolean;
   isLoading: Boolean
+  isCreatingDetector: Boolean
 }
 
 interface ModelConfigurationFieldsState {
@@ -53,9 +54,6 @@ interface ModelConfigurationFieldsState {
   sortField: string;
   sortDirection: SORT_DIRECTION;
 }
-
-
-
 
 
 export const ModelConfigurationFields = (
@@ -197,7 +195,7 @@ export const ModelConfigurationFields = (
     };
   };
 
-  const handleFeatureAttributesCallout = (issueResponse: validationFeatureResponse) => {
+  const handleFeatureAttributesCallout = (issueResponse: validationModelResponse) => {
     if (issueResponse != undefined && issueResponse != null) {
       if (issueResponse.sub_issues != undefined) {
         const renderList = (
@@ -224,7 +222,9 @@ export const ModelConfigurationFields = (
     }
   }
   const handleCalloutGeneralLogic = () => {
-    if (props.isLoading) {
+    //When validation response is loading then displaying loading spinner, don't display
+    // after clicking on "create detector" button as isLoading will be true from that request
+    if (props.isLoading && !props.isCreatingDetector) {
       return (<EuiCallOut
         title={
           <div>
@@ -253,7 +253,9 @@ export const ModelConfigurationFields = (
           style={{ marginBottom: '10px' }}>
         </EuiCallOut>
       )
-    } else if (!props.validModel && props.validationFeatureResponse.hasOwnProperty('message')){
+      // makes sure there is a response to display and model configs aren't valid per 
+      // validation API
+    } else if (!props.validModel && props.validationFeatureResponse.hasOwnProperty('message')) {
       return (
         <EuiCallOut
           title="issues found in the model configuration"
@@ -261,7 +263,12 @@ export const ModelConfigurationFields = (
           iconType="alert"
           size="s"
           style={{ marginBottom: '10px' }}>
-          {handleFeatureAttributesCallout(props.validationFeatureResponse)}
+            {props.validationFeatureResponse.hasOwnProperty('sub_issues') ?
+              handleFeatureAttributesCallout(props.validationFeatureResponse) :
+              <ul>
+                <li>{JSON.stringify(props.validationFeatureResponse.message)}</li>
+              </ul>
+            }
         </EuiCallOut>
       )
     } else {

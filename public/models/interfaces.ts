@@ -46,7 +46,7 @@ export enum FEATURE_TYPE {
 export enum VALIDATION_ISSUE_TYPES {
   NAME = 'name',
   TIMEFIELD_FIELD = 'time_field',
-  SHINGLE_SIZE_FIELD = 'shinge_size',
+  SHINGLE_SIZE_FIELD = 'shingle_size',
   INDICES = 'indices',
   FEATURE_ATTRIBUTES = 'feature_attributes',
   DETECTION_INTERVAL = 'detection_interval',
@@ -231,6 +231,7 @@ export type DetectionDateRange = {
 };
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 export type EntityOption = {
   label: string;
 };
@@ -245,6 +246,9 @@ export type EntityOptionsMap = {
 };
 =======
 export type validationFeatureResponse = {
+=======
+export type validationModelResponse = {
+>>>>>>> 3678ce7 (loading doesn't display on create anymore, cleaned code, no more parsing exceptions)
   message: String,
   sub_issues?: { [key: string]: string}
 }

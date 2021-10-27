@@ -232,7 +232,7 @@ export function AnomalyDetectionOverview(props: AnomalyDetectionOverviewProps) {
         <EuiFlexGroup>
           <CreateWorkflowStepDetails
             title="1. Define your detector"
-            content="Select a data sourcefdsdsadsa, set the detector interval, and specify a window delay."
+            content="Select a data source, set the detector interval, and specify a window delay."
           />
           <CreateWorkflowStepSeparator />
           <CreateWorkflowStepDetails
