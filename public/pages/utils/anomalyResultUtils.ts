@@ -86,6 +86,7 @@ import {
   MAX_END_TIME,
 } from './constants';
 import { dateFormatter, minuteDateFormatter } from './helpers';
+import { HeatmapCell } from '../AnomalyCharts/containers/AnomalyHeatmapChart';
 
 export const getQueryParamsForLiveAnomalyResults = (
   detectionInterval: number,
@@ -321,6 +322,58 @@ export const filterAnomaliesWithDateRange = (
     filteredData.push(filteredAnomalies);
   });
   return filteredData;
+};
+
+// Sample data retrieved from preview API will contain all sample results for all entities (if applicable).
+// Filter by zoom range and entity list (if applicable).
+export const filterSampleData = (
+  sampleData: Anomalies,
+  dateRange: DateRange,
+  timeField: string,
+  selectedHeatmapCell: HeatmapCell | undefined
+) => {
+  const isFilteringByHeatmapCell = selectedHeatmapCell !== undefined;
+  const heatmapCellEntityList = get(selectedHeatmapCell, 'entityList', []);
+  const sampleAnomalyResults = get(
+    sampleData,
+    'anomalies',
+    []
+  ) as AnomalyData[];
+  const sampleFeatureResults = get(sampleData, 'featureData', {}) as {
+    [key: string]: FeatureAggregationData[];
+  };
+  const sampleFeatureIds = Object.keys(sampleFeatureResults);
+  const filteredAnomalyResults = [] as AnomalyData[];
+  const filteredFeatureResults = {} as {
+    [key: string]: FeatureAggregationData[];
+  };
+  // init the sample feature results map
+  sampleFeatureIds.forEach((sampleFeatureId: string) => {
+    filteredFeatureResults[sampleFeatureId] = [];
+  });
+  for (let i = 0; i < sampleAnomalyResults.length; i++) {
+    const curAnomalyData = sampleAnomalyResults[i];
+    const curEntityList = get(curAnomalyData, 'entity', []) as Entity[];
+    if (
+      isFilteringByHeatmapCell
+        ? entityListsMatch(curEntityList, heatmapCellEntityList) &&
+          get(curAnomalyData, 'plotTime', 0) >= dateRange.startDate &&
+          get(curAnomalyData, 'plotTime', 0) <= dateRange.endDate
+        : get(curAnomalyData, 'plotTime', 0) >= dateRange.startDate &&
+          get(curAnomalyData, 'plotTime', 0) <= dateRange.endDate
+    ) {
+      filteredAnomalyResults.push(curAnomalyData);
+      sampleFeatureIds.forEach((sampleFeatureId: string) => {
+        filteredFeatureResults[sampleFeatureId].push(
+          sampleFeatureResults[sampleFeatureId][i]
+        );
+      });
+    }
+  }
+  return {
+    anomalies: filteredAnomalyResults,
+    featureData: filteredFeatureResults,
+  } as Anomalies;
 };
 
 export const filterWithDateRange = (
@@ -1627,6 +1680,22 @@ export const convertHeatmapCellEntityStringToEntityList = (
     });
   }
   return entityList;
+};
+
+export const entityListsMatch = (
+  entityListA: Entity[],
+  entityListB: Entity[]
+) => {
+  if (get(entityListA, 'length') !== get(entityListB, 'length')) {
+    return false;
+  }
+  var i;
+  for (i = 0; i < entityListA.length; i++) {
+    if (entityListA[i].value !== entityListB[i].value) {
+      return false;
+    }
+  }
+  return true;
 };
 
 // Adding filters for all entity values

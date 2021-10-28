@@ -557,11 +557,11 @@ export const AnomalyDetailsChart = React.memo(
                     showGridLines
                   />
                   {
-                    // If historical: don't show the confidence line chart
+                    // If historical or multiple selected time series: don't show the confidence line chart
                   }
-                  {zoomedAnomalies.forEach(
+                  {zoomedAnomalies.map(
                     (anomalySeries: AnomalyData[], index) => {
-                      if (props.isHistorical) {
+                      if (props.isHistorical || multipleTimeSeries) {
                         return null;
                       } else {
                         const seriesKey = props.isHCDetector
@@ -576,11 +576,7 @@ export const AnomalyDetailsChart = React.memo(
                           <LineSeries
                             id={seriesKey}
                             name={seriesKey}
-                            color={
-                              multipleTimeSeries
-                                ? ENTITY_COLORS[index]
-                                : CHART_COLORS.ANOMALY_GRADE_COLOR
-                            }
+                            color={CHART_COLORS.CONFIDENCE_COLOR}
                             xScaleType={ScaleType.Time}
                             yScaleType={ScaleType.Linear}
                             xAccessor={CHART_FIELDS.PLOT_TIME}
@@ -599,7 +595,7 @@ export const AnomalyDetailsChart = React.memo(
                           } (${convertToEntityString(
                             get(anomalySeries, '1.entity', []),
                             ', '
-                          )}`
+                          )})`
                         : props.anomalyGradeSeriesName;
 
                       return (
