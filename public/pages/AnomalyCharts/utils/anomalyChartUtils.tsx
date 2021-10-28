@@ -52,7 +52,6 @@ import {
   calculateTimeWindowsWithMaxDataPoints,
   convertToEntityString,
   transformEntityListsForHeatmap,
-  convertToCategoryFieldString,
 } from '../../utils/anomalyResultUtils';
 import { HeatmapCell } from '../containers/AnomalyHeatmapChart';
 import {
@@ -61,7 +60,10 @@ import {
 } from '../../../../server/models/interfaces';
 import { toFixedNumberForAnomaly } from '../../../../server/utils/helpers';
 import { Entity } from '../../../../server/models/interfaces';
-import { TOP_CHILD_ENTITIES_TO_FETCH } from '../../DetectorResults/utils/constants';
+import {
+  TOP_CHILD_ENTITIES_TO_FETCH,
+  MAX_TIME_SERIES_TO_DISPLAY,
+} from '../../DetectorResults/utils/constants';
 
 export const convertAlerts = (response: any): MonitorAlert[] => {
   const alerts = get(response, 'response.alerts', []);
@@ -725,24 +727,6 @@ export const getCategoryFieldOptions = (categoryFields: string[]) => {
   return categoryFieldOptions;
 };
 
-const getMultiCategoryFilterPrefix = (parentEntities: Entity[]) => {
-  return (
-    <EuiText>
-      <h3>
-        Viewing results for&nbsp;
-        {parentEntities.map((entity: Entity) => {
-          return (
-            <span>
-              {entity.name} <b>{entity.value}</b>
-              {''}
-            </span>
-          );
-        })}
-      </h3>
-    </EuiText>
-  );
-};
-
 // Split up the child entity values into their respective category fields, to pass as options to the dropdowns.
 // For example, given child category fields ['A', 'B'], and child entity values
 // [ [ { name: 'A', value: 'A1' }, { name: 'B', value: 'B1' } ], [ { name: 'A', value: 'A2' }, { name: 'B', value: 'B1' } ] ],
@@ -796,45 +780,60 @@ export const getMultiCategoryFilters = (
   return (
     <EuiFlexGroup
       gutterSize="s"
-      alignItems="center"
+      alignItems="flexStart"
+      direction="column"
       style={{ marginBottom: '4px' }}
     >
-      <EuiFlexItem grow={false}>
-        {getMultiCategoryFilterPrefix(parentEntities)}
-      </EuiFlexItem>
+      <EuiFlexItem grow={false}>{getHCTitle(parentEntities)}</EuiFlexItem>
       {childCategoryFields.map((childCategoryField: string) => {
         return (
-          <div style={{ display: 'flex', alignItems: 'center' }}>
-            <EuiFlexItem>
-              <EuiText>
-                <h3>and&nbsp;{childCategoryField}&nbsp;&nbsp;</h3>
-              </EuiText>
-            </EuiFlexItem>
-            <EuiFlexItem style={{ minWidth: 300 }}>
-              <EuiComboBox
-                placeholder="Select categorical fields"
-                options={childEntityOptions[childCategoryField]}
-                selectedOptions={selectedChildEntities[childCategoryField]}
-                onChange={(options: any[]) =>
-                  onSelectedOptionsChange(childCategoryField, options)
-                }
-              />
-            </EuiFlexItem>
-          </div>
+          <EuiFlexItem>
+            <div
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                marginTop: '-8px',
+              }}
+            >
+              <EuiFlexItem style={{ marginBottom: '32px' }}>
+                <EuiText>
+                  <h3>{childCategoryField}:&nbsp;&nbsp;</h3>
+                </EuiText>
+              </EuiFlexItem>
+              <EuiFlexItem style={{ minWidth: 300 }} grow={false}>
+                <div>
+                  <EuiComboBox
+                    placeholder="Select categorical fields"
+                    options={childEntityOptions[childCategoryField]}
+                    selectedOptions={selectedChildEntities[childCategoryField]}
+                    onChange={(options: any[]) =>
+                      onSelectedOptionsChange(childCategoryField, options)
+                    }
+                  />
+                  <EuiText
+                    className="sublabel"
+                    style={{
+                      marginLeft: '0px',
+                      marginBottom: '0px',
+                      marginTop: '4px',
+                      maxWidth: 300,
+                    }}
+                  >
+                    {/**
+                     * This is currently correct, in that the top TOP_CHILD_ENTITIES_TO_FETCH for this
+                     * single child category field will be fetched and available to view. But in the future,
+                     * if we add more category fields and more possible child category fields, we will only fetch
+                     * the top TOP_CHILD_ENTITIES_TO_FETCH values across ALL child category fields, so it may
+                     * be split between them. In that case this help text will need to be changed.
+                     */}
+                    {`Top ${TOP_CHILD_ENTITIES_TO_FETCH} ${childCategoryField}s sorted by anomaly ${sortType}. You may select up to ${MAX_TIME_SERIES_TO_DISPLAY}.`}
+                  </EuiText>
+                </div>
+              </EuiFlexItem>
+            </div>
+          </EuiFlexItem>
         );
       })}
-      <EuiFlexItem>
-        <EuiText
-          className="sublabel"
-          style={{ marginLeft: '8px', marginBottom: '0px', maxWidth: 300 }}
-        >
-          {`The top ${TOP_CHILD_ENTITIES_TO_FETCH} values of ${convertToCategoryFieldString(
-            childCategoryFields,
-            ', '
-          )} sorted by anomaly ${sortType} are available to
-          view.`}
-        </EuiText>
-      </EuiFlexItem>
     </EuiFlexGroup>
   );
 };
