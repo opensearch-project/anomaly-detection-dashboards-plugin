@@ -106,6 +106,7 @@ describe('<AnomaliesChart /> spec', () => {
       isHistorical: false,
       isHCDetector: true,
       detectorCategoryField: ['category-1'],
+      selectedCategoryFields: [{ label: 'category-1' }],
     });
     getByText('Test title');
     getByText('Top 10');
@@ -118,10 +119,15 @@ describe('<AnomaliesChart /> spec', () => {
       isHistorical: false,
       isHCDetector: true,
       detectorCategoryField: ['category-1, category-2'],
+      selectedCategoryFields: [
+        { label: 'category-1' },
+        { label: 'category-2' },
+      ],
     });
     getByText('Test title');
     getByText('Top 10');
-    getByText('category-1, category-2');
+    getByText('category-1');
+    getByText('category-2');
   });
   test('renders the component for historical, non-HC detector', () => {
     console.error = jest.fn();
@@ -142,6 +148,7 @@ describe('<AnomaliesChart /> spec', () => {
       isHistorical: true,
       isHCDetector: true,
       detectorCategoryField: ['category-1'],
+      selectedCategoryFields: [{ label: 'category-1' }],
     });
     getByText('Test title');
     getByText('Top 10');
@@ -154,33 +161,28 @@ describe('<AnomaliesChart /> spec', () => {
       isHistorical: true,
       isHCDetector: true,
       detectorCategoryField: ['category-1', 'category-2'],
+      selectedCategoryFields: [
+        { label: 'category-1' },
+        { label: 'category-2' },
+      ],
     });
     getByText('Test title');
     getByText('Top 10');
-    getByText('category-1, category-2');
+    getByText('category-1');
+    getByText('category-2');
   });
-  test('renders multiple category fields if stored in alphabetical order', () => {
+  test('renders the component with a subset of category fields selected', () => {
     console.error = jest.fn();
-    const { getByText } = renderDataFilter({
+    const { getByText, queryByText } = renderDataFilter({
       ...DEFAULT_PROPS,
-      isHistorical: false,
+      isHistorical: true,
       isHCDetector: true,
-      detectorCategoryField: ['a', 'b'],
+      detectorCategoryField: ['category-1', 'category-2'],
+      selectedCategoryFields: [{ label: 'category-1' }],
     });
     getByText('Test title');
     getByText('Top 10');
-    getByText('a, b');
-  });
-  test('renders multiple category fields if stored in non-alphabetical order', () => {
-    console.error = jest.fn();
-    const { getByText } = renderDataFilter({
-      ...DEFAULT_PROPS,
-      isHistorical: false,
-      isHCDetector: true,
-      detectorCategoryField: ['b', 'a'],
-    });
-    getByText('Test title');
-    getByText('Top 10');
-    getByText('a, b');
+    getByText('category-1');
+    expect(queryByText('category-2')).toBeNull();
   });
 });

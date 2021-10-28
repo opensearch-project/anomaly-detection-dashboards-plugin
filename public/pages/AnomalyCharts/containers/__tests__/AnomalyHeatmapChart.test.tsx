@@ -24,7 +24,7 @@
  * permissions and limitations under the License.
  */
 
-import { render, getByText } from '@testing-library/react';
+import { render } from '@testing-library/react';
 import React from 'react';
 import {
   AnomalyHeatmapChart,
@@ -44,7 +44,7 @@ describe('<AnomalyHeatmapChart /> spec', () => {
   test('AnomalyHeatmapChart with Sample anomaly data', () => {
     const { container } = render(
       <AnomalyHeatmapChart
-        title={'test-tile'}
+        title={'test-title'}
         detectorId="test-detector-id"
         detectorName="test-detector-name"
         detectorInterval={1}
@@ -63,7 +63,7 @@ describe('<AnomalyHeatmapChart /> spec', () => {
   test('AnomalyHeatmapChart with anomaly summaries data', () => {
     const { container } = render(
       <AnomalyHeatmapChart
-        title={'test-tile'}
+        title={'test-title'}
         detectorId="test-detector-id"
         detectorName="test-detector-name"
         detectorInterval={1}
@@ -82,7 +82,7 @@ describe('<AnomalyHeatmapChart /> spec', () => {
   test('AnomalyHeatmapChart with one category field', () => {
     const { container, getByText } = render(
       <AnomalyHeatmapChart
-        title={'test-tile'}
+        title={'test-title'}
         detectorId="test-detector-id"
         detectorName="test-detector-name"
         detectorInterval={1}
@@ -95,6 +95,7 @@ describe('<AnomalyHeatmapChart /> spec', () => {
         entityAnomalySummaries={[FAKE_ENTITY_ANOMALY_SUMMARIES]}
         heatmapDisplayOption={INITIAL_HEATMAP_DISPLAY_OPTION}
         categoryField={['test-field']}
+        selectedCategoryFields={[{ label: 'test-field' }]}
       />
     );
     expect(container).toMatchSnapshot();
@@ -104,7 +105,7 @@ describe('<AnomalyHeatmapChart /> spec', () => {
   test('AnomalyHeatmapChart with multiple category fields', () => {
     const { container, getByText } = render(
       <AnomalyHeatmapChart
-        title={'test-tile'}
+        title={'test-title'}
         detectorId="test-detector-id"
         detectorName="test-detector-name"
         detectorInterval={1}
@@ -117,10 +118,15 @@ describe('<AnomalyHeatmapChart /> spec', () => {
         entityAnomalySummaries={[FAKE_ENTITY_ANOMALY_SUMMARIES]}
         heatmapDisplayOption={INITIAL_HEATMAP_DISPLAY_OPTION}
         categoryField={['test-field-1', 'test-field-2']}
+        selectedCategoryFields={[
+          { label: 'test-field-1' },
+          { label: 'test-field-2' },
+        ]}
       />
     );
     expect(container).toMatchSnapshot();
     getByText('View by:');
-    getByText('test-field-1, test-field-2');
+    getByText('test-field-1');
+    getByText('test-field-2');
   });
 });
