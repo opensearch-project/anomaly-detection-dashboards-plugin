@@ -567,8 +567,9 @@ export const AnomalyDetailsChart = React.memo(
                         const seriesKey = props.isHCDetector
                           ? `${
                               props.confidenceSeriesName
+                              // Extracting entity list from anomaly data
                             } (${convertToEntityString(
-                              get(anomalySeries, '1.entity', []),
+                              get(anomalySeries, '0.entity', []),
                               ', '
                             )}`
                           : props.confidenceSeriesName;
@@ -592,8 +593,9 @@ export const AnomalyDetailsChart = React.memo(
                       const seriesKey = props.isHCDetector
                         ? `${
                             props.anomalyGradeSeriesName
+                            // Extracting entity list from anomaly data
                           } (${convertToEntityString(
-                            get(anomalySeries, '1.entity', []),
+                            get(anomalySeries, '0.entity', []),
                             ', '
                           )})`
                         : props.anomalyGradeSeriesName;

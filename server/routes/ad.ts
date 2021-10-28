@@ -981,8 +981,6 @@ export default class AdService {
           body: request.body,
         });
 
-      console.log('response: ', response);
-
       return opensearchDashboardsResponse.ok({
         body: {
           ok: true,

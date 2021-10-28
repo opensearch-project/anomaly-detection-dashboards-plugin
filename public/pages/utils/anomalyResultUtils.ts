@@ -49,6 +49,7 @@ import {
   HEATMAP_CELL_ENTITY_DELIMITER,
   HEATMAP_CALL_ENTITY_KEY_VALUE_DELIMITER,
   ENTITY_NAME_PATH_FIELD,
+  MAX_ANOMALY_GRADE_FIELD,
 } from '../../../server/utils/constants';
 import { toFixedNumberForAnomaly } from '../../../server/utils/helpers';
 import {
@@ -238,12 +239,8 @@ export const prepareDataForLiveChart = (
 };
 
 // Converts all anomaly results or feature aggregation results time series and filters out data
-// that is out of range, or shifts the timestamps if there is padding
-export const prepareDataForChart = (
-  data: any[][],
-  dateRange: DateRange,
-  withoutPadding?: boolean
-) => {
+// that is out of range
+export const prepareDataForChart = (data: any[][], dateRange: DateRange) => {
   let preparedData = [] as any[][];
   data.forEach((timeSeries: any[]) => {
     if (timeSeries && timeSeries.length > 0) {
@@ -256,25 +253,7 @@ export const prepareDataForChart = (
         timeSeries = sampleMaxAnomalyGrade(timeSeries);
       }
     }
-    if (withoutPadding) {
-      // just return result if padding/placeholder data is not needed
-      preparedData.push(timeSeries);
-    }
-    timeSeries.push({
-      startTime: dateRange.startDate,
-      endTime: dateRange.startDate,
-      plotTime: dateRange.startDate,
-      confidence: null,
-      anomalyGrade: null,
-    });
-    timeSeries.unshift({
-      startTime: dateRange.endDate,
-      endTime: dateRange.endDate,
-      plotTime: dateRange.endDate,
-      confidence: null,
-      anomalyGrade: null,
-    });
-    preparedData.push(timeSeries);
+    return preparedData.push(timeSeries);
   });
   return preparedData;
 };
@@ -1038,7 +1017,7 @@ export const getTopAnomalousEntitiesQuery = (
   // To handle BWC, we will return 2 possible queries based on the # of categorical fields:
   // (1) legacy way (1 category field): bucket aggregate over the single, nested, 'entity.value' field
   // (2) new way (>= 2 category fields): bucket aggregate over the new 'model_id' field
-  const requestBody = isMultiCategory
+  let requestBody = isMultiCategory
     ? {
         size: 0,
         query: {
@@ -1216,38 +1195,7 @@ export const getTopAnomalousEntitiesQuery = (
   // top IPs from that region, we return the top entity combos that have a region set to 'us-west-1', such as
   // ('us-west-1', '1.2.3.4), ('us-west-1', '5.6.7.8'), and so on.
   if (includedEntities !== undefined && !isEmpty(includedEntities)) {
-    includedEntities.forEach((entity: Entity) => {
-      // Add filters for entity name (like 'region'), and value (like 'us-west-1')
-      const entityNameFilter = {
-        nested: {
-          path: ENTITY_FIELD,
-          query: {
-            term: {
-              [ENTITY_NAME_PATH_FIELD]: {
-                value: entity.name,
-              },
-            },
-          },
-        },
-      };
-      const entityValueFilter = {
-        nested: {
-          path: ENTITY_FIELD,
-          query: {
-            term: {
-              [ENTITY_VALUE_PATH_FIELD]: {
-                value: entity.value,
-              },
-            },
-          },
-        },
-      };
-
-      //@ts-ignore
-      requestBody.query.bool.filter.push(entityNameFilter);
-      //@ts-ignore
-      requestBody.query.bool.filter.push(entityValueFilter);
-    });
+    requestBody = appendEntityFilters(requestBody, includedEntities);
   }
 
   return requestBody;
@@ -1292,6 +1240,8 @@ export const parseTopEntityAnomalySummaryResults = (
   return topEntityAnomalySummaries;
 };
 
+// Parsing the results from the multi-category filter API, which
+// returns summaries of the top parent entities
 export const parseAggTopEntityAnomalySummaryResults = (
   result: any
 ): EntityAnomalySummaries[] => {
@@ -1312,7 +1262,7 @@ export const parseAggTopEntityAnomalySummaryResults = (
     }
 
     const anomalyCount = get(item, DOC_COUNT_FIELD, 0);
-    const maxAnomalyGrade = get(item, 'max_anomaly_grade', 0);
+    const maxAnomalyGrade = get(item, MAX_ANOMALY_GRADE_FIELD, 0);
     const entityAnomalySummary = {
       maxAnomaly: maxAnomalyGrade,
       anomalyCount: anomalyCount,
@@ -1753,6 +1703,8 @@ export const transformEntityListsForHeatmap = (entityLists: any[]) => {
   return transformedEntityLists;
 };
 
+// Returns top child entities as an Entity[][],
+// where each entry in the array is a unique combination of entity values
 export const parseTopChildEntityCombos = (
   result: any,
   parentEntities: Entity[]

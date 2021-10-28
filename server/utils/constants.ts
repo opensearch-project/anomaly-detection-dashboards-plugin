@@ -106,6 +106,7 @@ export const MODEL_ID_FIELD = 'model_id';
 export const DOC_COUNT_FIELD = 'doc_count';
 export const KEY_FIELD = 'key';
 export const ENTITY_LIST_FIELD = 'entity_list';
+export const MAX_ANOMALY_GRADE_FIELD = 'max_anomaly_grade';
 
 // y-axis values in the heatmap chart should be in the form:
 // <category-field-value-1><br><category-field-value-2>

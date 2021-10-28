@@ -187,15 +187,6 @@ export const AnomalyHistory = (props: AnomalyHistoryProps) => {
     EntityOptionsMap
   >({});
 
-  // The selected anomaly results as an array of Anomalies, where each entry
-  // is its own time series, containing anomaly results and feature results
-  // We need to be able to store multiple, in the case of a user selecting a single
-  // category field, and then selecting multiple child category fields,
-  // resulting in multiple time series & sets of results
-  // const [selectedAnomalyResults, setSelectedAnomalyResults] = useState<
-  //   Anomalies[]
-  // >([]);
-
   const detectorCategoryField = get(props.detector, 'categoryField', []);
   const isHCDetector = !isEmpty(detectorCategoryField);
   const isMultiCategory = detectorCategoryField.length > 1;
@@ -772,12 +763,12 @@ export const AnomalyHistory = (props: AnomalyHistoryProps) => {
       [childCategoryField]: options,
     };
 
-    // Limit the number of entities to display on the charts at once
     const entityCombosToFetch = getAllEntityCombos(
       get(selectedHeatmapCell, 'entityList', []),
       tempSelectedChildEntities
     );
 
+    // Limit the number of entities to display on the charts at once
     if (entityCombosToFetch.length > MAX_TIME_SERIES_TO_DISPLAY) {
       core.notifications.toasts.addWarning(
         `A maximum of ${MAX_TIME_SERIES_TO_DISPLAY} sets of results can be displayed at one time`

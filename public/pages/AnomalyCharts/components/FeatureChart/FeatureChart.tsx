@@ -203,6 +203,11 @@ export const FeatureChart = (props: FeatureChartProps) => {
           opacity: showLoader ? 0.2 : 1,
         }}
       >
+        {/**
+         * Charts may show stale data even after feature data is changed.
+         * By setting the key prop here, the chart will re-mount whenever the
+         * feature data has changed.
+         */}
         <Chart key={`${featureData}`}>
           <Settings
             showLegend
