@@ -85,6 +85,36 @@ exports[`<ReviewAndCreate /> spec renders the component 1`] = `
           style="padding: 10px 0px;"
         >
           <div
+            class="euiCallOut euiCallOut--primary euiCallOut--small"
+            style="margin-bottom: 10px;"
+          >
+            <div
+              class="euiCallOutHeader"
+            >
+              <span
+                class="euiCallOutHeader__title"
+              >
+                <div>
+                  <div
+                    class="euiFlexGroup euiFlexGroup--gutterExtraSmall euiFlexGroup--directionRow euiFlexGroup--responsive"
+                  >
+                    <span
+                      class="euiLoadingSpinner euiLoadingSpinner--large"
+                      style="margin-right: 12px;"
+                    />
+                    <div
+                      class="euiText euiText--medium"
+                    >
+                      <p>
+                        Validating detector configurations
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </span>
+            </div>
+          </div>
+          <div
             class="euiFlexGrid euiFlexGrid--gutterLarge euiFlexGrid--wrap euiFlexGrid--responsive"
           >
             <div
@@ -419,6 +449,36 @@ exports[`<ReviewAndCreate /> spec renders the component 1`] = `
         <div
           style="padding: 10px 0px;"
         >
+          <div
+            class="euiCallOut euiCallOut--primary euiCallOut--small"
+            style="margin-bottom: 10px;"
+          >
+            <div
+              class="euiCallOutHeader"
+            >
+              <span
+                class="euiCallOutHeader__title"
+              >
+                <div>
+                  <div
+                    class="euiFlexGroup euiFlexGroup--gutterExtraSmall euiFlexGroup--directionRow euiFlexGroup--responsive"
+                  >
+                    <span
+                      class="euiLoadingSpinner euiLoadingSpinner--large"
+                      style="margin-right: 12px;"
+                    />
+                    <div
+                      class="euiText euiText--medium"
+                    >
+                      <p>
+                        Validating model configurations
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </span>
+            </div>
+          </div>
           <div>
             <div
               class="euiBasicTable header-single-value-euiBasicTable"
