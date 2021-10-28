@@ -170,7 +170,8 @@ export const AnomalyDetailsChart = React.memo(
         zoomRange.endDate,
         taskId
       );
-      dispatch(searchResults(anomalyDataRangeQuery))
+      const resultIndex = get(props, 'detector.resultIndex', '');
+      dispatch(searchResults(anomalyDataRangeQuery, resultIndex))
         .then((response: any) => {
           // Only retrieve buckets that are in the anomaly results range. This is so
           // we don't show aggregate results for where there is no data at all
@@ -189,7 +190,7 @@ export const AnomalyDetailsChart = React.memo(
             taskId,
             selectedAggId
           );
-          dispatch(searchResults(historicalAggQuery))
+          dispatch(searchResults(historicalAggQuery, resultIndex))
             .then((response: any) => {
               const aggregatedAnomalies = parseHistoricalAggregatedAnomalies(
                 response,
@@ -225,7 +226,8 @@ export const AnomalyDetailsChart = React.memo(
           zoomRange.endDate,
           taskId
         );
-        dispatch(searchResults(anomalyDataRangeQuery))
+        const resultIndex = get(props, 'detector.resultIndex', '');
+        dispatch(searchResults(anomalyDataRangeQuery, resultIndex))
           .then((response: any) => {
             const dataStartDate = get(
               response,
@@ -247,10 +249,10 @@ export const AnomalyDetailsChart = React.memo(
             const newAggId =
               (numDailyBuckets > MAX_HISTORICAL_AGG_RESULTS &&
                 selectedAggId === ANOMALY_AGG.DAILY) ||
-              (numWeeklyBuckets > MAX_HISTORICAL_AGG_RESULTS &&
-                selectedAggId === ANOMALY_AGG.WEEKLY) ||
-              (numMonthlyBuckets > MAX_HISTORICAL_AGG_RESULTS &&
-                selectedAggId === ANOMALY_AGG.MONTHLY)
+                (numWeeklyBuckets > MAX_HISTORICAL_AGG_RESULTS &&
+                  selectedAggId === ANOMALY_AGG.WEEKLY) ||
+                (numMonthlyBuckets > MAX_HISTORICAL_AGG_RESULTS &&
+                  selectedAggId === ANOMALY_AGG.MONTHLY)
                 ? ANOMALY_AGG.RAW
                 : (selectedAggId as ANOMALY_AGG);
             setSelectedAggId(newAggId);
@@ -288,8 +290,8 @@ export const AnomalyDetailsChart = React.memo(
       setAnomalySummary(
         !props.bucketizedAnomalies
           ? getAnomalySummary(
-              filterWithDateRange(props.anomalies, zoomRange, 'plotTime')
-            )
+            filterWithDateRange(props.anomalies, zoomRange, 'plotTime')
+          )
           : props.anomalySummary
       );
       setTotalAlerts(
@@ -515,7 +517,7 @@ export const AnomalyDetailsChart = React.memo(
                     theme={ANOMALY_CHART_THEME}
                   />
                   {(props.isHCDetector && !props.selectedHeatmapCell) ||
-                  props.isHistorical ? null : (
+                    props.isHistorical ? null : (
                     <RectAnnotation
                       dataValues={disabledHistoryAnnotations(
                         zoomRange,

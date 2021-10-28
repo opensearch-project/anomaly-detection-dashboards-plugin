@@ -46,4 +46,5 @@ export const INITIAL_DETECTOR_DEFINITION_VALUES: DetectorDefinitionFormikValues 
   timeField: '',
   interval: 10,
   windowDelay: 1,
+  resultIndex: undefined
 };

@@ -189,7 +189,7 @@ export function AnomalyResults(props: AnomalyResultsProps) {
 
   const isDetectorMissingData = featureMissingSeverity
     ? (isDetectorInitializing || isDetectorRunning) &&
-      featureMissingSeverity > MISSING_FEATURE_DATA_SEVERITY.GREEN
+    featureMissingSeverity > MISSING_FEATURE_DATA_SEVERITY.GREEN
     : undefined;
 
   const initializationInfo = featureMissingSeverity
@@ -227,7 +227,7 @@ export function AnomalyResults(props: AnomalyResultsProps) {
         moment()
           .subtract(
             (FEATURE_DATA_POINTS_WINDOW + FEATURE_DATA_CHECK_WINDOW_OFFSET) *
-              detectorIntervalInMin,
+            detectorIntervalInMin,
             'minutes'
           )
           .valueOf(),
@@ -243,8 +243,9 @@ export function AnomalyResults(props: AnomalyResultsProps) {
     );
 
     try {
+      const resultIndex = get(detector, 'resultIndex', '');
       const detectorResultResponse = await dispatch(
-        getDetectorResults(detectorId, params, false)
+        getDetectorResults(detectorId, params, false, resultIndex)
       );
       const featuresData = get(
         detectorResultResponse,
@@ -361,9 +362,9 @@ export function AnomalyResults(props: AnomalyResultsProps) {
       !isHCDetector &&
       get(detector, 'initProgress.estimatedMinutesLeft')
       ? `The detector needs ${get(
-          detector,
-          'initProgress.estimatedMinutesLeft'
-        )} minutes for initializing. If your data stream is not continuous, it may take even longer. `
+        detector,
+        'initProgress.estimatedMinutesLeft'
+      )} minutes for initializing. If your data stream is not continuous, it may take even longer. `
       : '';
   };
 
@@ -424,9 +425,9 @@ export function AnomalyResults(props: AnomalyResultsProps) {
                 </EuiOverlayMask>
               ) : null}
               {isDetectorRunning ||
-              isDetectorPaused ||
-              isDetectorInitializing ||
-              isDetectorFailed ? (
+                isDetectorPaused ||
+                isDetectorInitializing ||
+                isDetectorFailed ? (
                 <Fragment>
                   {isSampleDetector ? (
                     <Fragment>
@@ -438,11 +439,11 @@ export function AnomalyResults(props: AnomalyResultsProps) {
                     </Fragment>
                   ) : null}
                   {isDetectorUpdated ||
-                  // don't show miss feature callout for HC detector
-                  (isDetectorMissingData && !isHCDetector) ||
-                  isInitializingNormally ||
-                  (isInitOvertime && !isHCDetector) ||
-                  isDetectorFailed ? (
+                    // don't show miss feature callout for HC detector
+                    (isDetectorMissingData && !isHCDetector) ||
+                    isInitializingNormally ||
+                    (isInitOvertime && !isHCDetector) ||
+                    isDetectorFailed ? (
                     <EuiCallOut
                       title={getCalloutTitle()}
                       color={getCalloutColor()}
@@ -450,8 +451,8 @@ export function AnomalyResults(props: AnomalyResultsProps) {
                         isPerformingColdStart
                           ? ''
                           : isInitializingNormally
-                          ? 'iInCircle'
-                          : 'alert'
+                            ? 'iInCircle'
+                            : 'alert'
                       }
                       style={{ marginBottom: '20px' }}
                     >
@@ -492,14 +493,14 @@ export function AnomalyResults(props: AnomalyResultsProps) {
                         color={
                           featureMissingSeverity ===
                             MISSING_FEATURE_DATA_SEVERITY.RED ||
-                          isDetectorFailed
+                            isDetectorFailed
                             ? 'danger'
                             : isInitOvertime ||
                               isDetectorUpdated ||
                               featureMissingSeverity ===
-                                MISSING_FEATURE_DATA_SEVERITY.YELLOW
-                            ? 'warning'
-                            : 'primary'
+                              MISSING_FEATURE_DATA_SEVERITY.YELLOW
+                              ? 'warning'
+                              : 'primary'
                         }
                         style={{ marginRight: '8px' }}
                       >

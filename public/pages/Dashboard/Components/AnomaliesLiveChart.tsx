@@ -65,7 +65,7 @@ import {
   getLatestAnomalyResultsForDetectorsByTimeRange,
   getLatestAnomalyResultsByTimeRange,
 } from '../utils/utils';
-import { MAX_ANOMALIES, SPACE_STR } from '../../../utils/constants';
+import { MAX_ANOMALIES, SPACE_STR, CUSTOM_AD_RESULT_INDEX_PREFIX } from '../../../utils/constants';
 import { searchResults } from '../../../redux/reducers/anomalyResults';
 
 export interface AnomaliesLiveChartProps {
@@ -115,7 +115,8 @@ export const AnomaliesLiveChart = (props: AnomaliesLiveChartProps) => {
         dispatch,
         -1,
         1,
-        true
+        true,
+        CUSTOM_AD_RESULT_INDEX_PREFIX + '*'
       );
     } catch (err) {
       console.log(
@@ -136,7 +137,8 @@ export const AnomaliesLiveChart = (props: AnomaliesLiveChartProps) => {
       0,
       MAX_ANOMALIES,
       MAX_LIVE_DETECTORS,
-      false
+      false,
+      CUSTOM_AD_RESULT_INDEX_PREFIX + '*'
     );
 
     setLiveAnomalyData(latestLiveAnomalyResult);
@@ -296,10 +298,10 @@ export const AnomaliesLiveChart = (props: AnomaliesLiveChartProps) => {
                     ? '-'
                     : get(lastAnomalyResult, AD_DOC_FIELDS.ANOMALY_GRADE, 0) <
                       SHOW_DECIMAL_NUMBER_THRESHOLD
-                    ? Number(
+                      ? Number(
                         get(lastAnomalyResult, AD_DOC_FIELDS.ANOMALY_GRADE, 0)
                       ).toExponential(2)
-                    : Number(
+                      : Number(
                         get(lastAnomalyResult, AD_DOC_FIELDS.ANOMALY_GRADE, 0)
                       ).toFixed(2)
                 }

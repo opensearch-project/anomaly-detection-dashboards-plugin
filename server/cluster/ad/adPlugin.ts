@@ -105,6 +105,21 @@ export default function adPlugin(Client: any, config: any, components: any) {
     },
     method: 'GET',
   });
+
+  ad.searchResults = ca({
+    url: {
+      fmt: `${API.DETECTOR_BASE}/results/_search/<%=resultIndex%>`,
+      req: {
+        resultIndex: {
+          type: 'string',
+          required: false,
+        },
+      },
+    },
+    needBody: true,
+    method: 'POST',
+  });
+
   ad.searchResults = ca({
     url: {
       fmt: `${API.DETECTOR_BASE}/results/_search`,

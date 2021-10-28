@@ -105,13 +105,14 @@ export const getLiveAnomalyResults = (
   dispatch: Dispatch<any>,
   detectorId: string,
   detectionInterval: number,
-  intervals: number
+  intervals: number,
+  resultIndex: string,
 ) => {
   const queryParams = getQueryParamsForLiveAnomalyResults(
     detectionInterval,
     intervals
   );
-  dispatch(getDetectorLiveResults(detectorId, queryParams, false));
+  dispatch(getDetectorLiveResults(detectorId, queryParams, false, resultIndex));
 };
 
 export const buildParamsForGetAnomalyResultsWithDateRange = (

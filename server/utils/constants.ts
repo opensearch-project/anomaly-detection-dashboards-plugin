@@ -125,3 +125,5 @@ export const HISTORICAL_TASK_TYPES = [
   'HISTORICAL_HC_DETECTOR',
   'HISTORICAL',
 ];
+
+export const CUSTOM_AD_RESULT_INDEX_PREFIX = 'opensearch-ad-plugin-result-';

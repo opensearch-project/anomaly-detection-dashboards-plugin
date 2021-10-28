@@ -180,6 +180,7 @@ export const AnomalyHistory = (props: AnomalyHistoryProps) => {
   ) {
     try {
       setIsLoadingAnomalyResults(true);
+      const resultIndex = get(props, 'detector.resultIndex', '');
       const anomalySummaryResult = await dispatch(
         searchResults(
           getAnomalySummaryQuery(
@@ -190,7 +191,8 @@ export const AnomalyHistory = (props: AnomalyHistoryProps) => {
             props.isHistorical,
             taskId.current,
             modelId
-          )
+          ),
+          resultIndex
         )
       );
 
@@ -207,7 +209,8 @@ export const AnomalyHistory = (props: AnomalyHistoryProps) => {
             props.isHistorical,
             taskId.current,
             modelId
-          )
+          ),
+          resultIndex
         )
       );
 
@@ -259,21 +262,22 @@ export const AnomalyHistory = (props: AnomalyHistoryProps) => {
     try {
       const params = buildParamsForGetAnomalyResultsWithDateRange(
         dateRange.startDate -
-          // for non HC detector, rawData is used for feature missing check
-          // which needs window offset for time range.
-          // But it is not needed for HC detector
-          (isHCDetector
-            ? 0
-            : FEATURE_DATA_CHECK_WINDOW_OFFSET *
-              detectorInterval *
-              MIN_IN_MILLI_SECS),
+        // for non HC detector, rawData is used for feature missing check
+        // which needs window offset for time range.
+        // But it is not needed for HC detector
+        (isHCDetector
+          ? 0
+          : FEATURE_DATA_CHECK_WINDOW_OFFSET *
+          detectorInterval *
+          MIN_IN_MILLI_SECS),
         dateRange.endDate,
         // get anomaly only data if HC detector
         isHCDetector
       );
+      const resultIndex = get(props, 'detector.resultIndex', '');
       const detectorResultResponse = props.isHistorical
-        ? await dispatch(getDetectorResults(taskId.current || '', params, true))
-        : await dispatch(getDetectorResults(props.detector.id, params, false));
+        ? await dispatch(getDetectorResults(taskId.current || '', params, true, resultIndex))
+        : await dispatch(getDetectorResults(props.detector.id, params, false, resultIndex));
       const rawAnomaliesData = get(detectorResultResponse, 'response', []);
       const rawAnomaliesResult = {
         anomalies: get(rawAnomaliesData, 'results', []),
@@ -328,7 +332,8 @@ export const AnomalyHistory = (props: AnomalyHistoryProps) => {
       props.isHistorical,
       taskId.current
     );
-    const result = await dispatch(searchResults(query));
+    const resultIndex = get(props, 'detector.resultIndex', '');
+    const result = await dispatch(searchResults(query, resultIndex));
 
     const topEntityAnomalySummaries = parseTopEntityAnomalySummaryResults(
       result,
@@ -347,7 +352,7 @@ export const AnomalyHistory = (props: AnomalyHistoryProps) => {
           props.isHistorical,
           taskId.current
         );
-        return dispatch(searchResults(entityResultQuery));
+        return dispatch(searchResults(entityResultQuery, resultIndex));
       }
     );
 
@@ -416,11 +421,13 @@ export const AnomalyHistory = (props: AnomalyHistoryProps) => {
       heatmapCell.entityList
     );
 
+    const resultIndex = get(props, 'detector.resultIndex', '');
     const entityAnomalyResultResponse = await dispatch(
       getDetectorResults(
         props.isHistorical ? taskId.current : props.detector?.id,
         params,
-        props.isHistorical ? true : false
+        props.isHistorical ? true : false,
+        resultIndex
       )
     );
 
@@ -489,20 +496,19 @@ export const AnomalyHistory = (props: AnomalyHistoryProps) => {
 
   const annotations = anomalyResults
     ? get(anomalyResults, 'anomalies', [])
-        //@ts-ignore
-        .filter((anomaly: AnomalyData) => anomaly.anomalyGrade > 0)
-        .map((anomaly: AnomalyData) => ({
-          coordinates: {
-            x0: anomaly.startTime,
-            x1: anomaly.endTime,
-          },
-          details: `There is an anomaly with confidence ${
-            anomaly.confidence
+      //@ts-ignore
+      .filter((anomaly: AnomalyData) => anomaly.anomalyGrade > 0)
+      .map((anomaly: AnomalyData) => ({
+        coordinates: {
+          x0: anomaly.startTime,
+          x1: anomaly.endTime,
+        },
+        details: `There is an anomaly with confidence ${anomaly.confidence
           } between ${minuteDateFormatter(
             anomaly.startTime
           )} and ${minuteDateFormatter(anomaly.endTime)}`,
-          entity: get(anomaly, 'entity', []),
-        }))
+        entity: get(anomaly, 'entity', []),
+      }))
     : [];
 
   const tabs = [
@@ -562,31 +568,31 @@ export const AnomalyHistory = (props: AnomalyHistoryProps) => {
         <div style={{ padding: '20px' }}>
           {isHCDetector
             ? [
-                <AnomalyOccurrenceChart
-                  title={
-                    selectedHeatmapCell
-                      ? getHCTitle(selectedHeatmapCell.entityList)
-                      : '-'
-                  }
-                  dateRange={dateRange}
-                  onDateRangeChange={handleDateRangeChange}
-                  onZoomRangeChange={handleZoomChange}
-                  anomalies={anomalyResults ? anomalyResults.anomalies : []}
-                  bucketizedAnomalies={bucketizedAnomalyResults !== undefined}
-                  anomalySummary={bucketizedAnomalySummary}
-                  isLoading={isLoading || isLoadingAnomalyResults}
-                  anomalyGradeSeriesName="Anomaly grade"
-                  confidenceSeriesName="Confidence"
-                  showAlerts={true}
-                  isNotSample={true}
-                  detector={props.detector}
-                  monitor={props.monitor}
-                  isHCDetector={isHCDetector}
-                  isHistorical={props.isHistorical}
-                  selectedHeatmapCell={selectedHeatmapCell}
-                />,
-                <EuiSpacer size="m" />,
-              ]
+              <AnomalyOccurrenceChart
+                title={
+                  selectedHeatmapCell
+                    ? getHCTitle(selectedHeatmapCell.entityList)
+                    : '-'
+                }
+                dateRange={dateRange}
+                onDateRangeChange={handleDateRangeChange}
+                onZoomRangeChange={handleZoomChange}
+                anomalies={anomalyResults ? anomalyResults.anomalies : []}
+                bucketizedAnomalies={bucketizedAnomalyResults !== undefined}
+                anomalySummary={bucketizedAnomalySummary}
+                isLoading={isLoading || isLoadingAnomalyResults}
+                anomalyGradeSeriesName="Anomaly grade"
+                confidenceSeriesName="Confidence"
+                showAlerts={true}
+                isNotSample={true}
+                detector={props.detector}
+                monitor={props.monitor}
+                isHCDetector={isHCDetector}
+                isHistorical={props.isHistorical}
+                selectedHeatmapCell={selectedHeatmapCell}
+              />,
+              <EuiSpacer size="m" />,
+            ]
             : null}
           <EuiTabs>{renderTabs()}</EuiTabs>
 
@@ -630,10 +636,10 @@ export const AnomalyHistory = (props: AnomalyHistoryProps) => {
                       bucketizedAnomalyResults === undefined
                         ? anomalyResults
                           ? filterWithDateRange(
-                              anomalyResults.anomalies,
-                              zoomRange,
-                              'plotTime'
-                            )
+                            anomalyResults.anomalies,
+                            zoomRange,
+                            'plotTime'
+                          )
                           : []
                         : pureAnomalies,
                       selectedHeatmapCell,
