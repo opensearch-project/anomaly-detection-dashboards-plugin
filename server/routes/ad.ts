@@ -77,7 +77,7 @@ export function registerADRoutes(apiRouter: Router, adService: AdService) {
   apiRouter.post('/detectors', adService.putDetector);
   apiRouter.put('/detectors/{detectorId}', adService.putDetector);
   apiRouter.post('/detectors/_search', adService.searchDetector);
-  apiRouter.post('/detectors/results/_search', adService.searchResults);
+  apiRouter.post('/detectors/results/_search/', adService.searchResults);
   apiRouter.post(
     '/detectors/results/_search/{resultIndex}',
     adService.searchResults

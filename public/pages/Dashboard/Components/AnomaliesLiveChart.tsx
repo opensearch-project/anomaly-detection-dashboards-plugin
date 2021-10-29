@@ -65,11 +65,8 @@ import {
   getLatestAnomalyResultsForDetectorsByTimeRange,
   getLatestAnomalyResultsByTimeRange,
 } from '../utils/utils';
-import {
-  MAX_ANOMALIES,
-  SPACE_STR,
-  CUSTOM_AD_RESULT_INDEX_PREFIX,
-} from '../../../utils/constants';
+import { MAX_ANOMALIES, SPACE_STR } from '../../../utils/constants';
+import { ALL_CUSTOM_AD_RESULT_INDICES } from '../../utils/constants'
 import { searchResults } from '../../../redux/reducers/anomalyResults';
 
 export interface AnomaliesLiveChartProps {
@@ -118,7 +115,7 @@ export const AnomaliesLiveChart = (props: AnomaliesLiveChartProps) => {
         -1,
         1,
         true,
-        CUSTOM_AD_RESULT_INDEX_PREFIX + '*'
+        ALL_CUSTOM_AD_RESULT_INDICES
       );
     } catch (err) {
       console.log(
@@ -141,7 +138,7 @@ export const AnomaliesLiveChart = (props: AnomaliesLiveChartProps) => {
         MAX_ANOMALIES,
         MAX_LIVE_DETECTORS,
         false,
-        CUSTOM_AD_RESULT_INDEX_PREFIX + '*'
+        ALL_CUSTOM_AD_RESULT_INDICES
       );
 
     setLiveAnomalyData(latestLiveAnomalyResult);
