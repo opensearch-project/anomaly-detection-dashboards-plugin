@@ -24,6 +24,7 @@ import React, { useState, useEffect } from 'react';
 import ContentPanel from '../../../../components/ContentPanel/ContentPanel';
 import { CUSTOM_AD_RESULT_INDEX_PREFIX } from '../../../../../server/utils/constants';
 import { FormattedFormRow } from '../../../../components/FormattedFormRow/FormattedFormRow';
+import { ISM_PLUGIN_DOC_LINE } from '../../../../utils/constants';
 
 interface CustomResultIndexProps {
   isEdit: boolean;
@@ -74,7 +75,7 @@ function CustomResultIndex(props: CustomResultIndexProps) {
         <EuiFlexItem>
           <EuiCallOut
             data-test-subj="cannotEditResultIndexCallout"
-            title="You can't change the result index after you create the detector. You can manage the result index with ISM plugin."
+            title="You can't change the result index after you create the detector. You can manage the result index with Index Management plugin."
             color="warning"
             iconType="alert"
             size="s"
@@ -86,12 +87,15 @@ function CustomResultIndex(props: CustomResultIndexProps) {
         {({ field, form }: FieldProps) => (
           <FormattedFormRow
             title="Result index field"
-            hint='Specify a unique and descriptive name that is easy to
-          recognize. Prefix "opensearch-ad-plugin-result-" will be added to the index name you input. For example, 
-          if you input "abc" as result index name, the final index name will be "opensearch-ad-plugin-result-abc". 
-          You can use dash "-" to separete namespace to manage permission easily, for example "opensearch-ad-plugin-result-financial-us-group1",
-          so you can create permisison role based on prefix for "financial" department or granular level for "us" area. 
-          Create too many result indices may impact performance, suggest to reuse result index for multiple detectors.'
+            hint='Specify a unique and descriptive name that’s easy to recognize. The prefix “opensearch-ad-plugin-result-” will be 
+            added to the index name that you input. For example, if you input “abc” as the result index name, the final index name
+            will be “opensearch-ad-plugin-result-abc.”.
+            You can use dash “-” to separate the namespace to manage permissions easily. For example, if you use 
+            “opensearch-ad-plugin-result-financial-us-group1” as result index, you can create a permission role based on pattern 
+            "opensearch-ad-plugin-result-financial-us-*" for “financial” department at a granular level for the “us” area. 
+            Creating too many result indices might impact the performance. We recommend reusing the result index for multiple detectors. 
+            You can use Index Management plugin to manage result indices.'
+            hintLink={ISM_PLUGIN_DOC_LINE}
           >
             <EuiFieldText
               id="resultIndex"
