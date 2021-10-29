@@ -24,12 +24,21 @@
  * permissions and limitations under the License.
  */
 import React, { useState } from 'react';
-import { EuiBasicTable, EuiLink, EuiButton, EuiSpacer, EuiCallOut, EuiLoadingSpinner, EuiFlexGroup, EuiText } from '@elastic/eui';
+import {
+  EuiBasicTable,
+  EuiLink,
+  EuiButton,
+  EuiSpacer,
+  EuiCallOut,
+  EuiLoadingSpinner,
+  EuiFlexGroup,
+  EuiText,
+} from '@elastic/eui';
 import {
   Detector,
   FEATURE_TYPE,
   FeatureAttributes,
-  validationModelResponse
+  validationModelResponse,
 } from '../../../../models/interfaces';
 import { get, sortBy } from 'lodash';
 import ContentPanel from '../../../../components/ContentPanel/ContentPanel';
@@ -45,8 +54,8 @@ interface ModelConfigurationFieldsProps {
   validationFeatureResponse: validationModelResponse;
   validModel: Boolean;
   validationError: Boolean;
-  isLoading: Boolean
-  isCreatingDetector: Boolean
+  isLoading: Boolean;
+  isCreatingDetector: Boolean;
 }
 
 interface ModelConfigurationFieldsState {
@@ -55,19 +64,17 @@ interface ModelConfigurationFieldsState {
   sortDirection: SORT_DIRECTION;
 }
 
-
 export const ModelConfigurationFields = (
   props: ModelConfigurationFieldsProps
 ) => {
-  const [featuresState, setFeaturesState] = useState<
-    ModelConfigurationFieldsState
-  >({
-    showCodeModel: get(props.detector, 'featureAttributes', []).map(
-      () => false
-    ),
-    sortField: 'name',
-    sortDirection: SORT_DIRECTION.ASC,
-  });
+  const [featuresState, setFeaturesState] =
+    useState<ModelConfigurationFieldsState>({
+      showCodeModel: get(props.detector, 'featureAttributes', []).map(
+        () => false
+      ),
+      sortField: 'name',
+      sortDirection: SORT_DIRECTION.ASC,
+    });
 
   const closeModal = (index: number) => {
     const cloneShowCodeModal = [...featuresState.showCodeModel];
@@ -195,51 +202,51 @@ export const ModelConfigurationFields = (
     };
   };
 
-  const handleFeatureAttributesCallout = (issueResponse: validationModelResponse) => {
+  const handleFeatureAttributesCallout = (
+    issueResponse: validationModelResponse
+  ) => {
     if (issueResponse != undefined && issueResponse != null) {
       if (issueResponse.sub_issues != undefined) {
-        const renderList = (
-          Object.keys(issueResponse.sub_issues).map(key => {
-            if (issueResponse.sub_issues != undefined) {
-              return <li>{"The \"" + key + "\" " + issueResponse.sub_issues[key]}</li>
-            }
-          })
-        )
-        return (
-          <ul>
-            {renderList}
-          </ul>);
-
+        const renderList = Object.keys(issueResponse.sub_issues).map((key) => {
+          if (issueResponse.sub_issues != undefined) {
+            return (
+              <li>{'The "' + key + '" ' + issueResponse.sub_issues[key]}</li>
+            );
+          }
+        });
+        return <ul>{renderList}</ul>;
       } else {
         return (
           <ul>
             <li>{JSON.stringify(props.validationFeatureResponse.message)}</li>
           </ul>
-        )
+        );
       }
     } else {
       return null;
     }
-  }
+  };
   const handleCalloutGeneralLogic = () => {
     //When validation response is loading then displaying loading spinner, don't display
     // after clicking on "create detector" button as isLoading will be true from that request
     if (props.isLoading && !props.isCreatingDetector) {
-      return (<EuiCallOut
-        title={
-          <div>
-            <EuiFlexGroup direction="row" gutterSize="xs">
-              <EuiLoadingSpinner size="l" style={{ marginRight: '12px' }} />
-              <EuiText>
-                <p>Validating model configurations</p>
-              </EuiText>
-            </EuiFlexGroup>
-          </div>
-        }
-        style={{ marginBottom: '10px' }}
-        size="s"
-        color="primary"
-      />)
+      return (
+        <EuiCallOut
+          title={
+            <div>
+              <EuiFlexGroup direction="row" gutterSize="xs">
+                <EuiLoadingSpinner size="l" style={{ marginRight: '12px' }} />
+                <EuiText>
+                  <p>Validating model configurations</p>
+                </EuiText>
+              </EuiFlexGroup>
+            </div>
+          }
+          style={{ marginBottom: '10px' }}
+          size="s"
+          color="primary"
+        />
+      );
     }
     if (props.validationError) {
       return null;
@@ -250,31 +257,36 @@ export const ModelConfigurationFields = (
           color="success"
           iconType="check"
           size="s"
-          style={{ marginBottom: '10px' }}>
-        </EuiCallOut>
-      )
-      // makes sure there is a response to display and model configs aren't valid per 
+          style={{ marginBottom: '10px' }}
+        ></EuiCallOut>
+      );
+      // makes sure there is a response to display and model configs aren't valid per
       // validation API
-    } else if (!props.validModel && props.validationFeatureResponse.hasOwnProperty('message')) {
+    } else if (
+      !props.validModel &&
+      props.validationFeatureResponse.hasOwnProperty('message')
+    ) {
       return (
         <EuiCallOut
           title="issues found in the model configuration"
           color="danger"
           iconType="alert"
           size="s"
-          style={{ marginBottom: '10px' }}>
-            {props.validationFeatureResponse.hasOwnProperty('sub_issues') ?
-              handleFeatureAttributesCallout(props.validationFeatureResponse) :
-              <ul>
-                <li>{JSON.stringify(props.validationFeatureResponse.message)}</li>
-              </ul>
-            }
+          style={{ marginBottom: '10px' }}
+        >
+          {props.validationFeatureResponse.hasOwnProperty('sub_issues') ? (
+            handleFeatureAttributesCallout(props.validationFeatureResponse)
+          ) : (
+            <ul>
+              <li>{JSON.stringify(props.validationFeatureResponse.message)}</li>
+            </ul>
+          )}
         </EuiCallOut>
-      )
+      );
     } else {
       return null;
     }
-  }
+  };
   const featureNum = Object.keys(featureAttributes).length;
   return (
     <ContentPanel

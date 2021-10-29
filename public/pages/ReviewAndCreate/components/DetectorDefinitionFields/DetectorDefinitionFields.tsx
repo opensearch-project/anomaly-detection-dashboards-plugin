@@ -23,12 +23,22 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-
 import ContentPanel from '../../../../components/ContentPanel/ContentPanel';
-import { EuiFlexGrid, EuiFlexItem, EuiButton, EuiCallOut, EuiLoadingSpinner, EuiFlexGroup, EuiText } from '@elastic/eui';
+import {
+  EuiFlexGrid,
+  EuiFlexItem,
+  EuiButton,
+  EuiCallOut,
+  EuiLoadingSpinner,
+  EuiFlexGroup,
+  EuiText,
+} from '@elastic/eui';
 import React from 'react';
 import { get } from 'lodash';
-import { Detector, validationSettingResponse } from '../../../../models/interfaces';
+import {
+  Detector,
+  validationSettingResponse,
+} from '../../../../models/interfaces';
 import { FilterDisplayList } from '../FilterDisplayList';
 import { ConfigCell, FixedWidthRow } from '../../../../components/ConfigCell';
 import { toStringConfigCell } from '../../utils/helpers';
@@ -60,21 +70,23 @@ export const DetectorDefinitionFields = (
     //When validation response is loading then displaying loading spinner, don't display
     // after clicking on "create detector" button as isLoading will be true from that request
     if (props.isLoading && !props.isCreatingDetector) {
-      return (<EuiCallOut
-        title={
-          <div>
-            <EuiFlexGroup direction="row" gutterSize="xs">
-              <EuiLoadingSpinner size="l" style={{ marginRight: '12px' }} />
-              <EuiText>
-                <p>Validating detector configurations</p>
-              </EuiText>
-            </EuiFlexGroup>
-          </div>
-        }
-        style={{ marginBottom: '10px' }}
-        size="s"
-        color="primary"
-      />)
+      return (
+        <EuiCallOut
+          title={
+            <div>
+              <EuiFlexGroup direction="row" gutterSize="xs">
+                <EuiLoadingSpinner size="l" style={{ marginRight: '12px' }} />
+                <EuiText>
+                  <p>Validating detector configurations</p>
+                </EuiText>
+              </EuiFlexGroup>
+            </div>
+          }
+          style={{ marginBottom: '10px' }}
+          size="s"
+          color="primary"
+        />
+      );
     }
     // if validationResponse is not undefined and there was no error from validation display one
     // of the callout options.
@@ -88,8 +100,11 @@ export const DetectorDefinitionFields = (
             size="s"
             style={{ marginBottom: '10px' }}
           ></EuiCallOut>
-        )
-      } else if (!props.validDetectorSettings && props.validationResponse.hasOwnProperty('message')) {
+        );
+      } else if (
+        !props.validDetectorSettings &&
+        props.validationResponse.hasOwnProperty('message')
+      ) {
         return (
           <EuiCallOut
             title="Issues found in the detector settings"
@@ -102,15 +117,14 @@ export const DetectorDefinitionFields = (
               <li>{props.validationResponse.message}</li>
             </ul>
           </EuiCallOut>
-        )
+        );
       } else {
         return null;
       }
     }
-  }
+  };
 
   return (
-
     <ContentPanel
       title="Detector settings"
       titleSize="s"
@@ -124,7 +138,7 @@ export const DetectorDefinitionFields = (
         </EuiButton>,
       ]}
     >
-      {props.isCreate ? handleCalloutGeneralLogic(): null}
+      {props.isCreate ? handleCalloutGeneralLogic() : null}
       <EuiFlexGrid columns={0} gutterSize="l" style={{ border: 'none' }}>
         <EuiFlexItem>
           <ConfigCell

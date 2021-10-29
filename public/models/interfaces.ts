@@ -54,7 +54,7 @@ export enum VALIDATION_ISSUE_TYPES {
   FILTER_QUERY = 'filter_query',
   PARSING_ISSUE = 'query_parsing',
   WINDOW_DELAY = 'window_delay',
-  GENERAL_SETTINGS = 'general_settings'
+  GENERAL_SETTINGS = 'general_settings',
 }
 
 export enum OPERATORS_MAP {
@@ -230,8 +230,6 @@ export type DetectionDateRange = {
   endTime: number;
 };
 
-<<<<<<< HEAD
-<<<<<<< HEAD
 export type EntityOption = {
   label: string;
 };
@@ -244,17 +242,13 @@ export type EntityOption = {
 export type EntityOptionsMap = {
   [categoryField: string]: EntityOption[];
 };
-=======
-export type validationFeatureResponse = {
-=======
-export type validationModelResponse = {
->>>>>>> 3678ce7 (loading doesn't display on create anymore, cleaned code, no more parsing exceptions)
-  message: String,
-  sub_issues?: { [key: string]: string}
-}
 
-export interface validationSettingResponse {
-  issueType: string,
-  message: string
+export type ValidationModelResponse = {
+  message: String;
+  sub_issues?: { [key: string]: string };
+};
+
+export interface ValidationSettingResponse {
+  issueType: string;
+  message: string;
 }
->>>>>>> f276f5b (added validate API to routes, redux and added validate check to last step of detector creation)

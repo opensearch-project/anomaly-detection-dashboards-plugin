@@ -270,7 +270,7 @@ export default class AdService {
         },
       });
     }
-  }
+  };
 
   getDetector = async (
     context: RequestHandlerContext,

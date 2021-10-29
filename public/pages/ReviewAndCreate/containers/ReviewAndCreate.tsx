@@ -42,7 +42,7 @@ import {
   getDetectorCount,
   startDetector,
   startHistoricalDetector,
-  validateDetector
+  validateDetector,
 } from '../../../redux/reducers/ad';
 import { Formik, FormikHelpers } from 'formik';
 import { get } from 'lodash';
@@ -64,16 +64,16 @@ import {
 } from '../../../utils/utils';
 import { prettifyErrorMessage } from '../../../../server/utils/helpers';
 import { DetectorScheduleFields } from '../components/DetectorScheduleFields';
-import { validationModelResponse, validationSettingResponse, VALIDATION_ISSUE_TYPES } from '../../../models/interfaces'
+import {
+  validationModelResponse,
+  validationSettingResponse,
+  VALIDATION_ISSUE_TYPES,
+} from '../../../models/interfaces';
 
 interface ReviewAndCreateProps extends RouteComponentProps {
   setStep(stepNumber: number): void;
   values: CreateDetectorFormikValues;
 }
-
-
-
-
 
 export function ReviewAndCreate(props: ReviewAndCreateProps) {
   const core = React.useContext(CoreServicesContext) as CoreStart;
@@ -81,19 +81,19 @@ export function ReviewAndCreate(props: ReviewAndCreateProps) {
   useHideSideNavBar(true, false);
 
   const [validDetectorSettings, setValidDetectorSettings] = useState(false);
-  const [validModelConfigurations, setValidModelConfigurations] = useState(false);
+  const [validModelConfigurations, setValidModelConfigurations] =
+    useState(false);
   const [validationError, setValidationError] = useState(false);
-  const [settingsResponse, setDetectorMessageResponse] = useState<validationSettingResponse>({} as validationSettingResponse);
-  const [featureResponse, setFeatureResponse] = useState<validationModelResponse>({} as validationModelResponse);
+  const [settingsResponse, setDetectorMessageResponse] =
+    useState<validationSettingResponse>({} as validationSettingResponse);
+  const [featureResponse, setFeatureResponse] =
+    useState<validationModelResponse>({} as validationModelResponse);
   const [isCreatingDetector, setIsCreatingDetector] = useState(false);
-  const isLoading = useSelector(
-    (state: AppState) => state.ad.requesting
-  );
+  const isLoading = useSelector((state: AppState) => state.ad.requesting);
 
   // Jump to top of page on first load
   useEffect(() => {
     scroll(0, 0);
-
   }, []);
 
   useEffect(() => {
@@ -106,17 +106,20 @@ export function ReviewAndCreate(props: ReviewAndCreateProps) {
           if (resp.response.hasOwnProperty('detector')) {
             const issueType = Object.keys(resp.response.detector)[0];
             if (resp.response.detector[issueType].hasOwnProperty('message')) {
-              const validationMessage = resp.response.detector[issueType].message;
+              const validationMessage =
+                resp.response.detector[issueType].message;
               const detectorSettingIssue: validationSettingResponse = {
                 issueType: issueType,
-                message: validationMessage
-              }
+                message: validationMessage,
+              };
               switch (issueType) {
-                case VALIDATION_ISSUE_TYPES.FEATURE_ATTRIBUTES: 
-                case VALIDATION_ISSUE_TYPES.CATEGORY: 
+                case VALIDATION_ISSUE_TYPES.FEATURE_ATTRIBUTES:
+                case VALIDATION_ISSUE_TYPES.CATEGORY:
                 case VALIDATION_ISSUE_TYPES.SHINGLE_SIZE_FIELD:
-                  const modelResp = resp.response.detector[issueType] as validationModelResponse;
-                  setFeatureResponse(modelResp)
+                  const modelResp = resp.response.detector[
+                    issueType
+                  ] as validationModelResponse;
+                  setFeatureResponse(modelResp);
                   setValidDetectorSettings(true);
                   setValidModelConfigurations(false);
                   break;
@@ -125,7 +128,7 @@ export function ReviewAndCreate(props: ReviewAndCreateProps) {
                 default:
                   setValidModelConfigurations(true);
                   setValidDetectorSettings(false);
-                  setDetectorMessageResponse(detectorSettingIssue)
+                  setDetectorMessageResponse(detectorSettingIssue);
               }
             }
           }
@@ -135,16 +138,11 @@ export function ReviewAndCreate(props: ReviewAndCreateProps) {
         setValidationError(true);
         core.notifications.toasts.addDanger(
           prettifyErrorMessage(
-            getErrorMessage(
-              err,
-              'There was a problem validating the detector'
-            )
+            getErrorMessage(err, 'There was a problem validating the detector')
           )
         );
       });
   }, []); // <-- Have to pass in [] here!
-
-
 
   useEffect(() => {
     core.chrome.setBreadcrumbs([
@@ -226,8 +224,8 @@ export function ReviewAndCreate(props: ReviewAndCreateProps) {
             if (totalDetectors === MAX_DETECTORS) {
               core.notifications.toasts.addDanger(
                 'Cannot create detector - limit of ' +
-                MAX_DETECTORS +
-                ' detectors reached'
+                  MAX_DETECTORS +
+                  ' detectors reached'
               );
             } else {
               core.notifications.toasts.addDanger(
