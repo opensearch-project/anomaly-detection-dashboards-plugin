@@ -39,14 +39,14 @@ import { FeaturesFormikValues } from '../../ConfigureModel/models/interfaces';
 import { CreateDetectorFormikValues } from '../../CreateDetectorSteps/models/interfaces';
 import { OPERATORS_QUERY_MAP } from '../../DefineDetector/utils/whereFilters';
 import { convertTimestampToNumber } from '../../../utils/utils';
-import { CUSTOM_AD_RESULT_INDEX_PREFIX } from '../../../../server/utils/constants'
+import { CUSTOM_AD_RESULT_INDEX_PREFIX } from '../../../../server/utils/constants';
 
 export function formikToDetector(values: CreateDetectorFormikValues): Detector {
   const detectionDateRange = values.historical
     ? {
-      startTime: convertTimestampToNumber(values.startTime),
-      endTime: convertTimestampToNumber(values.endTime),
-    }
+        startTime: convertTimestampToNumber(values.startTime),
+        endTime: convertTimestampToNumber(values.endTime),
+      }
     : undefined;
   var resultIndex = values.resultIndex;
   if (resultIndex && resultIndex.trim().length > 0) {
@@ -134,8 +134,8 @@ export function formikToFeatureAttributes(
     const id = forPreview
       ? value.featureId
       : value.newFeature
-        ? undefined
-        : value.featureId;
+      ? undefined
+      : value.featureId;
     return {
       featureId: id,
       featureName: value.featureName,
@@ -176,10 +176,10 @@ export function formikToAggregation(values: FeaturesFormikValues) {
       values.aggregationOf &&
       values.aggregationOf.length > 0
       ? {
-        [snakeCase(values.featureName)]: {
-          [values.aggregationBy]: { field: values.aggregationOf[0].label },
-        },
-      }
+          [snakeCase(values.featureName)]: {
+            [values.aggregationBy]: { field: values.aggregationOf[0].label },
+          },
+        }
       : {};
   }
   return JSON.parse(values.aggregationQuery);

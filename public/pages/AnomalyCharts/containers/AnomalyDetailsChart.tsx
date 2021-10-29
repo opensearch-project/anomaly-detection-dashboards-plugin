@@ -143,9 +143,9 @@ export const AnomalyDetailsChart = React.memo(
     const [selectedAggId, setSelectedAggId] = useState<ANOMALY_AGG>(
       ANOMALY_AGG.RAW
     );
-    const [disabledAggsMap, setDisabledAggsMap] = useState<
-      { [key in ANOMALY_AGG]: boolean }
-    >({
+    const [disabledAggsMap, setDisabledAggsMap] = useState<{
+      [key in ANOMALY_AGG]: boolean;
+    }>({
       raw: false,
       day: true,
       week: true,
@@ -249,10 +249,10 @@ export const AnomalyDetailsChart = React.memo(
             const newAggId =
               (numDailyBuckets > MAX_HISTORICAL_AGG_RESULTS &&
                 selectedAggId === ANOMALY_AGG.DAILY) ||
-                (numWeeklyBuckets > MAX_HISTORICAL_AGG_RESULTS &&
-                  selectedAggId === ANOMALY_AGG.WEEKLY) ||
-                (numMonthlyBuckets > MAX_HISTORICAL_AGG_RESULTS &&
-                  selectedAggId === ANOMALY_AGG.MONTHLY)
+              (numWeeklyBuckets > MAX_HISTORICAL_AGG_RESULTS &&
+                selectedAggId === ANOMALY_AGG.WEEKLY) ||
+              (numMonthlyBuckets > MAX_HISTORICAL_AGG_RESULTS &&
+                selectedAggId === ANOMALY_AGG.MONTHLY)
                 ? ANOMALY_AGG.RAW
                 : (selectedAggId as ANOMALY_AGG);
             setSelectedAggId(newAggId);
@@ -290,8 +290,8 @@ export const AnomalyDetailsChart = React.memo(
       setAnomalySummary(
         !props.bucketizedAnomalies
           ? getAnomalySummary(
-            filterWithDateRange(props.anomalies, zoomRange, 'plotTime')
-          )
+              filterWithDateRange(props.anomalies, zoomRange, 'plotTime')
+            )
           : props.anomalySummary
       );
       setTotalAlerts(
@@ -517,7 +517,7 @@ export const AnomalyDetailsChart = React.memo(
                     theme={ANOMALY_CHART_THEME}
                   />
                   {(props.isHCDetector && !props.selectedHeatmapCell) ||
-                    props.isHistorical ? null : (
+                  props.isHistorical ? null : (
                     <RectAnnotation
                       dataValues={disabledHistoryAnnotations(
                         zoomRange,

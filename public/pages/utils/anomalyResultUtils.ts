@@ -106,7 +106,7 @@ export const getLiveAnomalyResults = (
   detectorId: string,
   detectionInterval: number,
   intervals: number,
-  resultIndex: string,
+  resultIndex: string
 ) => {
   const queryParams = getQueryParamsForLiveAnomalyResults(
     detectionInterval,
@@ -1105,9 +1105,10 @@ export const getTopAnomalousEntitiesQuery = (
                           bucket_sort: {
                             sort: [
                               {
-                                [`${TOP_ANOMALY_GRADE_SORT_AGGS}.${MAX_ANOMALY_AGGS}`]: {
-                                  order: SORT_DIRECTION.DESC,
-                                },
+                                [`${TOP_ANOMALY_GRADE_SORT_AGGS}.${MAX_ANOMALY_AGGS}`]:
+                                  {
+                                    order: SORT_DIRECTION.DESC,
+                                  },
                               },
                             ],
                           },

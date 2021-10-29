@@ -102,28 +102,28 @@ export const AnomalyResultsLiveChart = (
   const endDateTime = moment();
   const anomalies = !firstLoading
     ? prepareDataForLiveChart(
-      liveAnomalyResults.liveAnomalies,
-      {
-        startDate: startDateTime.valueOf(),
-        endDate: endDateTime.valueOf(),
-      },
-      get(props.detector, 'detectionInterval.period.interval', 1)
-    )
+        liveAnomalyResults.liveAnomalies,
+        {
+          startDate: startDateTime.valueOf(),
+          endDate: endDateTime.valueOf(),
+        },
+        get(props.detector, 'detectionInterval.period.interval', 1)
+      )
     : [];
 
   const annotations = liveAnomalyResults
     ? get(liveAnomalyResults, 'liveAnomalies', [])
-      //@ts-ignore
-      .filter((anomaly: AnomalyData) => anomaly.anomalyGrade > 0)
-      .map((anomaly: AnomalyData) => ({
-        coordinates: {
-          x0: anomaly.startTime + (anomaly.endTime - anomaly.startTime) * 0.5,
-          x1: anomaly.endTime - (anomaly.endTime - anomaly.startTime) * 0.5,
-          y0: 0,
-          y1: anomaly.anomalyGrade,
-        },
-        details: `${JSON.stringify(anomaly)}`,
-      }))
+        //@ts-ignore
+        .filter((anomaly: AnomalyData) => anomaly.anomalyGrade > 0)
+        .map((anomaly: AnomalyData) => ({
+          coordinates: {
+            x0: anomaly.startTime + (anomaly.endTime - anomaly.startTime) * 0.5,
+            x1: anomaly.endTime - (anomaly.endTime - anomaly.startTime) * 0.5,
+            y0: 0,
+            y1: anomaly.anomalyGrade,
+          },
+          details: `${JSON.stringify(anomaly)}`,
+        }))
     : [];
 
   const timeFormatter = niceTimeFormatter([
@@ -138,14 +138,16 @@ export const AnomalyResultsLiveChart = (
       detectorId: string,
       detectionInterval: number,
       intervals: number,
-      resultIndex: string,
+      resultIndex: string
     ) {
       try {
         const queryParams = getQueryParamsForLiveAnomalyResults(
           detectionInterval,
           intervals
         );
-        await dispatch(getDetectorLiveResults(detectorId, queryParams, false, resultIndex));
+        await dispatch(
+          getDetectorLiveResults(detectorId, queryParams, false, resultIndex)
+        );
       } catch (err) {
         console.error(
           `Failed to get live anomaly result for detector ${detectorId}`,
@@ -164,18 +166,15 @@ export const AnomalyResultsLiveChart = (
         LIVE_CHART_CONFIG.MONITORING_INTERVALS,
         resultIndex
       );
-      const intervalId = setInterval(
-        () => {
-          getLiveAnomalyResults(
-            dispatch,
-            props.detector.id,
-            detectionInterval,
-            LIVE_CHART_CONFIG.MONITORING_INTERVALS,
-            resultIndex
-          )
-        },
-        LIVE_CHART_CONFIG.REFRESH_INTERVAL_IN_SECONDS
-      );
+      const intervalId = setInterval(() => {
+        getLiveAnomalyResults(
+          dispatch,
+          props.detector.id,
+          detectionInterval,
+          LIVE_CHART_CONFIG.MONITORING_INTERVALS,
+          resultIndex
+        );
+      }, LIVE_CHART_CONFIG.REFRESH_INTERVAL_IN_SECONDS);
       return () => {
         clearInterval(intervalId);
       };
@@ -292,14 +291,16 @@ export const AnomalyResultsLiveChart = (
             ) : (
               <EuiFlexItem grow={true} style={{ marginRight: '0px' }}>
                 {get(liveAnomalyResults, 'liveAnomalies', []).length === 0 ||
-                  !latestAnomalyGrade ? (
+                !latestAnomalyGrade ? (
                   <EuiCallOut
                     color="success"
                     size="s"
-                    title={`No anomalies found during the last ${LIVE_CHART_CONFIG.MONITORING_INTERVALS
-                      } intervals (${LIVE_CHART_CONFIG.MONITORING_INTERVALS *
+                    title={`No anomalies found during the last ${
+                      LIVE_CHART_CONFIG.MONITORING_INTERVALS
+                    } intervals (${
+                      LIVE_CHART_CONFIG.MONITORING_INTERVALS *
                       props.detector.detectionInterval.period.interval
-                      } minutes).`}
+                    } minutes).`}
                     style={{
                       width: '97%', // ensure width reaches NOW line
                     }}
@@ -360,17 +361,18 @@ export const AnomalyResultsLiveChart = (
                   props.detector,
                   'detectionInterval.period.interval',
                   ''
-                )} ${get(props.detector, 'detectionInterval.period.interval', 0) >
-                    1
+                )} ${
+                  get(props.detector, 'detectionInterval.period.interval', 0) >
+                  1
                     ? get(
-                      props.detector,
-                      'detectionInterval.period.unit',
-                      ''
-                    ).toLowerCase()
+                        props.detector,
+                        'detectionInterval.period.unit',
+                        ''
+                      ).toLowerCase()
                     : get(props.detector, 'detectionInterval.period.unit', '')
-                      .toLowerCase()
-                      .slice(0, -1)
-                  }`}
+                        .toLowerCase()
+                        .slice(0, -1)
+                }`}
                 description="Detector interval"
                 titleSize="s"
               />
@@ -397,10 +399,11 @@ export const AnomalyResultsLiveChart = (
         ) : (
           <EuiText>
             {'Not available when the detector ' +
-              `${props.detector.curState === DETECTOR_STATE.INIT_FAILURE ||
+              `${
+                props.detector.curState === DETECTOR_STATE.INIT_FAILURE ||
                 props.detector.curState === DETECTOR_STATE.UNEXPECTED_FAILURE
-                ? 'initialization has failed.'
-                : `is ${props.detector.curState.toLowerCase()}.`
+                  ? 'initialization has failed.'
+                  : `is ${props.detector.curState.toLowerCase()}.`
               }`}
           </EuiText>
         )}

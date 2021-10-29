@@ -36,7 +36,7 @@ import { Router } from '../router';
 import {
   SORT_DIRECTION,
   AD_DOC_FIELDS,
-  CUSTOM_AD_RESULT_INDEX_PREFIX
+  CUSTOM_AD_RESULT_INDEX_PREFIX,
 } from '../utils/constants';
 import {
   mapKeysDeep,
@@ -78,11 +78,17 @@ export function registerADRoutes(apiRouter: Router, adService: AdService) {
   apiRouter.put('/detectors/{detectorId}', adService.putDetector);
   apiRouter.post('/detectors/_search', adService.searchDetector);
   apiRouter.post('/detectors/results/_search', adService.searchResults);
-  apiRouter.post('/detectors/results/_search/{resultIndex}', adService.searchResults);
+  apiRouter.post(
+    '/detectors/results/_search/{resultIndex}',
+    adService.searchResults
+  );
   apiRouter.get('/detectors/{detectorId}', adService.getDetector);
   apiRouter.get('/detectors', adService.getDetectors);
   apiRouter.post('/detectors/preview', adService.previewDetector);
-  apiRouter.get('/detectors/{id}/results/{isHistorical}/{resultIndex}', adService.getAnomalyResults);
+  apiRouter.get(
+    '/detectors/{id}/results/{isHistorical}/{resultIndex}',
+    adService.getAnomalyResults
+  );
   apiRouter.get(
     '/detectors/{id}/results/{isHistorical}',
     adService.getAnomalyResults
@@ -472,8 +478,11 @@ export default class AdService {
   ): Promise<IOpenSearchDashboardsResponse<any>> => {
     try {
       var { resultIndex } = request.params as { resultIndex: string };
-      if(!resultIndex || !resultIndex.startsWith(CUSTOM_AD_RESULT_INDEX_PREFIX)){
-        resultIndex = ''
+      if (
+        !resultIndex ||
+        !resultIndex.startsWith(CUSTOM_AD_RESULT_INDEX_PREFIX)
+      ) {
+        resultIndex = '';
       }
       let requestParams = { resultIndex: resultIndex } as {};
       const requestBody = JSON.stringify(request.body);
@@ -587,7 +596,9 @@ export default class AdService {
 
       //Given each detector from previous result, get aggregation to power list
       const allDetectorIds = Object.keys(allDetectorsMap);
-      let requestParams = { resultIndex: CUSTOM_AD_RESULT_INDEX_PREFIX + '*' } as {};
+      let requestParams = {
+        resultIndex: CUSTOM_AD_RESULT_INDEX_PREFIX + '*',
+      } as {};
       const aggregationResult = await this.client
         .asScoped(request)
         .callAsCurrentUser('ad.searchResults', {
@@ -737,8 +748,11 @@ export default class AdService {
       isHistorical: any;
       resultIndex: string;
     };
-    if(!resultIndex || !resultIndex.startsWith(CUSTOM_AD_RESULT_INDEX_PREFIX)){
-      resultIndex = ''
+    if (
+      !resultIndex ||
+      !resultIndex.startsWith(CUSTOM_AD_RESULT_INDEX_PREFIX)
+    ) {
+      resultIndex = '';
     }
     isHistorical = JSON.parse(isHistorical);
 

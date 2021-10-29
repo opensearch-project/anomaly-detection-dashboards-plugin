@@ -144,26 +144,21 @@ export const AnomalyHistory = (props: AnomalyHistoryProps) => {
   const [selectedTabId, setSelectedTabId] = useState<string>(
     ANOMALY_HISTORY_TABS.ANOMALY_OCCURRENCE
   );
-  const [isLoadingAnomalyResults, setIsLoadingAnomalyResults] = useState<
-    boolean
-  >(false);
-  const [bucketizedAnomalyResults, setBucketizedAnomalyResults] = useState<
-    Anomalies
-  >();
+  const [isLoadingAnomalyResults, setIsLoadingAnomalyResults] =
+    useState<boolean>(false);
+  const [bucketizedAnomalyResults, setBucketizedAnomalyResults] =
+    useState<Anomalies>();
   const [pureAnomalies, setPureAnomalies] = useState<AnomalyData[]>([]);
-  const [bucketizedAnomalySummary, setBucketizedAnomalySummary] = useState<
-    AnomalySummary
-  >(INITIAL_ANOMALY_SUMMARY);
+  const [bucketizedAnomalySummary, setBucketizedAnomalySummary] =
+    useState<AnomalySummary>(INITIAL_ANOMALY_SUMMARY);
 
   const [selectedHeatmapCell, setSelectedHeatmapCell] = useState<HeatmapCell>();
 
-  const [entityAnomalySummaries, setEntityAnomalySummaries] = useState<
-    EntityAnomalySummaries[]
-  >();
+  const [entityAnomalySummaries, setEntityAnomalySummaries] =
+    useState<EntityAnomalySummaries[]>();
 
-  const [heatmapDisplayOption, setHeatmapDisplayOption] = useState<
-    HeatmapDisplayOption
-  >(INITIAL_HEATMAP_DISPLAY_OPTION);
+  const [heatmapDisplayOption, setHeatmapDisplayOption] =
+    useState<HeatmapDisplayOption>(INITIAL_HEATMAP_DISPLAY_OPTION);
 
   const detectorCategoryField = get(props.detector, 'categoryField', []);
   const isHCDetector = !isEmpty(detectorCategoryField);
@@ -262,22 +257,26 @@ export const AnomalyHistory = (props: AnomalyHistoryProps) => {
     try {
       const params = buildParamsForGetAnomalyResultsWithDateRange(
         dateRange.startDate -
-        // for non HC detector, rawData is used for feature missing check
-        // which needs window offset for time range.
-        // But it is not needed for HC detector
-        (isHCDetector
-          ? 0
-          : FEATURE_DATA_CHECK_WINDOW_OFFSET *
-          detectorInterval *
-          MIN_IN_MILLI_SECS),
+          // for non HC detector, rawData is used for feature missing check
+          // which needs window offset for time range.
+          // But it is not needed for HC detector
+          (isHCDetector
+            ? 0
+            : FEATURE_DATA_CHECK_WINDOW_OFFSET *
+              detectorInterval *
+              MIN_IN_MILLI_SECS),
         dateRange.endDate,
         // get anomaly only data if HC detector
         isHCDetector
       );
       const resultIndex = get(props, 'detector.resultIndex', '');
       const detectorResultResponse = props.isHistorical
-        ? await dispatch(getDetectorResults(taskId.current || '', params, true, resultIndex))
-        : await dispatch(getDetectorResults(props.detector.id, params, false, resultIndex));
+        ? await dispatch(
+            getDetectorResults(taskId.current || '', params, true, resultIndex)
+          )
+        : await dispatch(
+            getDetectorResults(props.detector.id, params, false, resultIndex)
+          );
       const rawAnomaliesData = get(detectorResultResponse, 'response', []);
       const rawAnomaliesResult = {
         anomalies: get(rawAnomaliesData, 'results', []),
@@ -449,9 +448,8 @@ export const AnomalyHistory = (props: AnomalyHistoryProps) => {
   };
   const [atomicAnomalyResults, setAtomicAnomalyResults] = useState<Anomalies>();
   const [rawAnomalyResults, setRawAnomalyResults] = useState<Anomalies>();
-  const [hcDetectorAnomalyResults, setHCDetectorAnomalyResults] = useState<
-    Anomalies
-  >();
+  const [hcDetectorAnomalyResults, setHCDetectorAnomalyResults] =
+    useState<Anomalies>();
 
   const anomalyResults = bucketizedAnomalyResults
     ? bucketizedAnomalyResults
@@ -496,19 +494,20 @@ export const AnomalyHistory = (props: AnomalyHistoryProps) => {
 
   const annotations = anomalyResults
     ? get(anomalyResults, 'anomalies', [])
-      //@ts-ignore
-      .filter((anomaly: AnomalyData) => anomaly.anomalyGrade > 0)
-      .map((anomaly: AnomalyData) => ({
-        coordinates: {
-          x0: anomaly.startTime,
-          x1: anomaly.endTime,
-        },
-        details: `There is an anomaly with confidence ${anomaly.confidence
+        //@ts-ignore
+        .filter((anomaly: AnomalyData) => anomaly.anomalyGrade > 0)
+        .map((anomaly: AnomalyData) => ({
+          coordinates: {
+            x0: anomaly.startTime,
+            x1: anomaly.endTime,
+          },
+          details: `There is an anomaly with confidence ${
+            anomaly.confidence
           } between ${minuteDateFormatter(
             anomaly.startTime
           )} and ${minuteDateFormatter(anomaly.endTime)}`,
-        entity: get(anomaly, 'entity', []),
-      }))
+          entity: get(anomaly, 'entity', []),
+        }))
     : [];
 
   const tabs = [
@@ -568,31 +567,31 @@ export const AnomalyHistory = (props: AnomalyHistoryProps) => {
         <div style={{ padding: '20px' }}>
           {isHCDetector
             ? [
-              <AnomalyOccurrenceChart
-                title={
-                  selectedHeatmapCell
-                    ? getHCTitle(selectedHeatmapCell.entityList)
-                    : '-'
-                }
-                dateRange={dateRange}
-                onDateRangeChange={handleDateRangeChange}
-                onZoomRangeChange={handleZoomChange}
-                anomalies={anomalyResults ? anomalyResults.anomalies : []}
-                bucketizedAnomalies={bucketizedAnomalyResults !== undefined}
-                anomalySummary={bucketizedAnomalySummary}
-                isLoading={isLoading || isLoadingAnomalyResults}
-                anomalyGradeSeriesName="Anomaly grade"
-                confidenceSeriesName="Confidence"
-                showAlerts={true}
-                isNotSample={true}
-                detector={props.detector}
-                monitor={props.monitor}
-                isHCDetector={isHCDetector}
-                isHistorical={props.isHistorical}
-                selectedHeatmapCell={selectedHeatmapCell}
-              />,
-              <EuiSpacer size="m" />,
-            ]
+                <AnomalyOccurrenceChart
+                  title={
+                    selectedHeatmapCell
+                      ? getHCTitle(selectedHeatmapCell.entityList)
+                      : '-'
+                  }
+                  dateRange={dateRange}
+                  onDateRangeChange={handleDateRangeChange}
+                  onZoomRangeChange={handleZoomChange}
+                  anomalies={anomalyResults ? anomalyResults.anomalies : []}
+                  bucketizedAnomalies={bucketizedAnomalyResults !== undefined}
+                  anomalySummary={bucketizedAnomalySummary}
+                  isLoading={isLoading || isLoadingAnomalyResults}
+                  anomalyGradeSeriesName="Anomaly grade"
+                  confidenceSeriesName="Confidence"
+                  showAlerts={true}
+                  isNotSample={true}
+                  detector={props.detector}
+                  monitor={props.monitor}
+                  isHCDetector={isHCDetector}
+                  isHistorical={props.isHistorical}
+                  selectedHeatmapCell={selectedHeatmapCell}
+                />,
+                <EuiSpacer size="m" />,
+              ]
             : null}
           <EuiTabs>{renderTabs()}</EuiTabs>
 
@@ -636,10 +635,10 @@ export const AnomalyHistory = (props: AnomalyHistoryProps) => {
                       bucketizedAnomalyResults === undefined
                         ? anomalyResults
                           ? filterWithDateRange(
-                            anomalyResults.anomalies,
-                            zoomRange,
-                            'plotTime'
-                          )
+                              anomalyResults.anomalies,
+                              zoomRange,
+                              'plotTime'
+                            )
                           : []
                         : pureAnomalies,
                       selectedHeatmapCell,

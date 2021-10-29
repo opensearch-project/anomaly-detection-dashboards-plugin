@@ -65,7 +65,11 @@ import {
   getLatestAnomalyResultsForDetectorsByTimeRange,
   getLatestAnomalyResultsByTimeRange,
 } from '../utils/utils';
-import { MAX_ANOMALIES, SPACE_STR, CUSTOM_AD_RESULT_INDEX_PREFIX } from '../../../utils/constants';
+import {
+  MAX_ANOMALIES,
+  SPACE_STR,
+  CUSTOM_AD_RESULT_INDEX_PREFIX,
+} from '../../../utils/constants';
 import { searchResults } from '../../../redux/reducers/anomalyResults';
 
 export interface AnomaliesLiveChartProps {
@@ -97,10 +101,8 @@ export const AnomaliesLiveChart = (props: AnomaliesLiveChartProps) => {
 
   const [hasLatestAnomalyResult, setHasLatestAnomalyResult] = useState(true);
 
-  const [
-    latestAnomalousDetectorsCount,
-    setLatestLiveAnomalousDetectorsCount,
-  ] = useState(0);
+  const [latestAnomalousDetectorsCount, setLatestLiveAnomalousDetectorsCount] =
+    useState(0);
 
   const getLiveAnomalyResults = async () => {
     setIsLoadingAnomalies(true);
@@ -129,17 +131,18 @@ export const AnomaliesLiveChart = (props: AnomaliesLiveChartProps) => {
     setHasLatestAnomalyResult(!isEmpty(latestSingleLiveAnomalyResult));
 
     // get anomalies(anomaly_grade>0) in last 30mins
-    const latestLiveAnomalyResult = await getLatestAnomalyResultsForDetectorsByTimeRange(
-      searchResults,
-      props.selectedDetectors,
-      '30m',
-      dispatch,
-      0,
-      MAX_ANOMALIES,
-      MAX_LIVE_DETECTORS,
-      false,
-      CUSTOM_AD_RESULT_INDEX_PREFIX + '*'
-    );
+    const latestLiveAnomalyResult =
+      await getLatestAnomalyResultsForDetectorsByTimeRange(
+        searchResults,
+        props.selectedDetectors,
+        '30m',
+        dispatch,
+        0,
+        MAX_ANOMALIES,
+        MAX_LIVE_DETECTORS,
+        false,
+        CUSTOM_AD_RESULT_INDEX_PREFIX + '*'
+      );
 
     setLiveAnomalyData(latestLiveAnomalyResult);
 
@@ -298,10 +301,10 @@ export const AnomaliesLiveChart = (props: AnomaliesLiveChartProps) => {
                     ? '-'
                     : get(lastAnomalyResult, AD_DOC_FIELDS.ANOMALY_GRADE, 0) <
                       SHOW_DECIMAL_NUMBER_THRESHOLD
-                      ? Number(
+                    ? Number(
                         get(lastAnomalyResult, AD_DOC_FIELDS.ANOMALY_GRADE, 0)
                       ).toExponential(2)
-                      : Number(
+                    : Number(
                         get(lastAnomalyResult, AD_DOC_FIELDS.ANOMALY_GRADE, 0)
                       ).toFixed(2)
                 }

@@ -94,19 +94,22 @@ export const getDetectorResults = (
   id: string,
   queryParams: any,
   isHistorical: boolean,
-  resultIndex: string,
+  resultIndex: string
 ): APIAction => ({
   type: DETECTOR_RESULTS,
   request: (client: HttpSetup) =>
-    client.get(`..${AD_NODE_API.DETECTOR}/${id}/results/${isHistorical}/${resultIndex}`, {
-      query: queryParams,
-    }),
+    client.get(
+      `..${AD_NODE_API.DETECTOR}/${id}/results/${isHistorical}/${resultIndex}`,
+      {
+        query: queryParams,
+      }
+    ),
 });
 
 //ylwu check why result index not passed in
 export const searchResults = (
   requestBody: any,
-  resultIndex: string,
+  resultIndex: string
 ): APIAction => ({
   type: SEARCH_ANOMALY_RESULTS,
   request: (client: HttpSetup) =>

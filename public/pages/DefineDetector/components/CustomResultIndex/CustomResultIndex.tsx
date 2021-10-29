@@ -17,7 +17,7 @@ import {
   EuiTitle,
   EuiFieldText,
   EuiCallOut,
-  EuiSpacer
+  EuiSpacer,
 } from '@elastic/eui';
 import { Field, FieldProps } from 'formik';
 import React, { useState, useEffect } from 'react';
@@ -32,9 +32,7 @@ interface CustomResultIndexProps {
 }
 
 function CustomResultIndex(props: CustomResultIndexProps) {
-  const [showResultIndex, setShowResultIndex] = useState<boolean>(
-    false
-  );
+  const [showResultIndex, setShowResultIndex] = useState<boolean>(false);
 
   useEffect(() => {
     // show result index when update detector or go back to creation page after setting result index.
@@ -56,12 +54,12 @@ function CustomResultIndex(props: CustomResultIndexProps) {
             }}
           >
             <EuiLink>{showResultIndex ? 'Hide' : 'Show'}</EuiLink>
-
           </EuiText>
         </EuiFlexGroup>
       }
       titleSize="s"
-      hideBody={!showResultIndex}>
+      hideBody={!showResultIndex}
+    >
       {props.isEdit ? (
         <EuiFlexItem>
           <EuiCallOut
@@ -84,7 +82,7 @@ function CustomResultIndex(props: CustomResultIndexProps) {
         </EuiFlexItem>
       )}
       <EuiSpacer size="m" />
-      <Field name="resultIndex" >
+      <Field name="resultIndex">
         {({ field, form }: FieldProps) => (
           <FormattedFormRow
             title="Result index field"
@@ -98,7 +96,7 @@ function CustomResultIndex(props: CustomResultIndexProps) {
             <EuiFieldText
               id="resultIndex"
               placeholder="Enter result index name"
-              prepend={props.isEdit ? "" : CUSTOM_AD_RESULT_INDEX_PREFIX}
+              prepend={props.isEdit ? '' : CUSTOM_AD_RESULT_INDEX_PREFIX}
               disabled={props.isEdit}
               {...field}
             />

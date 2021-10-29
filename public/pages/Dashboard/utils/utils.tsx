@@ -522,7 +522,7 @@ export const getLatestAnomalyResultsForDetectorsByTimeRange = async (
   anomalySize: number,
   detectorNum: number,
   checkLastIndexOnly: boolean,
-  resultIndex: string,
+  resultIndex: string
 ): Promise<object[]> => {
   const detectorAndIdMap = buildDetectorAndIdMap(selectedDetectors);
   let from = 0;

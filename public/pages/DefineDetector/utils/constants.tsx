@@ -37,14 +37,15 @@ export const EMPTY_UI_FILTER: UIFilter = {
   label: '',
 };
 
-export const INITIAL_DETECTOR_DEFINITION_VALUES: DetectorDefinitionFormikValues = {
-  name: '',
-  description: '',
-  index: [],
-  filters: [],
-  filterQuery: JSON.stringify({ bool: { filter: [] } }, null, 4),
-  timeField: '',
-  interval: 10,
-  windowDelay: 1,
-  resultIndex: undefined
-};
+export const INITIAL_DETECTOR_DEFINITION_VALUES: DetectorDefinitionFormikValues =
+  {
+    name: '',
+    description: '',
+    index: [],
+    filters: [],
+    filterQuery: JSON.stringify({ bool: { filter: [] } }, null, 4),
+    timeField: '',
+    interval: 10,
+    windowDelay: 1,
+    resultIndex: undefined,
+  };

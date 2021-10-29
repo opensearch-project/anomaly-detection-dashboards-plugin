@@ -74,7 +74,7 @@ export const getDetectorLiveResults = (
   detectorId: string,
   queryParams: DetectorResultsQueryParams,
   isHistorical: boolean,
-  resultIndex: string,
+  resultIndex: string
 ): APIAction => ({
   type: DETECTOR_LIVE_RESULTS,
   request: (client: HttpSetup) =>

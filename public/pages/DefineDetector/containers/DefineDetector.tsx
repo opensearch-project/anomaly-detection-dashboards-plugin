@@ -241,7 +241,7 @@ export const DefineDetector = (props: DefineDetectorProps) => {
           : detectorDefinitionToFormik(detector)
       }
       enableReinitialize={true}
-      onSubmit={() => { }}
+      onSubmit={() => {}}
       validateOnMount={props.isEdit ? false : true}
     >
       {(formikProps) => (
@@ -284,7 +284,10 @@ export const DefineDetector = (props: DefineDetectorProps) => {
                 <EuiSpacer />
                 <Settings />
                 <EuiSpacer />
-                <CustomResultIndex isEdit={props.isEdit} resultIndex={get(formikProps, 'values.resultIndex')} />
+                <CustomResultIndex
+                  isEdit={props.isEdit}
+                  resultIndex={get(formikProps, 'values.resultIndex')}
+                />
               </Fragment>
             </EuiPageBody>
           </EuiPage>
