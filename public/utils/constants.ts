@@ -68,9 +68,6 @@ export const ANOMALY_RESULT_INDEX = '.opendistro-anomaly-results';
 
 export const BASE_DOCS_LINK = 'https://opensearch.org/docs/monitoring-plugins';
 
-export const ISM_PLUGIN_DOC_LINE =
-  'https://opensearch.org/docs/latest/im-plugin/index';
-
 export const MAX_DETECTORS = 1000;
 
 export const MAX_ANOMALIES = 10000;
@@ -82,9 +79,13 @@ export const MAX_FEATURE_NUM = 5;
 
 export const MAX_FEATURE_NAME_SIZE = 64;
 
+// OpenSearch max index name szie is 255
+export const MAX_INDEX_NAME_SIZE = 255;
+
 export const MAX_CATEGORY_FIELD_NUM = 2;
 
 export const NAME_REGEX = RegExp('^[a-zA-Z0-9._-]+$');
+export const INDEX_NAME_REGEX = RegExp('^[a-z0-9._-]+$');
 
 //https://github.com/opensearch-project/anomaly-detection/blob/main/src/main/java/com/amazon/opendistroforelasticsearch/ad/settings/AnomalyDetectorSettings.java
 export const DEFAULT_SHINGLE_SIZE = 8;

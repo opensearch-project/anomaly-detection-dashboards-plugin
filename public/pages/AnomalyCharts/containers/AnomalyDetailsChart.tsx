@@ -164,13 +164,14 @@ export const AnomalyDetailsChart = React.memo(
       (state: AppState) => state.anomalyResults.requesting
     );
 
+    const resultIndex = get(props, 'detector.resultIndex', '');
+
     const getAggregatedAnomalies = async () => {
       const anomalyDataRangeQuery = getAnomalyDataRangeQuery(
         zoomRange.startDate,
         zoomRange.endDate,
         taskId
       );
-      const resultIndex = get(props, 'detector.resultIndex', '');
       dispatch(searchResults(anomalyDataRangeQuery, resultIndex))
         .then((response: any) => {
           // Only retrieve buckets that are in the anomaly results range. This is so
@@ -226,7 +227,6 @@ export const AnomalyDetailsChart = React.memo(
           zoomRange.endDate,
           taskId
         );
-        const resultIndex = get(props, 'detector.resultIndex', '');
         dispatch(searchResults(anomalyDataRangeQuery, resultIndex))
           .then((response: any) => {
             const dataStartDate = get(

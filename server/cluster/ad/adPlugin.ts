@@ -120,14 +120,6 @@ export default function adPlugin(Client: any, config: any, components: any) {
     method: 'POST',
   });
 
-  ad.searchResults = ca({
-    url: {
-      fmt: `${API.DETECTOR_BASE}/results/_search`,
-    },
-    needBody: true,
-    method: 'POST',
-  });
-
   ad.startDetector = ca({
     url: {
       fmt: `${API.DETECTOR_BASE}/<%=detectorId%>/_start`,

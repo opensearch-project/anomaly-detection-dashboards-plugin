@@ -482,6 +482,7 @@ export default class AdService {
         !resultIndex ||
         !resultIndex.startsWith(CUSTOM_AD_RESULT_INDEX_PREFIX)
       ) {
+        // Set resultIndex as '' means no custom result index specified, will only search anomaly result from default index.
         resultIndex = '';
       }
       let requestParams = { resultIndex: resultIndex } as {};
@@ -597,6 +598,9 @@ export default class AdService {
       //Given each detector from previous result, get aggregation to power list
       const allDetectorIds = Object.keys(allDetectorsMap);
       let requestParams = {
+        // If specifying result index, will query anomaly result from both default and custom result indices.
+        // If no valid result index specified, just query anomaly result from default result index.
+        // Here we specify custom AD result index prefix pattern to query all custom result indices.
         resultIndex: CUSTOM_AD_RESULT_INDEX_PREFIX + '*',
       } as {};
       const aggregationResult = await this.client
@@ -752,6 +756,7 @@ export default class AdService {
       !resultIndex ||
       !resultIndex.startsWith(CUSTOM_AD_RESULT_INDEX_PREFIX)
     ) {
+      // Set resultIndex as '' means no custom result index specified, will only search anomaly result from default index.
       resultIndex = '';
     }
     isHistorical = JSON.parse(isHistorical);

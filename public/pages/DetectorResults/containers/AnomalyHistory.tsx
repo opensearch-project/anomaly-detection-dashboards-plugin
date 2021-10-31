@@ -164,6 +164,7 @@ export const AnomalyHistory = (props: AnomalyHistoryProps) => {
   const isHCDetector = !isEmpty(detectorCategoryField);
   const isMultiCategory = detectorCategoryField.length > 1;
   const backgroundColor = darkModeEnabled() ? '#29017' : '#F7F7F7';
+  const resultIndex = get(props, 'detector.resultIndex', '');
 
   // We load at most 10k AD result data points for one call. If user choose
   // a big time range which may have more than 10k AD results, will use bucket
@@ -175,7 +176,6 @@ export const AnomalyHistory = (props: AnomalyHistoryProps) => {
   ) {
     try {
       setIsLoadingAnomalyResults(true);
-      const resultIndex = get(props, 'detector.resultIndex', '');
       const anomalySummaryResult = await dispatch(
         searchResults(
           getAnomalySummaryQuery(
@@ -269,7 +269,6 @@ export const AnomalyHistory = (props: AnomalyHistoryProps) => {
         // get anomaly only data if HC detector
         isHCDetector
       );
-      const resultIndex = get(props, 'detector.resultIndex', '');
       const detectorResultResponse = props.isHistorical
         ? await dispatch(
             getDetectorResults(taskId.current || '', params, true, resultIndex)
@@ -331,7 +330,6 @@ export const AnomalyHistory = (props: AnomalyHistoryProps) => {
       props.isHistorical,
       taskId.current
     );
-    const resultIndex = get(props, 'detector.resultIndex', '');
     const result = await dispatch(searchResults(query, resultIndex));
 
     const topEntityAnomalySummaries = parseTopEntityAnomalySummaryResults(
@@ -420,7 +418,6 @@ export const AnomalyHistory = (props: AnomalyHistoryProps) => {
       heatmapCell.entityList
     );
 
-    const resultIndex = get(props, 'detector.resultIndex', '');
     const entityAnomalyResultResponse = await dispatch(
       getDetectorResults(
         props.isHistorical ? taskId.current : props.detector?.id,

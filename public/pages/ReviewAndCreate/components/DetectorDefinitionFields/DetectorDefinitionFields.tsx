@@ -131,8 +131,8 @@ export const DetectorDefinitionFields = (
         </EuiFlexItem>
         <EuiFlexItem>
           <ConfigCell
-            title="Result index"
-            description={get(props, 'detector.resultIndex', '')}
+            title="Custom result index"
+            description={get(props, 'detector.resultIndex', '-')}
           />
         </EuiFlexItem>
       </EuiFlexGrid>
