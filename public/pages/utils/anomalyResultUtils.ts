@@ -67,7 +67,6 @@ import {
   MAX_ANOMALIES,
   MISSING_FEATURE_DATA_SEVERITY,
 } from '../../utils/constants';
-//import { HeatmapCell } from '../AnomalyCharts/containers/AnomalyHeatmapChart';
 import {
   AnomalyHeatmapSortType,
   NUM_CELLS,
@@ -258,13 +257,16 @@ export const prepareDataForChart = (data: any[][], dateRange: DateRange) => {
   return preparedData;
 };
 
+// Generates a set of annotations for each anomaly result time series.
+// One time series is a single AnomalyData[]. We pass an array of time series
+// since multiple time series may need to be processed.
 export const generateAnomalyAnnotations = (
   anomalies: AnomalyData[][]
 ): any[][] => {
   let annotations = [] as any[];
-  anomalies.forEach((anomalies: AnomalyData[]) => {
+  anomalies.forEach((anomalyTimeSeries: AnomalyData[]) => {
     annotations.push(
-      anomalies
+      anomalyTimeSeries
         .filter((anomaly: AnomalyData) => anomaly.anomalyGrade > 0)
         .map((anomaly: AnomalyData) => ({
           coordinates: {

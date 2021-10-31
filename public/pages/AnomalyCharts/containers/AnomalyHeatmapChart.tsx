@@ -126,7 +126,7 @@ export const AnomalyHeatmapChart = React.memo(
         inputDisplay: 'By severity',
       },
       {
-        value: AnomalyHeatmapSortType.OCCURRENCES,
+        value: AnomalyHeatmapSortType.OCCURRENCE,
         inputDisplay: 'By occurrence',
       },
     ];

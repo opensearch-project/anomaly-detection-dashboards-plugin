@@ -204,7 +204,7 @@ export const ANOMALY_HEATMAP_COLORSCALE = [
 
 export enum AnomalyHeatmapSortType {
   SEVERITY = 'severity',
-  OCCURRENCES = 'occurrence',
+  OCCURRENCE = 'occurrence',
 }
 
 const getHeatmapColorByValue = (value: number) => {
