@@ -31,6 +31,7 @@ export interface DetectorDefinitionFormikValues {
   name: string;
   description: string;
   index: { label: string }[];
+  resultIndex?: string;
   filters: UIFilter[];
   filterQuery: string;
   timeField: string;

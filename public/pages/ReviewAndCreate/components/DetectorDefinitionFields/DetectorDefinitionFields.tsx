@@ -129,6 +129,12 @@ export const DetectorDefinitionFields = (
             )}
           />
         </EuiFlexItem>
+        <EuiFlexItem>
+          <ConfigCell
+            title="Custom result index"
+            description={get(props, 'detector.resultIndex', '-')}
+          />
+        </EuiFlexItem>
       </EuiFlexGrid>
     </ContentPanel>
   );

@@ -303,6 +303,40 @@ exports[`<AdditionalSettings /> spec renders the component in create mode (no ID
               </div>
             </div>
           </div>
+          <div
+            class="euiFlexItem"
+          >
+            <div
+              class="euiFormRow"
+              id="random_html_id-row"
+              style="width: 250px;"
+            >
+              <div
+                class="euiFormRow__labelWrapper"
+              >
+                <label
+                  class="euiFormLabel euiFormRow__label"
+                  for="random_html_id"
+                >
+                  Custom result index
+                </label>
+              </div>
+              <div
+                class="euiFormRow__fieldWrapper"
+              >
+                <div
+                  class="euiText euiText--medium"
+                  id="random_html_id"
+                >
+                  <p
+                    class="enabled"
+                  >
+                    -
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -676,6 +710,40 @@ exports[`<AdditionalSettings /> spec renders the component in edit mode (with ID
                     class="enabled"
                   >
                     1 Minutes
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div
+            class="euiFlexItem"
+          >
+            <div
+              class="euiFormRow"
+              id="random_html_id-row"
+              style="width: 250px;"
+            >
+              <div
+                class="euiFormRow__labelWrapper"
+              >
+                <label
+                  class="euiFormLabel euiFormRow__label"
+                  for="random_html_id"
+                >
+                  Custom result index
+                </label>
+              </div>
+              <div
+                class="euiFormRow__fieldWrapper"
+              >
+                <div
+                  class="euiText euiText--medium"
+                  id="random_html_id"
+                >
+                  <p
+                    class="enabled"
+                  >
+                    -
                   </p>
                 </div>
               </div>

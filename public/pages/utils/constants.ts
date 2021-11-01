@@ -109,3 +109,5 @@ export enum ANOMALY_AGG {
   WEEKLY = 'week',
   MONTHLY = 'month',
 }
+
+export const ALL_CUSTOM_AD_RESULT_INDICES = 'opensearch-ad-plugin-result-*';

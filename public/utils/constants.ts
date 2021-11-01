@@ -79,9 +79,13 @@ export const MAX_FEATURE_NUM = 5;
 
 export const MAX_FEATURE_NAME_SIZE = 64;
 
+// OpenSearch max index name size is 255
+export const MAX_INDEX_NAME_SIZE = 255;
+
 export const MAX_CATEGORY_FIELD_NUM = 2;
 
 export const NAME_REGEX = RegExp('^[a-zA-Z0-9._-]+$');
+export const INDEX_NAME_REGEX = RegExp('^[a-z0-9._-]+$');
 
 //https://github.com/opensearch-project/anomaly-detection/blob/main/src/main/java/com/amazon/opendistroforelasticsearch/ad/settings/AnomalyDetectorSettings.java
 export const DEFAULT_SHINGLE_SIZE = 8;

@@ -39,6 +39,7 @@ import { FeaturesFormikValues } from '../../ConfigureModel/models/interfaces';
 import { CreateDetectorFormikValues } from '../../CreateDetectorSteps/models/interfaces';
 import { OPERATORS_QUERY_MAP } from '../../DefineDetector/utils/whereFilters';
 import { convertTimestampToNumber } from '../../../utils/utils';
+import { CUSTOM_AD_RESULT_INDEX_PREFIX } from '../../../../server/utils/constants';
 
 export function formikToDetector(values: CreateDetectorFormikValues): Detector {
   const detectionDateRange = values.historical
@@ -47,10 +48,15 @@ export function formikToDetector(values: CreateDetectorFormikValues): Detector {
         endTime: convertTimestampToNumber(values.endTime),
       }
     : undefined;
+  var resultIndex = values.resultIndex;
+  if (resultIndex && resultIndex.trim().length > 0) {
+    resultIndex = CUSTOM_AD_RESULT_INDEX_PREFIX + resultIndex;
+  }
   let detectorBody = {
     name: values.name,
     description: values.description,
     indices: formikToIndices(values.index),
+    resultIndex: resultIndex,
     filterQuery: formikToFilterQuery(values),
     uiMetadata: {
       features: { ...featuresToUIMetadata(values.featureList) },

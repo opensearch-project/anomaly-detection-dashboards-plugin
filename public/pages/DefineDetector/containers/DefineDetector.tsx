@@ -52,6 +52,7 @@ import { BREADCRUMBS } from '../../../utils/constants';
 import { getErrorMessage, validateDetectorName } from '../../../utils/utils';
 import { NameAndDescription } from '../components/NameAndDescription';
 import { DataSource } from '../components/Datasource/DataSource';
+import { CustomResultIndex } from '../components/CustomResultIndex';
 import { Timestamp } from '../components/Timestamp';
 import { Settings } from '../components/Settings';
 import {
@@ -176,6 +177,7 @@ export const DefineDetector = (props: DefineDetectorProps) => {
       formikProps.setFieldTouched('name');
       formikProps.setFieldTouched('description');
       formikProps.setFieldTouched('index');
+      formikProps.setFieldTouched('resultIndex');
       formikProps.setFieldTouched('filters');
       formikProps.setFieldTouched('timeField');
       formikProps.setFieldTouched('interval');
@@ -281,6 +283,11 @@ export const DefineDetector = (props: DefineDetectorProps) => {
                 <Timestamp formikProps={formikProps} />
                 <EuiSpacer />
                 <Settings />
+                <EuiSpacer />
+                <CustomResultIndex
+                  isEdit={props.isEdit}
+                  resultIndex={get(formikProps, 'values.resultIndex')}
+                />
               </Fragment>
             </EuiPageBody>
           </EuiPage>

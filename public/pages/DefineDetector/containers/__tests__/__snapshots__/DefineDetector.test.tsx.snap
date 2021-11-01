@@ -810,6 +810,117 @@ exports[`<DefineDetector /> spec creating detector definition renders the compon
         </div>
       </div>
     </div>
+    <div
+      class="euiSpacer euiSpacer--l"
+    />
+    <div
+      class="euiPanel euiPanel--paddingMedium"
+      style="padding: 20px;"
+    >
+      <div
+        class="euiFlexGroup euiFlexGroup--gutterLarge euiFlexGroup--alignItemsCenter euiFlexGroup--justifyContentSpaceBetween euiFlexGroup--directionRow euiFlexGroup--responsive"
+        style="padding: 0px;"
+      >
+        <div
+          class="euiFlexItem"
+        >
+          <div
+            class="euiFlexGroup euiFlexGroup--gutterLarge euiFlexGroup--alignItemsCenter euiFlexGroup--directionRow euiFlexGroup--responsive"
+          >
+            <div
+              class="euiFlexItem"
+            >
+              <h2
+                class="euiTitle euiTitle--small"
+                id="resultIndexField"
+              >
+                Custom result index
+              </h2>
+            </div>
+          </div>
+          <div
+            class="euiFlexGroup euiFlexGroup--gutterLarge euiFlexGroup--directionRow euiFlexGroup--responsive"
+          >
+            <div
+              class="euiFlexItem content-panel-subTitle"
+              style="line-height: normal; max-width: 75%;"
+            >
+              <div
+                class="euiText euiText--medium content-panel-subTitle"
+                style="line-height: normal;"
+              >
+                Store detector results to your own index.
+                 
+                <a
+                  class="euiLink euiLink--primary"
+                  href="https://opensearch.org/docs/monitoring-plugins/ad"
+                  rel="noopener noreferrer"
+                  target="_blank"
+                >
+                  Learn more 
+                  <svg
+                    aria-hidden="true"
+                    class="euiIcon euiIcon--small euiIcon-isLoading"
+                    focusable="false"
+                    height="16"
+                    role="img"
+                    viewBox="0 0 16 16"
+                    width="16"
+                    xmlns="http://www.w3.org/2000/svg"
+                  />
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div
+          class="euiFlexItem euiFlexItem--flexGrowZero"
+        >
+          <div
+            class="euiFlexGroup euiFlexGroup--gutterMedium euiFlexGroup--alignItemsCenter euiFlexGroup--justifyContentSpaceBetween euiFlexGroup--directionRow euiFlexGroup--responsive"
+          >
+            <div
+              class="euiFlexItem"
+            />
+          </div>
+        </div>
+      </div>
+      <div>
+        <hr
+          class="euiHorizontalRule euiHorizontalRule--full euiHorizontalRule--marginSmall"
+        />
+        <div
+          style="padding: 10px 0px;"
+        >
+          <div
+            class="euiFlexGroup euiFlexGroup--gutterLarge euiFlexGroup--directionColumn euiFlexGroup--responsive"
+          >
+            <div
+              class="euiFlexItem"
+            >
+              <div
+                class="euiCheckbox"
+              >
+                <input
+                  class="euiCheckbox__input"
+                  id="resultIndexCheckbox"
+                  type="checkbox"
+                />
+                <div
+                  class="euiCheckbox__square"
+                />
+                <label
+                  class="euiCheckbox__label"
+                  for="resultIndexCheckbox"
+                >
+                  Enable custom result index
+                </label>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
   </main>
 </div>
 `;
@@ -1669,6 +1780,122 @@ exports[`<DefineDetector /> spec editing detector definition renders the compone
                     </p>
                   </div>
                 </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div
+      class="euiSpacer euiSpacer--l"
+    />
+    <div
+      class="euiPanel euiPanel--paddingMedium"
+      style="padding: 20px;"
+    >
+      <div
+        class="euiFlexGroup euiFlexGroup--gutterLarge euiFlexGroup--alignItemsCenter euiFlexGroup--justifyContentSpaceBetween euiFlexGroup--directionRow euiFlexGroup--responsive"
+        style="padding: 0px;"
+      >
+        <div
+          class="euiFlexItem"
+        >
+          <div
+            class="euiFlexGroup euiFlexGroup--gutterLarge euiFlexGroup--alignItemsCenter euiFlexGroup--directionRow euiFlexGroup--responsive"
+          >
+            <div
+              class="euiFlexItem"
+            >
+              <h2
+                class="euiTitle euiTitle--small"
+                id="resultIndexField"
+              >
+                Custom result index
+              </h2>
+            </div>
+          </div>
+          <div
+            class="euiFlexGroup euiFlexGroup--gutterLarge euiFlexGroup--directionRow euiFlexGroup--responsive"
+          >
+            <div
+              class="euiFlexItem content-panel-subTitle"
+              style="line-height: normal; max-width: 75%;"
+            >
+              <div
+                class="euiText euiText--medium content-panel-subTitle"
+                style="line-height: normal;"
+              >
+                Store detector results to your own index.
+                 
+                <a
+                  class="euiLink euiLink--primary"
+                  href="https://opensearch.org/docs/monitoring-plugins/ad"
+                  rel="noopener noreferrer"
+                  target="_blank"
+                >
+                  Learn more 
+                  <svg
+                    aria-hidden="true"
+                    class="euiIcon euiIcon--small"
+                    focusable="false"
+                    height="16"
+                    role="img"
+                    viewBox="0 0 16 16"
+                    width="16"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      d="M13 8.5a.5.5 0 111 0V12a2 2 0 01-2 2H4a2 2 0 01-2-2V4a2 2 0 012-2h3.5a.5.5 0 010 1H4a1 1 0 00-1 1v8a1 1 0 001 1h8a1 1 0 001-1V8.5zm-5.12.339a.5.5 0 11-.706-.707L13.305 2H10.5a.5.5 0 110-1H14a1 1 0 011 1v3.5a.5.5 0 11-1 0V2.72L7.88 8.838z"
+                    />
+                  </svg>
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div
+          class="euiFlexItem euiFlexItem--flexGrowZero"
+        >
+          <div
+            class="euiFlexGroup euiFlexGroup--gutterMedium euiFlexGroup--alignItemsCenter euiFlexGroup--justifyContentSpaceBetween euiFlexGroup--directionRow euiFlexGroup--responsive"
+          >
+            <div
+              class="euiFlexItem"
+            />
+          </div>
+        </div>
+      </div>
+      <div>
+        <hr
+          class="euiHorizontalRule euiHorizontalRule--full euiHorizontalRule--marginSmall"
+        />
+        <div
+          style="padding: 10px 0px;"
+        >
+          <div
+            class="euiFlexGroup euiFlexGroup--gutterLarge euiFlexGroup--directionColumn euiFlexGroup--responsive"
+          >
+            <div
+              class="euiFlexItem"
+            >
+              <div
+                class="euiCheckbox"
+              >
+                <input
+                  class="euiCheckbox__input"
+                  disabled=""
+                  id="resultIndexCheckbox"
+                  type="checkbox"
+                />
+                <div
+                  class="euiCheckbox__square"
+                />
+                <label
+                  class="euiCheckbox__label"
+                  for="resultIndexCheckbox"
+                >
+                  Enable custom result index
+                </label>
               </div>
             </div>
           </div>

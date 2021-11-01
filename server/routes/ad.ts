@@ -25,20 +25,18 @@
  */
 
 import { get, orderBy, pullAll, isEmpty } from 'lodash';
-import { AnomalyResults, SearchResponse } from '../models/interfaces';
+import { SearchResponse } from '../models/interfaces';
 import {
   AnomalyResult,
-  AnomalyResultsResponse,
   Detector,
   GetDetectorsQueryParams,
-  ServerResponse,
   FeatureResult,
 } from '../models/types';
 import { Router } from '../router';
 import {
   SORT_DIRECTION,
   AD_DOC_FIELDS,
-  DETECTOR_STATE,
+  CUSTOM_AD_RESULT_INDEX_PREFIX,
 } from '../utils/constants';
 import {
   mapKeysDeep,
@@ -51,18 +49,10 @@ import {
   convertDetectorKeysToSnakeCase,
   convertPreviewInputKeysToSnakeCase,
   getResultAggregationQuery,
-  getFinalDetectorStates,
-  getDetectorsWithJob,
-  getTaskInitProgress,
   isIndexNotFoundError,
   getErrorMessage,
-  getDetectorTasks,
-  appendTaskInfo,
-  getDetectorResults,
   getTaskState,
-  processTaskError,
   getLatestDetectorTasksQuery,
-  isRealTimeTask,
   getFiltersFromEntityList,
   convertStaticFieldsToCamelCase,
   getLatestTaskForDetectorQuery,
@@ -87,10 +77,18 @@ export function registerADRoutes(apiRouter: Router, adService: AdService) {
   apiRouter.post('/detectors', adService.putDetector);
   apiRouter.put('/detectors/{detectorId}', adService.putDetector);
   apiRouter.post('/detectors/_search', adService.searchDetector);
-  apiRouter.post('/detectors/results/_search', adService.searchResults);
+  apiRouter.post('/detectors/results/_search/', adService.searchResults);
+  apiRouter.post(
+    '/detectors/results/_search/{resultIndex}',
+    adService.searchResults
+  );
   apiRouter.get('/detectors/{detectorId}', adService.getDetector);
   apiRouter.get('/detectors', adService.getDetectors);
   apiRouter.post('/detectors/preview', adService.previewDetector);
+  apiRouter.get(
+    '/detectors/{id}/results/{isHistorical}/{resultIndex}',
+    adService.getAnomalyResults
+  );
   apiRouter.get(
     '/detectors/{id}/results/{isHistorical}',
     adService.getAnomalyResults
@@ -479,10 +477,20 @@ export default class AdService {
     opensearchDashboardsResponse: OpenSearchDashboardsResponseFactory
   ): Promise<IOpenSearchDashboardsResponse<any>> => {
     try {
+      var { resultIndex } = request.params as { resultIndex: string };
+      if (
+        !resultIndex ||
+        !resultIndex.startsWith(CUSTOM_AD_RESULT_INDEX_PREFIX)
+      ) {
+        // Set resultIndex as '' means no custom result index specified, will only search anomaly result from default index.
+        resultIndex = '';
+      }
+      let requestParams = { resultIndex: resultIndex } as {};
       const requestBody = JSON.stringify(request.body);
       const response = await this.client
         .asScoped(request)
         .callAsCurrentUser('ad.searchResults', {
+          ...requestParams,
           body: requestBody,
         });
       return opensearchDashboardsResponse.ok({
@@ -589,9 +597,16 @@ export default class AdService {
 
       //Given each detector from previous result, get aggregation to power list
       const allDetectorIds = Object.keys(allDetectorsMap);
+      let requestParams = {
+        // If specifying result index, will query anomaly result from both default and custom result indices.
+        // If no valid result index specified, just query anomaly result from default result index.
+        // Here we specify custom AD result index prefix pattern to query all custom result indices.
+        resultIndex: CUSTOM_AD_RESULT_INDEX_PREFIX + '*',
+      } as {};
       const aggregationResult = await this.client
         .asScoped(request)
         .callAsCurrentUser('ad.searchResults', {
+          ...requestParams,
           body: getResultAggregationQuery(allDetectorIds, {
             from,
             size,
@@ -732,10 +747,18 @@ export default class AdService {
     request: OpenSearchDashboardsRequest,
     opensearchDashboardsResponse: OpenSearchDashboardsResponseFactory
   ): Promise<IOpenSearchDashboardsResponse<any>> => {
-    let { id, isHistorical } = request.params as {
+    let { id, isHistorical, resultIndex } = request.params as {
       id: string;
       isHistorical: any;
+      resultIndex: string;
     };
+    if (
+      !resultIndex ||
+      !resultIndex.startsWith(CUSTOM_AD_RESULT_INDEX_PREFIX)
+    ) {
+      // Set resultIndex as '' means no custom result index specified, will only search anomaly result from default index.
+      resultIndex = '';
+    }
     isHistorical = JSON.parse(isHistorical);
 
     // Search by task id if historical, or by detector id if realtime
@@ -855,9 +878,11 @@ export default class AdService {
         console.log('wrong date range filter', error);
       }
 
+      let requestParams = { resultIndex: resultIndex } as {};
       const response = await this.client
         .asScoped(request)
         .callAsCurrentUser('ad.searchResults', {
+          ...requestParams,
           body: requestBody,
         });
 
