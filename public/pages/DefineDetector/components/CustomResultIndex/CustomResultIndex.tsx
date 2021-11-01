@@ -54,26 +54,13 @@ function CustomResultIndex(props: CustomResultIndexProps) {
           className="content-panel-subTitle"
           style={{ lineHeight: 'normal' }}
         >
-          Store detector result to your own index.{' '}
+          Store detector results to your own index.{' '}
           <EuiLink href={`${BASE_DOCS_LINK}/ad`} target="_blank">
             Learn more <EuiIcon size="s" type="popout" />
           </EuiLink>
         </EuiText>
       }
     >
-      {props.isEdit ? (
-        <EuiFlexItem>
-          <EuiCallOut
-            data-test-subj="resultIndexReadOnlyCallout"
-            title="You can't change the custom result index after you create the detector."
-            color="primary"
-            iconType="iInCircle"
-            size="s"
-          ></EuiCallOut>
-        </EuiFlexItem>
-      ) : null}
-      {props.isEdit ? <EuiSpacer size="m" /> : null}
-
       <Field
         name="resultIndex"
         validate={enabled ? validateCustomResultIndex : null}
@@ -95,7 +82,7 @@ function CustomResultIndex(props: CustomResultIndexProps) {
               />
             </EuiFlexItem>
 
-            {enabled && !props.isEdit ? (
+            {enabled ? (
               <EuiFlexItem>
                 <EuiCallOut
                   data-test-subj="cannotEditResultIndexCallout"
@@ -107,7 +94,7 @@ function CustomResultIndex(props: CustomResultIndexProps) {
               </EuiFlexItem>
             ) : null}
 
-            {enabled && !props.isEdit ? (
+            {enabled ? (
               <EuiFlexItem>
                 <EuiFormRow
                   label="Field"

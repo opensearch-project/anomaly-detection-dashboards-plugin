@@ -32,7 +32,7 @@ import {
   Route,
   Switch,
 } from 'react-router-dom';
-import { render, fireEvent, wait } from '@testing-library/react';
+import { render, fireEvent, wait, waitFor } from '@testing-library/react';
 import { DetectorConfig } from '../DetectorConfig';
 import {
   Detector,
@@ -167,7 +167,7 @@ describe('<DetectorConfig /> spec', () => {
       shingleSize: 8,
     };
     const { getByText, queryByText } = renderWithRouter(randomDetector);
-    await wait(() => {
+    waitFor(() => {
       getByText('Model parameters are required to run a detector');
       queryByText('Set the index fields');
       getByText('Model configuration');
@@ -212,7 +212,7 @@ describe('<DetectorConfig /> spec', () => {
           } as UiMetaData,
         };
         const { getByText, getAllByText } = renderWithRouter(randomDetector);
-        await wait(() => {
+        waitFor(() => {
           getByText('Field: value');
           getByText('Aggregation method: avg');
           getAllByText(enabledInRender);
