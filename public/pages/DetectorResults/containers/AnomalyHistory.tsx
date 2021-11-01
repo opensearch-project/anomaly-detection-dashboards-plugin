@@ -238,7 +238,7 @@ export const AnomalyHistory = (props: AnomalyHistoryProps) => {
                   taskId.current,
                   modelId
                 );
-                return dispatch(searchResults(params));
+                return dispatch(searchResults(params, resultIndex));
               })
             : [];
 
@@ -267,7 +267,8 @@ export const AnomalyHistory = (props: AnomalyHistoryProps) => {
               props.isHistorical,
               taskId.current,
               modelId
-            )
+            ),
+            resultIndex
           )
         );
         allPureAnomalies.push(parsePureAnomalies(anomalySummaryResponse));
@@ -291,7 +292,7 @@ export const AnomalyHistory = (props: AnomalyHistoryProps) => {
               taskId.current,
               modelId
             );
-            return dispatch(searchResults(params));
+            return dispatch(searchResults(params, resultIndex));
           }
         );
 
@@ -324,7 +325,8 @@ export const AnomalyHistory = (props: AnomalyHistoryProps) => {
               props.isHistorical,
               taskId.current,
               modelId
-            )
+            ),
+            resultIndex
           )
         );
         allBucketizedAnomalyResults.push(
@@ -636,7 +638,8 @@ export const AnomalyHistory = (props: AnomalyHistoryProps) => {
         getDetectorResults(
           props.isHistorical ? taskId.current : props.detector?.id,
           params,
-          props.isHistorical ? true : false
+          props.isHistorical ? true : false,
+          resultIndex
         )
       );
     });
@@ -718,7 +721,7 @@ export const AnomalyHistory = (props: AnomalyHistoryProps) => {
       taskId.current,
       heatmapCell.entityList
     );
-    const result = await dispatch(searchResults(query));
+    const result = await dispatch(searchResults(query, resultIndex));
 
     // Gets top child entities as an Entity[][],
     // where each entry in the array is a unique combination of entity values
