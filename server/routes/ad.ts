@@ -105,14 +105,11 @@ export function registerADRoutes(apiRouter: Router, adService: AdService) {
   );
   apiRouter.get('/detectors/{detectorName}/_match', adService.matchDetector);
   apiRouter.get('/detectors/_count', adService.getDetectorCount);
-<<<<<<< HEAD
   apiRouter.post(
     '/detectors/{detectorId}/_topAnomalies/{isHistorical}',
     adService.getTopAnomalyResults
   );
-=======
   apiRouter.post('/detectors/_validate', adService.validateDetector);
->>>>>>> f276f5b (added validate API to routes, redux and added validate check to last step of detector creation)
 }
 
 export default class AdService {

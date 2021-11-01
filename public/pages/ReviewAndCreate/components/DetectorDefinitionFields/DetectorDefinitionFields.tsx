@@ -88,8 +88,10 @@ export const DetectorDefinitionFields = (
         />
       );
     }
-    // if validationResponse is not undefined and there was no error from validation display one
-    // of the callout options.
+    // Callouts only displayed based on if validDetectorSettings is true or not, referring to
+    // to response content from validation API (empty body or response issue body).
+    // validationError reffers to if there was an exception from validation API which means no callout will
+    // be displayed since validation wasn't able to say if settings are valid or not.
     if (props.validationResponse != undefined && !props.validationError) {
       if (props.validDetectorSettings) {
         return (
