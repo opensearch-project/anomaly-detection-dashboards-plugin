@@ -140,7 +140,11 @@ export const AnomalyDetailsChart = React.memo(
       props.anomalies
     );
 
-    const [aggregatedAnomalies, setAggregatedAnomalies] = useState<any[]>([]);
+    // Aggregated anomalies will always be a single time series (AnomalyData[]).
+    // We don't support multiple time series of aggregated anomalies.
+    const [aggregatedAnomalies, setAggregatedAnomalies] = useState<
+      AnomalyData[]
+    >([]);
     const [selectedAggId, setSelectedAggId] = useState<ANOMALY_AGG>(
       ANOMALY_AGG.RAW
     );
@@ -204,7 +208,7 @@ export const AnomalyDetailsChart = React.memo(
                 response,
                 selectedAggId
               );
-              setAggregatedAnomalies([aggregatedAnomalies]);
+              setAggregatedAnomalies(aggregatedAnomalies);
             })
             .catch((e: any) => {
               console.error(
@@ -288,11 +292,11 @@ export const AnomalyDetailsChart = React.memo(
     useEffect(() => {
       // Aggregated anomalies are already formatted differently
       // in parseHistoricalAggregatedAnomalies(). Only raw anomalies
-      // are formatted with prepareDataForChart().
+      // need to be formatted with prepareDataForChart().
       const anomalies =
         selectedAggId === ANOMALY_AGG.RAW
-          ? prepareDataForChart(props.anomalies, zoomRange)
-          : aggregatedAnomalies;
+          ? (prepareDataForChart(props.anomalies, zoomRange) as AnomalyData[][])
+          : [aggregatedAnomalies];
       setZoomedAnomalies(anomalies);
       setTotalAlerts(
         filterWithDateRange(alerts, zoomRange, 'startTime').length
