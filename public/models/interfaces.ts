@@ -215,3 +215,16 @@ export type DetectionDateRange = {
   startTime: number;
   endTime: number;
 };
+
+export type EntityOption = {
+  label: string;
+};
+
+// Primarily used in the heatmap chart when a subset of category fields are selected.
+// We store all child category fields as keys, and all selected child entities as
+// an array of EntityOptions per field.
+// Ex: given child category field IP and entities [1.2.3.4, 5.6.7.8] would be stored as
+// { [IP]: [ { label: 1.2.3.4 }, { label: 5.6.7.8 } ] }
+export type EntityOptionsMap = {
+  [categoryField: string]: EntityOption[];
+};

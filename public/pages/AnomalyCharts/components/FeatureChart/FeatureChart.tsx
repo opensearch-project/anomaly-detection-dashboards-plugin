@@ -46,20 +46,28 @@ import {
   DateRange,
   FEATURE_TYPE,
   Schedule,
+  EntityData,
 } from '../../../../models/interfaces';
 import { darkModeEnabled } from '../../../../utils/opensearchDashboardsUtils';
 import {
   prepareDataForChart,
   getFeatureMissingDataAnnotations,
   filterWithDateRange,
+  flattenData,
+  convertToEntityString,
 } from '../../../utils/anomalyResultUtils';
 import { CodeModal } from '../../../DetectorConfig/components/CodeModal/CodeModal';
-import { CHART_FIELDS, FEATURE_CHART_THEME } from '../../utils/constants';
-import { isEmpty } from 'lodash';
+import {
+  CHART_FIELDS,
+  CHART_COLORS,
+  FEATURE_CHART_THEME,
+} from '../../utils/constants';
+import { get, isEmpty } from 'lodash';
+import { ENTITY_COLORS } from '../../../DetectorResults/utils/constants';
 
 interface FeatureChartProps {
   feature: FeatureAttributes;
-  featureData: FeatureAggregationData[];
+  featureData: FeatureAggregationData[][];
   annotations: any[];
   isLoading: boolean;
   dateRange: DateRange;
@@ -73,7 +81,9 @@ interface FeatureChartProps {
   detectorInterval: Schedule;
   showFeatureMissingDataPointAnnotation?: boolean;
   detectorEnabledTime?: number;
-  rawFeatureData: FeatureAggregationData[];
+  rawFeatureData: FeatureAggregationData[][];
+  entityData: EntityData[][];
+  isHCDetector?: boolean;
 }
 
 export const FeatureChart = (props: FeatureChartProps) => {
@@ -128,8 +138,6 @@ export const FeatureChart = (props: FeatureChartProps) => {
     </EuiText>
   );
 
-  const featureData = prepareDataForChart(props.featureData, props.dateRange);
-
   // return undefined if featureMissingDataPointAnnotationStartDate is missing
   // OR it is even behind the specified date range
   const getFeatureMissingAnnotationDateRange = (
@@ -161,6 +169,14 @@ export const FeatureChart = (props: FeatureChartProps) => {
       'coordinates.x0'
     );
   };
+
+  const featureData = prepareDataForChart(
+    props.featureData,
+    props.dateRange
+  ) as FeatureAggregationData[][];
+
+  const multipleTimeSeries = get(featureData, 'length', 0) > 1;
+
   return (
     <ContentPanel
       title={
@@ -187,7 +203,12 @@ export const FeatureChart = (props: FeatureChartProps) => {
           opacity: showLoader ? 0.2 : 1,
         }}
       >
-        <Chart>
+        {/**
+         * Charts may show stale data even after feature data is changed.
+         * By setting the key prop here, the chart will re-mount whenever the
+         * feature data has changed.
+         */}
+        <Chart key={`${featureData}`}>
           <Settings
             showLegend
             showLegendExtra={false}
@@ -217,8 +238,8 @@ export const FeatureChart = (props: FeatureChartProps) => {
                   domainType={AnnotationDomainTypes.XDomain}
                   dataValues={getFeatureMissingDataAnnotations(
                     props.showFeatureMissingDataPointAnnotation
-                      ? props.rawFeatureData
-                      : props.featureData,
+                      ? flattenData(props.rawFeatureData)
+                      : flattenData(props.featureData),
                     props.detectorInterval.interval,
                     getFeatureMissingAnnotationDateRange(
                       props.dateRange,
@@ -240,15 +261,35 @@ export const FeatureChart = (props: FeatureChartProps) => {
             showGridLines
           />
           <Axis id="bottom" position="bottom" tickFormat={timeFormatter} />
-          <LineSeries
-            id="featureData"
-            name={props.featureDataSeriesName}
-            xScaleType={ScaleType.Time}
-            yScaleType={ScaleType.Linear}
-            xAccessor={CHART_FIELDS.PLOT_TIME}
-            yAccessors={[CHART_FIELDS.DATA]}
-            data={featureData}
-          />
+          {
+            // Add each set of feature data as a separate time series
+          }
+          {featureData.map(
+            (featureTimeSeries: FeatureAggregationData[], index) => {
+              const seriesKey = props.isHCDetector
+                ? `${props.featureDataSeriesName} (${convertToEntityString(
+                    props.entityData[index],
+                    ', '
+                  )})`
+                : props.featureDataSeriesName;
+              return (
+                <LineSeries
+                  id={seriesKey}
+                  name={seriesKey}
+                  color={
+                    multipleTimeSeries
+                      ? ENTITY_COLORS[index]
+                      : CHART_COLORS.FEATURE_DATA_COLOR
+                  }
+                  xScaleType={ScaleType.Time}
+                  yScaleType={ScaleType.Linear}
+                  xAccessor={CHART_FIELDS.PLOT_TIME}
+                  yAccessors={[CHART_FIELDS.DATA]}
+                  data={featureTimeSeries}
+                />
+              );
+            }
+          )}
         </Chart>
         {showCustomExpression ? (
           <CodeModal

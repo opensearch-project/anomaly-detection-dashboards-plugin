@@ -70,7 +70,7 @@ describe('<FeatureBreakDown /> spec', () => {
         <FeatureBreakDown
           title="test"
           detector={detector}
-          anomaliesResult={anomaliesResult}
+          anomalyAndFeatureResults={[anomaliesResult]}
           annotations={[]}
           isLoading={false}
           dateRange={dateRange}

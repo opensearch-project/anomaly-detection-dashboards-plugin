@@ -32,6 +32,7 @@ import { get } from 'lodash';
 
 const DETECTOR_RESULTS = 'ad/DETECTOR_RESULTS';
 const SEARCH_ANOMALY_RESULTS = 'ad/SEARCH_ANOMALY_RESULTS';
+const GET_TOP_ANOMALY_RESULTS = 'ad/GET_TOP_ANOMALY_RESULTS';
 
 export interface Anomalies {
   requesting: boolean;
@@ -86,6 +87,22 @@ const reducer = handleActions<Anomalies>(
         errorMessage: get(action, 'error.error', action.error),
       }),
     },
+    [GET_TOP_ANOMALY_RESULTS]: {
+      REQUEST: (state: Anomalies): Anomalies => ({
+        ...state,
+        requesting: true,
+        errorMessage: '',
+      }),
+      SUCCESS: (state: Anomalies, action: APIResponseAction): Anomalies => ({
+        ...state,
+        requesting: false,
+      }),
+      FAILURE: (state: Anomalies, action: APIResponseAction): Anomalies => ({
+        ...state,
+        requesting: false,
+        errorMessage: get(action, 'error.error', action.error),
+      }),
+    },
   },
   initialDetectorsState
 );
@@ -115,6 +132,21 @@ export const searchResults = (
     client.post(`..${AD_NODE_API.DETECTOR}/results/_search/${resultIndex}`, {
       body: JSON.stringify(requestBody),
     }),
+});
+
+export const getTopAnomalyResults = (
+  detectorId: string,
+  isHistorical: boolean,
+  requestBody: any
+): APIAction => ({
+  type: GET_TOP_ANOMALY_RESULTS,
+  request: (client: HttpSetup) =>
+    client.post(
+      `..${AD_NODE_API.DETECTOR}/${detectorId}/_topAnomalies/${isHistorical}`,
+      {
+        body: JSON.stringify(requestBody),
+      }
+    ),
 });
 
 export default reducer;

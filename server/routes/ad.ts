@@ -105,6 +105,10 @@ export function registerADRoutes(apiRouter: Router, adService: AdService) {
   );
   apiRouter.get('/detectors/{detectorName}/_match', adService.matchDetector);
   apiRouter.get('/detectors/_count', adService.getDetectorCount);
+  apiRouter.post(
+    '/detectors/{detectorId}/_topAnomalies/{isHistorical}',
+    adService.getTopAnomalyResults
+  );
 }
 
 export default class AdService {
@@ -946,6 +950,45 @@ export default class AdService {
       });
     } catch (err) {
       console.log('Anomaly detector - Unable to get results', err);
+      return opensearchDashboardsResponse.ok({
+        body: {
+          ok: false,
+          error: getErrorMessage(err),
+        },
+      });
+    }
+  };
+
+  getTopAnomalyResults = async (
+    context: RequestHandlerContext,
+    request: OpenSearchDashboardsRequest,
+    opensearchDashboardsResponse: OpenSearchDashboardsResponseFactory
+  ): Promise<IOpenSearchDashboardsResponse<any>> => {
+    try {
+      let { detectorId, isHistorical } = request.params as {
+        detectorId: string;
+        isHistorical: any;
+      };
+      isHistorical = JSON.parse(isHistorical) as boolean;
+      const requestPath = isHistorical
+        ? 'ad.topHistoricalAnomalyResults'
+        : 'ad.topAnomalyResults';
+
+      const response = await this.client
+        .asScoped(request)
+        .callAsCurrentUser(requestPath, {
+          detectorId: detectorId,
+          body: request.body,
+        });
+
+      return opensearchDashboardsResponse.ok({
+        body: {
+          ok: true,
+          response: response,
+        },
+      });
+    } catch (err) {
+      console.log('Anomaly detector - getTopAnomalyResults', err);
       return opensearchDashboardsResponse.ok({
         body: {
           ok: false,
