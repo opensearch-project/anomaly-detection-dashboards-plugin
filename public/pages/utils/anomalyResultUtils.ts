@@ -105,13 +105,14 @@ export const getLiveAnomalyResults = (
   dispatch: Dispatch<any>,
   detectorId: string,
   detectionInterval: number,
-  intervals: number
+  intervals: number,
+  resultIndex: string
 ) => {
   const queryParams = getQueryParamsForLiveAnomalyResults(
     detectionInterval,
     intervals
   );
-  dispatch(getDetectorLiveResults(detectorId, queryParams, false));
+  dispatch(getDetectorLiveResults(detectorId, queryParams, false, resultIndex));
 };
 
 export const buildParamsForGetAnomalyResultsWithDateRange = (
@@ -1104,9 +1105,10 @@ export const getTopAnomalousEntitiesQuery = (
                           bucket_sort: {
                             sort: [
                               {
-                                [`${TOP_ANOMALY_GRADE_SORT_AGGS}.${MAX_ANOMALY_AGGS}`]: {
-                                  order: SORT_DIRECTION.DESC,
-                                },
+                                [`${TOP_ANOMALY_GRADE_SORT_AGGS}.${MAX_ANOMALY_AGGS}`]:
+                                  {
+                                    order: SORT_DIRECTION.DESC,
+                                  },
                               },
                             ],
                           },

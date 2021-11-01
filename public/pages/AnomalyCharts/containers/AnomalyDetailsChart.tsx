@@ -143,9 +143,9 @@ export const AnomalyDetailsChart = React.memo(
     const [selectedAggId, setSelectedAggId] = useState<ANOMALY_AGG>(
       ANOMALY_AGG.RAW
     );
-    const [disabledAggsMap, setDisabledAggsMap] = useState<
-      { [key in ANOMALY_AGG]: boolean }
-    >({
+    const [disabledAggsMap, setDisabledAggsMap] = useState<{
+      [key in ANOMALY_AGG]: boolean;
+    }>({
       raw: false,
       day: true,
       week: true,
@@ -164,13 +164,15 @@ export const AnomalyDetailsChart = React.memo(
       (state: AppState) => state.anomalyResults.requesting
     );
 
+    const resultIndex = get(props, 'detector.resultIndex', '');
+
     const getAggregatedAnomalies = async () => {
       const anomalyDataRangeQuery = getAnomalyDataRangeQuery(
         zoomRange.startDate,
         zoomRange.endDate,
         taskId
       );
-      dispatch(searchResults(anomalyDataRangeQuery))
+      dispatch(searchResults(anomalyDataRangeQuery, resultIndex))
         .then((response: any) => {
           // Only retrieve buckets that are in the anomaly results range. This is so
           // we don't show aggregate results for where there is no data at all
@@ -189,7 +191,7 @@ export const AnomalyDetailsChart = React.memo(
             taskId,
             selectedAggId
           );
-          dispatch(searchResults(historicalAggQuery))
+          dispatch(searchResults(historicalAggQuery, resultIndex))
             .then((response: any) => {
               const aggregatedAnomalies = parseHistoricalAggregatedAnomalies(
                 response,
@@ -225,7 +227,7 @@ export const AnomalyDetailsChart = React.memo(
           zoomRange.endDate,
           taskId
         );
-        dispatch(searchResults(anomalyDataRangeQuery))
+        dispatch(searchResults(anomalyDataRangeQuery, resultIndex))
           .then((response: any) => {
             const dataStartDate = get(
               response,

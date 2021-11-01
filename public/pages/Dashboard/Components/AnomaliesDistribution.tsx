@@ -32,7 +32,6 @@ import {
 import ContentPanel from '../../../components/ContentPanel/ContentPanel';
 import {
   EuiSelect,
-  EuiText,
   EuiFlexGroup,
   EuiFlexItem,
   EuiLoadingChart,
@@ -45,7 +44,10 @@ import { Datum } from '@elastic/charts';
 import React from 'react';
 import { TIME_RANGE_OPTIONS } from '../../Dashboard/utils/constants';
 import { get, isEmpty } from 'lodash';
-import { AD_DOC_FIELDS } from '../../../../server/utils/constants';
+import {
+  AD_DOC_FIELDS,
+} from '../../../../server/utils/constants';
+import { ALL_CUSTOM_AD_RESULT_INDICES } from '../../utils/constants'
 import { searchResults } from '../../../redux/reducers/anomalyResults';
 export interface AnomaliesDistributionChartProps {
   selectedDetectors: DetectorListItem[];
@@ -76,15 +78,16 @@ export const AnomaliesDistributionChart = (
 
   const getAnomalyResult = async (currentDetectors: DetectorListItem[]) => {
     setAnomalyResultsLoading(true);
-
-    const distributionResult = await getAnomalyDistributionForDetectorsByTimeRange(
-      searchResults,
-      props.selectedDetectors,
-      timeRange,
-      dispatch,
-      0,
-      false
-    );
+    const distributionResult =
+      await getAnomalyDistributionForDetectorsByTimeRange(
+        searchResults,
+        props.selectedDetectors,
+        timeRange,
+        dispatch,
+        0,
+        false,
+        ALL_CUSTOM_AD_RESULT_INDICES
+      );
     setAnomalyDistribution(distributionResult);
 
     const resultDetectors = getFinalDetectors(

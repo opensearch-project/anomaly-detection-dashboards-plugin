@@ -144,31 +144,27 @@ export const AnomalyHistory = (props: AnomalyHistoryProps) => {
   const [selectedTabId, setSelectedTabId] = useState<string>(
     ANOMALY_HISTORY_TABS.ANOMALY_OCCURRENCE
   );
-  const [isLoadingAnomalyResults, setIsLoadingAnomalyResults] = useState<
-    boolean
-  >(false);
-  const [bucketizedAnomalyResults, setBucketizedAnomalyResults] = useState<
-    Anomalies
-  >();
+  const [isLoadingAnomalyResults, setIsLoadingAnomalyResults] =
+    useState<boolean>(false);
+  const [bucketizedAnomalyResults, setBucketizedAnomalyResults] =
+    useState<Anomalies>();
   const [pureAnomalies, setPureAnomalies] = useState<AnomalyData[]>([]);
-  const [bucketizedAnomalySummary, setBucketizedAnomalySummary] = useState<
-    AnomalySummary
-  >(INITIAL_ANOMALY_SUMMARY);
+  const [bucketizedAnomalySummary, setBucketizedAnomalySummary] =
+    useState<AnomalySummary>(INITIAL_ANOMALY_SUMMARY);
 
   const [selectedHeatmapCell, setSelectedHeatmapCell] = useState<HeatmapCell>();
 
-  const [entityAnomalySummaries, setEntityAnomalySummaries] = useState<
-    EntityAnomalySummaries[]
-  >();
+  const [entityAnomalySummaries, setEntityAnomalySummaries] =
+    useState<EntityAnomalySummaries[]>();
 
-  const [heatmapDisplayOption, setHeatmapDisplayOption] = useState<
-    HeatmapDisplayOption
-  >(INITIAL_HEATMAP_DISPLAY_OPTION);
+  const [heatmapDisplayOption, setHeatmapDisplayOption] =
+    useState<HeatmapDisplayOption>(INITIAL_HEATMAP_DISPLAY_OPTION);
 
   const detectorCategoryField = get(props.detector, 'categoryField', []);
   const isHCDetector = !isEmpty(detectorCategoryField);
   const isMultiCategory = detectorCategoryField.length > 1;
   const backgroundColor = darkModeEnabled() ? '#29017' : '#F7F7F7';
+  const resultIndex = get(props, 'detector.resultIndex', '');
 
   // We load at most 10k AD result data points for one call. If user choose
   // a big time range which may have more than 10k AD results, will use bucket
@@ -190,7 +186,8 @@ export const AnomalyHistory = (props: AnomalyHistoryProps) => {
             props.isHistorical,
             taskId.current,
             modelId
-          )
+          ),
+          resultIndex
         )
       );
 
@@ -207,7 +204,8 @@ export const AnomalyHistory = (props: AnomalyHistoryProps) => {
             props.isHistorical,
             taskId.current,
             modelId
-          )
+          ),
+          resultIndex
         )
       );
 
@@ -272,8 +270,12 @@ export const AnomalyHistory = (props: AnomalyHistoryProps) => {
         isHCDetector
       );
       const detectorResultResponse = props.isHistorical
-        ? await dispatch(getDetectorResults(taskId.current || '', params, true))
-        : await dispatch(getDetectorResults(props.detector.id, params, false));
+        ? await dispatch(
+            getDetectorResults(taskId.current || '', params, true, resultIndex)
+          )
+        : await dispatch(
+            getDetectorResults(props.detector.id, params, false, resultIndex)
+          );
       const rawAnomaliesData = get(detectorResultResponse, 'response', []);
       const rawAnomaliesResult = {
         anomalies: get(rawAnomaliesData, 'results', []),
@@ -328,7 +330,7 @@ export const AnomalyHistory = (props: AnomalyHistoryProps) => {
       props.isHistorical,
       taskId.current
     );
-    const result = await dispatch(searchResults(query));
+    const result = await dispatch(searchResults(query, resultIndex));
 
     const topEntityAnomalySummaries = parseTopEntityAnomalySummaryResults(
       result,
@@ -347,7 +349,7 @@ export const AnomalyHistory = (props: AnomalyHistoryProps) => {
           props.isHistorical,
           taskId.current
         );
-        return dispatch(searchResults(entityResultQuery));
+        return dispatch(searchResults(entityResultQuery, resultIndex));
       }
     );
 
@@ -420,7 +422,8 @@ export const AnomalyHistory = (props: AnomalyHistoryProps) => {
       getDetectorResults(
         props.isHistorical ? taskId.current : props.detector?.id,
         params,
-        props.isHistorical ? true : false
+        props.isHistorical ? true : false,
+        resultIndex
       )
     );
 
@@ -442,9 +445,8 @@ export const AnomalyHistory = (props: AnomalyHistoryProps) => {
   };
   const [atomicAnomalyResults, setAtomicAnomalyResults] = useState<Anomalies>();
   const [rawAnomalyResults, setRawAnomalyResults] = useState<Anomalies>();
-  const [hcDetectorAnomalyResults, setHCDetectorAnomalyResults] = useState<
-    Anomalies
-  >();
+  const [hcDetectorAnomalyResults, setHCDetectorAnomalyResults] =
+    useState<Anomalies>();
 
   const anomalyResults = bucketizedAnomalyResults
     ? bucketizedAnomalyResults
