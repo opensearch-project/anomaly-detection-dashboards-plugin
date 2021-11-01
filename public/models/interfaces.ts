@@ -230,7 +230,6 @@ export type DetectionDateRange = {
   endTime: number;
 };
 
-<<<<<<< HEAD
 export type EntityOption = {
   label: string;
 };
@@ -244,8 +243,6 @@ export type EntityOptionsMap = {
   [categoryField: string]: EntityOption[];
 };
 
-=======
->>>>>>> 7193a34 (addressed tyler's comments)
 export type ValidationModelResponse = {
   message: String;
   sub_issues?: { [key: string]: string };

@@ -250,7 +250,8 @@ export const ModelConfigurationFields = (
     }
     if (props.validationError) {
       return null;
-    } else if (props.validModel) {
+    }
+    if (props.validModel) {
       return (
         <EuiCallOut
           title="Model configurations are validated"
@@ -262,7 +263,8 @@ export const ModelConfigurationFields = (
       );
       // makes sure there is a response to display and model configs aren't valid per
       // validation API
-    } else if (
+    } 
+    if (
       !props.validModel &&
       props.validationFeatureResponse.hasOwnProperty('message')
     ) {
