@@ -98,9 +98,8 @@ export function AnomalyResults(props: AnomalyResultsProps) {
   const detector = useSelector(
     (state: AppState) => state.ad.detectors[detectorId]
   );
-  const [outOfRangeModalOpen, setOutOfRangeModalOpen] = useState<boolean>(
-    false
-  );
+  const [outOfRangeModalOpen, setOutOfRangeModalOpen] =
+    useState<boolean>(false);
 
   useEffect(() => {
     core.chrome.setBreadcrumbs([
@@ -150,9 +149,8 @@ export function AnomalyResults(props: AnomalyResultsProps) {
   const monitors = useSelector((state: AppState) => state.alerting.monitors);
   const monitor = get(monitors, `${detectorId}.0`);
 
-  const [featureMissingSeverity, setFeatureMissingSeverity] = useState<
-    MISSING_FEATURE_DATA_SEVERITY
-  >();
+  const [featureMissingSeverity, setFeatureMissingSeverity] =
+    useState<MISSING_FEATURE_DATA_SEVERITY>();
 
   const [isSampleDetector, setIsSampleDetector] = useState<boolean>(false);
 
@@ -243,8 +241,9 @@ export function AnomalyResults(props: AnomalyResultsProps) {
     );
 
     try {
+      const resultIndex = get(detector, 'resultIndex', '');
       const detectorResultResponse = await dispatch(
-        getDetectorResults(detectorId, params, false)
+        getDetectorResults(detectorId, params, false, resultIndex)
       );
       const featuresData = get(
         detectorResultResponse,
@@ -258,9 +257,8 @@ export function AnomalyResults(props: AnomalyResultsProps) {
         featureDataPointsRange
       );
 
-      const featureMissingSeveritiesMap = getFeatureMissingSeverities(
-        featureDataPoints
-      );
+      const featureMissingSeveritiesMap =
+        getFeatureMissingSeverities(featureDataPoints);
       let highestSeverity = MISSING_FEATURE_DATA_SEVERITY.GREEN;
       let featuresAtHighestSev = [] as string[];
       featureMissingSeveritiesMap.forEach((featureNames, severity, map) => {

@@ -110,6 +110,7 @@ export type Detector = {
   description: string;
   timeField: string;
   indices: string[];
+  resultIndex?: string;
   filterQuery: { [key: string]: any };
   featureAttributes: FeatureAttributes[];
   windowDelay: { period: Schedule };

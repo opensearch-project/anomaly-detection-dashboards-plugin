@@ -93,19 +93,26 @@ const reducer = handleActions<Anomalies>(
 export const getDetectorResults = (
   id: string,
   queryParams: any,
-  isHistorical: boolean
+  isHistorical: boolean,
+  resultIndex: string
 ): APIAction => ({
   type: DETECTOR_RESULTS,
   request: (client: HttpSetup) =>
-    client.get(`..${AD_NODE_API.DETECTOR}/${id}/results/${isHistorical}`, {
-      query: queryParams,
-    }),
+    client.get(
+      `..${AD_NODE_API.DETECTOR}/${id}/results/${isHistorical}/${resultIndex}`,
+      {
+        query: queryParams,
+      }
+    ),
 });
 
-export const searchResults = (requestBody: any): APIAction => ({
+export const searchResults = (
+  requestBody: any,
+  resultIndex: string
+): APIAction => ({
   type: SEARCH_ANOMALY_RESULTS,
   request: (client: HttpSetup) =>
-    client.post(`..${AD_NODE_API.DETECTOR}/results/_search`, {
+    client.post(`..${AD_NODE_API.DETECTOR}/results/_search/${resultIndex}`, {
       body: JSON.stringify(requestBody),
     }),
 });

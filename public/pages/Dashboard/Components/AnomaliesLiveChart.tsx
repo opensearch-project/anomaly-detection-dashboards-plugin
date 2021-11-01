@@ -66,6 +66,7 @@ import {
   getLatestAnomalyResultsByTimeRange,
 } from '../utils/utils';
 import { MAX_ANOMALIES, SPACE_STR } from '../../../utils/constants';
+import { ALL_CUSTOM_AD_RESULT_INDICES } from '../../utils/constants'
 import { searchResults } from '../../../redux/reducers/anomalyResults';
 
 export interface AnomaliesLiveChartProps {
@@ -97,10 +98,8 @@ export const AnomaliesLiveChart = (props: AnomaliesLiveChartProps) => {
 
   const [hasLatestAnomalyResult, setHasLatestAnomalyResult] = useState(true);
 
-  const [
-    latestAnomalousDetectorsCount,
-    setLatestLiveAnomalousDetectorsCount,
-  ] = useState(0);
+  const [latestAnomalousDetectorsCount, setLatestLiveAnomalousDetectorsCount] =
+    useState(0);
 
   const getLiveAnomalyResults = async () => {
     setIsLoadingAnomalies(true);
@@ -115,7 +114,8 @@ export const AnomaliesLiveChart = (props: AnomaliesLiveChartProps) => {
         dispatch,
         -1,
         1,
-        true
+        true,
+        ALL_CUSTOM_AD_RESULT_INDICES
       );
     } catch (err) {
       console.log(
@@ -128,16 +128,18 @@ export const AnomaliesLiveChart = (props: AnomaliesLiveChartProps) => {
     setHasLatestAnomalyResult(!isEmpty(latestSingleLiveAnomalyResult));
 
     // get anomalies(anomaly_grade>0) in last 30mins
-    const latestLiveAnomalyResult = await getLatestAnomalyResultsForDetectorsByTimeRange(
-      searchResults,
-      props.selectedDetectors,
-      '30m',
-      dispatch,
-      0,
-      MAX_ANOMALIES,
-      MAX_LIVE_DETECTORS,
-      false
-    );
+    const latestLiveAnomalyResult =
+      await getLatestAnomalyResultsForDetectorsByTimeRange(
+        searchResults,
+        props.selectedDetectors,
+        '30m',
+        dispatch,
+        0,
+        MAX_ANOMALIES,
+        MAX_LIVE_DETECTORS,
+        false,
+        ALL_CUSTOM_AD_RESULT_INDICES
+      );
 
     setLiveAnomalyData(latestLiveAnomalyResult);
 

@@ -28,13 +28,19 @@ import { get, isEmpty } from 'lodash';
 import React from 'react';
 import { EuiTitle } from '@elastic/eui';
 import { darkModeEnabled } from './opensearchDashboardsUtils';
-import { ALERTING_PLUGIN_NAME, NAME_REGEX } from './constants';
-import { MAX_FEATURE_NAME_SIZE } from './constants';
+import {
+  ALERTING_PLUGIN_NAME,
+  NAME_REGEX,
+  INDEX_NAME_REGEX,
+  MAX_FEATURE_NAME_SIZE,
+  MAX_INDEX_NAME_SIZE,
+} from './constants';
 import { CoreStart } from '../../../../src/core/public';
 import { CoreServicesContext } from '../components/CoreServices/CoreServices';
 import datemath from '@elastic/datemath';
 import moment from 'moment';
 import { Detector } from '../models/interfaces';
+import { CUSTOM_AD_RESULT_INDEX_PREFIX } from '../../server/utils/constants';
 
 export const validateFeatureName = (
   featureName: string
@@ -60,6 +66,19 @@ export const validateName = (
   }
   if (!NAME_REGEX.test(name)) {
     return 'Valid characters are a-z, A-Z, 0-9, -(hyphen) and _(underscore)';
+  }
+};
+
+export const validateCustomResultIndex = (name: string): string | undefined => {
+  if (isEmpty(name)) {
+    return `You must enter a index name`;
+  }
+  let resultIndexName = CUSTOM_AD_RESULT_INDEX_PREFIX + name;
+  if (resultIndexName.length > MAX_INDEX_NAME_SIZE) {
+    return `Index name is too long, maximum limit is ${MAX_INDEX_NAME_SIZE}`;
+  }
+  if (!INDEX_NAME_REGEX.test(resultIndexName)) {
+    return 'Valid characters are a-z, 0-9, -(hyphen) and _(underscore)';
   }
 };
 

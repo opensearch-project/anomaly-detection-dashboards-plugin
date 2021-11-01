@@ -50,6 +50,7 @@ export function detectorDefinitionToFormik(
     name: ad.name,
     description: ad.description,
     index: [{ label: ad.indices[0] }], // Currently we support only one index
+    resultIndex: ad.resultIndex,
     filters: filtersToFormik(ad),
     filterQuery: JSON.stringify(
       get(ad, 'filterQuery', { match_all: {} }),
@@ -123,6 +124,7 @@ export function formikToDetectorDefinition(
     name: values.name,
     description: values.description,
     indices: formikToIndices(values.index),
+    resultIndex: values.resultIndex,
     filterQuery: formikToFilterQuery(values),
     uiMetadata: {
       features: get(detector, 'uiMetadata.features', {}),
