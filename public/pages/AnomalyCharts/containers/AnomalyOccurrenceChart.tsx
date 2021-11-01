@@ -27,14 +27,15 @@
 import React from 'react';
 import { EuiBadge } from '@elastic/eui';
 import ContentPanel from '../../../components/ContentPanel/ContentPanel';
-import { Monitor, Detector, DateRange } from '../../../models/interfaces';
+import {
+  Monitor,
+  Detector,
+  DateRange,
+  AnomalyData,
+} from '../../../models/interfaces';
 import { AnomalyDetailsChart } from './AnomalyDetailsChart';
 import { HeatmapCell } from './AnomalyHeatmapChart';
-import { filterWithHeatmapFilter } from '../../utils/anomalyResultUtils';
-import {
-  getAnomalySummary,
-  getDateRangeWithSelectedHeatmapCell,
-} from '../utils/anomalyChartUtils';
+import { getDateRangeWithSelectedHeatmapCell } from '../utils/anomalyChartUtils';
 
 interface AnomalyOccurrenceChartProps {
   onDateRangeChange(
@@ -44,7 +45,7 @@ interface AnomalyOccurrenceChartProps {
   ): void;
   onZoomRangeChange(startDate: number, endDate: number): void;
   title: string | React.ReactNode;
-  anomalies: any[];
+  anomalies: AnomalyData[][];
   bucketizedAnomalies: boolean;
   anomalySummary: any;
   dateRange: DateRange;
@@ -63,31 +64,14 @@ interface AnomalyOccurrenceChartProps {
 export const AnomalyOccurrenceChart = React.memo(
   (props: AnomalyOccurrenceChartProps) => {
     const getAnomaliesForChart = () => {
-      if (props.isHCDetector) {
-        if (props.selectedHeatmapCell) {
-          return filterWithHeatmapFilter(
-            props.anomalies,
-            props.selectedHeatmapCell
-          );
-        } else {
-          return [];
-        }
-      } else {
-        return props.anomalies;
-      }
+      return props.isHCDetector && !props.selectedHeatmapCell
+        ? []
+        : props.anomalies;
     };
     const getAnomalySummaryForChart = () => {
-      if (props.isHCDetector) {
-        if (props.selectedHeatmapCell) {
-          return getAnomalySummary(
-            filterWithHeatmapFilter(props.anomalies, props.selectedHeatmapCell)
-          );
-        } else {
-          return [];
-        }
-      } else {
-        return props.anomalySummary;
-      }
+      return props.isHCDetector && !props.selectedHeatmapCell
+        ? []
+        : props.anomalySummary;
     };
 
     return (

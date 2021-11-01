@@ -41,6 +41,7 @@ import {
   getAnomalyHistoryWording,
   getFeatureBreakdownWording,
   getFeatureDataWording,
+  getAnomalySummary,
 } from '../../AnomalyCharts/utils/anomalyChartUtils';
 import React, { Fragment, useCallback, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
@@ -52,7 +53,10 @@ import { AnomaliesChart } from '../../AnomalyCharts/containers/AnomaliesChart';
 import { HeatmapCell } from '../../AnomalyCharts/containers/AnomalyHeatmapChart';
 import { FeatureBreakDown } from '../../AnomalyCharts/containers/FeatureBreakDown';
 import { useHideSideNavBar } from '../../main/hooks/useHideSideNavBar';
-import { generateAnomalyAnnotations } from '../../utils/anomalyResultUtils';
+import {
+  generateAnomalyAnnotations,
+  filterSampleData,
+} from '../../utils/anomalyResultUtils';
 import { focusOnFirstWrongFeature } from '../utils/helpers';
 import { prepareDetector } from '../utils/helpers';
 import { FeaturesFormikValues } from '../models/interfaces';
@@ -95,6 +99,21 @@ export function SampleAnomalies(props: SampleAnomaliesProps) {
 
   const isHCDetector = !isEmpty(get(newDetector, 'categoryField', []));
 
+  const sampleAnomaliesResult = useSelector(
+    (state: AppState) => state.anomalies.anomaliesResult
+  );
+
+  const filteredSampleResults = filterSampleData(
+    sampleAnomaliesResult,
+    zoomRange,
+    'plotTime',
+    selectedHeatmapCell
+  );
+
+  const anomalySummary = getAnomalySummary(
+    get(filteredSampleResults, 'anomalies', [])
+  );
+
   useEffect(() => {
     if (!firstPreview) {
       getSampleAnomalies();
@@ -102,8 +121,12 @@ export function SampleAnomalies(props: SampleAnomaliesProps) {
   }, [dateRange]);
 
   const handleDateRangeChange = useCallback(
-    (startDate: number, endDate: number, dateRangeOption: string) => {
+    (startDate: number, endDate: number, dateRangeOption?: string) => {
       setDateRange({
+        startDate: startDate,
+        endDate: endDate,
+      });
+      setZoomRange({
         startDate: startDate,
         endDate: endDate,
       });
@@ -120,11 +143,8 @@ export function SampleAnomalies(props: SampleAnomaliesProps) {
 
   const handleHeatmapCellSelected = useCallback((heatmapCell: HeatmapCell) => {
     setSelectedHeatmapCell(heatmapCell);
+    setZoomRange(heatmapCell.dateRange);
   }, []);
-
-  const anomaliesResult = useSelector(
-    (state: AppState) => state.anomalies.anomaliesResult
-  );
 
   const getPreviewErrorMessage = (err: any, defaultMessage: string) => {
     if (typeof err === 'string') return err;
@@ -213,6 +233,10 @@ export function SampleAnomalies(props: SampleAnomaliesProps) {
                 if (
                   !focusOnFirstWrongFeature(props.errors, props.setFieldTouched)
                 ) {
+                  handleDateRangeChange(
+                    initialStartDate.valueOf(),
+                    initialEndDate.valueOf()
+                  );
                   getSampleAnomalies();
                 }
               }}
@@ -225,7 +249,7 @@ export function SampleAnomalies(props: SampleAnomaliesProps) {
         </EuiFlexGroup>
       </EuiCallOut>
       <EuiSpacer />
-      {previewDone && !anomaliesResult.anomalies.length ? (
+      {previewDone && !sampleAnomaliesResult.anomalies.length ? (
         <EuiCallOut
           title={`No sample anomaly result generated. Please check detector interval and make sure you have >400 data points${
             isHCDetector ? ' for some entities ' : ' '
@@ -249,7 +273,8 @@ export function SampleAnomalies(props: SampleAnomaliesProps) {
             selectedHeatmapCell={selectedHeatmapCell}
             newDetector={newDetector}
             zoomRange={zoomRange}
-            anomaliesResult={anomaliesResult}
+            anomalyAndFeatureResults={[filteredSampleResults]}
+            anomalySummary={anomalySummary}
             showAlerts={false}
             isNotSample={false}
           />
@@ -267,10 +292,10 @@ export function SampleAnomalies(props: SampleAnomaliesProps) {
             <FeatureBreakDown
               title={getFeatureBreakdownWording(false)}
               detector={newDetector}
-              anomaliesResult={anomaliesResult}
-              annotations={generateAnomalyAnnotations(
-                get(anomaliesResult, 'anomalies', [])
-              )}
+              anomalyAndFeatureResults={[filteredSampleResults]}
+              annotations={generateAnomalyAnnotations([
+                get(filteredSampleResults, 'anomalies', []),
+              ])}
               isLoading={isLoading}
               dateRange={zoomRange}
               featureDataSeriesName={getFeatureDataWording(false)}

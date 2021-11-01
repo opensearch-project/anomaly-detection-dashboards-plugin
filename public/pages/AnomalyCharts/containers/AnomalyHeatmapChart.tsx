@@ -44,14 +44,15 @@ import { useDelayedLoader } from '../../../hooks/useDelayedLoader';
 import { Monitor, DateRange } from '../../../models/interfaces';
 import { AlertsFlyout } from '../components/AlertsFlyout/AlertsFlyout';
 import {
-  getAnomaliesHeatmapData,
+  getSampleAnomaliesHeatmapData,
   getSelectedHeatmapCellPlotData,
   updateHeatmapPlotData,
   HEATMAP_X_AXIS_DATE_FORMAT,
   AnomalyHeatmapSortType,
   sortHeatmapPlotData,
   filterHeatmapPlotDataByY,
-  getEntitytAnomaliesHeatmapData,
+  getEntityAnomaliesHeatmapData,
+  getCategoryFieldOptions,
 } from '../utils/anomalyChartUtils';
 import {
   MIN_IN_MILLI_SECS,
@@ -63,7 +64,7 @@ import {
 } from '../../../../server/models/interfaces';
 import { HEATMAP_CHART_Y_AXIS_WIDTH } from '../utils/constants';
 import {
-  convertToEntityList,
+  convertHeatmapCellEntityStringToEntityList,
   convertToCategoryFieldString,
 } from '../../utils/anomalyResultUtils';
 
@@ -84,6 +85,8 @@ interface AnomalyHeatmapChartProps {
   entityAnomalySummaries?: EntityAnomalySummaries[];
   isNotSample?: boolean;
   categoryField?: string[];
+  selectedCategoryFields?: any[];
+  handleCategoryFieldsChange(selectedOptions: any[]): void;
 }
 
 export interface HeatmapCell {
@@ -123,7 +126,7 @@ export const AnomalyHeatmapChart = React.memo(
         inputDisplay: 'By severity',
       },
       {
-        value: AnomalyHeatmapSortType.OCCURRENCES,
+        value: AnomalyHeatmapSortType.OCCURRENCE,
         inputDisplay: 'By occurrence',
       },
     ];
@@ -173,16 +176,22 @@ export const AnomalyHeatmapChart = React.memo(
       };
     };
 
+    // We store and update heatmap data in 2 ways, depending on if it's in a sample scenario or not.
+    // If sample data, we get heatmap data from the raw sample anomalies themselves.
+    // If non-sample data, we get heatmap data from the anomaly summaries via props.
+    // The summaries come from aggregate query results directly against the result data; this isn't possible
+    // in the sample data scenario, where we can only retrieve sampled raw data and no aggregate buckets/summaries,
+    // hence needing to handle that in post-processing via getSampleAnomaliesHeatmapData
     const [originalHeatmapData, setOriginalHeatmapData] = useState(
       props.isNotSample
-        ? // use anomaly summary data in case of realtime result
-          getEntitytAnomaliesHeatmapData(
+        ? // use anomaly summary data in case of realtime or historical result
+          getEntityAnomaliesHeatmapData(
             props.dateRange,
-            props.entityAnomalySummaries,
-            props.heatmapDisplayOption?.entityOption.value
+            get(props, 'entityAnomalySummaries', []),
+            get(props, 'heatmapDisplayOption.entityOption.value', 0)
           )
-        : // use anomalies data in case of sample result
-          getAnomaliesHeatmapData(
+        : // use raw anomalies data in case of sample result
+          getSampleAnomaliesHeatmapData(
             props.anomalies,
             props.dateRange,
             AnomalyHeatmapSortType.SEVERITY,
@@ -198,7 +207,11 @@ export const AnomalyHeatmapChart = React.memo(
       AnomalyHeatmapSortType
     >(
       props.isNotSample
-        ? props.heatmapDisplayOption?.sortType
+        ? get(
+            props,
+            'heatmapDisplayOption.sortType',
+            SORT_BY_FIELD_OPTIONS[0].value
+          )
         : SORT_BY_FIELD_OPTIONS[0].value
     );
 
@@ -237,16 +250,22 @@ export const AnomalyHeatmapChart = React.memo(
     // https://github.com/opensearch-project/anomaly-detection-dashboards-plugin/issues/90
     useEffect(() => {
       if (props.isHistorical) {
-        const updateHeatmapPlotData = getAnomaliesHeatmapData(
-          props.anomalies,
-          props.dateRange,
-          sortByFieldValue,
-          get(
-            currentViewOptions[0],
-            'value',
-            get(COMBINED_OPTIONS.options[0], 'value')
-          )
-        );
+        const updateHeatmapPlotData = props.isNotSample
+          ? getEntityAnomaliesHeatmapData(
+              props.dateRange,
+              get(props, 'entityAnomalySummaries', []),
+              get(props, 'heatmapDisplayOption.entityOption.value', 0)
+            )
+          : getSampleAnomaliesHeatmapData(
+              props.anomalies,
+              props.dateRange,
+              sortByFieldValue,
+              get(
+                currentViewOptions[0],
+                'value',
+                get(COMBINED_OPTIONS.options[0], 'value')
+              )
+            );
         setOriginalHeatmapData(updateHeatmapPlotData);
         setHeatmapData(updateHeatmapPlotData);
         setNumEntities(updateHeatmapPlotData[0].y.length);
@@ -256,7 +275,7 @@ export const AnomalyHeatmapChart = React.memo(
 
     const handleHeatmapClick = (event: Plotly.PlotMouseEvent) => {
       const selectedCellIndices = get(event, 'points[0].pointIndex', []);
-      const selectedEntityString = get(event, 'points[0].y', '');
+      const selectedEntityString = get(event, 'points[0].customdata', '');
       if (!isEmpty(selectedCellIndices)) {
         let anomalyCount = get(event, 'points[0].text', 0);
         if (
@@ -301,10 +320,8 @@ export const AnomalyHeatmapChart = React.memo(
               startDate: selectedStartDate,
               endDate: selectedEndDate,
             },
-            entityList: convertToEntityList(
-              selectedEntityString,
-              get(props, 'categoryField', []),
-              ENTITY_LIST_DELIMITER
+            entityList: convertHeatmapCellEntityStringToEntityList(
+              selectedEntityString
             ),
           } as HeatmapCell);
         }
@@ -334,12 +351,18 @@ export const AnomalyHeatmapChart = React.memo(
           });
         } else {
           const displayTopEntityNum = get(COMBINED_OPTIONS.options[0], 'value');
-          const updateHeatmapPlotData = getAnomaliesHeatmapData(
-            props.anomalies,
-            props.dateRange,
-            sortByFieldValue,
-            displayTopEntityNum
-          );
+          const updateHeatmapPlotData = props.isNotSample
+            ? getEntityAnomaliesHeatmapData(
+                props.dateRange,
+                get(props, 'entityAnomalySummaries', []),
+                displayTopEntityNum
+              )
+            : getSampleAnomaliesHeatmapData(
+                props.anomalies,
+                props.dateRange,
+                sortByFieldValue,
+                displayTopEntityNum
+              );
           setOriginalHeatmapData(updateHeatmapPlotData);
           setHeatmapData(updateHeatmapPlotData);
           setNumEntities(updateHeatmapPlotData[0].y.length);
@@ -365,12 +388,18 @@ export const AnomalyHeatmapChart = React.memo(
             });
           } else {
             const displayTopEntityNum = get(option, 'value');
-            const updateHeatmapPlotData = getAnomaliesHeatmapData(
-              props.anomalies,
-              props.dateRange,
-              sortByFieldValue,
-              displayTopEntityNum
-            );
+            const updateHeatmapPlotData = props.isNotSample
+              ? getEntityAnomaliesHeatmapData(
+                  props.dateRange,
+                  get(props, 'entityAnomalySummaries', []),
+                  displayTopEntityNum
+                )
+              : getSampleAnomaliesHeatmapData(
+                  props.anomalies,
+                  props.dateRange,
+                  sortByFieldValue,
+                  displayTopEntityNum
+                );
 
             setOriginalHeatmapData(updateHeatmapPlotData);
             setHeatmapData(updateHeatmapPlotData);
@@ -460,22 +489,44 @@ export const AnomalyHeatmapChart = React.memo(
                 justifyContent="spaceBetween"
                 style={{ padding: '12px', marginBottom: '6px' }}
               >
-                <EuiFlexItem style={{ marginBottom: '0px' }}>
-                  <EuiText>
-                    <h4>
-                      View by:&nbsp;
-                      <b>
-                        {convertToCategoryFieldString(
-                          get(props, 'categoryField', []) as string[],
-                          ', '
-                        )}
-                      </b>
-                    </h4>
-                  </EuiText>
-                </EuiFlexItem>
-
                 <EuiFlexItem grow={false}>
                   <EuiFlexGroup gutterSize="s" alignItems="center">
+                    <EuiFlexItem style={{ marginBottom: '0px' }} grow={false}>
+                      <EuiText>
+                        <h4>View by:</h4>
+                      </EuiText>
+                    </EuiFlexItem>
+
+                    {/**
+                     * We don't support multi-category filtering on sample data currently.
+                     * Because of this, we remove the category field combo box for the sample charts, and
+                     * simply show the list of selected category fields in string format.
+                     */}
+                    {props.isNotSample ? (
+                      <EuiFlexItem style={{ minWidth: 300 }}>
+                        <EuiComboBox
+                          placeholder="Select categorical fields"
+                          options={getCategoryFieldOptions(
+                            get(props, 'categoryField', [])
+                          )}
+                          selectedOptions={props.selectedCategoryFields}
+                          onChange={(selectedOptions) =>
+                            props.handleCategoryFieldsChange(selectedOptions)
+                          }
+                        />
+                      </EuiFlexItem>
+                    ) : (
+                      <EuiFlexItem style={{ marginBottom: '0px' }}>
+                        <EuiText>
+                          <h4>
+                            {convertToCategoryFieldString(
+                              get(props, 'categoryField', [] as string[]),
+                              ','
+                            )}
+                          </h4>
+                        </EuiText>
+                      </EuiFlexItem>
+                    )}
                     <EuiFlexItem style={{ minWidth: 300 }}>
                       <EuiComboBox
                         placeholder="Select options"

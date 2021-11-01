@@ -106,7 +106,16 @@ export const MODEL_ID_FIELD = 'model_id';
 export const DOC_COUNT_FIELD = 'doc_count';
 export const KEY_FIELD = 'key';
 export const ENTITY_LIST_FIELD = 'entity_list';
+export const MAX_ANOMALY_GRADE_FIELD = 'max_anomaly_grade';
+
+// y-axis values in the heatmap chart should be in the form:
+// <category-field-value-1><br><category-field-value-2>
 export const ENTITY_LIST_DELIMITER = '<br>';
+
+// when hovering over a cell, the entity list should be in the form:
+// <category-field-name-1>: <category-field-value-1>, <category-field-name-2>: <category-field-value-2>
+export const HEATMAP_CELL_ENTITY_DELIMITER = ', ';
+export const HEATMAP_CALL_ENTITY_KEY_VALUE_DELIMITER = ': ';
 
 export const STACK_TRACE_PATTERN = '.java:';
 export const OPENSEARCH_EXCEPTION_PREFIX =

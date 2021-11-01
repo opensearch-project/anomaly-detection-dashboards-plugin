@@ -25,7 +25,7 @@
  */
 
 import React from 'react';
-import { get, isEmpty } from 'lodash';
+import { get } from 'lodash';
 import {
   EuiFlexItem,
   EuiFlexGroup,
@@ -40,27 +40,24 @@ import {
   Anomalies,
   DateRange,
   FEATURE_TYPE,
+  FeatureAggregationData,
+  EntityData,
 } from '../../../models/interfaces';
 import { NoFeaturePrompt } from '../components/FeatureChart/NoFeaturePrompt';
 import { focusOnFeatureAccordion } from '../../ConfigureModel/utils/helpers';
 import moment from 'moment';
 import { HeatmapCell } from './AnomalyHeatmapChart';
-import {
-  filterWithHeatmapFilter,
-  entityListsMatch,
-} from '../../utils/anomalyResultUtils';
-import { Entity } from '../../../../server/models/interfaces';
 
 interface FeatureBreakDownProps {
   title?: string;
   detector: Detector;
-  anomaliesResult: Anomalies;
+  anomalyAndFeatureResults: Anomalies[];
   annotations: any[];
   isLoading: boolean;
   dateRange: DateRange;
   featureDataSeriesName: string;
   showFeatureMissingDataPointAnnotation?: boolean;
-  rawAnomalyResults?: Anomalies;
+  rawAnomalyResults?: Anomalies[];
   isFeatureDataMissing?: boolean;
   isHCDetector?: boolean;
   selectedHeatmapCell?: HeatmapCell;
@@ -68,63 +65,47 @@ interface FeatureBreakDownProps {
 
 export const FeatureBreakDown = React.memo((props: FeatureBreakDownProps) => {
   const getFeatureDataForChart = (
-    anomaliesResult: Anomalies,
+    anomalyAndFeatureResults: Anomalies[],
     featureId: string
   ) => {
-    const originalFeatureData = get(
-      anomaliesResult,
-      `featureData.${featureId}`,
-      []
-    );
-    if (props.isHCDetector) {
-      if (props.selectedHeatmapCell) {
-        const anomaliesFound = get(anomaliesResult, 'anomalies', []);
-        const filteredFeatureData = [];
-        for (let i = 0; i < anomaliesFound.length; i++) {
-          const currentAnomalyData = anomaliesResult.anomalies[i];
-          const dataEntityList = get(
-            currentAnomalyData,
-            'entity',
-            []
-          ) as Entity[];
-          const cellEntityList = get(
-            props,
-            'selectedHeatmapCell.entityList',
-            []
-          ) as Entity[];
-          if (
-            !isEmpty(dataEntityList) &&
-            entityListsMatch(dataEntityList, cellEntityList) &&
-            get(currentAnomalyData, 'plotTime', 0) >=
-              props.dateRange.startDate &&
-            get(currentAnomalyData, 'plotTime', 0) <= props.dateRange.endDate
-          ) {
-            filteredFeatureData.push(originalFeatureData[i]);
-          }
-        }
-        return filteredFeatureData;
-      } else {
-        return [];
-      }
+    if (props.isHCDetector && !props.selectedHeatmapCell) {
+      return [];
     } else {
-      return originalFeatureData;
+      let featureResults = [] as FeatureAggregationData[][];
+      if (anomalyAndFeatureResults !== undefined) {
+        anomalyAndFeatureResults.forEach((timeSeries: Anomalies) => {
+          const curFeatureData = get(
+            timeSeries,
+            `featureData.${featureId}`,
+            []
+          ) as FeatureAggregationData[];
+          featureResults.push(curFeatureData);
+        });
+      }
+      return featureResults;
+    }
+  };
+
+  // Returns an array of entity combinations - one for each time series.
+  // Need to propagate this data to the chart in order to label the different possible time series
+  const getEntityDataForChart = (anomalyAndFeatureResults: Anomalies[]) => {
+    if (props.isHCDetector && !props.selectedHeatmapCell) {
+      return [];
+    } else {
+      let entityData = [] as EntityData[][];
+      if (anomalyAndFeatureResults !== undefined) {
+        anomalyAndFeatureResults.forEach((timeSeries: Anomalies) => {
+          // extracting the entity data from the first anomaly point in the time series
+          entityData.push(get(timeSeries, 'anomalies.0.entity', []));
+        });
+      }
+      return entityData;
     }
   };
   const getAnnotationData = () => {
-    if (props.isHCDetector) {
-      if (props.selectedHeatmapCell) {
-        return filterWithHeatmapFilter(
-          props.annotations,
-          props.selectedHeatmapCell,
-          true,
-          'coordinates.x0'
-        );
-      } else {
-        return [];
-      }
-    } else {
-      return props.annotations;
-    }
+    return props.isHCDetector && !props.selectedHeatmapCell
+      ? []
+      : props.annotations;
   };
 
   return (
@@ -156,10 +137,11 @@ export const FeatureBreakDown = React.memo((props: FeatureBreakDownProps) => {
           <React.Fragment key={`${feature.featureName}-${feature.featureId}`}>
             <FeatureChart
               feature={feature}
-              featureData={
+              featureData={getFeatureDataForChart(
+                props.anomalyAndFeatureResults,
                 //@ts-ignore
-                getFeatureDataForChart(props.anomaliesResult, feature.featureId)
-              }
+                feature.featureId
+              )}
               rawFeatureData={getFeatureDataForChart(
                 //@ts-ignore
                 props.rawAnomalyResults,
@@ -206,6 +188,8 @@ export const FeatureBreakDown = React.memo((props: FeatureBreakDownProps) => {
                 props.showFeatureMissingDataPointAnnotation
               }
               detectorEnabledTime={props.detector.enabledTime}
+              entityData={getEntityDataForChart(props.anomalyAndFeatureResults)}
+              isHCDetector={props.isHCDetector}
             />
             {index + 1 ===
             get(props, 'detector.featureAttributes', []).length ? null : (

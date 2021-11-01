@@ -26,13 +26,22 @@
 
 import { cloneDeep, defaultTo, get, isEmpty, orderBy } from 'lodash';
 import React from 'react';
-import { EuiTitle, EuiSpacer } from '@elastic/eui';
+import {
+  EuiTitle,
+  EuiSpacer,
+  EuiText,
+  EuiFlexGroup,
+  EuiFlexItem,
+  EuiComboBox,
+} from '@elastic/eui';
 import {
   DateRange,
   Detector,
   MonitorAlert,
   AnomalySummary,
   EntityData,
+  EntityOptionsMap,
+  EntityOption,
 } from '../../../models/interfaces';
 import { dateFormatter, minuteDateFormatter } from '../../utils/helpers';
 import { RectAnnotationDatum } from '@elastic/charts';
@@ -51,6 +60,10 @@ import {
 } from '../../../../server/models/interfaces';
 import { toFixedNumberForAnomaly } from '../../../../server/utils/helpers';
 import { Entity } from '../../../../server/models/interfaces';
+import {
+  TOP_CHILD_ENTITIES_TO_FETCH,
+  MAX_TIME_SERIES_TO_DISPLAY,
+} from '../../DetectorResults/utils/constants';
 
 export const convertAlerts = (response: any): MonitorAlert[] => {
   const alerts = get(response, 'response.alerts', []);
@@ -190,8 +203,8 @@ export const ANOMALY_HEATMAP_COLORSCALE = [
 ];
 
 export enum AnomalyHeatmapSortType {
-  SEVERITY = 'by_severity',
-  OCCURRENCES = 'by_occurrences',
+  SEVERITY = 'severity',
+  OCCURRENCE = 'occurrence',
 }
 
 const getHeatmapColorByValue = (value: number) => {
@@ -229,7 +242,7 @@ const buildBlankStringWithLength = (length: number) => {
   return result;
 };
 
-export const getAnomaliesHeatmapData = (
+export const getSampleAnomaliesHeatmapData = (
   anomalies: any[] | undefined,
   dateRange: DateRange,
   sortType: AnomalyHeatmapSortType = AnomalyHeatmapSortType.SEVERITY,
@@ -345,7 +358,7 @@ const buildHeatmapPlotData = (
   } as PlotData;
 };
 
-export const getEntitytAnomaliesHeatmapData = (
+export const getEntityAnomaliesHeatmapData = (
   dateRange: DateRange,
   entitiesAnomalySummaryResult: EntityAnomalySummaries[],
   displayTopNum: number
@@ -700,4 +713,172 @@ export const getHCTitle = (entityList: Entity[]) => {
       <EuiSpacer size="s" />
     </div>
   );
+};
+
+export const getCategoryFieldOptions = (categoryFields: string[]) => {
+  const categoryFieldOptions = [] as any[];
+  if (categoryFields !== undefined) {
+    categoryFields.forEach((categoryField: string) => {
+      categoryFieldOptions.push({
+        label: categoryField,
+      });
+    });
+  }
+  return categoryFieldOptions;
+};
+
+// Split up the child entity values into their respective category fields, to pass as options to the dropdowns.
+// For example, given child category fields ['A', 'B'], and child entity values
+// [ [ { name: 'A', value: 'A1' }, { name: 'B', value: 'B1' } ], [ { name: 'A', value: 'A2' }, { name: 'B', value: 'B1' } ] ],
+// => { [A]: [ { label: 'A1' }, { label: 'A2' } ], [B]: [ { label: B1 } ] }
+const getChildEntities = (
+  childCategoryFields: string[],
+  childEntityCombos: Entity[][]
+) => {
+  const childEntityOptionsMap = {} as EntityOptionsMap;
+  childCategoryFields.forEach((categoryField: string) => {
+    // init the map for each category field
+    childEntityOptionsMap[categoryField] = [] as EntityOption[];
+    childEntityCombos.forEach((childEntityCombo: Entity[]) => {
+      childEntityCombo.forEach((childEntity: Entity) => {
+        if (categoryField === childEntity.name) {
+          childEntityOptionsMap[categoryField].push({
+            label: childEntity.value,
+          });
+        }
+      });
+    });
+  });
+  return childEntityOptionsMap;
+};
+
+// Returns a string list of selected parent entities (populated from the selected heatmap cell)
+// + an array of comboboxes, one for each child category field. Populates the top
+// child entities per combo box.
+export const getMultiCategoryFilters = (
+  parentEntities: Entity[],
+  childEntities: Entity[][],
+  allCategoryFields: string[],
+  selectedChildEntities: EntityOptionsMap,
+  onSelectedOptionsChange: (childCategoryField: string, options: any[]) => void,
+  sortType: AnomalyHeatmapSortType
+) => {
+  const parentEntityFields = parentEntities.map(
+    (entity: Entity) => entity.name
+  );
+  const childCategoryFields = allCategoryFields.filter(
+    (categoryField: string) => !parentEntityFields.includes(categoryField)
+  );
+
+  // Based on the available child entities, categorize them into their appropriate category field
+  // so each combo box can be filled with the appopriate entity options
+  const childEntityOptions = getChildEntities(
+    childCategoryFields,
+    childEntities
+  );
+
+  return (
+    <EuiFlexGroup
+      gutterSize="s"
+      alignItems="flexStart"
+      direction="column"
+      style={{ marginBottom: '4px' }}
+    >
+      <EuiFlexItem grow={false}>{getHCTitle(parentEntities)}</EuiFlexItem>
+      {childCategoryFields.map((childCategoryField: string) => {
+        return (
+          <EuiFlexItem>
+            <div
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                marginTop: '-8px',
+              }}
+            >
+              <EuiFlexItem style={{ marginBottom: '32px' }}>
+                <EuiText>
+                  <h3>{childCategoryField}:&nbsp;&nbsp;</h3>
+                </EuiText>
+              </EuiFlexItem>
+              <EuiFlexItem style={{ minWidth: 300 }} grow={false}>
+                <div>
+                  <EuiComboBox
+                    placeholder="Select categorical fields"
+                    options={childEntityOptions[childCategoryField]}
+                    selectedOptions={selectedChildEntities[childCategoryField]}
+                    onChange={(options: any[]) =>
+                      onSelectedOptionsChange(childCategoryField, options)
+                    }
+                  />
+                  <EuiText
+                    className="sublabel"
+                    style={{
+                      marginLeft: '0px',
+                      marginBottom: '0px',
+                      marginTop: '4px',
+                      maxWidth: 300,
+                    }}
+                  >
+                    {/**
+                     * This is currently correct, in that the top TOP_CHILD_ENTITIES_TO_FETCH for this
+                     * single child category field will be fetched and available to view. But in the future,
+                     * if we add more category fields and more possible child category fields, we will only fetch
+                     * the top TOP_CHILD_ENTITIES_TO_FETCH values across ALL child category fields, so it may
+                     * be split between them. In that case this help text will need to be changed.
+                     */}
+                    {`Top ${TOP_CHILD_ENTITIES_TO_FETCH} ${childCategoryField}s sorted by anomaly ${sortType}. You may select up to ${MAX_TIME_SERIES_TO_DISPLAY}.`}
+                  </EuiText>
+                </div>
+              </EuiFlexItem>
+            </div>
+          </EuiFlexItem>
+        );
+      })}
+    </EuiFlexGroup>
+  );
+};
+
+// Get a list of entity lists, where each list represents a unique entity combination of
+// all parent + child entities (a single model).
+// In order to get all unique results, we first gather all of the entity sources, then get the cartesian product
+// of such sources. Each "source" here represents unique entities for a single category field. For example,
+// consider category field A with entities [A1, A2], and category field B with entities [B1, B2].
+// The sources would be: [[A1, A2], [B1, B2]]
+// The cartesian product would be [[A1, B1], [A1, B2], [A2, B1], [A2, B2]]
+export const getAllEntityCombos = (
+  parentEntities: Entity[],
+  childEntities: EntityOptionsMap
+) => {
+  let entitySources = [] as Entity[][];
+  // getting parent sources
+  entitySources.push(parentEntities);
+
+  // getting all child sources
+  for (var childCategoryField in childEntities) {
+    let curChildEntities = [] as Entity[];
+    childEntities[childCategoryField].forEach(
+      (childEntityValue: EntityOption) => {
+        const childEntity = {
+          name: childCategoryField,
+          value: childEntityValue.label,
+        } as Entity;
+        curChildEntities.push(childEntity);
+      }
+    );
+    entitySources.push(curChildEntities);
+  }
+
+  // Common JS pattern to return a cartesian product of an array of arrays, by iterating through
+  // pairs of results, and appending all values of the current array to all values in the previous array.
+  //
+  // reduce(): set a custom fn to perform on the current and previous values in the array
+  // map(): set a custom fn on the current value in the array
+  // flatMap(): similar to map(), but flattens the result into a single-depth array
+  //
+  // More info: https://stackoverflow.com/questions/12303989/cartesian-product-of-multiple-arrays-in-javascript
+  return entitySources.reduce(
+    //@ts-ignore
+    (a, b) => a.flatMap((x) => b.map((y) => [...x, y])),
+    [[]]
+  ) as Entity[][];
 };
