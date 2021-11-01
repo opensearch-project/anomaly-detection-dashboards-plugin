@@ -86,7 +86,7 @@ function CustomResultIndex(props: CustomResultIndexProps) {
               <EuiFlexItem>
                 <EuiCallOut
                   data-test-subj="cannotEditResultIndexCallout"
-                  title="You can't change the custom result index after you create the detector. You can manage the result index with Index Management plugin."
+                  title="You can't change the custom result index after you create the detector. You can manage the result index with the Index Management plugin."
                   color="warning"
                   iconType="alert"
                   size="s"

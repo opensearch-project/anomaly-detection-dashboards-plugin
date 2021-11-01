@@ -79,7 +79,7 @@ export const MAX_FEATURE_NUM = 5;
 
 export const MAX_FEATURE_NAME_SIZE = 64;
 
-// OpenSearch max index name szie is 255
+// OpenSearch max index name size is 255
 export const MAX_INDEX_NAME_SIZE = 255;
 
 export const MAX_CATEGORY_FIELD_NUM = 2;
