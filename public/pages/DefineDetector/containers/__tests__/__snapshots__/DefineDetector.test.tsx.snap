@@ -121,7 +121,7 @@ exports[`<DefineDetector /> spec creating detector definition renders the compon
                 id="random_html_id-help"
               >
                 Detector name must contain 1-64 characters. Valid characters are
-                a-z, A-Z, 0-9, -(hyphen) and _(underscore).
+                a-z, A-Z, 0-9, -(hyphen), _(underscore) and .(period).
               </div>
             </div>
           </div>
@@ -1046,7 +1046,7 @@ exports[`<DefineDetector /> spec editing detector definition renders the compone
                 id="random_html_id-help"
               >
                 Detector name must contain 1-64 characters. Valid characters are
-                a-z, A-Z, 0-9, -(hyphen) and _(underscore).
+                a-z, A-Z, 0-9, -(hyphen), _(underscore) and .(period).
               </div>
             </div>
           </div>

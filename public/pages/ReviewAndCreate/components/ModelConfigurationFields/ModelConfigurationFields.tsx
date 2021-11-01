@@ -208,11 +208,10 @@ export const ModelConfigurationFields = (
     if (issueResponse != undefined) {
       if (issueResponse.sub_issues != undefined) {
         const renderList = Object.keys(issueResponse.sub_issues).map((key) => {
-          if (issueResponse.sub_issues != undefined) {
             return (
+              //@ts-ignore
               <li>{'The "' + key + '" ' + issueResponse.sub_issues[key]}</li>
             );
-          }
         });
         return <ul>{renderList}</ul>;
       } else {
