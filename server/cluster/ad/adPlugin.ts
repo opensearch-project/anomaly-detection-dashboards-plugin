@@ -185,6 +185,7 @@ export default function adPlugin(Client: any, config: any, components: any) {
     },
     method: 'GET',
   });
+
   ad.matchDetector = ca({
     url: {
       fmt: `${API.DETECTOR_BASE}/match?name=<%=detectorName%>`,
@@ -198,10 +199,39 @@ export default function adPlugin(Client: any, config: any, components: any) {
     needBody: true,
     method: 'GET',
   });
+
   ad.detectorCount = ca({
     url: {
       fmt: `${API.DETECTOR_BASE}/count`,
     },
     method: 'GET',
+  });
+
+  ad.topAnomalyResults = ca({
+    url: {
+      fmt: `${API.DETECTOR_BASE}/<%=detectorId%>/results/_topAnomalies?historical=false`,
+      req: {
+        detectorId: {
+          type: 'string',
+          required: true,
+        },
+      },
+      needBody: true,
+    },
+    method: 'POST',
+  });
+
+  ad.topHistoricalAnomalyResults = ca({
+    url: {
+      fmt: `${API.DETECTOR_BASE}/<%=detectorId%>/results/_topAnomalies?historical=true`,
+      req: {
+        detectorId: {
+          type: 'string',
+          required: true,
+        },
+      },
+      needBody: true,
+    },
+    method: 'POST',
   });
 }

@@ -46,6 +46,10 @@ import {
   MODEL_ID_FIELD,
   ENTITY_LIST_FIELD,
   ENTITY_LIST_DELIMITER,
+  HEATMAP_CELL_ENTITY_DELIMITER,
+  HEATMAP_CALL_ENTITY_KEY_VALUE_DELIMITER,
+  ENTITY_NAME_PATH_FIELD,
+  MAX_ANOMALY_GRADE_FIELD,
 } from '../../../server/utils/constants';
 import { toFixedNumberForAnomaly } from '../../../server/utils/helpers';
 import {
@@ -56,13 +60,13 @@ import {
   Detector,
   FeatureAggregationData,
   FeatureAttributes,
+  MonitorAlert,
 } from '../../models/interfaces';
 import { getDetectorLiveResults } from '../../redux/reducers/liveAnomalyResults';
 import {
   MAX_ANOMALIES,
   MISSING_FEATURE_DATA_SEVERITY,
 } from '../../utils/constants';
-import { HeatmapCell } from '../AnomalyCharts/containers/AnomalyHeatmapChart';
 import {
   AnomalyHeatmapSortType,
   NUM_CELLS,
@@ -82,6 +86,7 @@ import {
   MAX_END_TIME,
 } from './constants';
 import { dateFormatter, minuteDateFormatter } from './helpers';
+import { HeatmapCell } from '../AnomalyCharts/containers/AnomalyHeatmapChart';
 
 export const getQueryParamsForLiveAnomalyResults = (
   detectionInterval: number,
@@ -232,58 +237,124 @@ export const prepareDataForLiveChart = (
   return anomalies;
 };
 
-export const prepareDataForChart = (
-  data: any[],
-  dateRange: DateRange,
-  withoutPadding?: boolean
-) => {
-  let anomalies = [];
-  if (data && data.length > 0) {
-    anomalies = data.filter(
-      (anomaly) =>
-        anomaly.plotTime >= dateRange.startDate &&
-        anomaly.plotTime <= dateRange.endDate
-    );
-    if (anomalies.length > MAX_DATA_POINTS) {
-      anomalies = sampleMaxAnomalyGrade(anomalies);
+// Converts all anomaly results or feature aggregation results time series and filters out data
+// that is out of range
+export const prepareDataForChart = (data: any[][], dateRange: DateRange) => {
+  let preparedData = [] as any[][];
+  data.forEach((timeSeries: any[]) => {
+    if (timeSeries && timeSeries.length > 0) {
+      timeSeries = timeSeries.filter(
+        (data: AnomalyData | FeatureAggregationData) =>
+          data.plotTime >= dateRange.startDate &&
+          data.plotTime <= dateRange.endDate
+      );
+      if (timeSeries.length > MAX_DATA_POINTS) {
+        timeSeries = sampleMaxAnomalyGrade(timeSeries);
+      }
     }
-  }
-  if (withoutPadding) {
-    // just return result if padding/placeholder data is not needed
-    return anomalies;
-  }
-  anomalies.push({
-    startTime: dateRange.startDate,
-    endTime: dateRange.startDate,
-    plotTime: dateRange.startDate,
-    confidence: null,
-    anomalyGrade: null,
+    return preparedData.push(timeSeries);
   });
-  anomalies.unshift({
-    startTime: dateRange.endDate,
-    endTime: dateRange.endDate,
-    plotTime: dateRange.endDate,
-    confidence: null,
-    anomalyGrade: null,
-  });
-  return anomalies;
+  return preparedData;
 };
 
-export const generateAnomalyAnnotations = (anomalies: any[]): any[] => {
-  return anomalies
-    .filter((anomaly: AnomalyData) => anomaly.anomalyGrade > 0)
-    .map((anomaly: AnomalyData) => ({
-      coordinates: {
-        x0: anomaly.startTime,
-        x1: anomaly.endTime,
-      },
-      details: `There is an anomaly with confidence ${
-        anomaly.confidence
-      } between ${moment(anomaly.startTime).format(
-        'MM/DD/YY h:mm A'
-      )} and ${moment(anomaly.endTime).format('MM/DD/YY h:mm A')}`,
-      entity: get(anomaly, 'entity', []),
-    }));
+// Generates a set of annotations for each anomaly result time series.
+// One time series is a single AnomalyData[]. We pass an array of time series
+// since multiple time series may need to be processed.
+export const generateAnomalyAnnotations = (
+  anomalies: AnomalyData[][]
+): any[][] => {
+  let annotations = [] as any[];
+  anomalies.forEach((anomalyTimeSeries: AnomalyData[]) => {
+    annotations.push(
+      anomalyTimeSeries
+        .filter((anomaly: AnomalyData) => anomaly.anomalyGrade > 0)
+        .map((anomaly: AnomalyData) => ({
+          coordinates: {
+            x0: anomaly.startTime,
+            x1: anomaly.endTime,
+          },
+          details: `There is an anomaly with confidence ${
+            anomaly.confidence
+          } between ${moment(anomaly.startTime).format(
+            'MM/DD/YY h:mm A'
+          )} and ${moment(anomaly.endTime).format('MM/DD/YY h:mm A')}`,
+          entity: get(anomaly, 'entity', []),
+        }))
+    );
+  });
+  return annotations;
+};
+
+export const filterAnomaliesWithDateRange = (
+  data: AnomalyData[][],
+  dateRange: DateRange,
+  timeField: string
+) => {
+  let filteredData = [] as AnomalyData[][];
+  data.forEach((anomalySeries: AnomalyData[]) => {
+    const filteredAnomalies = anomalySeries
+      ? anomalySeries.filter((anomaly: AnomalyData) => {
+          const time = get(anomaly, `${timeField}`);
+          return (
+            time && time >= dateRange.startDate && time <= dateRange.endDate
+          );
+        })
+      : [];
+    filteredData.push(filteredAnomalies);
+  });
+  return filteredData;
+};
+
+// Sample data retrieved from preview API will contain all sample results for all entities (if applicable).
+// Filter by zoom range and entity list (if applicable).
+export const filterSampleData = (
+  sampleData: Anomalies,
+  dateRange: DateRange,
+  timeField: string,
+  selectedHeatmapCell: HeatmapCell | undefined
+) => {
+  const isFilteringByHeatmapCell = selectedHeatmapCell !== undefined;
+  const heatmapCellEntityList = get(selectedHeatmapCell, 'entityList', []);
+  const sampleAnomalyResults = get(
+    sampleData,
+    'anomalies',
+    []
+  ) as AnomalyData[];
+  const sampleFeatureResults = get(sampleData, 'featureData', {}) as {
+    [key: string]: FeatureAggregationData[];
+  };
+  const sampleFeatureIds = Object.keys(sampleFeatureResults);
+  const filteredAnomalyResults = [] as AnomalyData[];
+  const filteredFeatureResults = {} as {
+    [key: string]: FeatureAggregationData[];
+  };
+  // init the sample feature results map
+  sampleFeatureIds.forEach((sampleFeatureId: string) => {
+    filteredFeatureResults[sampleFeatureId] = [];
+  });
+  for (let i = 0; i < sampleAnomalyResults.length; i++) {
+    const curAnomalyData = sampleAnomalyResults[i];
+    const curEntityList = get(curAnomalyData, 'entity', []) as Entity[];
+    if (
+      isFilteringByHeatmapCell
+        ? entityListsMatch(curEntityList, heatmapCellEntityList) &&
+          get(curAnomalyData, 'plotTime', 0) >= dateRange.startDate &&
+          get(curAnomalyData, 'plotTime', 0) <= dateRange.endDate
+        : get(curAnomalyData, 'plotTime', 0) >= dateRange.startDate &&
+          get(curAnomalyData, 'plotTime', 0) <= dateRange.endDate
+    ) {
+      filteredAnomalyResults.push(curAnomalyData);
+      sampleFeatureIds.forEach((sampleFeatureId: string) => {
+        filteredFeatureResults[sampleFeatureId].push(
+          sampleFeatureResults[sampleFeatureId][i]
+        );
+      });
+    }
+  }
+  return {
+    anomalies: filteredAnomalyResults,
+    featureData: filteredFeatureResults,
+  } as Anomalies;
 };
 
 export const filterWithDateRange = (
@@ -291,13 +362,13 @@ export const filterWithDateRange = (
   dateRange: DateRange,
   timeField: string
 ) => {
-  const anomalies = data
+  const filteredData = data
     ? data.filter((item) => {
         const time = get(item, `${timeField}`);
         return time && time >= dateRange.startDate && time <= dateRange.endDate;
       })
     : [];
-  return anomalies;
+  return filteredData;
 };
 
 export const RETURNED_AD_RESULT_FIELDS = [
@@ -320,7 +391,7 @@ export const getAnomalySummaryQuery = (
 ) => {
   const termField =
     isHistorical && taskId ? { task_id: taskId } : { detector_id: detectorId };
-  const requestBody = {
+  let requestBody = {
     size: MAX_ANOMALIES,
     query: {
       bool: {
@@ -405,10 +476,8 @@ export const getAnomalySummaryQuery = (
 
   // Add entity filters if this is a HC detector
   if (entityList !== undefined && entityList.length > 0) {
-    //@ts-ignore
-    requestBody.query.bool.filter.push(getEntityFilters(modelId, entityList));
+    requestBody = appendEntityFilters(requestBody, entityList);
   }
-
   return requestBody;
 };
 
@@ -426,7 +495,7 @@ export const getBucketizedAnomalyResultsQuery = (
   const fixedInterval = Math.ceil(
     (endTime - startTime) / (MIN_IN_MILLI_SECS * MAX_DATA_POINTS)
   );
-  const requestBody = {
+  let requestBody = {
     size: 0,
     query: {
       bool: {
@@ -489,10 +558,8 @@ export const getBucketizedAnomalyResultsQuery = (
 
   // Add entity filters if this is a HC detector
   if (entityList !== undefined && entityList.length > 0) {
-    //@ts-ignore
-    requestBody.query.bool.filter.push(getEntityFilters(modelId, entityList));
+    requestBody = appendEntityFilters(requestBody, entityList);
   }
-
   return requestBody;
 };
 
@@ -933,28 +1000,8 @@ export const getFeatureDataMissingMessageAndActionItem = (
   }
 };
 
-export const filterWithHeatmapFilter = (
-  data: any[],
-  heatmapCell: HeatmapCell | undefined,
-  isFilteringWithEntity: boolean = true,
-  timeField: string = 'plotTime'
-) => {
-  if (!heatmapCell) {
-    return data;
-  }
-
-  if (isFilteringWithEntity) {
-    data = data
-      .filter((anomaly) => !isEmpty(get(anomaly, 'entity', [])))
-      .filter((anomaly) => {
-        const dataEntityList = get(anomaly, 'entity');
-        const cellEntityList = get(heatmapCell, 'entityList');
-        return entityListsMatch(dataEntityList, cellEntityList);
-      });
-  }
-  return filterWithDateRange(data, heatmapCell.dateRange, timeField);
-};
-
+// Generates query to get the top anomalous entities (or entity pairs)
+// for some detector, sorting by severity or occurrence.
 export const getTopAnomalousEntitiesQuery = (
   startTime: number,
   endTime: number,
@@ -963,7 +1010,8 @@ export const getTopAnomalousEntitiesQuery = (
   sortType: AnomalyHeatmapSortType,
   isMultiCategory: boolean,
   isHistorical?: boolean,
-  taskId?: string
+  taskId?: string,
+  includedEntities?: Entity[]
 ) => {
   const termField =
     isHistorical && taskId ? { task_id: taskId } : { detector_id: detectorId };
@@ -971,7 +1019,7 @@ export const getTopAnomalousEntitiesQuery = (
   // To handle BWC, we will return 2 possible queries based on the # of categorical fields:
   // (1) legacy way (1 category field): bucket aggregate over the single, nested, 'entity.value' field
   // (2) new way (>= 2 category fields): bucket aggregate over the new 'model_id' field
-  const requestBody = isMultiCategory
+  let requestBody = isMultiCategory
     ? {
         size: 0,
         query: {
@@ -1115,6 +1163,14 @@ export const getTopAnomalousEntitiesQuery = (
                         },
                       }
                     : {}),
+                  [ENTITY_LIST_FIELD]: {
+                    top_hits: {
+                      size: 1,
+                      _source: {
+                        include: [ENTITY_FIELD],
+                      },
+                    },
+                  },
                 },
               },
             },
@@ -1133,6 +1189,15 @@ export const getTopAnomalousEntitiesQuery = (
         },
       },
     };
+  }
+
+  // In the HC filtering case, in order to fetch the top entity combos after a specific entity has been selected,
+  // we need to add a filter to only match results that include at least the user-specified entity values.
+  // Consider a detector with category fields [region, IP]. If user selects region 'us-west-1' and wants
+  // top IPs from that region, we return the top entity combos that have a region set to 'us-west-1', such as
+  // ('us-west-1', '1.2.3.4), ('us-west-1', '5.6.7.8'), and so on.
+  if (includedEntities !== undefined && !isEmpty(includedEntities)) {
+    requestBody = appendEntityFilters(requestBody, includedEntities);
   }
 
   return requestBody;
@@ -1155,9 +1220,7 @@ export const parseTopEntityAnomalySummaryResults = (
     const entityList = isMultiCategory
       ? get(item, `${ENTITY_LIST_FIELD}.hits.hits.0._source.entity`, [])
       : ([
-          {
-            value: get(item, KEY_FIELD, 0),
-          },
+          get(item, `${ENTITY_LIST_FIELD}.hits.hits.0._source`, {}),
         ] as Entity[]);
 
     const maxAnomalyGrade = isMultiCategory
@@ -1174,6 +1237,42 @@ export const parseTopEntityAnomalySummaryResults = (
     if (isMultiCategory) {
       entityAnomalySummaries.modelId = get(item, KEY_FIELD, '');
     }
+    topEntityAnomalySummaries.push(entityAnomalySummaries);
+  });
+  return topEntityAnomalySummaries;
+};
+
+// Parsing the results from the multi-category filter API, which
+// returns summaries of the top parent entities
+export const parseAggTopEntityAnomalySummaryResults = (
+  result: any
+): EntityAnomalySummaries[] => {
+  const rawEntityAnomalySummaries = get(result, `response.buckets`, []);
+  let topEntityAnomalySummaries = [] as EntityAnomalySummaries[];
+  rawEntityAnomalySummaries.forEach((item: any) => {
+    // Loop through the K/V pairs in the "key" dict returned in the composite
+    // agg bucket key from multi-category filter API
+    const entityListAsKey = get(item, `${KEY_FIELD}`, {}) as {
+      [key: string]: string;
+    };
+    let entityList = [] as Entity[];
+    for (var entity in entityListAsKey) {
+      entityList.push({
+        name: entity,
+        value: entityListAsKey[entity] as string,
+      });
+    }
+
+    const anomalyCount = get(item, DOC_COUNT_FIELD, 0);
+    const maxAnomalyGrade = get(item, MAX_ANOMALY_GRADE_FIELD, 0);
+    const entityAnomalySummary = {
+      maxAnomaly: maxAnomalyGrade,
+      anomalyCount: anomalyCount,
+    } as EntityAnomalySummary;
+    const entityAnomalySummaries = {
+      entityList: entityList,
+      anomalySummaries: [entityAnomalySummary],
+    } as EntityAnomalySummaries;
     topEntityAnomalySummaries.push(entityAnomalySummaries);
   });
   return topEntityAnomalySummaries;
@@ -1202,7 +1301,7 @@ export const getEntityAnomalySummariesQuery = (
   // this can be offset for bucket_key
   const offsetInMillisec = startTime % (fixedInterval * MIN_IN_MILLI_SECS);
 
-  const requestBody = {
+  let requestBody = {
     size: 0,
     query: {
       bool: {
@@ -1268,8 +1367,7 @@ export const getEntityAnomalySummariesQuery = (
 
   // Add entity filters if this is a HC detector
   if (entityList !== undefined && entityList.length > 0) {
-    //@ts-ignore
-    requestBody.query.bool.filter.push(getEntityFilters(modelId, entityList));
+    requestBody = appendEntityFilters(requestBody, entityList);
   }
 
   return requestBody;
@@ -1496,31 +1594,41 @@ export const convertToCategoryFieldString = (
   return categoryFieldString;
 };
 
-export const convertToCategoryFieldAndEntityString = (entityList: Entity[]) => {
+export const convertToCategoryFieldAndEntityString = (
+  entityList: Entity[],
+  delimiter: string = '\n'
+) => {
   let entityString = '';
   if (!isEmpty(entityList)) {
     entityList.forEach((entity: any, index) => {
       if (index > 0) {
-        entityString += '\n';
+        entityString += delimiter;
       }
-      entityString += entity.name + ': ' + entity.value;
+      entityString +=
+        entity.name +
+        `${HEATMAP_CALL_ENTITY_KEY_VALUE_DELIMITER}` +
+        entity.value;
     });
   }
   return entityString;
 };
 
-export const convertToEntityList = (
-  entityListAsString: string,
-  categoryFields: string[],
-  delimiter: string
+export const convertHeatmapCellEntityStringToEntityList = (
+  heatmapCellEntityString: string
 ) => {
   let entityList = [] as Entity[];
-  const valueArr = entityListAsString.split(delimiter);
+  const entitiesAsStringList = heatmapCellEntityString.split(
+    HEATMAP_CELL_ENTITY_DELIMITER
+  );
   var i;
-  for (i = 0; i < valueArr.length; i++) {
+  for (i = 0; i < entitiesAsStringList.length; i++) {
+    const entityAsString = entitiesAsStringList[i];
+    const entityAsFieldValuePair = entityAsString.split(
+      HEATMAP_CALL_ENTITY_KEY_VALUE_DELIMITER
+    );
     entityList.push({
-      name: categoryFields[i],
-      value: valueArr[i],
+      name: entityAsFieldValuePair[0],
+      value: entityAsFieldValuePair[1],
     });
   }
   return entityList;
@@ -1542,35 +1650,51 @@ export const entityListsMatch = (
   return true;
 };
 
-// Helper fn to get the correct filters based on how many categorical fields there are.
-const getEntityFilters = (
-  modelId: string | undefined,
-  entityList: Entity[]
-) => {
-  return entityList.length > 1
-    ? {
-        term: {
-          model_id: modelId,
-        },
-      }
-    : {
+// Adding filters for all entity values
+const appendEntityFilters = (requestBody: any, entityList: Entity[]) => {
+  if (entityList !== undefined && !isEmpty(entityList)) {
+    entityList.forEach((entity: Entity) => {
+      // Add filters for entity name (like 'region'), and value (like 'us-west-1')
+      const entityNameFilter = {
         nested: {
           path: ENTITY_FIELD,
           query: {
             term: {
-              [ENTITY_VALUE_PATH_FIELD]: {
-                value: get(entityList, '0.value', ''),
+              [ENTITY_NAME_PATH_FIELD]: {
+                value: entity.name,
               },
             },
           },
         },
       };
+      const entityValueFilter = {
+        nested: {
+          path: ENTITY_FIELD,
+          query: {
+            term: {
+              [ENTITY_VALUE_PATH_FIELD]: {
+                value: entity.value,
+              },
+            },
+          },
+        },
+      };
+      //@ts-ignore
+      requestBody.query.bool.filter.push(entityNameFilter);
+      //@ts-ignore
+      requestBody.query.bool.filter.push(entityValueFilter);
+    });
+  }
+  return requestBody;
 };
 
 export const transformEntityListsForHeatmap = (entityLists: any[]) => {
   let transformedEntityLists = [] as any[];
   entityLists.forEach((entityList: Entity[]) => {
-    const listAsString = convertToEntityString(entityList, ', ');
+    const listAsString = convertToCategoryFieldAndEntityString(
+      entityList,
+      ', '
+    );
     let row = [];
     var i;
     for (i = 0; i < NUM_CELLS; i++) {
@@ -1579,4 +1703,56 @@ export const transformEntityListsForHeatmap = (entityLists: any[]) => {
     transformedEntityLists.push(row);
   });
   return transformedEntityLists;
+};
+
+// Returns top child entities as an Entity[][],
+// where each entry in the array is a unique combination of entity values
+export const parseTopChildEntityCombos = (
+  result: any,
+  parentEntities: Entity[]
+) => {
+  const resultBuckets = get(
+    result,
+    `response.aggregations.${TOP_ENTITY_AGGS}.buckets`,
+    []
+  );
+
+  const topChildEntityCombos = [] as Entity[][];
+  // Each result bucket represents a unique entity combination. Loop through them
+  // to gather the unique child entity combinations (remove all parent entities).
+  resultBuckets.forEach((bucket: any) => {
+    const entities = get(
+      bucket,
+      `${ENTITY_LIST_FIELD}.hits.hits.0._source.${ENTITY_FIELD}`
+    ) as Entity[];
+    const childEntities = entities.filter(
+      (entity: Entity) => !containsEntity(entity, parentEntities)
+    );
+    topChildEntityCombos.push(childEntities);
+  });
+  return topChildEntityCombos;
+};
+
+const containsEntity = (entity: Entity, entities: Entity[]) => {
+  let contains = false;
+  entities.forEach((entityInList: Entity) => {
+    if (
+      entity.name === entityInList.name &&
+      entity.value === entityInList.value
+    ) {
+      contains = true;
+    }
+  });
+  return contains;
+};
+
+// Flatten 2D array into 1D array
+export const flattenData = (data: any[][]) => {
+  let flattenedData = [] as any[];
+  if (!isEmpty(data)) {
+    data.forEach((childArray: any[]) => {
+      flattenedData.push(...childArray);
+    });
+  }
+  return flattenedData;
 };
