@@ -65,10 +65,11 @@ import {
 import { prettifyErrorMessage } from '../../../../server/utils/helpers';
 import { DetectorScheduleFields } from '../components/DetectorScheduleFields';
 import {
-  validationModelResponse,
-  validationSettingResponse,
+  ValidationModelResponse,
+  ValidationSettingResponse,
   VALIDATION_ISSUE_TYPES,
 } from '../../../models/interfaces';
+import { isEmpty } from 'lodash';
 
 interface ReviewAndCreateProps extends RouteComponentProps {
   setStep(stepNumber: number): void;
@@ -80,15 +81,20 @@ export function ReviewAndCreate(props: ReviewAndCreateProps) {
   const dispatch = useDispatch();
   useHideSideNavBar(true, false);
 
-  const [validDetectorSettings, setValidDetectorSettings] = useState(false);
-  const [validModelConfigurations, setValidModelConfigurations] =
-    useState(false);
-  const [validationError, setValidationError] = useState(false);
-  const [settingsResponse, setDetectorMessageResponse] =
-    useState<validationSettingResponse>({} as validationSettingResponse);
-  const [featureResponse, setFeatureResponse] =
-    useState<validationModelResponse>({} as validationModelResponse);
-  const [isCreatingDetector, setIsCreatingDetector] = useState(false);
+  const [validDetectorSettings, setValidDetectorSettings] = useState<boolean>(
+    false
+  );
+  const [validModelConfigurations, setValidModelConfigurations] = useState<
+    boolean
+  >(false);
+  const [validationError, setValidationError] = useState<boolean>(false);
+  const [settingsResponse, setDetectorMessageResponse] = useState<
+    ValidationSettingResponse
+  >({} as ValidationSettingResponse);
+  const [featureResponse, setFeatureResponse] = useState<
+    ValidationModelResponse
+  >({} as ValidationModelResponse);
+  const [isCreatingDetector, setIsCreatingDetector] = useState<boolean>(false);
   const isLoading = useSelector((state: AppState) => state.ad.requesting);
 
   // Jump to top of page on first load
@@ -96,10 +102,15 @@ export function ReviewAndCreate(props: ReviewAndCreateProps) {
     scroll(0, 0);
   }, []);
 
+  // This hook only gets called once as the page is rendered, sending a request to
+  // AD validation API with the detector values. This will either return an empty response
+  // meaning validation has passed and succesful callout will display or validation has failed
+  // and callouts displaying what the issue is will be displayed instead.
   useEffect(() => {
     dispatch(validateDetector(formikToDetector(props.values)))
       .then((resp: any) => {
-        if (!Object.keys(resp.response).length) {
+        console.log('response: ' + JSON.stringify(resp.response));
+        if (isEmpty(Object.keys(resp.response))) {
           setValidDetectorSettings(true);
           setValidModelConfigurations(true);
         } else {
@@ -108,7 +119,7 @@ export function ReviewAndCreate(props: ReviewAndCreateProps) {
             if (resp.response.detector[issueType].hasOwnProperty('message')) {
               const validationMessage =
                 resp.response.detector[issueType].message;
-              const detectorSettingIssue: validationSettingResponse = {
+              const detectorSettingIssue: ValidationSettingResponse = {
                 issueType: issueType,
                 message: validationMessage,
               };
@@ -118,7 +129,7 @@ export function ReviewAndCreate(props: ReviewAndCreateProps) {
                 case VALIDATION_ISSUE_TYPES.SHINGLE_SIZE_FIELD:
                   const modelResp = resp.response.detector[
                     issueType
-                  ] as validationModelResponse;
+                  ] as ValidationModelResponse;
                   setFeatureResponse(modelResp);
                   setValidDetectorSettings(true);
                   setValidModelConfigurations(false);
@@ -142,7 +153,7 @@ export function ReviewAndCreate(props: ReviewAndCreateProps) {
           )
         );
       });
-  }, []); // <-- Have to pass in [] here!
+  }, []);
 
   useEffect(() => {
     core.chrome.setBreadcrumbs([

@@ -38,7 +38,7 @@ import {
   Detector,
   FEATURE_TYPE,
   FeatureAttributes,
-  validationModelResponse,
+  ValidationModelResponse,
 } from '../../../../models/interfaces';
 import { get, sortBy } from 'lodash';
 import ContentPanel from '../../../../components/ContentPanel/ContentPanel';
@@ -51,11 +51,11 @@ import { SORT_DIRECTION } from '../../../../../server/utils/constants';
 interface ModelConfigurationFieldsProps {
   detector: Detector;
   onEditModelConfiguration(): void;
-  validationFeatureResponse: validationModelResponse;
-  validModel: Boolean;
-  validationError: Boolean;
-  isLoading: Boolean;
-  isCreatingDetector: Boolean;
+  validationFeatureResponse: ValidationModelResponse;
+  validModel: boolean;
+  validationError: boolean;
+  isLoading: boolean;
+  isCreatingDetector: boolean;
 }
 
 interface ModelConfigurationFieldsState {
@@ -202,10 +202,10 @@ export const ModelConfigurationFields = (
     };
   };
 
-  const handleFeatureAttributesCallout = (
-    issueResponse: validationModelResponse
+  const getFeatureValidationCallout = (
+    issueResponse: ValidationModelResponse
   ) => {
-    if (issueResponse != undefined && issueResponse != null) {
+    if (issueResponse != undefined) {
       if (issueResponse.sub_issues != undefined) {
         const renderList = Object.keys(issueResponse.sub_issues).map((key) => {
           if (issueResponse.sub_issues != undefined) {
@@ -226,7 +226,7 @@ export const ModelConfigurationFields = (
       return null;
     }
   };
-  const handleCalloutGeneralLogic = () => {
+  const getValidationCallout = () => {
     //When validation response is loading then displaying loading spinner, don't display
     // after clicking on "create detector" button as isLoading will be true from that request
     if (props.isLoading && !props.isCreatingDetector) {
@@ -274,8 +274,11 @@ export const ModelConfigurationFields = (
           size="s"
           style={{ marginBottom: '10px' }}
         >
+          {/* Callout can either display feature subissue which related to a specific 
+          feature issue or display a feature_attribute issue that is general like
+          more then x anomaly feature or dulicate feature names */}
           {props.validationFeatureResponse.hasOwnProperty('sub_issues') ? (
-            handleFeatureAttributesCallout(props.validationFeatureResponse)
+            getFeatureValidationCallout(props.validationFeatureResponse)
           ) : (
             <ul>
               <li>{JSON.stringify(props.validationFeatureResponse.message)}</li>
@@ -296,7 +299,7 @@ export const ModelConfigurationFields = (
         <EuiButton onClick={props.onEditModelConfiguration}>Edit</EuiButton>,
       ]}
     >
-      {handleCalloutGeneralLogic()}
+      {getValidationCallout()}
 
       <div>
         <AdditionalSettings

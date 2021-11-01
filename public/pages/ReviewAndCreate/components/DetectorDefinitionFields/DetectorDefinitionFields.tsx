@@ -37,7 +37,7 @@ import React from 'react';
 import { get } from 'lodash';
 import {
   Detector,
-  validationSettingResponse,
+  ValidationSettingResponse,
 } from '../../../../models/interfaces';
 import { FilterDisplayList } from '../FilterDisplayList';
 import { ConfigCell, FixedWidthRow } from '../../../../components/ConfigCell';
@@ -49,7 +49,7 @@ interface DetectorDefinitionFieldsProps {
   isCreate: boolean;
   validationError?: boolean;
   validDetectorSettings?: boolean;
-  validationResponse?: validationSettingResponse;
+  validationResponse?: ValidationSettingResponse;
   isLoading?: boolean;
   isCreatingDetector?: boolean;
 }
@@ -66,7 +66,7 @@ export const DetectorDefinitionFields = (
     ),
   };
 
-  const handleCalloutGeneralLogic = () => {
+  const getValidationCallout = () => {
     //When validation response is loading then displaying loading spinner, don't display
     // after clicking on "create detector" button as isLoading will be true from that request
     if (props.isLoading && !props.isCreatingDetector) {
@@ -138,7 +138,7 @@ export const DetectorDefinitionFields = (
         </EuiButton>,
       ]}
     >
-      {props.isCreate ? handleCalloutGeneralLogic() : null}
+      {props.isCreate ? getValidationCallout() : null}
       <EuiFlexGrid columns={0} gutterSize="l" style={{ border: 'none' }}>
         <EuiFlexItem>
           <ConfigCell
