@@ -51,6 +51,7 @@ const STOP_HISTORICAL_DETECTOR = 'ad/STOP_HISTORICAL_DETECTOR';
 const GET_DETECTOR_PROFILE = 'ad/GET_DETECTOR_PROFILE';
 const MATCH_DETECTOR = 'ad/MATCH_DETECTOR';
 const GET_DETECTOR_COUNT = 'ad/GET_DETECTOR_COUNT';
+const VALIDATE_DETECTOR = 'ad/VALIDATE_DETECTOR';
 
 export interface Detectors {
   requesting: boolean;
@@ -83,6 +84,23 @@ const reducer = handleActions<Detectors>(
           ...state.detectors,
           [action.result.response.id]: action.result.response,
         },
+      }),
+      FAILURE: (state: Detectors, action: APIErrorAction): Detectors => ({
+        ...state,
+        requesting: false,
+        errorMessage: action.error,
+      }),
+    },
+    [VALIDATE_DETECTOR]: {
+      REQUEST: (state: Detectors): Detectors => ({
+        ...state,
+        requesting: true,
+        errorMessage: '',
+      }),
+      SUCCESS: (state: Detectors): Detectors => ({
+        ...state,
+        requesting: false,
+        errorMessage: '',
       }),
       FAILURE: (state: Detectors, action: APIErrorAction): Detectors => ({
         ...state,
@@ -370,6 +388,14 @@ export const createDetector = (requestBody: Detector): APIAction => ({
   type: CREATE_DETECTOR,
   request: (client: HttpSetup) =>
     client.post(`..${AD_NODE_API.DETECTOR}`, {
+      body: JSON.stringify(requestBody),
+    }),
+});
+
+export const validateDetector = (requestBody: Detector): APIAction => ({
+  type: VALIDATE_DETECTOR,
+  request: (client: HttpSetup) =>
+    client.post(`..${AD_NODE_API.DETECTOR}/_validate`, {
       body: JSON.stringify(requestBody),
     }),
 });
