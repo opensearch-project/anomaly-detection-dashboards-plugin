@@ -58,6 +58,13 @@ export default function adPlugin(Client: any, config: any, components: any) {
     needBody: true,
     method: 'POST',
   });
+  ad.validateDetector = ca({
+    url: {
+      fmt: `${API.DETECTOR_BASE}/_validate`,
+    },
+    needBody: true,
+    method: 'POST',
+  });
   ad.searchDetector = ca({
     url: {
       fmt: `${API.DETECTOR_BASE}/_search`,
