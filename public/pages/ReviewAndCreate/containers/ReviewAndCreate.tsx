@@ -35,18 +35,21 @@ import {
   EuiTitle,
   EuiButtonEmpty,
   EuiSpacer,
+  EuiCallOut,
 } from '@elastic/eui';
 import {
   createDetector,
   getDetectorCount,
   startDetector,
   startHistoricalDetector,
+  validateDetector,
 } from '../../../redux/reducers/ad';
 import { Formik, FormikHelpers } from 'formik';
 import { get } from 'lodash';
-import React, { Fragment, useEffect } from 'react';
+import React, { Fragment, useEffect, useState } from 'react';
 import { RouteComponentProps } from 'react-router';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
+import { AppState } from '../../../redux/reducers';
 import { BREADCRUMBS, MAX_DETECTORS } from '../../../utils/constants';
 import { useHideSideNavBar } from '../../main/hooks/useHideSideNavBar';
 import { CoreStart } from '../../../../../../src/core/public';
@@ -61,6 +64,12 @@ import {
 } from '../../../utils/utils';
 import { prettifyErrorMessage } from '../../../../server/utils/helpers';
 import { DetectorScheduleFields } from '../components/DetectorScheduleFields';
+import {
+  ValidationModelResponse,
+  ValidationSettingResponse,
+  VALIDATION_ISSUE_TYPES,
+} from '../../../models/interfaces';
+import { isEmpty } from 'lodash';
 
 interface ReviewAndCreateProps extends RouteComponentProps {
   setStep(stepNumber: number): void;
@@ -72,9 +81,81 @@ export function ReviewAndCreate(props: ReviewAndCreateProps) {
   const dispatch = useDispatch();
   useHideSideNavBar(true, false);
 
+  // This variable indicates if validate API declared detector settings as valid for AD creation
+  const [validDetectorSettings, setValidDetectorSettings] = useState<boolean>(
+    false
+  );
+  // This variable indicates if validate API declared model configs as valid for AD creation
+  const [validModelConfigurations, setValidModelConfigurations] = useState<
+    boolean
+  >(false);
+  // This variable indicates if validate API returned an exception and hence no callout regarding
+  // specifically detector or model configs
+  const [validationError, setValidationError] = useState<boolean>(false);
+  const [settingsResponse, setDetectorMessageResponse] = useState<
+    ValidationSettingResponse
+  >({} as ValidationSettingResponse);
+  const [featureResponse, setFeatureResponse] = useState<
+    ValidationModelResponse
+  >({} as ValidationModelResponse);
+  const [isCreatingDetector, setIsCreatingDetector] = useState<boolean>(false);
+  const isLoading = useSelector((state: AppState) => state.ad.requesting);
+
   // Jump to top of page on first load
   useEffect(() => {
     scroll(0, 0);
+  }, []);
+
+  // This hook only gets called once as the page is rendered, sending a request to
+  // AD validation API with the detector values. This will either return an empty response
+  // meaning validation has passed and succesful callout will display or validation has failed
+  // and callouts displaying what the issue is will be displayed instead.
+  useEffect(() => {
+    dispatch(validateDetector(formikToDetector(props.values)))
+      .then((resp: any) => {
+        if (isEmpty(Object.keys(resp.response))) {
+          setValidDetectorSettings(true);
+          setValidModelConfigurations(true);
+        } else {
+          if (resp.response.hasOwnProperty('detector')) {
+            const issueType = Object.keys(resp.response.detector)[0];
+            if (resp.response.detector[issueType].hasOwnProperty('message')) {
+              const validationMessage =
+                resp.response.detector[issueType].message;
+              const detectorSettingIssue: ValidationSettingResponse = {
+                issueType: issueType,
+                message: validationMessage,
+              };
+              switch (issueType) {
+                case VALIDATION_ISSUE_TYPES.FEATURE_ATTRIBUTES:
+                case VALIDATION_ISSUE_TYPES.CATEGORY:
+                case VALIDATION_ISSUE_TYPES.SHINGLE_SIZE_FIELD:
+                  const modelResp = resp.response.detector[
+                    issueType
+                  ] as ValidationModelResponse;
+                  setFeatureResponse(modelResp);
+                  setValidDetectorSettings(true);
+                  setValidModelConfigurations(false);
+                  break;
+                // this includes all other detector setting issues that don't need
+                // anything else added to their message
+                default:
+                  setValidModelConfigurations(true);
+                  setValidDetectorSettings(false);
+                  setDetectorMessageResponse(detectorSettingIssue);
+              }
+            }
+          }
+        }
+      })
+      .catch((err: any) => {
+        setValidationError(true);
+        core.notifications.toasts.addDanger(
+          prettifyErrorMessage(
+            getErrorMessage(err, 'There was a problem validating the detector')
+          )
+        );
+      });
   }, []);
 
   useEffect(() => {
@@ -90,6 +171,7 @@ export function ReviewAndCreate(props: ReviewAndCreateProps) {
     formikHelpers: FormikHelpers<CreateDetectorFormikValues>
   ) => {
     try {
+      setIsCreatingDetector(true);
       formikHelpers.setSubmitting(true);
       const detectorToCreate = formikToDetector(values);
       dispatch(createDetector(detectorToCreate))
@@ -202,14 +284,24 @@ export function ReviewAndCreate(props: ReviewAndCreateProps) {
                 </EuiPageHeaderSection>
               </EuiPageHeader>
               <DetectorDefinitionFields
+                validationError={validationError}
+                validDetectorSettings={validDetectorSettings}
+                validationResponse={settingsResponse}
                 onEditDetectorDefinition={() => props.setStep(1)}
                 detector={detectorToCreate}
                 isCreate={true}
+                isLoading={isLoading}
+                isCreatingDetector={isCreatingDetector}
               />
               <EuiSpacer />
               <ModelConfigurationFields
-                onEditModelConfiguration={() => props.setStep(2)}
                 detector={detectorToCreate}
+                onEditModelConfiguration={() => props.setStep(2)}
+                validationFeatureResponse={featureResponse}
+                validModel={validModelConfigurations}
+                validationError={validationError}
+                isLoading={isLoading}
+                isCreatingDetector={isCreatingDetector}
               />
               <EuiSpacer />
               <DetectorScheduleFields

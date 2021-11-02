@@ -43,6 +43,20 @@ export enum FEATURE_TYPE {
   CUSTOM = 'custom_aggs',
 }
 
+export enum VALIDATION_ISSUE_TYPES {
+  NAME = 'name',
+  TIMEFIELD_FIELD = 'time_field',
+  SHINGLE_SIZE_FIELD = 'shingle_size',
+  INDICES = 'indices',
+  FEATURE_ATTRIBUTES = 'feature_attributes',
+  DETECTION_INTERVAL = 'detection_interval',
+  CATEGORY = 'category_field',
+  FILTER_QUERY = 'filter_query',
+  PARSING_ISSUE = 'query_parsing',
+  WINDOW_DELAY = 'window_delay',
+  GENERAL_SETTINGS = 'general_settings',
+}
+
 export enum OPERATORS_MAP {
   IS = 'is',
   IS_NOT = 'is_not',
@@ -228,3 +242,13 @@ export type EntityOption = {
 export type EntityOptionsMap = {
   [categoryField: string]: EntityOption[];
 };
+
+export type ValidationModelResponse = {
+  message: String;
+  sub_issues?: { [key: string]: string };
+};
+
+export interface ValidationSettingResponse {
+  issueType: string;
+  message: string;
+}

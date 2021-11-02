@@ -47,7 +47,7 @@ function NameAndDescription(props: NameAndDescriptionProps) {
             isInvalid={isInvalid(field.name, form)}
             error={getError(field.name, form)}
             helpText={`Detector name must contain 1-64 characters. Valid characters are
-                a-z, A-Z, 0-9, -(hyphen) and _(underscore).`}
+                a-z, A-Z, 0-9, -(hyphen), _(underscore) and .(period).`}
           >
             <EuiFieldText
               name="detectorName"

@@ -24,11 +24,21 @@
  * permissions and limitations under the License.
  */
 import React, { useState } from 'react';
-import { EuiBasicTable, EuiLink, EuiButton, EuiSpacer } from '@elastic/eui';
+import {
+  EuiBasicTable,
+  EuiLink,
+  EuiButton,
+  EuiSpacer,
+  EuiCallOut,
+  EuiLoadingSpinner,
+  EuiFlexGroup,
+  EuiText,
+} from '@elastic/eui';
 import {
   Detector,
   FEATURE_TYPE,
   FeatureAttributes,
+  ValidationModelResponse,
 } from '../../../../models/interfaces';
 import { get, sortBy } from 'lodash';
 import ContentPanel from '../../../../components/ContentPanel/ContentPanel';
@@ -41,6 +51,11 @@ import { SORT_DIRECTION } from '../../../../../server/utils/constants';
 interface ModelConfigurationFieldsProps {
   detector: Detector;
   onEditModelConfiguration(): void;
+  validationFeatureResponse: ValidationModelResponse;
+  validModel: boolean;
+  validationError: boolean;
+  isLoading: boolean;
+  isCreatingDetector: boolean;
 }
 
 interface ModelConfigurationFieldsState {
@@ -52,15 +67,14 @@ interface ModelConfigurationFieldsState {
 export const ModelConfigurationFields = (
   props: ModelConfigurationFieldsProps
 ) => {
-  const [featuresState, setFeaturesState] = useState<
-    ModelConfigurationFieldsState
-  >({
-    showCodeModel: get(props.detector, 'featureAttributes', []).map(
-      () => false
-    ),
-    sortField: 'name',
-    sortDirection: SORT_DIRECTION.ASC,
-  });
+  const [featuresState, setFeaturesState] =
+    useState<ModelConfigurationFieldsState>({
+      showCodeModel: get(props.detector, 'featureAttributes', []).map(
+        () => false
+      ),
+      sortField: 'name',
+      sortDirection: SORT_DIRECTION.ASC,
+    });
 
   const closeModal = (index: number) => {
     const cloneShowCodeModal = [...featuresState.showCodeModel];
@@ -188,8 +202,96 @@ export const ModelConfigurationFields = (
     };
   };
 
+  const getFeatureValidationCallout = (
+    issueResponse: ValidationModelResponse
+  ) => {
+    if (issueResponse != undefined) {
+      if (issueResponse.sub_issues != undefined) {
+        const renderList = Object.keys(issueResponse.sub_issues).map((key) => {
+            return (
+              //@ts-ignore
+              <li>{'The "' + key + '" ' + issueResponse.sub_issues[key]}</li>
+            );
+        });
+        return <ul>{renderList}</ul>;
+      } else {
+        return (
+          <ul>
+            <li>{JSON.stringify(props.validationFeatureResponse.message)}</li>
+          </ul>
+        );
+      }
+    } else {
+      return null;
+    }
+  };
+  const getValidationCallout = () => {
+    //When validation response is loading then displaying loading spinner, don't display
+    // after clicking on "create detector" button as isLoading will be true from that request
+    if (props.isLoading && !props.isCreatingDetector) {
+      return (
+        <EuiCallOut
+          title={
+            <div>
+              <EuiFlexGroup direction="row" gutterSize="xs">
+                <EuiLoadingSpinner size="l" style={{ marginRight: '12px' }} />
+                <EuiText>
+                  <p>Validating model configurations</p>
+                </EuiText>
+              </EuiFlexGroup>
+            </div>
+          }
+          style={{ marginBottom: '10px' }}
+          size="s"
+          color="primary"
+        />
+      );
+    }
+    if (props.validationError) {
+      return null;
+    }
+    if (props.validModel) {
+      return (
+        <EuiCallOut
+          title="Model configurations are validated"
+          color="success"
+          iconType="check"
+          size="s"
+          style={{ marginBottom: '10px' }}
+        ></EuiCallOut>
+      );
+      // makes sure there is a response to display and model configs aren't valid per
+      // validation API
+    } 
+    if (
+      !props.validModel &&
+      props.validationFeatureResponse.hasOwnProperty('message')
+    ) {
+      return (
+        <EuiCallOut
+          title="issues found in the model configuration"
+          color="danger"
+          iconType="alert"
+          size="s"
+          style={{ marginBottom: '10px' }}
+        >
+          {/* Callout can either display feature subissue which related to a specific 
+          feature issue or display a feature_attribute issue that is general like
+          more then x anomaly feature or dulicate feature names */}
+          {props.validationFeatureResponse.hasOwnProperty('sub_issues') ? (
+            getFeatureValidationCallout(props.validationFeatureResponse)
+          ) : (
+            <ul>
+              <li>{JSON.stringify(props.validationFeatureResponse.message)}</li>
+            </ul>
+          )}
+        </EuiCallOut>
+      );
+    } else {
+      return null;
+    }
+  };
   const featureNum = Object.keys(featureAttributes).length;
-
   return (
     <ContentPanel
       title="Model configuration"
@@ -198,6 +300,8 @@ export const ModelConfigurationFields = (
         <EuiButton onClick={props.onEditModelConfiguration}>Edit</EuiButton>,
       ]}
     >
+      {getValidationCallout()}
+
       <div>
         <AdditionalSettings
           shingleSize={shingleSize}

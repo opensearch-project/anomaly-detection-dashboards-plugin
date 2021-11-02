@@ -109,6 +109,7 @@ export function registerADRoutes(apiRouter: Router, adService: AdService) {
     '/detectors/{detectorId}/_topAnomalies/{isHistorical}',
     adService.getTopAnomalyResults
   );
+  apiRouter.post('/detectors/_validate', adService.validateDetector);
 }
 
 export default class AdService {
@@ -228,6 +229,37 @@ export default class AdService {
       });
     } catch (err) {
       console.log('Anomaly detector - PutDetector', err);
+      return opensearchDashboardsResponse.ok({
+        body: {
+          ok: false,
+          error: getErrorMessage(err),
+        },
+      });
+    }
+  };
+
+  validateDetector = async (
+    context: RequestHandlerContext,
+    request: OpenSearchDashboardsRequest,
+    opensearchDashboardsResponse: OpenSearchDashboardsResponseFactory
+  ): Promise<IOpenSearchDashboardsResponse<any>> => {
+    try {
+      const requestBody = JSON.stringify(
+        convertPreviewInputKeysToSnakeCase(request.body)
+      );
+      const response = await this.client
+        .asScoped(request)
+        .callAsCurrentUser('ad.validateDetector', {
+          body: requestBody,
+        });
+      return opensearchDashboardsResponse.ok({
+        body: {
+          ok: true,
+          response: response,
+        },
+      });
+    } catch (err) {
+      console.log('Anomaly detector - validateDetector', err);
       return opensearchDashboardsResponse.ok({
         body: {
           ok: false,
