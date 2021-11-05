@@ -11,7 +11,7 @@ env:
   OPENSEARCH_VERSION: '1.2.0-SNAPSHOT'
 jobs:
   test-with-security:
-    name: Run e2e tests with security
+    name: Run e2e tests without security
     strategy:
       matrix:
         os: [ubuntu-latest]
