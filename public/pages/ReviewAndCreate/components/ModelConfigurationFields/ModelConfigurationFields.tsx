@@ -9,20 +9,6 @@
  * GitHub history for details.
  */
 
-/*
- * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
- */
 import React, { useState } from 'react';
 import {
   EuiBasicTable,
@@ -208,10 +194,10 @@ export const ModelConfigurationFields = (
     if (issueResponse != undefined) {
       if (issueResponse.sub_issues != undefined) {
         const renderList = Object.keys(issueResponse.sub_issues).map((key) => {
-            return (
-              //@ts-ignore
-              <li>{'The "' + key + '" ' + issueResponse.sub_issues[key]}</li>
-            );
+          return (
+            //@ts-ignore
+            <li>{'The "' + key + '" ' + issueResponse.sub_issues[key]}</li>
+          );
         });
         return <ul>{renderList}</ul>;
       } else {
@@ -262,7 +248,7 @@ export const ModelConfigurationFields = (
       );
       // makes sure there is a response to display and model configs aren't valid per
       // validation API
-    } 
+    }
     if (
       !props.validModel &&
       props.validationFeatureResponse.hasOwnProperty('message')
