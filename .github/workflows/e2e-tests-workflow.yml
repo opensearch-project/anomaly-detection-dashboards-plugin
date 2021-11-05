@@ -78,19 +78,6 @@ jobs:
         with:
           working-directory: OpenSearch-Dashboards/plugins/anomaly-detection-dashboards-plugin
           command: yarn cy:run --env SECURITY_ENABLED=true
-
-      # Screenshots are only captured on failure, will change this once we do visual regression tests
-      - uses: actions/upload-artifact@v1
-        if: failure()
-        with:
-          name: cypress-screenshots
-          path: OpenSearch-Dashboards/plugins/alerting-dashboards-plugin/cypress/screenshots
-      # Test run video was always captured, so this action uses "always()" condition
-      - uses: actions/upload-artifact@v1
-        if: always()
-        with:
-          name: cypress-videos
-          path: OpenSearch-Dashboards/plugins/alerting-dashboards-plugin/cypress/videos
 # name: E2E tests workflow
 # on:
 #   push:
