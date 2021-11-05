@@ -9,8 +9,7 @@
  * GitHub history for details.
  */
 
-/*
- * Copyright 2020 Amazon.com, Inc. or its import React from 'react';
+import React from 'react';
 import { render } from '@testing-library/react';
 import { SampleDataCallout } from '../SampleDataCallout';
 
