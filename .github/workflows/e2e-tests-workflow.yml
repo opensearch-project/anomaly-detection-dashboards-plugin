@@ -8,96 +8,9 @@ on:
       - main
 env:
   OPENSEARCH_DASHBOARDS_VERSION: '1.x'
-  AD_OPENSEARCH_DASHBOARDS_PLUGIN_NAME: anomaly-detection-dashboards
-  OPENSEARCH_DOCKER_IMAGE: opensearchstaging/opensearch
-  DASHBOARDS_DOCKER_IMAGE: opensearchstaging/opensearch-dashboards
-  DOCKER_TAG: 1.1.0
+  OPENSEARCH_VERSION: '1.2.0-SNAPSHOT'
 jobs:
   test-with-security:
-    name: Run e2e tests with security
-    strategy:
-      matrix:
-        os: [ubuntu-latest]
-        java: [14]
-    runs-on: ${{ matrix.os }}
-    steps:
-      - name: Checkout OpenSearch Dashboards
-        uses: actions/checkout@v2
-        with:
-          repository: opensearch-project/OpenSearch-Dashboards
-          ref: ${{ env.OPENSEARCH_DASHBOARDS_VERSION }}
-          path: OpenSearch-Dashboards
-
-      - name: Get node and yarn versions
-        id: versions_step
-        run: |
-          echo "::set-output name=node_version::$(node -p "(require('./OpenSearch-Dashboards/package.json').engines.node).match(/[.0-9]+/)[0]")"
-          echo "::set-output name=yarn_version::$(node -p "(require('./OpenSearch-Dashboards/package.json').engines.yarn).match(/[.0-9]+/)[0]")"
-
-      - name: Setup node
-        uses: actions/setup-node@v1
-        with:
-          node-version: ${{ steps.versions_step.outputs.node_version }}
-          registry-url: 'https://registry.npmjs.org'
-
-      - name: Install correct yarn version for OpenSearch Dashboards
-        run: |
-          npm uninstall -g yarn
-          echo "Installing yarn ${{ steps.versions_step.outputs.yarn_version }}"
-          npm i -g yarn@${{ steps.versions_step.outputs.yarn_version }}
-
-      - name: Checkout Anomaly Detection OpenSearch Dashboards plugin
-        uses: actions/checkout@v2
-        with:
-          path: OpenSearch-Dashboards/plugins/anomaly-detection-dashboards-plugin
-
-      - name: Bootstrap the plugin
-        run: |
-          cd OpenSearch-Dashboards/plugins/anomaly-detection-dashboards-plugin
-          yarn osd bootstrap
-
-      - name: Build the artifact
-        run: |
-          cd OpenSearch-Dashboards/plugins/anomaly-detection-dashboards-plugin
-          yarn build
-
-      - name: Create tagged images for OpenSearch and OpenSearch Dashboards
-        run: |
-          cd OpenSearch-Dashboards/plugins/anomaly-detection-dashboards-plugin
-          plugin_version=$(node -pe "require('./package.json').version")
-          echo plugin version: $plugin_version
-          echo plugin name: $AD_OPENSEARCH_DASHBOARDS_PLUGIN_NAME
-          if docker pull $OPENSEARCH_DOCKER_IMAGE:$DOCKER_TAG
-          then
-            ## Populate the Dockerfiles
-            echo "FROM $OPENSEARCH_DOCKER_IMAGE:$DOCKER_TAG" >> Dockerfile-AD-OpenSearch
-            echo "FROM $DASHBOARDS_DOCKER_IMAGE:$DOCKER_TAG" >> Dockerfile-AD-OpenSearch-Dashboards
-            echo "COPY build/$AD_OPENSEARCH_DASHBOARDS_PLUGIN_NAME-$plugin_version.zip ." >> Dockerfile-AD-OpenSearch-Dashboards
-            ## Uninstall existing AD artifact and install new one
-            echo "RUN if [ -d /usr/share/opensearch-dashboards/plugins/anomaly-detection-dashboards ]; then /usr/share/opensearch-dashboards/bin/opensearch-dashboards-plugin remove anomaly-detection-dashboards; fi" >> Dockerfile-AD-OpenSearch-Dashboards
-            echo "RUN bin/opensearch-dashboards-plugin install file:///usr/share/opensearch-dashboards/$AD_OPENSEARCH_DASHBOARDS_PLUGIN_NAME-$plugin_version.zip;" >> Dockerfile-AD-OpenSearch-Dashboards
-
-            ## Create the tagged images
-            docker build -f ./Dockerfile-AD-OpenSearch -t opensearch-ad:test .
-            docker build -f ./Dockerfile-AD-OpenSearch-Dashboards -t opensearch-ad-dashboards:test .
-          fi
-          docker images
-
-      - name: Start OpenSearch and OpenSearch Dashboards
-        run: |
-          cd OpenSearch-Dashboards/plugins/anomaly-detection-dashboards-plugin/.github/configurations
-          ## Need to increase max map count for running the docker container
-          sudo sysctl -w vm.max_map_count=262144
-          docker-compose up -d
-          sleep 180
-
-      - name: Run e2e tests
-        uses: cypress-io/github-action@v2.5.0
-        with:
-          working-directory: OpenSearch-Dashboards/plugins/anomaly-detection-dashboards-plugin
-          command: yarn cy:run --env SECURITY_ENABLED=true
-
-  test-without-security:
     name: Run e2e tests without security
     strategy:
       matrix:
@@ -105,31 +18,27 @@ jobs:
         java: [14]
     runs-on: ${{ matrix.os }}
     steps:
-      - name: Pull and Run Docker
+      - name: Checkout Anomaly-Detection
+        uses: actions/checkout@v2
+        with:
+          path: anomaly-detection
+          repository: opensearch-project/anomaly-detection
+          ref: 'main'
+      - name: Run Opensearch with plugin
         run: |
-          if docker pull $OPENSEARCH_DOCKER_IMAGE:$DOCKER_TAG
-          then
-            echo "FROM $OPENSEARCH_DOCKER_IMAGE:$DOCKER_TAG" >> Dockerfile
-            ## The OpenSearch rest test client uses http by default.
-            ## Need to disable the security plugin to call the rest api over http.
-            ## Also need to remove any remaining security settings specified in opensearch.yml
-            echo "RUN if [ -d /usr/share/opensearch/plugins/opensearch-security ]; then /usr/share/opensearch/bin/opensearch-plugin remove opensearch-security; fi" >> Dockerfile
-            echo "RUN sed -n -i '1,/Start OpenSearch Security Demo Configuration/p;/End OpenSearch Security Demo Configuration/,\$p'" >> Dockerfile
-            truncate -s -1 Dockerfile
-            echo -n " /usr/share/opensearch/config/opensearch.yml" >> Dockerfile
-            docker build -t opensearch-ad:test .
-          fi
-      - name: Run Docker Image
-        run: |
-          docker run -p 9200:9200 -d -p 9600:9600 -e "discovery.type=single-node" opensearch-ad:test
-          sleep 180
-          curl -XGET http://localhost:9200/_cat/plugins
+          cd anomaly-detection
+            ./gradlew run -Dopensearch.version=${{ env.OPENSEARCH_VERSION }} &
+            timeout 300 bash -c 'while [[ "$(curl -s -o /dev/null -w ''%{http_code}'' localhost:9200)" != "200" ]]; do sleep 5; done'
       - name: Checkout OpenSearch Dashboards
         uses: actions/checkout@v2
         with:
           repository: opensearch-project/OpenSearch-Dashboards
           ref: ${{ env.OPENSEARCH_DASHBOARDS_VERSION }}
           path: OpenSearch-Dashboards
+      - name: Checkout Anomaly Detection OpenSearch Dashboards plugin
+        uses: actions/checkout@v2
+        with:
+          path: OpenSearch-Dashboards/plugins/anomaly-detection-dashboards-plugin
       - name: Get node and yarn versions
         id: versions_step
         run: |
@@ -140,21 +49,27 @@ jobs:
         with:
           node-version: ${{ steps.versions_step.outputs.node_version }}
           registry-url: 'https://registry.npmjs.org'
+
       - name: Install correct yarn version for OpenSearch Dashboards
         run: |
           npm uninstall -g yarn
           echo "Installing yarn ${{ steps.versions_step.outputs.yarn_version }}"
           npm i -g yarn@${{ steps.versions_step.outputs.yarn_version }}
-      - name: Checkout Anomaly Detection OpenSearch Dashboards plugin
-        uses: actions/checkout@v2
-        with:
-          path: OpenSearch-Dashboards/plugins/anomaly-detection-dashboards-plugin
       - name: Bootstrap the plugin
         run: |
           cd OpenSearch-Dashboards/plugins/anomaly-detection-dashboards-plugin
           yarn osd bootstrap
-      - name: Run e2e tests
+      - name: Build the artifact
+        run: |
+          cd OpenSearch-Dashboards/plugins/anomaly-detection-dashboards-plugin
+          yarn build
+      - name: Run OpenSearch Dashboards server
+        run: |
+          cd OpenSearch-Dashboards
+          yarn start --no-base-path --no-watch &
+          sleep 300
+      - name: Run Cypress e2e tests
         uses: cypress-io/github-action@v2.5.0
         with:
           working-directory: OpenSearch-Dashboards/plugins/anomaly-detection-dashboards-plugin
-          command: yarn test:e2e
+          command: yarn cy:run --env SECURITY_ENABLED=true
