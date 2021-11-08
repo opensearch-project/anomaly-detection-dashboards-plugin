@@ -9,21 +9,6 @@
  * GitHub history for details.
  */
 
-/*
- * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
- */
-
 import React, { Fragment } from 'react';
 import { render, fireEvent } from '@testing-library/react';
 import { Form, Formik } from 'formik';
@@ -66,41 +51,36 @@ describe('<CategoryField /> spec', () => {
     expect(queryByText('Enable categorical fields')).not.toBeNull();
   });
   test('renders the component when enabled', () => {
-    const {
-      container,
-      queryByText,
-      queryByTestId,
-      getByTestId,
-      getByText,
-    } = render(
-      <Fragment>
-        <Formik
-          initialValues={{
-            categoryField: [],
-          }}
-          onSubmit={() => {}}
-        >
-          <Fragment>
-            <Form>
-              <CategoryField
-                isEdit={false}
-                isHCDetector={true}
-                categoryFieldOptions={['a', 'b']}
-                setIsHCDetector={(isHCDetector: boolean) => {
-                  return;
-                }}
-                isLoading={false}
-                formikProps={{
-                  values: {
-                    categoryFieldEnabled: true,
-                  },
-                }}
-              />
-            </Form>
-          </Fragment>
-        </Formik>
-      </Fragment>
-    );
+    const { container, queryByText, queryByTestId, getByTestId, getByText } =
+      render(
+        <Fragment>
+          <Formik
+            initialValues={{
+              categoryField: [],
+            }}
+            onSubmit={() => {}}
+          >
+            <Fragment>
+              <Form>
+                <CategoryField
+                  isEdit={false}
+                  isHCDetector={true}
+                  categoryFieldOptions={['a', 'b']}
+                  setIsHCDetector={(isHCDetector: boolean) => {
+                    return;
+                  }}
+                  isLoading={false}
+                  formikProps={{
+                    values: {
+                      categoryFieldEnabled: true,
+                    },
+                  }}
+                />
+              </Form>
+            </Fragment>
+          </Formik>
+        </Fragment>
+      );
     expect(container).toMatchSnapshot();
     expect(queryByTestId('noCategoryFieldsCallout')).toBeNull();
     expect(queryByTestId('categoryFieldComboBox')).not.toBeNull();

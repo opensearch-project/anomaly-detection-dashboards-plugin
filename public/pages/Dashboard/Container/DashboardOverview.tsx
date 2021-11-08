@@ -9,20 +9,6 @@
  * GitHub history for details.
  */
 
-/*
- * Copyright 2020 Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
- */
 import React, { Fragment, useState, useEffect } from 'react';
 import { AnomaliesLiveChart } from '../Components/AnomaliesLiveChart';
 import { AnomaliesDistributionChart } from '../Components/AnomaliesDistribution';
@@ -109,9 +95,8 @@ export function DashboardOverview() {
     [] as DETECTOR_STATE[]
   );
 
-  const [allDetectorStatesSelected, setAllDetectorStatesSelected] = useState(
-    true
-  );
+  const [allDetectorStatesSelected, setAllDetectorStatesSelected] =
+    useState(true);
 
   const handleDetectorStateFilterChange = (
     options: EuiComboBoxOptionProps[]
@@ -148,9 +133,9 @@ export function DashboardOverview() {
     if (allDetectorsSelected) {
       detectorsToFilter = cloneDeep(Object.values(allDetectorList));
     } else {
-      detectorsToFilter = cloneDeep(
-        Object.values(allDetectorList)
-      ).filter((detectorItem) => selectedNameList.includes(detectorItem.name));
+      detectorsToFilter = cloneDeep(Object.values(allDetectorList)).filter(
+        (detectorItem) => selectedNameList.includes(detectorItem.name)
+      );
     }
 
     let filteredDetectorItemsByNamesAndIndex = detectorsToFilter;
