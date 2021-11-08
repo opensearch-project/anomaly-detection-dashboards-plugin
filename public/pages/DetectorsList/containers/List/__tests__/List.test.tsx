@@ -9,21 +9,6 @@
  * GitHub history for details.
  */
 
-/*
- * Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
- */
-
 import { render, wait } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import moment from 'moment';
@@ -302,15 +287,11 @@ describe('<DetectorList /> spec', () => {
         },
       });
 
-      const {
-        getByText,
-        getByPlaceholderText,
-        queryByText,
-        getAllByTestId,
-      } = renderWithRouter({
-        ...initialDetectorsState,
-        requesting: true,
-      });
+      const { getByText, getByPlaceholderText, queryByText, getAllByTestId } =
+        renderWithRouter({
+          ...initialDetectorsState,
+          requesting: true,
+        });
       // Initial load, only first 20 items
       await wait();
       getByText('detector_name_0');
@@ -404,12 +385,8 @@ describe('<DetectorList /> spec', () => {
           totalDetectors: randomDetectors.length,
         },
       });
-      const {
-        getByText,
-        getByTestId,
-        getAllByRole,
-        queryByText,
-      } = renderWithRouter();
+      const { getByText, getByTestId, getAllByRole, queryByText } =
+        renderWithRouter();
       await wait();
       userEvent.click(getAllByRole('checkbox')[0]);
       userEvent.click(getByTestId('listActionsButton'));
@@ -464,12 +441,8 @@ describe('<DetectorList /> spec', () => {
           totalDetectors: randomDetectors.length,
         },
       });
-      const {
-        getByText,
-        getByTestId,
-        getAllByRole,
-        queryByText,
-      } = renderWithRouter();
+      const { getByText, getByTestId, getAllByRole, queryByText } =
+        renderWithRouter();
       await wait();
       userEvent.click(getAllByRole('checkbox')[0]);
       userEvent.click(getByTestId('listActionsButton'));

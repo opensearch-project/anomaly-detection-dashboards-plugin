@@ -9,21 +9,6 @@
  * GitHub history for details.
  */
 
-/*
- * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
- */
-
 import React, { Fragment, useState, useEffect } from 'react';
 import { RouteComponentProps } from 'react-router';
 import { EuiSteps, EuiFlexGroup, EuiFlexItem } from '@elastic/eui';
@@ -46,35 +31,31 @@ interface CreateDetectorStepsProps extends RouteComponentProps {}
 export const CreateDetectorSteps = (props: CreateDetectorStepsProps) => {
   useHideSideNavBar(true, false);
 
-  const [step1DefineDetectorStatus, setStep1DefineDetectorStatus] = useState<
-    STEP_STATUS
-  >(undefined);
-  const [step2ConfigureModelStatus, setStep2ConfigureModelStatus] = useState<
-    STEP_STATUS
-  >('disabled');
-  const [step3JobsStatus, setStep3JobsStatus] = useState<STEP_STATUS>(
-    'disabled'
-  );
-  const [step4ReviewCreateStatus, setStep4ReviewCreateStatus] = useState<
-    STEP_STATUS
-  >('disabled');
+  const [step1DefineDetectorStatus, setStep1DefineDetectorStatus] =
+    useState<STEP_STATUS>(undefined);
+  const [step2ConfigureModelStatus, setStep2ConfigureModelStatus] =
+    useState<STEP_STATUS>('disabled');
+  const [step3JobsStatus, setStep3JobsStatus] =
+    useState<STEP_STATUS>('disabled');
+  const [step4ReviewCreateStatus, setStep4ReviewCreateStatus] =
+    useState<STEP_STATUS>('disabled');
 
-  const [step1DefineDetectorFields, setStep1DefineDetectorFields] = useState<
-    DetectorDefinitionFormikValues
-  >(INITIAL_DETECTOR_DEFINITION_VALUES);
-  const [step2ConfigureModelFields, setStep2ConfigureModelFields] = useState<
-    ModelConfigurationFormikValues
-  >(INITIAL_MODEL_CONFIGURATION_VALUES);
-  const [step3JobsFields, setStep3JobsFields] = useState<
-    DetectorJobsFormikValues
-  >(INITIAL_DETECTOR_JOB_VALUES);
-  const [step4ReviewCreateFields, setStep4ReviewCreateFields] = useState<
-    CreateDetectorFormikValues
-  >({
-    ...step1DefineDetectorFields,
-    ...step2ConfigureModelFields,
-    ...step3JobsFields,
-  });
+  const [step1DefineDetectorFields, setStep1DefineDetectorFields] =
+    useState<DetectorDefinitionFormikValues>(
+      INITIAL_DETECTOR_DEFINITION_VALUES
+    );
+  const [step2ConfigureModelFields, setStep2ConfigureModelFields] =
+    useState<ModelConfigurationFormikValues>(
+      INITIAL_MODEL_CONFIGURATION_VALUES
+    );
+  const [step3JobsFields, setStep3JobsFields] =
+    useState<DetectorJobsFormikValues>(INITIAL_DETECTOR_JOB_VALUES);
+  const [step4ReviewCreateFields, setStep4ReviewCreateFields] =
+    useState<CreateDetectorFormikValues>({
+      ...step1DefineDetectorFields,
+      ...step2ConfigureModelFields,
+      ...step3JobsFields,
+    });
 
   const [curStep, setCurStep] = useState<number>(1);
 
