@@ -129,16 +129,21 @@ export const getAlertingCreateMonitorLink = (
   detectorId: string,
   detectorName: string,
   detectorInterval: number,
-  unit: string
+  unit: string,
+  resultIndex?: string
 ): string => {
   try {
     const core = React.useContext(CoreServicesContext) as CoreStart;
     const navLinks = get(core, 'chrome.navLinks', undefined);
     const url = `${navLinks.get(ALERTING_PLUGIN_NAME)?.url}`;
     const alertingRootUrl = getPluginRootPath(url, ALERTING_PLUGIN_NAME);
-    return `${alertingRootUrl}#/create-monitor?searchType=ad&adId=${detectorId}&name=${detectorName}&interval=${
-      2 * detectorInterval
-    }&unit=${unit}`;
+    return !resultIndex
+      ? `${alertingRootUrl}#/create-monitor?searchType=ad&adId=${detectorId}&name=${detectorName}&interval=${
+          2 * detectorInterval
+        }&unit=${unit}`
+      : `${alertingRootUrl}#/create-monitor?searchType=ad&adId=${detectorId}&name=${detectorName}&interval=${
+          2 * detectorInterval
+        }&unit=${unit}&adResultIndex=${resultIndex}`;
   } catch (e) {
     console.error('unable to get the alerting URL', e);
     return '';

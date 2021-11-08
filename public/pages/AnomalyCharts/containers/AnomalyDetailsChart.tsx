@@ -652,6 +652,7 @@ export const AnomalyDetailsChart = React.memo(
             )}
             monitor={props.monitor}
             onClose={() => setShowAlertsFlyout(false)}
+            resultIndex={get(props.detector, 'resultIndex')}
           />
         ) : null}
       </React.Fragment>

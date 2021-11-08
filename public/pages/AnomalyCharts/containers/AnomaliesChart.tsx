@@ -177,6 +177,7 @@ export const AnomaliesChart = React.memo((props: AnomaliesChartProps) => {
         1
       )}
       unit={get(props.detector, 'detectionInterval.period.unit', 'Minutes')}
+      resultIndex={get(props.detector, 'resultIndex')}
     />
   );
 
@@ -279,6 +280,7 @@ export const AnomaliesChart = React.memo((props: AnomaliesChartProps) => {
                         handleCategoryFieldsChange={
                           props.handleCategoryFieldsChange
                         }
+                        resultIndex={get(props.detector, 'resultIndex')}
                       />,
                       props.isNotSample !== true
                         ? [

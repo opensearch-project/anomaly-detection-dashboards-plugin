@@ -23,6 +23,7 @@ export interface AlertsButtonProps extends EuiButtonProps {
   detectorName: string;
   detectorInterval: number;
   unit: string;
+  resultIndex?: string;
 }
 
 export const AlertsButton = (props: AlertsButtonProps) => {
@@ -41,7 +42,8 @@ export const AlertsButton = (props: AlertsButtonProps) => {
             props.detectorId,
             props.detectorName,
             props.detectorInterval,
-            props.unit.toUpperCase()
+            props.unit.toUpperCase(),
+            props.resultIndex
           )}`}
           {...props}
         >
