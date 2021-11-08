@@ -34,6 +34,7 @@ type AlertsFlyoutProps = {
   unit: string;
   monitor?: Monitor;
   onClose(): void;
+  resultIndex?: string;
 };
 
 const alertSteps = [
@@ -117,6 +118,7 @@ export const AlertsFlyout = (props: AlertsFlyoutProps) => {
               detectorInterval={props.detectorInterval}
               unit={props.unit}
               fill
+              resultIndex={props.resultIndex}
             />
           </EuiFlexItem>
         </EuiFlexGroup>

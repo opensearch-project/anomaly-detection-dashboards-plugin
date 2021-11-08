@@ -72,6 +72,7 @@ interface AnomalyHeatmapChartProps {
   categoryField?: string[];
   selectedCategoryFields?: any[];
   handleCategoryFieldsChange(selectedOptions: any[]): void;
+  resultIndex?: string;
 }
 
 export interface HeatmapCell {
@@ -670,6 +671,7 @@ export const AnomalyHeatmapChart = React.memo(
             unit={get(props, 'unit', 'Minutes')}
             monitor={props.monitor}
             onClose={() => setShowAlertsFlyout(false)}
+            resultIndex={props.resultIndex}
           />
         ) : null}
       </React.Fragment>
