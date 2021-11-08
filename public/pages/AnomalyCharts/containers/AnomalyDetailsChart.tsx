@@ -304,11 +304,18 @@ export const AnomalyDetailsChart = React.memo(
     }, [props.anomalies, zoomRange, aggregatedAnomalies, selectedAggId]);
 
     const handleZoomRangeChange = (start: number, end: number) => {
-      setZoomRange({
-        startDate: start,
-        endDate: end,
-      });
-      props.onZoomRangeChange(start, end);
+      // In the HC scenario, we only want to change the local zoom range.
+      // We don't want to change the overall date range, since that would auto-de-select
+      // any selected heatmap cell, and re-fetch results based on the new date range
+      if (props.isHCDetector) {
+        setZoomRange({
+          startDate: start,
+          endDate: end,
+        });
+        props.onZoomRangeChange(start, end);
+      } else {
+        props.onDateRangeChange(start, end);
+      }
     };
 
     useEffect(() => {
@@ -505,7 +512,7 @@ export const AnomalyDetailsChart = React.memo(
                       const end = get(
                         brushArea,
                         'x.1',
-                        DEFAULT_DATE_PICKER_RANGE.start
+                        DEFAULT_DATE_PICKER_RANGE.end
                       );
                       handleZoomRangeChange(start, end);
                       if (props.onDatePickerRangeChange) {
@@ -513,6 +520,14 @@ export const AnomalyDetailsChart = React.memo(
                       }
                     }}
                     theme={ANOMALY_CHART_THEME}
+                    xDomain={
+                      showAggregateResults
+                        ? undefined
+                        : {
+                            min: zoomRange.startDate,
+                            max: zoomRange.endDate,
+                          }
+                    }
                   />
                   {(props.isHCDetector && !props.selectedHeatmapCell) ||
                   props.isHistorical ? null : (
