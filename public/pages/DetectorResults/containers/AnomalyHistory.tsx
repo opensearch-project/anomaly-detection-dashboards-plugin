@@ -9,21 +9,6 @@
  * GitHub history for details.
  */
 
-/*
- * Copyright 2020 Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
- */
-
 import React, {
   useState,
   useEffect,
@@ -153,12 +138,10 @@ export const AnomalyHistory = (props: AnomalyHistoryProps) => {
   const [selectedTabId, setSelectedTabId] = useState<string>(
     ANOMALY_HISTORY_TABS.ANOMALY_OCCURRENCE
   );
-  const [isLoadingAnomalyResults, setIsLoadingAnomalyResults] = useState<
-    boolean
-  >(false);
-  const [bucketizedAnomalyResults, setBucketizedAnomalyResults] = useState<
-    Anomalies[]
-  >();
+  const [isLoadingAnomalyResults, setIsLoadingAnomalyResults] =
+    useState<boolean>(false);
+  const [bucketizedAnomalyResults, setBucketizedAnomalyResults] =
+    useState<Anomalies[]>();
 
   // Used for storing the raw anomaly data in the bucketized scenario, where we
   // only show a bucketized view of results in the chart, but use the pure
@@ -169,13 +152,11 @@ export const AnomalyHistory = (props: AnomalyHistoryProps) => {
 
   // Array of summaries, used to populate each cell in the heatmap chart.
   // Each summary is a separate list of summaries for one unique model / entity combo.
-  const [entityAnomalySummaries, setEntityAnomalySummaries] = useState<
-    EntityAnomalySummaries[]
-  >();
+  const [entityAnomalySummaries, setEntityAnomalySummaries] =
+    useState<EntityAnomalySummaries[]>();
 
-  const [heatmapDisplayOption, setHeatmapDisplayOption] = useState<
-    HeatmapDisplayOption
-  >(INITIAL_HEATMAP_DISPLAY_OPTION);
+  const [heatmapDisplayOption, setHeatmapDisplayOption] =
+    useState<HeatmapDisplayOption>(INITIAL_HEATMAP_DISPLAY_OPTION);
 
   // The top child entity combinations when filtering by a subset of category fields &
   // selecting a parent entity combination.
@@ -183,9 +164,8 @@ export const AnomalyHistory = (props: AnomalyHistoryProps) => {
 
   // Map to keep track of the selected child entities. The key is a child category field,
   // and the value is an array of selected entities.
-  const [selectedChildEntities, setSelectedChildEntities] = useState<
-    EntityOptionsMap
-  >({});
+  const [selectedChildEntities, setSelectedChildEntities] =
+    useState<EntityOptionsMap>({});
 
   const detectorCategoryField = get(props.detector, 'categoryField', []);
   const isHCDetector = !isEmpty(detectorCategoryField);
@@ -533,9 +513,8 @@ export const AnomalyHistory = (props: AnomalyHistoryProps) => {
           query
         )
       );
-      topEntityAnomalySummaries = parseAggTopEntityAnomalySummaryResults(
-        result
-      );
+      topEntityAnomalySummaries =
+        parseAggTopEntityAnomalySummaryResults(result);
     } else {
       const query = getTopAnomalousEntitiesQuery(
         dateRange.startDate,
@@ -668,9 +647,8 @@ export const AnomalyHistory = (props: AnomalyHistoryProps) => {
   const fetchBucketizedEntityAnomalyData = async (entityLists: Entity[][]) => {
     getBucketizedAnomalyResults(entityLists);
   };
-  const [atomicAnomalyResults, setAtomicAnomalyResults] = useState<
-    Anomalies[]
-  >();
+  const [atomicAnomalyResults, setAtomicAnomalyResults] =
+    useState<Anomalies[]>();
   const [rawAnomalyResults, setRawAnomalyResults] = useState<Anomalies[]>([]);
   const [hcDetectorAnomalyResults, setHCDetectorAnomalyResults] = useState<
     Anomalies[]
