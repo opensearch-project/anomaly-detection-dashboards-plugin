@@ -292,19 +292,29 @@ export default class AdService {
 
       // Get real-time and historical task info to populate the
       // task and job-related fields
-      const realtimeTaskResponse: any = await this.client
-        .asScoped(request)
-        .callAsCurrentUser('ad.searchTasks', {
-          body: getLatestTaskForDetectorQuery(detectorId, true),
-        });
-      const historicalTaskResponse: any = await this.client
-        .asScoped(request)
-        .callAsCurrentUser('ad.searchTasks', {
-          body: getLatestTaskForDetectorQuery(detectorId, false),
-        });
+      // We wrap these calls in a try/catch, and suppress any index_not_found_exceptions
+      // which can occur if no detector jobs have been ran on a new cluster.
+      let realtimeTasksResponse = {} as any;
+      let historicalTasksResponse = {} as any;
+      try {
+        realtimeTasksResponse = await this.client
+          .asScoped(request)
+          .callAsCurrentUser('ad.searchTasks', {
+            body: getLatestTaskForDetectorQuery(detectorId, true),
+          });
+        historicalTasksResponse = await this.client
+          .asScoped(request)
+          .callAsCurrentUser('ad.searchTasks', {
+            body: getLatestTaskForDetectorQuery(detectorId, false),
+          });
+      } catch (err) {
+        if (!isIndexNotFoundError(err)) {
+          throw err;
+        }
+      }
 
       const realtimeTask = get(
-        get(realtimeTaskResponse, 'hits.hits', []).map((taskResponse: any) => {
+        get(realtimeTasksResponse, 'hits.hits', []).map((taskResponse: any) => {
           return {
             id: get(taskResponse, '_id'),
             ...get(taskResponse, '_source'),
@@ -313,7 +323,7 @@ export default class AdService {
         0
       );
       const historicalTask = get(
-        get(historicalTaskResponse, 'hits.hits', []).map(
+        get(historicalTasksResponse, 'hits.hits', []).map(
           (taskResponse: any) => {
             return {
               id: get(taskResponse, '_id'),
@@ -699,16 +709,26 @@ export default class AdService {
 
       // Fetch the latest realtime and historical tasks for all detectors
       // using terms aggregations
-      const realtimeTasksResponse: any = await this.client
-        .asScoped(request)
-        .callAsCurrentUser('ad.searchTasks', {
-          body: getLatestDetectorTasksQuery(true),
-        });
-      const historicalTasksResponse: any = await this.client
-        .asScoped(request)
-        .callAsCurrentUser('ad.searchTasks', {
-          body: getLatestDetectorTasksQuery(false),
-        });
+      // We wrap these calls in a try/catch, and suppress any index_not_found_exceptions
+      // which can occur if no detector jobs have been ran on a new cluster.
+      let realtimeTasksResponse = {} as any;
+      let historicalTasksResponse = {} as any;
+      try {
+        realtimeTasksResponse = await this.client
+          .asScoped(request)
+          .callAsCurrentUser('ad.searchTasks', {
+            body: getLatestDetectorTasksQuery(true),
+          });
+        historicalTasksResponse = await this.client
+          .asScoped(request)
+          .callAsCurrentUser('ad.searchTasks', {
+            body: getLatestDetectorTasksQuery(false),
+          });
+      } catch (err) {
+        if (!isIndexNotFoundError(err)) {
+          throw err;
+        }
+      }
 
       const realtimeTasks = get(
         realtimeTasksResponse,
