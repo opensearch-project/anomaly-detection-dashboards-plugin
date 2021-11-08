@@ -90,9 +90,8 @@ export const FeatureChart = (props: FeatureChartProps) => {
   const getDisabledChartBackground = () =>
     darkModeEnabled() ? '#25262E' : '#F0F0F0';
 
-  const [showCustomExpression, setShowCustomExpression] = useState<boolean>(
-    false
-  );
+  const [showCustomExpression, setShowCustomExpression] =
+    useState<boolean>(false);
   const timeFormatter = niceTimeFormatter([
     props.dateRange.startDate,
     props.dateRange.endDate,
@@ -216,6 +215,10 @@ export const FeatureChart = (props: FeatureChartProps) => {
             showLegendDisplayValue={false}
             legendPosition={Position.Right}
             theme={FEATURE_CHART_THEME}
+            xDomain={{
+              min: props.dateRange.startDate,
+              max: props.dateRange.endDate,
+            }}
           />
           {props.feature.featureEnabled ? (
             <RectAnnotation
