@@ -100,9 +100,21 @@ export default function adPlugin(Client: any, config: any, components: any) {
 
   ad.searchResults = ca({
     url: {
-      fmt: `${API.DETECTOR_BASE}/results/_search/<%=resultIndex%>`,
+      fmt: `${API.DETECTOR_BASE}/results/_search`,
+    },
+    needBody: true,
+    method: 'POST',
+  });
+
+  ad.searchResultsFromCustomResultIndex = ca({
+    url: {
+      fmt: `${API.DETECTOR_BASE}/results/_search/<%=resultIndex%>?only_query_custom_result_index=<%=onlyQueryCustomResultIndex%>`,
       req: {
         resultIndex: {
+          type: 'string',
+          required: false,
+        },
+        onlyQueryCustomResultIndex: {
           type: 'string',
           required: false,
         },
