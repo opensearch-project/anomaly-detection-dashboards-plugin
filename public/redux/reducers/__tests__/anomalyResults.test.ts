@@ -43,7 +43,13 @@ describe('anomaly results reducer actions', () => {
       };
       const resultIndex = 'opensearch-ad-plugin-result-test';
       await store.dispatch(
-        getDetectorResults(tempDetectorId, queryParams, false, resultIndex)
+        getDetectorResults(
+          tempDetectorId,
+          queryParams,
+          false,
+          resultIndex,
+          true
+        )
       );
       const actions = store.getActions();
 
@@ -61,7 +67,9 @@ describe('anomaly results reducer actions', () => {
         featureData: undefined,
       });
       expect(httpMockedClient.get).toHaveBeenCalledWith(
-        `..${AD_NODE_API.DETECTOR}/${tempDetectorId}/results/${false}/${resultIndex}`,
+        `..${
+          AD_NODE_API.DETECTOR
+        }/${tempDetectorId}/results/${false}/${resultIndex}/true`,
         { query: queryParams }
       );
     });
@@ -79,7 +87,7 @@ describe('anomaly results reducer actions', () => {
       };
       try {
         await store.dispatch(
-          getDetectorResults(tempDetectorId, queryParams, false, '')
+          getDetectorResults(tempDetectorId, queryParams, false, '', false)
         );
       } catch (e) {
         const actions = store.getActions();
@@ -95,7 +103,7 @@ describe('anomaly results reducer actions', () => {
           errorMessage: 'Something went wrong',
         });
         expect(httpMockedClient.get).toHaveBeenCalledWith(
-          `..${AD_NODE_API.DETECTOR}/${tempDetectorId}/results/${false}/`,
+          `..${AD_NODE_API.DETECTOR}/${tempDetectorId}/results/${false}`,
           { query: queryParams }
         );
       }

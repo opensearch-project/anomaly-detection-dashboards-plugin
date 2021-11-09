@@ -9,7 +9,6 @@
  * GitHub history for details.
  */
 
-
 import { APIAction, APIResponseAction, HttpSetup } from '../middleware/types';
 import handleActions from '../utils/handleActions';
 import { AD_NODE_API } from '../../../utils/constants';
@@ -97,28 +96,54 @@ export const getDetectorResults = (
   id: string,
   queryParams: any,
   isHistorical: boolean,
-  resultIndex: string
-): APIAction => ({
-  type: DETECTOR_RESULTS,
-  request: (client: HttpSetup) =>
-    client.get(
-      `..${AD_NODE_API.DETECTOR}/${id}/results/${isHistorical}/${resultIndex}`,
-      {
-        query: queryParams,
+  resultIndex: string,
+  onlyQueryCustomResultIndex: boolean
+): APIAction =>
+  !resultIndex
+    ? {
+        type: DETECTOR_RESULTS,
+        request: (client: HttpSetup) =>
+          client.get(
+            `..${AD_NODE_API.DETECTOR}/${id}/results/${isHistorical}`,
+            {
+              query: queryParams,
+            }
+          ),
       }
-    ),
-});
+    : {
+        type: DETECTOR_RESULTS,
+        request: (client: HttpSetup) =>
+          client.get(
+            `..${AD_NODE_API.DETECTOR}/${id}/results/${isHistorical}/${resultIndex}/${onlyQueryCustomResultIndex}`,
+            {
+              query: queryParams,
+            }
+          ),
+      };
 
 export const searchResults = (
   requestBody: any,
-  resultIndex: string
-): APIAction => ({
-  type: SEARCH_ANOMALY_RESULTS,
-  request: (client: HttpSetup) =>
-    client.post(`..${AD_NODE_API.DETECTOR}/results/_search/${resultIndex}`, {
-      body: JSON.stringify(requestBody),
-    }),
-});
+  resultIndex: string,
+  onlyQueryCustomResultIndex: boolean
+): APIAction =>
+  !resultIndex
+    ? {
+        type: SEARCH_ANOMALY_RESULTS,
+        request: (client: HttpSetup) =>
+          client.post(`..${AD_NODE_API.DETECTOR}/results/_search`, {
+            body: JSON.stringify(requestBody),
+          }),
+      }
+    : {
+        type: SEARCH_ANOMALY_RESULTS,
+        request: (client: HttpSetup) =>
+          client.post(
+            `..${AD_NODE_API.DETECTOR}/results/_search/${resultIndex}/${onlyQueryCustomResultIndex}`,
+            {
+              body: JSON.stringify(requestBody),
+            }
+          ),
+      };
 
 export const getTopAnomalyResults = (
   detectorId: string,
