@@ -448,13 +448,18 @@ export const buildGetAnomalyResultQueryByRange = (
 };
 
 export const getLatestAnomalyResultsByTimeRange = async (
-  func: (request: any, resultIndex: string) => APIAction,
+  func: (
+    request: any,
+    resultIndex: string,
+    onlyQueryCustomResultIndex: boolean
+  ) => APIAction,
   timeRange: string,
   dispatch: Dispatch<any>,
   threshold: number,
   anomalySize: number,
   checkLastIndexOnly: boolean,
-  resultIndex: string
+  resultIndex: string,
+  onlyQueryCustomResultIndex: boolean
 ): Promise<object[]> => {
   let from = 0;
   let anomalyResults = [] as object[];
@@ -469,7 +474,8 @@ export const getLatestAnomalyResultsByTimeRange = async (
           threshold,
           checkLastIndexOnly
         ),
-        resultIndex
+        resultIndex,
+        onlyQueryCustomResultIndex
       )
     );
 
@@ -499,7 +505,11 @@ export const getLatestAnomalyResultsByTimeRange = async (
 };
 
 export const getLatestAnomalyResultsForDetectorsByTimeRange = async (
-  func: (request: any, resultIndex: string) => APIAction,
+  func: (
+    request: any,
+    resultIndex: string,
+    onlyQueryCustomResultIndex: boolean
+  ) => APIAction,
   selectedDetectors: DetectorListItem[],
   timeRange: string,
   dispatch: Dispatch<any>,
@@ -507,7 +517,8 @@ export const getLatestAnomalyResultsForDetectorsByTimeRange = async (
   anomalySize: number,
   detectorNum: number,
   checkLastIndexOnly: boolean,
-  resultIndex: string
+  resultIndex: string,
+  onlyQueryCustomResultIndex: boolean
 ): Promise<object[]> => {
   const detectorAndIdMap = buildDetectorAndIdMap(selectedDetectors);
   let from = 0;
@@ -523,7 +534,8 @@ export const getLatestAnomalyResultsForDetectorsByTimeRange = async (
           threshold,
           checkLastIndexOnly
         ),
-        resultIndex
+        resultIndex,
+        onlyQueryCustomResultIndex
       )
     );
     const searchAnomalyResponse = searchResponse.response;
@@ -610,13 +622,18 @@ const selectLatestAnomalousDetectorIds = (
 };
 
 export const getAnomalyDistributionForDetectorsByTimeRange = async (
-  func: (request: any, resultIndex: string) => APIAction,
+  func: (
+    request: any,
+    resultIndex: string,
+    onlyQueryCustomResultIndex: boolean
+  ) => APIAction,
   selectedDetectors: DetectorListItem[],
   timeRange: string,
   dispatch: Dispatch<any>,
   threshold: number,
   checkLastIndexOnly: boolean,
-  resultIndex: string
+  resultIndex: string,
+  onlyQueryCustomResultIndex: boolean
 ) => {
   const aggregationName = 'anomaly_dist';
   const detectorAndIdMap = buildDetectorAndIdMap(selectedDetectors);
@@ -640,7 +657,9 @@ export const getAnomalyDistributionForDetectorsByTimeRange = async (
   };
   const finalQuery = Object.assign({}, getResultQuery, anomaly_dist_aggs);
 
-  const result = await dispatch(func(finalQuery, resultIndex));
+  const result = await dispatch(
+    func(finalQuery, resultIndex, onlyQueryCustomResultIndex)
+  );
 
   const detectorsAggResults = get(
     result,

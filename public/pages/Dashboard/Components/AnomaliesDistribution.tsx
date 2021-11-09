@@ -70,7 +70,8 @@ export const AnomaliesDistributionChart = (
         dispatch,
         0,
         false,
-        ALL_CUSTOM_AD_RESULT_INDICES
+        ALL_CUSTOM_AD_RESULT_INDICES,
+        false
       );
     setAnomalyDistribution(distributionResult);
 

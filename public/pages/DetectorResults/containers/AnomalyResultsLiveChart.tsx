@@ -131,7 +131,13 @@ export const AnomalyResultsLiveChart = (
           intervals
         );
         await dispatch(
-          getDetectorLiveResults(detectorId, queryParams, false, resultIndex)
+          getDetectorLiveResults(
+            detectorId,
+            queryParams,
+            false,
+            resultIndex,
+            true
+          )
         );
       } catch (err) {
         console.error(
@@ -157,7 +163,8 @@ export const AnomalyResultsLiveChart = (
           props.detector.id,
           detectionInterval,
           LIVE_CHART_CONFIG.MONITORING_INTERVALS,
-          resultIndex
+          resultIndex,
+          true
         );
       }, LIVE_CHART_CONFIG.REFRESH_INTERVAL_IN_SECONDS);
       return () => {
