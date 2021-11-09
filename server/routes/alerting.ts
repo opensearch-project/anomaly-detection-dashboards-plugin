@@ -51,12 +51,17 @@ export default class AlertingService {
             path: 'monitor.inputs',
             query: {
               bool: {
-                must: [
+                should: [
                   {
                     term: {
                       'monitor.inputs.search.indices.keyword': {
                         value: '.opendistro-anomaly-results*',
                       },
+                    },
+                  },
+                  {
+                    match_phrase_prefix: {
+                      'monitor.inputs.search.indices': 'opensearch-ad-plugin-result-',
                     },
                   },
                 ],
