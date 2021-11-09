@@ -168,7 +168,7 @@ export const AnomalyDetailsChart = React.memo(
         zoomRange.endDate,
         taskId
       );
-      dispatch(searchResults(anomalyDataRangeQuery, resultIndex))
+      dispatch(searchResults(anomalyDataRangeQuery, resultIndex, true))
         .then((response: any) => {
           // Only retrieve buckets that are in the anomaly results range. This is so
           // we don't show aggregate results for where there is no data at all
@@ -187,7 +187,7 @@ export const AnomalyDetailsChart = React.memo(
             taskId,
             selectedAggId
           );
-          dispatch(searchResults(historicalAggQuery, resultIndex))
+          dispatch(searchResults(historicalAggQuery, resultIndex, true))
             .then((response: any) => {
               const aggregatedAnomalies = parseHistoricalAggregatedAnomalies(
                 response,
@@ -223,7 +223,7 @@ export const AnomalyDetailsChart = React.memo(
           zoomRange.endDate,
           taskId
         );
-        dispatch(searchResults(anomalyDataRangeQuery, resultIndex))
+        dispatch(searchResults(anomalyDataRangeQuery, resultIndex, true))
           .then((response: any) => {
             const dataStartDate = get(
               response,
