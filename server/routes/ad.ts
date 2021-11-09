@@ -63,15 +63,16 @@ export function registerADRoutes(apiRouter: Router, adService: AdService) {
   apiRouter.put('/detectors/{detectorId}', adService.putDetector);
   apiRouter.post('/detectors/_search', adService.searchDetector);
   apiRouter.post('/detectors/results/_search/', adService.searchResults);
+  apiRouter.post('/detectors/results/_search', adService.searchResults);
   apiRouter.post(
-    '/detectors/results/_search/{resultIndex}',
+    '/detectors/results/_search/{resultIndex}/{onlyQueryCustomResultIndex}',
     adService.searchResults
   );
   apiRouter.get('/detectors/{detectorId}', adService.getDetector);
   apiRouter.get('/detectors', adService.getDetectors);
   apiRouter.post('/detectors/preview', adService.previewDetector);
   apiRouter.get(
-    '/detectors/{id}/results/{isHistorical}/{resultIndex}',
+    '/detectors/{id}/results/{isHistorical}/{resultIndex}/{onlyQueryCustomResultIndex}',
     adService.getAnomalyResults
   );
   apiRouter.get(
@@ -508,7 +509,10 @@ export default class AdService {
     opensearchDashboardsResponse: OpenSearchDashboardsResponseFactory
   ): Promise<IOpenSearchDashboardsResponse<any>> => {
     try {
-      var { resultIndex } = request.params as { resultIndex: string };
+      var { resultIndex, onlyQueryCustomResultIndex } = request.params as {
+        resultIndex: string;
+        onlyQueryCustomResultIndex: boolean;
+      };
       if (
         !resultIndex ||
         !resultIndex.startsWith(CUSTOM_AD_RESULT_INDEX_PREFIX)
@@ -516,14 +520,23 @@ export default class AdService {
         // Set resultIndex as '' means no custom result index specified, will only search anomaly result from default index.
         resultIndex = '';
       }
-      let requestParams = { resultIndex: resultIndex } as {};
+      let requestParams = {
+        resultIndex: resultIndex,
+        onlyQueryCustomResultIndex: onlyQueryCustomResultIndex,
+      } as {};
       const requestBody = JSON.stringify(request.body);
-      const response = await this.client
-        .asScoped(request)
-        .callAsCurrentUser('ad.searchResults', {
-          ...requestParams,
-          body: requestBody,
-        });
+      const response = !resultIndex
+        ? await this.client
+            .asScoped(request)
+            .callAsCurrentUser('ad.searchResults', {
+              body: requestBody,
+            })
+        : await this.client
+            .asScoped(request)
+            .callAsCurrentUser('ad.searchResultsFromCustomResultIndex', {
+              ...requestParams,
+              body: requestBody,
+            });
       return opensearchDashboardsResponse.ok({
         body: {
           ok: true,
@@ -633,10 +646,11 @@ export default class AdService {
         // If no valid result index specified, just query anomaly result from default result index.
         // Here we specify custom AD result index prefix pattern to query all custom result indices.
         resultIndex: CUSTOM_AD_RESULT_INDEX_PREFIX + '*',
+        onlyQueryCustomResultIndex: 'false',
       } as {};
       const aggregationResult = await this.client
         .asScoped(request)
-        .callAsCurrentUser('ad.searchResults', {
+        .callAsCurrentUser('ad.searchResultsFromCustomResultIndex', {
           ...requestParams,
           body: getResultAggregationQuery(allDetectorIds, {
             from,
@@ -788,11 +802,13 @@ export default class AdService {
     request: OpenSearchDashboardsRequest,
     opensearchDashboardsResponse: OpenSearchDashboardsResponseFactory
   ): Promise<IOpenSearchDashboardsResponse<any>> => {
-    let { id, isHistorical, resultIndex } = request.params as {
-      id: string;
-      isHistorical: any;
-      resultIndex: string;
-    };
+    let { id, isHistorical, resultIndex, onlyQueryCustomResultIndex } =
+      request.params as {
+        id: string;
+        isHistorical: any;
+        resultIndex: string;
+        onlyQueryCustomResultIndex: boolean;
+      };
     if (
       !resultIndex ||
       !resultIndex.startsWith(CUSTOM_AD_RESULT_INDEX_PREFIX)
@@ -919,13 +935,22 @@ export default class AdService {
         console.log('wrong date range filter', error);
       }
 
-      let requestParams = { resultIndex: resultIndex } as {};
-      const response = await this.client
-        .asScoped(request)
-        .callAsCurrentUser('ad.searchResults', {
-          ...requestParams,
-          body: requestBody,
-        });
+      let requestParams = {
+        resultIndex: resultIndex,
+        onlyQueryCustomResultIndex: onlyQueryCustomResultIndex,
+      } as {};
+      const response = !resultIndex
+        ? await this.client
+            .asScoped(request)
+            .callAsCurrentUser('ad.searchResults', {
+              body: requestBody,
+            })
+        : await this.client
+            .asScoped(request)
+            .callAsCurrentUser('ad.searchResultsFromCustomResultIndex', {
+              ...requestParams,
+              body: requestBody,
+            });
 
       const totalResults: number = get(response, 'hits.total.value', 0);
 
