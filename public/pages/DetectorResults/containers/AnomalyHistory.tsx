@@ -54,6 +54,7 @@ import {
   parseAggTopEntityAnomalySummaryResults,
   parseTopChildEntityCombos,
   flattenData,
+  generateAnomalyAnnotations,
 } from '../../utils/anomalyResultUtils';
 import { AnomalyResultsTable } from './AnomalyResultsTable';
 import { AnomaliesChart } from '../../AnomalyCharts/containers/AnomaliesChart';
@@ -794,23 +795,7 @@ export const AnomalyHistory = (props: AnomalyHistoryProps) => {
     []
   );
 
-  const annotations = anomalyResults
-    ? get(anomalyResults, 'anomalies', [])
-        //@ts-ignore
-        .filter((anomaly: AnomalyData) => anomaly.anomalyGrade > 0)
-        .map((anomaly: AnomalyData) => ({
-          coordinates: {
-            x0: anomaly.startTime,
-            x1: anomaly.endTime,
-          },
-          details: `There is an anomaly with confidence ${
-            anomaly.confidence
-          } between ${minuteDateFormatter(
-            anomaly.startTime
-          )} and ${minuteDateFormatter(anomaly.endTime)}`,
-          entity: get(anomaly, 'entity', []),
-        }))
-    : [];
+  const annotations = generateAnomalyAnnotations(anomalyResults);
 
   const tabs = [
     {

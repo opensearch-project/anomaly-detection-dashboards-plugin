@@ -37,7 +37,6 @@ import { darkModeEnabled } from '../../../../utils/opensearchDashboardsUtils';
 import {
   prepareDataForChart,
   getFeatureMissingDataAnnotations,
-  filterWithDateRange,
   flattenData,
   convertToEntityString,
 } from '../../../utils/anomalyResultUtils';
@@ -47,13 +46,13 @@ import {
   CHART_COLORS,
   FEATURE_CHART_THEME,
 } from '../../utils/constants';
-import { get, isEmpty } from 'lodash';
+import { get } from 'lodash';
 import { ENTITY_COLORS } from '../../../DetectorResults/utils/constants';
 
 interface FeatureChartProps {
   feature: FeatureAttributes;
   featureData: FeatureAggregationData[][];
-  annotations: any[];
+  annotations: any[][];
   isLoading: boolean;
   dateRange: DateRange;
   featureType: FEATURE_TYPE;
@@ -143,17 +142,6 @@ export const FeatureChart = (props: FeatureChartProps) => {
     return undefined;
   };
 
-  const getFeatureAnnotations = () => {
-    if (isEmpty(props.annotations)) {
-      return [];
-    }
-    return filterWithDateRange(
-      props.annotations,
-      props.dateRange,
-      'coordinates.x0'
-    );
-  };
-
   const featureData = prepareDataForChart(
     props.featureData,
     props.dateRange
@@ -205,9 +193,19 @@ export const FeatureChart = (props: FeatureChartProps) => {
               max: props.dateRange.endDate,
             }}
           />
+          {/**
+           * props.annotations is 2-dimensional, and contains an array of annotations
+           * per time series to show on the charts. We flatten all anomaly annotations into
+           * a 1-D array, and show on all enabled feature line charts.
+           *
+           * Note that feature attribution is supported on the backend as of 1.2 - future
+           * frontend improvements may change the data model of generated annotations,
+           * and thus show different annotations per feature chart (currently all annotations
+           * shown equally across all enabled feature charts for a given detector).
+           */}
           {props.feature.featureEnabled ? (
             <RectAnnotation
-              dataValues={getFeatureAnnotations()}
+              dataValues={flattenData(props.annotations)}
               id="annotations"
               style={{
                 stroke: darkModeEnabled() ? 'red' : '#D5DBDB',
