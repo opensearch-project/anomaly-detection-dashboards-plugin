@@ -437,6 +437,13 @@ export const AnomalyHistory = (props: AnomalyHistoryProps) => {
       if (showLoading) {
         setIsLoading(false);
       }
+      // After fetching raw results, re-fetch the latest HC anomaly summaries, if applicable.
+      // Also clear any selected heatmap cell data in all of the child charts,
+      // in case a user selected one while the job was still running.
+      if (isHCDetector) {
+        setSelectedHeatmapCell(undefined);
+        fetchHCAnomalySummaries();
+      }
     }
   };
 
