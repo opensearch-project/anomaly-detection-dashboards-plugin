@@ -37,7 +37,7 @@ interface FeatureBreakDownProps {
   title?: string;
   detector: Detector;
   anomalyAndFeatureResults: Anomalies[];
-  annotations: any[];
+  annotations: any[][];
   isLoading: boolean;
   dateRange: DateRange;
   featureDataSeriesName: string;
