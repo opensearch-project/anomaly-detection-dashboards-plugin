@@ -20,6 +20,8 @@ Compatible with OpenSearch Dashboards 1.2.0
 - Fix bug of detector task calls failing if no state index ([#120](https://github.com/opensearch-project/anomaly-detection-dashboards-plugin/pull/120))
 - Fix chart range bug of non-HC anomaly and feature charts ([#122](https://github.com/opensearch-project/anomaly-detection-dashboards-plugin/pull/122))
 - support create monitor with custom result index ([#123](https://github.com/opensearch-project/anomaly-detection-dashboards-plugin/pull/123))
+- Fix bug of HC historical results not auto-refreshing ([#131](https://github.com/opensearch-project/anomaly-detection-dashboards-plugin/pull/131))
+- Fix bug of missing annotations on feature charts ([#136](https://github.com/opensearch-project/anomaly-detection-dashboards-plugin/pull/136))
 
 ### Infrastructure
 
