@@ -178,7 +178,8 @@ export default class OpenSearchService {
     request: OpenSearchDashboardsRequest,
     opensearchDashboardsResponse: OpenSearchDashboardsResponseFactory
   ): Promise<IOpenSearchDashboardsResponse<any>> => {
-    const { isResultIndex } = request.params as { isResultIndex: boolean };
+    let { isResultIndex } = request.params as { isResultIndex: any };
+    isResultIndex = JSON.parse(isResultIndex) as boolean;
     let anomalyResultIndexMappings = {};
 
     // If creating a custom result index: need to fetch the latest anomaly result index mappings.
