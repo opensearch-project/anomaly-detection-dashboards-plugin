@@ -155,7 +155,7 @@ export const DetectorDetail = (props: DetectorDetailProps) => {
   }, []);
 
   // Getting all visible indices. Will re-fetch if changes to the detector (e.g.,
-  // detector starts, result index re-created or user switches tabs to re-fetch detector)
+  // detector starts, result index recreated or user switches tabs to re-fetch detector)
   useEffect(() => {
     const getInitialIndices = async () => {
       await dispatch(getIndices('')).catch((error: any) => {
@@ -405,7 +405,7 @@ export const DetectorDetail = (props: DetectorDetailProps) => {
                 'resultIndex',
                 ''
               )}' has been deleted and all anomaly results have been lost. To start saving anomaly results, 
-              restart real-time or historical detection, or re-create the index.`}
+              restart real-time or historical detection, or recreate the index.`}
               color="danger"
               iconType="alert"
             >
@@ -422,21 +422,21 @@ export const DetectorDetail = (props: DetectorDetailProps) => {
                   await dispatch(createIndex(indexConfig, true))
                     .then(() => {
                       core.notifications.toasts.addSuccess(
-                        `Successfully re-created result index ${get(
+                        `Successfully recreated result index '${get(
                           detector,
                           'resultIndex',
                           ''
-                        )}`
+                        )}'.`
                       );
                     })
                     .catch((error: any) => {
                       console.error(error);
                       core.notifications.toasts.addDanger(
-                        `Error re-creating result index ${get(
+                        `Error recreating result index '${get(
                           detector,
                           'resultIndex',
                           ''
-                        )}`
+                        )}'.`
                       );
                     })
                     .finally(() => {
@@ -444,7 +444,7 @@ export const DetectorDetail = (props: DetectorDetailProps) => {
                     });
                 }}
               >
-                {isCreatingIndex ? 'Re-creating...' : 'Re-create index'}
+                {isCreatingIndex ? 'Recreating...' : 'Recreate index'}
               </EuiButton>
             </EuiCallOut>
           ) : null}
