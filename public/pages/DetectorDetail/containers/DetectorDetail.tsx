@@ -22,14 +22,16 @@ import {
   EuiText,
   EuiFieldText,
   EuiLoadingSpinner,
+  EuiButton,
 } from '@elastic/eui';
 import { CoreStart } from '../../../../../../src/core/public';
 import { CoreServicesContext } from '../../../components/CoreServices/CoreServices';
 import { get, isEmpty } from 'lodash';
 import { RouteComponentProps, Switch, Route, Redirect } from 'react-router-dom';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { useFetchDetectorInfo } from '../../CreateDetectorSteps/hooks/useFetchDetectorInfo';
 import { useHideSideNavBar } from '../../main/hooks/useHideSideNavBar';
+import { AppState } from '../../../redux/reducers';
 import {
   deleteDetector,
   startDetector,
@@ -37,6 +39,7 @@ import {
   getDetector,
   stopHistoricalDetector,
 } from '../../../redux/reducers/ad';
+import { getIndices, createIndex } from '../../../redux/reducers/opensearch';
 import { getErrorMessage, Listener } from '../../../utils/utils';
 import { darkModeEnabled } from '../../../utils/opensearchDashboardsUtils';
 import { BREADCRUMBS } from '../../../utils/constants';
@@ -53,6 +56,8 @@ import {
   prettifyErrorMessage,
 } from '../../../../server/utils/helpers';
 import { DETECTOR_STATE } from '../../../../server/utils/constants';
+import { CatIndex } from '../../../../server/models/types';
+import { containsIndex } from '../utils/helpers';
 
 export interface DetectorRouterProps {
   detectorId?: string;
@@ -102,6 +107,15 @@ export const DetectorDetail = (props: DetectorDetailProps) => {
     useFetchDetectorInfo(detectorId);
   const { monitor, fetchMonitorError, isLoadingMonitor } =
     useFetchMonitorInfo(detectorId);
+  const visibleIndices = useSelector(
+    (state: AppState) => state.opensearch.indices
+  ) as CatIndex[];
+  const isResultIndexMissing = isLoadingDetector
+    ? false
+    : isEmpty(get(detector, 'resultIndex', ''))
+    ? false
+    : !containsIndex(get(detector, 'resultIndex', ''), visibleIndices);
+
   // String to set in the modal if the realtime detector and/or historical analysis
   // are running when the user tries to edit the detector details or model config
   const isRTJobRunning = get(detector, 'enabled');
@@ -120,6 +134,8 @@ export const DetectorDetail = (props: DetectorDetailProps) => {
   //TODO: test dark mode once detector configuration and AD result page merged
   const isDark = darkModeEnabled();
 
+  const [isCreatingIndex, setIsCreatingIndex] = useState<boolean>(false);
+
   const [detectorDetailModel, setDetectorDetailModel] =
     useState<DetectorDetailModel>({
       selectedTab: getSelectedTabId(
@@ -137,6 +153,18 @@ export const DetectorDetail = (props: DetectorDetailProps) => {
   useEffect(() => {
     scroll(0, 0);
   }, []);
+
+  // Getting all visible indices. Will re-fetch if changes to the detector (e.g.,
+  // detector starts, result index re-created or user switches tabs to re-fetch detector)
+  useEffect(() => {
+    const getInitialIndices = async () => {
+      await dispatch(getIndices('')).catch((error: any) => {
+        console.error(error);
+        core.notifications.toasts.addDanger('Error getting all indices');
+      });
+    };
+    getInitialIndices();
+  }, [detector]);
 
   useEffect(() => {
     if (hasError) {
@@ -365,6 +393,61 @@ export const DetectorDetail = (props: DetectorDetailProps) => {
               />
             </EuiFlexItem>
           </EuiFlexGroup>
+          {isResultIndexMissing || isCreatingIndex ? (
+            <EuiCallOut
+              style={{
+                marginLeft: '10px',
+                marginRight: '10px',
+                marginBottom: '10px',
+              }}
+              title={`Result index '${get(
+                detector,
+                'resultIndex',
+                ''
+              )}' has been deleted and all anomaly results have been lost. To start saving anomaly results, 
+              restart real-time or historical detection, or re-create the index.`}
+              color="danger"
+              iconType="alert"
+            >
+              <EuiButton
+                style={{ marginLeft: '24px' }}
+                fill={false}
+                isLoading={isCreatingIndex}
+                onClick={async () => {
+                  setIsCreatingIndex(true);
+                  const indexConfig = {
+                    index: get(detector, 'resultIndex', ''),
+                    body: {},
+                  };
+                  await dispatch(createIndex(indexConfig, true))
+                    .then(() => {
+                      core.notifications.toasts.addSuccess(
+                        `Successfully re-created result index ${get(
+                          detector,
+                          'resultIndex',
+                          ''
+                        )}`
+                      );
+                    })
+                    .catch((error: any) => {
+                      console.error(error);
+                      core.notifications.toasts.addDanger(
+                        `Error re-creating result index ${get(
+                          detector,
+                          'resultIndex',
+                          ''
+                        )}`
+                      );
+                    })
+                    .finally(() => {
+                      setIsCreatingIndex(false);
+                    });
+                }}
+              >
+                {isCreatingIndex ? 'Re-creating...' : 'Re-create index'}
+              </EuiButton>
+            </EuiCallOut>
+          ) : null}
 
           <EuiFlexGroup>
             <EuiFlexItem>

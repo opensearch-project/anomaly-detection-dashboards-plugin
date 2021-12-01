@@ -17,7 +17,7 @@ import React, {
   useRef,
 } from 'react';
 
-import { isEmpty, get, stubTrue } from 'lodash';
+import { isEmpty, get } from 'lodash';
 import {
   EuiFlexItem,
   EuiFlexGroup,
@@ -59,7 +59,6 @@ import {
 import { AnomalyResultsTable } from './AnomalyResultsTable';
 import { AnomaliesChart } from '../../AnomalyCharts/containers/AnomaliesChart';
 import { FeatureBreakDown } from '../../AnomalyCharts/containers/FeatureBreakDown';
-import { minuteDateFormatter } from '../../utils/helpers';
 import {
   ANOMALY_HISTORY_TABS,
   MAX_TIME_SERIES_TO_DISPLAY,
@@ -383,7 +382,7 @@ export const AnomalyHistory = (props: AnomalyHistoryProps) => {
     if (showLoading) {
       setIsLoading(true);
     }
-
+    let errorFetchingResults = false;
     try {
       const params = buildParamsForGetAnomalyResultsWithDateRange(
         dateRange.startDate -
@@ -408,7 +407,11 @@ export const AnomalyHistory = (props: AnomalyHistoryProps) => {
               resultIndex,
               true
             )
-          )
+          ).catch((error: any) => {
+            setIsLoading(false);
+            setIsLoadingAnomalyResults(false);
+            errorFetchingResults = true;
+          })
         : await dispatch(
             getDetectorResults(
               props.detector.id,
@@ -417,7 +420,12 @@ export const AnomalyHistory = (props: AnomalyHistoryProps) => {
               resultIndex,
               true
             )
-          );
+          ).catch((error: any) => {
+            setIsLoading(false);
+            setIsLoadingAnomalyResults(false);
+            errorFetchingResults = true;
+          });
+
       const rawAnomaliesData = get(detectorResultResponse, 'response', []);
       const rawAnomaliesResult = {
         anomalies: get(rawAnomaliesData, 'results', []),
@@ -441,7 +449,7 @@ export const AnomalyHistory = (props: AnomalyHistoryProps) => {
       // After fetching raw results, re-fetch the latest HC anomaly summaries, if applicable.
       // Also clear any selected heatmap cell data in all of the child charts,
       // in case a user selected one while the job was still running.
-      if (isHCDetector) {
+      if (isHCDetector && !errorFetchingResults) {
         setSelectedHeatmapCell(undefined);
         fetchHCAnomalySummaries();
       }
