@@ -52,6 +52,6 @@ jobs:
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v1
         with:
-          file: ./OpenSearch-Dashboards/plugins/anomaly-detection-opensearch-dashboard-plugin/coverage/cobertura-coverage.xml
+          file: ./OpenSearch-Dashboards/plugins/anomaly-detection-dashboards-plugin/coverage/cobertura-coverage.xml
           flags: unittests
           name: ad-opensearch-dashboards-ut-codecov
