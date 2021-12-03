@@ -10,7 +10,7 @@
  */
 
 import React, { Fragment } from 'react';
-import { get } from 'lodash';
+import { get, isEmpty } from 'lodash';
 import { DETECTOR_INIT_FAILURES } from './constants';
 import { DETECTOR_STATE_COLOR } from '../../utils/constants';
 import { DETECTOR_STATE } from '../../../../server/utils/constants';
@@ -111,10 +111,12 @@ export const getDetectorStateDetails = (
 
 export const containsIndex = (index: string, indices: CatIndex[]) => {
   let containsIndex = false;
-  indices.forEach((catIndex: CatIndex) => {
-    if (catIndex.index == index) {
-      containsIndex = true;
-    }
-  });
+  if (!isEmpty(indices)) {
+    indices.forEach((catIndex: CatIndex) => {
+      if (get(catIndex, 'index', '') == index) {
+        containsIndex = true;
+      }
+    });
+  }
   return containsIndex;
 };
