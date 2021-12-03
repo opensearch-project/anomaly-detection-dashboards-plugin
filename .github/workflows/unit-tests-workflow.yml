@@ -49,9 +49,5 @@ jobs:
         run: |
           cd OpenSearch-Dashboards/plugins/anomaly-detection-dashboards-plugin
           yarn run test:jest --coverage
-      - name: Upload coverage to Codecov
+      - name: Uploads coverage
         uses: codecov/codecov-action@v1
-        with:
-          file: ./OpenSearch-Dashboards/plugins/anomaly-detection-opensearch-dashboard-plugin/coverage/cobertura-coverage.xml
-          flags: unittests
-          name: ad-opensearch-dashboards-ut-codecov
