@@ -10,7 +10,6 @@
  */
 
 import { get } from 'lodash';
-import fetch from 'node-fetch';
 import { SearchResponse } from '../models/interfaces';
 import {
   CatIndex,
