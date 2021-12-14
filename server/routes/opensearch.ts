@@ -9,7 +9,6 @@
  * GitHub history for details.
  */
 
-
 import { get } from 'lodash';
 import { SearchResponse } from '../models/interfaces';
 import {
