@@ -27,6 +27,3 @@ export const ALERTING_NODE_API = Object.freeze({
   ALERTS: `${BASE_NODE_API_PATH}/monitors/alerts`,
   MONITORS: `${BASE_NODE_API_PATH}/monitors`,
 });
-
-export const ANOMALY_RESULTS_INDEX_MAPPINGS_LINK =
-  'https://raw.githubusercontent.com/opensearch-project/anomaly-detection/main/src/main/resources/mappings/anomaly-results.json';

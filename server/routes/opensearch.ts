@@ -28,7 +28,6 @@ import {
   OpenSearchDashboardsResponseFactory,
   IOpenSearchDashboardsResponse,
 } from '../../../../src/core/server';
-import { ANOMALY_RESULTS_INDEX_MAPPINGS_LINK } from '../../utils/constants';
 
 type SearchParams = {
   index: string;
@@ -44,7 +43,7 @@ export function registerOpenSearchRoutes(
   apiRouter.get('/_aliases', opensearchService.getAliases);
   apiRouter.get('/_mappings', opensearchService.getMapping);
   apiRouter.post('/_search', opensearchService.executeSearch);
-  apiRouter.put('/create_index/{isResultIndex}', opensearchService.createIndex);
+  apiRouter.put('/create_index', opensearchService.createIndex);
   apiRouter.post('/bulk', opensearchService.bulk);
   apiRouter.post('/delete_index', opensearchService.deleteIndex);
 }
@@ -178,45 +177,10 @@ export default class OpenSearchService {
     request: OpenSearchDashboardsRequest,
     opensearchDashboardsResponse: OpenSearchDashboardsResponseFactory
   ): Promise<IOpenSearchDashboardsResponse<any>> => {
-    let { isResultIndex } = request.params as { isResultIndex: any };
-    isResultIndex = JSON.parse(isResultIndex) as boolean;
-    let anomalyResultIndexMappings = {};
-
-    // If creating a custom result index: need to fetch the latest anomaly result index mappings.
-    // Currently pulling the stored JSON mappings from backend source code. Prefer to
-    // pull from backend rather than persisting a copy of the latest mappings in frontend code.
-    if (isResultIndex) {
-      try {
-        await fetch(ANOMALY_RESULTS_INDEX_MAPPINGS_LINK)
-          .then((response: any) => {
-            if (get(response, 'status') !== 200) {
-              throw { message: `HTTP status code ${get(response, 'status')}` };
-            }
-            return response.json();
-          })
-          .then((jsonData: {}) => {
-            anomalyResultIndexMappings = {
-              mappings: { ...jsonData },
-            };
-          });
-      } catch (error) {
-        const errorString = `Error fetching anomaly result index mappings from URL ${ANOMALY_RESULTS_INDEX_MAPPINGS_LINK}: ${getErrorMessage(
-          error
-        )}`;
-        console.error(errorString);
-        return opensearchDashboardsResponse.ok({
-          body: {
-            ok: false,
-            error: errorString,
-          },
-        });
-      }
-    }
-
     //@ts-ignore
     const index = request.body.index;
     //@ts-ignore
-    const body = isResultIndex ? anomalyResultIndexMappings : request.body.body;
+    const body = request.body.body;
     try {
       await this.client.asScoped(request).callAsCurrentUser('indices.create', {
         index: index,

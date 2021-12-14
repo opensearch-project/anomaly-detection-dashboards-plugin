@@ -39,7 +39,7 @@ import {
   getDetector,
   stopHistoricalDetector,
 } from '../../../redux/reducers/ad';
-import { getIndices, createIndex } from '../../../redux/reducers/opensearch';
+import { getIndices } from '../../../redux/reducers/opensearch';
 import { getErrorMessage, Listener } from '../../../utils/utils';
 import { darkModeEnabled } from '../../../utils/opensearchDashboardsUtils';
 import { BREADCRUMBS } from '../../../utils/constants';
@@ -133,8 +133,6 @@ export const DetectorDetail = (props: DetectorDetailProps) => {
 
   //TODO: test dark mode once detector configuration and AD result page merged
   const isDark = darkModeEnabled();
-
-  const [isCreatingIndex, setIsCreatingIndex] = useState<boolean>(false);
 
   const [detectorDetailModel, setDetectorDetailModel] =
     useState<DetectorDetailModel>({
@@ -393,60 +391,21 @@ export const DetectorDetail = (props: DetectorDetailProps) => {
               />
             </EuiFlexItem>
           </EuiFlexGroup>
-          {isResultIndexMissing || isCreatingIndex ? (
+          {isResultIndexMissing ? (
             <EuiCallOut
               style={{
                 marginLeft: '10px',
                 marginRight: '10px',
                 marginBottom: '10px',
               }}
-              title={`Result index '${get(
+              title={`Your detector is using custom result index '${get(
                 detector,
                 'resultIndex',
                 ''
-              )}' has been deleted and all anomaly results have been lost. To start saving anomaly results, 
-              restart real-time or historical detection, or recreate the index.`}
+              )}', but is not found in the cluster. The index will be recreated when you start a real-time or historical job.`}
               color="danger"
               iconType="alert"
-            >
-              <EuiButton
-                style={{ marginLeft: '24px' }}
-                fill={false}
-                isLoading={isCreatingIndex}
-                onClick={async () => {
-                  setIsCreatingIndex(true);
-                  const indexConfig = {
-                    index: get(detector, 'resultIndex', ''),
-                    body: {},
-                  };
-                  await dispatch(createIndex(indexConfig, true))
-                    .then(() => {
-                      core.notifications.toasts.addSuccess(
-                        `Successfully recreated result index '${get(
-                          detector,
-                          'resultIndex',
-                          ''
-                        )}'.`
-                      );
-                    })
-                    .catch((error: any) => {
-                      console.error(error);
-                      core.notifications.toasts.addDanger(
-                        `Error recreating result index '${get(
-                          detector,
-                          'resultIndex',
-                          ''
-                        )}'.`
-                      );
-                    })
-                    .finally(() => {
-                      setIsCreatingIndex(false);
-                    });
-                }}
-              >
-                {isCreatingIndex ? 'Recreating...' : 'Recreate index'}
-              </EuiButton>
-            </EuiCallOut>
+            ></EuiCallOut>
           ) : null}
 
           <EuiFlexGroup>

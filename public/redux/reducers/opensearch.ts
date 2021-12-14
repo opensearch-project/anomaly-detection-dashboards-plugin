@@ -274,13 +274,10 @@ export const searchOpenSearch = (requestData: any): APIAction => ({
     }),
 });
 
-export const createIndex = (
-  indexConfig: any,
-  isResultIndex: boolean = false
-): APIAction => ({
+export const createIndex = (indexConfig: any): APIAction => ({
   type: CREATE_INDEX,
   request: (client: HttpSetup) =>
-    client.put(`..${AD_NODE_API.CREATE_INDEX}/${isResultIndex}`, {
+    client.put(`..${AD_NODE_API.CREATE_INDEX}`, {
       body: JSON.stringify(indexConfig),
     }),
 });
