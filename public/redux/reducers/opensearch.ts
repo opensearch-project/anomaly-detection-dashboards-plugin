@@ -9,7 +9,6 @@
  * GitHub history for details.
  */
 
-
 import {
   APIAction,
   APIResponseAction,
@@ -295,36 +294,35 @@ export const deleteIndex = (index: string): APIAction => ({
     client.post(`..${AD_NODE_API.DELETE_INDEX}`, { query: { index: index } }),
 });
 
-export const getPrioritizedIndices = (searchKey: string): ThunkAction => async (
-  dispatch,
-  getState
-) => {
-  //Fetch Indices and Aliases with text provided
-  await dispatch(getIndices(searchKey));
-  await dispatch(getAliases(searchKey));
-  const osState = getState().opensearch;
-  const exactMatchedIndices = osState.indices;
-  const exactMatchedAliases = osState.aliases;
-  if (exactMatchedAliases.length || exactMatchedIndices.length) {
-    //If we have exact match just return that
-    return {
-      indices: exactMatchedIndices,
-      aliases: exactMatchedAliases,
-    };
-  } else {
-    //No results found for exact match, append wildCard and get partial matches if exists
-    await dispatch(getIndices(`${searchKey}*`));
-    await dispatch(getAliases(`${searchKey}*`));
+export const getPrioritizedIndices =
+  (searchKey: string): ThunkAction =>
+  async (dispatch, getState) => {
+    //Fetch Indices and Aliases with text provided
+    await dispatch(getIndices(searchKey));
+    await dispatch(getAliases(searchKey));
     const osState = getState().opensearch;
-    const partialMatchedIndices = osState.indices;
-    const partialMatchedAliases = osState.aliases;
-    if (partialMatchedAliases.length || partialMatchedIndices.length) {
+    const exactMatchedIndices = osState.indices;
+    const exactMatchedAliases = osState.aliases;
+    if (exactMatchedAliases.length || exactMatchedIndices.length) {
+      //If we have exact match just return that
       return {
-        indices: partialMatchedIndices,
-        aliases: partialMatchedAliases,
+        indices: exactMatchedIndices,
+        aliases: exactMatchedAliases,
       };
+    } else {
+      //No results found for exact match, append wildCard and get partial matches if exists
+      await dispatch(getIndices(`${searchKey}*`));
+      await dispatch(getAliases(`${searchKey}*`));
+      const osState = getState().opensearch;
+      const partialMatchedIndices = osState.indices;
+      const partialMatchedAliases = osState.aliases;
+      if (partialMatchedAliases.length || partialMatchedIndices.length) {
+        return {
+          indices: partialMatchedIndices,
+          aliases: partialMatchedAliases,
+        };
+      }
     }
-  }
-};
+  };
 
 export default reducer;

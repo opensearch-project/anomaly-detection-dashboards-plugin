@@ -10,13 +10,14 @@
  */
 
 import React, { Fragment } from 'react';
-import { get } from 'lodash';
+import { get, isEmpty } from 'lodash';
 import { DETECTOR_INIT_FAILURES } from './constants';
 import { DETECTOR_STATE_COLOR } from '../../utils/constants';
 import { DETECTOR_STATE } from '../../../../server/utils/constants';
 import { Detector } from '../../../models/interfaces';
 import { EuiHealth } from '@elastic/eui';
 import moment from 'moment';
+import { CatIndex } from '../../../../server/models/types';
 
 export const getInitFailureMessageAndActionItem = (error: string): object => {
   const failureDetails = Object.values(DETECTOR_INIT_FAILURES);
@@ -106,4 +107,16 @@ export const getDetectorStateDetails = (
       )}
     </Fragment>
   );
+};
+
+export const containsIndex = (index: string, indices: CatIndex[]) => {
+  let containsIndex = false;
+  if (!isEmpty(indices)) {
+    indices.forEach((catIndex: CatIndex) => {
+      if (get(catIndex, 'index', '') == index) {
+        containsIndex = true;
+      }
+    });
+  }
+  return containsIndex;
 };
