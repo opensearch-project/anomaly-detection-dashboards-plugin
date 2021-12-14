@@ -22,14 +22,16 @@ import {
   EuiText,
   EuiFieldText,
   EuiLoadingSpinner,
+  EuiButton,
 } from '@elastic/eui';
 import { CoreStart } from '../../../../../../src/core/public';
 import { CoreServicesContext } from '../../../components/CoreServices/CoreServices';
 import { get, isEmpty } from 'lodash';
 import { RouteComponentProps, Switch, Route, Redirect } from 'react-router-dom';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { useFetchDetectorInfo } from '../../CreateDetectorSteps/hooks/useFetchDetectorInfo';
 import { useHideSideNavBar } from '../../main/hooks/useHideSideNavBar';
+import { AppState } from '../../../redux/reducers';
 import {
   deleteDetector,
   startDetector,
@@ -37,6 +39,7 @@ import {
   getDetector,
   stopHistoricalDetector,
 } from '../../../redux/reducers/ad';
+import { getIndices } from '../../../redux/reducers/opensearch';
 import { getErrorMessage, Listener } from '../../../utils/utils';
 import { darkModeEnabled } from '../../../utils/opensearchDashboardsUtils';
 import { BREADCRUMBS } from '../../../utils/constants';
@@ -53,6 +56,8 @@ import {
   prettifyErrorMessage,
 } from '../../../../server/utils/helpers';
 import { DETECTOR_STATE } from '../../../../server/utils/constants';
+import { CatIndex } from '../../../../server/models/types';
+import { containsIndex } from '../utils/helpers';
 
 export interface DetectorRouterProps {
   detectorId?: string;
@@ -102,6 +107,15 @@ export const DetectorDetail = (props: DetectorDetailProps) => {
     useFetchDetectorInfo(detectorId);
   const { monitor, fetchMonitorError, isLoadingMonitor } =
     useFetchMonitorInfo(detectorId);
+  const visibleIndices = useSelector(
+    (state: AppState) => state.opensearch.indices
+  ) as CatIndex[];
+  const isResultIndexMissing = isLoadingDetector
+    ? false
+    : isEmpty(get(detector, 'resultIndex', ''))
+    ? false
+    : !containsIndex(get(detector, 'resultIndex', ''), visibleIndices);
+
   // String to set in the modal if the realtime detector and/or historical analysis
   // are running when the user tries to edit the detector details or model config
   const isRTJobRunning = get(detector, 'enabled');
@@ -137,6 +151,18 @@ export const DetectorDetail = (props: DetectorDetailProps) => {
   useEffect(() => {
     scroll(0, 0);
   }, []);
+
+  // Getting all visible indices. Will re-fetch if changes to the detector (e.g.,
+  // detector starts, result index recreated or user switches tabs to re-fetch detector)
+  useEffect(() => {
+    const getInitialIndices = async () => {
+      await dispatch(getIndices('')).catch((error: any) => {
+        console.error(error);
+        core.notifications.toasts.addDanger('Error getting all indices');
+      });
+    };
+    getInitialIndices();
+  }, [detector]);
 
   useEffect(() => {
     if (hasError) {
@@ -365,6 +391,22 @@ export const DetectorDetail = (props: DetectorDetailProps) => {
               />
             </EuiFlexItem>
           </EuiFlexGroup>
+          {isResultIndexMissing ? (
+            <EuiCallOut
+              style={{
+                marginLeft: '10px',
+                marginRight: '10px',
+                marginBottom: '10px',
+              }}
+              title={`Your detector is using custom result index '${get(
+                detector,
+                'resultIndex',
+                ''
+              )}', but is not found in the cluster. The index will be recreated when you start a real-time or historical job.`}
+              color="danger"
+              iconType="alert"
+            ></EuiCallOut>
+          ) : null}
 
           <EuiFlexGroup>
             <EuiFlexItem>
