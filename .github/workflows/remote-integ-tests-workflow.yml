@@ -73,8 +73,22 @@ jobs:
           path: opensearch-dashboards-functional-test
           repository: opensearch-project/opensearch-dashboards-functional-test
           ref: 'main' # TODO: change to a branch when the branching strategy in that repo has been established
+      - name: Get Cypress version
+        id: cypress_version
+        run: |
+          echo "::set-output name=cypress_version::$(cat ./opensearch-dashboards-functional-test/package.json | jq '.devDependencies.cypress' | tr -d '"')"
+      - name: Cache Cypress
+        id: cache-cypress
+        uses: actions/cache@v1
+        with:
+          path: ~/.cache/Cypress
+          key: cypress-cache-v2-${{ runner.os }}-${{ hashFiles('**/package.json') }}
+        env:
+          CYPRESS_INSTALL_BINARY: ${{ steps.cypress_version.outputs.cypress_version }}
+      - run: npx cypress cache list
+      - run: npx cypress cache path
       - name: Run AD cypress tests
-        uses: cypress-io/github-action@v2.5.0
+        uses: cypress-io/github-action@v2
         with:
           working-directory: opensearch-dashboards-functional-test
-          command: npx cypress run --env SECURITY_ENABLED=false --spec "cypress/integration/plugins/anomaly-detection-dashboards-plugin/*.js"
+          command: yarn run cypress run --env SECURITY_ENABLED=false --spec "cypress/integration/plugins/anomaly-detection-dashboards-plugin/*.js"
