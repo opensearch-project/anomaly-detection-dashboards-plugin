@@ -91,4 +91,4 @@ jobs:
         uses: cypress-io/github-action@v2
         with:
           working-directory: opensearch-dashboards-functional-test
-          command: yarn run cypress run --env SECURITY_ENABLED=false --spec "cypress/integration/plugins/anomaly-detection-dashboards-plugin/*.js"
+          command: yarn run cypress run --env SECURITY_ENABLED=false --spec cypress/integration/plugins/anomaly-detection-dashboards-plugin/*.js
