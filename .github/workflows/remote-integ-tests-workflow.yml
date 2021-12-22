@@ -1,6 +1,7 @@
-# Soon-to-be deprecated way of running integ tests. In the future all tests will be moved to
-# https://github.com/opensearch-project/opensearch-dashboards-functional-test
-name: E2E tests workflow
+# Running AD integ tests stored in https://github.com/opensearch-project/opensearch-dashboards-functional-test
+# In the future we should pull dependencies from bundled build snapshots. Because that is not available
+# yet we build the cluster from source (besides core Opensearch, which is a pulled min artifact).
+name: Remote integ tests workflow
 on:
   push:
     branches:
@@ -13,7 +14,7 @@ env:
   OPENSEARCH_VERSION: '1.3.0-SNAPSHOT'
 jobs:
   test-without-security:
-    name: Run e2e tests without security
+    name: Run integ tests without security
     strategy:
       matrix:
         os: [ubuntu-latest]
@@ -66,8 +67,28 @@ jobs:
           cd OpenSearch-Dashboards
           yarn start --no-base-path --no-watch &
           sleep 300
-      - name: Run Cypress e2e tests
-        uses: cypress-io/github-action@v2.5.0
+      - name: Checkout opensearch-dashboards-functional-test
+        uses: actions/checkout@v2
         with:
-          working-directory: OpenSearch-Dashboards/plugins/anomaly-detection-dashboards-plugin
-          command: yarn cy:run --env SECURITY_ENABLED=false
+          path: opensearch-dashboards-functional-test
+          repository: opensearch-project/opensearch-dashboards-functional-test
+          ref: 'main' # TODO: change to a branch when the branching strategy in that repo has been established
+      - name: Get Cypress version
+        id: cypress_version
+        run: |
+          echo "::set-output name=cypress_version::$(cat ./opensearch-dashboards-functional-test/package.json | jq '.devDependencies.cypress' | tr -d '"')"
+      - name: Cache Cypress
+        id: cache-cypress
+        uses: actions/cache@v1
+        with:
+          path: ~/.cache/Cypress
+          key: cypress-cache-v2-${{ runner.os }}-${{ hashFiles('**/package.json') }}
+        env:
+          CYPRESS_INSTALL_BINARY: ${{ steps.cypress_version.outputs.cypress_version }}
+      - run: npx cypress cache list
+      - run: npx cypress cache path
+      - name: Run AD cypress tests
+        uses: cypress-io/github-action@v2
+        with:
+          working-directory: opensearch-dashboards-functional-test
+          command: yarn run cypress run --env SECURITY_ENABLED=false --spec cypress/integration/plugins/anomaly-detection-dashboards-plugin/*.js
