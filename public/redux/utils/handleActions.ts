@@ -9,7 +9,6 @@
  * GitHub history for details.
  */
 
-
 import { Action, Reducer } from 'redux';
 
 // This is utility to remove boilerplate for Redux.

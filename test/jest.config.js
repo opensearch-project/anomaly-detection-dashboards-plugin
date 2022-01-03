@@ -9,7 +9,6 @@
  * GitHub history for details.
  */
 
-
 module.exports = {
   rootDir: '../',
   setupFiles: ['<rootDir>/test/polyfills.ts', '<rootDir>/test/setupTests.ts'],

@@ -9,24 +9,22 @@
  * GitHub history for details.
  */
 
-import {validateNonNegativeInteger} from '../utils';
+import { validateNonNegativeInteger } from '../utils';
 
 describe('validateNonNegativeInteger', () => {
-
   test('should pass for positive', () => {
-      expect(validateNonNegativeInteger(1)).toBeUndefined();
+    expect(validateNonNegativeInteger(1)).toBeUndefined();
   });
 
   test('should pass for zero', () => {
-      expect(validateNonNegativeInteger(0)).toBeUndefined();
+    expect(validateNonNegativeInteger(0)).toBeUndefined();
   });
 
   test('should raise for negative', () => {
-      expect(validateNonNegativeInteger(-1)).not.toBeUndefined();
+    expect(validateNonNegativeInteger(-1)).not.toBeUndefined();
   });
 
   test('should raise for floating-point', () => {
-      expect(validateNonNegativeInteger(1.1)).not.toBeUndefined();
+    expect(validateNonNegativeInteger(1.1)).not.toBeUndefined();
   });
-
 });

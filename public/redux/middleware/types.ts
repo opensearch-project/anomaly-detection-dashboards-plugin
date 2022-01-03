@@ -9,7 +9,6 @@
  * GitHub history for details.
  */
 
-
 import { HttpSetup, HttpResponse } from '../../../../../src/core/public';
 import { Action, Dispatch } from 'redux';
 import { AppState } from '../reducers';

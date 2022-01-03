@@ -9,7 +9,6 @@
  * GitHub history for details.
  */
 
-
 import { AnyAction } from 'redux';
 import { httpClientMock } from '../../../../test/mocks';
 import clientMiddleware from '../clientMiddleware';

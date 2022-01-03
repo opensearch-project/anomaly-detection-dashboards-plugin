@@ -9,7 +9,6 @@
  * GitHub history for details.
  */
 
-
 import handleActions from '../handleActions';
 import { Reducer } from 'redux';
 

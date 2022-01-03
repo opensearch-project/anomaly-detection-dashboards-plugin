@@ -9,14 +9,14 @@
  * GitHub history for details.
  */
 
-
 import '@testing-library/jest-dom/extend-expect';
 import { configure } from '@testing-library/react';
 
 configure({ testIdAttribute: 'data-test-subj' });
 
-jest.mock('@elastic/eui/lib/components/form/form_row/make_id', () => () =>
-  'random_id'
+jest.mock(
+  '@elastic/eui/lib/components/form/form_row/make_id',
+  () => () => 'random_id'
 );
 
 jest.mock('@elastic/eui/lib/services/accessibility/html_id_generator', () => ({

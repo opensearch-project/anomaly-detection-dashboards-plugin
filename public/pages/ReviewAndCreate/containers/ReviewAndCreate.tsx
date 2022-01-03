@@ -67,22 +67,18 @@ export function ReviewAndCreate(props: ReviewAndCreateProps) {
   useHideSideNavBar(true, false);
 
   // This variable indicates if validate API declared detector settings as valid for AD creation
-  const [validDetectorSettings, setValidDetectorSettings] = useState<boolean>(
-    false
-  );
+  const [validDetectorSettings, setValidDetectorSettings] =
+    useState<boolean>(false);
   // This variable indicates if validate API declared model configs as valid for AD creation
-  const [validModelConfigurations, setValidModelConfigurations] = useState<
-    boolean
-  >(false);
+  const [validModelConfigurations, setValidModelConfigurations] =
+    useState<boolean>(false);
   // This variable indicates if validate API returned an exception and hence no callout regarding
   // specifically detector or model configs
   const [validationError, setValidationError] = useState<boolean>(false);
-  const [settingsResponse, setDetectorMessageResponse] = useState<
-    ValidationSettingResponse
-  >({} as ValidationSettingResponse);
-  const [featureResponse, setFeatureResponse] = useState<
-    ValidationModelResponse
-  >({} as ValidationModelResponse);
+  const [settingsResponse, setDetectorMessageResponse] =
+    useState<ValidationSettingResponse>({} as ValidationSettingResponse);
+  const [featureResponse, setFeatureResponse] =
+    useState<ValidationModelResponse>({} as ValidationModelResponse);
   const [isCreatingDetector, setIsCreatingDetector] = useState<boolean>(false);
   const isLoading = useSelector((state: AppState) => state.ad.requesting);
 

@@ -9,7 +9,6 @@
  * GitHub history for details.
  */
 
-
 import {
   SORT_DIRECTION,
   AD_DOC_FIELDS,
