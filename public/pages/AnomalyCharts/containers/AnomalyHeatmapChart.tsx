@@ -633,6 +633,7 @@ export const AnomalyHeatmapChart = React.memo(
                       showgrid: false,
                       fixedrange: true,
                       automargin: true,
+                      type: 'category',
                       tickmode: 'array',
                       tickvals: heatmapData[0].y,
                       ticktext: heatmapData[0].y.map((label: string) =>
