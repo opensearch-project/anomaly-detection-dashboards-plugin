@@ -9,7 +9,6 @@
  * GitHub history for details.
  */
 
-
 import { getVisibleOptions, sanitizeSearchText } from '../helpers';
 describe('helpers', () => {
   describe('getVisibleOptions', () => {

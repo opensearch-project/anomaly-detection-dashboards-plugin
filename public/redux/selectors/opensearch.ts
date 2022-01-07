@@ -9,7 +9,6 @@
  * GitHub history for details.
  */
 
-
 import { createSelector } from 'reselect';
 import { AppState } from '../reducers';
 

@@ -9,7 +9,6 @@
  * GitHub history for details.
  */
 
-
 import queryString from 'query-string';
 import { get, cloneDeep } from 'lodash';
 import { GetDetectorsQueryParams } from '../../../../server/models/types';
@@ -22,14 +21,8 @@ import { DETECTOR_ACTION } from '../utils/constants';
 export const getURLQueryParams = (location: {
   search: string;
 }): GetDetectorsQueryParams => {
-  const {
-    from,
-    size,
-    search,
-    indices,
-    sortField,
-    sortDirection,
-  } = queryString.parse(location.search) as { [key: string]: string };
+  const { from, size, search, indices, sortField, sortDirection } =
+    queryString.parse(location.search) as { [key: string]: string };
   return {
     // @ts-ignore
     from: isNaN(parseInt(from, 10))

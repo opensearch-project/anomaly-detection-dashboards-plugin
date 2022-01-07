@@ -9,5 +9,4 @@
  * GitHub history for details.
  */
 
-
 require('babel-polyfill');

@@ -61,7 +61,8 @@ export default class AlertingService {
                   },
                   {
                     match_phrase_prefix: {
-                      'monitor.inputs.search.indices': 'opensearch-ad-plugin-result-',
+                      'monitor.inputs.search.indices':
+                        'opensearch-ad-plugin-result-',
                     },
                   },
                 ],

@@ -9,7 +9,6 @@
  * GitHub history for details.
  */
 
-
 import { mapKeysDeep, toSnake } from '../helpers';
 
 describe('server helpers', () => {

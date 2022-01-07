@@ -14,15 +14,18 @@ import { SET_HIDE_SIDE_NAV_BAR_STATE } from '../../../redux/reducers/adAppReduce
 import { useDispatch } from 'react-redux';
 
 //A hook which hide side nav bar
-export const useHideSideNavBar = (hidden: boolean, hiddenAfterClear: boolean) => {
-    const dispatch = useDispatch();
-    useEffect(
-        () => {
-            dispatch({ type: SET_HIDE_SIDE_NAV_BAR_STATE, payload: hidden })
-            return () => {
-                dispatch({ type: SET_HIDE_SIDE_NAV_BAR_STATE, payload: hiddenAfterClear })
-            }
-        },
-        []
-    );
+export const useHideSideNavBar = (
+  hidden: boolean,
+  hiddenAfterClear: boolean
+) => {
+  const dispatch = useDispatch();
+  useEffect(() => {
+    dispatch({ type: SET_HIDE_SIDE_NAV_BAR_STATE, payload: hidden });
+    return () => {
+      dispatch({
+        type: SET_HIDE_SIDE_NAV_BAR_STATE,
+        payload: hiddenAfterClear,
+      });
+    };
+  }, []);
 };

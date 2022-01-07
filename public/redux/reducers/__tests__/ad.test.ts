@@ -161,11 +161,12 @@ describe('detector reducer actions', () => {
           },
         },
       });
-      expect(
-        httpMockedClient.post
-      ).toHaveBeenCalledWith(`..${BASE_NODE_API_PATH}/detectors`, {
-        body: JSON.stringify(expectedDetector),
-      });
+      expect(httpMockedClient.post).toHaveBeenCalledWith(
+        `..${BASE_NODE_API_PATH}/detectors`,
+        {
+          body: JSON.stringify(expectedDetector),
+        }
+      );
     });
 
     test('should invoke [REQUEST, FAILURE]', async () => {
@@ -228,9 +229,7 @@ describe('detector reducer actions', () => {
           },
         },
       });
-      expect(
-        httpMockedClient.put
-      ).toHaveBeenCalledWith(
+      expect(httpMockedClient.put).toHaveBeenCalledWith(
         `..${BASE_NODE_API_PATH}/detectors/${detectorId}`,
         { body: JSON.stringify(randomDetector) }
       );

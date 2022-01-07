@@ -9,7 +9,6 @@
  * GitHub history for details.
  */
 
-
 import { CatIndex, IndexAlias } from '../../../server/models/types';
 import sortBy from 'lodash/sortBy';
 import { DetectorListItem } from '../../models/interfaces';

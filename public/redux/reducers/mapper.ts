@@ -9,7 +9,6 @@
  * GitHub history for details.
  */
 
-
 import { DataTypes, Mappings } from './opensearch';
 
 export function shouldSkip(mapping: any) {

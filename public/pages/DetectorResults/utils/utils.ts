@@ -9,7 +9,6 @@
  * GitHub history for details.
  */
 
-
 import { Detector } from '../../../models/interfaces';
 import {
   NO_FULL_SHINGLE_ERROR_MESSAGE,

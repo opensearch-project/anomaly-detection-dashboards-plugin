@@ -9,7 +9,6 @@
  * GitHub history for details.
  */
 
-
 import { validateIndex, ILLEGAL_CHARACTERS } from '../validate';
 
 describe('validateIndex', () => {

@@ -9,7 +9,6 @@
  * GitHub history for details.
  */
 
-
 import { useState, useEffect, useCallback } from 'react';
 
 export const useDelayedLoader = (isLoading: boolean): boolean => {
@@ -27,20 +26,17 @@ export const useDelayedLoader = (isLoading: boolean): boolean => {
     setTimer(timer);
   }, []);
 
-  useEffect(
-    () => {
-      if (isLoading) {
-        handleSetTimer();
-      } else {
-        clearTimeout(timer);
-        setLoader(false);
-      }
-      //Cleanup incase component unmounts
-      return () => {
-        clearTimeout(timer);
-      };
-    },
-    [isLoading]
-  );
+  useEffect(() => {
+    if (isLoading) {
+      handleSetTimer();
+    } else {
+      clearTimeout(timer);
+      setLoader(false);
+    }
+    //Cleanup incase component unmounts
+    return () => {
+      clearTimeout(timer);
+    };
+  }, [isLoading]);
   return loaderState;
 };

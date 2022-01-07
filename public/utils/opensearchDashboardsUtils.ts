@@ -9,7 +9,6 @@
  * GitHub history for details.
  */
 
-
 import React from 'react';
 import { CoreStart } from '../../../../src/core/public';
 import { CoreServicesContext } from '../components/CoreServices/CoreServices';

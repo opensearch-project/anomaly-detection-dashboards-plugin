@@ -69,3 +69,13 @@ In the base OpenSearch Dashboards directory, run
 
   Runs end-to-end tests on a currently running OpenSearch Dashboards server. Defaults to run the tests on `localhost:5601`, although you can change this to run on any
   OpenSearch Dashboards server with the command `yarn cy:run --config baseUrl=<your-custom-URL>`
+
+### Formatting
+
+This codebase uses Prettier as our code formatter. All new code that is added has to be reformatted using the Prettier version listed in `package.json`. In order to keep consistent formatting across the project developers should only use the prettier CLI to reformat their code using the following command:
+
+```
+yarn prettier --write <relative file path>
+```
+
+> NOTE: There also exists prettier plugins on several editors that allow for automatic reformatting on saving the file. However using this is discouraged as you must ensure that the plugin uses the correct version of prettier (listed in `package.json`) before using such a plugin.
