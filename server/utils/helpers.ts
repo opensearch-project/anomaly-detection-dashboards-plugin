@@ -9,7 +9,6 @@
  * GitHub history for details.
  */
 
-
 import {
   camelCase,
   isEmpty,
@@ -62,7 +61,8 @@ export const formatAnomalyNumber = (num: number): string => {
     : num.toExponential(2);
 };
 
-const PERMISSIONS_ERROR_PATTERN = /no permissions for \[(.+)\] and User \[name=(.+), backend_roles/;
+const PERMISSIONS_ERROR_PATTERN =
+  /no permissions for \[(.+)\] and User \[name=(.+), backend_roles/;
 
 export const NO_PERMISSIONS_KEY_WORD = 'no permissions';
 

@@ -9,7 +9,6 @@
  * GitHub history for details.
  */
 
-
 import { get, omit, cloneDeep, isEmpty } from 'lodash';
 import { AnomalyResults, Entity } from '../../models/interfaces';
 import { GetDetectorsQueryParams, Detector } from '../../models/types';

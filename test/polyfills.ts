@@ -9,7 +9,6 @@
  * GitHub history for details.
  */
 
-
 // @ts-ignore
 import { MutationObserver } from './polyfills/mutationObserver';
 

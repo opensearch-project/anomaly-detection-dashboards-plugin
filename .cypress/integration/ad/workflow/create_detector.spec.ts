@@ -9,7 +9,6 @@
  * GitHub history for details.
  */
 
-
 import { CREATE_AD } from '../../../utils/constants';
 import { buildAdAppUrl } from '../../../utils/helpers';
 

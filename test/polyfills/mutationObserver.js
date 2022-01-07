@@ -13,31 +13,34 @@ import { EventEmitter } from 'events';
 
 var __extends =
   (this && this.__extends) ||
-  (function() {
+  (function () {
     var extendStatics =
       Object.setPrototypeOf ||
       ({ __proto__: [] } instanceof Array &&
-        function(d, b) {
+        function (d, b) {
           d.__proto__ = b;
         }) ||
-      function(d, b) {
+      function (d, b) {
         for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
       };
-    return function(d, b) {
+    return function (d, b) {
       extendStatics(d, b);
       function __() {
         this.constructor = d;
       }
-      d.prototype = b === null ? Object.create(b) : ((__.prototype = b.prototype), new __());
+      d.prototype =
+        b === null
+          ? Object.create(b)
+          : ((__.prototype = b.prototype), new __());
     };
   })();
 
 module.exports = {};
 
 Object.defineProperty(module.exports, '__esModule', { value: true });
-var Util = /** @class */ (function() {
+var Util = /** @class */ (function () {
   function Util() {}
-  Util.clone = function($target, config) {
+  Util.clone = function ($target, config) {
     var recurse = true; // set true so childList we'll always check the first level
     return (function copy($target) {
       var elestruct = {
@@ -49,7 +52,10 @@ var Util = /** @class */ (function() {
       };
       // Store current character data of target text or comment node if the config requests
       // those properties to be observed.
-      if (config.charData && ($target.nodeType === 3 || $target.nodeType === 8)) {
+      if (
+        config.charData &&
+        ($target.nodeType === 3 || $target.nodeType === 8)
+      ) {
         elestruct.charData = $target.nodeValue;
       } else {
         // Add attr only if subtree is specified or top level and avoid if
@@ -61,7 +67,7 @@ var Util = /** @class */ (function() {
            */
           elestruct.attr = Util.reduce(
             $target.attributes,
-            function(memo, attr) {
+            function (memo, attr) {
               if (!config.afilter || config.afilter[attr.name]) {
                 memo[attr.name] = attr.value;
               }
@@ -71,7 +77,12 @@ var Util = /** @class */ (function() {
           );
         }
         // whether we should iterate the children of $target node
-        if (recurse && (config.kids || config.charData || (config.attr && config.descendents))) {
+        if (
+          recurse &&
+          (config.kids ||
+            config.charData ||
+            (config.attr && config.descendents))
+        ) {
           /** @type {Array.<!Object>} : Array of custom clone */
           elestruct.kids = Util.map($target.childNodes, copy);
         }
@@ -88,8 +99,8 @@ var Util = /** @class */ (function() {
    * @param {number} idx : index to start the loop
    * @return {number}
    */
-  Util.indexOfCustomNode = function(set, $node, idx) {
-    var JSCompiler_renameProperty = function(a) {
+  Util.indexOfCustomNode = function (set, $node, idx) {
+    var JSCompiler_renameProperty = function (a) {
       return a;
     };
     return this.indexOf(set, $node, idx, JSCompiler_renameProperty('node'));
@@ -100,9 +111,11 @@ var Util = /** @class */ (function() {
    * @param {Node} $ele
    * @return {(string|number)}
    */
-  Util.getElementId = function($ele) {
+  Util.getElementId = function ($ele) {
     try {
-      return $ele.id || ($ele[this.expando] = $ele[this.expando] || this.counter++);
+      return (
+        $ele.id || ($ele[this.expando] = $ele[this.expando] || this.counter++)
+      );
     } catch (e) {
       // ie <8 will throw if you set an unknown property on a text node
       try {
@@ -118,7 +131,7 @@ var Util = /** @class */ (function() {
    * @param {Array|NodeList} set
    * @param {Function} iterator
    */
-  Util.map = function(set, iterator) {
+  Util.map = function (set, iterator) {
     var results = [];
     for (var index = 0; index < set.length; index++) {
       results[index] = iterator(set[index], index, set);
@@ -131,7 +144,7 @@ var Util = /** @class */ (function() {
    * @param {Function} iterator
    * @param {*} [memo] Initial value of the memo.
    */
-  Util.reduce = function(set, iterator, memo) {
+  Util.reduce = function (set, iterator, memo) {
     for (var index = 0; index < set.length; index++) {
       memo = iterator(memo, set[index], index, set);
     }
@@ -144,7 +157,7 @@ var Util = /** @class */ (function() {
    * @param {number} idx
    * @param {string} [prop] Property on set item to compare to item
    */
-  Util.indexOf = function(set, item, idx, prop) {
+  Util.indexOf = function (set, item, idx, prop) {
     for (; /*idx = ~~idx*/ idx < set.length; idx++) {
       // start idx is always given as this is internal
       if ((prop ? set[idx][prop] : set[idx]) === item) return idx;
@@ -156,7 +169,7 @@ var Util = /** @class */ (function() {
    * @param {(string|number)} prop
    * @return {boolean}
    */
-  Util.has = function(obj, prop) {
+  Util.has = function (obj, prop) {
     return obj[prop] !== undefined; // will be nicely inlined by gcc
   };
   Util.counter = 1;
@@ -164,7 +177,7 @@ var Util = /** @class */ (function() {
   return Util;
 })();
 module.exports.Util = Util;
-var MutationObserver = /** @class */ (function() {
+var MutationObserver = /** @class */ (function () {
   function MutationObserver(listener) {
     var _this = this;
     this._watched = [];
@@ -176,13 +189,17 @@ var MutationObserver = /** @class */ (function() {
     this._watched = [];
     this._listener = listener;
     this._period = 30;
-    this._notifyListener = function() {
+    this._notifyListener = function () {
       _this.scheduleMutationCheck(_this);
     };
   }
-  MutationObserver.prototype.observe = function($target, config) {
+  MutationObserver.prototype.observe = function ($target, config) {
     var settings = {
-      attr: !!(config.attributes || config.attributeFilter || config.attributeOldValue),
+      attr: !!(
+        config.attributes ||
+        config.attributeFilter ||
+        config.attributeOldValue
+      ),
       // some browsers enforce that subtree must be set with childList, attributes or characterData.
       // We don't care as spec doesn't specify this rule.
       kids: !!config.childList,
@@ -203,7 +220,7 @@ var MutationObserver = /** @class */ (function() {
        */
       settings.afilter = Util.reduce(
         config.attributeFilter,
-        function(a, b) {
+        function (a, b) {
           a[b] = true;
           return a;
         },
@@ -215,7 +232,7 @@ var MutationObserver = /** @class */ (function() {
       fn: this.createMutationSearcher($target, settings),
     });
   };
-  MutationObserver.prototype.takeRecords = function() {
+  MutationObserver.prototype.takeRecords = function () {
     var mutations = [];
     var watched = this._watched;
     for (var i = 0; i < watched.length; i++) {
@@ -223,14 +240,20 @@ var MutationObserver = /** @class */ (function() {
     }
     return mutations;
   };
-  MutationObserver.prototype.disconnect = function() {
+  MutationObserver.prototype.disconnect = function () {
     this._watched = []; // clear the stuff being observed
-    MutationNotifier.getInstance().removeListener('changed', this._notifyListener);
+    MutationNotifier.getInstance().removeListener(
+      'changed',
+      this._notifyListener
+    );
     this._disposed = true;
     clearTimeout(this._timeout); // ready for garbage collection
     this._timeout = null;
   };
-  MutationObserver.prototype.createMutationSearcher = function($target, config) {
+  MutationObserver.prototype.createMutationSearcher = function (
+    $target,
+    config
+  ) {
     var _this = this;
     /** type {Elestuct} */
     var $oldstate = Util.clone($target, config); // create the cloned datastructure
@@ -239,10 +262,14 @@ var MutationObserver = /** @class */ (function() {
      *
      * @param {Array.<MutationRecord>} mutations
      */
-    return function(mutations) {
+    return function (mutations) {
       var olen = mutations.length;
       var dirty;
-      if (config.charData && $target.nodeType === 3 && $target.nodeValue !== $oldstate.charData) {
+      if (
+        config.charData &&
+        $target.nodeType === 3 &&
+        $target.nodeValue !== $oldstate.charData
+      ) {
         mutations.push(
           new MutationRecord({
             type: 'characterData',
@@ -253,7 +280,12 @@ var MutationObserver = /** @class */ (function() {
       }
       // Alright we check base level changes in attributes... easy
       if (config.attr && $oldstate.attr) {
-        _this.findAttributeMutations(mutations, $target, $oldstate.attr, config.afilter);
+        _this.findAttributeMutations(
+          mutations,
+          $target,
+          $oldstate.attr,
+          config.afilter
+        );
       }
       // check childlist or subtree for mutations
       if (config.kids || config.descendents) {
@@ -266,16 +298,16 @@ var MutationObserver = /** @class */ (function() {
       }
     };
   };
-  MutationObserver.prototype.scheduleMutationCheck = function(observer) {
+  MutationObserver.prototype.scheduleMutationCheck = function (observer) {
     var _this = this;
     // Only schedule if there isn't already a timer.
     if (!observer._timeout) {
-      observer._timeout = setTimeout(function() {
+      observer._timeout = setTimeout(function () {
         return _this.mutationChecker(observer);
       }, this._period);
     }
   };
-  MutationObserver.prototype.mutationChecker = function(observer) {
+  MutationObserver.prototype.mutationChecker = function (observer) {
     // allow scheduling a new timer.
     observer._timeout = null;
     var mutations = observer.takeRecords();
@@ -285,7 +317,12 @@ var MutationObserver = /** @class */ (function() {
       observer._listener(mutations, observer);
     }
   };
-  MutationObserver.prototype.searchSubtree = function(mutations, $target, $oldstate, config) {
+  MutationObserver.prototype.searchSubtree = function (
+    mutations,
+    $target,
+    $oldstate,
+    config
+  ) {
     var _this = this;
     // Track if the tree is dirty and has to be recomputed (#14).
     var dirty;
@@ -295,7 +332,13 @@ var MutationObserver = /** @class */ (function() {
      * if the positions have been shuffled.
      * conflicts array will be emptied by end of operation
      */
-    var _resolveConflicts = function(conflicts, node, $kids, $oldkids, numAddedNodes) {
+    var _resolveConflicts = function (
+      conflicts,
+      node,
+      $kids,
+      $oldkids,
+      numAddedNodes
+    ) {
       // the distance between the first conflicting node and the last
       var distance = conflicts.length - 1;
       // prevents same conflict being resolved twice consider when two nodes switch places.
@@ -309,7 +352,11 @@ var MutationObserver = /** @class */ (function() {
         oldstruct = $oldkids[conflict.j];
         // attempt to determine if there was node rearrangement... won't gaurentee all matches
         // also handles case where added/removed nodes cause nodes to be identified as conflicts
-        if (config.kids && counter && Math.abs(conflict.i - conflict.j) >= distance) {
+        if (
+          config.kids &&
+          counter &&
+          Math.abs(conflict.i - conflict.j) >= distance
+        ) {
           mutations.push(
             new MutationRecord({
               type: 'childList',
@@ -324,8 +371,18 @@ var MutationObserver = /** @class */ (function() {
           counter--; // found conflict
         }
         // Alright we found the resorted nodes now check for other types of mutations
-        if (config.attr && oldstruct.attr) _this.findAttributeMutations(mutations, $cur, oldstruct.attr, config.afilter);
-        if (config.charData && $cur.nodeType === 3 && $cur.nodeValue !== oldstruct.charData) {
+        if (config.attr && oldstruct.attr)
+          _this.findAttributeMutations(
+            mutations,
+            $cur,
+            oldstruct.attr,
+            config.afilter
+          );
+        if (
+          config.charData &&
+          $cur.nodeType === 3 &&
+          $cur.nodeValue !== oldstruct.charData
+        ) {
           mutations.push(
             new MutationRecord({
               type: 'characterData',
@@ -343,7 +400,7 @@ var MutationObserver = /** @class */ (function() {
      * @param {Node} node
      * @param {!Object} old : A cloned data structure using internal clone
      */
-    var _findMutations = function(node, old) {
+    var _findMutations = function (node, old) {
       var $kids = node.childNodes;
       var $oldkids = old.kids;
       var klen = $kids.length;
@@ -377,10 +434,19 @@ var MutationObserver = /** @class */ (function() {
           // check attributes as specified by config
           if (config.attr && oldstruct.attr) {
             /* oldstruct.attr instead of textnode check */
-            _this.findAttributeMutations(mutations, $cur, oldstruct.attr, config.afilter);
+            _this.findAttributeMutations(
+              mutations,
+              $cur,
+              oldstruct.attr,
+              config.afilter
+            );
           }
           // check character data if node is a comment or textNode and it's being observed
-          if (config.charData && oldstruct.charData !== undefined && $cur.nodeValue !== oldstruct.charData) {
+          if (
+            config.charData &&
+            oldstruct.charData !== undefined &&
+            $cur.nodeValue !== oldstruct.charData
+          ) {
             mutations.push(
               new MutationRecord({
                 type: 'characterData',
@@ -389,9 +455,15 @@ var MutationObserver = /** @class */ (function() {
             );
           }
           // resolve conflicts; it will be undefined if there are no conflicts - otherwise an array
-          if (conflicts) _resolveConflicts(conflicts, node, $kids, $oldkids, numAddedNodes);
+          if (conflicts)
+            _resolveConflicts(conflicts, node, $kids, $oldkids, numAddedNodes);
           // recurse on next level of children. Avoids the recursive call when there are no children left to iterate
-          if (config.descendents && ($cur.childNodes.length || (oldstruct.kids && oldstruct.kids.length))) _findMutations($cur, oldstruct);
+          if (
+            config.descendents &&
+            ($cur.childNodes.length ||
+              (oldstruct.kids && oldstruct.kids.length))
+          )
+            _findMutations($cur, oldstruct);
           i++;
           j++;
         } else {
@@ -463,12 +535,18 @@ var MutationObserver = /** @class */ (function() {
         } // end uncommon case
       } // end loop
       // resolve any remaining conflicts
-      if (conflicts) _resolveConflicts(conflicts, node, $kids, $oldkids, numAddedNodes);
+      if (conflicts)
+        _resolveConflicts(conflicts, node, $kids, $oldkids, numAddedNodes);
     };
     _findMutations($target, $oldstate);
     return dirty;
   };
-  MutationObserver.prototype.findAttributeMutations = function(mutations, $target, $oldstate, filter) {
+  MutationObserver.prototype.findAttributeMutations = function (
+    mutations,
+    $target,
+    $oldstate,
+    filter
+  ) {
     var checked = {};
     var attributes = $target.attributes;
     var attr;
@@ -509,7 +587,7 @@ var MutationObserver = /** @class */ (function() {
   return MutationObserver;
 })();
 module.exports.MutationObserver = MutationObserver;
-var MutationRecord = /** @class */ (function() {
+var MutationRecord = /** @class */ (function () {
   function MutationRecord(data) {
     var settings = {
       type: null,
@@ -523,30 +601,31 @@ var MutationRecord = /** @class */ (function() {
       oldValue: null,
     };
     for (var prop in data) {
-      if (Util.has(settings, prop) && data[prop] !== undefined) settings[prop] = data[prop];
+      if (Util.has(settings, prop) && data[prop] !== undefined)
+        settings[prop] = data[prop];
     }
     return settings;
   }
   return MutationRecord;
 })();
 module.exports.MutationRecord = MutationRecord;
-var MutationNotifier = /** @class */ (function(_super) {
+var MutationNotifier = /** @class */ (function (_super) {
   __extends(MutationNotifier, _super);
   function MutationNotifier() {
     var _this = _super.call(this) || this;
     _this.setMaxListeners(100);
     return _this;
   }
-  MutationNotifier.getInstance = function() {
+  MutationNotifier.getInstance = function () {
     if (!MutationNotifier._instance) {
       MutationNotifier._instance = new MutationNotifier();
     }
     return MutationNotifier._instance;
   };
-  MutationNotifier.prototype.destruct = function() {
+  MutationNotifier.prototype.destruct = function () {
     this.removeAllListeners('changed');
   };
-  MutationNotifier.prototype.notifyChanged = function(node) {
+  MutationNotifier.prototype.notifyChanged = function (node) {
     this.emit('changed', node);
   };
   MutationNotifier._instance = null;

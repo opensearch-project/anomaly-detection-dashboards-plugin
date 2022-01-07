@@ -9,7 +9,6 @@
  * GitHub history for details.
  */
 
-
 import { SORT_DIRECTION } from '../../../../../server/utils/constants';
 import {
   getURLQueryParams,

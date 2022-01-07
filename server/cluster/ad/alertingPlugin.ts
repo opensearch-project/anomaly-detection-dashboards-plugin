@@ -11,12 +11,16 @@
 
 import { API, MAX_ALERTS } from '../../utils/constants';
 
-export default function alertingPlugin(Client: any, config: any, components: any) {
+export default function alertingPlugin(
+  Client: any,
+  config: any,
+  components: any
+) {
   const ca = components.clientAction.factory;
 
   Client.prototype.alerting = components.clientAction.namespaceFactory();
   const alerting = Client.prototype.alerting.prototype;
-  
+
   alerting.searchMonitors = ca({
     url: {
       fmt: `${API.ALERTING_BASE}/_search`,
@@ -24,7 +28,7 @@ export default function alertingPlugin(Client: any, config: any, components: any
     needBody: true,
     method: 'POST',
   });
-  
+
   alerting.searchAlerts = ca({
     url: {
       fmt: `${API.ALERTING_BASE}/alerts?size=${MAX_ALERTS}&monitorId=<%=monitorId%>&sortString=start_time&sortOrder=desc&searchString=start_time:[<%=startTime%>%20TO%20<%=endTime%>]`,
@@ -45,5 +49,4 @@ export default function alertingPlugin(Client: any, config: any, components: any
     },
     method: 'GET',
   });
-
 }

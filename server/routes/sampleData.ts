@@ -9,7 +9,6 @@
  * GitHub history for details.
  */
 
-
 //@ts-ignore
 import moment from 'moment';
 import path from 'path';

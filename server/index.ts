@@ -9,7 +9,6 @@
  * GitHub history for details.
  */
 
-
 import { schema, TypeOf } from '@osd/config-schema';
 import {
   PluginConfigDescriptor,
@@ -25,12 +24,13 @@ export type AnomalyDetectionOpenSearchDashboardsPluginConfigType = TypeOf<
   typeof configSchema
 >;
 
-export const config: PluginConfigDescriptor<AnomalyDetectionOpenSearchDashboardsPluginConfigType> = {
-  exposeToBrowser: {
-    enabled: true,
-  },
-  schema: configSchema,
-};
+export const config: PluginConfigDescriptor<AnomalyDetectionOpenSearchDashboardsPluginConfigType> =
+  {
+    exposeToBrowser: {
+      enabled: true,
+    },
+    schema: configSchema,
+  };
 
 export interface AnomalyDetectionOpenSearchDashboardsPluginSetup {}
 export interface AnomalyDetectionOpenSearchDashboardsPluginStart {}

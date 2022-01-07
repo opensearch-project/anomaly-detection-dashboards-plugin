@@ -9,7 +9,6 @@
  * GitHub history for details.
  */
 
-
 declare namespace Cypress {
   interface Chainable<Subject> {
     mockGetDetectorOnAction(
