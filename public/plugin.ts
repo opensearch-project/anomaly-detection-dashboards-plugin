@@ -26,7 +26,8 @@ export class AnomalyDetectionOpenSearchDashboardsPlugin
     Plugin<
       AnomalyDetectionOpenSearchDashboardsPluginSetup,
       AnomalyDetectionOpenSearchDashboardsPluginStart
-    > {
+    >
+{
   constructor(private readonly initializerContext: PluginInitializerContext) {
     // can retrieve config from initializerContext
   }

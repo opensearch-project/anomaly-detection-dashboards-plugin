@@ -9,7 +9,6 @@
  * GitHub history for details.
  */
 
-
 import { combineReducers } from 'redux';
 import opensearchReducer from './opensearch';
 import adReducer from './ad';

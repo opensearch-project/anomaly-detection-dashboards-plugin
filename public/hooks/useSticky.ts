@@ -9,7 +9,6 @@
  * GitHub history for details.
  */
 
-
 import { useState, useEffect, useRef } from 'react';
 
 export const useSticky = (ref: any, offset: number): boolean => {

@@ -9,7 +9,6 @@
  * GitHub history for details.
  */
 
-
 import {
   DETECTORS,
   INDICES_PATH,
@@ -43,117 +42,126 @@ Cypress.Commands.overwrite('visit', (orig, url, options) => {
   }
 });
 
-Cypress.Commands.add('mockGetDetectorOnAction', function (
-  fixtureFileName: string,
-  funcMockedOn: VoidFunction
-) {
-  cy.server();
-  cy.route2(buildAdApiUrl(DETECTORS + '*'), { fixture: fixtureFileName }).as(
-    'getDetectors'
-  );
+Cypress.Commands.add(
+  'mockGetDetectorOnAction',
+  function (fixtureFileName: string, funcMockedOn: VoidFunction) {
+    cy.server();
+    cy.route2(buildAdApiUrl(DETECTORS + '*'), { fixture: fixtureFileName }).as(
+      'getDetectors'
+    );
 
-  funcMockedOn();
+    funcMockedOn();
 
-  cy.wait('@getDetectors');
-});
+    cy.wait('@getDetectors');
+  }
+);
 
-Cypress.Commands.add('mockCreateDetectorOnAction', function (
-  fixtureFileName: string,
-  funcMockedOn: VoidFunction
-) {
-  cy.server();
-  cy.route2(buildAdApiUrl(DETECTORS + '*'), { fixture: fixtureFileName }).as(
-    'createDetector'
-  );
+Cypress.Commands.add(
+  'mockCreateDetectorOnAction',
+  function (fixtureFileName: string, funcMockedOn: VoidFunction) {
+    cy.server();
+    cy.route2(buildAdApiUrl(DETECTORS + '*'), { fixture: fixtureFileName }).as(
+      'createDetector'
+    );
 
-  funcMockedOn();
+    funcMockedOn();
 
-  cy.wait('@createDetector');
-});
+    cy.wait('@createDetector');
+  }
+);
 
-Cypress.Commands.add('mockSearchIndexOnAction', function (
-  fixtureFileName: string,
-  funcMockedOn: VoidFunction
-) {
-  cy.server();
-  cy.route2(buildAdApiUrl(INDICES_PATH + '*'), { fixture: fixtureFileName }).as(
-    'getIndices'
-  );
+Cypress.Commands.add(
+  'mockSearchIndexOnAction',
+  function (fixtureFileName: string, funcMockedOn: VoidFunction) {
+    cy.server();
+    cy.route2(buildAdApiUrl(INDICES_PATH + '*'), {
+      fixture: fixtureFileName,
+    }).as('getIndices');
 
-  funcMockedOn();
+    funcMockedOn();
 
-  cy.wait('@getIndices');
-});
+    cy.wait('@getIndices');
+  }
+);
 
-Cypress.Commands.add('mockSearchOnAction', function (
-  fixtureFileName: string,
-  funcMockedOn: VoidFunction
-) {
-  cy.server();
-  cy.route2(buildAdApiUrl(SEARCH_PATH), { fixture: fixtureFileName }).as(
-    'searchOpenSearch'
-  );
+Cypress.Commands.add(
+  'mockSearchOnAction',
+  function (fixtureFileName: string, funcMockedOn: VoidFunction) {
+    cy.server();
+    cy.route2(buildAdApiUrl(SEARCH_PATH), { fixture: fixtureFileName }).as(
+      'searchOpenSearch'
+    );
 
-  funcMockedOn();
+    funcMockedOn();
 
-  cy.wait('@searchOpenSearch');
-});
+    cy.wait('@searchOpenSearch');
+  }
+);
 
-Cypress.Commands.add('mockGetIndexMappingsOnAction', function (
-  fixtureFileName: string,
-  funcMockedOn: VoidFunction
-) {
-  cy.server();
-  cy.route2(buildAdApiUrl(MAPPINGS_PATH + '*'), {
-    fixture: fixtureFileName,
-  }).as('getMappings');
+Cypress.Commands.add(
+  'mockGetIndexMappingsOnAction',
+  function (fixtureFileName: string, funcMockedOn: VoidFunction) {
+    cy.server();
+    cy.route2(buildAdApiUrl(MAPPINGS_PATH + '*'), {
+      fixture: fixtureFileName,
+    }).as('getMappings');
 
-  funcMockedOn();
+    funcMockedOn();
 
-  cy.wait('@getMappings');
-});
+    cy.wait('@getMappings');
+  }
+);
 
-Cypress.Commands.add('mockStartDetectorOnAction', function (
-  fixtureFileName: string,
-  detectorId: string,
-  funcMockedOn: VoidFunction
-) {
-  cy.server();
-  cy.route2(buildAdApiUrl([DETECTORS, detectorId, START_PATH].join(SLASH)), {
-    fixture: fixtureFileName,
-  }).as('startDetector');
+Cypress.Commands.add(
+  'mockStartDetectorOnAction',
+  function (
+    fixtureFileName: string,
+    detectorId: string,
+    funcMockedOn: VoidFunction
+  ) {
+    cy.server();
+    cy.route2(buildAdApiUrl([DETECTORS, detectorId, START_PATH].join(SLASH)), {
+      fixture: fixtureFileName,
+    }).as('startDetector');
 
-  funcMockedOn();
+    funcMockedOn();
 
-  cy.wait('@startDetector');
-});
+    cy.wait('@startDetector');
+  }
+);
 
-Cypress.Commands.add('mockStopDetectorOnAction', function (
-  fixtureFileName: string,
-  detectorId: string,
-  funcMockedOn: VoidFunction
-) {
-  cy.server();
-  cy.route2(buildAdApiUrl([DETECTORS, detectorId, STOP_PATH].join(SLASH)), {
-    fixture: fixtureFileName,
-  }).as('stopDetector');
+Cypress.Commands.add(
+  'mockStopDetectorOnAction',
+  function (
+    fixtureFileName: string,
+    detectorId: string,
+    funcMockedOn: VoidFunction
+  ) {
+    cy.server();
+    cy.route2(buildAdApiUrl([DETECTORS, detectorId, STOP_PATH].join(SLASH)), {
+      fixture: fixtureFileName,
+    }).as('stopDetector');
 
-  funcMockedOn();
+    funcMockedOn();
 
-  cy.wait('@stopDetector');
-});
+    cy.wait('@stopDetector');
+  }
+);
 
-Cypress.Commands.add('mockDeleteDetectorOnAction', function (
-  fixtureFileName: string,
-  detectorId: string,
-  funcMockedOn: VoidFunction
-) {
-  cy.server();
-  cy.route2(buildAdApiUrl([DETECTORS, detectorId].join(SLASH)), {
-    fixture: fixtureFileName,
-  }).as('deleteDetector');
+Cypress.Commands.add(
+  'mockDeleteDetectorOnAction',
+  function (
+    fixtureFileName: string,
+    detectorId: string,
+    funcMockedOn: VoidFunction
+  ) {
+    cy.server();
+    cy.route2(buildAdApiUrl([DETECTORS, detectorId].join(SLASH)), {
+      fixture: fixtureFileName,
+    }).as('deleteDetector');
 
-  funcMockedOn();
+    funcMockedOn();
 
-  cy.wait('@deleteDetector');
-});
+    cy.wait('@deleteDetector');
+  }
+);

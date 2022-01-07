@@ -37,17 +37,19 @@ export default (iRouter: IRouter, basePath: String): Router => {
   if (basePath == null || basePath == '') {
     throw new TypeError('Base path is null');
   }
-  const requestHandler = (handler: RouteHandler) => async (
-    context: RequestHandlerContext,
-    request: OpenSearchDashboardsRequest,
-    response: OpenSearchDashboardsResponseFactory
-  ) => {
-    try {
-      return await handler(context, request, response);
-    } catch (e) {
-      throw e;
-    }
-  };
+  const requestHandler =
+    (handler: RouteHandler) =>
+    async (
+      context: RequestHandlerContext,
+      request: OpenSearchDashboardsRequest,
+      response: OpenSearchDashboardsResponseFactory
+    ) => {
+      try {
+        return await handler(context, request, response);
+      } catch (e) {
+        throw e;
+      }
+    };
   return ['get', 'put', 'post', 'delete'].reduce(
     (router: any, method: string) => {
       router[method] = (path: String, handler: RouteHandler) => {

@@ -9,7 +9,6 @@
  * GitHub history for details.
  */
 
-
 module.exports = {
   presets: [
     require('@babel/preset-env'),

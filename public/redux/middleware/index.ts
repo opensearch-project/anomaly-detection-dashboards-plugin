@@ -9,7 +9,6 @@
  * GitHub history for details.
  */
 
-
 import clientMiddleware from './clientMiddleware';
 
 export { clientMiddleware };

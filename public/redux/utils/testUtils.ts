@@ -9,7 +9,6 @@
  * GitHub history for details.
  */
 
-
 import configureStore, { MockStore } from 'redux-mock-store';
 import clientMiddleware from '../middleware/clientMiddleware';
 import httpClientMock from '../../../test/mocks/httpClientMock';

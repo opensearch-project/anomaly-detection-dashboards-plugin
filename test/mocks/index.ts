@@ -9,7 +9,6 @@
  * GitHub history for details.
  */
 
-
 import httpClientMock from './httpClientMock';
 import styleMock from './styleMock';
 import coreServicesMock from './coreServicesMock';

@@ -9,7 +9,6 @@
  * GitHub history for details.
  */
 
-
 export enum DATA_TYPES {
   NUMBER = 'number',
   TEXT = 'text',

@@ -9,7 +9,6 @@
  * GitHub history for details.
  */
 
-
 import { Dispatch, MiddlewareAPI, AnyAction } from 'redux';
 import { HttpSetup, APIAction, ThunkAction } from './types';
 import { get } from 'lodash';
@@ -24,33 +23,33 @@ const isAPIAction = (
 //TODO: Find better way to define return type and avoid ANY.
 
 export default function clientMiddleware<State>(client: HttpSetup) {
-  return ({ dispatch, getState }: MiddlewareAPI<Dispatch, State>) => (
-    next: Dispatch
-  ) => async (action: APIAction | ThunkAction | AnyAction): Promise<any> => {
-    if (typeof action === 'function') {
-      //@ts-ignore
-      return action(dispatch, getState);
-    }
-    if (isAPIAction(action)) {
-      const { request, type, ...rest } = action;
-      try {
-        // Network call
-        next({ ...rest, type: `${type}_REQUEST` });
-        const result = await request(client);
+  return ({ dispatch, getState }: MiddlewareAPI<Dispatch, State>) =>
+    (next: Dispatch) =>
+    async (action: APIAction | ThunkAction | AnyAction): Promise<any> => {
+      if (typeof action === 'function') {
         //@ts-ignore
-        if (get(result, 'ok', true)) {
-          next({ ...rest, result, type: `${type}_SUCCESS` });
-          return result;
-        } else {
-          //@ts-ignore
-          throw get(result, 'error', '');
-        }
-      } catch (error) {
-        next({ ...rest, error, type: `${type}_FAILURE` });
-        throw error;
+        return action(dispatch, getState);
       }
-    } else {
-      return next(action);
-    }
-  };
+      if (isAPIAction(action)) {
+        const { request, type, ...rest } = action;
+        try {
+          // Network call
+          next({ ...rest, type: `${type}_REQUEST` });
+          const result = await request(client);
+          //@ts-ignore
+          if (get(result, 'ok', true)) {
+            next({ ...rest, result, type: `${type}_SUCCESS` });
+            return result;
+          } else {
+            //@ts-ignore
+            throw get(result, 'error', '');
+          }
+        } catch (error) {
+          next({ ...rest, error, type: `${type}_FAILURE` });
+          throw error;
+        }
+      } else {
+        return next(action);
+      }
+    };
 }

@@ -9,7 +9,6 @@
  * GitHub history for details.
  */
 
-
 import {
   SORT_DIRECTION,
   OPENSEARCH_EXCEPTION_PREFIX,

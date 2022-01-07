@@ -9,7 +9,6 @@
  * GitHub history for details.
  */
 
-
 import { BASE_NODE_API_PATH } from '../utils/constants';
 import { first } from 'rxjs/operators';
 import { default as createRouter, Router } from './router';
@@ -42,7 +41,8 @@ export class AnomalyDetectionOpenSearchDashboardsPlugin
     Plugin<
       AnomalyDetectionOpenSearchDashboardsPluginSetup,
       AnomalyDetectionOpenSearchDashboardsPluginStart
-    > {
+    >
+{
   private readonly logger: Logger;
   private readonly globalConfig$: any;
 

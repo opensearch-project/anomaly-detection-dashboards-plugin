@@ -9,7 +9,6 @@
  * GitHub history for details.
  */
 
-
 export const ILLEGAL_CHARACTERS = [
   '\\',
   '/',
@@ -42,5 +41,5 @@ export function isIndexPatternQueryValid(
   if (pattern === '.' || pattern === '..') {
     return false;
   }
-  return !illegalCharacters.some(char => pattern.includes(char));
+  return !illegalCharacters.some((char) => pattern.includes(char));
 }
