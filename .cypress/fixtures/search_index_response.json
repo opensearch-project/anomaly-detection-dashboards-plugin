@@ -1,4 +1,0 @@
-{
-  "ok": true,
-  "response": { "indices": [{ "health": "green", "index": "e2e-test-index" }] }
-}
