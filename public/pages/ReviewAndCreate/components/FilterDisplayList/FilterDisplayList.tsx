@@ -30,7 +30,7 @@ export const FilterDisplayList = (props: FilterDisplayListProps) => {
 
   // Old detectors with custom filters will have no filter list, but
   // will have a populated filter query
-  if (isEmpty(filters) && isOldDetector && !isEmpty(props.filterQuery)) {
+  if (isEmpty(filters) && (isOldDetector || !isEmpty(props.filterQuery))) {
     return (
       <div>
         <EuiText>
