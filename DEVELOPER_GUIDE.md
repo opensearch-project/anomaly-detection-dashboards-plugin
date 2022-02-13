@@ -71,9 +71,9 @@ Runs the plugin unit tests.
 
 Integration tests for this plugin are written using the Cypress test framework. The tests are maintained in the central [opensearch-dashboards-functional-test](https://github.com/opensearch-project/opensearch-dashboards-functional-test) repository. Steps to run the tests:
 
-1. Checkout [opensearch-dashboards-functional-test](https://github.com/opensearch-project/opensearch-dashboards-functional-test)
-2. Spin up a cluster with the Anomaly Detection Dashboards Plugin installed
-3. In the root directory, run a command using [Cypress CLI](https://docs.cypress.io/guides/guides/command-line)
+1. Spin up a cluster with the Anomaly Detection plugin ([details](https://github.com/opensearch-project/anomaly-detection/blob/main/DEVELOPER_GUIDE.md#build)) and Anomaly Detection Dashboards Plugin ([details](https://github.com/opensearch-project/anomaly-detection-dashboards-plugin/blob/main/DEVELOPER_GUIDE.md#run)) installed.
+2. Checkout [opensearch-dashboards-functional-test](https://github.com/opensearch-project/opensearch-dashboards-functional-test)
+3. In the root directory of `opensearch-dashboards-functional-test`, run a command using [Cypress CLI](https://docs.cypress.io/guides/guides/command-line)
 
 For more details and an example, see the [related GitHub workflow](https://github.com/opensearch-project/anomaly-detection-dashboards-plugin/blob/main/.github/workflows/remote-integ-tests-workflow.yml).
 
