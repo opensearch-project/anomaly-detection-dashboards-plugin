@@ -5,6 +5,10 @@
   - [Build](#build)
   - [Run](#run)
   - [Test](#test)
+    - [Unit Tests](#unit-tests)
+    - [Integration Tests](#integration-tests)
+  - [Formatting](#formatting)
+  - [Backports](#backports)
 
 ## Developer guide
 
@@ -51,24 +55,27 @@ Example output: `./build/anomaly-detection-dashboards-1.0.0.0.zip`
 
 In the base OpenSearch Dashboards directory, run
 
-- `yarn start --no-base-path`
+`yarn start --no-base-path`
 
-  Starts OpenSearch Dashboards and includes this plugin. OpenSearch Dashboards will be available on `localhost:5601`.
+Starts OpenSearch Dashboards and includes this plugin. OpenSearch Dashboards will be available on `localhost:5601`.
 
 ### Test
 
-- `yarn test:jest`
+#### Unit Tests
 
-  Runs the plugin unit tests.
+`yarn test:jest`
 
-- `yarn test:e2e`
+Runs the plugin unit tests.
 
-  Start OpenSearch Dashboards, wait for it to be available on `localhost:5601`, and runs end-to-end tests.
+#### Integration Tests
 
-- `yarn cy:run`
+Integration tests for this plugin are written using the Cypress test framework. The tests are maintained in the central [opensearch-dashboards-functional-test](https://github.com/opensearch-project/opensearch-dashboards-functional-test) repository. Steps to run the tests:
 
-  Runs end-to-end tests on a currently running OpenSearch Dashboards server. Defaults to run the tests on `localhost:5601`, although you can change this to run on any
-  OpenSearch Dashboards server with the command `yarn cy:run --config baseUrl=<your-custom-URL>`
+1. Spin up a cluster with the Anomaly Detection plugin ([details](https://github.com/opensearch-project/anomaly-detection/blob/main/DEVELOPER_GUIDE.md#build)) and Anomaly Detection Dashboards Plugin ([details](https://github.com/opensearch-project/anomaly-detection-dashboards-plugin/blob/main/DEVELOPER_GUIDE.md#run)) installed.
+2. Checkout [opensearch-dashboards-functional-test](https://github.com/opensearch-project/opensearch-dashboards-functional-test)
+3. In the root directory of `opensearch-dashboards-functional-test`, run a command using [Cypress CLI](https://docs.cypress.io/guides/guides/command-line)
+
+For more details and an example, see the [related GitHub workflow](https://github.com/opensearch-project/anomaly-detection-dashboards-plugin/blob/main/.github/workflows/remote-integ-tests-workflow.yml).
 
 ### Formatting
 
