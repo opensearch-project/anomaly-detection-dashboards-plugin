@@ -26,11 +26,14 @@ export const FilterDisplayList = (props: FilterDisplayListProps) => {
   const [filterIndex, setFilterIndex] = useState<number>(-1);
   let filters = get(props, 'uiMetadata.filters', []);
   const oldFilterType = get(props, 'uiMetadata.filterType', undefined);
-  const isOldDetector = !isEmpty(oldFilterType);
 
-  // Old detectors with custom filters will have no filter list, but
-  // will have a populated filter query
-  if (isEmpty(filters) && isOldDetector && !isEmpty(props.filterQuery)) {
+  // We want to show the custom filter if filters is empty and 
+  // props.filterQuery isn't empty.
+  // Two possible situations for the if branch:
+  // First, old detectors with custom filters will have no filter list, but
+  // will have a populated filter query.
+  // Second, the detector has been created from API (no uiMetadata.* fields).
+  if (isEmpty(filters) && !isEmpty(props.filterQuery)) {
     return (
       <div>
         <EuiText>
