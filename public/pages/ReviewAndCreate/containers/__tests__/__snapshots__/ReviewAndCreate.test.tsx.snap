@@ -202,14 +202,24 @@ exports[`<ReviewAndCreate /> spec renders the component 1`] = `
                 <div
                   class="euiFormRow__fieldWrapper"
                 >
-                  <div
-                    class="euiText euiText--medium"
-                  >
-                    <p
-                      class="enabled"
+                  <div>
+                    <div
+                      class="euiText euiText--medium"
                     >
-                      -
-                    </p>
+                      <p
+                        class="enabled"
+                      >
+                        Custom expression:
+                         
+                        <button
+                          class="euiLink euiLink--primary"
+                          data-test-subj="viewFilter"
+                          type="button"
+                        >
+                          View code
+                        </button>
+                      </p>
+                    </div>
                   </div>
                 </div>
               </div>
