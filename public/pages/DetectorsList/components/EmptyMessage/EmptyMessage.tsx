@@ -27,6 +27,7 @@ interface EmptyDetectorProps {
 
 export const EmptyDetectorMessage = (props: EmptyDetectorProps) => (
   <EuiEmptyPrompt
+    data-test-subj="emptyDetectorListMessage"
     style={{ maxWidth: '45em' }}
     body={
       <EuiText>
