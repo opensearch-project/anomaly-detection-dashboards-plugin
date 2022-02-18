@@ -229,7 +229,10 @@ export function ConfigureModel(props: ConfigureModelProps) {
             <EuiPageBody>
               <EuiPageHeader>
                 <EuiPageHeaderSection>
-                  <EuiTitle size="l">
+                  <EuiTitle
+                    size="l"
+                    data-test-subj="configureOrEditModelConfigurationTitle"
+                  >
                     <h1>
                       {props.isEdit
                         ? 'Edit model configuration'

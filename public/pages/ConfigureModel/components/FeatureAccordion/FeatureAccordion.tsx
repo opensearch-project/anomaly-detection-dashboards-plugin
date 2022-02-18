@@ -132,6 +132,7 @@ export const FeatureAccordion = (props: FeatureAccordionProps) => {
             error={getError(field.name, form)}
           >
             <EuiFieldText
+              data-test-subj={`featureNameTextInput-${props.index}`}
               name={`featureList.${props.index}.featureName`}
               placeholder="Enter feature name"
               value={field.value ? field.value : props.feature.featureName}

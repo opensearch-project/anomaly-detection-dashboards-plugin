@@ -259,7 +259,7 @@ export function ReviewAndCreate(props: ReviewAndCreateProps) {
             <EuiPageBody>
               <EuiPageHeader>
                 <EuiPageHeaderSection>
-                  <EuiTitle size="l">
+                  <EuiTitle size="l" data-test-subj="reviewAndCreateTitle">
                     <h1>Review and create </h1>
                   </EuiTitle>
                 </EuiPageHeaderSection>

@@ -129,13 +129,13 @@ export const DetectorDefinitionFields = (
     >
       {props.isCreate ? getValidationCallout() : null}
       <EuiFlexGrid columns={0} gutterSize="l" style={{ border: 'none' }}>
-        <EuiFlexItem>
+        <EuiFlexItem data-test-subj="detectorNameCell">
           <ConfigCell
             title="Name"
             description={get(props, 'detector.name', '')}
           />
         </EuiFlexItem>
-        <EuiFlexItem>
+        <EuiFlexItem data-test-subj="indexNameCell">
           <ConfigCell
             title="Data source index"
             description={get(props, 'detector.indices.0', '')}
@@ -168,7 +168,7 @@ export const DetectorDefinitionFields = (
             description={get(props, 'detector.description', '')}
           />
         </EuiFlexItem>
-        <EuiFlexItem>
+        <EuiFlexItem data-test-subj="timestampNameCell">
           <ConfigCell
             title="Timestamp"
             description={get(props, 'detector.timeField', '')}

@@ -35,6 +35,7 @@ function NameAndDescription(props: NameAndDescriptionProps) {
                 a-z, A-Z, 0-9, -(hyphen), _(underscore) and .(period).`}
           >
             <EuiFieldText
+              data-test-subj="detectorNameTextInput"
               name="detectorName"
               id="detectorName"
               placeholder="Enter detector name"
