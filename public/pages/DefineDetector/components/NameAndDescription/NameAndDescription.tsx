@@ -58,6 +58,7 @@ function NameAndDescription(props: NameAndDescriptionProps) {
             error={getError(field.name, form)}
           >
             <EuiTextArea
+              data-test-subj="detectorDescriptionTextInput"
               name="detectorDescription"
               id="detectorDescription"
               rows={3}

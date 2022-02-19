@@ -155,14 +155,14 @@ export const DetectorDefinitionFields = (
           />
         </EuiFlexItem>
         {props.isCreate ? null : (
-          <EuiFlexItem>
+          <EuiFlexItem data-test-subj="detectorIdCell">
             <ConfigCell
               title="ID"
               description={get(props, 'detector.id', '')}
             />
           </EuiFlexItem>
         )}
-        <EuiFlexItem>
+        <EuiFlexItem data-test-subj="detectorDescriptionCell">
           <ConfigCell
             title="Description"
             description={get(props, 'detector.description', '')}
