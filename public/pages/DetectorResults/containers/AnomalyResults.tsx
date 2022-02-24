@@ -505,7 +505,10 @@ export function AnomalyResults(props: AnomalyResultsProps) {
                       style={{ marginBottom: '18px' }}
                     >
                       <EuiFlexItem grow={false}>
-                        <EuiTitle size="m">
+                        <EuiTitle
+                          size="m"
+                          data-test-subj="realTimeResultsHeader"
+                        >
                           {
                             <h1>
                               {'Real-time results'}{' '}
@@ -522,7 +525,7 @@ export function AnomalyResults(props: AnomalyResultsProps) {
 
                       <EuiFlexItem grow={false}>
                         <EuiButton
-                          data-test-subj="stopDetectorButton"
+                          data-test-subj="stopAndStartDetectorButton"
                           onClick={
                             detector?.enabled
                               ? props.onStopDetector

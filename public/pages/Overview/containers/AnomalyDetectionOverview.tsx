@@ -183,7 +183,7 @@ export function AnomalyDetectionOverview(props: AnomalyDetectionOverviewProps) {
       <EuiPageHeader>
         <EuiFlexGroup justifyContent="spaceBetween">
           <EuiFlexItem grow={false}>
-            <EuiTitle size="l">
+            <EuiTitle size="l" data-test-subj="overviewTitle">
               <h1>Anomaly detection</h1>
             </EuiTitle>
           </EuiFlexItem>
@@ -248,6 +248,7 @@ export function AnomalyDetectionOverview(props: AnomalyDetectionOverviewProps) {
               icon={sampleHttpResponses.icon}
               description={sampleHttpResponses.description}
               loadDataButtonDescription="Create HTTP response detector"
+              buttonDataTestSubj="createHttpSampleDetectorButton"
               onOpenFlyout={() => {
                 setShowHttpResponseDetailsFlyout(true);
                 setShowEcommerceDetailsFlyout(false);
@@ -281,6 +282,7 @@ export function AnomalyDetectionOverview(props: AnomalyDetectionOverviewProps) {
               icon={sampleEcommerce.icon}
               description={sampleEcommerce.description}
               loadDataButtonDescription="Create eCommerce orders detector"
+              buttonDataTestSubj="createECommerceSampleDetectorButton"
               onOpenFlyout={() => {
                 setShowHttpResponseDetailsFlyout(false);
                 setShowEcommerceDetailsFlyout(true);
@@ -312,6 +314,7 @@ export function AnomalyDetectionOverview(props: AnomalyDetectionOverviewProps) {
               icon={sampleHostHealth.icon}
               description={sampleHostHealth.description}
               loadDataButtonDescription="Create health monitor detector"
+              buttonDataTestSubj="createHostHealthSampleDetectorButton"
               onOpenFlyout={() => {
                 setShowHttpResponseDetailsFlyout(false);
                 setShowEcommerceDetailsFlyout(false);

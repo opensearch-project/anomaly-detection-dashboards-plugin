@@ -25,6 +25,7 @@ export const SampleIndexDetailsCallout = (
 ) => {
   return (
     <EuiCallOut
+      data-test-subj="sampleIndexDetailsCallout"
       title="Want more details on the sample data?"
       color="primary"
       iconType="help"
