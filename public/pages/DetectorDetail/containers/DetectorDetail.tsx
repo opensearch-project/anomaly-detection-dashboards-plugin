@@ -455,6 +455,7 @@ export const DetectorDetail = (props: DetectorDetailProps) => {
                 </EuiFlexItem>
                 <EuiFlexItem grow={true}>
                   <EuiFieldText
+                    data-test-subj="typeDeleteField"
                     fullWidth={true}
                     placeholder="delete"
                     onChange={(e) => {

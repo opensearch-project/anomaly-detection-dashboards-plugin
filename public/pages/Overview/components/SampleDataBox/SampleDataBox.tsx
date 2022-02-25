@@ -53,6 +53,7 @@ export const SampleDataBox = (props: SampleDataBoxProps) => {
               </h2>
             </EuiTitle>
             <EuiLink
+              data-test-subj="flyoutInfoButton"
               style={{ marginLeft: '12px' }}
               onClick={props.onOpenFlyout}
             >

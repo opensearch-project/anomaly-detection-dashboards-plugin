@@ -116,11 +116,12 @@ export const DetectorDefinitionFields = (
   return (
     <ContentPanel
       title="Detector settings"
+      titleDataTestSubj="detectorSettingsHeader"
       titleSize="s"
       panelStyles={{ margin: '0px' }}
       actions={[
         <EuiButton
-          data-test-subj="editDetectorButton"
+          data-test-subj="editDetectorSettingsButton"
           onClick={props.onEditDetectorDefinition}
         >
           Edit

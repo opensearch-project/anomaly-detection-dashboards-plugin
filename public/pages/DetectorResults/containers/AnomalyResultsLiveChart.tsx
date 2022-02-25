@@ -211,6 +211,7 @@ export const AnomalyResultsLiveChart = (
       onClick={() => setIsFullScreen((isFullScreen) => !isFullScreen)}
       iconType={isFullScreen ? 'exit' : 'fullScreen'}
       aria-label="View full screen"
+      data-test-subj="anomalyResultsFullScreenButton"
     >
       {isFullScreen ? 'Exit full screen' : 'View full screen'}
     </EuiButton>

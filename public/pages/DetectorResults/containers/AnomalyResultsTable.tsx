@@ -169,7 +169,7 @@ export function AnomalyResultsTable(props: AnomalyResultsTableProps) {
             <EuiEmptyPrompt
               style={{ maxWidth: '45em' }}
               body={
-                <EuiText>
+                <EuiText data-test-subj="noAnomaliesMessage">
                   <p>There are no anomalies currently.</p>
                 </EuiText>
               }

@@ -76,7 +76,7 @@ export const SampleDetailsFlyout = (props: SampleDetailsFlyoutProps) => {
         <EuiAccordion
           id="detectorDetailsAccordion"
           buttonContent={
-            <EuiTitle size="s">
+            <EuiTitle size="s" data-test-subj="detectorDetailsHeader">
               <h3>Detector details</h3>
             </EuiTitle>
           }
@@ -107,7 +107,7 @@ export const SampleDetailsFlyout = (props: SampleDetailsFlyoutProps) => {
         <EuiAccordion
           id="indexDetailsAccordion"
           buttonContent={
-            <EuiTitle size="s">
+            <EuiTitle size="s" data-test-subj="indexDetailsHeader">
               <h3>Index details</h3>
             </EuiTitle>
           }

@@ -191,8 +191,16 @@ export const Features = (props: FeaturesProps) => {
   return (
     <ContentPanel
       title="Model configuration"
+      titleDataTestSubj="modelConfigurationHeader"
       titleSize="s"
-      actions={[<EuiButton onClick={props.onEditFeatures}>Edit</EuiButton>]}
+      actions={[
+        <EuiButton
+          data-test-subj="editModelConfigurationButton"
+          onClick={props.onEditFeatures}
+        >
+          Edit
+        </EuiButton>,
+      ]}
     >
       {featureNum == 0 ? (
         <EuiEmptyPrompt
