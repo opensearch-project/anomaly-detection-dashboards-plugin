@@ -195,7 +195,7 @@ export function HistoricalDetectorResults(
               ) : null}
               <EuiFlexGroup direction="column">
                 <EuiFlexItem>
-                  <EuiTitle size="m">
+                  <EuiTitle size="m" data-test-subj="historicalAnalysisTitle">
                     <div>
                       {'Historical analysis'}&nbsp;
                       {getDetectorStateDetails(

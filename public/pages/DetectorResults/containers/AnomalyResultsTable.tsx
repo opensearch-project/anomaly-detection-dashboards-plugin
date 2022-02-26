@@ -137,6 +137,7 @@ export function AnomalyResultsTable(props: AnomalyResultsTableProps) {
   return (
     <ContentPanel
       title={getTitleWithCount('Anomaly occurrences', totalAnomalies.length)}
+      titleDataTestSubj="anomalyOccurrencesHeader"
       titleSize="xs"
       titleClassName="preview-title"
     >
