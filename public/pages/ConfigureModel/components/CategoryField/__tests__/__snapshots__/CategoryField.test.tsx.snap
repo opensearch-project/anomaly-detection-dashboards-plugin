@@ -18,6 +18,7 @@ exports[`<CategoryField /> spec renders the component when disabled 1`] = `
         >
           <div
             class="euiFlexGroup euiFlexGroup--gutterLarge euiFlexGroup--alignItemsCenter euiFlexGroup--directionRow euiFlexGroup--responsive"
+            data-test-subj="contentPanelTitle"
           >
             <div
               class="euiFlexItem"
@@ -135,6 +136,7 @@ exports[`<CategoryField /> spec renders the component when enabled 1`] = `
         >
           <div
             class="euiFlexGroup euiFlexGroup--gutterLarge euiFlexGroup--alignItemsCenter euiFlexGroup--directionRow euiFlexGroup--responsive"
+            data-test-subj="contentPanelTitle"
           >
             <div
               class="euiFlexItem"

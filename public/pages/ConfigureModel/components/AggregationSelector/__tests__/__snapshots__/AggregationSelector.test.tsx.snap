@@ -109,6 +109,7 @@ exports[`<AggregationSelector /> spec Empty results renders component with aggre
         aria-expanded="false"
         aria-haspopup="listbox"
         class="euiComboBox"
+        data-test-subj="featureFieldTextInput-undefined"
         name="featureList.undefined.aggregationOf"
         role="combobox"
       >

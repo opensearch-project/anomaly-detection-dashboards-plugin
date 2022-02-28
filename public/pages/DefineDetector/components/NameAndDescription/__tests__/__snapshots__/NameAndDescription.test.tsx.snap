@@ -15,6 +15,7 @@ exports[`<NameAndDescription /> spec renders the component 1`] = `
       >
         <h3
           class="euiTitle euiTitle--small"
+          data-test-subj="contentPanelTitle"
         >
           Detector details
         </h3>
@@ -88,6 +89,7 @@ exports[`<NameAndDescription /> spec renders the component 1`] = `
                 <input
                   aria-describedby="random_html_id-help"
                   class="euiFieldText"
+                  data-test-subj="detectorNameTextInput"
                   id="random_html_id"
                   name="name"
                   placeholder="Enter detector name"
@@ -144,6 +146,7 @@ exports[`<NameAndDescription /> spec renders the component 1`] = `
           >
             <textarea
               class="euiTextArea euiTextArea--resizeVertical"
+              data-test-subj="detectorDescriptionTextInput"
               id="random_html_id"
               name="description"
               placeholder="Describe the detector"

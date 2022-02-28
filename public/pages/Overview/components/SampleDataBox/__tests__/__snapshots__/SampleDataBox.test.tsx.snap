@@ -27,6 +27,7 @@ exports[`<SampleDataBox /> spec Data is loaded renders component 1`] = `
       >
         <div
           class="euiFlexGroup euiFlexGroup--gutterLarge euiFlexGroup--alignItemsCenter euiFlexGroup--directionRow euiFlexGroup--responsive"
+          data-test-subj="contentPanelTitle"
         >
           <div
             class="euiFlexItem"
@@ -57,6 +58,7 @@ exports[`<SampleDataBox /> spec Data is loaded renders component 1`] = `
               </h2>
               <button
                 class="euiLink euiLink--primary"
+                data-test-subj="flyoutInfoButton"
                 style="margin-left: 12px;"
                 type="button"
               >
@@ -136,6 +138,7 @@ exports[`<SampleDataBox /> spec Data is loaded renders component 1`] = `
             >
               <a
                 class="euiLink euiLink--primary"
+                data-test-subj="viewSampleDetectorLink"
                 href="anomaly-detection-dashboards#/detectors/sample-detector-id"
                 rel="noreferrer"
               >
@@ -167,6 +170,7 @@ exports[`<SampleDataBox /> spec Data is loading renders component 1`] = `
       >
         <div
           class="euiFlexGroup euiFlexGroup--gutterLarge euiFlexGroup--alignItemsCenter euiFlexGroup--directionRow euiFlexGroup--responsive"
+          data-test-subj="contentPanelTitle"
         >
           <div
             class="euiFlexItem"
@@ -197,6 +201,7 @@ exports[`<SampleDataBox /> spec Data is loading renders component 1`] = `
               </h2>
               <button
                 class="euiLink euiLink--primary"
+                data-test-subj="flyoutInfoButton"
                 style="margin-left: 12px;"
                 type="button"
               >
@@ -302,6 +307,7 @@ exports[`<SampleDataBox /> spec Data not loaded renders component 1`] = `
       >
         <div
           class="euiFlexGroup euiFlexGroup--gutterLarge euiFlexGroup--alignItemsCenter euiFlexGroup--directionRow euiFlexGroup--responsive"
+          data-test-subj="contentPanelTitle"
         >
           <div
             class="euiFlexItem"
@@ -327,6 +333,7 @@ exports[`<SampleDataBox /> spec Data not loaded renders component 1`] = `
               </h2>
               <button
                 class="euiLink euiLink--primary"
+                data-test-subj="flyoutInfoButton"
                 style="margin-left: 12px;"
                 type="button"
               >
