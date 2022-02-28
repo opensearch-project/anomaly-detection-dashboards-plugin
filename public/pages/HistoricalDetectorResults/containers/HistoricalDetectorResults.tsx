@@ -219,6 +219,7 @@ export function HistoricalDetectorResults(
                   </EuiFlexItem>
                   <EuiFlexItem grow={false} style={{ marginTop: '0px' }}>
                     <EuiButtonEmpty
+                      data-test-subj="modifyHistoricalAnalysisButton"
                       iconType="gear"
                       iconSide="left"
                       size="xs"
