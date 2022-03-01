@@ -299,6 +299,7 @@ export const ModelConfigurationFields = (
           titleSize="s"
         >
           <EuiBasicTable
+            data-test-subj="featureTable"
             items={sortedItems}
             columns={columns}
             cellProps={getCellProps}

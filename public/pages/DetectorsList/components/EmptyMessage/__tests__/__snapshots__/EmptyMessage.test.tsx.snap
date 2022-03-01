@@ -3,6 +3,7 @@
 exports[`<EmptyDetectorMessage /> spec Empty results renders component with empty message 1`] = `
 <div
   class="euiEmptyPrompt"
+  data-test-subj="emptyDetectorListMessage"
   style="max-width: 45em;"
 >
   <span
@@ -78,6 +79,7 @@ exports[`<EmptyDetectorMessage /> spec Empty results renders component with empt
 exports[`<EmptyDetectorMessage /> spec Filters results message renders component no result for filters message 1`] = `
 <div
   class="euiEmptyPrompt"
+  data-test-subj="emptyDetectorListMessage"
   style="max-width: 45em;"
 >
   <span

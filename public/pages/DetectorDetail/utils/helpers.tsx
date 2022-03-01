@@ -44,22 +44,37 @@ export const getDetectorStateDetails = (
   return (
     <Fragment>
       {isStoppingHistorical ? (
-        <EuiHealth color={DETECTOR_STATE_COLOR.DISABLED}>
+        <EuiHealth
+          color={DETECTOR_STATE_COLOR.DISABLED}
+          data-test-subj="detectorStateStopping"
+        >
           {'Stopping...'}
         </EuiHealth>
       ) : isHistorical && detector && state === DETECTOR_STATE.RUNNING ? (
-        <EuiHealth className={className} color={DETECTOR_STATE_COLOR.RUNNING}>
+        <EuiHealth
+          className={className}
+          color={DETECTOR_STATE_COLOR.RUNNING}
+          data-test-subj="detectorStateRunning"
+        >
           Running
         </EuiHealth>
       ) : detector && detector.enabled && state === DETECTOR_STATE.RUNNING ? (
-        <EuiHealth className={className} color={DETECTOR_STATE_COLOR.RUNNING}>
+        <EuiHealth
+          className={className}
+          color={DETECTOR_STATE_COLOR.RUNNING}
+          data-test-subj="detectorStateRunning"
+        >
           Running since{' '}
           {detector.enabledTime
             ? moment(detector.enabledTime).format('MM/DD/YY h:mm A')
             : '?'}
         </EuiHealth>
       ) : detector.enabled && state === DETECTOR_STATE.INIT ? (
-        <EuiHealth className={className} color={DETECTOR_STATE_COLOR.INIT}>
+        <EuiHealth
+          className={className}
+          color={DETECTOR_STATE_COLOR.INIT}
+          data-test-subj="detectorStateInitializing"
+        >
           {detector.initProgress?.estimatedMinutesLeft &&
           !isHCDetector &&
           !isHistorical
@@ -72,11 +87,16 @@ export const getDetectorStateDetails = (
         <EuiHealth
           className={className}
           color={DETECTOR_STATE_COLOR.INIT_FAILURE}
+          data-test-subj="detectorStateInitializingFailure"
         >
           Initialization failure
         </EuiHealth>
       ) : state === DETECTOR_STATE.DISABLED ? (
-        <EuiHealth className={className} color={DETECTOR_STATE_COLOR.DISABLED}>
+        <EuiHealth
+          className={className}
+          color={DETECTOR_STATE_COLOR.DISABLED}
+          data-test-subj="detectorStateStopped"
+        >
           {detector.disabledTime
             ? `Stopped at ${moment(detector.disabledTime).format(
                 'MM/DD/YY h:mm A'
@@ -87,19 +107,32 @@ export const getDetectorStateDetails = (
         <EuiHealth
           className={className}
           color={DETECTOR_STATE_COLOR.FEATURE_REQUIRED}
+          data-test-subj="detectorStateFeatureRequired"
         >
           Feature required to start the detector
         </EuiHealth>
       ) : state === DETECTOR_STATE.INIT ? (
-        <EuiHealth className={className} color={DETECTOR_STATE_COLOR.INIT}>
+        <EuiHealth
+          className={className}
+          color={DETECTOR_STATE_COLOR.INIT}
+          data-test-subj="detectorStateInitializing"
+        >
           Initializing
         </EuiHealth>
       ) : state === DETECTOR_STATE.FINISHED ? (
-        <EuiHealth className={className} color={DETECTOR_STATE_COLOR.FINISHED}>
+        <EuiHealth
+          className={className}
+          color={DETECTOR_STATE_COLOR.FINISHED}
+          data-test-subj="detectorStateFinished"
+        >
           Finished
         </EuiHealth>
       ) : state === DETECTOR_STATE.FAILED ? (
-        <EuiHealth className={className} color={DETECTOR_STATE_COLOR.FAILED}>
+        <EuiHealth
+          className={className}
+          color={DETECTOR_STATE_COLOR.FAILED}
+          data-test-subj="detectorStateFailed"
+        >
           Failed
         </EuiHealth>
       ) : (

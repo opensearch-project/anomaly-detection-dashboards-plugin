@@ -119,7 +119,7 @@ export function DetectorJobs(props: DetectorJobsProps) {
             <EuiPageBody>
               <EuiPageHeader>
                 <EuiPageHeaderSection>
-                  <EuiTitle size="l">
+                  <EuiTitle size="l" data-test-subj="detectorJobsTitle">
                     <h1>Set up detector jobs </h1>
                   </EuiTitle>
                 </EuiPageHeaderSection>

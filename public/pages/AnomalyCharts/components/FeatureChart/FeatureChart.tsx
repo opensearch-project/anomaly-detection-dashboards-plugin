@@ -156,6 +156,7 @@ export const FeatureChart = (props: FeatureChartProps) => {
           ? props.feature.featureName
           : `${props.feature.featureName} (disabled)`
       }
+      titleDataTestSubj="featureNameHeader"
       bodyStyles={
         !props.feature.featureEnabled
           ? { backgroundColor: getDisabledChartBackground() }

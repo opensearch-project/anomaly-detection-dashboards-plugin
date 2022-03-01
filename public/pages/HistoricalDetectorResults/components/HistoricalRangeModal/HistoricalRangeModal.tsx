@@ -50,7 +50,7 @@ export const HistoricalRangeModal = (props: HistoricalRangeModalProps) => {
   return (
     <EuiModal onClose={props.onClose}>
       <EuiModalHeader>
-        <EuiModalHeaderTitle>
+        <EuiModalHeaderTitle data-test-subj="historicalAnalysisModalHeader">
           {props.isEdit
             ? 'Modify historical analysis'
             : 'Set up historical analysis'}

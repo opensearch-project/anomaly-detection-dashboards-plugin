@@ -15,6 +15,7 @@ exports[`<AdditionalSettings /> spec renders the component in create mode (no ID
       >
         <h3
           class="euiTitle euiTitle--small"
+          data-test-subj="detectorSettingsHeader"
         >
           Detector settings
         </h3>
@@ -38,7 +39,7 @@ exports[`<AdditionalSettings /> spec renders the component in create mode (no ID
           >
             <button
               class="euiButton euiButton--primary"
-              data-test-subj="editDetectorButton"
+              data-test-subj="editDetectorSettingsButton"
               type="button"
             >
               <span
@@ -70,6 +71,7 @@ exports[`<AdditionalSettings /> spec renders the component in create mode (no ID
         >
           <div
             class="euiFlexItem"
+            data-test-subj="detectorNameCell"
           >
             <div
               class="euiFormRow"
@@ -104,6 +106,7 @@ exports[`<AdditionalSettings /> spec renders the component in create mode (no ID
           </div>
           <div
             class="euiFlexItem"
+            data-test-subj="indexNameCell"
           >
             <div
               class="euiFormRow"
@@ -203,6 +206,7 @@ exports[`<AdditionalSettings /> spec renders the component in create mode (no ID
           </div>
           <div
             class="euiFlexItem"
+            data-test-subj="detectorDescriptionCell"
           >
             <div
               class="euiFormRow"
@@ -237,6 +241,7 @@ exports[`<AdditionalSettings /> spec renders the component in create mode (no ID
           </div>
           <div
             class="euiFlexItem"
+            data-test-subj="timestampNameCell"
           >
             <div
               class="euiFormRow"
@@ -359,6 +364,7 @@ exports[`<AdditionalSettings /> spec renders the component in edit mode (with ID
       >
         <h3
           class="euiTitle euiTitle--small"
+          data-test-subj="detectorSettingsHeader"
         >
           Detector settings
         </h3>
@@ -382,7 +388,7 @@ exports[`<AdditionalSettings /> spec renders the component in edit mode (with ID
           >
             <button
               class="euiButton euiButton--primary"
-              data-test-subj="editDetectorButton"
+              data-test-subj="editDetectorSettingsButton"
               type="button"
             >
               <span
@@ -414,6 +420,7 @@ exports[`<AdditionalSettings /> spec renders the component in edit mode (with ID
         >
           <div
             class="euiFlexItem"
+            data-test-subj="detectorNameCell"
           >
             <div
               class="euiFormRow"
@@ -448,6 +455,7 @@ exports[`<AdditionalSettings /> spec renders the component in edit mode (with ID
           </div>
           <div
             class="euiFlexItem"
+            data-test-subj="indexNameCell"
           >
             <div
               class="euiFormRow"
@@ -547,6 +555,7 @@ exports[`<AdditionalSettings /> spec renders the component in edit mode (with ID
           </div>
           <div
             class="euiFlexItem"
+            data-test-subj="detectorIdCell"
           >
             <div
               class="euiFormRow"
@@ -581,6 +590,7 @@ exports[`<AdditionalSettings /> spec renders the component in edit mode (with ID
           </div>
           <div
             class="euiFlexItem"
+            data-test-subj="detectorDescriptionCell"
           >
             <div
               class="euiFormRow"
@@ -615,6 +625,7 @@ exports[`<AdditionalSettings /> spec renders the component in edit mode (with ID
           </div>
           <div
             class="euiFlexItem"
+            data-test-subj="timestampNameCell"
           >
             <div
               class="euiFormRow"

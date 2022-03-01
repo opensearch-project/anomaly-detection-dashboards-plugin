@@ -829,6 +829,7 @@ export const AnomalyHistory = (props: AnomalyHistoryProps) => {
         isSelected={tab.id === selectedTabId}
         disabled={tab.disabled}
         key={index}
+        data-test-subj={`${tab.id}Tab`}
       >
         {tab.name}
       </EuiTab>

@@ -14,6 +14,7 @@ exports[`<ContentPanel /> spec renders the component 1`] = `
     >
       <h3
         class="euiTitle euiTitle--small"
+        data-test-subj="contentPanelTitle"
       >
         Testing
       </h3>

@@ -41,6 +41,7 @@ export const DetectorScheduleFields = (props: DetectorScheduleFieldsProps) => {
   return (
     <ContentPanel
       title="Detector schedule"
+      titleDataTestSubj="detectorScheduleHeader"
       titleSize="s"
       panelStyles={{ margin: '0px' }}
       actions={[

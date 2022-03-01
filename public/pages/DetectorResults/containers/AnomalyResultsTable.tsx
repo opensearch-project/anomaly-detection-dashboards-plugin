@@ -137,6 +137,7 @@ export function AnomalyResultsTable(props: AnomalyResultsTableProps) {
   return (
     <ContentPanel
       title={getTitleWithCount('Anomaly occurrences', totalAnomalies.length)}
+      titleDataTestSubj="anomalyOccurrencesHeader"
       titleSize="xs"
       titleClassName="preview-title"
     >
@@ -169,7 +170,7 @@ export function AnomalyResultsTable(props: AnomalyResultsTableProps) {
             <EuiEmptyPrompt
               style={{ maxWidth: '45em' }}
               body={
-                <EuiText>
+                <EuiText data-test-subj="noAnomaliesMessage">
                   <p>There are no anomalies currently.</p>
                 </EuiText>
               }

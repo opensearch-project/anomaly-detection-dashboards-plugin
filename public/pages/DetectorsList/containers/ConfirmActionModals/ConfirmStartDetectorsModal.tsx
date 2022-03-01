@@ -41,7 +41,7 @@ export const ConfirmStartDetectorsModal = (
   const isLoading = isModalLoading || props.isListLoading;
   return (
     <EuiOverlayMask>
-      <EuiModal onClose={props.onHide}>
+      <EuiModal data-test-subj="startDetectorsModal" onClose={props.onHide}>
         <EuiModalHeader>
           <EuiModalHeaderTitle>
             {'Are you sure you want to start the selected detectors?'}&nbsp;

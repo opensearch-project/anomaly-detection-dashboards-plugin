@@ -357,6 +357,7 @@ export const AnomalyDetailsChart = React.memo(
         <EuiFlexGroup style={{ padding: '20px' }}>
           <EuiFlexItem>
             <EuiStat
+              data-test-subj="anomalyOccurrenceStat"
               title={isLoading ? '-' : anomalySummary.anomalyOccurrence}
               description={getAnomalyOccurrenceWording(props.isNotSample)}
               titleSize="s"

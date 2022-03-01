@@ -75,6 +75,7 @@ export function Timestamp(props: TimestampProps) {
             error={getError(field.name, form)}
           >
             <EuiComboBox
+              data-test-subj="timestampFilter"
               id="timeField"
               placeholder="Find timestamp"
               options={timeStampFieldOptions}

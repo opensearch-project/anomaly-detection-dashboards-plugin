@@ -72,7 +72,7 @@ export const ConfirmDeleteDetectorsModal = (
 
   return (
     <EuiOverlayMask>
-      <EuiModal onClose={props.onHide}>
+      <EuiModal data-test-subj="deleteDetectorsModal" onClose={props.onHide}>
         <EuiModalHeader>
           <EuiModalHeaderTitle>
             {'Are you sure you want to delete the selected detectors?'}&nbsp;

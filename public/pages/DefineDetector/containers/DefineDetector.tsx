@@ -239,7 +239,7 @@ export const DefineDetector = (props: DefineDetectorProps) => {
             <EuiPageBody>
               <EuiPageHeader>
                 <EuiPageHeaderSection>
-                  <EuiTitle size="l">
+                  <EuiTitle size="l" data-test-subj="defineOrEditDetectorTitle">
                     <h1>
                       {props.isEdit
                         ? 'Edit detector settings'
