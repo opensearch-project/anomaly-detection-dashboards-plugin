@@ -13,6 +13,7 @@ exports[`<AnomalyDetectionOverview /> spec No sample detectors created renders c
       >
         <h1
           class="euiTitle euiTitle--large"
+          data-test-subj="overviewTitle"
         >
           Anomaly detection
         </h1>
@@ -79,6 +80,7 @@ exports[`<AnomalyDetectionOverview /> spec No sample detectors created renders c
       >
         <h3
           class="euiTitle euiTitle--small"
+          data-test-subj="contentPanelTitle"
         >
           How it works
         </h3>
@@ -350,6 +352,7 @@ exports[`<AnomalyDetectionOverview /> spec No sample detectors created renders c
       >
         <h3
           class="euiTitle euiTitle--small"
+          data-test-subj="contentPanelTitle"
         >
           Start with a sample detector to learn about anomaly detection
         </h3>
@@ -410,6 +413,7 @@ exports[`<AnomalyDetectionOverview /> spec No sample detectors created renders c
                   >
                     <div
                       class="euiFlexGroup euiFlexGroup--gutterLarge euiFlexGroup--alignItemsCenter euiFlexGroup--directionRow euiFlexGroup--responsive"
+                      data-test-subj="contentPanelTitle"
                     >
                       <div
                         class="euiFlexItem"
@@ -435,6 +439,7 @@ exports[`<AnomalyDetectionOverview /> spec No sample detectors created renders c
                           </h2>
                           <button
                             class="euiLink euiLink--primary"
+                            data-test-subj="flyoutInfoButton"
                             style="margin-left: 12px;"
                             type="button"
                           >
@@ -493,7 +498,7 @@ exports[`<AnomalyDetectionOverview /> spec No sample detectors created renders c
                         >
                           <button
                             class="euiButton euiButton--primary"
-                            data-test-subj="loadDataButton"
+                            data-test-subj="createHttpSampleDetectorButton"
                             style="width: 300px;"
                             type="button"
                           >
@@ -537,6 +542,7 @@ exports[`<AnomalyDetectionOverview /> spec No sample detectors created renders c
                   >
                     <div
                       class="euiFlexGroup euiFlexGroup--gutterLarge euiFlexGroup--alignItemsCenter euiFlexGroup--directionRow euiFlexGroup--responsive"
+                      data-test-subj="contentPanelTitle"
                     >
                       <div
                         class="euiFlexItem"
@@ -562,6 +568,7 @@ exports[`<AnomalyDetectionOverview /> spec No sample detectors created renders c
                           </h2>
                           <button
                             class="euiLink euiLink--primary"
+                            data-test-subj="flyoutInfoButton"
                             style="margin-left: 12px;"
                             type="button"
                           >
@@ -620,7 +627,7 @@ exports[`<AnomalyDetectionOverview /> spec No sample detectors created renders c
                         >
                           <button
                             class="euiButton euiButton--primary"
-                            data-test-subj="loadDataButton"
+                            data-test-subj="createECommerceSampleDetectorButton"
                             style="width: 300px;"
                             type="button"
                           >
@@ -664,6 +671,7 @@ exports[`<AnomalyDetectionOverview /> spec No sample detectors created renders c
                   >
                     <div
                       class="euiFlexGroup euiFlexGroup--gutterLarge euiFlexGroup--alignItemsCenter euiFlexGroup--directionRow euiFlexGroup--responsive"
+                      data-test-subj="contentPanelTitle"
                     >
                       <div
                         class="euiFlexItem"
@@ -689,6 +697,7 @@ exports[`<AnomalyDetectionOverview /> spec No sample detectors created renders c
                           </h2>
                           <button
                             class="euiLink euiLink--primary"
+                            data-test-subj="flyoutInfoButton"
                             style="margin-left: 12px;"
                             type="button"
                           >
@@ -747,7 +756,7 @@ exports[`<AnomalyDetectionOverview /> spec No sample detectors created renders c
                         >
                           <button
                             class="euiButton euiButton--primary"
-                            data-test-subj="loadDataButton"
+                            data-test-subj="createHostHealthSampleDetectorButton"
                             style="width: 300px;"
                             type="button"
                           >
@@ -796,6 +805,7 @@ exports[`<AnomalyDetectionOverview /> spec Some detectors created renders compon
       >
         <h1
           class="euiTitle euiTitle--large"
+          data-test-subj="overviewTitle"
         >
           Anomaly detection
         </h1>
@@ -866,6 +876,7 @@ exports[`<AnomalyDetectionOverview /> spec Some detectors created renders compon
       >
         <h3
           class="euiTitle euiTitle--small"
+          data-test-subj="contentPanelTitle"
         >
           How it works
         </h3>
@@ -1153,6 +1164,7 @@ exports[`<AnomalyDetectionOverview /> spec Some detectors created renders compon
       >
         <h3
           class="euiTitle euiTitle--small"
+          data-test-subj="contentPanelTitle"
         >
           Start with a sample detector to learn about anomaly detection
         </h3>
@@ -1213,6 +1225,7 @@ exports[`<AnomalyDetectionOverview /> spec Some detectors created renders compon
                   >
                     <div
                       class="euiFlexGroup euiFlexGroup--gutterLarge euiFlexGroup--alignItemsCenter euiFlexGroup--directionRow euiFlexGroup--responsive"
+                      data-test-subj="contentPanelTitle"
                     >
                       <div
                         class="euiFlexItem"
@@ -1242,6 +1255,7 @@ exports[`<AnomalyDetectionOverview /> spec Some detectors created renders compon
                           </h2>
                           <button
                             class="euiLink euiLink--primary"
+                            data-test-subj="flyoutInfoButton"
                             style="margin-left: 12px;"
                             type="button"
                           >
@@ -1300,7 +1314,7 @@ exports[`<AnomalyDetectionOverview /> spec Some detectors created renders compon
                         >
                           <button
                             class="euiButton euiButton--primary"
-                            data-test-subj="loadDataButton"
+                            data-test-subj="createHttpSampleDetectorButton"
                             style="width: 300px;"
                             type="button"
                           >
@@ -1344,6 +1358,7 @@ exports[`<AnomalyDetectionOverview /> spec Some detectors created renders compon
                   >
                     <div
                       class="euiFlexGroup euiFlexGroup--gutterLarge euiFlexGroup--alignItemsCenter euiFlexGroup--directionRow euiFlexGroup--responsive"
+                      data-test-subj="contentPanelTitle"
                     >
                       <div
                         class="euiFlexItem"
@@ -1373,6 +1388,7 @@ exports[`<AnomalyDetectionOverview /> spec Some detectors created renders compon
                           </h2>
                           <button
                             class="euiLink euiLink--primary"
+                            data-test-subj="flyoutInfoButton"
                             style="margin-left: 12px;"
                             type="button"
                           >
@@ -1431,7 +1447,7 @@ exports[`<AnomalyDetectionOverview /> spec Some detectors created renders compon
                         >
                           <button
                             class="euiButton euiButton--primary"
-                            data-test-subj="loadDataButton"
+                            data-test-subj="createECommerceSampleDetectorButton"
                             style="width: 300px;"
                             type="button"
                           >
@@ -1475,6 +1491,7 @@ exports[`<AnomalyDetectionOverview /> spec Some detectors created renders compon
                   >
                     <div
                       class="euiFlexGroup euiFlexGroup--gutterLarge euiFlexGroup--alignItemsCenter euiFlexGroup--directionRow euiFlexGroup--responsive"
+                      data-test-subj="contentPanelTitle"
                     >
                       <div
                         class="euiFlexItem"
@@ -1504,6 +1521,7 @@ exports[`<AnomalyDetectionOverview /> spec Some detectors created renders compon
                           </h2>
                           <button
                             class="euiLink euiLink--primary"
+                            data-test-subj="flyoutInfoButton"
                             style="margin-left: 12px;"
                             type="button"
                           >
@@ -1562,7 +1580,7 @@ exports[`<AnomalyDetectionOverview /> spec Some detectors created renders compon
                         >
                           <button
                             class="euiButton euiButton--primary"
-                            data-test-subj="loadDataButton"
+                            data-test-subj="createHostHealthSampleDetectorButton"
                             style="width: 300px;"
                             type="button"
                           >
@@ -1611,6 +1629,7 @@ exports[`<AnomalyDetectionOverview /> spec Some detectors created renders compon
       >
         <h1
           class="euiTitle euiTitle--large"
+          data-test-subj="overviewTitle"
         >
           Anomaly detection
         </h1>
@@ -1681,6 +1700,7 @@ exports[`<AnomalyDetectionOverview /> spec Some detectors created renders compon
       >
         <h3
           class="euiTitle euiTitle--small"
+          data-test-subj="contentPanelTitle"
         >
           How it works
         </h3>
@@ -1968,6 +1988,7 @@ exports[`<AnomalyDetectionOverview /> spec Some detectors created renders compon
       >
         <h3
           class="euiTitle euiTitle--small"
+          data-test-subj="contentPanelTitle"
         >
           Start with a sample detector to learn about anomaly detection
         </h3>
@@ -2038,6 +2059,7 @@ exports[`<AnomalyDetectionOverview /> spec Some detectors created renders compon
                   >
                     <div
                       class="euiFlexGroup euiFlexGroup--gutterLarge euiFlexGroup--alignItemsCenter euiFlexGroup--directionRow euiFlexGroup--responsive"
+                      data-test-subj="contentPanelTitle"
                     >
                       <div
                         class="euiFlexItem"
@@ -2067,6 +2089,7 @@ exports[`<AnomalyDetectionOverview /> spec Some detectors created renders compon
                           </h2>
                           <button
                             class="euiLink euiLink--primary"
+                            data-test-subj="flyoutInfoButton"
                             style="margin-left: 12px;"
                             type="button"
                           >
@@ -2125,7 +2148,7 @@ exports[`<AnomalyDetectionOverview /> spec Some detectors created renders compon
                         >
                           <button
                             class="euiButton euiButton--primary euiButton-isDisabled"
-                            data-test-subj="loadDataButton"
+                            data-test-subj="createHttpSampleDetectorButton"
                             disabled=""
                             style="width: 300px;"
                             type="button"
@@ -2146,6 +2169,7 @@ exports[`<AnomalyDetectionOverview /> spec Some detectors created renders compon
                         >
                           <a
                             class="euiLink euiLink--primary"
+                            data-test-subj="viewSampleDetectorLink"
                             href="anomaly-detection-dashboards#/detectors/sample-detector-id"
                             rel="noreferrer"
                           >
@@ -2178,6 +2202,7 @@ exports[`<AnomalyDetectionOverview /> spec Some detectors created renders compon
                   >
                     <div
                       class="euiFlexGroup euiFlexGroup--gutterLarge euiFlexGroup--alignItemsCenter euiFlexGroup--directionRow euiFlexGroup--responsive"
+                      data-test-subj="contentPanelTitle"
                     >
                       <div
                         class="euiFlexItem"
@@ -2207,6 +2232,7 @@ exports[`<AnomalyDetectionOverview /> spec Some detectors created renders compon
                           </h2>
                           <button
                             class="euiLink euiLink--primary"
+                            data-test-subj="flyoutInfoButton"
                             style="margin-left: 12px;"
                             type="button"
                           >
@@ -2265,7 +2291,7 @@ exports[`<AnomalyDetectionOverview /> spec Some detectors created renders compon
                         >
                           <button
                             class="euiButton euiButton--primary"
-                            data-test-subj="loadDataButton"
+                            data-test-subj="createECommerceSampleDetectorButton"
                             style="width: 300px;"
                             type="button"
                           >
@@ -2309,6 +2335,7 @@ exports[`<AnomalyDetectionOverview /> spec Some detectors created renders compon
                   >
                     <div
                       class="euiFlexGroup euiFlexGroup--gutterLarge euiFlexGroup--alignItemsCenter euiFlexGroup--directionRow euiFlexGroup--responsive"
+                      data-test-subj="contentPanelTitle"
                     >
                       <div
                         class="euiFlexItem"
@@ -2338,6 +2365,7 @@ exports[`<AnomalyDetectionOverview /> spec Some detectors created renders compon
                           </h2>
                           <button
                             class="euiLink euiLink--primary"
+                            data-test-subj="flyoutInfoButton"
                             style="margin-left: 12px;"
                             type="button"
                           >
@@ -2396,7 +2424,7 @@ exports[`<AnomalyDetectionOverview /> spec Some detectors created renders compon
                         >
                           <button
                             class="euiButton euiButton--primary"
-                            data-test-subj="loadDataButton"
+                            data-test-subj="createHostHealthSampleDetectorButton"
                             style="width: 300px;"
                             type="button"
                           >

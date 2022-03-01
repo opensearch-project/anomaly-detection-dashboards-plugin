@@ -16,6 +16,7 @@ exports[`<DetectorJobs /> spec configuring detector jobs renders the component 1
       >
         <h1
           class="euiTitle euiTitle--large"
+          data-test-subj="detectorJobsTitle"
         >
           Set up detector jobs 
         </h1>
@@ -34,6 +35,7 @@ exports[`<DetectorJobs /> spec configuring detector jobs renders the component 1
         >
           <h3
             class="euiTitle euiTitle--small"
+            data-test-subj="contentPanelTitle"
           >
             Real-time detection
           </h3>
@@ -133,6 +135,7 @@ exports[`<DetectorJobs /> spec configuring detector jobs renders the component 1
         >
           <h3
             class="euiTitle euiTitle--small"
+            data-test-subj="contentPanelTitle"
           >
             Historical analysis detection
           </h3>

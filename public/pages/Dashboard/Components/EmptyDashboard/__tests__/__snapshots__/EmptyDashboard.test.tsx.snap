@@ -3,6 +3,7 @@
 exports[`<EmptyDetector /> spec Empty results renders component with empty message 1`] = `
 <div
   class="euiEmptyPrompt"
+  data-test-subj="emptyDashboardHeader"
 >
   <span
     class="euiTextColor euiTextColor--subdued"

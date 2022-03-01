@@ -10,6 +10,7 @@
  */
 
 import React from 'react';
+import { get } from 'lodash';
 import ContentPanel from '../../../../components/ContentPanel/ContentPanel';
 import {
   EuiButton,
@@ -30,6 +31,7 @@ interface SampleDataBoxProps {
   isLoadingData: boolean;
   isDataLoaded: boolean;
   detectorId: string;
+  buttonDataTestSubj?: string;
 }
 
 export const SampleDataBox = (props: SampleDataBoxProps) => {
@@ -51,6 +53,7 @@ export const SampleDataBox = (props: SampleDataBoxProps) => {
               </h2>
             </EuiTitle>
             <EuiLink
+              data-test-subj="flyoutInfoButton"
               style={{ marginLeft: '12px' }}
               onClick={props.onOpenFlyout}
             >
@@ -85,7 +88,11 @@ export const SampleDataBox = (props: SampleDataBoxProps) => {
             <EuiFlexItem grow={false}>
               <EuiButton
                 style={{ width: '300px' }}
-                data-test-subj="loadDataButton"
+                data-test-subj={get(
+                  props,
+                  'buttonDataTestSubj',
+                  'loadDataButton'
+                )}
                 disabled={props.isLoadingData || props.isDataLoaded}
                 isLoading={props.isLoadingData}
                 onClick={() => {
@@ -101,7 +108,10 @@ export const SampleDataBox = (props: SampleDataBoxProps) => {
             </EuiFlexItem>
             <EuiFlexItem grow={false}>
               {props.isDataLoaded ? (
-                <EuiLink href={`${PLUGIN_NAME}#/detectors/${props.detectorId}`}>
+                <EuiLink
+                  data-test-subj="viewSampleDetectorLink"
+                  href={`${PLUGIN_NAME}#/detectors/${props.detectorId}`}
+                >
                   View detector and sample data
                 </EuiLink>
               ) : null}

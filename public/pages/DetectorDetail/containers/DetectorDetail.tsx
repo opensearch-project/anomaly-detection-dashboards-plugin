@@ -363,7 +363,7 @@ export const DetectorDetail = (props: DetectorDetailProps) => {
             style={{ padding: '10px' }}
           >
             <EuiFlexItem grow={false}>
-              <EuiTitle size="l">
+              <EuiTitle size="l" data-test-subj="detectorNameHeader">
                 {<h1>{detector && detector.name} </h1>}
               </EuiTitle>
             </EuiFlexItem>
@@ -418,6 +418,7 @@ export const DetectorDetail = (props: DetectorDetailProps) => {
                     }}
                     isSelected={tab.id === detectorDetailModel.selectedTab}
                     key={tab.id}
+                    data-test-subj={`${tab.id}Tab`}
                   >
                     {tab.name}
                   </EuiTab>
@@ -454,6 +455,7 @@ export const DetectorDetail = (props: DetectorDetailProps) => {
                 </EuiFlexItem>
                 <EuiFlexItem grow={true}>
                   <EuiFieldText
+                    data-test-subj="typeDeleteField"
                     fullWidth={true}
                     placeholder="delete"
                     onChange={(e) => {

@@ -119,6 +119,7 @@ export const AnomaliesDistributionChart = (
 
   return (
     <ContentPanel
+      titleDataTestSubj="dashboardSunburstChartHeader"
       title="Anomalies by index and detector"
       titleSize="s"
       subTitle={`The inner circle shows anomaly distribution by index. 

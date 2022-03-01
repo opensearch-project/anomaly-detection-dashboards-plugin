@@ -15,6 +15,7 @@ exports[`<Settings /> spec renders the component 1`] = `
       >
         <h3
           class="euiTitle euiTitle--small"
+          data-test-subj="contentPanelTitle"
         >
           Operation settings
         </h3>

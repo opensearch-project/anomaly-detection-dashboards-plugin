@@ -33,6 +33,7 @@ export const EmptyHistoricalDetectorResults = (
     useState<boolean>(false);
   return (
     <EuiEmptyPrompt
+      data-test-subj="emptyHistoricalAnalysisMessage"
       title={<h2>You haven't yet set up historical analysis</h2>}
       body={
         <Fragment>
@@ -62,6 +63,7 @@ export const EmptyHistoricalDetectorResults = (
       }
       actions={
         <EuiButton
+          data-test-subj="runHistoricalAnalysisButton"
           fill={true}
           onClick={() => {
             setHistoricalRangeModalOpen(true);

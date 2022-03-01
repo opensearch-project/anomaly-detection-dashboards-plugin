@@ -16,6 +16,7 @@ exports[`<ReviewAndCreate /> spec renders the component 1`] = `
       >
         <h1
           class="euiTitle euiTitle--large"
+          data-test-subj="reviewAndCreateTitle"
         >
           Review and create 
         </h1>
@@ -34,6 +35,7 @@ exports[`<ReviewAndCreate /> spec renders the component 1`] = `
         >
           <h3
             class="euiTitle euiTitle--small"
+            data-test-subj="detectorSettingsHeader"
           >
             Detector settings
           </h3>
@@ -57,7 +59,7 @@ exports[`<ReviewAndCreate /> spec renders the component 1`] = `
             >
               <button
                 class="euiButton euiButton--primary"
-                data-test-subj="editDetectorButton"
+                data-test-subj="editDetectorSettingsButton"
                 type="button"
               >
                 <span
@@ -119,6 +121,7 @@ exports[`<ReviewAndCreate /> spec renders the component 1`] = `
           >
             <div
               class="euiFlexItem"
+              data-test-subj="detectorNameCell"
             >
               <div
                 class="euiFormRow"
@@ -151,6 +154,7 @@ exports[`<ReviewAndCreate /> spec renders the component 1`] = `
             </div>
             <div
               class="euiFlexItem"
+              data-test-subj="indexNameCell"
             >
               <div
                 class="euiFormRow"
@@ -260,6 +264,7 @@ exports[`<ReviewAndCreate /> spec renders the component 1`] = `
             </div>
             <div
               class="euiFlexItem"
+              data-test-subj="detectorDescriptionCell"
             >
               <div
                 class="euiFormRow"
@@ -292,6 +297,7 @@ exports[`<ReviewAndCreate /> spec renders the component 1`] = `
             </div>
             <div
               class="euiFlexItem"
+              data-test-subj="timestampNameCell"
             >
               <div
                 class="euiFormRow"
@@ -410,6 +416,7 @@ exports[`<ReviewAndCreate /> spec renders the component 1`] = `
         >
           <h3
             class="euiTitle euiTitle--small"
+            data-test-subj="contentPanelTitle"
           >
             Model configuration
           </h3>
@@ -615,6 +622,7 @@ exports[`<ReviewAndCreate /> spec renders the component 1`] = `
                 >
                   <div
                     class="euiFlexGroup euiFlexGroup--gutterLarge euiFlexGroup--alignItemsCenter euiFlexGroup--directionRow euiFlexGroup--responsive"
+                    data-test-subj="contentPanelTitle"
                   >
                     <div
                       class="euiFlexItem"
@@ -665,6 +673,7 @@ exports[`<ReviewAndCreate /> spec renders the component 1`] = `
                 >
                   <div
                     class="euiBasicTable"
+                    data-test-subj="featureTable"
                   >
                     <div>
                       <div
@@ -851,6 +860,7 @@ exports[`<ReviewAndCreate /> spec renders the component 1`] = `
         >
           <h3
             class="euiTitle euiTitle--small"
+            data-test-subj="detectorScheduleHeader"
           >
             Detector schedule
           </h3>

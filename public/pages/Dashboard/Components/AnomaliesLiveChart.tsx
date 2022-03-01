@@ -209,6 +209,7 @@ export const AnomaliesLiveChart = (props: AnomaliesLiveChartProps) => {
       onClick={() => setIsFullScreen((isFullScreen) => !isFullScreen)}
       iconType={isFullScreen ? 'exit' : 'fullScreen'}
       aria-label="View full screen"
+      data-test-subj="dashboardFullScreenButton"
     >
       {isFullScreen ? 'Exit full screen' : 'View full screen'}
     </EuiButton>
@@ -217,7 +218,7 @@ export const AnomaliesLiveChart = (props: AnomaliesLiveChartProps) => {
   return (
     <ContentPanel
       title={
-        <EuiTitle size="s">
+        <EuiTitle size="s" data-test-subj="dashboardLiveAnomaliesHeader">
           <h3>
             Live anomalies{' '}
             <EuiBadge color={hasLatestAnomalyResult ? '#DB1374' : '#DDD'}>

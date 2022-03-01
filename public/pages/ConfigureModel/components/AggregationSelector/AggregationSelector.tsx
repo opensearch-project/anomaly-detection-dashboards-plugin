@@ -87,6 +87,7 @@ export const AggregationSelector = (props: AggregationSelectorProps) => {
             error={getError(field.name, form)}
           >
             <EuiComboBox
+              data-test-subj={`featureFieldTextInput-${props.index}`}
               placeholder="Select field"
               singleSelection={{ asPlainText: true }}
               selectedOptions={field.value}

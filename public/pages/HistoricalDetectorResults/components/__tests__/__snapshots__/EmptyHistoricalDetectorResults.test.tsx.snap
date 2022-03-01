@@ -3,6 +3,7 @@
 exports[`<EmptyHistoricalDetectorResults /> spec renders component 1`] = `
 <div
   class="euiEmptyPrompt"
+  data-test-subj="emptyHistoricalAnalysisMessage"
 >
   <span
     class="euiTextColor euiTextColor--subdued"
@@ -51,6 +52,7 @@ exports[`<EmptyHistoricalDetectorResults /> spec renders component 1`] = `
   />
   <button
     class="euiButton euiButton--primary euiButton--fill"
+    data-test-subj="runHistoricalAnalysisButton"
     type="button"
   >
     <span
