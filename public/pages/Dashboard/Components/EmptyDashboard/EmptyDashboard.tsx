@@ -18,6 +18,7 @@ export class EmptyDashboard extends Component<{}, {}> {
   render() {
     return (
       <EuiEmptyPrompt
+        data-test-subj="emptyDashboardHeader"
         title={<h2>You have no detectors</h2>}
         body={
           <Fragment>

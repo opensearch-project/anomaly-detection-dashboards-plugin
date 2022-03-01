@@ -53,7 +53,7 @@ export const DetectorControls = (props: DetectorControls) => {
           <EuiContextMenuPanel>
             <EuiContextMenuItem
               key="editDetector"
-              data-test-subj="editDetector"
+              data-test-subj="editDetectorSettingsItem"
               onClick={props.onEditDetector}
             >
               Edit detector settings
@@ -61,7 +61,7 @@ export const DetectorControls = (props: DetectorControls) => {
 
             <EuiContextMenuItem
               key="editFeatures"
-              data-test-subj="editFeature"
+              data-test-subj="editModelConfigurationItem"
               onClick={props.onEditFeatures}
             >
               Edit model configuration
@@ -69,7 +69,7 @@ export const DetectorControls = (props: DetectorControls) => {
 
             <EuiContextMenuItem
               key="deleteDetector"
-              data-test-subj="deleteDetector"
+              data-test-subj="deleteDetectorItem"
               onClick={props.onDelete}
               style={{ color: '#FF6666' }}
             >

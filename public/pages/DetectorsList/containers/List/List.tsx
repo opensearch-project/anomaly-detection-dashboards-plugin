@@ -633,6 +633,7 @@ export const DetectorList = (props: ListProps) => {
               ? getTitleWithCount('Detectors', '...')
               : getTitleWithCount('Detectors', selectedDetectors.length)
           }
+          titleDataTestSubj="detectorListHeader"
           actions={[
             <ListActions
               onStartDetectors={handleStartDetectorsAction}
@@ -643,7 +644,7 @@ export const DetectorList = (props: ListProps) => {
               isStopDisabled={listActionsState.isStopDisabled}
             />,
             <EuiButton
-              data-test-subj="addDetector"
+              data-test-subj="createDetectorButton"
               fill
               href={`${PLUGIN_NAME}#${APP_PATH.CREATE_DETECTOR}`}
             >
@@ -673,6 +674,7 @@ export const DetectorList = (props: ListProps) => {
           />
           <EuiSpacer size="m" />
           <EuiBasicTable<any>
+            data-test-subj="detectorListTable"
             items={isLoading ? [] : detectorsToDisplay}
             /*
               itemId here is used to keep track of the selected detectors and render appropriately.

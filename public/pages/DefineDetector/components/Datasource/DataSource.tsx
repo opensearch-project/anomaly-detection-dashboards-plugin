@@ -117,6 +117,7 @@ export function DataSource(props: DataSourceProps) {
               helpText="You can use a wildcard (*) in your index pattern."
             >
               <EuiComboBox
+                data-test-subj="indicesFilter"
                 id="index"
                 placeholder="Find indices"
                 async

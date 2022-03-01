@@ -15,6 +15,7 @@ exports[`<HistoricalJob /> spec renders the component 1`] = `
       >
         <h3
           class="euiTitle euiTitle--small"
+          data-test-subj="contentPanelTitle"
         >
           Historical analysis detection
         </h3>

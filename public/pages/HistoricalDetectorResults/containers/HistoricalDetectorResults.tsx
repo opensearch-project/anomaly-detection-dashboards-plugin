@@ -195,7 +195,7 @@ export function HistoricalDetectorResults(
               ) : null}
               <EuiFlexGroup direction="column">
                 <EuiFlexItem>
-                  <EuiTitle size="m">
+                  <EuiTitle size="m" data-test-subj="historicalAnalysisTitle">
                     <div>
                       {'Historical analysis'}&nbsp;
                       {getDetectorStateDetails(
@@ -219,6 +219,7 @@ export function HistoricalDetectorResults(
                   </EuiFlexItem>
                   <EuiFlexItem grow={false} style={{ marginTop: '0px' }}>
                     <EuiButtonEmpty
+                      data-test-subj="modifyHistoricalAnalysisButton"
                       iconType="gear"
                       iconSide="left"
                       size="xs"

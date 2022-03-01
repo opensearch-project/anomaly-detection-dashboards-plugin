@@ -16,6 +16,7 @@ exports[`<DefineDetector /> spec creating detector definition renders the compon
       >
         <h1
           class="euiTitle euiTitle--large"
+          data-test-subj="defineOrEditDetectorTitle"
         >
           Define detector
            
@@ -35,6 +36,7 @@ exports[`<DefineDetector /> spec creating detector definition renders the compon
         >
           <h3
             class="euiTitle euiTitle--small"
+            data-test-subj="contentPanelTitle"
           >
             Detector details
           </h3>
@@ -108,6 +110,7 @@ exports[`<DefineDetector /> spec creating detector definition renders the compon
                   <input
                     aria-describedby="random_html_id-help"
                     class="euiFieldText"
+                    data-test-subj="detectorNameTextInput"
                     id="random_html_id"
                     name="name"
                     placeholder="Enter detector name"
@@ -164,6 +167,7 @@ exports[`<DefineDetector /> spec creating detector definition renders the compon
             >
               <textarea
                 class="euiTextArea euiTextArea--resizeVertical"
+                data-test-subj="detectorDescriptionTextInput"
                 id="random_html_id"
                 name="description"
                 placeholder="Describe the detector"
@@ -190,6 +194,7 @@ exports[`<DefineDetector /> spec creating detector definition renders the compon
         >
           <h3
             class="euiTitle euiTitle--small"
+            data-test-subj="contentPanelTitle"
           >
             Data Source
           </h3>
@@ -259,6 +264,7 @@ exports[`<DefineDetector /> spec creating detector definition renders the compon
                 aria-expanded="false"
                 aria-haspopup="listbox"
                 class="euiComboBox"
+                data-test-subj="indicesFilter"
                 role="combobox"
               >
                 <div
@@ -427,6 +433,7 @@ exports[`<DefineDetector /> spec creating detector definition renders the compon
         >
           <h3
             class="euiTitle euiTitle--small"
+            data-test-subj="contentPanelTitle"
           >
             Timestamp
           </h3>
@@ -497,6 +504,7 @@ exports[`<DefineDetector /> spec creating detector definition renders the compon
                 aria-expanded="false"
                 aria-haspopup="listbox"
                 class="euiComboBox"
+                data-test-subj="timestampFilter"
                 role="combobox"
               >
                 <div
@@ -577,6 +585,7 @@ exports[`<DefineDetector /> spec creating detector definition renders the compon
         >
           <h3
             class="euiTitle euiTitle--small"
+            data-test-subj="contentPanelTitle"
           >
             Operation settings
           </h3>
@@ -826,6 +835,7 @@ exports[`<DefineDetector /> spec creating detector definition renders the compon
         >
           <div
             class="euiFlexGroup euiFlexGroup--gutterLarge euiFlexGroup--alignItemsCenter euiFlexGroup--directionRow euiFlexGroup--responsive"
+            data-test-subj="contentPanelTitle"
           >
             <div
               class="euiFlexItem"
@@ -941,6 +951,7 @@ exports[`<DefineDetector /> spec editing detector definition renders the compone
       >
         <h1
           class="euiTitle euiTitle--large"
+          data-test-subj="defineOrEditDetectorTitle"
         >
           Edit detector settings
            
@@ -960,6 +971,7 @@ exports[`<DefineDetector /> spec editing detector definition renders the compone
         >
           <h3
             class="euiTitle euiTitle--small"
+            data-test-subj="contentPanelTitle"
           >
             Detector details
           </h3>
@@ -1033,6 +1045,7 @@ exports[`<DefineDetector /> spec editing detector definition renders the compone
                   <input
                     aria-describedby="random_html_id-help"
                     class="euiFieldText"
+                    data-test-subj="detectorNameTextInput"
                     id="random_html_id"
                     name="name"
                     placeholder="Enter detector name"
@@ -1089,6 +1102,7 @@ exports[`<DefineDetector /> spec editing detector definition renders the compone
             >
               <textarea
                 class="euiTextArea euiTextArea--resizeVertical"
+                data-test-subj="detectorDescriptionTextInput"
                 id="random_html_id"
                 name="description"
                 placeholder="Describe the detector"
@@ -1115,6 +1129,7 @@ exports[`<DefineDetector /> spec editing detector definition renders the compone
         >
           <h3
             class="euiTitle euiTitle--small"
+            data-test-subj="contentPanelTitle"
           >
             Data Source
           </h3>
@@ -1212,6 +1227,7 @@ exports[`<DefineDetector /> spec editing detector definition renders the compone
                 aria-expanded="false"
                 aria-haspopup="listbox"
                 class="euiComboBox"
+                data-test-subj="indicesFilter"
                 role="combobox"
               >
                 <div
@@ -1390,6 +1406,7 @@ exports[`<DefineDetector /> spec editing detector definition renders the compone
         >
           <h3
             class="euiTitle euiTitle--small"
+            data-test-subj="contentPanelTitle"
           >
             Timestamp
           </h3>
@@ -1460,6 +1477,7 @@ exports[`<DefineDetector /> spec editing detector definition renders the compone
                 aria-expanded="false"
                 aria-haspopup="listbox"
                 class="euiComboBox"
+                data-test-subj="timestampFilter"
                 role="combobox"
               >
                 <div
@@ -1545,6 +1563,7 @@ exports[`<DefineDetector /> spec editing detector definition renders the compone
         >
           <h3
             class="euiTitle euiTitle--small"
+            data-test-subj="contentPanelTitle"
           >
             Operation settings
           </h3>
@@ -1802,6 +1821,7 @@ exports[`<DefineDetector /> spec editing detector definition renders the compone
         >
           <div
             class="euiFlexGroup euiFlexGroup--gutterLarge euiFlexGroup--alignItemsCenter euiFlexGroup--directionRow euiFlexGroup--responsive"
+            data-test-subj="contentPanelTitle"
           >
             <div
               class="euiFlexItem"

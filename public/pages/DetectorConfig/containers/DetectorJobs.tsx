@@ -29,6 +29,7 @@ export const DetectorJobs = (props: DetectorJobsProps) => {
   return (
     <ContentPanel
       title="Detector jobs"
+      titleDataTestSubj="detectorJobsHeader"
       titleSize="s"
       panelStyles={{ margin: '0px' }}
       actions={[]}

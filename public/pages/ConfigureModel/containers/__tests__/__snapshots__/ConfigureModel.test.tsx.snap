@@ -16,6 +16,7 @@ exports[`<ConfigureModel /> spec creating model configuration renders the compon
       >
         <h1
           class="euiTitle euiTitle--large"
+          data-test-subj="configureOrEditModelConfigurationTitle"
         >
           Configure model
            
@@ -65,6 +66,7 @@ exports[`<ConfigureModel /> spec creating model configuration renders the compon
         >
           <h3
             class="euiTitle euiTitle--small"
+            data-test-subj="contentPanelTitle"
           >
             Features
           </h3>
@@ -229,6 +231,7 @@ exports[`<ConfigureModel /> spec creating model configuration renders the compon
                             <input
                               aria-describedby="random_html_id-help"
                               class="euiFieldText"
+                              data-test-subj="featureNameTextInput-0"
                               id="random_html_id"
                               name="featureList.0.featureName"
                               placeholder="Enter feature name"
@@ -455,6 +458,7 @@ exports[`<ConfigureModel /> spec creating model configuration renders the compon
                           aria-expanded="false"
                           aria-haspopup="listbox"
                           class="euiComboBox"
+                          data-test-subj="featureFieldTextInput-0"
                           name="featureList.0.aggregationOf"
                           role="combobox"
                         >
@@ -576,6 +580,7 @@ exports[`<ConfigureModel /> spec creating model configuration renders the compon
         >
           <div
             class="euiFlexGroup euiFlexGroup--gutterLarge euiFlexGroup--alignItemsCenter euiFlexGroup--directionRow euiFlexGroup--responsive"
+            data-test-subj="contentPanelTitle"
           >
             <div
               class="euiFlexItem"
@@ -715,6 +720,7 @@ exports[`<ConfigureModel /> spec creating model configuration renders the compon
         >
           <div
             class="euiFlexGroup euiFlexGroup--gutterLarge euiFlexGroup--alignItemsCenter euiFlexGroup--directionRow euiFlexGroup--responsive"
+            data-test-subj="contentPanelTitle"
           >
             <div
               class="euiFlexItem"
@@ -780,6 +786,7 @@ exports[`<ConfigureModel /> spec creating model configuration renders the compon
         >
           <h3
             class="euiTitle euiTitle--small"
+            data-test-subj="contentPanelTitle"
           >
             Sample anomalies
           </h3>
@@ -919,6 +926,7 @@ exports[`<ConfigureModel /> spec editing model configuration renders the compone
       >
         <h1
           class="euiTitle euiTitle--large"
+          data-test-subj="configureOrEditModelConfigurationTitle"
         >
           Edit model configuration
            
@@ -972,6 +980,7 @@ exports[`<ConfigureModel /> spec editing model configuration renders the compone
         >
           <h3
             class="euiTitle euiTitle--small"
+            data-test-subj="contentPanelTitle"
           >
             Features
           </h3>
@@ -1145,6 +1154,7 @@ exports[`<ConfigureModel /> spec editing model configuration renders the compone
                             <input
                               aria-describedby="random_html_id-help"
                               class="euiFieldText"
+                              data-test-subj="featureNameTextInput-0"
                               id="random_html_id"
                               name="featureList.0.featureName"
                               placeholder="Enter feature name"
@@ -1381,6 +1391,7 @@ exports[`<ConfigureModel /> spec editing model configuration renders the compone
                           aria-expanded="false"
                           aria-haspopup="listbox"
                           class="euiComboBox"
+                          data-test-subj="featureFieldTextInput-0"
                           name="featureList.0.aggregationOf"
                           role="combobox"
                         >
@@ -1507,6 +1518,7 @@ exports[`<ConfigureModel /> spec editing model configuration renders the compone
         >
           <div
             class="euiFlexGroup euiFlexGroup--gutterLarge euiFlexGroup--alignItemsCenter euiFlexGroup--directionRow euiFlexGroup--responsive"
+            data-test-subj="contentPanelTitle"
           >
             <div
               class="euiFlexItem"
@@ -1682,6 +1694,7 @@ exports[`<ConfigureModel /> spec editing model configuration renders the compone
         >
           <div
             class="euiFlexGroup euiFlexGroup--gutterLarge euiFlexGroup--alignItemsCenter euiFlexGroup--directionRow euiFlexGroup--responsive"
+            data-test-subj="contentPanelTitle"
           >
             <div
               class="euiFlexItem"

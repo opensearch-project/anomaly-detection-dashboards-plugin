@@ -54,7 +54,7 @@ export const ConfirmStopDetectorsModal = (
 
   return (
     <EuiOverlayMask>
-      <EuiModal onClose={props.onHide}>
+      <EuiModal data-test-subj="stopDetectorsModal" onClose={props.onHide}>
         <EuiModalHeader>
           <EuiModalHeaderTitle>
             {'Are you sure you want to stop the selected detectors?'}&nbsp;
