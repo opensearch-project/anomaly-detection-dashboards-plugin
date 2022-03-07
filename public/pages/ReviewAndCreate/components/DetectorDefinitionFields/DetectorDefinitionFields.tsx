@@ -28,7 +28,7 @@ import {
 import { FilterDisplayList } from '../FilterDisplayList';
 import { ConfigCell, FixedWidthRow } from '../../../../components/ConfigCell';
 import { toStringConfigCell } from '../../utils/helpers';
-
+import { isEqual } from 'lodash';
 interface DetectorDefinitionFieldsProps {
   detector: Detector;
   onEditDetectorDefinition(): void;
@@ -94,19 +94,36 @@ export const DetectorDefinitionFields = (
         !props.validDetectorSettings &&
         props.validationResponse.hasOwnProperty('message')
       ) {
-        return (
-          <EuiCallOut
-            title="Issues found in the detector settings"
-            color="danger"
-            iconType="alert"
-            size="s"
-            style={{ marginBottom: '10px' }}
-          >
-            <ul>
-              <li>{props.validationResponse.message}</li>
-            </ul>
-          </EuiCallOut>
-        );
+        if (isEqual(props.validationResponse.validationType, 'model')) {
+          return (
+            <EuiCallOut
+              title="We identified some areas that might improve your model"
+              color="warning"
+              iconType="iInCircle"
+              size="s"
+              style={{ marginBottom: '10px' }}
+            >
+              {JSON.stringify(props.validationResponse.message).replace(
+                /\"/g,
+                ''
+              )}
+            </EuiCallOut>
+          );
+        } else {
+          return (
+            <EuiCallOut
+              title="Issues found in the detector settings"
+              color="danger"
+              iconType="alert"
+              size="s"
+              style={{ marginBottom: '10px' }}
+            >
+              <ul>
+                <li>{props.validationResponse.message}</li>
+              </ul>
+            </EuiCallOut>
+          );
+        }
       } else {
         return null;
       }

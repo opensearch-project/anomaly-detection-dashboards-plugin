@@ -95,7 +95,10 @@ export function registerADRoutes(apiRouter: Router, adService: AdService) {
     '/detectors/{detectorId}/_topAnomalies/{isHistorical}',
     adService.getTopAnomalyResults
   );
-  apiRouter.post('/detectors/_validate', adService.validateDetector);
+  apiRouter.post(
+    '/detectors/_validate/{validationType}',
+    adService.validateDetector
+  );
 }
 
 export default class AdService {
@@ -230,6 +233,11 @@ export default class AdService {
     opensearchDashboardsResponse: OpenSearchDashboardsResponseFactory
   ): Promise<IOpenSearchDashboardsResponse<any>> => {
     try {
+      console.log('request.params: ' + request.params);
+      let { validationType } = request.params as {
+        validationType: string;
+      };
+      console.log('params: ' + validationType);
       const requestBody = JSON.stringify(
         convertPreviewInputKeysToSnakeCase(request.body)
       );
@@ -237,6 +245,7 @@ export default class AdService {
         .asScoped(request)
         .callAsCurrentUser('ad.validateDetector', {
           body: requestBody,
+          validationType: validationType,
         });
       return opensearchDashboardsResponse.ok({
         body: {

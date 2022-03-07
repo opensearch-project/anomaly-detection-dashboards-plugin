@@ -30,7 +30,7 @@ import {
   validateDetector,
 } from '../../../redux/reducers/ad';
 import { Formik, FormikHelpers } from 'formik';
-import { get } from 'lodash';
+import { get, isEmpty } from 'lodash';
 import React, { Fragment, useEffect, useState } from 'react';
 import { RouteComponentProps } from 'react-router';
 import { useDispatch, useSelector } from 'react-redux';
@@ -54,7 +54,6 @@ import {
   ValidationSettingResponse,
   VALIDATION_ISSUE_TYPES,
 } from '../../../models/interfaces';
-import { isEmpty } from 'lodash';
 
 interface ReviewAndCreateProps extends RouteComponentProps {
   setStep(stepNumber: number): void;
@@ -92,28 +91,45 @@ export function ReviewAndCreate(props: ReviewAndCreateProps) {
   // meaning validation has passed and succesful callout will display or validation has failed
   // and callouts displaying what the issue is will be displayed instead.
   useEffect(() => {
-    dispatch(validateDetector(formikToDetector(props.values)))
+    dispatch(validateDetector(formikToDetector(props.values), 'model'))
       .then((resp: any) => {
         if (isEmpty(Object.keys(resp.response))) {
           setValidDetectorSettings(true);
           setValidModelConfigurations(true);
         } else {
-          if (resp.response.hasOwnProperty('detector')) {
-            const issueType = Object.keys(resp.response.detector)[0];
-            if (resp.response.detector[issueType].hasOwnProperty('message')) {
+          if (
+            resp.response.hasOwnProperty('detector') ||
+            resp.response.hasOwnProperty('model')
+          ) {
+            const validationType = Object.keys(resp.response)[0];
+            const issueType = Object.keys(resp.response[validationType])[0];
+            if (
+              resp.response[validationType][issueType].hasOwnProperty('message')
+            ) {
               const validationMessage =
-                resp.response.detector[issueType].message;
+                resp.response[validationType][issueType].message;
               const detectorSettingIssue: ValidationSettingResponse = {
                 issueType: issueType,
                 message: validationMessage,
+                validationType: validationType,
               };
+
+              // Potentially remove warning toast in these cases
+              if (issueType == 'aggregation' || issueType == 'timeout') {
+                setValidDetectorSettings(true);
+                setValidModelConfigurations(true);
+                return;
+              }
+
               switch (issueType) {
+                // need to handle model validation issue case seperatly
                 case VALIDATION_ISSUE_TYPES.FEATURE_ATTRIBUTES:
                 case VALIDATION_ISSUE_TYPES.CATEGORY:
                 case VALIDATION_ISSUE_TYPES.SHINGLE_SIZE_FIELD:
-                  const modelResp = resp.response.detector[
+                  const modelResp = resp.response[validationType][
                     issueType
                   ] as ValidationModelResponse;
+                  modelResp.validationType = validationType;
                   setFeatureResponse(modelResp);
                   setValidDetectorSettings(true);
                   setValidModelConfigurations(false);
@@ -313,7 +329,6 @@ export function ReviewAndCreate(props: ReviewAndCreateProps) {
                 iconType="arrowLeft"
                 fill={false}
                 data-test-subj="reviewAndCreatePreviousButton"
-                //@ts-ignore
                 onClick={() => {
                   props.setStep(3);
                 }}

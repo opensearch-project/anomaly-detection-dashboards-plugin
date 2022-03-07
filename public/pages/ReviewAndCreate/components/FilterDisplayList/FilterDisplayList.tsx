@@ -27,7 +27,7 @@ export const FilterDisplayList = (props: FilterDisplayListProps) => {
   let filters = get(props, 'uiMetadata.filters', []);
   const oldFilterType = get(props, 'uiMetadata.filterType', undefined);
 
-  // We want to show the custom filter if filters is empty and 
+  // We want to show the custom filter if filters is empty and
   // props.filterQuery isn't empty.
   // Two possible situations for the if branch:
   // First, old detectors with custom filters will have no filter list, but
