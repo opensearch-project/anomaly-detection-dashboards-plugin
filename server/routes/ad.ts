@@ -233,11 +233,9 @@ export default class AdService {
     opensearchDashboardsResponse: OpenSearchDashboardsResponseFactory
   ): Promise<IOpenSearchDashboardsResponse<any>> => {
     try {
-      console.log('request.params: ' + request.params);
       let { validationType } = request.params as {
         validationType: string;
       };
-      console.log('params: ' + validationType);
       const requestBody = JSON.stringify(
         convertPreviewInputKeysToSnakeCase(request.body)
       );
