@@ -253,7 +253,12 @@ export const ModelConfigurationFields = (
       !props.validModel &&
       props.validationFeatureResponse.hasOwnProperty('message')
     ) {
-      if (isEqual(props.validationFeatureResponse.validationType, 'model')) {
+      if (
+        isEqual(
+          get(props, 'validationFeatureResponse.validationType', ''),
+          'model'
+        )
+      ) {
         return (
           <EuiCallOut
             title="We identified some areas that might improve your model"
@@ -271,7 +276,7 @@ export const ModelConfigurationFields = (
       } else {
         return (
           <EuiCallOut
-            title="issues found in the model configuration"
+            title="Issues found in the model configuration"
             color="danger"
             iconType="alert"
             size="s"

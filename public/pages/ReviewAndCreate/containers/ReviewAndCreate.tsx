@@ -20,7 +20,6 @@ import {
   EuiTitle,
   EuiButtonEmpty,
   EuiSpacer,
-  EuiCallOut,
 } from '@elastic/eui';
 import {
   createDetector,
@@ -93,6 +92,7 @@ export function ReviewAndCreate(props: ReviewAndCreateProps) {
   useEffect(() => {
     dispatch(validateDetector(formikToDetector(props.values), 'model'))
       .then((resp: any) => {
+        console.log('resp: ' + JSON.stringify(resp));
         if (isEmpty(Object.keys(resp.response))) {
           setValidDetectorSettings(true);
           setValidModelConfigurations(true);
@@ -114,7 +114,11 @@ export function ReviewAndCreate(props: ReviewAndCreateProps) {
                 validationType: validationType,
               };
 
-              // Potentially remove warning toast in these cases
+              // These issue types only come up during non-blocker validation after blocker validation has passed
+              // This means that the configurations don't have any blocking issues but request either timed out during
+              // non blocking validation or due to an issue in core. This means we aren't able to provide any recommendation
+              // and user has no way of re-trying except re-rendering page which isn't straightforward. At the moment we will
+              // hide these failures instead of explaining both levels of validation being done in the backend.
               if (issueType == 'aggregation' || issueType == 'timeout') {
                 setValidDetectorSettings(true);
                 setValidModelConfigurations(true);

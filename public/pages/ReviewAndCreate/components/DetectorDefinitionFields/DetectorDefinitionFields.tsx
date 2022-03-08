@@ -20,7 +20,7 @@ import {
   EuiText,
 } from '@elastic/eui';
 import React from 'react';
-import { get } from 'lodash';
+import { get, isEqual } from 'lodash';
 import {
   Detector,
   ValidationSettingResponse,
@@ -28,7 +28,6 @@ import {
 import { FilterDisplayList } from '../FilterDisplayList';
 import { ConfigCell, FixedWidthRow } from '../../../../components/ConfigCell';
 import { toStringConfigCell } from '../../utils/helpers';
-import { isEqual } from 'lodash';
 interface DetectorDefinitionFieldsProps {
   detector: Detector;
   onEditDetectorDefinition(): void;
@@ -94,7 +93,9 @@ export const DetectorDefinitionFields = (
         !props.validDetectorSettings &&
         props.validationResponse.hasOwnProperty('message')
       ) {
-        if (isEqual(props.validationResponse.validationType, 'model')) {
+        if (
+          isEqual(get(props, 'validationResponse.validationType', ''), 'model')
+        ) {
           return (
             <EuiCallOut
               title="We identified some areas that might improve your model"
