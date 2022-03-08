@@ -92,7 +92,6 @@ export function ReviewAndCreate(props: ReviewAndCreateProps) {
   useEffect(() => {
     dispatch(validateDetector(formikToDetector(props.values), 'model'))
       .then((resp: any) => {
-        console.log('resp: ' + JSON.stringify(resp));
         if (isEmpty(Object.keys(resp.response))) {
           setValidDetectorSettings(true);
           setValidModelConfigurations(true);
