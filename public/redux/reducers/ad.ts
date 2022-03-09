@@ -377,10 +377,13 @@ export const createDetector = (requestBody: Detector): APIAction => ({
     }),
 });
 
-export const validateDetector = (requestBody: Detector): APIAction => ({
+export const validateDetector = (
+  requestBody: Detector,
+  validationType: string
+): APIAction => ({
   type: VALIDATE_DETECTOR,
   request: (client: HttpSetup) =>
-    client.post(`..${AD_NODE_API.DETECTOR}/_validate`, {
+    client.post(`..${AD_NODE_API.DETECTOR}/_validate/${validationType}`, {
       body: JSON.stringify(requestBody),
     }),
 });

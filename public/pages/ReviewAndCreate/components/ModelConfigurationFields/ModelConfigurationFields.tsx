@@ -26,7 +26,7 @@ import {
   FeatureAttributes,
   ValidationModelResponse,
 } from '../../../../models/interfaces';
-import { get, sortBy } from 'lodash';
+import { get, sortBy, isEqual } from 'lodash';
 import ContentPanel from '../../../../components/ContentPanel/ContentPanel';
 import { CodeModal } from '../../../../components/CodeModal/CodeModal';
 import { AdditionalSettings } from '../AdditionalSettings/AdditionalSettings';
@@ -253,26 +253,50 @@ export const ModelConfigurationFields = (
       !props.validModel &&
       props.validationFeatureResponse.hasOwnProperty('message')
     ) {
-      return (
-        <EuiCallOut
-          title="issues found in the model configuration"
-          color="danger"
-          iconType="alert"
-          size="s"
-          style={{ marginBottom: '10px' }}
-        >
-          {/* Callout can either display feature subissue which related to a specific 
-          feature issue or display a feature_attribute issue that is general like
-          more then x anomaly feature or dulicate feature names */}
-          {props.validationFeatureResponse.hasOwnProperty('sub_issues') ? (
-            getFeatureValidationCallout(props.validationFeatureResponse)
-          ) : (
-            <ul>
-              <li>{JSON.stringify(props.validationFeatureResponse.message)}</li>
-            </ul>
-          )}
-        </EuiCallOut>
-      );
+      if (
+        isEqual(
+          get(props, 'validationFeatureResponse.validationType', ''),
+          'model'
+        )
+      ) {
+        return (
+          <EuiCallOut
+            title="We identified some areas that might improve your model"
+            color="warning"
+            iconType="iInCircle"
+            size="s"
+            style={{ marginBottom: '10px' }}
+          >
+            {JSON.stringify(props.validationFeatureResponse.message).replace(
+              /\"/g,
+              ''
+            )}
+          </EuiCallOut>
+        );
+      } else {
+        return (
+          <EuiCallOut
+            title="Issues found in the model configuration"
+            color="danger"
+            iconType="alert"
+            size="s"
+            style={{ marginBottom: '10px' }}
+          >
+            {/* Callout can either display feature subissue which related to a specific 
+            feature issue or display a feature_attribute issue that is general like
+            more then x anomaly feature or dulicate feature names */}
+            {props.validationFeatureResponse.hasOwnProperty('sub_issues') ? (
+              getFeatureValidationCallout(props.validationFeatureResponse)
+            ) : (
+              <ul>
+                <li>
+                  {JSON.stringify(props.validationFeatureResponse.message)}
+                </li>
+              </ul>
+            )}
+          </EuiCallOut>
+        );
+      }
     } else {
       return null;
     }

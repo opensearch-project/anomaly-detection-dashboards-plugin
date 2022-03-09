@@ -231,9 +231,11 @@ export type EntityOptionsMap = {
 export type ValidationModelResponse = {
   message: String;
   sub_issues?: { [key: string]: string };
+  validationType: string;
 };
 
 export interface ValidationSettingResponse {
   issueType: string;
   message: string;
+  validationType: string;
 }
