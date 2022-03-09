@@ -12,7 +12,6 @@
 import { FILTER_TYPES, UIFilter } from '../../../models/interfaces';
 import { OPERATORS_MAP } from '../../DefineDetector/components/DataFilterList/utils/constant';
 import { DetectorDefinitionFormikValues } from '../../DefineDetector/models/interfaces';
-
 export const EMPTY_UI_FILTER: UIFilter = {
   filterType: FILTER_TYPES.SIMPLE,
   fieldInfo: [],
