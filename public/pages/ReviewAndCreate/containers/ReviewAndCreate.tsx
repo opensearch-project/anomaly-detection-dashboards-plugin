@@ -20,7 +20,6 @@ import {
   EuiTitle,
   EuiButtonEmpty,
   EuiSpacer,
-  EuiCallOut,
 } from '@elastic/eui';
 import {
   createDetector,
@@ -30,7 +29,7 @@ import {
   validateDetector,
 } from '../../../redux/reducers/ad';
 import { Formik, FormikHelpers } from 'formik';
-import { get } from 'lodash';
+import { get, isEmpty } from 'lodash';
 import React, { Fragment, useEffect, useState } from 'react';
 import { RouteComponentProps } from 'react-router';
 import { useDispatch, useSelector } from 'react-redux';
@@ -54,7 +53,6 @@ import {
   ValidationSettingResponse,
   VALIDATION_ISSUE_TYPES,
 } from '../../../models/interfaces';
-import { isEmpty } from 'lodash';
 
 interface ReviewAndCreateProps extends RouteComponentProps {
   setStep(stepNumber: number): void;
@@ -92,28 +90,49 @@ export function ReviewAndCreate(props: ReviewAndCreateProps) {
   // meaning validation has passed and succesful callout will display or validation has failed
   // and callouts displaying what the issue is will be displayed instead.
   useEffect(() => {
-    dispatch(validateDetector(formikToDetector(props.values)))
+    dispatch(validateDetector(formikToDetector(props.values), 'model'))
       .then((resp: any) => {
         if (isEmpty(Object.keys(resp.response))) {
           setValidDetectorSettings(true);
           setValidModelConfigurations(true);
         } else {
-          if (resp.response.hasOwnProperty('detector')) {
-            const issueType = Object.keys(resp.response.detector)[0];
-            if (resp.response.detector[issueType].hasOwnProperty('message')) {
+          if (
+            resp.response.hasOwnProperty('detector') ||
+            resp.response.hasOwnProperty('model')
+          ) {
+            const validationType = Object.keys(resp.response)[0];
+            const issueType = Object.keys(resp.response[validationType])[0];
+            if (
+              resp.response[validationType][issueType].hasOwnProperty('message')
+            ) {
               const validationMessage =
-                resp.response.detector[issueType].message;
+                resp.response[validationType][issueType].message;
               const detectorSettingIssue: ValidationSettingResponse = {
                 issueType: issueType,
                 message: validationMessage,
+                validationType: validationType,
               };
+
+              // These issue types only come up during non-blocker validation after blocker validation has passed
+              // This means that the configurations don't have any blocking issues but request either timed out during
+              // non blocking validation or due to an issue in core. This means we aren't able to provide any recommendation
+              // and user has no way of re-trying except re-rendering page which isn't straightforward. At the moment we will
+              // hide these failures instead of explaining both levels of validation being done in the backend.
+              if (issueType == 'aggregation' || issueType == 'timeout') {
+                setValidDetectorSettings(true);
+                setValidModelConfigurations(true);
+                return;
+              }
+
               switch (issueType) {
+                // need to handle model validation issue case seperatly
                 case VALIDATION_ISSUE_TYPES.FEATURE_ATTRIBUTES:
                 case VALIDATION_ISSUE_TYPES.CATEGORY:
                 case VALIDATION_ISSUE_TYPES.SHINGLE_SIZE_FIELD:
-                  const modelResp = resp.response.detector[
+                  const modelResp = resp.response[validationType][
                     issueType
                   ] as ValidationModelResponse;
+                  modelResp.validationType = validationType;
                   setFeatureResponse(modelResp);
                   setValidDetectorSettings(true);
                   setValidModelConfigurations(false);
@@ -313,7 +332,6 @@ export function ReviewAndCreate(props: ReviewAndCreateProps) {
                 iconType="arrowLeft"
                 fill={false}
                 data-test-subj="reviewAndCreatePreviousButton"
-                //@ts-ignore
                 onClick={() => {
                   props.setStep(3);
                 }}
