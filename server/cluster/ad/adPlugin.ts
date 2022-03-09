@@ -45,7 +45,13 @@ export default function adPlugin(Client: any, config: any, components: any) {
   });
   ad.validateDetector = ca({
     url: {
-      fmt: `${API.DETECTOR_BASE}/_validate`,
+      fmt: `${API.DETECTOR_BASE}/_validate/<%=validationType%>`,
+      req: {
+        validationType: {
+          type: 'string',
+          required: true,
+        },
+      },
     },
     needBody: true,
     method: 'POST',
