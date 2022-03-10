@@ -2,10 +2,6 @@
 
 Compatible with OpenSearch Dashboards 1.3.0
 
-* Enable codecov in repository UT workflow ([#159](https://github.com/opensearch-project/anomaly-detection-dashboards-plugin/pull/159))
-* add auto backport workflow ([#172](https://github.com/opensearch-project/anomaly-detection-dashboards-plugin/pull/172))
-* Updating backport workflow to include custom branch name ([#173](https://github.com/opensearch-project/anomaly-detection-dashboards-plugin/pull/173))
-
 ### Features
 
 * Non blocker ([#202](https://github.com/opensearch-project/anomaly-detection-dashboards-plugin/pull/202))
