@@ -1,0 +1,26 @@
+# Default all changes to backporting to 1.x branch
+backport 1.x:
+- '*'
+- '*/*'
+- '*/**/*'
+- '*/**/**/*'
+- '*/**/**/**/*'
+- '*/**/**/**/**/*'
+- '*/**/**/**/**/**/*'
+- '*/**/**/**/**/**/**/*'
+- '*/**/**/**/**/**/**/**/*'
+- '*/**/**/**/**/**/**/**/**/*'
+- '.github/**/*'
+
+# Adding "github actions" label to files in .github or its subdirectories
+github actions:
+- '.github/**/*'
+
+# Adding "documentation" label to markdown files or updating release notes
+documentation:
+- '*.md'
+- 'release-notes/*'
+
+# Adding a "dependencies" label when yarn.lock is updated
+dependencies:
+- 'yarn.lock'
