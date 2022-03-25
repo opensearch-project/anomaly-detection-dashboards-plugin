@@ -72,7 +72,7 @@ jobs:
         with:
           path: opensearch-dashboards-functional-test
           repository: opensearch-project/opensearch-dashboards-functional-test
-          ref: 'main' # TODO: change to a branch when the branching strategy in that repo has been established
+          ref: ${{ env.OPENSEARCH_DASHBOARDS_VERSION }}
       - name: Get Cypress version
         id: cypress_version
         run: |
