@@ -10,7 +10,7 @@
  */
 
 import React from 'react';
-import { render, fireEvent, wait } from '@testing-library/react';
+import { render, fireEvent, waitFor } from '@testing-library/react';
 import { ConfirmStopDetectorsModal } from '../ConfirmStopDetectorsModal';
 import { DetectorListItem, Monitor } from '../../../../../models/interfaces';
 
@@ -72,16 +72,15 @@ describe('<ConfirmStopDetectorsModal /> spec', () => {
         <ConfirmStopDetectorsModal {...defaultStopProps} />
       );
       fireEvent.click(getByTestId('confirmButton'));
-      await wait();
-      expect(defaultStopProps.onStopDetectors).toHaveBeenCalled();
+      await waitFor(() => expect(defaultStopProps.onStopDetectors).toHaveBeenCalled());
+      ;
     });
     test('should call onHide() when closing', async () => {
       const { getByTestId } = render(
         <ConfirmStopDetectorsModal {...defaultStopProps} />
       );
       fireEvent.click(getByTestId('cancelButton'));
-      await wait();
-      expect(defaultStopProps.onHide).toHaveBeenCalled();
+      await waitFor(() => expect(defaultStopProps.onHide).toHaveBeenCalled());
     });
   });
 });

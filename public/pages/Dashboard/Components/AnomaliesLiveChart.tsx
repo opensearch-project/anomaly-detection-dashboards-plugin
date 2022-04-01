@@ -38,7 +38,7 @@ import {
   niceTimeFormatter,
   ScaleType,
   LineAnnotation,
-  AnnotationDomainTypes,
+  AnnotationDomainType,
   LineAnnotationDatum,
 } from '@elastic/charts';
 import { EuiText, EuiTitle } from '@elastic/eui';
@@ -344,14 +344,14 @@ export const AnomaliesLiveChart = (props: AnomaliesLiveChartProps) => {
                     legendPosition={Position.Right}
                     //TODO: research more why only set this old property will work.
                     showLegendExtra={false}
-                    showLegendDisplayValue={false}
                     xDomain={{
                       min: liveTimeRange.startDateTime.valueOf(),
                       max: liveTimeRange.endDateTime.valueOf(),
                     }}
                   />
                   <LineAnnotation
-                    domainType={AnnotationDomainTypes.XDomain}
+                    id={'lineAnnotation'}
+                    domainType={AnnotationDomainType.XDomain}
                     dataValues={annotations}
                     style={TIME_NOW_LINE_STYLE}
                     marker={'Now'}

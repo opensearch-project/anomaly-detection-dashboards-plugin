@@ -5,19 +5,10 @@ exports[`<SampleDataBox /> spec Data is loaded renders component 1`] = `
   style="height: auto;"
 >
   <div
-    class="euiPanel euiPanel--paddingMedium euiPanel--hasBetaBadge"
+    betabadgelabel="INSTALLED"
+    class="euiPanel euiPanel--paddingMedium euiPanel--borderRadiusMedium euiPanel--plain euiPanel--hasShadow"
     style="padding: 20px;"
   >
-    <span
-      class="euiPanel__betaBadgeWrapper"
-    >
-      <span
-        class="euiBetaBadge euiPanel__betaBadge"
-        title="INSTALLED"
-      >
-        INSTALLED
-      </span>
-    </span>
     <div
       class="euiFlexGroup euiFlexGroup--gutterLarge euiFlexGroup--alignItemsCenter euiFlexGroup--justifyContentSpaceBetween euiFlexGroup--directionRow euiFlexGroup--responsive"
       style="padding: 0px;"
@@ -158,7 +149,7 @@ exports[`<SampleDataBox /> spec Data is loading renders component 1`] = `
   style="height: auto;"
 >
   <div
-    class="euiPanel euiPanel--paddingMedium"
+    class="euiPanel euiPanel--paddingMedium euiPanel--borderRadiusMedium euiPanel--plain euiPanel--hasShadow"
     style="padding: 20px;"
   >
     <div
@@ -295,7 +286,7 @@ exports[`<SampleDataBox /> spec Data not loaded renders component 1`] = `
   style="height: auto;"
 >
   <div
-    class="euiPanel euiPanel--paddingMedium"
+    class="euiPanel euiPanel--paddingMedium euiPanel--borderRadiusMedium euiPanel--plain euiPanel--hasShadow"
     style="padding: 20px;"
   >
     <div

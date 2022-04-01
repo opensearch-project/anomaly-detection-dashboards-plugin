@@ -3,7 +3,7 @@
 exports[`<AdditionalSettings /> spec renders the component in create mode (no ID) 1`] = `
 <div>
   <div
-    class="euiPanel euiPanel--paddingMedium"
+    class="euiPanel euiPanel--paddingMedium euiPanel--borderRadiusMedium euiPanel--plain euiPanel--hasShadow"
     style="padding: 20px; margin: 0px;"
   >
     <div
@@ -352,7 +352,7 @@ exports[`<AdditionalSettings /> spec renders the component in create mode (no ID
 exports[`<AdditionalSettings /> spec renders the component in edit mode (with ID) 1`] = `
 <div>
   <div
-    class="euiPanel euiPanel--paddingMedium"
+    class="euiPanel euiPanel--paddingMedium euiPanel--borderRadiusMedium euiPanel--plain euiPanel--hasShadow"
     style="padding: 20px; margin: 0px;"
   >
     <div

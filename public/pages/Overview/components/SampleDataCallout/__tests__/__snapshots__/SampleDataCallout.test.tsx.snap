@@ -9,7 +9,7 @@ exports[`<SampleDataCallout /> spec Data not loaded renders component 1`] = `
   >
     <svg
       aria-hidden="true"
-      class="euiIcon euiIcon--medium euiIcon-isLoading euiCallOutHeader__icon"
+      class="euiIcon euiIcon--medium euiIcon--inherit euiIcon-isLoading euiCallOutHeader__icon"
       focusable="false"
       height="16"
       role="img"
@@ -26,30 +26,50 @@ exports[`<SampleDataCallout /> spec Data not loaded renders component 1`] = `
   <div
     class="euiText euiText--small"
   >
-    <p>
-      Read the
-       
-      <a
-        class="euiLink euiLink--primary"
-        href="https://opensearch.org/docs/monitoring-plugins/ad"
-        rel="noopener noreferrer"
-        target="_blank"
-      >
-        documentation
-      </a>
-       
-      or create a
-       
-      <a
-        class="euiLink euiLink--primary"
-        href="anomaly-detection-dashboards#/overview"
-        rel="noreferrer"
-      >
-        sample detector
-      </a>
-       
-      to get started.
-    </p>
+    <div
+      class="euiTextColor euiTextColor--default"
+    >
+      <p>
+        Read the
+         
+        <a
+          class="euiLink euiLink--primary"
+          href="https://opensearch.org/docs/monitoring-plugins/ad"
+          rel="noopener noreferrer"
+          target="_blank"
+        >
+          documentation
+          <svg
+            aria-hidden="true"
+            aria-label="External link"
+            class="euiIcon euiIcon--small euiIcon-isLoading euiLink__externalIcon"
+            focusable="false"
+            height="16"
+            role="img"
+            viewBox="0 0 16 16"
+            width="16"
+            xmlns="http://www.w3.org/2000/svg"
+          />
+          <span
+            class="euiScreenReaderOnly"
+          >
+            (opens in a new tab or window)
+          </span>
+        </a>
+         
+        or create a
+         
+        <a
+          class="euiLink euiLink--primary"
+          href="anomaly-detection-dashboards#/overview"
+          rel="noreferrer"
+        >
+          sample detector
+        </a>
+         
+        to get started.
+      </p>
+    </div>
   </div>
 </div>
 `;

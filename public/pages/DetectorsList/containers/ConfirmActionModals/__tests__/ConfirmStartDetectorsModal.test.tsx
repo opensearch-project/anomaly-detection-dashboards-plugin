@@ -10,7 +10,7 @@
  */
 
 import React from 'react';
-import { render, fireEvent, wait } from '@testing-library/react';
+import { render, fireEvent, waitFor } from '@testing-library/react';
 import { ConfirmStartDetectorsModal } from '../ConfirmStartDetectorsModal';
 import { DetectorListItem, Monitor } from '../../../../../models/interfaces';
 
@@ -59,17 +59,16 @@ describe('<ConfirmStartDetectorsModal /> spec', () => {
         <ConfirmStartDetectorsModal {...defaultStartProps} />
       );
       fireEvent.click(getByTestId('confirmButton'));
-      await wait();
-      expect(defaultStartProps.onStartDetectors).toHaveBeenCalled();
-      expect(defaultStartProps.onConfirm).toHaveBeenCalled();
+      await waitFor(() => expect(defaultStartProps.onStartDetectors).toHaveBeenCalled());
+      
+      await waitFor(() => expect(defaultStartProps.onConfirm).toHaveBeenCalled());
     });
     test('should call onHide() when closing', async () => {
       const { getByTestId } = render(
         <ConfirmStartDetectorsModal {...defaultStartProps} />
       );
       fireEvent.click(getByTestId('cancelButton'));
-      await wait();
-      expect(defaultStartProps.onHide).toHaveBeenCalled();
+      await waitFor(() => expect(defaultStartProps.onHide).toHaveBeenCalled());
     });
   });
 });

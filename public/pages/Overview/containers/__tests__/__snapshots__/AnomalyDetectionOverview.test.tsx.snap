@@ -2,8 +2,8 @@
 
 exports[`<AnomalyDetectionOverview /> spec No sample detectors created renders component 1`] = `
 <div>
-  <div
-    class="euiPageHeader euiPageHeader--responsive"
+  <header
+    class="euiPageHeader euiPageHeader--responsive euiPageHeader--center"
   >
     <div
       class="euiFlexGroup euiFlexGroup--gutterLarge euiFlexGroup--justifyContentSpaceBetween euiFlexGroup--directionRow euiFlexGroup--responsive"
@@ -39,7 +39,7 @@ exports[`<AnomalyDetectionOverview /> spec No sample detectors created renders c
         </a>
       </div>
     </div>
-  </div>
+  </header>
   <div
     class="euiText euiText--medium"
   >
@@ -62,13 +62,29 @@ exports[`<AnomalyDetectionOverview /> spec No sample detectors created renders c
         width="16"
         xmlns="http://www.w3.org/2000/svg"
       />
+      <svg
+        aria-hidden="true"
+        aria-label="External link"
+        class="euiIcon euiIcon--small euiIcon-isLoading euiLink__externalIcon"
+        focusable="false"
+        height="16"
+        role="img"
+        viewBox="0 0 16 16"
+        width="16"
+        xmlns="http://www.w3.org/2000/svg"
+      />
+      <span
+        class="euiScreenReaderOnly"
+      >
+        (opens in a new tab or window)
+      </span>
     </a>
   </div>
   <div
     class="euiSpacer euiSpacer--xl"
   />
   <div
-    class="euiPanel euiPanel--paddingMedium"
+    class="euiPanel euiPanel--paddingMedium euiPanel--borderRadiusMedium euiPanel--plain euiPanel--hasShadow"
     style="padding: 20px;"
   >
     <div
@@ -159,6 +175,22 @@ exports[`<AnomalyDetectionOverview /> spec No sample detectors created renders c
                       width="16"
                       xmlns="http://www.w3.org/2000/svg"
                     />
+                    <svg
+                      aria-hidden="true"
+                      aria-label="External link"
+                      class="euiIcon euiIcon--small euiIcon-isLoading euiLink__externalIcon"
+                      focusable="false"
+                      height="16"
+                      role="img"
+                      viewBox="0 0 16 16"
+                      width="16"
+                      xmlns="http://www.w3.org/2000/svg"
+                    />
+                    <span
+                      class="euiScreenReaderOnly"
+                    >
+                      (opens in a new tab or window)
+                    </span>
                   </a>
                 </div>
               </div>
@@ -215,6 +247,22 @@ exports[`<AnomalyDetectionOverview /> spec No sample detectors created renders c
                       width="16"
                       xmlns="http://www.w3.org/2000/svg"
                     />
+                    <svg
+                      aria-hidden="true"
+                      aria-label="External link"
+                      class="euiIcon euiIcon--small euiIcon-isLoading euiLink__externalIcon"
+                      focusable="false"
+                      height="16"
+                      role="img"
+                      viewBox="0 0 16 16"
+                      width="16"
+                      xmlns="http://www.w3.org/2000/svg"
+                    />
+                    <span
+                      class="euiScreenReaderOnly"
+                    >
+                      (opens in a new tab or window)
+                    </span>
                   </a>
                 </div>
               </div>
@@ -271,6 +319,22 @@ exports[`<AnomalyDetectionOverview /> spec No sample detectors created renders c
                       width="16"
                       xmlns="http://www.w3.org/2000/svg"
                     />
+                    <svg
+                      aria-hidden="true"
+                      aria-label="External link"
+                      class="euiIcon euiIcon--small euiIcon-isLoading euiLink__externalIcon"
+                      focusable="false"
+                      height="16"
+                      role="img"
+                      viewBox="0 0 16 16"
+                      width="16"
+                      xmlns="http://www.w3.org/2000/svg"
+                    />
+                    <span
+                      class="euiScreenReaderOnly"
+                    >
+                      (opens in a new tab or window)
+                    </span>
                   </a>
                 </div>
               </div>
@@ -327,6 +391,22 @@ exports[`<AnomalyDetectionOverview /> spec No sample detectors created renders c
                       width="16"
                       xmlns="http://www.w3.org/2000/svg"
                     />
+                    <svg
+                      aria-hidden="true"
+                      aria-label="External link"
+                      class="euiIcon euiIcon--small euiIcon-isLoading euiLink__externalIcon"
+                      focusable="false"
+                      height="16"
+                      role="img"
+                      viewBox="0 0 16 16"
+                      width="16"
+                      xmlns="http://www.w3.org/2000/svg"
+                    />
+                    <span
+                      class="euiScreenReaderOnly"
+                    >
+                      (opens in a new tab or window)
+                    </span>
                   </a>
                 </div>
               </div>
@@ -340,7 +420,7 @@ exports[`<AnomalyDetectionOverview /> spec No sample detectors created renders c
     class="euiSpacer euiSpacer--xl"
   />
   <div
-    class="euiPanel euiPanel--paddingMedium"
+    class="euiPanel euiPanel--paddingMedium euiPanel--borderRadiusMedium euiPanel--plain euiPanel--hasShadow"
     style="padding: 20px;"
   >
     <div
@@ -401,7 +481,7 @@ exports[`<AnomalyDetectionOverview /> spec No sample detectors created renders c
               style="height: auto;"
             >
               <div
-                class="euiPanel euiPanel--paddingMedium"
+                class="euiPanel euiPanel--paddingMedium euiPanel--borderRadiusMedium euiPanel--plain euiPanel--hasShadow"
                 style="padding: 20px;"
               >
                 <div
@@ -530,7 +610,7 @@ exports[`<AnomalyDetectionOverview /> spec No sample detectors created renders c
               style="height: auto;"
             >
               <div
-                class="euiPanel euiPanel--paddingMedium"
+                class="euiPanel euiPanel--paddingMedium euiPanel--borderRadiusMedium euiPanel--plain euiPanel--hasShadow"
                 style="padding: 20px;"
               >
                 <div
@@ -659,7 +739,7 @@ exports[`<AnomalyDetectionOverview /> spec No sample detectors created renders c
               style="height: auto;"
             >
               <div
-                class="euiPanel euiPanel--paddingMedium"
+                class="euiPanel euiPanel--paddingMedium euiPanel--borderRadiusMedium euiPanel--plain euiPanel--hasShadow"
                 style="padding: 20px;"
               >
                 <div

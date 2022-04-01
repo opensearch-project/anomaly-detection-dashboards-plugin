@@ -2,14 +2,14 @@
 
 exports[`<DetectorJobs /> spec configuring detector jobs renders the component 1`] = `
 <div
-  class="euiPage"
+  class="euiPage euiPage--paddingMedium euiPage--grow"
   style="margin-top: -24px;"
 >
-  <main
-    class="euiPageBody"
+  <div
+    class="euiPageBody euiPageBody--borderRadiusNone"
   >
-    <div
-      class="euiPageHeader euiPageHeader--responsive"
+    <header
+      class="euiPageHeader euiPageHeader--responsive euiPageHeader--center"
     >
       <div
         class="euiPageHeaderSection"
@@ -21,9 +21,9 @@ exports[`<DetectorJobs /> spec configuring detector jobs renders the component 1
           Set up detector jobs 
         </h1>
       </div>
-    </div>
+    </header>
     <div
-      class="euiPanel euiPanel--paddingMedium"
+      class="euiPanel euiPanel--paddingMedium euiPanel--borderRadiusMedium euiPanel--plain euiPanel--hasShadow"
       style="padding: 20px;"
     >
       <div
@@ -69,6 +69,22 @@ exports[`<DetectorJobs /> spec configuring detector jobs renders the component 1
                     width="16"
                     xmlns="http://www.w3.org/2000/svg"
                   />
+                  <svg
+                    aria-hidden="true"
+                    aria-label="External link"
+                    class="euiIcon euiIcon--small euiIcon-isLoading euiLink__externalIcon"
+                    focusable="false"
+                    height="16"
+                    role="img"
+                    viewBox="0 0 16 16"
+                    width="16"
+                    xmlns="http://www.w3.org/2000/svg"
+                  />
+                  <span
+                    class="euiScreenReaderOnly"
+                  >
+                    (opens in a new tab or window)
+                  </span>
                 </a>
               </div>
             </div>
@@ -123,7 +139,7 @@ exports[`<DetectorJobs /> spec configuring detector jobs renders the component 1
       class="euiSpacer euiSpacer--l"
     />
     <div
-      class="euiPanel euiPanel--paddingMedium"
+      class="euiPanel euiPanel--paddingMedium euiPanel--borderRadiusMedium euiPanel--plain euiPanel--hasShadow"
       style="padding: 20px;"
     >
       <div
@@ -169,6 +185,22 @@ exports[`<DetectorJobs /> spec configuring detector jobs renders the component 1
                     width="16"
                     xmlns="http://www.w3.org/2000/svg"
                   />
+                  <svg
+                    aria-hidden="true"
+                    aria-label="External link"
+                    class="euiIcon euiIcon--small euiIcon-isLoading euiLink__externalIcon"
+                    focusable="false"
+                    height="16"
+                    role="img"
+                    viewBox="0 0 16 16"
+                    width="16"
+                    xmlns="http://www.w3.org/2000/svg"
+                  />
+                  <span
+                    class="euiScreenReaderOnly"
+                  >
+                    (opens in a new tab or window)
+                  </span>
                 </a>
               </div>
             </div>
@@ -222,6 +254,6 @@ exports[`<DetectorJobs /> spec configuring detector jobs renders the component 1
         </div>
       </div>
     </div>
-  </main>
+  </div>
 </div>
 `;

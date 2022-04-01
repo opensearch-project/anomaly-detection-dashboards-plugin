@@ -5,14 +5,14 @@ exports[`<EmptyDetector /> spec Empty results renders component with empty messa
   class="euiEmptyPrompt"
   data-test-subj="emptyDashboardHeader"
 >
+  <h2
+    class="euiTitle euiTitle--medium"
+  >
+    You have no detectors
+  </h2>
   <span
     class="euiTextColor euiTextColor--subdued"
   >
-    <h2
-      class="euiTitle euiTitle--medium"
-    >
-      You have no detectors
-    </h2>
     <div
       class="euiSpacer euiSpacer--m"
     />
@@ -45,6 +45,22 @@ exports[`<EmptyDetector /> spec Empty results renders component with empty messa
             width="16"
             xmlns="http://www.w3.org/2000/svg"
           />
+          <svg
+            aria-hidden="true"
+            aria-label="External link"
+            class="euiIcon euiIcon--small euiIcon-isLoading euiLink__externalIcon"
+            focusable="false"
+            height="16"
+            role="img"
+            viewBox="0 0 16 16"
+            width="16"
+            xmlns="http://www.w3.org/2000/svg"
+          />
+          <span
+            class="euiScreenReaderOnly"
+          >
+            (opens in a new tab or window)
+          </span>
         </a>
          
       </p>
@@ -52,9 +68,6 @@ exports[`<EmptyDetector /> spec Empty results renders component with empty messa
   </span>
   <div
     class="euiSpacer euiSpacer--l"
-  />
-  <div
-    class="euiSpacer euiSpacer--s"
   />
   <div
     class="euiFlexGroup euiFlexGroup--gutterMedium euiFlexGroup--justifyContentCenter euiFlexGroup--directionRow euiFlexGroup--responsive"
