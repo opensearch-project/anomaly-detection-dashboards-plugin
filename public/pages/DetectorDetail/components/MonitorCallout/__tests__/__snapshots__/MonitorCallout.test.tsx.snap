@@ -9,7 +9,7 @@ exports[`<MonitorCallout /> spec Monitor callout renders component 1`] = `
   >
     <svg
       aria-hidden="true"
-      class="euiIcon euiIcon--medium euiIcon-isLoading euiCallOutHeader__icon"
+      class="euiIcon euiIcon--medium euiIcon--inherit euiIcon-isLoading euiCallOutHeader__icon"
       focusable="false"
       height="16"
       role="img"
@@ -26,31 +26,51 @@ exports[`<MonitorCallout /> spec Monitor callout renders component 1`] = `
   <div
     class="euiText euiText--small"
   >
-    <p>
-      Once a detector is stopped, monitor
-       
-      <a
-        class="euiLink euiLink--primary"
-        href="/dnexZXEBemUf2kpaW2CK"
-        rel="noopener noreferrer"
-        target="_blank"
-      >
-        test-monitor
+    <div
+      class="euiTextColor euiTextColor--default"
+    >
+      <p>
+        Once a detector is stopped, monitor
          
-        <svg
-          aria-hidden="true"
-          class="euiIcon euiIcon--small euiIcon-isLoading"
-          focusable="false"
-          height="16"
-          role="img"
-          viewBox="0 0 16 16"
-          width="16"
-          xmlns="http://www.w3.org/2000/svg"
-        />
-      </a>
-       
-      associated with this detector will not receive any anomaly results to generate alerts.
-    </p>
+        <a
+          class="euiLink euiLink--primary"
+          href="/dnexZXEBemUf2kpaW2CK"
+          rel="noopener noreferrer"
+          target="_blank"
+        >
+          test-monitor
+           
+          <svg
+            aria-hidden="true"
+            class="euiIcon euiIcon--small euiIcon-isLoading"
+            focusable="false"
+            height="16"
+            role="img"
+            viewBox="0 0 16 16"
+            width="16"
+            xmlns="http://www.w3.org/2000/svg"
+          />
+          <svg
+            aria-hidden="true"
+            aria-label="External link"
+            class="euiIcon euiIcon--small euiIcon-isLoading euiLink__externalIcon"
+            focusable="false"
+            height="16"
+            role="img"
+            viewBox="0 0 16 16"
+            width="16"
+            xmlns="http://www.w3.org/2000/svg"
+          />
+          <span
+            class="euiScreenReaderOnly"
+          >
+            (opens in a new tab or window)
+          </span>
+        </a>
+         
+        associated with this detector will not receive any anomaly results to generate alerts.
+      </p>
+    </div>
   </div>
 </div>
 `;

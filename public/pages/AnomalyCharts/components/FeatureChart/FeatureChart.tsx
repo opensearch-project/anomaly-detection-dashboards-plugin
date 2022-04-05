@@ -19,7 +19,7 @@ import {
   Settings,
   ScaleType,
   LineAnnotation,
-  AnnotationDomainTypes,
+  AnnotationDomainType,
 } from '@elastic/charts';
 import { EuiText, EuiLink, EuiButton, EuiIcon } from '@elastic/eui';
 import React, { useState, Fragment } from 'react';
@@ -222,7 +222,7 @@ export const FeatureChart = (props: FeatureChartProps) => {
             ? [
                 <LineAnnotation
                   id="featureMissingAnnotations"
-                  domainType={AnnotationDomainTypes.XDomain}
+                  domainType={AnnotationDomainType.XDomain}
                   dataValues={getFeatureMissingDataAnnotations(
                     props.showFeatureMissingDataPointAnnotation
                       ? flattenData(props.rawFeatureData)

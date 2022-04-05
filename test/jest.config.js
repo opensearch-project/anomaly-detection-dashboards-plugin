@@ -18,6 +18,7 @@ module.exports = {
   moduleNameMapper: {
     '\\.(css|less|scss)$': '<rootDir>/test/mocks/styleMock.ts',
   },
+  testEnvironment: 'jest-environment-jsdom',
   coverageReporters: ['lcov', 'text', 'cobertura'],
   testMatch: ['**/*.test.js', '**/*.test.jsx', '**/*.test.ts', '**/*.test.tsx'],
   collectCoverageFrom: [

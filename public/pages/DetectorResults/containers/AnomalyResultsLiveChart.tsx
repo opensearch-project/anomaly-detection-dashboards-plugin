@@ -30,7 +30,7 @@ import {
   Settings,
   LineAnnotation,
   RectAnnotation,
-  AnnotationDomainTypes,
+  AnnotationDomainType,
   LineAnnotationDatum,
   ScaleType,
 } from '@elastic/charts';
@@ -303,7 +303,7 @@ export const AnomalyResultsLiveChart = (
                   <Settings theme={LIVE_ANOMALY_CHART_THEME} />
                   <LineAnnotation
                     id="annotationNow"
-                    domainType={AnnotationDomainTypes.XDomain}
+                    domainType={AnnotationDomainType.XDomain}
                     dataValues={nowAnnotation([endDateTime.valueOf(), 1])}
                     style={nowLineStyle}
                     // @ts-ignore

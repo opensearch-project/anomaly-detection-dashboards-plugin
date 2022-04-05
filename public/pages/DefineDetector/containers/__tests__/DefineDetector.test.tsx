@@ -17,7 +17,7 @@ import {
   Route,
   Switch,
 } from 'react-router-dom';
-import { render, fireEvent, wait } from '@testing-library/react';
+import { render, fireEvent, waitFor } from '@testing-library/react';
 import { DefineDetector } from '../DefineDetector';
 import configureStore from '../../../../redux/configureStore';
 import { httpClientMock, coreServicesMock } from '../../../../../test/mocks';
@@ -71,7 +71,7 @@ describe('<DefineDetector /> spec', () => {
       });
       const { getByText } = renderWithRouter();
       fireEvent.click(getByText('Next'));
-      await wait();
+      await waitFor(()=>{});
       getByText('Detector name cannot be empty');
       getByText('Must specify an index');
       getByText('Required');

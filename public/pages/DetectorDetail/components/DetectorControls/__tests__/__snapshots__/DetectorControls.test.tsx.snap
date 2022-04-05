@@ -25,7 +25,7 @@ exports[`<DetectorControls /> spec Detector Controls renders detector controls w
             >
               <svg
                 aria-hidden="true"
-                class="euiIcon euiIcon--medium euiIcon-isLoading euiButtonContent__icon"
+                class="euiIcon euiIcon--medium euiIcon--inherit euiIcon-isLoading euiButtonContent__icon"
                 focusable="false"
                 height="16"
                 role="img"
@@ -72,7 +72,7 @@ exports[`<DetectorControls /> spec Detector Controls renders detector controls w
             >
               <svg
                 aria-hidden="true"
-                class="euiIcon euiIcon--medium euiButtonContent__icon"
+                class="euiIcon euiIcon--medium euiIcon--inherit euiButtonContent__icon"
                 focusable="false"
                 height="16"
                 role="img"
@@ -124,7 +124,7 @@ exports[`<DetectorControls /> spec Detector Controls renders detector controls w
             >
               <svg
                 aria-hidden="true"
-                class="euiIcon euiIcon--medium euiButtonContent__icon"
+                class="euiIcon euiIcon--medium euiIcon--inherit euiButtonContent__icon"
                 focusable="false"
                 height="16"
                 role="img"
@@ -176,7 +176,7 @@ exports[`<DetectorControls /> spec Detector Controls renders detector controls w
             >
               <svg
                 aria-hidden="true"
-                class="euiIcon euiIcon--medium euiButtonContent__icon"
+                class="euiIcon euiIcon--medium euiIcon--inherit euiButtonContent__icon"
                 focusable="false"
                 height="16"
                 role="img"

@@ -2,14 +2,14 @@
 
 exports[`<ConfigureModel /> spec creating model configuration renders the component 1`] = `
 <div
-  class="euiPage"
+  class="euiPage euiPage--paddingMedium euiPage--grow"
   style="margin-top: -24px;"
 >
-  <main
-    class="euiPageBody"
+  <div
+    class="euiPageBody euiPageBody--borderRadiusNone"
   >
-    <div
-      class="euiPageHeader euiPageHeader--responsive"
+    <header
+      class="euiPageHeader euiPageHeader--responsive euiPageHeader--center"
     >
       <div
         class="euiPageHeaderSection"
@@ -46,15 +46,31 @@ exports[`<ConfigureModel /> spec creating model configuration renders the compon
               width="16"
               xmlns="http://www.w3.org/2000/svg"
             />
+            <svg
+              aria-hidden="true"
+              aria-label="External link"
+              class="euiIcon euiIcon--small euiIcon-isLoading euiLink__externalIcon"
+              focusable="false"
+              height="16"
+              role="img"
+              viewBox="0 0 16 16"
+              width="16"
+              xmlns="http://www.w3.org/2000/svg"
+            />
+            <span
+              class="euiScreenReaderOnly"
+            >
+              (opens in a new tab or window)
+            </span>
           </a>
         </div>
         <div
           class="euiSpacer euiSpacer--s"
         />
       </div>
-    </div>
+    </header>
     <div
-      class="euiPanel euiPanel--paddingMedium"
+      class="euiPanel euiPanel--paddingMedium euiPanel--borderRadiusMedium euiPanel--plain euiPanel--hasShadow"
       style="padding: 20px;"
     >
       <div
@@ -100,6 +116,22 @@ exports[`<ConfigureModel /> spec creating model configuration renders the compon
                     width="16"
                     xmlns="http://www.w3.org/2000/svg"
                   />
+                  <svg
+                    aria-hidden="true"
+                    aria-label="External link"
+                    class="euiIcon euiIcon--small euiIcon-isLoading euiLink__externalIcon"
+                    focusable="false"
+                    height="16"
+                    role="img"
+                    viewBox="0 0 16 16"
+                    width="16"
+                    xmlns="http://www.w3.org/2000/svg"
+                  />
+                  <span
+                    class="euiScreenReaderOnly"
+                  >
+                    (opens in a new tab or window)
+                  </span>
                 </a>
               </div>
             </div>
@@ -197,8 +229,11 @@ exports[`<ConfigureModel /> spec creating model configuration renders the compon
                 </div>
               </div>
               <div
+                aria-labelledby="random_html_id"
                 class="euiAccordion__childWrapper"
                 id="featureList.0"
+                role="region"
+                tabindex="-1"
               >
                 <div>
                   <div
@@ -229,7 +264,7 @@ exports[`<ConfigureModel /> spec creating model configuration renders the compon
                             class="euiFormControlLayout__childrenWrapper"
                           >
                             <input
-                              aria-describedby="random_html_id-help"
+                              aria-describedby="random_html_id-help-0"
                               class="euiFieldText"
                               data-test-subj="featureNameTextInput-0"
                               id="random_html_id"
@@ -242,7 +277,7 @@ exports[`<ConfigureModel /> spec creating model configuration renders the compon
                         </div>
                         <div
                           class="euiFormHelpText euiFormRow__text"
-                          id="random_html_id-help"
+                          id="random_html_id-help-0"
                         >
                           Enter a descriptive name. The name must be unique within this detector. Feature name must contain 1-64 characters. Valid characters are a-z, A-Z, 0-9, -(hyphen) and _(underscore).
                         </div>
@@ -376,7 +411,7 @@ exports[`<ConfigureModel /> spec creating model configuration renders the compon
                             class="euiFormControlLayout__childrenWrapper"
                           >
                             <select
-                              aria-describedby="random_html_id-help"
+                              aria-describedby="random_html_id-help-0"
                               class="euiSelect"
                               data-test-subj="aggregationType"
                               id="random_html_id"
@@ -430,7 +465,7 @@ exports[`<ConfigureModel /> spec creating model configuration renders the compon
                         </div>
                         <div
                           class="euiFormHelpText euiFormRow__text"
-                          id="random_html_id-help"
+                          id="random_html_id-help-0"
                         >
                           The aggregation method determines what constitutes an anomaly. For example, if you choose min(), the detector focuses on finding anomalies based on the minimum values of your feature.
                         </div>
@@ -568,7 +603,7 @@ exports[`<ConfigureModel /> spec creating model configuration renders the compon
       class="euiSpacer euiSpacer--l"
     />
     <div
-      class="euiPanel euiPanel--paddingMedium"
+      class="euiPanel euiPanel--paddingMedium euiPanel--borderRadiusMedium euiPanel--plain euiPanel--hasShadow"
       style="padding: 20px;"
     >
       <div
@@ -623,6 +658,22 @@ exports[`<ConfigureModel /> spec creating model configuration renders the compon
                     width="16"
                     xmlns="http://www.w3.org/2000/svg"
                   />
+                  <svg
+                    aria-hidden="true"
+                    aria-label="External link"
+                    class="euiIcon euiIcon--small euiIcon-isLoading euiLink__externalIcon"
+                    focusable="false"
+                    height="16"
+                    role="img"
+                    viewBox="0 0 16 16"
+                    width="16"
+                    xmlns="http://www.w3.org/2000/svg"
+                  />
+                  <span
+                    class="euiScreenReaderOnly"
+                  >
+                    (opens in a new tab or window)
+                  </span>
                 </a>
               </div>
             </div>
@@ -656,7 +707,7 @@ exports[`<ConfigureModel /> spec creating model configuration renders the compon
             >
               <svg
                 aria-hidden="true"
-                class="euiIcon euiIcon--medium euiIcon-isLoading euiCallOutHeader__icon"
+                class="euiIcon euiIcon--medium euiIcon--inherit euiIcon-isLoading euiCallOutHeader__icon"
                 focusable="false"
                 height="16"
                 role="img"
@@ -708,7 +759,7 @@ exports[`<ConfigureModel /> spec creating model configuration renders the compon
       class="euiSpacer euiSpacer--l"
     />
     <div
-      class="euiPanel euiPanel--paddingMedium"
+      class="euiPanel euiPanel--paddingMedium euiPanel--borderRadiusMedium euiPanel--plain euiPanel--hasShadow"
       style="padding: 20px;"
     >
       <div
@@ -774,7 +825,7 @@ exports[`<ConfigureModel /> spec creating model configuration renders the compon
       class="euiSpacer euiSpacer--l"
     />
     <div
-      class="euiPanel euiPanel--paddingMedium"
+      class="euiPanel euiPanel--paddingMedium euiPanel--borderRadiusMedium euiPanel--plain euiPanel--hasShadow"
       style="padding: 20px;"
     >
       <div
@@ -826,7 +877,7 @@ exports[`<ConfigureModel /> spec creating model configuration renders the compon
             >
               <svg
                 aria-hidden="true"
-                class="euiIcon euiIcon--medium euiIcon-isLoading euiCallOutHeader__icon"
+                class="euiIcon euiIcon--medium euiIcon--inherit euiIcon-isLoading euiCallOutHeader__icon"
                 focusable="false"
                 height="16"
                 role="img"
@@ -844,58 +895,78 @@ exports[`<ConfigureModel /> spec creating model configuration renders the compon
               class="euiText euiText--small"
             >
               <div
-                class="euiFlexGroup euiFlexGroup--gutterLarge euiFlexGroup--directionRow euiFlexGroup--responsive"
+                class="euiTextColor euiTextColor--default"
               >
                 <div
-                  class="euiFlexItem"
+                  class="euiFlexGroup euiFlexGroup--gutterLarge euiFlexGroup--directionRow euiFlexGroup--responsive"
                 >
                   <div
-                    class="euiText euiText--medium"
+                    class="euiFlexItem"
                   >
-                    You can preview how your anomalies may look like from sample feature output and adjust the feature settings as needed.
-                     
-                    <a
-                      class="euiLink euiLink--primary"
-                      href="https://opensearch.org/docs/monitoring-plugins/ad"
-                      rel="noopener noreferrer"
-                      target="_blank"
+                    <div
+                      class="euiText euiText--medium"
                     >
-                      Learn more 
-                      <svg
-                        aria-hidden="true"
-                        class="euiIcon euiIcon--small euiIcon-isLoading"
-                        focusable="false"
-                        height="16"
-                        role="img"
-                        viewBox="0 0 16 16"
-                        width="16"
-                        xmlns="http://www.w3.org/2000/svg"
-                      />
-                    </a>
+                      You can preview how your anomalies may look like from sample feature output and adjust the feature settings as needed.
+                       
+                      <a
+                        class="euiLink euiLink--primary"
+                        href="https://opensearch.org/docs/monitoring-plugins/ad"
+                        rel="noopener noreferrer"
+                        target="_blank"
+                      >
+                        Learn more 
+                        <svg
+                          aria-hidden="true"
+                          class="euiIcon euiIcon--small euiIcon-isLoading"
+                          focusable="false"
+                          height="16"
+                          role="img"
+                          viewBox="0 0 16 16"
+                          width="16"
+                          xmlns="http://www.w3.org/2000/svg"
+                        />
+                        <svg
+                          aria-hidden="true"
+                          aria-label="External link"
+                          class="euiIcon euiIcon--small euiIcon-isLoading euiLink__externalIcon"
+                          focusable="false"
+                          height="16"
+                          role="img"
+                          viewBox="0 0 16 16"
+                          width="16"
+                          xmlns="http://www.w3.org/2000/svg"
+                        />
+                        <span
+                          class="euiScreenReaderOnly"
+                        >
+                          (opens in a new tab or window)
+                        </span>
+                      </a>
+                    </div>
                   </div>
                 </div>
-              </div>
-              <div
-                class="euiFlexGroup euiFlexGroup--gutterLarge euiFlexGroup--directionRow euiFlexGroup--responsive"
-              >
                 <div
-                  class="euiFlexItem euiFlexItem--flexGrowZero"
+                  class="euiFlexGroup euiFlexGroup--gutterLarge euiFlexGroup--directionRow euiFlexGroup--responsive"
                 >
-                  <button
-                    class="euiButton euiButton--primary"
-                    data-test-subj="previewDetector"
-                    type="button"
+                  <div
+                    class="euiFlexItem euiFlexItem--flexGrowZero"
                   >
-                    <span
-                      class="euiButtonContent euiButton__content"
+                    <button
+                      class="euiButton euiButton--primary"
+                      data-test-subj="previewDetector"
+                      type="button"
                     >
                       <span
-                        class="euiButton__text"
+                        class="euiButtonContent euiButton__content"
                       >
-                        Preview anomalies
+                        <span
+                          class="euiButton__text"
+                        >
+                          Preview anomalies
+                        </span>
                       </span>
-                    </span>
-                  </button>
+                    </button>
+                  </div>
                 </div>
               </div>
             </div>
@@ -906,20 +977,20 @@ exports[`<ConfigureModel /> spec creating model configuration renders the compon
         </div>
       </div>
     </div>
-  </main>
+  </div>
 </div>
 `;
 
 exports[`<ConfigureModel /> spec editing model configuration renders the component 1`] = `
 <div
-  class="euiPage"
+  class="euiPage euiPage--paddingMedium euiPage--grow"
   style="margin-top: -24px;"
 >
-  <main
-    class="euiPageBody"
+  <div
+    class="euiPageBody euiPageBody--borderRadiusNone"
   >
-    <div
-      class="euiPageHeader euiPageHeader--responsive"
+    <header
+      class="euiPageHeader euiPageHeader--responsive euiPageHeader--center"
     >
       <div
         class="euiPageHeaderSection"
@@ -960,15 +1031,34 @@ exports[`<ConfigureModel /> spec editing model configuration renders the compone
                 d="M13 8.5a.5.5 0 111 0V12a2 2 0 01-2 2H4a2 2 0 01-2-2V4a2 2 0 012-2h3.5a.5.5 0 010 1H4a1 1 0 00-1 1v8a1 1 0 001 1h8a1 1 0 001-1V8.5zm-5.12.339a.5.5 0 11-.706-.707L13.305 2H10.5a.5.5 0 110-1H14a1 1 0 011 1v3.5a.5.5 0 11-1 0V2.72L7.88 8.838z"
               />
             </svg>
+            <svg
+              aria-label="External link"
+              class="euiIcon euiIcon--small euiLink__externalIcon"
+              focusable="false"
+              height="16"
+              role="img"
+              viewBox="0 0 16 16"
+              width="16"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M13 8.5a.5.5 0 111 0V12a2 2 0 01-2 2H4a2 2 0 01-2-2V4a2 2 0 012-2h3.5a.5.5 0 010 1H4a1 1 0 00-1 1v8a1 1 0 001 1h8a1 1 0 001-1V8.5zm-5.12.339a.5.5 0 11-.706-.707L13.305 2H10.5a.5.5 0 110-1H14a1 1 0 011 1v3.5a.5.5 0 11-1 0V2.72L7.88 8.838z"
+              />
+            </svg>
+            <span
+              class="euiScreenReaderOnly"
+            >
+              (opens in a new tab or window)
+            </span>
           </a>
         </div>
         <div
           class="euiSpacer euiSpacer--s"
         />
       </div>
-    </div>
+    </header>
     <div
-      class="euiPanel euiPanel--paddingMedium"
+      class="euiPanel euiPanel--paddingMedium euiPanel--borderRadiusMedium euiPanel--plain euiPanel--hasShadow"
       style="padding: 20px;"
     >
       <div
@@ -1018,6 +1108,25 @@ exports[`<ConfigureModel /> spec editing model configuration renders the compone
                       d="M13 8.5a.5.5 0 111 0V12a2 2 0 01-2 2H4a2 2 0 01-2-2V4a2 2 0 012-2h3.5a.5.5 0 010 1H4a1 1 0 00-1 1v8a1 1 0 001 1h8a1 1 0 001-1V8.5zm-5.12.339a.5.5 0 11-.706-.707L13.305 2H10.5a.5.5 0 110-1H14a1 1 0 011 1v3.5a.5.5 0 11-1 0V2.72L7.88 8.838z"
                     />
                   </svg>
+                  <svg
+                    aria-label="External link"
+                    class="euiIcon euiIcon--small euiLink__externalIcon"
+                    focusable="false"
+                    height="16"
+                    role="img"
+                    viewBox="0 0 16 16"
+                    width="16"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      d="M13 8.5a.5.5 0 111 0V12a2 2 0 01-2 2H4a2 2 0 01-2-2V4a2 2 0 012-2h3.5a.5.5 0 010 1H4a1 1 0 00-1 1v8a1 1 0 001 1h8a1 1 0 001-1V8.5zm-5.12.339a.5.5 0 11-.706-.707L13.305 2H10.5a.5.5 0 110-1H14a1 1 0 011 1v3.5a.5.5 0 11-1 0V2.72L7.88 8.838z"
+                    />
+                  </svg>
+                  <span
+                    class="euiScreenReaderOnly"
+                  >
+                    (opens in a new tab or window)
+                  </span>
                 </a>
               </div>
             </div>
@@ -1120,8 +1229,11 @@ exports[`<ConfigureModel /> spec editing model configuration renders the compone
                 </div>
               </div>
               <div
+                aria-labelledby="random_html_id"
                 class="euiAccordion__childWrapper"
                 id="featureList.0"
+                role="region"
+                tabindex="-1"
               >
                 <div>
                   <div
@@ -1152,7 +1264,7 @@ exports[`<ConfigureModel /> spec editing model configuration renders the compone
                             class="euiFormControlLayout__childrenWrapper"
                           >
                             <input
-                              aria-describedby="random_html_id-help"
+                              aria-describedby="random_html_id-help-0"
                               class="euiFieldText"
                               data-test-subj="featureNameTextInput-0"
                               id="random_html_id"
@@ -1165,7 +1277,7 @@ exports[`<ConfigureModel /> spec editing model configuration renders the compone
                         </div>
                         <div
                           class="euiFormHelpText euiFormRow__text"
-                          id="random_html_id-help"
+                          id="random_html_id-help-0"
                         >
                           Enter a descriptive name. The name must be unique within this detector. Feature name must contain 1-64 characters. Valid characters are a-z, A-Z, 0-9, -(hyphen) and _(underscore).
                         </div>
@@ -1304,7 +1416,7 @@ exports[`<ConfigureModel /> spec editing model configuration renders the compone
                             class="euiFormControlLayout__childrenWrapper"
                           >
                             <select
-                              aria-describedby="random_html_id-help"
+                              aria-describedby="random_html_id-help-0"
                               class="euiSelect"
                               data-test-subj="aggregationType"
                               id="random_html_id"
@@ -1363,7 +1475,7 @@ exports[`<ConfigureModel /> spec editing model configuration renders the compone
                         </div>
                         <div
                           class="euiFormHelpText euiFormRow__text"
-                          id="random_html_id-help"
+                          id="random_html_id-help-0"
                         >
                           The aggregation method determines what constitutes an anomaly. For example, if you choose min(), the detector focuses on finding anomalies based on the minimum values of your feature.
                         </div>
@@ -1506,7 +1618,7 @@ exports[`<ConfigureModel /> spec editing model configuration renders the compone
       class="euiSpacer euiSpacer--l"
     />
     <div
-      class="euiPanel euiPanel--paddingMedium"
+      class="euiPanel euiPanel--paddingMedium euiPanel--borderRadiusMedium euiPanel--plain euiPanel--hasShadow"
       style="padding: 20px;"
     >
       <div
@@ -1565,6 +1677,25 @@ exports[`<ConfigureModel /> spec editing model configuration renders the compone
                       d="M13 8.5a.5.5 0 111 0V12a2 2 0 01-2 2H4a2 2 0 01-2-2V4a2 2 0 012-2h3.5a.5.5 0 010 1H4a1 1 0 00-1 1v8a1 1 0 001 1h8a1 1 0 001-1V8.5zm-5.12.339a.5.5 0 11-.706-.707L13.305 2H10.5a.5.5 0 110-1H14a1 1 0 011 1v3.5a.5.5 0 11-1 0V2.72L7.88 8.838z"
                     />
                   </svg>
+                  <svg
+                    aria-label="External link"
+                    class="euiIcon euiIcon--small euiLink__externalIcon"
+                    focusable="false"
+                    height="16"
+                    role="img"
+                    viewBox="0 0 16 16"
+                    width="16"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      d="M13 8.5a.5.5 0 111 0V12a2 2 0 01-2 2H4a2 2 0 01-2-2V4a2 2 0 012-2h3.5a.5.5 0 010 1H4a1 1 0 00-1 1v8a1 1 0 001 1h8a1 1 0 001-1V8.5zm-5.12.339a.5.5 0 11-.706-.707L13.305 2H10.5a.5.5 0 110-1H14a1 1 0 011 1v3.5a.5.5 0 11-1 0V2.72L7.88 8.838z"
+                    />
+                  </svg>
+                  <span
+                    class="euiScreenReaderOnly"
+                  >
+                    (opens in a new tab or window)
+                  </span>
                 </a>
               </div>
             </div>
@@ -1598,7 +1729,7 @@ exports[`<ConfigureModel /> spec editing model configuration renders the compone
             >
               <svg
                 aria-hidden="true"
-                class="euiIcon euiIcon--medium euiCallOutHeader__icon"
+                class="euiIcon euiIcon--medium euiIcon--inherit euiCallOutHeader__icon"
                 focusable="false"
                 height="16"
                 role="img"
@@ -1630,7 +1761,7 @@ exports[`<ConfigureModel /> spec editing model configuration renders the compone
             >
               <svg
                 aria-hidden="true"
-                class="euiIcon euiIcon--medium euiIcon-isLoading euiCallOutHeader__icon"
+                class="euiIcon euiIcon--medium euiIcon--inherit euiIcon-isLoading euiCallOutHeader__icon"
                 focusable="false"
                 height="16"
                 role="img"
@@ -1682,7 +1813,7 @@ exports[`<ConfigureModel /> spec editing model configuration renders the compone
       class="euiSpacer euiSpacer--l"
     />
     <div
-      class="euiPanel euiPanel--paddingMedium"
+      class="euiPanel euiPanel--paddingMedium euiPanel--borderRadiusMedium euiPanel--plain euiPanel--hasShadow"
       style="padding: 20px;"
     >
       <div
@@ -1744,6 +1875,6 @@ exports[`<ConfigureModel /> spec editing model configuration renders the compone
         </div>
       </div>
     </div>
-  </main>
+  </div>
 </div>
 `;

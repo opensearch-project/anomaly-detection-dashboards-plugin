@@ -27,7 +27,7 @@ exports[`<AggregationSelector /> spec Empty results renders component with aggre
           class="euiFormControlLayout__childrenWrapper"
         >
           <select
-            aria-describedby="random_html_id-help"
+            aria-describedby="random_html_id-help-0"
             class="euiSelect"
             data-test-subj="aggregationType"
             id="random_html_id"
@@ -81,7 +81,7 @@ exports[`<AggregationSelector /> spec Empty results renders component with aggre
       </div>
       <div
         class="euiFormHelpText euiFormRow__text"
-        id="random_html_id-help"
+        id="random_html_id-help-0"
       >
         The aggregation method determines what constitutes an anomaly. For example, if you choose min(), the detector focuses on finding anomalies based on the minimum values of your feature.
       </div>

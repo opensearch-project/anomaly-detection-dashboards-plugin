@@ -15,13 +15,13 @@ exports[`<ListControls /> spec Empty results renders component with empty messag
     >
       <button
         aria-label="Previous page, 1"
-        class="euiButtonIcon euiButtonIcon--text"
+        class="euiButtonIcon euiButtonIcon--text euiButtonIcon--empty euiButtonIcon--xSmall"
         data-test-subj="pagination-button-previous"
         type="button"
       >
         <svg
           aria-hidden="true"
-          class="euiIcon euiIcon--medium euiIcon-isLoading euiButtonIcon__icon"
+          class="euiIcon euiIcon--medium euiIcon--inherit euiIcon-isLoading euiButtonIcon__icon"
           focusable="false"
           height="16"
           role="img"
@@ -38,7 +38,7 @@ exports[`<ListControls /> spec Empty results renders component with empty messag
         >
           <button
             aria-label="Page 1 of 10"
-            class="euiButtonEmpty euiButtonEmpty--text euiButtonEmpty--xSmall euiPaginationButton euiPaginationButton--hideOnMobile"
+            class="euiButtonEmpty euiButtonEmpty--text euiButtonEmpty--small euiPaginationButton euiPaginationButton--hideOnMobile"
             data-test-subj="pagination-button-0"
             type="button"
           >
@@ -59,7 +59,7 @@ exports[`<ListControls /> spec Empty results renders component with empty messag
           <button
             aria-current="true"
             aria-label="Page 2 of 10"
-            class="euiButtonEmpty euiButtonEmpty--text euiButtonEmpty--xSmall euiButtonEmpty-isDisabled euiPaginationButton euiPaginationButton-isActive euiPaginationButton--hideOnMobile"
+            class="euiButtonEmpty euiButtonEmpty--text euiButtonEmpty--small euiButtonEmpty-isDisabled euiPaginationButton euiPaginationButton-isActive euiPaginationButton--hideOnMobile"
             data-test-subj="pagination-button-1"
             disabled=""
             type="button"
@@ -80,7 +80,7 @@ exports[`<ListControls /> spec Empty results renders component with empty messag
         >
           <button
             aria-label="Page 3 of 10"
-            class="euiButtonEmpty euiButtonEmpty--text euiButtonEmpty--xSmall euiPaginationButton euiPaginationButton--hideOnMobile"
+            class="euiButtonEmpty euiButtonEmpty--text euiButtonEmpty--small euiPaginationButton euiPaginationButton--hideOnMobile"
             data-test-subj="pagination-button-2"
             type="button"
           >
@@ -100,7 +100,7 @@ exports[`<ListControls /> spec Empty results renders component with empty messag
         >
           <button
             aria-label="Page 4 of 10"
-            class="euiButtonEmpty euiButtonEmpty--text euiButtonEmpty--xSmall euiPaginationButton euiPaginationButton--hideOnMobile"
+            class="euiButtonEmpty euiButtonEmpty--text euiButtonEmpty--small euiPaginationButton euiPaginationButton--hideOnMobile"
             data-test-subj="pagination-button-3"
             type="button"
           >
@@ -120,7 +120,7 @@ exports[`<ListControls /> spec Empty results renders component with empty messag
         >
           <button
             aria-label="Page 5 of 10"
-            class="euiButtonEmpty euiButtonEmpty--text euiButtonEmpty--xSmall euiPaginationButton euiPaginationButton--hideOnMobile"
+            class="euiButtonEmpty euiButtonEmpty--text euiButtonEmpty--small euiPaginationButton euiPaginationButton--hideOnMobile"
             data-test-subj="pagination-button-4"
             type="button"
           >
@@ -146,7 +146,7 @@ exports[`<ListControls /> spec Empty results renders component with empty messag
         >
           <button
             aria-label="Page 10 of 10"
-            class="euiButtonEmpty euiButtonEmpty--text euiButtonEmpty--xSmall euiPaginationButton euiPaginationButton--hideOnMobile"
+            class="euiButtonEmpty euiButtonEmpty--text euiButtonEmpty--small euiPaginationButton euiPaginationButton--hideOnMobile"
             data-test-subj="pagination-button-9"
             type="button"
           >
@@ -164,13 +164,13 @@ exports[`<ListControls /> spec Empty results renders component with empty messag
       </ul>
       <button
         aria-label="Next page, 3"
-        class="euiButtonIcon euiButtonIcon--text"
+        class="euiButtonIcon euiButtonIcon--text euiButtonIcon--empty euiButtonIcon--xSmall"
         data-test-subj="pagination-button-next"
         type="button"
       >
         <svg
           aria-hidden="true"
-          class="euiIcon euiIcon--medium euiIcon-isLoading euiButtonIcon__icon"
+          class="euiIcon euiIcon--medium euiIcon--inherit euiIcon-isLoading euiButtonIcon__icon"
           focusable="false"
           height="16"
           role="img"

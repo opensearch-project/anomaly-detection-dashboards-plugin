@@ -3,7 +3,7 @@
 exports[`<NameAndDescription /> spec renders the component 1`] = `
 <div>
   <div
-    class="euiPanel euiPanel--paddingMedium"
+    class="euiPanel euiPanel--paddingMedium euiPanel--borderRadiusMedium euiPanel--plain euiPanel--hasShadow"
     style="padding: 20px;"
   >
     <div
@@ -87,7 +87,7 @@ exports[`<NameAndDescription /> spec renders the component 1`] = `
                 class="euiFormControlLayout__childrenWrapper"
               >
                 <input
-                  aria-describedby="random_html_id-help"
+                  aria-describedby="random_html_id-help-0"
                   class="euiFieldText"
                   data-test-subj="detectorNameTextInput"
                   id="random_html_id"
@@ -100,7 +100,7 @@ exports[`<NameAndDescription /> spec renders the component 1`] = `
             </div>
             <div
               class="euiFormHelpText euiFormRow__text"
-              id="random_html_id-help"
+              id="random_html_id-help-0"
             >
               Detector name must contain 1-64 characters. Valid characters are
                 a-z, A-Z, 0-9, -(hyphen), _(underscore) and .(period).

@@ -17,7 +17,7 @@ import {
   Route,
   Switch,
 } from 'react-router-dom';
-import { render, fireEvent, wait } from '@testing-library/react';
+import { render, fireEvent, waitFor } from '@testing-library/react';
 import { ConfigureModel } from '../ConfigureModel';
 import configureStore from '../../../../redux/configureStore';
 import { httpClientMock, coreServicesMock } from '../../../../../test/mocks';
@@ -64,7 +64,7 @@ describe('<ConfigureModel /> spec', () => {
     test('validate all required fields', async () => {
       const { getByText } = renderWithRouter();
       fireEvent.click(getByText('Next'));
-      await wait();
+      await waitFor(()=>{});
       getByText('You must enter a feature name');
       getByText('You must select a field');
     });

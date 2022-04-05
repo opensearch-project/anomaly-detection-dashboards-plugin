@@ -227,14 +227,14 @@ describe('<DetectorConfig /> spec', () => {
     };
     const { getByTestId, getByText, queryByText } =
       renderWithRouter(randomDetector);
-    await wait(() => {
+    await waitFor(() => {
       getByText('Custom expression:');
       expect(queryByText('detector_1')).toBeNull();
       expect(queryByText('detector_2')).toBeNull();
     });
 
     fireEvent.click(getByTestId('viewFeature-0'));
-    await wait(() => {
+    await waitFor(() => {
       queryByText('detector_1');
       queryByText('detector_2');
     });
@@ -284,7 +284,7 @@ describe('<DetectorConfig /> spec', () => {
         };
         const { getByTestId, getAllByText, queryByText } =
           renderWithRouter(randomDetector);
-        await wait(() => {
+        await waitFor(() => {
           getAllByText('Custom expression:');
           expect(queryByText('detector_1')).toBeNull();
           expect(queryByText('detector_2')).toBeNull();
@@ -293,7 +293,7 @@ describe('<DetectorConfig /> spec', () => {
         });
 
         fireEvent.click(getByTestId(toClick));
-        await wait(() => {
+        await waitFor(() => {
           notExpected.forEach((obj, index) => {
             expect(queryByText(notExpected[index])).toBeNull();
           });

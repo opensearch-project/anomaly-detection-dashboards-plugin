@@ -25,9 +25,6 @@ exports[`<EmptyDetectorMessage /> spec Empty results renders component with empt
     class="euiSpacer euiSpacer--l"
   />
   <div
-    class="euiSpacer euiSpacer--s"
-  />
-  <div
     class="euiFlexGroup euiFlexGroup--gutterMedium euiFlexGroup--justifyContentCenter euiFlexGroup--directionRow euiFlexGroup--responsive"
   >
     <div
@@ -99,9 +96,6 @@ exports[`<EmptyDetectorMessage /> spec Filters results message renders component
   </span>
   <div
     class="euiSpacer euiSpacer--l"
-  />
-  <div
-    class="euiSpacer euiSpacer--s"
   />
   <button
     class="euiButton euiButton--primary euiButton--fill"
