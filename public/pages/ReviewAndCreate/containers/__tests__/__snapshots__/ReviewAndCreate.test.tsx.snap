@@ -24,7 +24,7 @@ exports[`<ReviewAndCreate /> spec renders the component 1`] = `
     </header>
     <div
       class="euiPanel euiPanel--paddingMedium euiPanel--borderRadiusMedium euiPanel--plain euiPanel--hasShadow"
-      style="padding: 20px; margin: 0px;"
+      style="padding: 20px;"
     >
       <div
         class="euiFlexGroup euiFlexGroup--gutterLarge euiFlexGroup--alignItemsCenter euiFlexGroup--justifyContentSpaceBetween euiFlexGroup--directionRow euiFlexGroup--responsive"
@@ -843,7 +843,7 @@ exports[`<ReviewAndCreate /> spec renders the component 1`] = `
     />
     <div
       class="euiPanel euiPanel--paddingMedium euiPanel--borderRadiusMedium euiPanel--plain euiPanel--hasShadow"
-      style="padding: 20px; margin: 0px;"
+      style="padding: 20px;"
     >
       <div
         class="euiFlexGroup euiFlexGroup--gutterLarge euiFlexGroup--alignItemsCenter euiFlexGroup--justifyContentSpaceBetween euiFlexGroup--directionRow euiFlexGroup--responsive"

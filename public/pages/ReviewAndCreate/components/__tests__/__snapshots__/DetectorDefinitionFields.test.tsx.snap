@@ -4,7 +4,7 @@ exports[`<AdditionalSettings /> spec renders the component in create mode (no ID
 <div>
   <div
     class="euiPanel euiPanel--paddingMedium euiPanel--borderRadiusMedium euiPanel--plain euiPanel--hasShadow"
-    style="padding: 20px; margin: 0px;"
+    style="padding: 20px;"
   >
     <div
       class="euiFlexGroup euiFlexGroup--gutterLarge euiFlexGroup--alignItemsCenter euiFlexGroup--justifyContentSpaceBetween euiFlexGroup--directionRow euiFlexGroup--responsive"
@@ -353,7 +353,7 @@ exports[`<AdditionalSettings /> spec renders the component in edit mode (with ID
 <div>
   <div
     class="euiPanel euiPanel--paddingMedium euiPanel--borderRadiusMedium euiPanel--plain euiPanel--hasShadow"
-    style="padding: 20px; margin: 0px;"
+    style="padding: 20px;"
   >
     <div
       class="euiFlexGroup euiFlexGroup--gutterLarge euiFlexGroup--alignItemsCenter euiFlexGroup--justifyContentSpaceBetween euiFlexGroup--directionRow euiFlexGroup--responsive"

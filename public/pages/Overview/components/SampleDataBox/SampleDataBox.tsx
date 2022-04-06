@@ -18,6 +18,8 @@ import {
   EuiFlexItem,
   EuiTitle,
   EuiLink,
+  EuiCard,
+  EuiHorizontalRule,
 } from '@elastic/eui';
 import { PLUGIN_NAME } from '../../../../utils/constants';
 
@@ -37,7 +39,7 @@ interface SampleDataBoxProps {
 export const SampleDataBox = (props: SampleDataBoxProps) => {
   return (
     <div style={{ height: 'auto' }}>
-      <ContentPanel
+      <EuiCard
         title={
           <div
             style={{
@@ -62,9 +64,15 @@ export const SampleDataBox = (props: SampleDataBoxProps) => {
           </div>
         }
         titleSize="s"
-        badgeLabel={props.isDataLoaded ? 'INSTALLED' : undefined}
+        betaBadgeLabel={props.isDataLoaded ? 'INSTALLED' : undefined}
+        paddingSize='l'
       >
         <EuiFlexGroup direction="column" gutterSize="l">
+        <EuiHorizontalRule
+              size="full"
+              margin="s"
+            >
+            </EuiHorizontalRule>
           <EuiFlexItem grow={false} style={{ height: '70px' }}>
             <p
               style={{
@@ -118,7 +126,7 @@ export const SampleDataBox = (props: SampleDataBoxProps) => {
             </EuiFlexItem>
           </EuiFlexGroup>
         </EuiFlexGroup>
-      </ContentPanel>
+      </EuiCard>
     </div>
   );
 };
