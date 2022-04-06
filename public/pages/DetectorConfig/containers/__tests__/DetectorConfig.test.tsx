@@ -17,7 +17,7 @@ import {
   Route,
   Switch,
 } from 'react-router-dom';
-import { render, fireEvent, wait, waitFor } from '@testing-library/react';
+import { render, fireEvent, waitFor } from '@testing-library/react';
 import { DetectorConfig } from '../DetectorConfig';
 import {
   Detector,

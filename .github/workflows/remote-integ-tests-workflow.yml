@@ -10,15 +10,15 @@ on:
     branches:
       - main
 env:
-  OPENSEARCH_DASHBOARDS_VERSION: '1.x'
-  OPENSEARCH_VERSION: '1.3.0-SNAPSHOT'
+  OPENSEARCH_DASHBOARDS_VERSION: 'main'
+  OPENSEARCH_VERSION: '2.0.0-alpha1-SNAPSHOT'
 jobs:
   test-without-security:
     name: Run integ tests without security
     strategy:
       matrix:
         os: [ubuntu-latest]
-        java: [14]
+        java: [11]
     runs-on: ${{ matrix.os }}
     steps:
       - name: Checkout Anomaly-Detection
