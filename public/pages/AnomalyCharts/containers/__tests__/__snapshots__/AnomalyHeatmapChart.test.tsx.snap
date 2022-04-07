@@ -17,7 +17,7 @@ exports[`<AnomalyHeatmapChart /> spec AnomalyHeatmapChart with Sample anomaly da
         >
           <svg
             aria-hidden="true"
-            class="euiIcon euiIcon--medium euiIcon-isLoading euiCallOutHeader__icon"
+            class="euiIcon euiIcon--medium euiIcon--inherit euiIcon-isLoading euiCallOutHeader__icon"
             focusable="false"
             height="16"
             role="img"
@@ -116,10 +116,11 @@ exports[`<AnomalyHeatmapChart /> spec AnomalyHeatmapChart with Sample anomaly da
                               aria-label="Remove Top 10 from selection in this group"
                               class="euiBadge__iconButton"
                               title="Remove Top 10 from selection in this group"
+                              type="button"
                             >
                               <svg
                                 aria-hidden="true"
-                                class="euiIcon euiIcon--small euiIcon-isLoading euiBadge__icon"
+                                class="euiIcon euiIcon--small euiIcon--inherit euiIcon-isLoading euiBadge__icon"
                                 focusable="false"
                                 height="16"
                                 role="img"
@@ -194,52 +195,54 @@ exports[`<AnomalyHeatmapChart /> spec AnomalyHeatmapChart with Sample anomaly da
                 style="min-width: 150px;"
               >
                 <div
-                  class="euiPopover euiPopover--anchorDownCenter euiPopover--displayBlock euiSuperSelect"
+                  class="euiPopover euiPopover--anchorDownLeft euiPopover--displayBlock euiInputPopover euiSuperSelect"
                 >
                   <div
                     class="euiPopover__anchor"
                   >
-                    <input
-                      type="hidden"
-                      value="severity"
-                    />
-                    <div
-                      class="euiFormControlLayout"
-                    >
+                    <div>
+                      <input
+                        type="hidden"
+                        value="severity"
+                      />
                       <div
-                        class="euiFormControlLayout__childrenWrapper"
+                        class="euiFormControlLayout"
                       >
-                        <span
-                          class="euiScreenReaderOnly"
-                          id="random_html_id"
-                        >
-                          Select an option: By severity, is selected
-                        </span>
-                        <button
-                          aria-haspopup="true"
-                          aria-labelledby="undefined random_html_id"
-                          class="euiSuperSelectControl"
-                          type="button"
-                        >
-                          By severity
-                        </button>
                         <div
-                          class="euiFormControlLayoutIcons euiFormControlLayoutIcons--right"
+                          class="euiFormControlLayout__childrenWrapper"
                         >
                           <span
-                            class="euiFormControlLayoutCustomIcon"
+                            class="euiScreenReaderOnly"
+                            id="random_html_id"
                           >
-                            <svg
-                              aria-hidden="true"
-                              class="euiIcon euiIcon--medium euiIcon-isLoading euiFormControlLayoutCustomIcon__icon"
-                              focusable="false"
-                              height="16"
-                              role="img"
-                              viewBox="0 0 16 16"
-                              width="16"
-                              xmlns="http://www.w3.org/2000/svg"
-                            />
+                            Select an option: By severity, is selected
                           </span>
+                          <button
+                            aria-haspopup="true"
+                            aria-labelledby="undefined random_html_id"
+                            class="euiSuperSelectControl"
+                            type="button"
+                          >
+                            By severity
+                          </button>
+                          <div
+                            class="euiFormControlLayoutIcons euiFormControlLayoutIcons--right"
+                          >
+                            <span
+                              class="euiFormControlLayoutCustomIcon"
+                            >
+                              <svg
+                                aria-hidden="true"
+                                class="euiIcon euiIcon--medium euiIcon-isLoading euiFormControlLayoutCustomIcon__icon"
+                                focusable="false"
+                                height="16"
+                                role="img"
+                                viewBox="0 0 16 16"
+                                width="16"
+                                xmlns="http://www.w3.org/2000/svg"
+                              />
+                            </span>
+                          </div>
                         </div>
                       </div>
                     </div>
@@ -422,7 +425,7 @@ exports[`<AnomalyHeatmapChart /> spec AnomalyHeatmapChart with anomaly summaries
         >
           <svg
             aria-hidden="true"
-            class="euiIcon euiIcon--medium euiCallOutHeader__icon"
+            class="euiIcon euiIcon--medium euiIcon--inherit euiCallOutHeader__icon"
             focusable="false"
             height="16"
             role="img"
@@ -588,10 +591,11 @@ exports[`<AnomalyHeatmapChart /> spec AnomalyHeatmapChart with anomaly summaries
                               aria-label="Remove Top 10 from selection in this group"
                               class="euiBadge__iconButton"
                               title="Remove Top 10 from selection in this group"
+                              type="button"
                             >
                               <svg
                                 aria-hidden="true"
-                                class="euiIcon euiIcon--small euiBadge__icon"
+                                class="euiIcon euiIcon--small euiIcon--inherit euiBadge__icon"
                                 focusable="false"
                                 height="16"
                                 role="img"
@@ -679,57 +683,59 @@ exports[`<AnomalyHeatmapChart /> spec AnomalyHeatmapChart with anomaly summaries
                 style="min-width: 150px;"
               >
                 <div
-                  class="euiPopover euiPopover--anchorDownCenter euiPopover--displayBlock euiSuperSelect"
+                  class="euiPopover euiPopover--anchorDownLeft euiPopover--displayBlock euiInputPopover euiSuperSelect"
                 >
                   <div
                     class="euiPopover__anchor"
                   >
-                    <input
-                      type="hidden"
-                      value="severity"
-                    />
-                    <div
-                      class="euiFormControlLayout"
-                    >
+                    <div>
+                      <input
+                        type="hidden"
+                        value="severity"
+                      />
                       <div
-                        class="euiFormControlLayout__childrenWrapper"
+                        class="euiFormControlLayout"
                       >
-                        <span
-                          class="euiScreenReaderOnly"
-                          id="random_html_id"
-                        >
-                          Select an option: By severity, is selected
-                        </span>
-                        <button
-                          aria-haspopup="true"
-                          aria-labelledby="undefined random_html_id"
-                          class="euiSuperSelectControl"
-                          type="button"
-                        >
-                          By severity
-                        </button>
                         <div
-                          class="euiFormControlLayoutIcons euiFormControlLayoutIcons--right"
+                          class="euiFormControlLayout__childrenWrapper"
                         >
                           <span
-                            class="euiFormControlLayoutCustomIcon"
+                            class="euiScreenReaderOnly"
+                            id="random_html_id"
                           >
-                            <svg
-                              aria-hidden="true"
-                              class="euiIcon euiIcon--medium euiFormControlLayoutCustomIcon__icon"
-                              focusable="false"
-                              height="16"
-                              role="img"
-                              viewBox="0 0 16 16"
-                              width="16"
-                              xmlns="http://www.w3.org/2000/svg"
-                            >
-                              <path
-                                d="M13.069 5.157L8.384 9.768a.546.546 0 01-.768 0L2.93 5.158a.552.552 0 00-.771 0 .53.53 0 000 .759l4.684 4.61c.641.631 1.672.63 2.312 0l4.684-4.61a.53.53 0 000-.76.552.552 0 00-.771 0z"
-                                fill-rule="non-zero"
-                              />
-                            </svg>
+                            Select an option: By severity, is selected
                           </span>
+                          <button
+                            aria-haspopup="true"
+                            aria-labelledby="undefined random_html_id"
+                            class="euiSuperSelectControl"
+                            type="button"
+                          >
+                            By severity
+                          </button>
+                          <div
+                            class="euiFormControlLayoutIcons euiFormControlLayoutIcons--right"
+                          >
+                            <span
+                              class="euiFormControlLayoutCustomIcon"
+                            >
+                              <svg
+                                aria-hidden="true"
+                                class="euiIcon euiIcon--medium euiFormControlLayoutCustomIcon__icon"
+                                focusable="false"
+                                height="16"
+                                role="img"
+                                viewBox="0 0 16 16"
+                                width="16"
+                                xmlns="http://www.w3.org/2000/svg"
+                              >
+                                <path
+                                  d="M13.069 5.157L8.384 9.768a.546.546 0 01-.768 0L2.93 5.158a.552.552 0 00-.771 0 .53.53 0 000 .759l4.684 4.61c.641.631 1.672.63 2.312 0l4.684-4.61a.53.53 0 000-.76.552.552 0 00-.771 0z"
+                                  fill-rule="non-zero"
+                                />
+                              </svg>
+                            </span>
+                          </div>
                         </div>
                       </div>
                     </div>
@@ -916,7 +922,7 @@ exports[`<AnomalyHeatmapChart /> spec AnomalyHeatmapChart with multiple category
         >
           <svg
             aria-hidden="true"
-            class="euiIcon euiIcon--medium euiCallOutHeader__icon"
+            class="euiIcon euiIcon--medium euiIcon--inherit euiCallOutHeader__icon"
             focusable="false"
             height="16"
             role="img"
@@ -1009,10 +1015,11 @@ exports[`<AnomalyHeatmapChart /> spec AnomalyHeatmapChart with multiple category
                               aria-label="Remove test-field-1 from selection in this group"
                               class="euiBadge__iconButton"
                               title="Remove test-field-1 from selection in this group"
+                              type="button"
                             >
                               <svg
                                 aria-hidden="true"
-                                class="euiIcon euiIcon--small euiBadge__icon"
+                                class="euiIcon euiIcon--small euiIcon--inherit euiBadge__icon"
                                 focusable="false"
                                 height="16"
                                 role="img"
@@ -1044,10 +1051,11 @@ exports[`<AnomalyHeatmapChart /> spec AnomalyHeatmapChart with multiple category
                               aria-label="Remove test-field-2 from selection in this group"
                               class="euiBadge__iconButton"
                               title="Remove test-field-2 from selection in this group"
+                              type="button"
                             >
                               <svg
                                 aria-hidden="true"
-                                class="euiIcon euiIcon--small euiBadge__icon"
+                                class="euiIcon euiIcon--small euiIcon--inherit euiBadge__icon"
                                 focusable="false"
                                 height="16"
                                 role="img"
@@ -1168,10 +1176,11 @@ exports[`<AnomalyHeatmapChart /> spec AnomalyHeatmapChart with multiple category
                               aria-label="Remove Top 10 from selection in this group"
                               class="euiBadge__iconButton"
                               title="Remove Top 10 from selection in this group"
+                              type="button"
                             >
                               <svg
                                 aria-hidden="true"
-                                class="euiIcon euiIcon--small euiBadge__icon"
+                                class="euiIcon euiIcon--small euiIcon--inherit euiBadge__icon"
                                 focusable="false"
                                 height="16"
                                 role="img"
@@ -1259,57 +1268,59 @@ exports[`<AnomalyHeatmapChart /> spec AnomalyHeatmapChart with multiple category
                 style="min-width: 150px;"
               >
                 <div
-                  class="euiPopover euiPopover--anchorDownCenter euiPopover--displayBlock euiSuperSelect"
+                  class="euiPopover euiPopover--anchorDownLeft euiPopover--displayBlock euiInputPopover euiSuperSelect"
                 >
                   <div
                     class="euiPopover__anchor"
                   >
-                    <input
-                      type="hidden"
-                      value="severity"
-                    />
-                    <div
-                      class="euiFormControlLayout"
-                    >
+                    <div>
+                      <input
+                        type="hidden"
+                        value="severity"
+                      />
                       <div
-                        class="euiFormControlLayout__childrenWrapper"
+                        class="euiFormControlLayout"
                       >
-                        <span
-                          class="euiScreenReaderOnly"
-                          id="random_html_id"
-                        >
-                          Select an option: By severity, is selected
-                        </span>
-                        <button
-                          aria-haspopup="true"
-                          aria-labelledby="undefined random_html_id"
-                          class="euiSuperSelectControl"
-                          type="button"
-                        >
-                          By severity
-                        </button>
                         <div
-                          class="euiFormControlLayoutIcons euiFormControlLayoutIcons--right"
+                          class="euiFormControlLayout__childrenWrapper"
                         >
                           <span
-                            class="euiFormControlLayoutCustomIcon"
+                            class="euiScreenReaderOnly"
+                            id="random_html_id"
                           >
-                            <svg
-                              aria-hidden="true"
-                              class="euiIcon euiIcon--medium euiFormControlLayoutCustomIcon__icon"
-                              focusable="false"
-                              height="16"
-                              role="img"
-                              viewBox="0 0 16 16"
-                              width="16"
-                              xmlns="http://www.w3.org/2000/svg"
-                            >
-                              <path
-                                d="M13.069 5.157L8.384 9.768a.546.546 0 01-.768 0L2.93 5.158a.552.552 0 00-.771 0 .53.53 0 000 .759l4.684 4.61c.641.631 1.672.63 2.312 0l4.684-4.61a.53.53 0 000-.76.552.552 0 00-.771 0z"
-                                fill-rule="non-zero"
-                              />
-                            </svg>
+                            Select an option: By severity, is selected
                           </span>
+                          <button
+                            aria-haspopup="true"
+                            aria-labelledby="undefined random_html_id"
+                            class="euiSuperSelectControl"
+                            type="button"
+                          >
+                            By severity
+                          </button>
+                          <div
+                            class="euiFormControlLayoutIcons euiFormControlLayoutIcons--right"
+                          >
+                            <span
+                              class="euiFormControlLayoutCustomIcon"
+                            >
+                              <svg
+                                aria-hidden="true"
+                                class="euiIcon euiIcon--medium euiFormControlLayoutCustomIcon__icon"
+                                focusable="false"
+                                height="16"
+                                role="img"
+                                viewBox="0 0 16 16"
+                                width="16"
+                                xmlns="http://www.w3.org/2000/svg"
+                              >
+                                <path
+                                  d="M13.069 5.157L8.384 9.768a.546.546 0 01-.768 0L2.93 5.158a.552.552 0 00-.771 0 .53.53 0 000 .759l4.684 4.61c.641.631 1.672.63 2.312 0l4.684-4.61a.53.53 0 000-.76.552.552 0 00-.771 0z"
+                                  fill-rule="non-zero"
+                                />
+                              </svg>
+                            </span>
+                          </div>
                         </div>
                       </div>
                     </div>
@@ -1496,7 +1507,7 @@ exports[`<AnomalyHeatmapChart /> spec AnomalyHeatmapChart with one category fiel
         >
           <svg
             aria-hidden="true"
-            class="euiIcon euiIcon--medium euiCallOutHeader__icon"
+            class="euiIcon euiIcon--medium euiIcon--inherit euiCallOutHeader__icon"
             focusable="false"
             height="16"
             role="img"
@@ -1589,10 +1600,11 @@ exports[`<AnomalyHeatmapChart /> spec AnomalyHeatmapChart with one category fiel
                               aria-label="Remove test-field from selection in this group"
                               class="euiBadge__iconButton"
                               title="Remove test-field from selection in this group"
+                              type="button"
                             >
                               <svg
                                 aria-hidden="true"
-                                class="euiIcon euiIcon--small euiBadge__icon"
+                                class="euiIcon euiIcon--small euiIcon--inherit euiBadge__icon"
                                 focusable="false"
                                 height="16"
                                 role="img"
@@ -1713,10 +1725,11 @@ exports[`<AnomalyHeatmapChart /> spec AnomalyHeatmapChart with one category fiel
                               aria-label="Remove Top 10 from selection in this group"
                               class="euiBadge__iconButton"
                               title="Remove Top 10 from selection in this group"
+                              type="button"
                             >
                               <svg
                                 aria-hidden="true"
-                                class="euiIcon euiIcon--small euiBadge__icon"
+                                class="euiIcon euiIcon--small euiIcon--inherit euiBadge__icon"
                                 focusable="false"
                                 height="16"
                                 role="img"
@@ -1804,57 +1817,59 @@ exports[`<AnomalyHeatmapChart /> spec AnomalyHeatmapChart with one category fiel
                 style="min-width: 150px;"
               >
                 <div
-                  class="euiPopover euiPopover--anchorDownCenter euiPopover--displayBlock euiSuperSelect"
+                  class="euiPopover euiPopover--anchorDownLeft euiPopover--displayBlock euiInputPopover euiSuperSelect"
                 >
                   <div
                     class="euiPopover__anchor"
                   >
-                    <input
-                      type="hidden"
-                      value="severity"
-                    />
-                    <div
-                      class="euiFormControlLayout"
-                    >
+                    <div>
+                      <input
+                        type="hidden"
+                        value="severity"
+                      />
                       <div
-                        class="euiFormControlLayout__childrenWrapper"
+                        class="euiFormControlLayout"
                       >
-                        <span
-                          class="euiScreenReaderOnly"
-                          id="random_html_id"
-                        >
-                          Select an option: By severity, is selected
-                        </span>
-                        <button
-                          aria-haspopup="true"
-                          aria-labelledby="undefined random_html_id"
-                          class="euiSuperSelectControl"
-                          type="button"
-                        >
-                          By severity
-                        </button>
                         <div
-                          class="euiFormControlLayoutIcons euiFormControlLayoutIcons--right"
+                          class="euiFormControlLayout__childrenWrapper"
                         >
                           <span
-                            class="euiFormControlLayoutCustomIcon"
+                            class="euiScreenReaderOnly"
+                            id="random_html_id"
                           >
-                            <svg
-                              aria-hidden="true"
-                              class="euiIcon euiIcon--medium euiFormControlLayoutCustomIcon__icon"
-                              focusable="false"
-                              height="16"
-                              role="img"
-                              viewBox="0 0 16 16"
-                              width="16"
-                              xmlns="http://www.w3.org/2000/svg"
-                            >
-                              <path
-                                d="M13.069 5.157L8.384 9.768a.546.546 0 01-.768 0L2.93 5.158a.552.552 0 00-.771 0 .53.53 0 000 .759l4.684 4.61c.641.631 1.672.63 2.312 0l4.684-4.61a.53.53 0 000-.76.552.552 0 00-.771 0z"
-                                fill-rule="non-zero"
-                              />
-                            </svg>
+                            Select an option: By severity, is selected
                           </span>
+                          <button
+                            aria-haspopup="true"
+                            aria-labelledby="undefined random_html_id"
+                            class="euiSuperSelectControl"
+                            type="button"
+                          >
+                            By severity
+                          </button>
+                          <div
+                            class="euiFormControlLayoutIcons euiFormControlLayoutIcons--right"
+                          >
+                            <span
+                              class="euiFormControlLayoutCustomIcon"
+                            >
+                              <svg
+                                aria-hidden="true"
+                                class="euiIcon euiIcon--medium euiFormControlLayoutCustomIcon__icon"
+                                focusable="false"
+                                height="16"
+                                role="img"
+                                viewBox="0 0 16 16"
+                                width="16"
+                                xmlns="http://www.w3.org/2000/svg"
+                              >
+                                <path
+                                  d="M13.069 5.157L8.384 9.768a.546.546 0 01-.768 0L2.93 5.158a.552.552 0 00-.771 0 .53.53 0 000 .759l4.684 4.61c.641.631 1.672.63 2.312 0l4.684-4.61a.53.53 0 000-.76.552.552 0 00-.771 0z"
+                                  fill-rule="non-zero"
+                                />
+                              </svg>
+                            </span>
+                          </div>
                         </div>
                       </div>
                     </div>

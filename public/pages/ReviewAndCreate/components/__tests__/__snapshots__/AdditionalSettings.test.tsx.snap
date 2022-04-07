@@ -36,7 +36,7 @@ exports[`<AdditionalSettings /> spec renders the component with high cardinality
               role="columnheader"
               scope="col"
             >
-              <div
+              <span
                 class="euiTableCellContent"
               >
                 <span
@@ -45,7 +45,7 @@ exports[`<AdditionalSettings /> spec renders the component with high cardinality
                 >
                   Category field
                 </span>
-              </div>
+              </span>
             </th>
             <th
               class="euiTableHeaderCell"
@@ -53,7 +53,7 @@ exports[`<AdditionalSettings /> spec renders the component with high cardinality
               role="columnheader"
               scope="col"
             >
-              <div
+              <span
                 class="euiTableCellContent"
               >
                 <span
@@ -62,7 +62,7 @@ exports[`<AdditionalSettings /> spec renders the component with high cardinality
                 >
                   Shingle size
                 </span>
-              </div>
+              </span>
             </th>
           </tr>
         </thead>
@@ -150,7 +150,7 @@ exports[`<AdditionalSettings /> spec renders the component with high cardinality
               role="columnheader"
               scope="col"
             >
-              <div
+              <span
                 class="euiTableCellContent"
               >
                 <span
@@ -159,7 +159,7 @@ exports[`<AdditionalSettings /> spec renders the component with high cardinality
                 >
                   Category field
                 </span>
-              </div>
+              </span>
             </th>
             <th
               class="euiTableHeaderCell"
@@ -167,7 +167,7 @@ exports[`<AdditionalSettings /> spec renders the component with high cardinality
               role="columnheader"
               scope="col"
             >
-              <div
+              <span
                 class="euiTableCellContent"
               >
                 <span
@@ -176,7 +176,7 @@ exports[`<AdditionalSettings /> spec renders the component with high cardinality
                 >
                   Shingle size
                 </span>
-              </div>
+              </span>
             </th>
           </tr>
         </thead>

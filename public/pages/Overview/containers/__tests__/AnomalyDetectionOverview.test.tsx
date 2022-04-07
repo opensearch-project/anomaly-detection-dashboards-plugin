@@ -10,7 +10,7 @@
  */
 
 import React from 'react';
-import { render, wait } from '@testing-library/react';
+import { render, waitFor } from '@testing-library/react';
 import { AnomalyDetectionOverview } from '../AnomalyDetectionOverview';
 import { Provider } from 'react-redux';
 import {
@@ -90,7 +90,7 @@ describe('<AnomalyDetectionOverview /> spec', () => {
         },
       });
       const { container, getByText, getAllByText } = renderWithRouter();
-      await wait();
+      await waitFor(()=>{});
       expect(container).toMatchSnapshot();
       getByText('Anomaly detection');
       getByText('Monitor HTTP responses');
@@ -117,7 +117,7 @@ describe('<AnomalyDetectionOverview /> spec', () => {
         },
       });
       const { container, getByText, queryByText } = renderWithRouter();
-      await wait();
+      await waitFor(()=>{});
       expect(container).toMatchSnapshot();
       getByText('Anomaly detection');
       getByText('Monitor HTTP responses');

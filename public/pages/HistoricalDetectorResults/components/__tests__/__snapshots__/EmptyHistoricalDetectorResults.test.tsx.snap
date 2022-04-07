@@ -5,14 +5,14 @@ exports[`<EmptyHistoricalDetectorResults /> spec renders component 1`] = `
   class="euiEmptyPrompt"
   data-test-subj="emptyHistoricalAnalysisMessage"
 >
+  <h2
+    class="euiTitle euiTitle--medium"
+  >
+    You haven't yet set up historical analysis
+  </h2>
   <span
     class="euiTextColor euiTextColor--subdued"
   >
-    <h2
-      class="euiTitle euiTitle--medium"
-    >
-      You haven't yet set up historical analysis
-    </h2>
     <div
       class="euiSpacer euiSpacer--m"
     />
@@ -39,6 +39,22 @@ exports[`<EmptyHistoricalDetectorResults /> spec renders component 1`] = `
             width="16"
             xmlns="http://www.w3.org/2000/svg"
           />
+          <svg
+            aria-hidden="true"
+            aria-label="External link"
+            class="euiIcon euiIcon--small euiIcon-isLoading euiLink__externalIcon"
+            focusable="false"
+            height="16"
+            role="img"
+            viewBox="0 0 16 16"
+            width="16"
+            xmlns="http://www.w3.org/2000/svg"
+          />
+          <span
+            class="euiScreenReaderOnly"
+          >
+            (opens in a new tab or window)
+          </span>
         </a>
          
       </p>
@@ -46,9 +62,6 @@ exports[`<EmptyHistoricalDetectorResults /> spec renders component 1`] = `
   </span>
   <div
     class="euiSpacer euiSpacer--l"
-  />
-  <div
-    class="euiSpacer euiSpacer--s"
   />
   <button
     class="euiButton euiButton--primary euiButton--fill"

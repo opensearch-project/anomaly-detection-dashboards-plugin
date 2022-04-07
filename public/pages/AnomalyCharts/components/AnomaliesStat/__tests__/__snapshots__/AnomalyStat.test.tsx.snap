@@ -53,6 +53,25 @@ exports[`<AlertsStat /> spec Alert Stat renders component with monitor and loadi
             d="M13 8.5a.5.5 0 111 0V12a2 2 0 01-2 2H4a2 2 0 01-2-2V4a2 2 0 012-2h3.5a.5.5 0 010 1H4a1 1 0 00-1 1v8a1 1 0 001 1h8a1 1 0 001-1V8.5zm-5.12.339a.5.5 0 11-.706-.707L13.305 2H10.5a.5.5 0 110-1H14a1 1 0 011 1v3.5a.5.5 0 11-1 0V2.72L7.88 8.838z"
           />
         </svg>
+        <svg
+          aria-label="External link"
+          class="euiIcon euiIcon--small euiLink__externalIcon"
+          focusable="false"
+          height="16"
+          role="img"
+          viewBox="0 0 16 16"
+          width="16"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            d="M13 8.5a.5.5 0 111 0V12a2 2 0 01-2 2H4a2 2 0 01-2-2V4a2 2 0 012-2h3.5a.5.5 0 010 1H4a1 1 0 00-1 1v8a1 1 0 001 1h8a1 1 0 001-1V8.5zm-5.12.339a.5.5 0 11-.706-.707L13.305 2H10.5a.5.5 0 110-1H14a1 1 0 011 1v3.5a.5.5 0 11-1 0V2.72L7.88 8.838z"
+          />
+        </svg>
+        <span
+          class="euiScreenReaderOnly"
+        >
+          (opens in a new tab or window)
+        </span>
       </a>
     </div>
   </div>
@@ -108,6 +127,22 @@ exports[`<AlertsStat /> spec Alert Stat renders component with monitor and not l
           width="16"
           xmlns="http://www.w3.org/2000/svg"
         />
+        <svg
+          aria-hidden="true"
+          aria-label="External link"
+          class="euiIcon euiIcon--small euiIcon-isLoading euiLink__externalIcon"
+          focusable="false"
+          height="16"
+          role="img"
+          viewBox="0 0 16 16"
+          width="16"
+          xmlns="http://www.w3.org/2000/svg"
+        />
+        <span
+          class="euiScreenReaderOnly"
+        >
+          (opens in a new tab or window)
+        </span>
       </a>
     </div>
   </div>

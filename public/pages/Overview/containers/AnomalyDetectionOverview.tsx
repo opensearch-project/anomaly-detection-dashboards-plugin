@@ -20,6 +20,7 @@ import {
   EuiIcon,
   EuiButton,
   EuiLoadingSpinner,
+  EuiFlexGrid,
 } from '@elastic/eui';
 import React, { Fragment, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
@@ -241,7 +242,7 @@ export function AnomalyDetectionOverview(props: AnomalyDetectionOverviewProps) {
         }
         horizontalRuleClassName="hide-horizontal-rule"
       >
-        <EuiFlexGroup direction="row" gutterSize="l">
+        <EuiFlexGrid columns={3} gutterSize="l">
           <EuiFlexItem>
             <SampleDataBox
               title="Monitor HTTP responses"
@@ -343,7 +344,7 @@ export function AnomalyDetectionOverview(props: AnomalyDetectionOverviewProps) {
             />
           </EuiFlexItem>
           <EuiSpacer size="m" />
-        </EuiFlexGroup>
+        </EuiFlexGrid>
       </ContentPanel>
       {showHttpResponseDetailsFlyout ? (
         <SampleDetailsFlyout

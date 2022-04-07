@@ -61,7 +61,6 @@ export default (iRouter: IRouter, basePath: String): Router => {
                 validate: {
                   params: schema.any(),
                   query: schema.any(),
-                  body: schema.any(),
                 },
               },
               requestHandler(handler)

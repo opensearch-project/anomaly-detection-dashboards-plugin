@@ -38,7 +38,7 @@ import {
   niceTimeFormatter,
   ScaleType,
   LineAnnotation,
-  AnnotationDomainTypes,
+  AnnotationDomainType,
   LineAnnotationDatum,
 } from '@elastic/charts';
 import { EuiText, EuiTitle } from '@elastic/eui';
@@ -351,7 +351,8 @@ export const AnomaliesLiveChart = (props: AnomaliesLiveChartProps) => {
                     }}
                   />
                   <LineAnnotation
-                    domainType={AnnotationDomainTypes.XDomain}
+                    id={'lineAnnotation'}
+                    domainType={AnnotationDomainType.XDomain}
                     dataValues={annotations}
                     style={TIME_NOW_LINE_STYLE}
                     marker={'Now'}

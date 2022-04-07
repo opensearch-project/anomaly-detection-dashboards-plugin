@@ -10,7 +10,7 @@
  */
 
 import {
-  AnnotationDomainTypes,
+  AnnotationDomainType,
   Axis,
   Chart,
   LineAnnotation,
@@ -535,7 +535,7 @@ export const AnomalyDetailsChart = React.memo(
                   {alertAnnotations ? (
                     <LineAnnotation
                       id="alertAnnotation"
-                      domainType={AnnotationDomainTypes.XDomain}
+                      domainType={AnnotationDomainType.XDomain}
                       dataValues={alertAnnotations}
                       marker={<EuiIcon type="bell" />}
                     />

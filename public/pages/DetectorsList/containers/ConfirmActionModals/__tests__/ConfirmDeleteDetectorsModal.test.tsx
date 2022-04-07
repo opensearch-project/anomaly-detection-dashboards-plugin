@@ -10,7 +10,7 @@
  */
 
 import React from 'react';
-import { render, fireEvent, wait } from '@testing-library/react';
+import { render, fireEvent, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { ConfirmDeleteDetectorsModal } from '../ConfirmDeleteDetectorsModal';
 import { DetectorListItem, Monitor } from '../../../../../models/interfaces';
@@ -74,11 +74,11 @@ describe('<ConfirmDeleteDetectorsModal /> spec', () => {
       const { getByTestId, getByPlaceholderText } = render(
         <ConfirmDeleteDetectorsModal {...defaultDeleteProps} />
       );
-      await wait();
+      await waitFor(()=>{});
       userEvent.type(getByPlaceholderText('delete'), 'foo');
-      await wait();
+      await waitFor(()=>{});
       userEvent.click(getByTestId('confirmButton'));
-      await wait();
+      await waitFor(()=>{});
       expect(defaultDeleteProps.onStopDetectors).not.toHaveBeenCalled();
       expect(defaultDeleteProps.onDeleteDetectors).not.toHaveBeenCalled();
       expect(defaultDeleteProps.onConfirm).not.toHaveBeenCalled();
@@ -87,11 +87,11 @@ describe('<ConfirmDeleteDetectorsModal /> spec', () => {
       const { getByTestId, getByPlaceholderText } = render(
         <ConfirmDeleteDetectorsModal {...defaultDeleteProps} />
       );
-      await wait();
+      await waitFor(()=>{});
       userEvent.type(getByPlaceholderText('delete'), 'delete');
-      await wait();
+      await waitFor(()=>{});
       userEvent.click(getByTestId('confirmButton'));
-      await wait();
+      await waitFor(()=>{});
       expect(defaultDeleteProps.onConfirm).toHaveBeenCalled();
     }, 10000);
     test('should not show callout if no detectors are running', async () => {
@@ -126,7 +126,7 @@ describe('<ConfirmDeleteDetectorsModal /> spec', () => {
           }
         />
       );
-      await wait();
+      await waitFor(()=>{});
       expect(
         queryByText('Some of the selected detectors are currently running.')
       ).not.toBeNull();
@@ -135,9 +135,9 @@ describe('<ConfirmDeleteDetectorsModal /> spec', () => {
       const { getByTestId } = render(
         <ConfirmDeleteDetectorsModal {...defaultDeleteProps} />
       );
-      await wait();
+      await waitFor(()=>{});
       fireEvent.click(getByTestId('cancelButton'));
-      await wait();
+      await waitFor(()=>{});
       expect(defaultDeleteProps.onHide).toHaveBeenCalled();
     });
     test('should call onStopDetectors when deleting running detectors', async () => {
@@ -156,14 +156,14 @@ describe('<ConfirmDeleteDetectorsModal /> spec', () => {
         />
       );
       // Try clicking before 'delete' has been typed
-      await wait();
+      await waitFor(()=>{});
       userEvent.click(getByTestId('confirmButton'));
-      await wait();
+      await waitFor(()=>{});
       expect(defaultDeleteProps.onStopDetectors).not.toHaveBeenCalled();
       userEvent.type(getByPlaceholderText('delete'), 'delete');
-      await wait();
+      await waitFor(()=>{});
       userEvent.click(getByTestId('confirmButton'));
-      await wait();
+      await waitFor(()=>{});
       expect(defaultDeleteProps.onStopDetectors).toHaveBeenCalled();
     });
   });

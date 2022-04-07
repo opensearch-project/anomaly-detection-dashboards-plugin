@@ -26,7 +26,7 @@ exports[`<ListActions /> spec List actions renders component when disabled 1`] =
           >
             <svg
               aria-hidden="true"
-              class="euiIcon euiIcon--medium euiIcon-isLoading euiButtonContent__icon"
+              class="euiIcon euiIcon--medium euiIcon--inherit euiIcon-isLoading euiButtonContent__icon"
               focusable="false"
               height="16"
               role="img"
@@ -72,7 +72,7 @@ exports[`<ListActions /> spec List actions renders component when enabled 1`] = 
           >
             <svg
               aria-hidden="true"
-              class="euiIcon euiIcon--medium euiButtonContent__icon"
+              class="euiIcon euiIcon--medium euiIcon--inherit euiButtonContent__icon"
               focusable="false"
               height="16"
               role="img"

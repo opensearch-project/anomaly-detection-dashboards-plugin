@@ -41,7 +41,6 @@ type ContentPanelProps = {
   hideBody?: boolean;
   titleDataTestSubj?: string;
 };
-
 const ContentPanel = (props: ContentPanelProps) => {
   const titleDataTestSubj = get(
     props,
@@ -50,12 +49,11 @@ const ContentPanel = (props: ContentPanelProps) => {
   );
   return (
     <EuiPanel
-      style={{ padding: '20px', ...props.panelStyles }}
+      style={{ padding: '20px'}}
       className={props.contentPanelClassName}
-      betaBadgeLabel={props.badgeLabel}
     >
       <EuiFlexGroup
-        style={{ padding: '0px', ...props.titleContainerStyles }}
+        style={{ padding: '0px' }}
         justifyContent="spaceBetween"
         alignItems="center"
       >
@@ -135,7 +133,7 @@ const ContentPanel = (props: ContentPanelProps) => {
             margin="s"
             className={props.horizontalRuleClassName}
           />
-          <div style={{ padding: '10px 0px', ...props.bodyStyles }}>
+          <div style={{ padding: '10px 0px' }}>
             {props.children}
           </div>
         </div>
