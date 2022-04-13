@@ -56,12 +56,6 @@ export function DetectorConfig(props: DetectorConfigProps) {
         </EuiPageBody>
       ) : (
         <div>
-          <EuiLoadingSpinner size="s" />
-          &nbsp;&nbsp;
-          <EuiLoadingSpinner size="m" />
-          &nbsp;&nbsp;
-          <EuiLoadingSpinner size="l" />
-          &nbsp;&nbsp;
           <EuiLoadingSpinner size="xl" />
         </div>
       )}
