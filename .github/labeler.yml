@@ -1,5 +1,5 @@
-# Default all changes to backporting to 1.x branch
-backport 1.x:
+# Default all changes to backporting to 2.x branch
+backport 2.x:
 - '*'
 - '*/*'
 - '*/**/*'
