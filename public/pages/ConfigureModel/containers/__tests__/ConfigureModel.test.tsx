@@ -64,7 +64,7 @@ describe('<ConfigureModel /> spec', () => {
     test('validate all required fields', async () => {
       const { getByText } = renderWithRouter();
       fireEvent.click(getByText('Next'));
-      await waitFor(()=>{});
+      await waitFor(() => {});
       getByText('You must enter a feature name');
       getByText('You must select a field');
     });

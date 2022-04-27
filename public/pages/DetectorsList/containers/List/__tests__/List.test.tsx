@@ -79,7 +79,7 @@ describe('<DetectorList /> spec', () => {
         ...initialDetectorsState,
         requesting: true,
       });
-      await waitFor(()=>{});
+      await waitFor(() => {});
       getByText(
         `A detector is an individual anomaly detection task. You can create multiple detectors, and all the detectors can run simultaneously, with each analyzing data from different sources. Create an anomaly detector to get started.`
       );
@@ -116,14 +116,18 @@ describe('<DetectorList /> spec', () => {
       expect(queryByText('index_30')).toBeNull();
 
       // Navigate to next page
-      await waitFor(() => userEvent.click(getAllByTestId('pagination-button-next')[0]));
+      await waitFor(() =>
+        userEvent.click(getAllByTestId('pagination-button-next')[0])
+      );
       getByText('detector_name_30');
       getByText('index_30');
       expect(queryByText('detector_name_0')).toBeNull();
       expect(queryByText('index_0')).toBeNull();
 
       // Navigate to previous page
-      await waitFor(()=>userEvent.click(getAllByTestId('pagination-button-previous')[0]));
+      await waitFor(() =>
+        userEvent.click(getAllByTestId('pagination-button-previous')[0])
+      );
       getByText('detector_name_0');
       expect(queryByText('detector_name_30')).toBeNull();
     });
@@ -161,23 +165,23 @@ describe('<DetectorList /> spec', () => {
         requesting: true,
       });
       // Default view 20 items per page
-      await waitFor(()=>{});
+      await waitFor(() => {});
       getByText('detector_name_0');
       expect(queryByText('detector_name_30')).toBeNull();
 
       // Sort by name (string sorting)
       userEvent.click(getAllByTestId('tableHeaderSortButton')[0]);
-      await waitFor(()=>{});
+      await waitFor(() => {});
       getByText('detector_name_30');
       expect(queryByText('detector_name_0')).toBeNull();
 
       // Sort by indices (string sorting)
       userEvent.click(getAllByTestId('tableHeaderSortButton')[1]);
-      await waitFor(()=>{});
+      await waitFor(() => {});
       getByText('index_0');
       expect(queryByText('index_30')).toBeNull();
       userEvent.click(getAllByTestId('tableHeaderSortButton')[1]);
-      await waitFor(()=>{});
+      await waitFor(() => {});
       getByText('index_30');
       expect(queryByText('index_0')).toBeNull();
 
@@ -185,21 +189,21 @@ describe('<DetectorList /> spec', () => {
       // NOTE: this is assuming DETECTOR_STATE.RUNNING is higher alphabetically ('running')
       // than DETECTOR_STATE.DISABLED ('stopped')
       userEvent.click(getAllByTestId('tableHeaderSortButton')[2]);
-      await waitFor(()=>{});
+      await waitFor(() => {});
       expect(queryByText(DETECTOR_STATE.RUNNING)).not.toBeNull();
       userEvent.click(getAllByTestId('tableHeaderSortButton')[2]);
-      await waitFor(()=>{});
+      await waitFor(() => {});
       expect(queryByText(DETECTOR_STATE.RUNNING)).toBeNull();
 
       // Sort by totalAnomalies (numeric sorting)
       userEvent.click(getAllByTestId('tableHeaderSortButton')[3]);
-      await waitFor(()=>{});
+      await waitFor(() => {});
       getByText('0');
       getByText('19');
       expect(queryByText('30')).toBeNull();
       expect(queryByText('39')).toBeNull();
       userEvent.click(getAllByTestId('tableHeaderSortButton')[3]);
-      await waitFor(()=>{});
+      await waitFor(() => {});
       getByText('30');
       getByText('39');
       expect(queryByText('0')).toBeNull();
@@ -207,21 +211,21 @@ describe('<DetectorList /> spec', () => {
 
       // Sort by last anomaly occurrence (date sorting)
       userEvent.click(getAllByTestId('tableHeaderSortButton')[4]);
-      await waitFor(()=>{});
+      await waitFor(() => {});
       getByText('04/15/2020 9:00 AM');
       expect(queryByText('04/15/2020 9:30 AM')).toBeNull();
       userEvent.click(getAllByTestId('tableHeaderSortButton')[4]);
-      await waitFor(()=>{});
+      await waitFor(() => {});
       getByText('04/15/2020 9:30 AM');
       expect(queryByText('04/15/2020 9:00 AM')).toBeNull();
 
       // Sort by last updated (date sorting)
       userEvent.click(getAllByTestId('tableHeaderSortButton')[5]);
-      await waitFor(()=>{});
+      await waitFor(() => {});
       getByText('04/15/2020 7:00 AM');
       expect(queryByText('04/15/2020 7:30 AM')).toBeNull();
       userEvent.click(getAllByTestId('tableHeaderSortButton')[5]);
-      await waitFor(()=>{});
+      await waitFor(() => {});
       getByText('04/15/2020 7:30 AM');
       expect(queryByText('04/15/2020 7:00 AM')).toBeNull();
     }, 20000);
@@ -258,7 +262,7 @@ describe('<DetectorList /> spec', () => {
 
       //Input search event
       userEvent.type(getByPlaceholderText('Search'), 'detector_name_38');
-      await waitFor(()=>{});
+      await waitFor(() => {});
       getByText('detector_name_38');
       getByText('index_38');
       expect(queryByText('detector_name_39')).toBeNull();
@@ -291,16 +295,16 @@ describe('<DetectorList /> spec', () => {
           requesting: true,
         });
       // Initial load, only first 20 items
-      await waitFor(()=>{});
+      await waitFor(() => {});
       getByText('detector_name_0');
 
       // Go to next page
       userEvent.click(getAllByTestId('pagination-button-next')[0]);
-      await waitFor(()=>{});
+      await waitFor(() => {});
 
       // Search for detector which is on prev page
       userEvent.type(getByPlaceholderText('Search'), 'detector_name_0');
-      await waitFor(()=>{});
+      await waitFor(() => {});
       getByText('detector_name_0');
       expect(queryByText('detector_name_30')).toBeNull();
     });
@@ -347,7 +351,7 @@ describe('<DetectorList /> spec', () => {
         ...initialDetectorsState,
         requesting: true,
       });
-      await waitFor(()=>{});
+      await waitFor(() => {});
       //Assert all visible text are available
       //Test1 Detector
       getByText(randomDetectors[0].name);
@@ -385,7 +389,7 @@ describe('<DetectorList /> spec', () => {
       });
       const { getByText, getByTestId, getAllByRole, queryByText } =
         renderWithRouter();
-      await waitFor(()=>{});
+      await waitFor(() => {});
       userEvent.click(getAllByRole('checkbox')[0]);
       userEvent.click(getByTestId('listActionsButton'));
       userEvent.click(getByText('Start real-time detectors'));
@@ -413,7 +417,7 @@ describe('<DetectorList /> spec', () => {
         },
       });
       const { getByText, getByTestId, getAllByRole } = renderWithRouter();
-      await waitFor(()=>{});
+      await waitFor(() => {});
       userEvent.click(getAllByRole('checkbox')[0]);
       userEvent.click(getByTestId('listActionsButton'));
       userEvent.click(getByText('Start real-time detectors'));
@@ -441,7 +445,7 @@ describe('<DetectorList /> spec', () => {
       });
       const { getByText, getByTestId, getAllByRole, queryByText } =
         renderWithRouter();
-      await waitFor(()=>{});
+      await waitFor(() => {});
       userEvent.click(getAllByRole('checkbox')[0]);
       userEvent.click(getByTestId('listActionsButton'));
       userEvent.click(getByText('Stop real-time detectors'));
@@ -469,7 +473,7 @@ describe('<DetectorList /> spec', () => {
         },
       });
       const { getByText, getByTestId, getAllByRole } = renderWithRouter();
-      await waitFor(()=>{});
+      await waitFor(() => {});
       userEvent.click(getAllByRole('checkbox')[0]);
       userEvent.click(getByTestId('listActionsButton'));
       userEvent.click(getByText('Stop real-time detectors'));
@@ -542,7 +546,7 @@ describe('<DetectorList /> spec', () => {
         },
       });
       const { getByText, getByTestId, getAllByRole } = renderWithRouter();
-      await waitFor(()=>{});
+      await waitFor(() => {});
       // Try to delete disabled detector
       userEvent.click(getAllByRole('checkbox')[1]);
       userEvent.click(getByTestId('listActionsButton'));
