@@ -130,7 +130,7 @@ describe('<DetectorList /> spec', () => {
       );
       getByText('detector_name_0');
       expect(queryByText('detector_name_30')).toBeNull();
-    });
+    }, 20000);
     test('sorting functionality', async () => {
       const randomDetectors = new Array(40).fill(null).map((_, index) => {
         return {
@@ -228,7 +228,7 @@ describe('<DetectorList /> spec', () => {
       await waitFor(() => {});
       getByText('04/15/2020 7:30 AM');
       expect(queryByText('04/15/2020 7:00 AM')).toBeNull();
-    }, 20000);
+    }, 30000);
     test('should be able to search', async () => {
       const randomDetectors = new Array(40).fill(null).map((_, index) => {
         const hasAnomaly = Math.random() > 0.5;
