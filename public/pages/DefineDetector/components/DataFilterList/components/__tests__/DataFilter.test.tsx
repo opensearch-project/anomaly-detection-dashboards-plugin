@@ -1,0 +1,209 @@
+/*
+ * Copyright OpenSearch Contributors
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
+import React from 'react';
+import { render, waitFor } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
+
+import { DATA_TYPES } from '../../../../../../utils/constants';
+import { CoreServicesContext } from '../../../../../../components/CoreServices/CoreServices';
+import {
+  coreServicesMock,
+  httpClientMock,
+} from '../../../../../../../test/mocks';
+import { DataFilter } from '../DataFilter';
+import {
+  OPERATORS_MAP,
+  FILTER_TYPES,
+  UIFilter,
+} from '../../../../../../models/interfaces';
+import { DetectorDefinitionFormikValues } from '../../../models/interfaces';
+import { FormikProps, Formik } from 'formik';
+import { Provider } from 'react-redux';
+import configureStore, { MockStore } from 'redux-mock-store';
+import clientMiddleware from '../../../../../../redux/middleware/clientMiddleware';
+import { AppState } from '../../../../../../reducers';
+
+const initialState = {
+  opensearch: {
+    indices: [
+      {
+        label: 'test-index',
+        health: 'green',
+      },
+    ],
+    aliases: [],
+    dataTypes: {
+      integer: ['cpu', 'memory'],
+    },
+    requesting: false,
+    searchResult: {},
+    errorMessage: '',
+  },
+};
+
+const filters = [
+  {
+    filterType: FILTER_TYPES.SIMPLE,
+    fieldInfo: [
+      {
+        label: 'cpu',
+        type: DATA_TYPES.NUMBER,
+      },
+    ],
+    operator: OPERATORS_MAP.IS_GREATER,
+    fieldValue: 0,
+  },
+] as UIFilter;
+
+const values = {
+  name: 'test-ad',
+  description: 'desc',
+  index: [
+    {
+      label: 'test-index',
+      health: 'green',
+    },
+  ],
+  filters: [
+    {
+      filterType: FILTER_TYPES.SIMPLE,
+      fieldInfo: [
+        {
+          label: 'cpu',
+          type: DATA_TYPES.NUMBER,
+        },
+      ],
+      operator: OPERATORS_MAP.IS_GREATER,
+      fieldValue: 0,
+    },
+  ],
+  filterQuery: JSON.stringify({ bool: { filter: [] } }, null, 4),
+  timeField: 'timestamp',
+  interval: 10,
+  windowDelay: 1,
+} as DetectorDefinitionFormikValues;
+
+const formikProps = {
+  values: { values },
+  errors: {},
+  touched: {
+    index: true,
+    name: true,
+    timeField: true,
+  },
+  isSubmitting: false,
+  isValidating: false,
+  submitCount: 0,
+  initialErrors: {},
+  initialTouched: {},
+  isValid: true,
+  dirty: true,
+  validateOnBlur: true,
+  validateOnChange: true,
+  validateOnMount: true,
+} as FormikProps<DetectorDefinitionFormikValues>;
+const fields = [
+  {
+    label: DATA_TYPES.TEXT,
+    options: [
+      {
+        label: 'test-filter-field',
+        type: DATA_TYPES.TEXT,
+      },
+      {
+        label: 'test-filter-field-two',
+        type: DATA_TYPES.TEXT,
+      },
+    ],
+  },
+];
+const mockedStore = (mockState = initialState): MockStore<AppState> => {
+  const middlewares = [clientMiddleware(httpClientMock)];
+  const mockStore = configureStore<AppState>(middlewares);
+  const store = mockStore(mockState);
+  return store;
+};
+describe('dataFilter', () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
+  test('renders data filter', async () => {
+    const { container, getByText, getByTestId } = render(
+      <Provider store={mockedStore()}>
+        <CoreServicesContext.Provider value={coreServicesMock}>
+          <Formik initialValues={values} onSubmit={jest.fn()}>
+            <DataFilter
+              formikProps={formikProps}
+              filter={filters}
+              index={0}
+              values={values}
+              replace={jest.fn()}
+              onOpen={() => {}}
+              onSave={jest.fn()}
+              onCancel={jest.fn()}
+              onDelete={jest.fn()}
+              openPopoverIndex={0}
+              setOpenPopoverIndex={jest.fn(() => 0)}
+              isNewFilter={true}
+              oldFilterType={undefined}
+              oldFilterQuery={undefined}
+            />
+          </Formik>
+        </CoreServicesContext.Provider>
+      </Provider>
+    );
+    expect(container).toMatchSnapshot();
+    getByText('Create custom label?');
+    getByText('Operator');
+    expect(getByTestId('switchForCustomLabel')).not.toBeChecked();
+    userEvent.click(getByTestId('switchForCustomLabel'));
+    await waitFor(() => {});
+    expect(getByTestId('switchForCustomLabel')).toBeChecked();
+    userEvent.click(getByTestId('switchForCustomLabel'));
+    userEvent.click(getByTestId('comboBoxToggleListButton'));
+    await waitFor(() => {
+      getByText('cpu');
+    });
+    userEvent.click(getByTestId('cancelFilter0Button'));
+  });
+  test('renders data filter, click on custom', async () => {
+    const { container, getByText, getByTestId } = render(
+      <Provider store={mockedStore()}>
+        <CoreServicesContext.Provider value={coreServicesMock}>
+          <Formik initialValues={values} onSubmit={jest.fn()}>
+            <DataFilter
+              formikProps={formikProps}
+              filter={filters}
+              index={0}
+              values={values}
+              replace={jest.fn()}
+              onOpen={() => {}}
+              onSave={jest.fn()}
+              onCancel={jest.fn()}
+              onDelete={jest.fn()}
+              openPopoverIndex={0}
+              setOpenPopoverIndex={jest.fn(() => 0)}
+              isNewFilter={true}
+              oldFilterType={undefined}
+              oldFilterQuery={undefined}
+            />
+          </Formik>
+        </CoreServicesContext.Provider>
+      </Provider>
+    );
+    getByText('Create custom label?');
+    getByText('Operator');
+    userEvent.click(getByTestId('filterTypeButton'));
+    await waitFor(() => {
+      getByText('Use visual editor');
+    });
+    userEvent.click(getByTestId('filterTypeButton'));
+    await waitFor(() => {
+      getByText('Use query DSL');
+    });
+    userEvent.click(getByTestId('cancelFilter0Button'));
+  });
+});

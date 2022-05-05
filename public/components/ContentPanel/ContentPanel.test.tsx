@@ -38,4 +38,30 @@ describe('<ContentPanel /> spec', () => {
     getByText('Hello');
     getByText('World');
   });
+
+  test('renders array title', () => {
+    const { getByText } = render(
+      <ContentPanel
+        title={['testing-1', 'testing-2']}
+        actions={[<div>Hello</div>, <div>World</div>]}
+      >
+        <div>Testing ContentPanel</div>
+      </ContentPanel>
+    );
+    getByText('testing-1');
+    getByText('testing-2');
+  });
+  test('renders array subtitle', () => {
+    const { getByText } = render(
+      <ContentPanel
+        title="Testing"
+        subTitle={['testing-1', 'testing-2']}
+        actions={[<div>Hello</div>, <div>World</div>]}
+      >
+        <div>Testing ContentPanel</div>
+      </ContentPanel>
+    );
+    getByText('testing-1');
+    getByText('testing-2');
+  });
 });

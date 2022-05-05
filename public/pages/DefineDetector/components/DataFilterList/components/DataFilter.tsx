@@ -215,6 +215,7 @@ export const DataFilter = (props: DataFilterProps) => {
     <EuiButtonEmpty
       style={{ marginTop: '-2px' }}
       size="xs"
+      data-test-subj={'addDataFilterButton'}
       onClick={() => {
         props.onOpen();
         openPopover();
@@ -252,6 +253,7 @@ export const DataFilter = (props: DataFilterProps) => {
             </EuiFlexItem>
             <EuiFlexItem grow={false}>
               <EuiButtonEmpty
+                data-test-subj="filterTypeButton"
                 onClick={() => {
                   filterType === FILTER_TYPES.SIMPLE
                     ? setFilterType(FILTER_TYPES.CUSTOM)
@@ -285,6 +287,7 @@ export const DataFilter = (props: DataFilterProps) => {
           <EuiFlexGroup direction="column">
             <EuiFlexItem>
               <EuiSwitch
+                data-test-subj={'switchForCustomLabel'}
                 label={<EuiText>Create custom label?</EuiText>}
                 checked={isCustomLabel}
                 onChange={() => {

@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`CodeMOdal spec renders the component 1`] = `
+exports[`CodeModal spec renders the component 1`] = `
 <div
   aria-hidden="true"
   data-aria-hidden="true"
