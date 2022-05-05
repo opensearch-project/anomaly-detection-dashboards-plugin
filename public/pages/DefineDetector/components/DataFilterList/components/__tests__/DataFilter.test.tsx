@@ -131,7 +131,7 @@ describe('dataFilter', () => {
     jest.clearAllMocks();
   });
   test('renders data filter', async () => {
-    const { container, getByText, getByTestId } = render(
+    const { container, getByText, getByTestId, getAllByText } = render(
       <Provider store={mockedStore()}>
         <CoreServicesContext.Provider value={coreServicesMock}>
           <Formik initialValues={values} onSubmit={jest.fn()}>
@@ -165,7 +165,7 @@ describe('dataFilter', () => {
     userEvent.click(getByTestId('switchForCustomLabel'));
     userEvent.click(getByTestId('comboBoxToggleListButton'));
     await waitFor(() => {
-      getByText('cpu');
+      getAllByText('cpu');
     });
     userEvent.click(getByTestId('cancelFilter0Button'));
   });
