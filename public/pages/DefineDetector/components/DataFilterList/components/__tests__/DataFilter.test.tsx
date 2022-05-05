@@ -168,7 +168,7 @@ describe('dataFilter', () => {
       getAllByText('cpu');
     });
     userEvent.click(getByTestId('cancelFilter0Button'));
-  });
+  }, 10000);
   test('renders data filter, click on custom', async () => {
     const { container, getByText, getByTestId } = render(
       <Provider store={mockedStore()}>
@@ -205,5 +205,5 @@ describe('dataFilter', () => {
       getByText('Use query DSL');
     });
     userEvent.click(getByTestId('cancelFilter0Button'));
-  });
+  }, 10000);
 });
