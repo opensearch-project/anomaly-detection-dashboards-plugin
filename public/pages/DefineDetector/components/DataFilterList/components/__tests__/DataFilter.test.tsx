@@ -6,7 +6,6 @@
 import React from 'react';
 import { render, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-
 import { DATA_TYPES } from '../../../../../../utils/constants';
 import { CoreServicesContext } from '../../../../../../components/CoreServices/CoreServices';
 import {
@@ -19,7 +18,7 @@ import {
   FILTER_TYPES,
   UIFilter,
 } from '../../../../../../models/interfaces';
-import { DetectorDefinitionFormikValues } from '../../../models/interfaces';
+import { DetectorDefinitionFormikValues } from '../../../../models/interfaces';
 import { FormikProps, Formik } from 'formik';
 import { Provider } from 'react-redux';
 import configureStore, { MockStore } from 'redux-mock-store';
@@ -105,21 +104,7 @@ const formikProps = {
   validateOnChange: true,
   validateOnMount: true,
 } as FormikProps<DetectorDefinitionFormikValues>;
-const fields = [
-  {
-    label: DATA_TYPES.TEXT,
-    options: [
-      {
-        label: 'test-filter-field',
-        type: DATA_TYPES.TEXT,
-      },
-      {
-        label: 'test-filter-field-two',
-        type: DATA_TYPES.TEXT,
-      },
-    ],
-  },
-];
+
 const mockedStore = (mockState = initialState): MockStore<AppState> => {
   const middlewares = [clientMiddleware(httpClientMock)];
   const mockStore = configureStore<AppState>(middlewares);
