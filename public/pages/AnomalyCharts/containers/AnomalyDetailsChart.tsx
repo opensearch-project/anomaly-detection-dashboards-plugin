@@ -316,8 +316,11 @@ export const AnomalyDetailsChart = React.memo(
           );
           setIsLoadingAlerts(false);
           setTotalAlerts(get(result, 'response.totalAlerts'));
+          console.log('alert result: ' + JSON.stringify(result));
           const monitorAlerts = convertAlerts(result);
           setAlerts(monitorAlerts);
+          console.log('monitor alerts: ' + JSON.stringify(monitorAlerts));
+
           const annotations = generateAlertAnnotations(monitorAlerts);
           setAlertAnnotations(annotations);
         } catch (err) {

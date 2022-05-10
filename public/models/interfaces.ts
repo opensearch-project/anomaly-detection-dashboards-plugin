@@ -189,7 +189,7 @@ export type MonitorAlert = {
   triggerName: string;
   severity: number;
   state: string;
-  error: string;
+  error: string | null;
   startTime: number;
   endTime: number;
   acknowledgedTime: number;

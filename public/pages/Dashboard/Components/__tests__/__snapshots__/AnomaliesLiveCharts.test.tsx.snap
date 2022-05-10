@@ -1,0 +1,229 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`<AnomaliesLiveChart /> spec AnomaliesLiveChart with Sample anomaly data 1`] = `
+<div>
+  <div
+    class="euiPanel euiPanel--paddingMedium euiPanel--borderRadiusMedium euiPanel--plain euiPanel--hasShadow"
+    style="padding: 20px;"
+  >
+    <div
+      class="euiFlexGroup euiFlexGroup--gutterLarge euiFlexGroup--alignItemsCenter euiFlexGroup--justifyContentSpaceBetween euiFlexGroup--directionRow euiFlexGroup--responsive"
+      style="padding: 0px;"
+    >
+      <div
+        class="euiFlexItem"
+      >
+        <div
+          class="euiFlexGroup euiFlexGroup--gutterLarge euiFlexGroup--alignItemsCenter euiFlexGroup--directionRow euiFlexGroup--responsive"
+          data-test-subj="contentPanelTitle"
+        >
+          <div
+            class="euiFlexItem"
+          >
+            <h3
+              class="euiTitle euiTitle--small"
+              data-test-subj="dashboardLiveAnomaliesHeader"
+            >
+              Live anomalies
+               
+              <span
+                class="euiBadge euiBadge--iconLeft"
+                style="background-color: rgb(219, 19, 116); color: rgb(255, 255, 255);"
+                title="Live"
+              >
+                <span
+                  class="euiBadge__content"
+                >
+                  <span
+                    class="euiBadge__text"
+                  >
+                    Live
+                  </span>
+                </span>
+              </span>
+            </h3>
+          </div>
+        </div>
+        <div
+          class="euiFlexGroup euiFlexGroup--gutterLarge euiFlexGroup--directionRow euiFlexGroup--responsive"
+        >
+          <div
+            class="euiFlexItem content-panel-subTitle"
+            style="line-height: normal; max-width: 75%;"
+          >
+            Live anomaly results across detectors for the last 30 minutes.  
+                'The results refresh every 1 minute. 
+                'For each detector, if an anomaly occurrence is detected at the end of the detector interval, 
+                'you will see a bar representing its anomaly grade.
+          </div>
+        </div>
+      </div>
+      <div
+        class="euiFlexItem euiFlexItem--flexGrowZero"
+      >
+        <div
+          class="euiFlexGroup euiFlexGroup--gutterMedium euiFlexGroup--alignItemsCenter euiFlexGroup--justifyContentSpaceBetween euiFlexGroup--directionRow euiFlexGroup--responsive"
+        >
+          <div
+            class="euiFlexItem"
+          >
+            <button
+              aria-label="View full screen"
+              class="euiButton euiButton--primary"
+              data-test-subj="dashboardFullScreenButton"
+              type="button"
+            >
+              <span
+                class="euiButtonContent euiButton__content"
+              >
+                <svg
+                  aria-hidden="true"
+                  class="euiIcon euiIcon--medium euiIcon--inherit euiIcon-isLoading euiButtonContent__icon"
+                  focusable="false"
+                  height="16"
+                  role="img"
+                  viewBox="0 0 16 16"
+                  width="16"
+                  xmlns="http://www.w3.org/2000/svg"
+                />
+                <span
+                  class="euiButton__text"
+                >
+                  View full screen
+                </span>
+              </span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div
+      class="euiSpacer euiSpacer--s"
+    />
+    <div>
+      <hr
+        class="euiHorizontalRule euiHorizontalRule--full euiHorizontalRule--marginSmall"
+      />
+      <div
+        style="padding: 10px 0px;"
+      >
+        <div
+          class="euiFlexGroup euiFlexGroup--gutterLarge euiFlexGroup--directionRow euiFlexGroup--responsive"
+          style="padding-top: 175px;"
+        >
+          <div
+            class="euiFlexItem"
+            style="min-width: 200px;"
+          >
+            <div
+              class="euiStat euiStat--leftAligned"
+            >
+              <div
+                class="euiText euiText--small euiStat__description"
+              >
+                <p
+                  aria-hidden="true"
+                >
+                  Last updated time
+                </p>
+              </div>
+              <p
+                aria-hidden="true"
+                class="euiTitle euiTitle--small euiStat__title"
+              >
+                06/06/2021 12:33 PM
+              </p>
+              <p
+                class="euiScreenReaderOnly"
+              >
+                Last updated time 06/06/2021 12:33 PM
+              </p>
+            </div>
+          </div>
+          <div
+            class="euiFlexItem"
+            style="min-width: 310px;"
+          >
+            <div
+              class="euiStat euiStat--leftAligned"
+            >
+              <div
+                class="euiText euiText--small euiStat__description"
+              >
+                <p
+                  aria-hidden="true"
+                >
+                  Detector with the most recent anomaly
+                </p>
+              </div>
+              <p
+                aria-hidden="true"
+                class="euiTitle euiTitle--small euiStat__title"
+              />
+              <p
+                class="euiScreenReaderOnly"
+              >
+                Detector with the most recent anomaly 
+              </p>
+            </div>
+          </div>
+          <div
+            class="euiFlexItem"
+            style="min-width: 185px;"
+          >
+            <div
+              class="euiStat euiStat--leftAligned"
+            >
+              <div
+                class="euiText euiText--small euiStat__description"
+              >
+                <p
+                  aria-hidden="true"
+                >
+                  Most recent anomaly grade
+                </p>
+              </div>
+              <p
+                aria-hidden="true"
+                class="euiTitle euiTitle--small euiStat__title"
+              >
+                0.00e+0
+              </p>
+              <p
+                class="euiScreenReaderOnly"
+              >
+                Most recent anomaly grade 0.00e+0
+              </p>
+            </div>
+          </div>
+        </div>
+        <div>
+          <div
+            style="height: 200px; width: 100%; opacity: 1;"
+          >
+            <div
+              class="echChart"
+            >
+              <div
+                class="echChartBackground"
+                style="background-color: transparent;"
+              />
+              <div
+                class="echChartStatus"
+                data-ech-render-complete="false"
+                data-ech-render-count="0"
+              />
+              <div
+                class="echChartResizer"
+              />
+              <div
+                class="echContainer"
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+`;

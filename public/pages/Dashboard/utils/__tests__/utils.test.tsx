@@ -14,7 +14,11 @@ import {
   FeatureAttributes,
   DetectorListItem,
 } from '../../../../models/interfaces';
-
+import {
+  selectedDetectors,
+  anomalyResultQuery,
+  anomalyResultQueryPerDetector,
+} from '../../../../pages/utils/__tests__/constants';
 const anomalyResult = {
   detector_id: 'gtU2l4ABuV34PY9ITTdm',
   anomaly_grade: 0.10949221682655441,
@@ -37,20 +41,6 @@ const buildQueryInput = {
   from: 0,
   threshold: 10,
   checkLastIndexOnly: false,
-};
-
-const anomalyResultQuery = {
-  anomaly_grade: 0.10949221682655441,
-  data_start_time: 1651817250642,
-  data_end_time: 1651817310642,
-  detector_id: 'gtU2l4ABuV34PY9ITTdm',
-};
-const anomalyResultQueryPerDetector = {
-  anomaly_grade: 0.10949221682655441,
-  data_start_time: 1651817250642,
-  data_end_time: 1651817310642,
-  detector_id: 'gtU2l4ABuV34PY9ITTdm',
-  name: 'test2',
 };
 
 const searchResponseGetLatestAnomalyResults = {
@@ -103,33 +93,6 @@ const searchResponseGetLatestAnomalyResults = {
     },
   },
 };
-
-const selectedDetectors = [
-  {
-    id: 'gtU2l4ABuV34PY9ITTdm',
-    name: 'test2',
-    indices: ['sample-host-health'],
-    curState: 'Running',
-    featureAttributes: [
-      {
-        featureId: 'gdU2l4ABuV34PY9ITTdf',
-        featureName: 'f-1',
-        featureEnabled: true,
-        importance: 1,
-        aggregationQuery: {
-          f_1: {
-            sum: {
-              field: 'cpu_usage_percentage',
-            },
-          },
-        },
-      },
-    ],
-    totalAnomalies: 6,
-    lastActiveAnomaly: 1651818220194,
-    lastUpdateTime: 1651818220194,
-  },
-] as DetectorListItem[];
 
 describe('visualizeAnomalyResultForXYChart', () => {
   test('should return chart object', () => {
