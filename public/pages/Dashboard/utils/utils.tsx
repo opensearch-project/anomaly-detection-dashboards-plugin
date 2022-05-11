@@ -520,7 +520,6 @@ export const getLatestAnomalyResultsForDetectorsByTimeRange = async (
         onlyQueryCustomResultIndex
       )
     );
-    console.log('searchResponse: ' + JSON.stringify(searchResponse));
     const searchAnomalyResponse = searchResponse.response;
     const numHits = get(searchAnomalyResponse, 'hits.total.value', 0);
     if (numHits === 0) {
