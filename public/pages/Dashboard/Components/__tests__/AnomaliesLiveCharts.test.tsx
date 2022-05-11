@@ -7,18 +7,12 @@ import { render, waitFor } from '@testing-library/react';
 import React from 'react';
 import {
   AnomaliesLiveChart,
-  INITIAL_HEATMAP_DISPLAY_OPTION,
 } from '../AnomaliesLiveChart';
 import { selectedDetectors } from '../../../../pages/utils/__tests__/constants';
 import { Provider } from 'react-redux';
 import { coreServicesMock } from '../../../../../test/mocks';
 import { CoreServicesContext } from '../../../../components/CoreServices/CoreServices';
 import { mockedStore } from '../../../../redux/utils/testUtils';
-import {
-  getLatestAnomalyResultsForDetectorsByTimeRange,
-  getFloorPlotTime,
-  getLatestAnomalyResultsByTimeRange,
-} from '../../utils/utils';
 const anomalyResponse = [
   {
     ok: true,
@@ -54,7 +48,7 @@ describe('<AnomaliesLiveChart /> spec', () => {
   });
 
   test('AnomaliesLiveChart with Sample anomaly data', async () => {
-    const { container, getByText, getAllByText } = render(
+    const { container, getByTestId, getAllByText, getByText } = render(
       <Provider store={mockedStore()}>
         <CoreServicesContext.Provider value={coreServicesMock}>
           <AnomaliesLiveChart {...selectedDetectors} />
@@ -63,7 +57,10 @@ describe('<AnomaliesLiveChart /> spec', () => {
     );
     //mock current last update to a specific date so doesn't produce new snapshot each minute
     Date.now = jest.fn().mockReturnValue(new Date('2021-06-06T12:33:37.000Z'));
-    await waitFor(() => {});
+    await waitFor(() => {
+      expect(getByTestId('dashboardFullScreenButton').innerHTML.includes('euiIcon-isssLoaded'))
+    });
+    await waitFor(()=> {})
     expect(container).toMatchSnapshot();
     getAllByText('Detector with the most recent anomaly');
   });
