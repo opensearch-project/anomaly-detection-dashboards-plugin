@@ -11,7 +11,7 @@ on:
       - main
 env:
   OPENSEARCH_DASHBOARDS_VERSION: 'main'
-  OPENSEARCH_VERSION: '2.0.0-rc1-SNAPSHOT'
+  OPENSEARCH_VERSION: '2.0.0-SNAPSHOT'
 jobs:
   test-without-security:
     name: Run integ tests without security
