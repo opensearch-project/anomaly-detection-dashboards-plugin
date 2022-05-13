@@ -10,7 +10,7 @@ on:
     branches:
       - main
 env:
-  OPENSEARCH_DASHBOARDS_VERSION: 'main'
+  OPENSEARCH_DASHBOARDS_VERSION: '2.0'
   OPENSEARCH_VERSION: '2.0.0-SNAPSHOT'
 jobs:
   test-without-security:
