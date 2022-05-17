@@ -49,7 +49,7 @@ const ContentPanel = (props: ContentPanelProps) => {
   );
   return (
     <EuiPanel
-      style={{ padding: '20px' }}
+      style={{ padding: '20px'}}
       className={props.contentPanelClassName}
     >
       <EuiFlexGroup
@@ -133,7 +133,9 @@ const ContentPanel = (props: ContentPanelProps) => {
             margin="s"
             className={props.horizontalRuleClassName}
           />
-          <div style={{ padding: '10px 0px' }}>{props.children}</div>
+          <div style={{ padding: '10px 0px' }}>
+            {props.children}
+          </div>
         </div>
       ) : null}
     </EuiPanel>

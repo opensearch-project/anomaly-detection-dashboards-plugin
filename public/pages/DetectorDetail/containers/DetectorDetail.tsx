@@ -161,10 +161,7 @@ export const DetectorDetail = (props: DetectorDetailProps) => {
         core.notifications.toasts.addDanger('Error getting all indices');
       });
     };
-    // only need to check if indices exist after detector finishes loading
-    if (!isLoadingDetector) {
-      getInitialIndices();
-    }
+    getInitialIndices();
   }, [detector]);
 
   useEffect(() => {
@@ -191,7 +188,7 @@ export const DetectorDetail = (props: DetectorDetailProps) => {
   // If the detector state was changed after opening the stop detector modal,
   // re-check if any jobs are running, and close the modal if it's not needed anymore
   useEffect(() => {
-    if (!isRTJobRunning && !isHistoricalJobRunning && !isEmpty(detector)) {
+    if (!isRTJobRunning && !isHistoricalJobRunning) {
       hideStopDetectorModal();
     }
   }, [detector]);
