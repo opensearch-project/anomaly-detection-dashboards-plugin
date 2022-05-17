@@ -71,7 +71,7 @@ describe('<DefineDetector /> spec', () => {
       });
       const { getByText } = renderWithRouter();
       fireEvent.click(getByText('Next'));
-      await waitFor(()=>{});
+      await waitFor(() => {});
       getByText('Detector name cannot be empty');
       getByText('Must specify an index');
       getByText('Required');

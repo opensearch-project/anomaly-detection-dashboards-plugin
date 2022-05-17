@@ -59,7 +59,7 @@ describe('<ConfirmStartDetectorsModal /> spec', () => {
         <ConfirmStartDetectorsModal {...defaultStartProps} />
       );
       fireEvent.click(getByTestId('confirmButton'));
-      await waitFor(()=>{});
+      await waitFor(() => {});
       expect(defaultStartProps.onStartDetectors).toHaveBeenCalled();
       expect(defaultStartProps.onConfirm).toHaveBeenCalled();
     });
@@ -68,7 +68,7 @@ describe('<ConfirmStartDetectorsModal /> spec', () => {
         <ConfirmStartDetectorsModal {...defaultStartProps} />
       );
       fireEvent.click(getByTestId('cancelButton'));
-      await waitFor(()=>{});
+      await waitFor(() => {});
       expect(defaultStartProps.onHide).toHaveBeenCalled();
     });
   });
