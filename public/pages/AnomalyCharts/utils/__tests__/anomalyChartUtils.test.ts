@@ -131,7 +131,6 @@ describe('anomalyChartUtils function tests', () => {
       totalAlerts: 1,
     },
   };
-  //TODO: change acknowledgedTime and endTime type to allow null values potentially
   const alertConverted = [
     {
       monitorName: 'Example_monitor_name',

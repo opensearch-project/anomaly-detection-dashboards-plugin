@@ -21,9 +21,7 @@ import {
 import { DetectorDefinitionFormikValues } from '../../../../models/interfaces';
 import { FormikProps, Formik } from 'formik';
 import { Provider } from 'react-redux';
-import configureStore, { MockStore } from 'redux-mock-store';
-import clientMiddleware from '../../../../../../redux/middleware/clientMiddleware';
-import { AppState } from '../../../../../../reducers';
+import { mockedStore } from '../../../../../../redux/utils/testUtils';
 
 const initialState = {
   opensearch: {
@@ -105,41 +103,40 @@ const formikProps = {
   validateOnMount: true,
 } as FormikProps<DetectorDefinitionFormikValues>;
 
-const mockedStore = (mockState = initialState): MockStore<AppState> => {
-  const middlewares = [clientMiddleware(httpClientMock)];
-  const mockStore = configureStore<AppState>(middlewares);
-  const store = mockStore(mockState);
-  return store;
-};
+const renderWithProvider = () => ({
+  ...render(
+    <Provider store={mockedStore(initialState)}>
+      <CoreServicesContext.Provider value={coreServicesMock}>
+        <Formik initialValues={values} onSubmit={jest.fn()}>
+          <DataFilter
+            formikProps={formikProps}
+            filter={filters}
+            index={0}
+            values={values}
+            replace={jest.fn()}
+            onOpen={() => {}}
+            onSave={jest.fn()}
+            onCancel={jest.fn()}
+            onDelete={jest.fn()}
+            openPopoverIndex={0}
+            setOpenPopoverIndex={jest.fn(() => 0)}
+            isNewFilter={true}
+            oldFilterType={undefined}
+            oldFilterQuery={undefined}
+          />
+        </Formik>
+      </CoreServicesContext.Provider>
+    </Provider>
+  ),
+});
+
 describe('dataFilter', () => {
   beforeEach(() => {
     jest.clearAllMocks();
   });
   test('renders data filter', async () => {
-    const { container, getByText, getByTestId, getAllByText } = render(
-      <Provider store={mockedStore()}>
-        <CoreServicesContext.Provider value={coreServicesMock}>
-          <Formik initialValues={values} onSubmit={jest.fn()}>
-            <DataFilter
-              formikProps={formikProps}
-              filter={filters}
-              index={0}
-              values={values}
-              replace={jest.fn()}
-              onOpen={() => {}}
-              onSave={jest.fn()}
-              onCancel={jest.fn()}
-              onDelete={jest.fn()}
-              openPopoverIndex={0}
-              setOpenPopoverIndex={jest.fn(() => 0)}
-              isNewFilter={true}
-              oldFilterType={undefined}
-              oldFilterQuery={undefined}
-            />
-          </Formik>
-        </CoreServicesContext.Provider>
-      </Provider>
-    );
+    const { container, getByText, getByTestId, getAllByText } =
+      renderWithProvider();
     expect(container).toMatchSnapshot();
     getByText('Create custom label?');
     getByText('Operator');
@@ -155,30 +152,7 @@ describe('dataFilter', () => {
     userEvent.click(getByTestId('cancelFilter0Button'));
   }, 10000);
   test('renders data filter, click on custom', async () => {
-    const { container, getByText, getByTestId } = render(
-      <Provider store={mockedStore()}>
-        <CoreServicesContext.Provider value={coreServicesMock}>
-          <Formik initialValues={values} onSubmit={jest.fn()}>
-            <DataFilter
-              formikProps={formikProps}
-              filter={filters}
-              index={0}
-              values={values}
-              replace={jest.fn()}
-              onOpen={() => {}}
-              onSave={jest.fn()}
-              onCancel={jest.fn()}
-              onDelete={jest.fn()}
-              openPopoverIndex={0}
-              setOpenPopoverIndex={jest.fn(() => 0)}
-              isNewFilter={true}
-              oldFilterType={undefined}
-              oldFilterQuery={undefined}
-            />
-          </Formik>
-        </CoreServicesContext.Provider>
-      </Provider>
-    );
+    const { container, getByText, getByTestId } = renderWithProvider();
     getByText('Create custom label?');
     getByText('Operator');
     userEvent.click(getByTestId('filterTypeButton'));
