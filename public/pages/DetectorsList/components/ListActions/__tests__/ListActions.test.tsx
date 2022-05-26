@@ -36,7 +36,7 @@ describe('<ListActions /> spec', () => {
       expect(queryByText('Stop')).toBeNull();
       expect(queryByText('Delete')).toBeNull();
       fireEvent.click(getByTestId('listActionsButton'));
-      await waitFor(()=>{});
+      await waitFor(() => {});
       expect(queryByText('Start')).toBeNull();
       expect(queryByText('Stop')).toBeNull();
       expect(queryByText('Delete')).toBeNull();
@@ -50,7 +50,7 @@ describe('<ListActions /> spec', () => {
       expect(queryByText('Stop')).toBeNull();
       expect(queryByText('Delete')).toBeNull();
       fireEvent.click(getByTestId('listActionsButton'));
-      await waitFor(()=>{});
+      await waitFor(() => {});
       expect(queryByText('Start real-time detectors')).not.toBeNull();
       expect(queryByText('Stop real-time detectors')).not.toBeNull();
       expect(queryByText('Delete detectors')).not.toBeNull();
@@ -60,7 +60,7 @@ describe('<ListActions /> spec', () => {
         <ListActions {...defaultProps} isActionsDisabled={false} />
       );
       fireEvent.click(getByTestId('listActionsButton'));
-      await waitFor(()=>{});
+      await waitFor(() => {});
       fireEvent.click(getByTestId('startDetectors'));
       expect(defaultProps.onStartDetectors).toHaveBeenCalled();
     });
@@ -69,7 +69,7 @@ describe('<ListActions /> spec', () => {
         <ListActions {...defaultProps} isActionsDisabled={false} />
       );
       fireEvent.click(getByTestId('listActionsButton'));
-      await waitFor(()=>{});
+      await waitFor(() => {});
       fireEvent.click(getByTestId('stopDetectors'));
       expect(defaultProps.onStopDetectors).toHaveBeenCalled();
     });
@@ -78,7 +78,7 @@ describe('<ListActions /> spec', () => {
         <ListActions {...defaultProps} isActionsDisabled={false} />
       );
       fireEvent.click(getByTestId('listActionsButton'));
-      await waitFor(()=>{});
+      await waitFor(() => {});
       fireEvent.click(getByTestId('deleteDetectors'));
       expect(defaultProps.onDeleteDetectors).toHaveBeenCalled();
     });

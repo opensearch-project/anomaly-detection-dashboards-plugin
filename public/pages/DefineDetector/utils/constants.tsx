@@ -21,6 +21,18 @@ export const EMPTY_UI_FILTER: UIFilter = {
   label: '',
 };
 
+export const testDetectorDefinitionValues: DetectorDefinitionFormikValues = {
+  name: 'test',
+  description: 'desc',
+  index: [],
+  filters: [],
+  filterQuery: JSON.stringify({ bool: { filter: [] } }, null, 4),
+  timeField: 'timestamp',
+  interval: 10,
+  windowDelay: 1,
+  resultIndex: undefined,
+};
+
 export const INITIAL_DETECTOR_DEFINITION_VALUES: DetectorDefinitionFormikValues =
   {
     name: '',

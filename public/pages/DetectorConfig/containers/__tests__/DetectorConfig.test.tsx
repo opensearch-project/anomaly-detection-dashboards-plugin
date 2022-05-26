@@ -136,7 +136,7 @@ const featureQuery2 = {
 } as { [key: string]: any };
 
 describe('<DetectorConfig /> spec', () => {
-  test.skip('renders the component', () => {
+  test('renders the component', () => {
     const randomDetector = {
       ...getRandomDetector(false),
     };
@@ -305,7 +305,7 @@ describe('<DetectorConfig /> spec', () => {
     );
   });
 
-  test.skip('renders the component with 2 custom and 1 simple features', () => {
+  test('renders the component with 2 custom and 1 simple features', () => {
     const randomDetector = {
       ...getRandomDetector(true),
       featureAttributes: [

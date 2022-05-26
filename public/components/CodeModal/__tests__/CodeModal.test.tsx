@@ -13,7 +13,7 @@ import React from 'react';
 import { render } from '@testing-library/react';
 import { CodeModal } from '../CodeModal';
 
-describe('CodeMOdal spec', () => {
+describe('CodeModal spec', () => {
   const onVisibilityChange = jest.fn(() => true);
   const onCloseModal = jest.fn();
 

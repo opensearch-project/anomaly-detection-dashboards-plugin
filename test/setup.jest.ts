@@ -25,6 +25,10 @@ jest.mock('@elastic/eui/lib/services/accessibility/html_id_generator', () => ({
   },
 }));
 
+//for mocking window.scroll(0,0)
+const noop = () => {};
+Object.defineProperty(window, 'scroll', { value: noop, writable: true });
+
 // for Plotly
 //@ts-ignore
 window.URL.createObjectURL = function () {};
