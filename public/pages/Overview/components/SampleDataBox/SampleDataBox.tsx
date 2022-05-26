@@ -65,14 +65,10 @@ export const SampleDataBox = (props: SampleDataBoxProps) => {
         }
         titleSize="s"
         betaBadgeLabel={props.isDataLoaded ? 'INSTALLED' : undefined}
-        paddingSize='l'
+        paddingSize="l"
       >
         <EuiFlexGroup direction="column" gutterSize="l">
-        <EuiHorizontalRule
-              size="full"
-              margin="s"
-            >
-            </EuiHorizontalRule>
+          <EuiHorizontalRule size="full" margin="s"></EuiHorizontalRule>
           <EuiFlexItem grow={false} style={{ height: '70px' }}>
             <p
               style={{

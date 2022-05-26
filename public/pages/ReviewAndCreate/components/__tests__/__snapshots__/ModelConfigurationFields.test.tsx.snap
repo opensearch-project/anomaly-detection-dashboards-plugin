@@ -1,0 +1,555 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`ModelConfigurationFields renders the component in create mode (no ID) 1`] = `
+<div
+  class="euiPanel euiPanel--paddingMedium euiPanel--borderRadiusMedium euiPanel--plain euiPanel--hasShadow"
+  style="padding: 20px;"
+>
+  <div
+    class="euiFlexGroup euiFlexGroup--gutterLarge euiFlexGroup--alignItemsCenter euiFlexGroup--justifyContentSpaceBetween euiFlexGroup--directionRow euiFlexGroup--responsive"
+    style="padding: 0px;"
+  >
+    <div
+      class="euiFlexItem"
+    >
+      <h3
+        class="euiTitle euiTitle--small"
+        data-test-subj="contentPanelTitle"
+      >
+        Model configuration
+      </h3>
+      <div
+        class="euiFlexGroup euiFlexGroup--gutterLarge euiFlexGroup--directionRow euiFlexGroup--responsive"
+      >
+        <div
+          class="euiFlexItem content-panel-subTitle"
+          style="line-height: normal; max-width: 75%;"
+        />
+      </div>
+    </div>
+    <div
+      class="euiFlexItem euiFlexItem--flexGrowZero"
+    >
+      <div
+        class="euiFlexGroup euiFlexGroup--gutterMedium euiFlexGroup--alignItemsCenter euiFlexGroup--justifyContentSpaceBetween euiFlexGroup--directionRow euiFlexGroup--responsive"
+      >
+        <div
+          class="euiFlexItem"
+        >
+          <button
+            class="euiButton euiButton--primary"
+            type="button"
+          >
+            <span
+              class="euiButtonContent euiButton__content"
+            >
+              <span
+                class="euiButton__text"
+              >
+                Edit
+              </span>
+            </span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div
+    class="euiSpacer euiSpacer--s"
+  />
+  <div>
+    <hr
+      class="euiHorizontalRule euiHorizontalRule--full euiHorizontalRule--marginSmall"
+    />
+    <div
+      style="padding: 10px 0px;"
+    >
+      <div
+        class="euiCallOut euiCallOut--success euiCallOut--small"
+        style="margin-bottom: 10px;"
+      >
+        <div
+          class="euiCallOutHeader"
+        >
+          <svg
+            aria-hidden="true"
+            class="euiIcon euiIcon--medium euiIcon--inherit euiIcon-isLoading euiCallOutHeader__icon"
+            focusable="false"
+            height="16"
+            role="img"
+            viewBox="0 0 16 16"
+            width="16"
+            xmlns="http://www.w3.org/2000/svg"
+          />
+          <span
+            class="euiCallOutHeader__title"
+          >
+            Model configurations are validated
+          </span>
+        </div>
+      </div>
+      <div>
+        <div
+          class="euiBasicTable header-single-value-euiBasicTable"
+        >
+          <div>
+            <div
+              class="euiTableHeaderMobile"
+            >
+              <div
+                class="euiFlexGroup euiFlexGroup--gutterLarge euiFlexGroup--alignItemsBaseline euiFlexGroup--justifyContentSpaceBetween euiFlexGroup--directionRow"
+              >
+                <div
+                  class="euiFlexItem euiFlexItem--flexGrowZero"
+                />
+                <div
+                  class="euiFlexItem euiFlexItem--flexGrowZero"
+                />
+              </div>
+            </div>
+            <table
+              class="euiTable euiTable--responsive"
+              id="random_html_id"
+              tabindex="-1"
+            >
+              <caption
+                class="euiScreenReaderOnly euiTableCaption"
+              />
+              <thead>
+                <tr>
+                  <th
+                    class="euiTableHeaderCell"
+                    data-test-subj="tableHeaderCell_categoryField_0"
+                    role="columnheader"
+                    scope="col"
+                  >
+                    <span
+                      class="euiTableCellContent"
+                    >
+                      <span
+                        class="euiTableCellContent__text"
+                        title="Category field"
+                      >
+                        Category field
+                      </span>
+                    </span>
+                  </th>
+                  <th
+                    class="euiTableHeaderCell"
+                    data-test-subj="tableHeaderCell_shingleSize_1"
+                    role="columnheader"
+                    scope="col"
+                  >
+                    <span
+                      class="euiTableCellContent"
+                    >
+                      <span
+                        class="euiTableCellContent__text"
+                        title="Shingle size"
+                      >
+                        Shingle size
+                      </span>
+                    </span>
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr
+                  class="euiTableRow"
+                >
+                  <td
+                    class="euiTableRowCell"
+                  >
+                    <div
+                      class="euiTableRowCell__mobileHeader euiTableRowCell--hideForDesktop"
+                    >
+                      Category field
+                    </div>
+                    <div
+                      class="euiTableCellContent"
+                    >
+                      <span
+                        class="euiTableCellContent__text"
+                      >
+                        -
+                      </span>
+                    </div>
+                  </td>
+                  <td
+                    class="euiTableRowCell"
+                  >
+                    <div
+                      class="euiTableRowCell__mobileHeader euiTableRowCell--hideForDesktop"
+                    >
+                      Shingle size
+                    </div>
+                    <div
+                      class="euiTableCellContent"
+                    >
+                      <span
+                        class="euiTableCellContent__text"
+                      >
+                        8
+                      </span>
+                    </div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <div
+          class="euiSpacer euiSpacer--l"
+        />
+        <div
+          class="euiPanel euiPanel--paddingMedium euiPanel--borderRadiusMedium euiPanel--plain euiPanel--hasShadow"
+          style="padding: 20px;"
+        >
+          <div
+            class="euiFlexGroup euiFlexGroup--gutterLarge euiFlexGroup--alignItemsCenter euiFlexGroup--justifyContentSpaceBetween euiFlexGroup--directionRow euiFlexGroup--responsive"
+            style="padding: 0px;"
+          >
+            <div
+              class="euiFlexItem"
+            >
+              <div
+                class="euiFlexGroup euiFlexGroup--gutterLarge euiFlexGroup--alignItemsCenter euiFlexGroup--directionRow euiFlexGroup--responsive"
+                data-test-subj="contentPanelTitle"
+              >
+                <div
+                  class="euiFlexItem"
+                >
+                  <h3
+                    class="euiTitle euiTitle--small"
+                    style="display: flex; flex-direction: row;"
+                  >
+                    <p>
+                      Features
+                       
+                    </p>
+                    <p
+                      style="color: rgb(83, 89, 102);"
+                    >
+                      (2)
+                    </p>
+                  </h3>
+                </div>
+              </div>
+              <div
+                class="euiFlexGroup euiFlexGroup--gutterLarge euiFlexGroup--directionRow euiFlexGroup--responsive"
+              >
+                <div
+                  class="euiFlexItem content-panel-subTitle"
+                  style="line-height: normal; max-width: 75%;"
+                />
+              </div>
+            </div>
+            <div
+              class="euiFlexItem euiFlexItem--flexGrowZero"
+            >
+              <div
+                class="euiFlexGroup euiFlexGroup--gutterMedium euiFlexGroup--alignItemsCenter euiFlexGroup--justifyContentSpaceBetween euiFlexGroup--directionRow euiFlexGroup--responsive"
+              >
+                <div
+                  class="euiFlexItem"
+                />
+              </div>
+            </div>
+          </div>
+          <div>
+            <hr
+              class="euiHorizontalRule euiHorizontalRule--full euiHorizontalRule--marginSmall"
+            />
+            <div
+              style="padding: 10px 0px;"
+            >
+              <div
+                class="euiBasicTable"
+                data-test-subj="featureTable"
+              >
+                <div>
+                  <div
+                    class="euiTableHeaderMobile"
+                  >
+                    <div
+                      class="euiFlexGroup euiFlexGroup--gutterLarge euiFlexGroup--alignItemsBaseline euiFlexGroup--justifyContentSpaceBetween euiFlexGroup--directionRow"
+                    >
+                      <div
+                        class="euiFlexItem euiFlexItem--flexGrowZero"
+                      />
+                      <div
+                        class="euiFlexItem euiFlexItem--flexGrowZero"
+                      >
+                        <div
+                          class="euiTableSortMobile"
+                        >
+                          <div
+                            class="euiPopover euiPopover--anchorDownRight"
+                          >
+                            <div
+                              class="euiPopover__anchor"
+                            >
+                              <button
+                                class="euiButtonEmpty euiButtonEmpty--primary euiButtonEmpty--xSmall euiButtonEmpty--flushRight"
+                                type="button"
+                              >
+                                <span
+                                  class="euiButtonContent euiButtonContent--iconRight euiButtonEmpty__content"
+                                >
+                                  <svg
+                                    aria-hidden="true"
+                                    class="euiIcon euiIcon--small euiIcon--inherit euiIcon-isLoading euiButtonContent__icon"
+                                    focusable="false"
+                                    height="16"
+                                    role="img"
+                                    viewBox="0 0 16 16"
+                                    width="16"
+                                    xmlns="http://www.w3.org/2000/svg"
+                                  />
+                                  <span
+                                    class="euiButtonEmpty__text"
+                                  >
+                                    Sorting
+                                  </span>
+                                </span>
+                              </button>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <table
+                    class="euiTable euiTable--responsive"
+                    id="random_html_id"
+                    tabindex="-1"
+                  >
+                    <caption
+                      class="euiScreenReaderOnly euiTableCaption"
+                    />
+                    <thead>
+                      <tr>
+                        <th
+                          aria-live="polite"
+                          aria-sort="ascending"
+                          class="euiTableHeaderCell"
+                          data-test-subj="tableHeaderCell_name_0"
+                          role="columnheader"
+                          scope="col"
+                        >
+                          <button
+                            class="euiTableHeaderButton euiTableHeaderButton-isSorted"
+                            data-test-subj="tableHeaderSortButton"
+                            type="button"
+                          >
+                            <span
+                              class="euiTableCellContent"
+                            >
+                              <span
+                                class="euiTableCellContent__text"
+                                title="Feature name"
+                              >
+                                Feature name
+                              </span>
+                              <svg
+                                aria-hidden="true"
+                                class="euiIcon euiIcon--medium euiIcon-isLoading euiTableSortIcon"
+                                focusable="false"
+                                height="16"
+                                role="img"
+                                viewBox="0 0 16 16"
+                                width="16"
+                                xmlns="http://www.w3.org/2000/svg"
+                              />
+                            </span>
+                          </button>
+                        </th>
+                        <th
+                          class="euiTableHeaderCell"
+                          data-test-subj="tableHeaderCell_definition_1"
+                          role="columnheader"
+                          scope="col"
+                        >
+                          <span
+                            class="euiTableCellContent"
+                          >
+                            <span
+                              class="euiTableCellContent__text"
+                              title="Feature definition"
+                            >
+                              Feature definition
+                            </span>
+                          </span>
+                        </th>
+                        <th
+                          class="euiTableHeaderCell"
+                          data-test-subj="tableHeaderCell_state_2"
+                          role="columnheader"
+                          scope="col"
+                        >
+                          <span
+                            class="euiTableCellContent"
+                          >
+                            <span
+                              class="euiTableCellContent__text"
+                              title="Feature state"
+                            >
+                              Feature state
+                            </span>
+                          </span>
+                        </th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr
+                        class="euiTableRow"
+                      >
+                        <td
+                          class="euiTableRowCell"
+                        >
+                          <div
+                            class="euiTableRowCell__mobileHeader euiTableRowCell--hideForDesktop"
+                          >
+                            Feature name
+                          </div>
+                          <div
+                            class="euiTableCellContent"
+                          >
+                            <span
+                              class="euiTableCellContent__text"
+                            >
+                              TF
+                            </span>
+                          </div>
+                        </td>
+                        <td
+                          class="euiTableRowCell"
+                        >
+                          <div
+                            class="euiTableRowCell__mobileHeader euiTableRowCell--hideForDesktop"
+                          >
+                            Feature definition
+                          </div>
+                          <div
+                            class="euiTableCellContent"
+                          >
+                            <span
+                              class="euiTableCellContent__text"
+                            >
+                              <div>
+                                <p>
+                                  Custom expression:
+                                   
+                                  <button
+                                    class="euiLink euiLink--primary"
+                                    data-test-subj="viewFeature-0"
+                                    type="button"
+                                  >
+                                    View code
+                                  </button>
+                                </p>
+                              </div>
+                            </span>
+                          </div>
+                        </td>
+                        <td
+                          class="euiTableRowCell"
+                        >
+                          <div
+                            class="euiTableRowCell__mobileHeader euiTableRowCell--hideForDesktop"
+                          >
+                            Feature state
+                          </div>
+                          <div
+                            class="euiTableCellContent"
+                          >
+                            <span
+                              class="euiTableCellContent__text"
+                            >
+                              Disabled
+                            </span>
+                          </div>
+                        </td>
+                      </tr>
+                      <tr
+                        class="euiTableRow"
+                      >
+                        <td
+                          class="euiTableRowCell"
+                        >
+                          <div
+                            class="euiTableRowCell__mobileHeader euiTableRowCell--hideForDesktop"
+                          >
+                            Feature name
+                          </div>
+                          <div
+                            class="euiTableCellContent"
+                          >
+                            <span
+                              class="euiTableCellContent__text"
+                            >
+                              TR
+                            </span>
+                          </div>
+                        </td>
+                        <td
+                          class="euiTableRowCell"
+                        >
+                          <div
+                            class="euiTableRowCell__mobileHeader euiTableRowCell--hideForDesktop"
+                          >
+                            Feature definition
+                          </div>
+                          <div
+                            class="euiTableCellContent"
+                          >
+                            <span
+                              class="euiTableCellContent__text"
+                            >
+                              <div>
+                                <p>
+                                  Custom expression:
+                                   
+                                  <button
+                                    class="euiLink euiLink--primary"
+                                    data-test-subj="viewFeature-1"
+                                    type="button"
+                                  >
+                                    View code
+                                  </button>
+                                </p>
+                              </div>
+                            </span>
+                          </div>
+                        </td>
+                        <td
+                          class="euiTableRowCell"
+                        >
+                          <div
+                            class="euiTableRowCell__mobileHeader euiTableRowCell--hideForDesktop"
+                          >
+                            Feature state
+                          </div>
+                          <div
+                            class="euiTableCellContent"
+                          >
+                            <span
+                              class="euiTableCellContent__text"
+                            >
+                              Disabled
+                            </span>
+                          </div>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+`;

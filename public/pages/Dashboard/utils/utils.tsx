@@ -23,11 +23,7 @@ import {
   FeatureAttributes,
   DetectorListItem,
 } from '../../../models/interfaces';
-import {
-  PLUGIN_NAME,
-  ANOMALY_RESULT_INDEX,
-  MAX_ANOMALIES,
-} from '../../../utils/constants';
+import { PLUGIN_NAME, MAX_ANOMALIES } from '../../../utils/constants';
 import { get, orderBy, isEmpty } from 'lodash';
 import { APIAction } from 'public/redux/middleware/types';
 import { Dispatch } from 'redux';
@@ -43,19 +39,6 @@ import { MAX_DETECTORS } from '../../../pages/utils/constants';
  * @param  {[string]} timeRange [last time period which query is for]
  * @returns query which is used to get anomaly result for the last timeRange period
  */
-export const buildGetRecentAnomalyResultQuery = (timeRange: string) => {
-  return {
-    range: {
-      [AD_DOC_FIELDS.DATA_START_TIME]: {
-        gte: 'now-' + timeRange,
-      },
-    },
-    size: 30,
-    sortField: AD_DOC_FIELDS.DATA_START_TIME,
-    from: 0,
-    sortDirection: SORT_DIRECTION.DESC,
-  };
-};
 
 export type RgbColor = [number, number, number, number?];
 export const rgbColors: RgbColor[] = [
@@ -500,7 +483,6 @@ export const getLatestAnomalyResultsByTimeRange = async (
     from += anomalySize;
     numSingleBatchResults = anomalies.length;
   } while (numSingleBatchResults === MAX_ANOMALIES);
-
   return anomalyResults;
 };
 
@@ -539,7 +521,6 @@ export const getLatestAnomalyResultsForDetectorsByTimeRange = async (
       )
     );
     const searchAnomalyResponse = searchResponse.response;
-
     const numHits = get(searchAnomalyResponse, 'hits.total.value', 0);
     if (numHits === 0) {
       break;

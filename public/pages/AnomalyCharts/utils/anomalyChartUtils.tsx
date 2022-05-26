@@ -406,7 +406,6 @@ export const getEntityAnomaliesHeatmapData = (
           singleAnomalySummary.startTime >= timeWindow.startDate &&
           singleAnomalySummary.startTime < timeWindow.endDate
       );
-
       if (isEmpty(anomalySummaryInTimeRange)) {
         maxAnomalyGradesForEntity.push(0);
         numAnomalyGradesForEntity.push(0);
