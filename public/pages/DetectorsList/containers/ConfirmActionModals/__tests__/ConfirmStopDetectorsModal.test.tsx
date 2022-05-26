@@ -72,7 +72,7 @@ describe('<ConfirmStopDetectorsModal /> spec', () => {
         <ConfirmStopDetectorsModal {...defaultStopProps} />
       );
       fireEvent.click(getByTestId('confirmButton'));
-      await waitFor(()=>{});
+      await waitFor(() => {});
       expect(defaultStopProps.onStopDetectors).toHaveBeenCalled();
     });
     test('should call onHide() when closing', async () => {
@@ -80,7 +80,7 @@ describe('<ConfirmStopDetectorsModal /> spec', () => {
         <ConfirmStopDetectorsModal {...defaultStopProps} />
       );
       fireEvent.click(getByTestId('cancelButton'));
-      await waitFor(()=>{});
+      await waitFor(() => {});
       expect(defaultStopProps.onHide).toHaveBeenCalled();
     });
   });

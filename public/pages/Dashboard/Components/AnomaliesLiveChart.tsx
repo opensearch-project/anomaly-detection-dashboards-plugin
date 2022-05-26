@@ -128,7 +128,6 @@ export const AnomaliesLiveChart = (props: AnomaliesLiveChartProps) => {
         ALL_CUSTOM_AD_RESULT_INDICES,
         false
       );
-
     setLiveAnomalyData(latestLiveAnomalyResult);
 
     setLatestLiveAnomalousDetectorsCount(
@@ -144,6 +143,7 @@ export const AnomaliesLiveChart = (props: AnomaliesLiveChartProps) => {
     } else {
       setLastAnomalyResult(undefined);
     }
+
     setLiveTimeRange({
       startDateTime: moment().subtract(31, 'minutes'),
       endDateTime: moment(),
