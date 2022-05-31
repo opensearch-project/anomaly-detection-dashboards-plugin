@@ -5,10 +5,10 @@ name: Remote integ tests workflow
 on:
   push:
     branches:
-      - main
+      - "*"
   pull_request:
     branches:
-      - main
+      - "*"
 env:
   OPENSEARCH_DASHBOARDS_VERSION: '2.0'
   OPENSEARCH_VERSION: '2.0.1-SNAPSHOT'
