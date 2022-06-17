@@ -74,6 +74,7 @@ interface FeatureChartProps {
   showFeatureMissingDataPointAnnotation?: boolean;
   detectorEnabledTime?: number;
   rawFeatureData: FeatureAggregationData[];
+  windowDelay: Schedule;
 }
 
 export const FeatureChart = (props: FeatureChartProps) => {
@@ -220,11 +221,14 @@ export const FeatureChart = (props: FeatureChartProps) => {
                       ? props.rawFeatureData
                       : props.featureData,
                     props.detectorInterval.interval,
+                    props.windowDelay,
                     getFeatureMissingAnnotationDateRange(
                       props.dateRange,
                       props.detectorEnabledTime
                     ),
-                    props.dateRange
+                    props.dateRange,
+                    // date range is selected by customer in UX so window delay time is not considered
+                    false
                   )}
                   marker={<EuiIcon type="alert" />}
                   style={{
