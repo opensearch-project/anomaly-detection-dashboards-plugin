@@ -27,6 +27,7 @@ import {
   FEATURE_TYPE,
   FeatureAggregationData,
   EntityData,
+  UNITS,
 } from '../../../models/interfaces';
 import { NoFeaturePrompt } from '../components/FeatureChart/NoFeaturePrompt';
 import { focusOnFeatureAccordion } from '../../ConfigureModel/utils/helpers';
@@ -175,6 +176,11 @@ export const FeatureBreakDown = React.memo((props: FeatureBreakDownProps) => {
               detectorEnabledTime={props.detector.enabledTime}
               entityData={getEntityDataForChart(props.anomalyAndFeatureResults)}
               isHCDetector={props.isHCDetector}
+              windowDelay={
+                get(props, `detector.windowDelay.period`,  {
+                  period: { interval: 0, unit: UNITS.MINUTES },
+                })
+              }
             />
             {index + 1 ===
             get(props, 'detector.featureAttributes', []).length ? null : (
