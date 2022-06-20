@@ -208,11 +208,11 @@ export function AnomalyResults(props: AnomalyResultsProps) {
   const checkLatestFeatureDataPoints = async () => {
     let windowDelayInMinutes = 0;
     if (detector.windowDelay !== undefined) {
-      let windowDelay = detector.windowDelay.period;
-      let windowDelayUnit = get(windowDelay, 'unit',  UNITS.MINUTES);
+      const windowDelay = detector.windowDelay.period;
+      const windowDelayUnit = get(windowDelay, 'unit',  UNITS.MINUTES);
 
       // current time minus window delay
-      let windowDelayInterval = get(windowDelay, 'interval',  0);
+      const windowDelayInterval = get(windowDelay, 'interval',  0);
       windowDelayInMinutes = windowDelayInterval * toDuration(windowDelayUnit).asMinutes();
     }
 
