@@ -53,7 +53,7 @@ import {
   getDetectorStateDetails,
 } from '../../DetectorDetail/utils/helpers';
 import moment from 'moment';
-import { DateRange } from '../../../models/interfaces';
+import { DateRange, UNITS, toDuration } from '../../../models/interfaces';
 import {
   getFeatureDataPointsForDetector,
   buildParamsForGetAnomalyResultsWithDateRange,
@@ -204,10 +204,29 @@ export function AnomalyResults(props: AnomalyResultsProps) {
 
   const isHCDetector = !isEmpty(get(detector, 'categoryField', []));
 
+  // ran during componentDidMount and componentDidUpdate
   const checkLatestFeatureDataPoints = async () => {
+    let windowDelayInMinutes = 0;
+    if (detector.windowDelay !== undefined) {
+      const windowDelay = detector.windowDelay.period;
+      const windowDelayUnit = get(windowDelay, 'unit',  UNITS.MINUTES);
+
+      // current time minus window delay
+      const windowDelayInterval = get(windowDelay, 'interval',  0);
+      windowDelayInMinutes = windowDelayInterval * toDuration(windowDelayUnit).asMinutes();
+    }
+
+    // The query in this function uses data start/end time. So we should consider window delay
+    let adjustedCurrentTime = moment().subtract(
+      windowDelayInMinutes,
+      'minutes'
+    );;
+
+    // check from FEATURE_DATA_POINTS_WINDOW + FEATURE_DATA_CHECK_WINDOW_OFFSET (currently 5) intervals to now
     const featureDataPointsRange = {
       startDate: Math.max(
-        moment()
+        // clone since subtract mutates the original moment that we need to use as endData later
+        adjustedCurrentTime.clone()
           .subtract(
             (FEATURE_DATA_POINTS_WINDOW + FEATURE_DATA_CHECK_WINDOW_OFFSET) *
               detectorIntervalInMin,
@@ -217,7 +236,7 @@ export function AnomalyResults(props: AnomalyResultsProps) {
         //@ts-ignore
         detector.enabledTime
       ),
-      endDate: moment().valueOf(),
+      endDate: adjustedCurrentTime.valueOf(),
     } as DateRange;
 
     const params = buildParamsForGetAnomalyResultsWithDateRange(
@@ -239,7 +258,8 @@ export function AnomalyResults(props: AnomalyResultsProps) {
         detector,
         featuresData,
         detectorIntervalInMin,
-        featureDataPointsRange
+        featureDataPointsRange,
+        true
       );
 
       const featureMissingSeveritiesMap =

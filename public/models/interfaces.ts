@@ -12,6 +12,8 @@
 import { InitProgress } from '../../server/models/interfaces';
 import { DATA_TYPES } from '../utils/constants';
 import { DETECTOR_STATE } from '../../server/utils/constants';
+import { Duration } from 'moment';
+import moment from 'moment';
 
 export type FieldInfo = {
   label: string;
@@ -78,8 +80,82 @@ export type FeatureAttributes = {
   aggregationQuery: { [key: string]: any };
 };
 
+// all possible valid units accepted by the backend
 export enum UNITS {
+  NANOS = "Nanos",
+  MICROS = "Micros",
+  MILLIS = "Millis",
+  SECONDS = "Seconds",
   MINUTES = 'Minutes',
+  HOURS = "Hours",
+  HALF_DAYS = "HalfDays",
+  DAYS = "Days",
+  WEEKS = "Weeks",
+  MONTHS = "Months",
+  YEARS = "Years",
+  DECADES = "Decades",
+  CENTURIES = "Centuries",
+  MILLENNIA = "Millennia",
+  ERAS = "Eras",
+  FOREVER = "Forever"
+}
+
+// cannot create a method in enum, have to write function separately
+export function toDuration(units: UNITS): Duration {
+  switch(units) {
+    case UNITS.NANOS: {
+      // Duration in moment library does not support
+      return moment.duration(0.000000001, 'seconds');
+    }
+    case UNITS.MICROS: {
+      return moment.duration(0.000001, 'seconds');
+    }
+    case UNITS.MILLIS: {
+      return moment.duration(0.001, 'seconds');
+    }
+    case UNITS.SECONDS: {
+      return moment.duration(1, 'seconds');
+    }
+    case UNITS.MINUTES: {
+      return moment.duration(60, 'seconds');
+    }
+    case UNITS.HOURS: {
+      return moment.duration(3600, 'seconds');
+    }
+    case UNITS.HALF_DAYS: {
+      return moment.duration(43200, 'seconds');
+    }
+    case UNITS.DAYS: {
+      return moment.duration(86400, 'seconds');
+    }
+    case UNITS.WEEKS: {
+      return moment.duration(7 * 86400, 'seconds');
+    }
+    case UNITS.MONTHS: {
+      return moment.duration(31556952 / 12, 'seconds');
+    }
+    case UNITS.YEARS: {
+      return moment.duration(31556952, 'seconds');
+    }
+    case UNITS.DECADES: {
+      return moment.duration(31556952 * 10, 'seconds');
+    }
+    case UNITS.CENTURIES: {
+      return moment.duration(31556952 * 100, 'seconds');
+    }
+    case UNITS.MILLENNIA: {
+      return moment.duration(31556952 * 1000, 'seconds');
+    }
+    case UNITS.ERAS: {
+      return moment.duration(31556952 * 1000000000, 'seconds');
+    }
+    case UNITS.FOREVER: {
+      return moment.duration(Number.MAX_VALUE, 'seconds');
+    }
+    default:
+      break;
+  }
+  throw new Error("Unexpected unit: " + units);
 }
 
 export type Schedule = {
