@@ -24,7 +24,6 @@ import {
   ENTITY_VALUE_PATH_FIELD,
   KEY_FIELD,
   MIN_IN_MILLI_SECS,
-  HOUR_IN_MILLI_SECS,
   DAY_IN_MILLI_SECS,
   SORT_DIRECTION,
   WEEK_IN_MILLI_SECS,
@@ -46,6 +45,7 @@ import {
   FeatureAggregationData,
   FeatureAttributes,
   MonitorAlert,
+  toDuration
 } from '../../models/interfaces';
 import { getDetectorLiveResults } from '../../redux/reducers/liveAnomalyResults';
 import {
@@ -72,6 +72,9 @@ import {
 } from './constants';
 import { dateFormatter, minuteDateFormatter } from './helpers';
 import { HeatmapCell } from '../AnomalyCharts/containers/AnomalyHeatmapChart';
+import {
+  Schedule, UNITS
+} from '../../models/interfaces'
 
 export const getQueryParamsForLiveAnomalyResults = (
   detectionInterval: number,
@@ -693,10 +696,23 @@ export type FeatureDataPoint = {
 
 export const FEATURE_DATA_CHECK_WINDOW_OFFSET = 2;
 
+/**
+ * Returns feature data points array specified in a data range
+ * @param featureData Feature aggregation data array
+ * @param interval Detector interval
+ * @param dateRange Plot date rage
+ * @param windowDelay Detector window delay
+ * @param windowDelayAdjusted Whether window delay time has been considered in the dateRange parameter
+ *  If not, we have to consider that before declaring a feature point is missing.
+ * @returns Feature data points including missing data information
+ *
+ */
 export const getFeatureDataPoints = (
   featureData: FeatureAggregationData[],
   interval: number,
-  dateRange: DateRange | undefined
+  dateRange: DateRange | undefined,
+  windowDelay: Schedule | undefined,
+  windowDelayAdjusted: boolean | undefined
 ): FeatureDataPoint[] => {
   const featureDataPoints = [] as FeatureDataPoint[];
   if (!dateRange) {
@@ -708,13 +724,28 @@ export const getFeatureDataPoints = (
     : featureData
         .map((feature) => getRoundedTimeInMin(feature.startTime))
         .filter((featureTime) => featureTime != undefined);
+
+  let windowDelayInMilliSecs = 0;
+
+  if (!windowDelayAdjusted) {
+    let windowDelayUnit = get(windowDelay, 'unit',  UNITS.MINUTES);
+
+    let windowDelayInterval = get(windowDelay, 'interval',  0);
+    windowDelayInMilliSecs = windowDelayInterval * toDuration(windowDelayUnit).asMilliseconds();
+  }
+
   for (
     let currentTime = getRoundedTimeInMin(dateRange.startDate);
     currentTime <
     // skip checking for latest interval as data point for it may not be delivered in time
+    // in other words, we allow FEATURE_DATA_CHECK_WINDOW_OFFSET points to be missed
+    // We also have to subtract window delay time. We query data using data start time within dateRange.
+    // Thus, [dateRange.endDate - windowDelayInMilliSecs, dateRange.endDate] will not have data if
+    // dateRange.endDate equals now.
+    // If windowDelayAdjusted is true, windowDelayInMilliSecs is 0.
     getRoundedTimeInMin(
       dateRange.endDate -
-        FEATURE_DATA_CHECK_WINDOW_OFFSET * interval * MIN_IN_MILLI_SECS
+        FEATURE_DATA_CHECK_WINDOW_OFFSET * interval * MIN_IN_MILLI_SECS - windowDelayInMilliSecs
     );
     currentTime += interval * MIN_IN_MILLI_SECS
   ) {
@@ -742,6 +773,7 @@ const findTimeExistsInWindow = (
   // timestamps is in desc order
   let result = false;
   if (isEmpty(timestamps)) {
+    // if timestamps is empty, we have no way to verify. Prefer not to report mising data callout
     return result;
   }
 
@@ -767,6 +799,22 @@ const getRoundedTimeInMin = (timestamp: number): number => {
   return Math.round(timestamp / MIN_IN_MILLI_SECS) * MIN_IN_MILLI_SECS;
 };
 
+/**
+ * Make sure we don't have more than MAX_FEATURE_ANNOTATIONS missing feature annotations. We divide dataRange by MAX_FEATURE_ANNOTATIONS
+ * divisions. If there is any missing data in that division, we will flag that division missing data.
+ *
+ * For example, assuming we miss one data point for an one-minute interval detector and the featureMissingDataPoints is
+ * [{"isMissing":true,"plotTime":1655508900000,"startTime":1655508840000,"endTime":1655508900000}]
+ *
+ * The dataRange is last 7 days. We will devide the 7 days period to MAX_FEATURE_ANNOTATIONS divisions and return
+ * [{"isMissing":true,"plotTime":1655508900000,"startTime":1655506137843,"endTime":1655512185843}]
+ *
+ * @param featureMissingDataPoints The actual missing feature data array
+ * @param dateRange Plot date rage
+ * @returns Sampleed feature data points including missing data information. The returned missing data time range might be bigger
+ * than the input missing data time range due to the effect of sampling.
+ *
+ */
 const sampleFeatureMissingDataPoints = (
   featureMissingDataPoints: FeatureDataPoint[],
   dateRange?: DateRange
@@ -840,34 +888,64 @@ const finalizeFeatureMissingDataAnnotations = (
   return generateFeatureMissingAnnotations(sampledFeatureMissingDataPoints);
 };
 
+/**
+ *
+ * @param featureData Feature aggregation data array
+ * @param interval Detector interval
+ * @param windowDelay Detector window delay
+ * @param queryDateRange Date rage specified by customer
+ * @param displayDateRange The actual display date range. displayDateRange is different from queryDateRange
+ *  when the queryDateRange has timestamps older than detector enabled time
+ * @param windowDelayAdjusted Whether window delay time has been considered in the dateRange parameter
+ *  If not, we have to consider that before declaring a feature point is missing.
+ * @returns Returns feature data points array with missing data information
+ *
+ */
 export const getFeatureMissingDataAnnotations = (
   featureData: FeatureAggregationData[],
   interval: number,
+  windowDelay: Schedule,
   queryDateRange?: DateRange,
-  displayDateRange?: DateRange
+  displayDateRange?: DateRange,
+  windowDelayAdjusted?: boolean
 ) => {
   const featureMissingDataPoints = getFeatureDataPoints(
     featureData,
     interval,
-    queryDateRange
+    queryDateRange,
+    windowDelay,
+    windowDelayAdjusted
   ).filter((dataPoint) => get(dataPoint, 'isMissing', false));
 
   const featureMissingAnnotations = finalizeFeatureMissingDataAnnotations(
     featureMissingDataPoints,
     displayDateRange
   );
+
   return featureMissingAnnotations;
 };
 
-// returns feature data points(missing/existing both included) for detector in a map like
-// {
-//    'featureName': data points[]
-// }
+/**
+ * returns feature data points(missing/existing both included) for detector in a map like
+ * {
+ *    'featureName': data points[]
+ * }
+ * 
+ * @param detector Detector config
+ * @param featureData Feature aggregation data array
+ * @param interval Detector interval
+ * @param dateRange Plot date rage
+ * @param windowDelayAdjusted Whether window delay time has been considered in the dateRange parameter
+ *  If not, we have to consider that before declaring a feature point is missing.
+ * @returns Feature data points including missing data information
+ *
+ */
 export const getFeatureDataPointsForDetector = (
   detector: Detector,
   featuresData: { [key: string]: FeatureAggregationData[] },
   interval: number,
-  dateRange?: DateRange
+  dateRange?: DateRange,
+  windowDelayAdjusted?: boolean
 ) => {
   let featureDataPointsForDetector = {} as {
     [key: string]: FeatureDataPoint[];
@@ -884,7 +962,11 @@ export const getFeatureDataPointsForDetector = (
     const featureDataPoints = getFeatureDataPoints(
       featureData,
       interval,
-      dateRange
+      dateRange,
+      get(detector, `windowDelay.period`,  {
+        period: { interval: 0, unit: UNITS.MINUTES },
+      }),
+      windowDelayAdjusted
     );
     featureDataPointsForDetector = {
       ...featureDataPointsForDetector,

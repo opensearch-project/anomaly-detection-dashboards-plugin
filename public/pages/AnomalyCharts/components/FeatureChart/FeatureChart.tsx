@@ -68,6 +68,7 @@ interface FeatureChartProps {
   rawFeatureData: FeatureAggregationData[][];
   entityData: EntityData[][];
   isHCDetector?: boolean;
+  windowDelay: Schedule;
 }
 
 export const FeatureChart = (props: FeatureChartProps) => {
@@ -228,11 +229,14 @@ export const FeatureChart = (props: FeatureChartProps) => {
                       ? flattenData(props.rawFeatureData)
                       : flattenData(props.featureData),
                     props.detectorInterval.interval,
+                    props.windowDelay,
                     getFeatureMissingAnnotationDateRange(
                       props.dateRange,
                       props.detectorEnabledTime
                     ),
-                    props.dateRange
+                    props.dateRange,
+                    // date range is selected by customer in UX so window delay time is not considered
+                    false
                   )}
                   marker={<EuiIcon type="alert" />}
                   style={{
