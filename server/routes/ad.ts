@@ -1010,7 +1010,7 @@ export default class AdService {
                 : 0,
             name: featureData.feature_name, 
             expectedValue: result.anomaly_grade > 0 
-            ? this.getExpectedValue(result._source.expected_values[0].value_list, featureData.feature_id) : featureData.data
+            ? this.getExpectedValue(result, featureData.feature_id) : featureData.data
           });
         });
       });
@@ -1136,18 +1136,21 @@ export default class AdService {
             : 0,
         name: featureData.feature_name,
         expectedValue: rawResult.anomaly_grade > 0 
-        ? this.getExpectedValue(rawResult._source.expected_values[0].value_list, featureData.feature_id)
+        ? this.getExpectedValue(rawResult, featureData.feature_id)
         : featureData.data
       };
     });
     return featureResult;
   };
 
-  getExpectedValue = (expectedList: any[], featureId: string) => {
-    expectedList.forEach((expect: any) => {
-      if (expect.feature_id === featureId) {
-        return expect.data;
-      }
-    })
+  getExpectedValue = (rawResult: any, featureId: string) => {
+    const expectedValueList = rawResult._source.expected_values;
+    if (expectedValueList.length > 0) {
+      expectedValueList[0].value_list.forEach((expect: any) => {
+        if (expect.feature_id === featureId) {
+          return expect.data;
+        }
+      })
+    }
   }
 }
