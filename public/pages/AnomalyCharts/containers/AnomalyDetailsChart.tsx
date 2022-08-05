@@ -352,10 +352,10 @@ export const AnomalyDetailsChart = React.memo(
     const customAnomalyContributionTooltip = (details?: string) => {
       const anomaly = details ? JSON.parse(details) : undefined;
       const contributionData = get(anomaly, `features`, {})      
-      const componentList = [];
+      const featureAttributionList = [];
       for (const [key, value] of Object.entries(contributionData)) {
        const attribution = Number(JSON.stringify(value.data))
-        componentList.push(
+       featureAttributionList.push(
           <div>
             {key}: {attribution} <br />
           </div>
@@ -369,7 +369,7 @@ export const AnomalyDetailsChart = React.memo(
             {anomaly ? (
             <p>
               <hr style={{ color: '#E0E0E0' }}></hr>
-              {componentList}
+              {featureAttributionList}
             </p>
           ) : null}
           </EuiText>
@@ -384,7 +384,6 @@ export const AnomalyDetailsChart = React.memo(
       let annotations = [] as any[];
 
       anomalies.forEach((anomalyTimeSeries: AnomalyData[]) => {
-        console.log("anomalyTimeSeries: " + JSON.stringify(anomalyTimeSeries))
         annotations.push(
           anomalyTimeSeries
             .filter((anomaly: AnomalyData) => anomaly.anomalyGrade > 0)

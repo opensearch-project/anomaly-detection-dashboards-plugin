@@ -258,14 +258,14 @@ export const FeatureChart = (props: FeatureChartProps) => {
           }
           {featureData.map(
             (featureTimeSeries: FeatureAggregationData[], index) => {
-              const componentList: any[] = [];
+              const timeSeriesList: any[] = [];
               const seriesKey = props.isHCDetector
                 ? `${props.featureDataSeriesName} (${convertToEntityString(
                     props.entityData[index],
                     ', '
                   )})`
                 : props.featureDataSeriesName;
-              componentList.push(
+                timeSeriesList.push(
                 <LineSeries
                   id={seriesKey}
                   name={seriesKey}
@@ -284,7 +284,7 @@ export const FeatureChart = (props: FeatureChartProps) => {
               if (featureTimeSeries.map(
                 (item: FeatureAggregationData) => {
                   if(item.hasOwnProperty('expectedValue')) {
-                    componentList.push(
+                    timeSeriesList.push(
                       <LineSeries
                         id={"ExpectedValue"}
                         name={"Expected Value"}
@@ -299,7 +299,7 @@ export const FeatureChart = (props: FeatureChartProps) => {
                   }
                 }
               ))
-              return componentList;
+              return timeSeriesList;
             }
           )}
           

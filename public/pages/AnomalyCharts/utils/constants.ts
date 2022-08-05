@@ -91,8 +91,7 @@ export const DEFAULT_ANOMALY_SUMMARY = {
   maxAnomalyGrade: 0,
   minConfidence: 0,
   maxConfidence: 0,
-  lastAnomalyOccurrence: '-',
-  contributions: '-'
+  lastAnomalyOccurrence: '-'
 };
 
 export const HEATMAP_CHART_Y_AXIS_WIDTH = 30;
