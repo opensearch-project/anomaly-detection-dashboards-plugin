@@ -666,7 +666,6 @@ export const AnomalyHistory = (props: AnomalyHistoryProps) => {
       } as Anomalies;
       anomalyResults.push(entityAnomaliesResult);
     });
-    console.log("allAnomalyResultResponses: " + JSON.stringify(anomalyResults))
     setAtomicAnomalyResults(anomalyResults);
   };
 

@@ -135,6 +135,7 @@ export type FeatureResult = {
   plotTime: number;
   data: number;
   name: string;
+  expectedValue?: number;
 };
 
 export type AnomalyResultsResponse = {
