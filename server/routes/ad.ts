@@ -1000,9 +1000,6 @@ export default class AdService {
           if (!featureResult[featureData.feature_id]) {
             featureResult[featureData.feature_id] = [];
           }
-          // if (result._source.anomaly_grade > 0) {
-          //   this.getExpectedValue(result._source.expected_values[0].value_list, featureData.feature_id)
-          // }
           featureResult[featureData.feature_id].push({
             startTime: result._source.data_start_time,
             endTime: result._source.data_end_time,
