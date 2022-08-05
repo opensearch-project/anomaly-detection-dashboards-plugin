@@ -121,7 +121,7 @@ export type AnomalyResult = {
   confidence: number;
   entity?: Entity[];
   features?: { [key: string]: FeatureResult };
-  contributions: { [key: string]: FeatureContributionData };
+  contributions?: { [key: string]: FeatureContributionData };
 };
 
 export type FeatureContributionData = {
