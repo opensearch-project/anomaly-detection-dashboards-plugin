@@ -234,14 +234,23 @@ export type AnomalyData = {
   plotTime?: number;
   entity?: EntityData[];
   features?: { [key: string]: FeatureAggregationData };
-  aggInterval?: string;
+  contributions?: { [key: string]: FeatureContributionData };
+  aggInterval?: string; 
 };
 
 export type FeatureAggregationData = {
   data: number;
+  name?: string;
   endTime: number;
   startTime: number;
   plotTime?: number;
+  attribution?: number;
+  expectedValue?: number;
+};
+
+export type FeatureContributionData = {
+  name: string;
+  attribution: number;
 };
 
 export type Anomalies = {
@@ -279,6 +288,7 @@ export type AnomalySummary = {
   minConfidence: number;
   maxConfidence: number;
   lastAnomalyOccurrence: string;
+  contributions?: string;
 };
 
 export type DateRange = {
