@@ -136,7 +136,7 @@ export const AnomalyHistory = (props: AnomalyHistoryProps) => {
     endDate: initialEndDate,
   });
   const [selectedTabId, setSelectedTabId] = useState<string>(
-    ANOMALY_HISTORY_TABS.ANOMALY_OCCURRENCE
+    ANOMALY_HISTORY_TABS.FEATURE_BREAKDOWN
   );
   const [isLoadingAnomalyResults, setIsLoadingAnomalyResults] =
     useState<boolean>(false);
@@ -425,7 +425,6 @@ export const AnomalyHistory = (props: AnomalyHistoryProps) => {
             setIsLoadingAnomalyResults(false);
             errorFetchingResults = true;
           });
-
       const rawAnomaliesData = get(detectorResultResponse, 'response', []);
       const rawAnomaliesResult = {
         anomalies: get(rawAnomaliesData, 'results', []),
@@ -610,6 +609,7 @@ export const AnomalyHistory = (props: AnomalyHistoryProps) => {
         fetchBucketizedEntityAnomalyData(entityLists);
       } else {
         fetchAllEntityAnomalyData(dateRange, entityLists);
+        // no visit
         setBucketizedAnomalyResults(undefined);
       }
     } catch (err) {
@@ -666,6 +666,7 @@ export const AnomalyHistory = (props: AnomalyHistoryProps) => {
       } as Anomalies;
       anomalyResults.push(entityAnomaliesResult);
     });
+    console.log("allAnomalyResultResponses: " + JSON.stringify(anomalyResults))
     setAtomicAnomalyResults(anomalyResults);
   };
 
@@ -807,13 +808,13 @@ export const AnomalyHistory = (props: AnomalyHistoryProps) => {
 
   const tabs = [
     {
-      id: ANOMALY_HISTORY_TABS.ANOMALY_OCCURRENCE,
-      name: 'Anomaly occurrences',
+      id: ANOMALY_HISTORY_TABS.FEATURE_BREAKDOWN,
+      name: 'Feature breakdown',
       disabled: false,
     },
     {
-      id: ANOMALY_HISTORY_TABS.FEATURE_BREAKDOWN,
-      name: 'Feature breakdown',
+      id: ANOMALY_HISTORY_TABS.ANOMALY_OCCURRENCE,
+      name: 'Anomaly occurrences',
       disabled: false,
     },
   ];

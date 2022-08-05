@@ -205,6 +205,7 @@ export const FeatureChart = (props: FeatureChartProps) => {
            * and thus show different annotations per feature chart (currently all annotations
            * shown equally across all enabled feature charts for a given detector).
            */}
+           
           {props.feature.featureEnabled ? (
             <RectAnnotation
               dataValues={flattenData(props.annotations)}
@@ -257,13 +258,14 @@ export const FeatureChart = (props: FeatureChartProps) => {
           }
           {featureData.map(
             (featureTimeSeries: FeatureAggregationData[], index) => {
+              const componentList: any[] = [];
               const seriesKey = props.isHCDetector
                 ? `${props.featureDataSeriesName} (${convertToEntityString(
                     props.entityData[index],
                     ', '
                   )})`
                 : props.featureDataSeriesName;
-              return (
+              componentList.push(
                 <LineSeries
                   id={seriesKey}
                   name={seriesKey}
@@ -278,9 +280,29 @@ export const FeatureChart = (props: FeatureChartProps) => {
                   yAccessors={[CHART_FIELDS.DATA]}
                   data={featureTimeSeries}
                 />
-              );
+              )
+              if (featureTimeSeries.map(
+                (item: FeatureAggregationData) => {
+                  if(item.hasOwnProperty('expectedValue')) {
+                    componentList.push(
+                      <LineSeries
+                        id={"ExpectedValue"}
+                        name={"Expected Value"}
+                        color={"#0475a2"}
+                        xScaleType={ScaleType.Time}
+                        yScaleType={ScaleType.Linear}
+                        xAccessor={CHART_FIELDS.PLOT_TIME}
+                        yAccessors={[CHART_FIELDS.EXPECTED_VALUE]}
+                        data={featureTimeSeries}
+                      />
+                    )
+                  }
+                }
+              ))
+              return componentList;
             }
           )}
+          
         </Chart>
         {showCustomExpression ? (
           <CodeModal

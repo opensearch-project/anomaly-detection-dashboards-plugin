@@ -18,6 +18,7 @@ import {
   niceTimeFormatter,
   Position,
   RectAnnotation,
+  RectAnnotationDatum,
   ScaleType,
   Settings,
   XYBrushArea,
@@ -29,6 +30,7 @@ import {
   EuiLoadingChart,
   EuiStat,
   EuiButtonGroup,
+  EuiText,
 } from '@elastic/eui';
 import { get } from 'lodash';
 import moment from 'moment';
@@ -41,6 +43,7 @@ import {
   Monitor,
   MonitorAlert,
   AnomalyData,
+  Anomalies,
 } from '../../../models/interfaces';
 import { AppState } from '../../../redux/reducers';
 import { searchAlerts } from '../../../redux/reducers/alerting';
@@ -52,6 +55,8 @@ import {
   getHistoricalAggQuery,
   parseHistoricalAggregatedAnomalies,
   convertToEntityString,
+  flattenData,
+  generateAnomalyAnnotations,
 } from '../../utils/anomalyResultUtils';
 import { AlertsFlyout } from '../components/AlertsFlyout/AlertsFlyout';
 import {
@@ -155,7 +160,6 @@ export const AnomalyDetailsChart = React.memo(
 
     const taskId = get(props, 'detector.taskId');
     const taskState = get(props, 'detector.taskState');
-
     const isRequestingAnomalyResults = useSelector(
       (state: AppState) => state.anomalyResults.requesting
     );
@@ -344,6 +348,59 @@ export const AnomalyDetailsChart = React.memo(
       zoomRange.endDate,
     ]);
 
+
+    const customAnomalyContributionTooltip = (details?: string) => {
+      const anomaly = details ? JSON.parse(details) : undefined;
+      const contributionData = get(anomaly, `features`, {})      
+      const componentList = [];
+      for (const [key, value] of Object.entries(contributionData)) {
+       const attribution = Number(JSON.stringify(value.data))
+        componentList.push(
+          <div>
+            {key}: {attribution} <br />
+          </div>
+        )
+      }
+
+      return (
+        <div>
+          <EuiText size="xs">
+            <EuiIcon type="list" /> <b>Feature Contribution: </b>
+            {anomaly ? (
+            <p>
+              <hr style={{ color: '#E0E0E0' }}></hr>
+              {componentList}
+            </p>
+          ) : null}
+          </EuiText>
+        </div>
+      );
+    };
+
+
+    const generateContributionAnomalyAnnotations = (
+      anomalies: AnomalyData[][]
+    ): any[][] => {
+      let annotations = [] as any[];
+
+      anomalies.forEach((anomalyTimeSeries: AnomalyData[]) => {
+        console.log("anomalyTimeSeries: " + JSON.stringify(anomalyTimeSeries))
+        annotations.push(
+          anomalyTimeSeries
+            .filter((anomaly: AnomalyData) => anomaly.anomalyGrade > 0)
+            .map((anomaly: AnomalyData) => (              
+              {
+              coordinates: {
+                x0: anomaly.startTime,
+                x1: anomaly.endTime,
+              },
+              details: `${JSON.stringify(anomaly)}`
+            }))
+        );
+      });
+      return annotations;
+    };
+
     const isLoading =
       props.isLoading || isLoadingAlerts || isRequestingAnomalyResults;
     const isInitializingHistorical = taskState === DETECTOR_STATE.INIT;
@@ -531,7 +588,18 @@ export const AnomalyDetailsChart = React.memo(
                       }}
                     />
                   )}
-
+                  {/* <RectAnnotation
+                    dataValues={flattenData(generateContributionAnomalyAnnotations(zoomedAnomalies))}
+                    id="featureAttributionAnnotation"
+                    style={{
+                      stroke: CHART_COLORS.ANOMALY_GRADE_COLOR,
+                      strokeWidth: 1,
+                      opacity: 0.1,
+                      fill: CHART_COLORS.ANOMALY_GRADE_COLOR,
+                    }}
+                    renderTooltip={customAnomalyContributionTooltip}
+                  />   */}
+                
                   {alertAnnotations ? (
                     <LineAnnotation
                       id="alertAnnotation"
@@ -603,32 +671,31 @@ export const AnomalyDetailsChart = React.memo(
                             get(anomalySeries, '0.entity', []),
                             ', '
                           )})`
-                        : props.anomalyGradeSeriesName;
-
-                      return (
-                        <LineSeries
-                          id={seriesKey}
-                          name={seriesKey}
-                          color={
-                            multipleTimeSeries
-                              ? ENTITY_COLORS[index]
-                              : CHART_COLORS.ANOMALY_GRADE_COLOR
-                          }
-                          data={anomalySeries}
-                          xScaleType={
-                            showAggregateResults
-                              ? ScaleType.Ordinal
-                              : ScaleType.Time
-                          }
-                          yScaleType={ScaleType.Linear}
-                          xAccessor={
-                            showAggregateResults
-                              ? CHART_FIELDS.AGG_INTERVAL
-                              : CHART_FIELDS.PLOT_TIME
-                          }
-                          yAccessors={[CHART_FIELDS.ANOMALY_GRADE]}
-                        />
-                      );
+                        : props.anomalyGradeSeriesName; 
+                        return (
+                          <LineSeries
+                            id={seriesKey}
+                            name={seriesKey}
+                            color={
+                              multipleTimeSeries
+                                ? ENTITY_COLORS[index]
+                                : CHART_COLORS.ANOMALY_GRADE_COLOR
+                            }
+                            data={anomalySeries}
+                            xScaleType={
+                              showAggregateResults
+                                ? ScaleType.Ordinal
+                                : ScaleType.Time
+                            }
+                            yScaleType={ScaleType.Linear}
+                            xAccessor={
+                              showAggregateResults
+                                ? CHART_FIELDS.AGG_INTERVAL
+                                : CHART_FIELDS.PLOT_TIME
+                            }
+                            yAccessors={[CHART_FIELDS.ANOMALY_GRADE]}
+                          />
+                        )
                     }
                   )}
                 </Chart>

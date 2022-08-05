@@ -24,11 +24,13 @@ export enum CHART_FIELDS {
   CONFIDENCE = 'confidence',
   DATA = 'data',
   AGG_INTERVAL = 'aggInterval',
+  EXPECTED_VALUE = 'expectedValue'
 }
 
 export enum CHART_COLORS {
   ANOMALY_GRADE_COLOR = '#D13212',
   FEATURE_DATA_COLOR = '#16191F',
+  FEATURE_COLOR = '#fcd529',
   CONFIDENCE_COLOR = '#017F75',
   LIGHT_BACKGROUND = '#FFFFFF',
   DARK_BACKGROUND = '#1D1E24',
@@ -90,6 +92,7 @@ export const DEFAULT_ANOMALY_SUMMARY = {
   minConfidence: 0,
   maxConfidence: 0,
   lastAnomalyOccurrence: '-',
+  contributions: '-'
 };
 
 export const HEATMAP_CHART_Y_AXIS_WIDTH = 30;
