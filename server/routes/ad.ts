@@ -965,7 +965,6 @@ export default class AdService {
       const featureResult: { [key: string]: FeatureResult[] } = {};
       
       get(response, 'hits.hits', []).forEach((result: any) => {
-        console.log("result: " + JSON.stringify(result))
         detectorResult.push({
           startTime: result._source.data_start_time,
           endTime: result._source.data_end_time,
