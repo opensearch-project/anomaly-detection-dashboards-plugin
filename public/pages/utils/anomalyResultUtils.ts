@@ -44,6 +44,7 @@ import {
   Detector,
   FeatureAggregationData,
   FeatureAttributes,
+  FeatureContributionData,
   MonitorAlert,
   toDuration
 } from '../../models/interfaces';
@@ -375,6 +376,8 @@ export const RETURNED_AD_RESULT_FIELDS = [
   'confidence',
   'feature_data',
   'entity',
+  'relevant_attribution',
+  'expected_values'
 ];
 
 export const getAnomalySummaryQuery = (
@@ -575,6 +578,23 @@ export const parseBucketizedAnomalyResults = (result: any): Anomalies => {
         get(rawAnomaly, 'anomaly_grade') !== undefined &&
         get(rawAnomaly, 'feature_data', []).length > 0
       ) {
+        const featureDataMap: {[key: string]: string} = {};
+        get(rawAnomaly, 'feature_data', []).filter(element => get(element, 'feature_id') && get(element, 'feature_name')).
+        forEach((feature: any) => {
+          featureDataMap[get(feature, 'feature_id')] = get(feature, 'feature_name');
+        });
+        const relevantAttributionMap: {[key: string]: number} = {};
+        get(rawAnomaly, 'relevant_attribution', []).filter(element => get(element, 'feature_id') && get(element, 'data')).
+        forEach((attribution: any) => {
+          relevantAttributionMap[get(attribution, 'feature_id')] = get(attribution, 'data');
+        });
+        const contributions: { [key: string]: FeatureContributionData } = {}
+        for (const [key] of Object.entries(featureDataMap)) {
+          contributions[key] = {
+            name: featureDataMap[key],
+            attribution: relevantAttributionMap[key]
+          }
+        }
         anomalies.push({
           anomalyGrade: toFixedNumberForAnomaly(
             get(rawAnomaly, 'anomaly_grade')
@@ -584,7 +604,23 @@ export const parseBucketizedAnomalyResults = (result: any): Anomalies => {
           endTime: get(rawAnomaly, 'data_end_time'),
           plotTime: get(rawAnomaly, 'data_end_time'),
           entity: get(rawAnomaly, 'entity'),
+          contributions: toFixedNumberForAnomaly(
+            get(rawAnomaly, 'anomaly_grade')
+          ) > 0 ? contributions : {}
         });
+
+        const featureBreakdownAttributionMap: {[key: string]: number} = {};
+
+        get(rawAnomaly, 'relevant_attribution', []).filter(element => get(element, 'feature_id') && get(element, 'data')).
+        forEach((attribution: any) => {
+          featureBreakdownAttributionMap[get(attribution, 'feature_id')] = toFixedNumberForAnomaly(get(attribution, 'data'));
+        });
+             
+        const expectedValueMap: {[key: string]: number} = {};
+        get(rawAnomaly, 'expected_values[0].value_list', []).forEach((expect: any) => {
+          expectedValueMap[get(expect, 'feature_id')] = toFixedNumberForAnomaly(get(expect, 'data'));
+        });
+
         get(rawAnomaly, 'feature_data', []).forEach((feature) => {
           if (!get(featureData, get(feature, 'feature_id'))) {
             featureData[get(feature, 'feature_id')] = [];
@@ -594,6 +630,8 @@ export const parseBucketizedAnomalyResults = (result: any): Anomalies => {
             startTime: get(rawAnomaly, 'data_start_time'),
             endTime: get(rawAnomaly, 'data_end_time'),
             plotTime: get(rawAnomaly, 'data_end_time'),
+            attribution: featureBreakdownAttributionMap[get(feature, 'feature_id')],
+            expectedValue: expectedValueMap[get(feature, 'feature_id')]
           });
         });
       }
@@ -674,6 +712,23 @@ export const parsePureAnomalies = (
   if (anomaliesHits.length > 0) {
     anomaliesHits.forEach((item: any) => {
       const rawAnomaly = get(item, '_source');
+      const featureDataMap: {[key: string]: string} = {};
+      get(rawAnomaly, 'feature_data', []).filter(element => get(element, 'feature_id') && get(element, 'feature_name')).
+      forEach((feature: any) => {
+        featureDataMap[get(feature, 'feature_id')] = get(feature, 'feature_name');
+      });
+      const relevantAttributionMap: {[key: string]: number} = {};
+      get(rawAnomaly, 'relevant_attribution', []).filter(element => get(element, 'feature_id') && get(element, 'data')).
+      forEach((attribution: any) => {
+        relevantAttributionMap[get(attribution, 'feature_id')] = toFixedNumberForAnomaly(get(attribution, 'data'));
+      });
+      const contributions: { [key: string]: FeatureContributionData } = {}
+      for (const [key] of Object.entries(featureDataMap)) {
+        contributions[key] = {
+          name: featureDataMap[key],
+          attribution: relevantAttributionMap[key]
+        }
+      }
       anomalies.push({
         anomalyGrade: toFixedNumberForAnomaly(get(rawAnomaly, 'anomaly_grade')),
         confidence: toFixedNumberForAnomaly(get(rawAnomaly, 'confidence')),
@@ -681,6 +736,7 @@ export const parsePureAnomalies = (
         endTime: get(rawAnomaly, 'data_end_time'),
         plotTime: get(rawAnomaly, 'data_end_time'),
         entity: get(rawAnomaly, 'entity'),
+        contributions: contributions
       });
     });
   }
