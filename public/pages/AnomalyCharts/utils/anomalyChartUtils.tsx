@@ -27,8 +27,6 @@ import {
   EntityData,
   EntityOptionsMap,
   EntityOption,
-  AnomalyData,
-  FeatureContributionData,
 } from '../../../models/interfaces';
 import { dateFormatter, minuteDateFormatter } from '../../utils/helpers';
 import { RectAnnotationDatum } from '@elastic/charts';
@@ -114,8 +112,6 @@ export const getAnomalySummary = (totalAnomalies: any[]): AnomalySummary => {
   );
   const anomalyGrades = anomalies.map((anomaly) => anomaly.anomalyGrade);
   const anomalyConfidences = anomalies.map((anomaly) => anomaly.confidence);
-  // const featureAttribution = anomalies.map((anomaly) => anomaly.contributions)
-  // console.log("here: " + featureAttribution);
   const maxConfidence = Math.max(...anomalyConfidences, 0.0);
   const minConfidence = Math.min(...anomalyConfidences, 1.0);
   const maxAnomalyGrade = Math.max(...anomalyGrades, 0.0);
@@ -175,26 +171,6 @@ export const disabledHistoryAnnotations = (
     },
   ];
 };
-
-// export const contributionAnnotations = (
-//   anomaly: AnomalyData
-// ): RectAnnotationDatum[] => {
-//   //const anomalyStr = '{"anomalyGrade":1,"confidence":0.94,"startTime":1659663024160,"endTime":1659663084160,"plotTime":1659663084160,"contributions":{"F9eca4IBNt5P0v9BIqoK":{"name":"sum_http_4xx","attribution":0.1},"GNeca4IBNt5P0v9BIqoN":{"name":"sum_http_5xx","attribution":0.9}}}';
-//   //const anomaly = JSON.parse(anomaly)
-//   console.log("in here")
-//   const startTime = get(anomaly, "startTime");
-//   const endTime = get(anomaly, "endTime");
-
-//   return [
-//     {
-//       coordinates: {
-//         x0: startTime,
-//         x1: endTime + (endTime - startTime),
-//       },
-//       details: `${JSON.stringify(anomaly)}`
-//     },
-//   ];
-// };
 
 export const ANOMALY_HEATMAP_COLORSCALE = [
   [0, '#F2F2F2'],
