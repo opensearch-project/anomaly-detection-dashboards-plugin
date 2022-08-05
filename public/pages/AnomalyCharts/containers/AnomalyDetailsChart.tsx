@@ -32,7 +32,7 @@ import {
   EuiButtonGroup,
   EuiText,
 } from '@elastic/eui';
-import { get } from 'lodash';
+import { forEach, get } from 'lodash';
 import moment from 'moment';
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
@@ -351,17 +351,29 @@ export const AnomalyDetailsChart = React.memo(
 
     const customAnomalyContributionTooltip = (details?: string) => {
       const anomaly = details ? JSON.parse(details) : undefined;
-      const contributionData = get(anomaly, `features`, {})      
-      const featureAttributionList = [];
-      for (const [key, value] of Object.entries(contributionData)) {
-       const attribution = Number(JSON.stringify(value.data))
-       featureAttributionList.push(
-          <div>
-            {key}: {attribution} <br />
-          </div>
-        )
-      }
+      const contributionData = get(anomaly, `contributions`, [])  
 
+      const featureData = get(anomaly, `features`, {}) 
+      let featureAttributionList = [] as any[];
+      if (Array.isArray(contributionData)) {
+        contributionData.map((contribution: any) => {
+          const featureName = get(get(featureData, contribution.feature_id, ""), "name", "") 
+          const dataString = (contribution.data * 100) + "%"
+          featureAttributionList.push(
+            <div>
+              {featureName}: {dataString} <br />
+            </div>
+          )
+        })
+      } else {
+        for (const [, value] of Object.entries(contributionData)) {
+          featureAttributionList.push(
+            <div>
+              {value.name}: {value.attribution} <br />
+            </div>
+          )
+        }
+      }
       return (
         <div>
           <EuiText size="xs">
@@ -382,7 +394,6 @@ export const AnomalyDetailsChart = React.memo(
       anomalies: AnomalyData[][]
     ): any[][] => {
       let annotations = [] as any[];
-
       anomalies.forEach((anomalyTimeSeries: AnomalyData[]) => {
         annotations.push(
           anomalyTimeSeries
@@ -391,7 +402,7 @@ export const AnomalyDetailsChart = React.memo(
               {
               coordinates: {
                 x0: anomaly.startTime,
-                x1: anomaly.endTime,
+                x1: anomaly.endTime + (anomaly.endTime - anomaly.startTime),
               },
               details: `${JSON.stringify(anomaly)}`
             }))
@@ -587,7 +598,7 @@ export const AnomalyDetailsChart = React.memo(
                       }}
                     />
                   )}
-                  {/* <RectAnnotation
+                  <RectAnnotation
                     dataValues={flattenData(generateContributionAnomalyAnnotations(zoomedAnomalies))}
                     id="featureAttributionAnnotation"
                     style={{
@@ -597,7 +608,7 @@ export const AnomalyDetailsChart = React.memo(
                       fill: CHART_COLORS.ANOMALY_GRADE_COLOR,
                     }}
                     renderTooltip={customAnomalyContributionTooltip}
-                  />   */}
+                  />  
                 
                   {alertAnnotations ? (
                     <LineAnnotation
