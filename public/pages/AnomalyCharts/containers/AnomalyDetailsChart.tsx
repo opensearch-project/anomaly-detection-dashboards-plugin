@@ -396,7 +396,8 @@ export const AnomalyDetailsChart = React.memo(
       let annotations = [] as any[];
       anomalies.forEach((anomalyTimeSeries: AnomalyData[]) => {
         annotations.push(
-          anomalyTimeSeries
+          Array.isArray(anomalyTimeSeries) ? (
+            anomalyTimeSeries
             .filter((anomaly: AnomalyData) => anomaly.anomalyGrade > 0)
             .map((anomaly: AnomalyData) => (              
               {
@@ -406,6 +407,7 @@ export const AnomalyDetailsChart = React.memo(
               },
               details: `${JSON.stringify(anomaly)}`
             }))
+          ) : [] 
         );
       });
       return annotations;
