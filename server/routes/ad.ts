@@ -1009,7 +1009,7 @@ export default class AdService {
                 ? toFixedNumberForAnomaly(Number.parseFloat(featureData.data))
                 : 0,
             name: featureData.feature_name, 
-            expectedValue: result.anomaly_grade > 0 
+            expectedValue: result._source.anomaly_grade > 0 
             ? this.getExpectedValue(result, featureData.feature_id) : featureData.data
           });
         });
@@ -1135,7 +1135,7 @@ export default class AdService {
             ? toFixedNumberForAnomaly(Number.parseFloat(featureData.data))
             : 0,
         name: featureData.feature_name,
-        expectedValue: rawResult.anomaly_grade > 0 
+        expectedValue: rawResult._source.anomaly_grade > 0 
         ? this.getExpectedValue(rawResult, featureData.feature_id)
         : featureData.data
       };
