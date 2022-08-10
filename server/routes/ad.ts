@@ -996,7 +996,7 @@ export default class AdService {
           features: this.getFeatureData(result),
         });
         
-        result._source.feature_data.forEach((featureData: any) => {
+        result._source.feature_data.forEach((featureData: any) => {          
           if (!featureResult[featureData.feature_id]) {
             featureResult[featureData.feature_id] = [];
           }
@@ -1009,8 +1009,7 @@ export default class AdService {
                 ? toFixedNumberForAnomaly(Number.parseFloat(featureData.data))
                 : 0,
             name: featureData.feature_name, 
-            expectedValue: result._source.anomaly_grade > 0 
-            ? this.getExpectedValue(result, featureData.feature_id) : featureData.data
+            expectedValue: this.getExpectedValue(result, featureData)
           });
         });
       });
@@ -1135,22 +1134,26 @@ export default class AdService {
             ? toFixedNumberForAnomaly(Number.parseFloat(featureData.data))
             : 0,
         name: featureData.feature_name,
-        expectedValue: rawResult._source.anomaly_grade > 0 
-        ? this.getExpectedValue(rawResult, featureData.feature_id)
-        : featureData.data
+        expectedValue: this.getExpectedValue(rawResult, featureData)
       };
     });
     return featureResult;
   };
 
-  getExpectedValue = (rawResult: any, featureId: string) => {
-    const expectedValueList = rawResult._source.expected_values;
-    if (expectedValueList.length > 0) {
-      expectedValueList[0].value_list.forEach((expect: any) => {
-        if (expect.feature_id === featureId) {
-          return expect.data;
-        }
-      })
+  getExpectedValue = (rawResult: any, featureData: any) => {
+    let expectedValue = featureData.data != null && featureData.data !== 'NaN' 
+    ? toFixedNumberForAnomaly(Number.parseFloat(featureData.data)) 
+    : 0;
+    if (rawResult._source.anomaly_grade > 0) {
+      const expectedValueList = rawResult._source.expected_values;
+      if (expectedValueList?.length > 0) {
+        expectedValueList[0].value_list.forEach((expect: any) => {
+          if (expect.feature_id === featureData.feature_id) {
+            expectedValue = expect.data;
+          }
+        })
+      }
     }
+    return expectedValue
   }
 }
