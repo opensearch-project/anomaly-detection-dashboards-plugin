@@ -652,7 +652,7 @@ exports[`<DefineDetector /> Full creating detector definition renders the compon
                         class="euiText euiText--medium sublabel"
                         style="max-width: 400px;"
                       >
-                        Define how often the detector collects data to generate anomalies. The shorter the interval is, the more real time the detector results will be, and the more computing resources the  detector will need.
+                        Define how often the detector collects data to generate anomalies. The shorter the interval is, the more real time the detector results will be, and the more computing resources the detector will need.
                          
                         <a
                           class="euiLink euiLink--primary"
@@ -1650,7 +1650,7 @@ exports[`<DefineDetector /> empty creating detector definition renders the compo
                         class="euiText euiText--medium sublabel"
                         style="max-width: 400px;"
                       >
-                        Define how often the detector collects data to generate anomalies. The shorter the interval is, the more real time the detector results will be, and the more computing resources the  detector will need.
+                        Define how often the detector collects data to generate anomalies. The shorter the interval is, the more real time the detector results will be, and the more computing resources the detector will need.
                          
                         <a
                           class="euiLink euiLink--primary"
@@ -2697,7 +2697,7 @@ exports[`<DefineDetector /> empty editing detector definition renders the compon
                         class="euiText euiText--medium sublabel"
                         style="max-width: 400px;"
                       >
-                        Define how often the detector collects data to generate anomalies. The shorter the interval is, the more real time the detector results will be, and the more computing resources the  detector will need.
+                        Define how often the detector collects data to generate anomalies. The shorter the interval is, the more real time the detector results will be, and the more computing resources the detector will need.
                          
                         <a
                           class="euiLink euiLink--primary"
