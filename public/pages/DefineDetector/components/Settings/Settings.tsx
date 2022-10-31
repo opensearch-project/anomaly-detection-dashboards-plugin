@@ -37,7 +37,10 @@ export const Settings = () => {
               <FormattedFormRow
                 fullWidth
                 title="Detector interval"
-                hint="Define how often the detector collects data to generate anomalies. The shorter the interval is, the more real time the detector results will be, and the more computing resources the detector will need."
+                hint={[
+                  `Define how often the detector collects data to generate anomalies. The shorter the interval is, the more real time the 
+                  detector results will be, and the more computing resources the detector will need.`
+                ]}
                 hintLink={`${BASE_DOCS_LINK}/ad`}
                 isInvalid={isInvalid(field.name, form)}
                 error={getError(field.name, form)}
