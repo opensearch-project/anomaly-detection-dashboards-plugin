@@ -37,10 +37,7 @@ export const Settings = () => {
               <FormattedFormRow
                 fullWidth
                 title="Detector interval"
-                hint="Define how often the detector collects data to generate
-                anomalies. The shorter the interval is, the more real time the 
-                detector results will be, and the more computing resources the 
-                detector will need."
+                hint="Define how often the detector collects data to generate anomalies. The shorter the interval is, the more real time the detector results will be, and the more computing resources the detector will need."
                 hintLink={`${BASE_DOCS_LINK}/ad`}
                 isInvalid={isInvalid(field.name, form)}
                 error={getError(field.name, form)}
@@ -72,8 +69,7 @@ export const Settings = () => {
           <FormattedFormRow
             fullWidth
             title="Window delay"
-            hint="Specify a window of delay for a detector to fetch data, if you
-            need to account for extra processing time."
+            hint="Specify a window of delay for a detector to fetch data, if you need to account for extra processing time."
             hintLink={`${BASE_DOCS_LINK}/ad`}
             isInvalid={isInvalid(field.name, form)}
             error={getError(field.name, form)}
