@@ -26,7 +26,7 @@ jobs:
         with:
           path: anomaly-detection
           repository: opensearch-project/anomaly-detection
-          ref: 'main'
+          ref: '2.x'
       - name: Run Opensearch with plugin
         run: |
           cd anomaly-detection
