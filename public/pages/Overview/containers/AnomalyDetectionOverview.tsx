@@ -216,8 +216,7 @@ export function AnomalyDetectionOverview(props: AnomalyDetectionOverviewProps) {
           <CreateWorkflowStepSeparator />
           <CreateWorkflowStepDetails
             title="2. Configure your detector"
-            content="Choose the fields in your index that you want to check for anomalies.
-             You may also set a category field to see a granular view of anomalies within each entity."
+            content="Choose the fields in your index that you want to check for anomalies. You may also set a category field to see a granular view of anomalies within each entity."
           />
           <CreateWorkflowStepSeparator />
           <CreateWorkflowStepDetails
