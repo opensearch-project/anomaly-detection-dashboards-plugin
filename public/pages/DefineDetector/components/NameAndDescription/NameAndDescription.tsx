@@ -27,8 +27,7 @@ function NameAndDescription(props: NameAndDescriptionProps) {
         {({ field, form }: FieldProps) => (
           <FormattedFormRow
             title="Name"
-            hint="Specify a unique and descriptive name that is easy to
-          recognize."
+            hint="Specify a unique and descriptive name that is easy to recognize."
             isInvalid={isInvalid(field.name, form)}
             error={getError(field.name, form)}
             helpText={`Detector name must contain 1-64 characters. Valid characters are
