@@ -13,9 +13,13 @@ jobs:
     name: Run unit tests
     strategy:
       matrix:
-        os: [ubuntu-latest, macos-latest]
+        os: [ubuntu-latest, macos-latest, windows-latest]
     runs-on: ${{ matrix.os }}
     steps:
+      # Enable longer filenames for windows
+      - name: Enable longer filenames
+        if: ${{ matrix.os == 'windows-latest' }}
+        run: git config --system core.longpaths true
       - name: Checkout OpenSearch Dashboards
         uses: actions/checkout@v2
         with:
