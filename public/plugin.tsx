@@ -16,25 +16,24 @@ import {
   Plugin,
   PluginInitializerContext,
 } from '../../../src/core/public';
-import {
-  AnomalyDetectionOpenSearchDashboardsPluginSetup,
-  AnomalyDetectionOpenSearchDashboardsPluginStart,
-} from '.';
+import { createADAction, ACTION_AD } from './actions/ad_dashboard_action';
+import { CONTEXT_MENU_TRIGGER } from '../../../src/plugins/embeddable/public';
+
+declare module '../../../src/plugins/ui_actions/public' {
+  export interface ActionContextMapping {
+    [ACTION_AD]: {};
+  }
+}
 
 export class AnomalyDetectionOpenSearchDashboardsPlugin
   implements
-    Plugin<
-      AnomalyDetectionOpenSearchDashboardsPluginSetup,
-      AnomalyDetectionOpenSearchDashboardsPluginStart
-    >
+    Plugin
 {
   constructor(private readonly initializerContext: PluginInitializerContext) {
     // can retrieve config from initializerContext
   }
 
-  public setup(
-    core: CoreSetup
-  ): AnomalyDetectionOpenSearchDashboardsPluginSetup {
+  public setup(core: CoreSetup, plugins) {
     core.application.register({
       id: 'anomaly-detection-dashboards',
       title: 'Anomaly Detection',
@@ -50,12 +49,15 @@ export class AnomalyDetectionOpenSearchDashboardsPlugin
         return renderApp(coreStart, params);
       },
     });
-    return {};
+
+    const alertingAction = createADAction();
+    const { uiActions } = plugins;
+    uiActions.addTriggerAction(CONTEXT_MENU_TRIGGER, alertingAction);
   }
 
-  public start(
-    core: CoreStart
-  ): AnomalyDetectionOpenSearchDashboardsPluginStart {
-    return {};
-  }
+  public start() {}
+
+  public stop() {}
 }
+
+
