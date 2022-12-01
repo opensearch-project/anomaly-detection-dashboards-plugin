@@ -1,10 +1,10 @@
 {
   "name": "anomaly-detection-dashboards",
-  "version": "2.0.1.0",
+  "version": "2.0.2.0",
   "description": "OpenSearch Anomaly Detection Dashboards Plugin",
   "main": "index.js",
   "config": {
-    "plugin_version": "2.0.1.0",
+    "plugin_version": "2.0.2.0",
     "plugin_name": "anomalyDetectionDashboards",
     "plugin_zip_name": "anomaly-detection-dashboards"
   },
@@ -44,5 +44,11 @@
     "react-plotly.js": "^2.4.0",
     "react-redux": "^7.2.0",
     "reselect": "^4.0.0"
+  },
+  "resolutions": {
+    "**/ansi-regex": "^5.0.1",
+    "**/glob-parent": "^6.0.0",
+    "**/loader-utils": "^2.0.4",
+    "**/terser": "^4.8.1"
   }
 }
