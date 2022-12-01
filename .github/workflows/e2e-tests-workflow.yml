@@ -2,10 +2,10 @@ name: E2E tests workflow
 on:
   push:
     branches:
-      - main
+      - '*'
   pull_request:
     branches:
-      - main
+      - '*'
 env:
   OPENSEARCH_DASHBOARDS_VERSION: '1.2'
   OPENSEARCH_VERSION: '1.2.1-SNAPSHOT'
