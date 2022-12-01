@@ -2,16 +2,16 @@ name: E2E tests workflow
 on:
   push:
     branches:
-      - main
+      - '*'
   pull_request:
     branches:
-      - main
+      - '*'
 env:
   OPENSEARCH_DASHBOARDS_VERSION: '1.1'
   AD_OPENSEARCH_DASHBOARDS_PLUGIN_NAME: anomaly-detection-dashboards
   OPENSEARCH_DOCKER_IMAGE: opensearchstaging/opensearch
   DASHBOARDS_DOCKER_IMAGE: opensearchstaging/opensearch-dashboards
-  DOCKER_TAG: 1.1.0
+  DOCKER_TAG: 1.1.1
 jobs:
   test-with-security:
     name: Run e2e tests with security
