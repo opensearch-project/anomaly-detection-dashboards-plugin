@@ -2,10 +2,10 @@ name: Unit tests workflow
 on:
   push:
     branches:
-      - main
+      - '*'
   pull_request:
     branches:
-      - main
+      - '*'
 env:
   OPENSEARCH_DASHBOARDS_VERSION: '1.0'
 jobs:
@@ -13,7 +13,7 @@ jobs:
     name: Run unit tests
     strategy:
       matrix:
-        os: [ubuntu-latest, macos-latest]
+        os: [ubuntu-latest]
     runs-on: ${{ matrix.os }}
     steps:
       - name: Checkout OpenSearch Dashboards
