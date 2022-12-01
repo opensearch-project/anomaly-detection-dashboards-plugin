@@ -7,8 +7,9 @@ on:
     branches:
       - main
 env:
-  OPENSEARCH_DASHBOARDS_VERSION: '1.x'
-  OPENSEARCH_VERSION: '1.2.0-SNAPSHOT'
+  OPENSEARCH_DASHBOARDS_VERSION: '1.2'
+  OPENSEARCH_VERSION: '1.2.1-SNAPSHOT'
+  ANOMALY_DETECTION_PLUGIN_VERSION: '1.2'
 jobs:
   test-with-security:
     name: Run e2e tests without security
@@ -23,7 +24,7 @@ jobs:
         with:
           path: anomaly-detection
           repository: opensearch-project/anomaly-detection
-          ref: 'main'
+          ref: ${{ env.ANOMALY_DETECTION_PLUGIN_VERSION }}
       - name: Run Opensearch with plugin
         run: |
           cd anomaly-detection
