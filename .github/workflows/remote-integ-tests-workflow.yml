@@ -12,6 +12,8 @@ on:
 env:
   OPENSEARCH_DASHBOARDS_VERSION: 'main'
   OPENSEARCH_VERSION: '3.0.0-SNAPSHOT'
+  OPENSEARCH_DASHBOARDS_FTREPO_VERSION: 'main'
+  ANOMALY_DETECTION_PLUGIN_VERSION: 'main'
 jobs:
   test-without-security:
     name: Run integ tests without security
@@ -26,7 +28,7 @@ jobs:
         with:
           path: anomaly-detection
           repository: opensearch-project/anomaly-detection
-          ref: 'main'
+          ref: ${{ env.ANOMALY_DETECTION_PLUGIN_VERSION }}
       - name: Run Opensearch with plugin
         run: |
           cd anomaly-detection
@@ -72,7 +74,7 @@ jobs:
         with:
           path: opensearch-dashboards-functional-test
           repository: opensearch-project/opensearch-dashboards-functional-test
-          ref: 'main' # TODO: change to a branch when the branching strategy in that repo has been established
+          ref: ${{ env.OPENSEARCH_DASHBOARDS_FTREPO_VERSION }}
       - name: Get Cypress version
         id: cypress_version
         run: |
