@@ -19,7 +19,7 @@ jobs:
     name: Run integ tests without security
     strategy:
       matrix:
-        os: [ubuntu-latest]
+        os: [ubuntu-latest, windows-latest]
         java: [14]
     runs-on: ${{ matrix.os }}
     steps:
