@@ -626,7 +626,7 @@ exports[`<DefineDetector /> spec creating detector definition renders the compon
             >
               <div
                 class="euiFormRow euiFormRow--fullWidth"
-                hint="Define how often the detector collects data to generate anomalies. The shorter the interval is, the more real time the  detector results will be, and the more computing resources the  detector will need."
+                hint="Define how often the detector collects data to generate anomalies. The shorter the interval is, the more real time the detector results will be, and the more computing resources the detector will need."
                 hintlink="https://opensearch.org/docs/monitoring-plugins/ad"
                 id="random_html_id-row"
                 title="Detector interval"
@@ -650,7 +650,7 @@ exports[`<DefineDetector /> spec creating detector definition renders the compon
                         class="euiText euiText--medium sublabel"
                         style="max-width: 400px;"
                       >
-                        Define how often the detector collects data to generate anomalies. The shorter the interval is, the more real time the  detector results will be, and the more computing resources the  detector will need.
+                        Define how often the detector collects data to generate anomalies. The shorter the interval is, the more real time the detector results will be, and the more computing resources the detector will need.
                          
                         <a
                           class="euiLink euiLink--primary"
@@ -1604,7 +1604,7 @@ exports[`<DefineDetector /> spec editing detector definition renders the compone
             >
               <div
                 class="euiFormRow euiFormRow--fullWidth"
-                hint="Define how often the detector collects data to generate anomalies. The shorter the interval is, the more real time the  detector results will be, and the more computing resources the  detector will need."
+                hint="Define how often the detector collects data to generate anomalies. The shorter the interval is, the more real time the detector results will be, and the more computing resources the detector will need."
                 hintlink="https://opensearch.org/docs/monitoring-plugins/ad"
                 id="random_html_id-row"
                 title="Detector interval"
@@ -1628,7 +1628,7 @@ exports[`<DefineDetector /> spec editing detector definition renders the compone
                         class="euiText euiText--medium sublabel"
                         style="max-width: 400px;"
                       >
-                        Define how often the detector collects data to generate anomalies. The shorter the interval is, the more real time the  detector results will be, and the more computing resources the  detector will need.
+                        Define how often the detector collects data to generate anomalies. The shorter the interval is, the more real time the detector results will be, and the more computing resources the detector will need.
                          
                         <a
                           class="euiLink euiLink--primary"
