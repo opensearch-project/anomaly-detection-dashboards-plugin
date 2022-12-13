@@ -41,31 +41,6 @@ export const getContextMenuData: Action['getContextMenuData'] = (
         },
       ],
     },
-    {
-      name: 'View events',
-      isTitleVisible: true,
-      order: 10,
-      items: [
-        {
-          name: anomalies.length ? (
-            `Anomalies (${anomalies.length})`
-          ) : (
-            <EuiText>
-              Anomalies{' '}
-              <EuiToolTip position="left" content="Here is some tooltip text">
-                <EuiLink href="#">
-                  <EuiIcon type="questionInCircle" />
-                </EuiLink>
-              </EuiToolTip>
-            </EuiText>
-          ),
-          icon: 'nested',
-          panel: viewAnomaliesByTriggerId,
-          className: anomalies.length ? '' : 'ad-dashboards-context-menu__no-action',
-          disabled: !anomalies.length,
-        },
-      ],
-    },
   ];
   const additionalPanels: EuiContextMenuPanelDescriptor[] = [
     {
@@ -128,16 +103,6 @@ export const getContextMenuData: Action['getContextMenuData'] = (
       content: (
         <FormikWrapper {...{ getFormikOptions }}>
           <ManageDetectors />
-        </FormikWrapper>
-      ),
-    },
-    {
-      id: viewAnomaliesByTriggerId,
-      width: 400,
-      title: 'View Anomalies by Trigger',
-      content: (
-        <FormikWrapper {...{ getFormikOptions }}>
-          <ViewAnomalies />
         </FormikWrapper>
       ),
     },
