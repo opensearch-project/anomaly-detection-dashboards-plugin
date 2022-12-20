@@ -4,31 +4,20 @@ import {
   EuiText,
   EuiCallOut,
   EuiSpacer,
-  EuiIcon,
-  EuiToolTip,
   EuiContextMenuPanelDescriptor,
 } from '@elastic/eui';
 import { v4 as uuid } from 'uuid';
+import CreateAnomalyDetector from '../../components/contextMenu/CreateAnomalyDetector';
 import './styles.scss';
-import { getInitialValues } from './helpers';
 import { GetActionContextMenuDataArgs, Action } from '../../../../../src/plugins/ui_actions/public';
 import FormikWrapper from './FormikWrapper';
 
 export const getContextMenuData: Action['getContextMenuData'] = (
   options: GetActionContextMenuDataArgs
 ) => {
-  const initialValues = getInitialValues();
-  const { anomalies, detectors } = initialValues;
-  const getFormikOptions = () => ({
-    initialValues,
-    onSubmit: (values) => {
-      console.log(values);
-    },
-  });
   const detectorId = uuid();
   const createAnomalyDetectorId = uuid();
   const manageDetectorId = uuid();
-  const viewAnomaliesByTriggerId = uuid();
   const additionalFirstPanelGroups = [
     {
       name: 'Initial group',
@@ -96,16 +85,16 @@ export const getContextMenuData: Action['getContextMenuData'] = (
         </FormikWrapper>
       ),
     },
-    {
-      id: manageDetectorId,
-      width: 400,
-      title: 'Manage detectors',
-      content: (
-        <FormikWrapper {...{ getFormikOptions }}>
-          <ManageDetectors />
-        </FormikWrapper>
-      ),
-    },
+    // {
+    //   id: manageDetectorId,
+    //   width: 400,
+    //   title: 'Manage detectors',
+    //   content: (
+    //     <FormikWrapper {...{ getFormikOptions }}>
+    //       <ManageDetectors />
+    //     </FormikWrapper>
+    //   ),
+    // },
   ];
 
   return {
