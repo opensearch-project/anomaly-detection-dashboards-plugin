@@ -12,12 +12,11 @@
 import {
   AppMountParameters,
   CoreSetup,
-  CoreStart,
   Plugin,
   PluginInitializerContext,
 } from '../../../src/core/public';
-import { createADAction, ACTION_AD } from './actions/ad_dashboard_action';
 import { CONTEXT_MENU_TRIGGER } from '../../../src/plugins/embeddable/public';
+import { ACTION_AD, createADAction } from './action/ad_dashboard_action';
 
 declare module '../../../src/plugins/ui_actions/public' {
   export interface ActionContextMapping {
@@ -45,14 +44,14 @@ export class AnomalyDetectionOpenSearchDashboardsPlugin
       order: 5000,
       mount: async (params: AppMountParameters) => {
         const { renderApp } = await import('./anomaly_detection_app');
-        const [coreStart, depsStart] = await core.getStartServices();
+        const [coreStart] = await core.getStartServices();
         return renderApp(coreStart, params);
       },
     });
 
-    const alertingAction = createADAction();
+    const adAction = createADAction();
     const { uiActions } = plugins;
-    uiActions.addTriggerAction(CONTEXT_MENU_TRIGGER, alertingAction);
+    uiActions.addTriggerAction(CONTEXT_MENU_TRIGGER, adAction);
   }
 
   public start() {}
