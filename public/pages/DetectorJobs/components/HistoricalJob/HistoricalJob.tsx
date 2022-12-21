@@ -54,7 +54,7 @@ export function HistoricalJob(props: HistoricalJobProps) {
           learning models over long historical data windows (weeks or months).
           You can identify anomaly patterns, seasonality, and trends.{' '}
           <EuiLink href={`${BASE_DOCS_LINK}/ad`} target="_blank">
-            Learn more <EuiIcon size="s" type="popout" />
+            Learn more
           </EuiLink>
         </EuiText>
       }

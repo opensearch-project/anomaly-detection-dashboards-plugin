@@ -249,7 +249,7 @@ export function ConfigureModel(props: ConfigureModelProps) {
                       and other optional parameters, you can preview your
                       anomalies from a sample feature output.{' '}
                       <EuiLink href={`${BASE_DOCS_LINK}/ad`} target="_blank">
-                        Learn more <EuiIcon size="s" type="popout" />
+                        Learn more
                       </EuiLink>
                     </EuiText>
                     <EuiSpacer size="s" />
