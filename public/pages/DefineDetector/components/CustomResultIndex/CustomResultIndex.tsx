@@ -56,7 +56,7 @@ function CustomResultIndex(props: CustomResultIndexProps) {
         >
           Store detector results to your own index.{' '}
           <EuiLink href={`${BASE_DOCS_LINK}/ad`} target="_blank">
-            Learn more <EuiIcon size="s" type="popout" />
+            Learn more
           </EuiLink>
         </EuiText>
       }

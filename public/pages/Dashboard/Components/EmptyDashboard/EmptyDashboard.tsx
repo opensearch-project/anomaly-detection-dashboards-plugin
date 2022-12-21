@@ -30,8 +30,7 @@ export class EmptyDashboard extends Component<{}, {}> {
             <p>
               Read about{' '}
               <EuiLink href={`${BASE_DOCS_LINK}/ad`} target="_blank">
-                Get started with Anomaly detection &nbsp;
-                <EuiIcon size="s" type="popout" />
+                Get started with Anomaly detection
               </EuiLink>{' '}
             </p>
           </Fragment>

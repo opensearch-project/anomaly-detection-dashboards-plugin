@@ -38,7 +38,7 @@ export const Settings = () => {
                 fullWidth
                 title="Detector interval"
                 hint={[
-                  `Define how often the detector collects data to generate anomalies. The shorter the interval is, the more real time the detector results will be, and the more computing resources the detector will need.`
+                  `Define how often the detector collects data to generate anomalies. The shorter the interval is, the more real time the detector results will be, and the more computing resources the detector will need.`,
                 ]}
                 hintLink={`${BASE_DOCS_LINK}/ad`}
                 isInvalid={isInvalid(field.name, form)}

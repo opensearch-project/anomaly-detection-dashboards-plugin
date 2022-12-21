@@ -82,27 +82,27 @@ export type FeatureAttributes = {
 
 // all possible valid units accepted by the backend
 export enum UNITS {
-  NANOS = "Nanos",
-  MICROS = "Micros",
-  MILLIS = "Millis",
-  SECONDS = "Seconds",
+  NANOS = 'Nanos',
+  MICROS = 'Micros',
+  MILLIS = 'Millis',
+  SECONDS = 'Seconds',
   MINUTES = 'Minutes',
-  HOURS = "Hours",
-  HALF_DAYS = "HalfDays",
-  DAYS = "Days",
-  WEEKS = "Weeks",
-  MONTHS = "Months",
-  YEARS = "Years",
-  DECADES = "Decades",
-  CENTURIES = "Centuries",
-  MILLENNIA = "Millennia",
-  ERAS = "Eras",
-  FOREVER = "Forever"
+  HOURS = 'Hours',
+  HALF_DAYS = 'HalfDays',
+  DAYS = 'Days',
+  WEEKS = 'Weeks',
+  MONTHS = 'Months',
+  YEARS = 'Years',
+  DECADES = 'Decades',
+  CENTURIES = 'Centuries',
+  MILLENNIA = 'Millennia',
+  ERAS = 'Eras',
+  FOREVER = 'Forever',
 }
 
 // cannot create a method in enum, have to write function separately
 export function toDuration(units: UNITS): Duration {
-  switch(units) {
+  switch (units) {
     case UNITS.NANOS: {
       // Duration in moment library does not support
       return moment.duration(0.000000001, 'seconds');
@@ -155,7 +155,7 @@ export function toDuration(units: UNITS): Duration {
     default:
       break;
   }
-  throw new Error("Unexpected unit: " + units);
+  throw new Error('Unexpected unit: ' + units);
 }
 
 export type Schedule = {
@@ -235,7 +235,7 @@ export type AnomalyData = {
   entity?: EntityData[];
   features?: { [key: string]: FeatureAggregationData };
   contributions?: { [key: string]: FeatureContributionData };
-  aggInterval?: string; 
+  aggInterval?: string;
 };
 
 export type FeatureAggregationData = {
