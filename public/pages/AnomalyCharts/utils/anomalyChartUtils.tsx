@@ -640,9 +640,7 @@ export const getFeatureBreakdownWording = (
   return isNotSample ? 'Feature breakdown' : 'Sample feature breakdown';
 };
 
-export const getFeatureDataWording = (
-  isNotSample: boolean | undefined
-) => {
+export const getFeatureDataWording = (isNotSample: boolean | undefined) => {
   return isNotSample ? 'Feature output' : 'Sample feature output';
 };
 

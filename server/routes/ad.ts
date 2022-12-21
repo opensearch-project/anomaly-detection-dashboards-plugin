@@ -963,14 +963,16 @@ export default class AdService {
 
       const detectorResult: AnomalyResult[] = [];
       const featureResult: { [key: string]: FeatureResult[] } = {};
-      
+
       get(response, 'hits.hits', []).forEach((result: any) => {
         detectorResult.push({
           startTime: result._source.data_start_time,
           endTime: result._source.data_end_time,
           plotTime: result._source.data_end_time,
-          contributions: result._source.anomaly_grade > 0 
-            ? result._source.relevant_attribution : {},
+          contributions:
+            result._source.anomaly_grade > 0
+              ? result._source.relevant_attribution
+              : {},
           confidence:
             result._source.confidence != null &&
             result._source.confidence !== 'NaN' &&
@@ -995,7 +997,7 @@ export default class AdService {
           // to know feature data belongs to which anomaly result
           features: this.getFeatureData(result),
         });
-        
+
         result._source.feature_data.forEach((featureData: any) => {
           if (!featureResult[featureData.feature_id]) {
             featureResult[featureData.feature_id] = [];
@@ -1008,8 +1010,8 @@ export default class AdService {
               featureData.data != null && featureData.data !== 'NaN'
                 ? toFixedNumberForAnomaly(Number.parseFloat(featureData.data))
                 : 0,
-            name: featureData.feature_name, 
-            expectedValue: this.getExpectedValue(result, featureData)
+            name: featureData.feature_name,
+            expectedValue: this.getExpectedValue(result, featureData),
           });
         });
       });
@@ -1134,16 +1136,17 @@ export default class AdService {
             ? toFixedNumberForAnomaly(Number.parseFloat(featureData.data))
             : 0,
         name: featureData.feature_name,
-        expectedValue: this.getExpectedValue(rawResult, featureData)
+        expectedValue: this.getExpectedValue(rawResult, featureData),
       };
     });
     return featureResult;
   };
 
   getExpectedValue = (rawResult: any, featureData: any) => {
-    let expectedValue = featureData.data != null && featureData.data !== 'NaN' 
-    ? toFixedNumberForAnomaly(Number.parseFloat(featureData.data)) 
-    : 0;
+    let expectedValue =
+      featureData.data != null && featureData.data !== 'NaN'
+        ? toFixedNumberForAnomaly(Number.parseFloat(featureData.data))
+        : 0;
     if (rawResult._source.anomaly_grade > 0) {
       const expectedValueList = rawResult._source.expected_values;
       if (expectedValueList?.length > 0) {
@@ -1151,9 +1154,9 @@ export default class AdService {
           if (expect.feature_id === featureData.feature_id) {
             expectedValue = expect.data;
           }
-        })
+        });
       }
     }
-    return expectedValue
-  }
+    return expectedValue;
+  };
 }

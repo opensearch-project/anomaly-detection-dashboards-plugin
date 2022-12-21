@@ -37,7 +37,7 @@ export const CreateWorkflowStepDetails = (
           <EuiText style={{ fontSize: '14px' }}>
             {props.content}{' '}
             <EuiLink href={`${BASE_DOCS_LINK}/ad`} target="_blank">
-              Learn more <EuiIcon size="s" type="popout" />
+              Learn more
             </EuiLink>
           </EuiText>
         </EuiFlexItem>

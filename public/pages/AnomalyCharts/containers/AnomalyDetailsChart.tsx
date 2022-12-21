@@ -348,30 +348,33 @@ export const AnomalyDetailsChart = React.memo(
       zoomRange.endDate,
     ]);
 
-
     const customAnomalyContributionTooltip = (details?: string) => {
       const anomaly = details ? JSON.parse(details) : undefined;
-      const contributionData = get(anomaly, `contributions`, [])  
+      const contributionData = get(anomaly, `contributions`, []);
 
-      const featureData = get(anomaly, `features`, {}) 
+      const featureData = get(anomaly, `features`, {});
       let featureAttributionList = [] as any[];
       if (Array.isArray(contributionData)) {
         contributionData.map((contribution: any) => {
-          const featureName = get(get(featureData, contribution.feature_id, ""), "name", "") 
-          const dataString = (contribution.data * 100) + "%"
+          const featureName = get(
+            get(featureData, contribution.feature_id, ''),
+            'name',
+            ''
+          );
+          const dataString = contribution.data * 100 + '%';
           featureAttributionList.push(
             <div>
               {featureName}: {dataString} <br />
             </div>
-          )
-        })
+          );
+        });
       } else {
         for (const [, value] of Object.entries(contributionData)) {
           featureAttributionList.push(
             <div>
               {value.name}: {value.attribution} <br />
             </div>
-          )
+          );
         }
       }
       return (
@@ -379,16 +382,15 @@ export const AnomalyDetailsChart = React.memo(
           <EuiText size="xs">
             <EuiIcon type="list" /> <b>Feature Contribution: </b>
             {anomaly ? (
-            <p>
-              <hr style={{ color: '#E0E0E0' }}></hr>
-              {featureAttributionList}
-            </p>
-          ) : null}
+              <p>
+                <hr style={{ color: '#E0E0E0' }}></hr>
+                {featureAttributionList}
+              </p>
+            ) : null}
           </EuiText>
         </div>
       );
     };
-
 
     const generateContributionAnomalyAnnotations = (
       anomalies: AnomalyData[][]
@@ -396,18 +398,17 @@ export const AnomalyDetailsChart = React.memo(
       let annotations = [] as any[];
       anomalies.forEach((anomalyTimeSeries: AnomalyData[]) => {
         annotations.push(
-          Array.isArray(anomalyTimeSeries) ? (
-            anomalyTimeSeries
-            .filter((anomaly: AnomalyData) => anomaly.anomalyGrade > 0)
-            .map((anomaly: AnomalyData) => (              
-              {
-              coordinates: {
-                x0: anomaly.startTime,
-                x1: anomaly.endTime + (anomaly.endTime - anomaly.startTime),
-              },
-              details: `${JSON.stringify(anomaly)}`
-            }))
-          ) : [] 
+          Array.isArray(anomalyTimeSeries)
+            ? anomalyTimeSeries
+                .filter((anomaly: AnomalyData) => anomaly.anomalyGrade > 0)
+                .map((anomaly: AnomalyData) => ({
+                  coordinates: {
+                    x0: anomaly.startTime,
+                    x1: anomaly.endTime + (anomaly.endTime - anomaly.startTime),
+                  },
+                  details: `${JSON.stringify(anomaly)}`,
+                }))
+            : []
         );
       });
       return annotations;
@@ -601,7 +602,9 @@ export const AnomalyDetailsChart = React.memo(
                     />
                   )}
                   <RectAnnotation
-                    dataValues={flattenData(generateContributionAnomalyAnnotations(zoomedAnomalies))}
+                    dataValues={flattenData(
+                      generateContributionAnomalyAnnotations(zoomedAnomalies)
+                    )}
                     id="featureAttributionAnnotation"
                     style={{
                       stroke: CHART_COLORS.ANOMALY_GRADE_COLOR,
@@ -610,8 +613,8 @@ export const AnomalyDetailsChart = React.memo(
                       fill: CHART_COLORS.ANOMALY_GRADE_COLOR,
                     }}
                     renderTooltip={customAnomalyContributionTooltip}
-                  />  
-                
+                  />
+
                   {alertAnnotations ? (
                     <LineAnnotation
                       id="alertAnnotation"
@@ -683,31 +686,31 @@ export const AnomalyDetailsChart = React.memo(
                             get(anomalySeries, '0.entity', []),
                             ', '
                           )})`
-                        : props.anomalyGradeSeriesName; 
-                        return (
-                          <LineSeries
-                            id={seriesKey}
-                            name={seriesKey}
-                            color={
-                              multipleTimeSeries
-                                ? ENTITY_COLORS[index]
-                                : CHART_COLORS.ANOMALY_GRADE_COLOR
-                            }
-                            data={anomalySeries}
-                            xScaleType={
-                              showAggregateResults
-                                ? ScaleType.Ordinal
-                                : ScaleType.Time
-                            }
-                            yScaleType={ScaleType.Linear}
-                            xAccessor={
-                              showAggregateResults
-                                ? CHART_FIELDS.AGG_INTERVAL
-                                : CHART_FIELDS.PLOT_TIME
-                            }
-                            yAccessors={[CHART_FIELDS.ANOMALY_GRADE]}
-                          />
-                        )
+                        : props.anomalyGradeSeriesName;
+                      return (
+                        <LineSeries
+                          id={seriesKey}
+                          name={seriesKey}
+                          color={
+                            multipleTimeSeries
+                              ? ENTITY_COLORS[index]
+                              : CHART_COLORS.ANOMALY_GRADE_COLOR
+                          }
+                          data={anomalySeries}
+                          xScaleType={
+                            showAggregateResults
+                              ? ScaleType.Ordinal
+                              : ScaleType.Time
+                          }
+                          yScaleType={ScaleType.Linear}
+                          xAccessor={
+                            showAggregateResults
+                              ? CHART_FIELDS.AGG_INTERVAL
+                              : CHART_FIELDS.PLOT_TIME
+                          }
+                          yAccessors={[CHART_FIELDS.ANOMALY_GRADE]}
+                        />
+                      );
                     }
                   )}
                 </Chart>

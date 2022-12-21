@@ -47,7 +47,7 @@ export function RealTimeJob(props: RealTimeJobProps) {
           changes. The earlier the detector starts running, the sooner the
           real-time anomalies will be available.{' '}
           <EuiLink href={`${BASE_DOCS_LINK}/ad`} target="_blank">
-            Learn more <EuiIcon size="s" type="popout" />
+            Learn more
           </EuiLink>
         </EuiText>
       }

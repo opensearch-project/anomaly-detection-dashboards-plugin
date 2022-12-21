@@ -209,24 +209,26 @@ export function AnomalyResults(props: AnomalyResultsProps) {
     let windowDelayInMinutes = 0;
     if (detector.windowDelay !== undefined) {
       const windowDelay = detector.windowDelay.period;
-      const windowDelayUnit = get(windowDelay, 'unit',  UNITS.MINUTES);
+      const windowDelayUnit = get(windowDelay, 'unit', UNITS.MINUTES);
 
       // current time minus window delay
-      const windowDelayInterval = get(windowDelay, 'interval',  0);
-      windowDelayInMinutes = windowDelayInterval * toDuration(windowDelayUnit).asMinutes();
+      const windowDelayInterval = get(windowDelay, 'interval', 0);
+      windowDelayInMinutes =
+        windowDelayInterval * toDuration(windowDelayUnit).asMinutes();
     }
 
     // The query in this function uses data start/end time. So we should consider window delay
     let adjustedCurrentTime = moment().subtract(
       windowDelayInMinutes,
       'minutes'
-    );;
+    );
 
     // check from FEATURE_DATA_POINTS_WINDOW + FEATURE_DATA_CHECK_WINDOW_OFFSET (currently 5) intervals to now
     const featureDataPointsRange = {
       startDate: Math.max(
         // clone since subtract mutates the original moment that we need to use as endData later
-        adjustedCurrentTime.clone()
+        adjustedCurrentTime
+          .clone()
           .subtract(
             (FEATURE_DATA_POINTS_WINDOW + FEATURE_DATA_CHECK_WINDOW_OFFSET) *
               detectorIntervalInMin,
