@@ -1,3 +1,3 @@
 export default () => {
-    process.env.TZ = 'UTC';
-  }
+  process.env.TZ = 'UTC';
+};

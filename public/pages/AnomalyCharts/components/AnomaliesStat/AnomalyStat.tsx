@@ -91,7 +91,7 @@ export const AlertsStat = (props: {
             target="_blank"
             style={{ fontSize: '14px' }}
           >
-            View monitor <EuiIcon type="popout"></EuiIcon>
+            View monitor
           </EuiLink>
         ) : null}
       </Fragment>

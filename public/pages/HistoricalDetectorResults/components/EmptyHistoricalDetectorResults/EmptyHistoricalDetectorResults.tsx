@@ -55,8 +55,7 @@ export const EmptyHistoricalDetectorResults = (
               href={`${BASE_DOCS_LINK}/ad/index/#step-6-analyze-historical-data`}
               target="_blank"
             >
-              Learn more &nbsp;
-              <EuiIcon size="s" type="popout" />
+              Learn more
             </EuiLink>{' '}
           </p>
         </Fragment>

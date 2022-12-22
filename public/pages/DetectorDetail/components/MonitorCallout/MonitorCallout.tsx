@@ -31,7 +31,7 @@ export const MonitorCallout = (props: MonitorCalloutProps) => {
           href={`${getAlertingMonitorListLink()}/${props.monitorId}`}
           target="_blank"
         >
-          {props.monitorName} <EuiIcon type="popout" size="s" />
+          {props.monitorName}
         </EuiLink>{' '}
         associated with this detector will not receive any anomaly results to
         generate alerts.
