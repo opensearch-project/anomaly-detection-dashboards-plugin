@@ -27,7 +27,7 @@ const getNames = (detectors: DetectorListItem[]) => {
           href={`${PLUGIN_NAME}#/detectors/${detectors[i].id}`}
           target="_blank"
         >
-          {detectors[i].name} <EuiIcon type="popout" size="s" />
+          {detectors[i].name} />
         </EuiLink>
       ),
     });
@@ -49,7 +49,7 @@ const getNamesAndMonitors = (
             href={`${PLUGIN_NAME}#/detectors/${detectors[i].id}`}
             target="_blank"
           >
-            {detectors[i].name} <EuiIcon type="popout" size="s" />
+            {detectors[i].name} />
           </EuiLink>
         ),
         Monitor: (
@@ -57,7 +57,7 @@ const getNamesAndMonitors = (
             href={`${getAlertingMonitorListLink()}/${relatedMonitor.id}`}
             target="_blank"
           >
-            {relatedMonitor.name} <EuiIcon type="popout" size="s" />
+            {relatedMonitor.name} />
           </EuiLink>
         ),
       });
@@ -68,7 +68,7 @@ const getNamesAndMonitors = (
             href={`${PLUGIN_NAME}#/detectors/${detectors[i].id}`}
             target="_blank"
           >
-            {detectors[i].name} <EuiIcon type="popout" size="s" />
+            {detectors[i].name} />
           </EuiLink>
         ),
         Monitor: '-',
@@ -95,7 +95,7 @@ const getNamesAndMonitorsAndStates = (
             href={`${PLUGIN_NAME}#/detectors/${detectors[i].id}`}
             target="_blank"
           >
-            {detectors[i].name} <EuiIcon type="popout" size="s" />
+            {detectors[i].name} />
           </EuiLink>
         ),
         Monitor: (
@@ -103,7 +103,7 @@ const getNamesAndMonitorsAndStates = (
             href={`${getAlertingMonitorListLink()}/${relatedMonitor.id}`}
             target="_blank"
           >
-            {relatedMonitor.name} <EuiIcon type="popout" size="s" />
+            {relatedMonitor.name} />
           </EuiLink>
         ),
         Running: <EuiText>{isRunning ? 'Yes' : 'No'}</EuiText>,
@@ -115,7 +115,7 @@ const getNamesAndMonitorsAndStates = (
             href={`${PLUGIN_NAME}#/detectors/${detectors[i].id}`}
             target="_blank"
           >
-            {detectors[i].name} <EuiIcon type="popout" size="s" />
+            {detectors[i].name}
           </EuiLink>
         ),
         Monitor: '-',

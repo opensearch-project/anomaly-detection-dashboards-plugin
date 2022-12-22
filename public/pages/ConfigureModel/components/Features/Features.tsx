@@ -55,7 +55,7 @@ export function Features(props: FeaturesProps) {
           A feature is the field in your index that you use to check for
           anomalies. You can add up to 5 features.{' '}
           <EuiLink href={`${BASE_DOCS_LINK}/ad`} target="_blank">
-            Learn more <EuiIcon size="s" type="popout" />
+            Learn more
           </EuiLink>
         </EuiText>
       }

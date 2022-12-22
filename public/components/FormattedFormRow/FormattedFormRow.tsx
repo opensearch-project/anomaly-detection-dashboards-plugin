@@ -35,7 +35,7 @@ export const FormattedFormRow = (props: FormattedFormRowProps) => {
           {props.hintLink ? ' ' : null}
           {props.hintLink ? (
             <EuiLink href={props.hintLink} target="_blank">
-              Learn more <EuiIcon size="s" type="popout" />
+              Learn more
             </EuiLink>
           ) : null}
         </EuiText>

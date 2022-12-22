@@ -203,7 +203,7 @@ export function AnomalyDetectionOverview(props: AnomalyDetectionOverviewProps) {
         The anomaly detection plugin automatically detects anomalies in your
         data in near real-time using the Random Cut Forest (RCF) algorithm.{' '}
         <EuiLink href={`${BASE_DOCS_LINK}/ad`} target="_blank">
-          Learn more <EuiIcon size="s" type="popout" />
+          Learn more
         </EuiLink>
       </EuiText>
       <EuiSpacer size="xl" />
