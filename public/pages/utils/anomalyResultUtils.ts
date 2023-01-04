@@ -1767,10 +1767,17 @@ export const convertToCategoryFieldAndEntityString = (
       if (index > 0) {
         entityString += delimiter;
       }
+
+      // It is possible that entity.name is undefined when we artificially add
+      // whitespace strings as the entity values when the heatmap is empty (see
+      // getSampleAnomaliesHeatmapData())
+      // If true, set the entire string as 'None'
       entityString +=
-        entity.name +
-        `${HEATMAP_CALL_ENTITY_KEY_VALUE_DELIMITER}` +
-        entity.value;
+        entity.name !== undefined
+          ? entity.name +
+            `${HEATMAP_CALL_ENTITY_KEY_VALUE_DELIMITER}` +
+            entity.value
+          : 'None';
     });
   }
   return entityString;
