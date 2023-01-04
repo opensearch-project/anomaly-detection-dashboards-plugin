@@ -103,7 +103,6 @@ interface AnomalyHistoryProps {
   isHistorical?: boolean;
   taskId?: string;
   isNotSample?: boolean;
-  openOutOfRangeModal?(): void;
 }
 
 const useAsyncRef = (value: any) => {
@@ -691,13 +690,6 @@ export const AnomalyHistory = (props: AnomalyHistoryProps) => {
   }
   const handleDateRangeChange = useCallback(
     (startDate: number, endDate: number) => {
-      if (
-        !props.isHistorical &&
-        startDate < get(props, 'detector.enabledTime') &&
-        props.openOutOfRangeModal
-      ) {
-        props.openOutOfRangeModal();
-      }
       setDateRange({
         startDate: startDate,
         endDate: endDate,
