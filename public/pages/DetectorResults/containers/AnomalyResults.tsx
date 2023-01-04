@@ -66,7 +66,6 @@ import { detectorIsSample } from '../../Overview/utils/helpers';
 import { SampleIndexDetailsCallout } from '../../Overview/components/SampleIndexDetailsCallout/SampleIndexDetailsCallout';
 import { CoreStart } from '../../../../../../src/core/public';
 import { CoreServicesContext } from '../../../components/CoreServices/CoreServices';
-import { OutOfRangeModal } from '../components/OutOfRangeModal';
 
 interface AnomalyResultsProps extends RouteComponentProps {
   detectorId: string;
@@ -83,8 +82,6 @@ export function AnomalyResults(props: AnomalyResultsProps) {
   const detector = useSelector(
     (state: AppState) => state.ad.detectors[detectorId]
   );
-  const [outOfRangeModalOpen, setOutOfRangeModalOpen] =
-    useState<boolean>(false);
 
   useEffect(() => {
     core.chrome.setBreadcrumbs([
@@ -417,17 +414,6 @@ export function AnomalyResults(props: AnomalyResultsProps) {
           <EuiSpacer size="l" />
           {
             <Fragment>
-              {outOfRangeModalOpen ? (
-                <EuiOverlayMask>
-                  <OutOfRangeModal
-                    onClose={() => setOutOfRangeModalOpen(false)}
-                    onConfirm={() => {
-                      props.onSwitchToHistorical();
-                    }}
-                    lastEnabledTime={get(detector, 'enabledTime') as number}
-                  />
-                </EuiOverlayMask>
-              ) : null}
               {isDetectorRunning ||
               isDetectorPaused ||
               isDetectorInitializing ||
@@ -570,7 +556,6 @@ export function AnomalyResults(props: AnomalyResultsProps) {
                     isFeatureDataMissing={isDetectorMissingData}
                     isNotSample={true}
                     isHistorical={false}
-                    openOutOfRangeModal={() => setOutOfRangeModalOpen(true)}
                   />
                 </Fragment>
               ) : detector ? (

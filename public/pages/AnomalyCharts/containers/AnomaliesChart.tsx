@@ -84,6 +84,7 @@ export interface AnomaliesChartProps {
   entityAnomalySummaries?: EntityAnomalySummaries[];
   selectedCategoryFields?: any[];
   handleCategoryFieldsChange(selectedOptions: any[]): void;
+  openOutOfRangeCallOut?: boolean;
 }
 
 export const AnomaliesChart = React.memo((props: AnomaliesChartProps) => {
@@ -96,6 +97,8 @@ export const AnomaliesChart = React.memo((props: AnomaliesChartProps) => {
       : 'now',
   });
 
+  const [showOutOfRangeCallOut, setShowOutOfRangeCallOut] = useState(false);
+
   // for each time series of results, get the anomalies, ignoring feature data
   let anomalyResults = [] as AnomalyData[][];
   get(props, 'anomalyAndFeatureResults', []).forEach(
@@ -107,6 +110,14 @@ export const AnomaliesChart = React.memo((props: AnomaliesChartProps) => {
   const handleDateRangeChange = (startDate: number, endDate: number) => {
     props.onDateRangeChange(startDate, endDate);
     props.onZoomRangeChange(startDate, endDate);
+    if (
+      !props.isHistorical &&
+      endDate < get(props, 'detector.enabledTime') 
+    ) {
+      setShowOutOfRangeCallOut(true)
+    } else {
+      setShowOutOfRangeCallOut(false)
+    }
   };
 
   const showLoader = useDelayedLoader(props.isLoading);
@@ -387,6 +398,7 @@ export const AnomaliesChart = React.memo((props: AnomaliesChartProps) => {
               isHCDetector={props.isHCDetector}
               isHistorical={props.isHistorical}
               onDatePickerRangeChange={handleDatePickerRangeChange}
+              openOutOfRangeCallOut={showOutOfRangeCallOut}
             />
           )}
         </EuiFlexGroup>
