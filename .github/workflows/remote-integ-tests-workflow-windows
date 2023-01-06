@@ -1,7 +1,7 @@
 # Running AD integ tests stored in https://github.com/opensearch-project/opensearch-dashboards-functional-test
 # In the future we should pull dependencies from bundled build snapshots. Because that is not available
 # yet we build the cluster from source (besides core Opensearch, which is a pulled min artifact).
-name: Remote integ tests workflow
+name: Remote integ tests workflow - windows
 on:
   push:
     branches:
