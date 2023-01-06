@@ -20,7 +20,7 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu-latest, windows-latest]
-        java: [11]
+        java: [14]
         include:
           - os: windows-latest
             cypress_cache_folder: ~/AppData/Local/Cypress/Cache
