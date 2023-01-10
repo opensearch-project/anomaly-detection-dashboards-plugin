@@ -11,6 +11,7 @@ Compatible with OpenSearch Dashboards 2.5.0
 ### Infrastructure
 
 * Add branch constants in CI workflow ([#345](https://github.com/opensearch-project/anomaly-detection-dashboards-plugin/pull/345))
+* Bump to 2.5.0; add constants in CI workflow ([#346](https://github.com/opensearch-project/anomaly-detection-dashboards-plugin/pull/346))
 * Bump decode-uri-component ([#359](https://github.com/opensearch-project/anomaly-detection-dashboards-plugin/pull/359))
 * Add windows env to integration test workflow ([#390](https://github.com/opensearch-project/anomaly-detection-dashboards-plugin/pull/390))
 * Bump json5 to 2.2.3 ([#393](https://github.com/opensearch-project/anomaly-detection-dashboards-plugin/pull/393))
