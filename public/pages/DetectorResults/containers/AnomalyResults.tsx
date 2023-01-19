@@ -311,10 +311,9 @@ export function AnomalyResults(props: AnomalyResultsProps) {
             />
             <EuiText>
               <p>
-                Attempting to initialize the detector with historical data. This
-                initializing process takes approximately{' '}
-                {get(detector, 'detectionInterval.period.interval', 10)}{' '}
-                minutes.
+                Attempting to initialize the detector with historical data.
+                This initializing process takes approximately 1 minute if
+                 you have data in each of the last 40 consecutive intervals.
               </p>
             </EuiText>
           </EuiFlexGroup>
