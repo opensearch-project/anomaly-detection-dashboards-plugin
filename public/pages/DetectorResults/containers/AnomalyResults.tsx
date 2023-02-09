@@ -66,6 +66,7 @@ import { detectorIsSample } from '../../Overview/utils/helpers';
 import { SampleIndexDetailsCallout } from '../../Overview/components/SampleIndexDetailsCallout/SampleIndexDetailsCallout';
 import { CoreStart } from '../../../../../../src/core/public';
 import { CoreServicesContext } from '../../../components/CoreServices/CoreServices';
+import { DEFAULT_SHINGLE_SIZE } from '../../../utils/constants';
 
 interface AnomalyResultsProps extends RouteComponentProps {
   detectorId: string;
@@ -313,7 +314,8 @@ export function AnomalyResults(props: AnomalyResultsProps) {
               <p>
                 Attempting to initialize the detector with historical data.
                 This initializing process takes approximately 1 minute if
-                 you have data in each of the last 40 consecutive intervals.
+                you have data in each of the last{' '}
+                {32+get(detector, 'shingleSize', DEFAULT_SHINGLE_SIZE)}{' '} consecutive intervals.
               </p>
             </EuiText>
           </EuiFlexGroup>
