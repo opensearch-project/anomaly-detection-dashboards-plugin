@@ -51,6 +51,7 @@
     "**/loader-utils": "^2.0.4",
     "**/terser": "^4.8.1",
     "decode-uri-component": "^0.2.1",
-    "json5": "^2.2.3"
+    "json5": "^2.2.3",
+    "@sideway/formula": "^3.0.1"
   }
 }
