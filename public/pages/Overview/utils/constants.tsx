@@ -14,11 +14,10 @@ import moment from 'moment';
 import React from 'react';
 import { EuiIcon } from '@elastic/eui';
 
-// same as default OpenSearch Dashboards sample data
+// We don't need to specify auto_expand_replicas - use cluster defaults instead
 export const indexSettings = {
   index: {
     number_of_shards: 1,
-    auto_expand_replicas: '0-1',
   },
 };
 
