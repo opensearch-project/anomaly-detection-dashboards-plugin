@@ -46,9 +46,7 @@ const DetectorDetails = () => {
           />
         </EuiFormRow>
         <EuiFormRow label='Detector description'>
-          <EuiFieldText
-            
-          />
+          <EuiFieldText/>
         </EuiFormRow>
       </EuiPanel>
       <EuiSpacer />
