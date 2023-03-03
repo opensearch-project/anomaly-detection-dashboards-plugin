@@ -8,14 +8,16 @@ import {
   EuiFlyoutBody,
   EuiTitle,
   EuiAccordion,
-  EuiSpacer
+  EuiSpacer,
+  EuiFlyout
 } from '@elastic/eui';
 import './styles.scss';
 import { EmbeddablePanel } from '../../../../../../src/plugins/embeddable/public';
 import DetectorDetails from './DetectorDetails';
 import Features from './Features';
+import ShingleSize from './ShingleSize';
 
-const accordions = ['detectorDetails', 'features', 'categoricalFields', 'shingleSize', 'alerts', 'triggers'].reduce(
+const accordions = ['detectorDetails', 'features', 'shingleSize', 'alerts', 'triggers'].reduce(
   (acc, cur) => ({ ...acc, [cur]: cur }),
   {}
 );
@@ -60,87 +62,89 @@ function CreateAnomalyDetector({ embeddable }) {
 
   return (
     <div className="create-anomaly-detector">
-      <EuiFlyoutHeader hasBorder>
-        <EuiTitle>
-          <h2 id="create-anomaly-detector__title">Create anomaly detector</h2>
-        </EuiTitle>
-      </EuiFlyoutHeader>
-      <EuiFlyoutBody>
-        <EuiFlexGroup>
-          <EuiFlexItem>
-            <div className="create-anomaly-detector__vis">
-              <EmbeddablePanel
-                hideHeader
-                embeddable={embeddable}
-                getActions={() => Promise.resolve([])}
-                getAllEmbeddableFactories={() => []}
-                getEmbeddableFactory={() => null}
-                notifications={{}}
-                application={{}}
-                overlays={{}}
-                inspector={{ isAvailable: () => null }}
-                SavedObjectFinder={() => null}
-              />
-            </div>
-          </EuiFlexItem>
-          <EuiFlexItem className="create-anomaly-detector__aside">
-            <EuiAccordion
-              id={accordions.detectorDetails}
-              buttonContent={
-                <EuiText>
-                  <h6>Detector Details</h6>
-                </EuiText>
-              }
-              initialIsOpen={true}
-              forceState={accordionOpen === accordions.detectorDetails ? 'open' : 'closed'}
-              onToggle={() =>
-                setAccordionOpen(
-                  accordionOpen !== accordions.detectorDetails && accordions.detectorDetails
-                )
-              }
-            >
-              <EuiSpacer />
-              <DetectorDetails />
-            </EuiAccordion>
-            <EuiHorizontalRule margin="s" />
-            <EuiAccordion
-                id={accordions.features}
+      <EuiFlyout>
+        <EuiFlyoutHeader hasBorder>
+          <EuiTitle>
+            <h2 id="create-anomaly-detector__title">Create anomaly detector</h2>
+          </EuiTitle>
+        </EuiFlyoutHeader>
+        <EuiFlyoutBody>
+          <EuiFlexGroup>
+            <EuiFlexItem>
+              <div className="create-anomaly-detector__vis">
+                <EmbeddablePanel
+                  hideHeader
+                  embeddable={embeddable}
+                  getActions={() => Promise.resolve([])}
+                  getAllEmbeddableFactories={() => []}
+                  getEmbeddableFactory={() => null}
+                  notifications={{}}
+                  application={{}}
+                  overlays={{}}
+                  inspector={{ isAvailable: () => null }}
+                  SavedObjectFinder={() => null}
+                />
+              </div>
+            </EuiFlexItem>
+            <EuiFlexItem className="create-anomaly-detector__aside">
+              <EuiAccordion
+                id={accordions.detectorDetails}
                 buttonContent={
                   <EuiText>
-                    <h6>Features</h6>
+                    <h6>DETECTOR DETAILS</h6>
                   </EuiText>
                 }
                 initialIsOpen={true}
-                // forceState={accordionOpen === accordions.detectorDetails ? 'open' : 'closed'}
-                // onToggle={() =>
-                //   setAccordionOpen(
-                //     accordionOpen !== accordions.detectorDetails && accordions.detectorDetails
-                //   )
-                // }
-              >
-                <Features />
-            </EuiAccordion>
-            <EuiHorizontalRule margin="s" />
-            <EuiAccordion
-                id={accordions.shingleSize}
-                buttonContent={
-                  <EuiText>
-                    <h6>Shingle Size</h6>
-                  </EuiText>
+                forceState={accordionOpen === accordions.detectorDetails ? 'open' : 'closed'}
+                onToggle={() =>
+                  setAccordionOpen(
+                    accordionOpen !== accordions.detectorDetails && accordions.detectorDetails
+                  )
                 }
-                initialIsOpen={false}
-                // forceState={accordionOpen === accordions.detectorDetails ? 'open' : 'closed'}
-                // onToggle={() =>
-                //   setAccordionOpen(
-                //     accordionOpen !== accordions.detectorDetails && accordions.detectorDetails
-                //   )
-                // }
               >
-                {/* <Features /> */}
-            </EuiAccordion>
-          </EuiFlexItem>
-        </EuiFlexGroup>
-      </EuiFlyoutBody>
+                <EuiSpacer />
+                <DetectorDetails />
+              </EuiAccordion>
+              <EuiHorizontalRule margin="s" />
+              <EuiAccordion
+                  id={accordions.features}
+                  buttonContent={
+                    <EuiText>
+                      <h6>FEATURES</h6>
+                    </EuiText>
+                  }
+                  initialIsOpen={true}
+                  // forceState={accordionOpen === accordions.detectorDetails ? 'open' : 'closed'}
+                  // onToggle={() =>
+                  //   setAccordionOpen(
+                  //     accordionOpen !== accordions.detectorDetails && accordions.detectorDetails
+                  //   )
+                  // }
+                >
+                  <Features />
+              </EuiAccordion>
+              <EuiHorizontalRule margin="s" />
+              <EuiAccordion
+                  id={accordions.shingleSize}
+                  buttonContent={
+                    <EuiText>
+                      <h6>SHINGLE SIZE</h6>
+                    </EuiText>
+                  }
+                  initialIsOpen={false}
+                  // forceState={accordionOpen === accordions.detectorDetails ? 'open' : 'closed'}
+                  // onToggle={() =>
+                  //   setAccordionOpen(
+                  //     accordionOpen !== accordions.detectorDetails && accordions.detectorDetails
+                  //   )
+                  // }
+                >
+                  <ShingleSize />
+              </EuiAccordion>
+            </EuiFlexItem>
+          </EuiFlexGroup>
+        </EuiFlyoutBody>
+      </EuiFlyout>
     </div>
   )
 }
