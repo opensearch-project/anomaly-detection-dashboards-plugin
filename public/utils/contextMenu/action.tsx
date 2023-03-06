@@ -4,8 +4,8 @@ import { EuiIconType } from '@elastic/eui/src/components/icon/icon';
 import { toMountPoint } from '../../../../../src/plugins/opensearch_dashboards_react/public';
 import { Action } from '../../../../../src/plugins/ui_actions/public';
 import { createADAction } from '../../action/ad_dashboard_action';
-import FormikWrapper from '../../components/FeatureAnywhereContextMenu/FormikWrapper';
 import CreateAnomalyDetector from '../../components/FeatureAnywhereContextMenu/CreateAnomalyDetector';
+import AssociatedDetectors from '../../components/FeatureAnywhereContextMenu/AssociatedDetectors';
 
 // This is used to create all actions in the same context menu
 const grouping: Action['grouping'] = [
@@ -33,13 +33,6 @@ export const getActions = ({ core }) =>
       onClick: async ({ embeddable }) => {
         const services = await core.getStartServices();
         const openFlyout = services[0].overlays.openFlyout;
-        // const getFormikOptions = () => ({
-        //   initialValues: getInitialValues(),
-        //   onSubmit: (values) => {
-        //     console.log('Submitting createAlertingMonitor');
-        //     console.log(values);
-        //   },
-        // });
         openFlyout(
           toMountPoint(<CreateAnomalyDetector {...{ embeddable }} />),
           { size: 'l' }
@@ -58,7 +51,18 @@ export const getActions = ({ core }) =>
       icon: 'wrench' as EuiIconType,
       order: 99,
       onClick: async ({ embeddable }) => {
+<<<<<<< HEAD
         console.log('manage ad');
+=======
+        const services = await core.getStartServices();
+        const openFlyout = services[0].overlays.openFlyout;
+        const overlay = openFlyout(
+          toMountPoint(
+            <AssociatedDetectors {...{ embeddable, closeFlyout: () => overlay.close(), core, services }} />
+          ),
+          { size: 'l' }
+        );
+>>>>>>> 6e93ee7 (working js manage detectors)
       },
     },
     {
