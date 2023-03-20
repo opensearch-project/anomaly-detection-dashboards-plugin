@@ -10,6 +10,5 @@
  */
 
 export enum ASSOCIATED_DETECTOR_ACTION {
-    UNLINK,
-  }
-  
+  UNLINK,
+}

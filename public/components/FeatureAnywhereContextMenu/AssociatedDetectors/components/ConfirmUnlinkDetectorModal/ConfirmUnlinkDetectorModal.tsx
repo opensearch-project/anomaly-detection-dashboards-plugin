@@ -39,16 +39,22 @@ export const ConfirmUnlinkDetectorModal = (
   const isLoading = isModalLoading || props.isListLoading;
   return (
     <EuiOverlayMask>
-      <EuiModal data-test-subj="startDetectorsModal" onClose={props.onHide} maxWidth={450}>
+      <EuiModal
+        data-test-subj="startDetectorsModal"
+        onClose={props.onHide}
+        maxWidth={450}
+      >
         <EuiModalHeader>
           <EuiModalHeaderTitle>
             {'Remove association?'}&nbsp;
           </EuiModalHeaderTitle>
         </EuiModalHeader>
         <EuiModalBody>
-          <EuiText>Removing association unlinks {props.detector.name} detector 
-          from the visualization but does not delete it.
-          The detector association can be restored.</EuiText>
+          <EuiText>
+            Removing association unlinks {props.detector.name} detector from the
+            visualization but does not delete it. The detector association can
+            be restored.
+          </EuiText>
           <EuiSpacer size="s" />
         </EuiModalBody>
         <EuiModalFooter>

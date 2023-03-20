@@ -9,7 +9,9 @@
     "dashboard",
     "embeddable",
     "opensearchDashboardsReact",
-    "savedObjects"
+    "savedObjects",
+    "visAugmenter",
+    "opensearchDashboardsUtils"
   ],
   "optionalPlugins": [],
   "server": true,

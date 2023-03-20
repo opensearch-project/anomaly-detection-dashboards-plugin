@@ -8,7 +8,7 @@ import CreateAnomalyDetector from '../../components/FeatureAnywhereContextMenu/C
 import { AssociatedDetectors } from '../../components/FeatureAnywhereContextMenu/AssociatedDetectors';
 import { CoreServicesContext } from '../../components/CoreServices/CoreServices';
 import { Provider } from 'react-redux';
-import configureStore from '../../redux/configureStore'
+import configureStore from '../../redux/configureStore';
 
 // This is used to create all actions in the same context menu
 const grouping: Action['grouping'] = [
@@ -54,9 +54,6 @@ export const getActions = ({ core }) =>
       icon: 'wrench' as EuiIconType,
       order: 99,
       onClick: async ({ embeddable }) => {
-<<<<<<< HEAD
-        console.log('manage ad');
-=======
         const services = await core.getStartServices();
         const http = services[0].http;
         const store = configureStore(http);
@@ -65,13 +62,19 @@ export const getActions = ({ core }) =>
           toMountPoint(
             <Provider store={store}>
               <CoreServicesContext.Provider value={services}>
-                <AssociatedDetectors {...{ embeddable, closeFlyout: () => overlay.close(), core, services }} />
+                <AssociatedDetectors
+                  {...{
+                    embeddable,
+                    closeFlyout: () => overlay.close(),
+                    core,
+                    services,
+                  }}
+                />
               </CoreServicesContext.Provider>
             </Provider>
           ),
           { size: 'l' }
         );
->>>>>>> 6e93ee7 (working js manage detectors)
       },
     },
     {
