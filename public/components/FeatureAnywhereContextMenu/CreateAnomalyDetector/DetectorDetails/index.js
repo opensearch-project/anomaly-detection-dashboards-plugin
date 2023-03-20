@@ -9,7 +9,7 @@ import {
   EuiFormRow,
   EuiFieldText,
   EuiSelect,
-  EuiCheckbox
+  EuiCheckbox,
 } from '@elastic/eui';
 const DetectorDetails = () => {
   const intervalOptions = [
@@ -18,7 +18,7 @@ const DetectorDetails = () => {
     { value: 'option_three', text: '5 minutes' },
   ];
   const [intervalValue, setIntervalalue] = useState(intervalOptions[0].value);
-  const intervalOnChange = e => {
+  const intervalOnChange = (e) => {
     setIntervalalue(e.target.value);
   };
 
@@ -28,58 +28,55 @@ const DetectorDetails = () => {
     { value: 'option_three', text: '5 minutes' },
   ];
   const [delayValue, setDelayValue] = useState(delayOptions[0].value);
-  const delayOnChange = e => {
+  const delayOnChange = (e) => {
     setDelayValue(e.target.value);
   };
 
   const [checked, setChecked] = useState(false);
-  const onCustomerResultIndexCheckboxChange = e => {
+  const onCustomerResultIndexCheckboxChange = (e) => {
     setChecked(e.target.checked);
   };
 
   return (
     <>
       <EuiPanel>
-        <EuiFormRow label='Detector name'>
-          <EuiFieldText
-            value='detector_name'
-          />
+        <EuiFormRow label="Detector name">
+          <EuiFieldText value="detector_name" />
         </EuiFormRow>
-        <EuiFormRow label='Detector description'>
-          <EuiFieldText/>
+        <EuiFormRow label="Detector description">
+          <EuiFieldText />
         </EuiFormRow>
       </EuiPanel>
       <EuiSpacer />
       <EuiPanel>
-        <EuiFormRow label='Detector interval'>
+        <EuiFormRow label="Detector interval">
           <EuiSelect
             id="detectorIntervalSelection"
             options={intervalOptions}
             value={intervalValue}
-            onChange={e => intervalOnChange(e)}
+            onChange={(e) => intervalOnChange(e)}
           />
         </EuiFormRow>
-        <EuiFormRow label='Window delay'>
-        <EuiSelect
+        <EuiFormRow label="Window delay">
+          <EuiSelect
             id="windowDelaySelection"
             options={delayOptions}
             value={delayValue}
-            onChange={e => delayOnChange(e)}
+            onChange={(e) => delayOnChange(e)}
           />
         </EuiFormRow>
       </EuiPanel>
       <EuiSpacer />
       <EuiPanel>
-      <EuiCheckbox
-        id='customerResultIndexCheckbox'
-        label="Enable custom result index"
-        checked={checked}
-        onChange={e => onCustomerResultIndexCheckboxChange(e)}
-      />
+        <EuiCheckbox
+          id="customerResultIndexCheckbox"
+          label="Enable custom result index"
+          checked={checked}
+          onChange={(e) => onCustomerResultIndexCheckboxChange(e)}
+        />
       </EuiPanel>
-      
     </>
   );
-}
+};
 
 export default DetectorDetails;

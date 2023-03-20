@@ -26,10 +26,7 @@ declare module '../../../src/plugins/ui_actions/public' {
   }
 }
 
-export class AnomalyDetectionOpenSearchDashboardsPlugin
-  implements
-    Plugin
-{
+export class AnomalyDetectionOpenSearchDashboardsPlugin implements Plugin {
   public setup(core: CoreSetup, plugins) {
     core.application.register({
       id: PLUGIN_NAME,
@@ -60,5 +57,3 @@ export class AnomalyDetectionOpenSearchDashboardsPlugin
 
   public stop() {}
 }
-
-

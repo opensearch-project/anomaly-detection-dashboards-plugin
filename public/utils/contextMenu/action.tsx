@@ -41,9 +41,7 @@ export const getActions = ({ core }) =>
         //   },
         // });
         openFlyout(
-          toMountPoint(
-            <CreateAnomalyDetector {...{ embeddable }} />
-          ),
+          toMountPoint(<CreateAnomalyDetector {...{ embeddable }} />),
           { size: 'l' }
         );
       },
@@ -51,20 +49,26 @@ export const getActions = ({ core }) =>
     {
       grouping,
       id: 'manageAnomalyDetector',
-      title: i18n.translate('dashboard.actions.alertingMenuItem.manageAnomalyDetector.displayName', {
-        defaultMessage: 'Manage anomaly detector',
-      }),
+      title: i18n.translate(
+        'dashboard.actions.alertingMenuItem.manageAnomalyDetector.displayName',
+        {
+          defaultMessage: 'Manage anomaly detector',
+        }
+      ),
       icon: 'wrench' as EuiIconType,
       order: 99,
       onClick: async ({ embeddable }) => {
-        console.log("manage ad");
+        console.log('manage ad');
       },
     },
     {
       id: 'documentation',
-      title: i18n.translate('dashboard.actions.adMenuItem.documentation.displayName', {
-        defaultMessage: 'Documentation',
-      }),
+      title: i18n.translate(
+        'dashboard.actions.adMenuItem.documentation.displayName',
+        {
+          defaultMessage: 'Documentation',
+        }
+      ),
       icon: 'documentation' as EuiIconType,
       order: 98,
       onClick: () => {
@@ -74,5 +78,4 @@ export const getActions = ({ core }) =>
         );
       },
     },
-  ]
-  .map((options) => createADAction({ ...options, grouping }));
+  ].map((options) => createADAction({ ...options, grouping }));
