@@ -7,15 +7,17 @@ import {
   EuiFlyoutHeader,
   EuiFlyoutBody,
   EuiTitle,
-  EuiAccordion,
+  EuiCheckableCard,
   EuiSpacer,
   EuiFlyout
 } from '@elastic/eui';
+// import {
+//   OuiCheckableCard
+// } from '@elastic/eui';
 import './styles.scss';
 import { EmbeddablePanel } from '../../../../../../src/plugins/embeddable/public';
 import DetectorDetails from './DetectorDetails';
 import Features from './Features';
-import ShingleSize from './ShingleSize';
 
 const accordions = ['detectorDetails', 'features', 'shingleSize', 'alerts', 'triggers'].reduce(
   (acc, cur) => ({ ...acc, [cur]: cur }),
@@ -23,53 +25,44 @@ const accordions = ['detectorDetails', 'features', 'shingleSize', 'alerts', 'tri
 );
 
 function CreateAnomalyDetector({ embeddable }) {
+  const [radio, setRadio] = useState('createRadio');
   const [accordionOpen, setAccordionOpen] = useState(accordions.triggers);
 
-  // useEffect(() => {
-  //   async function createVisEmbeddable() {
-  //     try {
-  //       const getFactory = getEmbeddable().getEmbeddableFactory('visualization');
-
-  //       // fetching the current context from the data plugin
-  //       const contextInput = {
-  //         filters: getQueryService().filterManager.getFilters(),
-  //         query: getQueryService().queryString.getQuery(),
-  //         timeRange: getQueryService().timefilter.timefilter.getTime(),
-  //       };
-
-  //       const embeddable = (await getFactory?.createFromSavedObject(
-  //         props.savedObjectId,
-  //         contextInput
-  //       )) as IEmbeddable<EmbeddableInput, EmbeddableOutput> | ErrorEmbeddable;
-
-  //       // updating the input so we don't auto-refresh
-  //       embeddable.updateInput({
-  //         // @ts-ignore
-  //         refreshConfig: {
-  //           value: 0,
-  //           pause: true,
-  //         },
-  //       });
-
-  //       setEmbeddableObj(embeddable);
-  //     } catch (err) {
-  //       console.log(err);
-  //     }
-  //   }
-  //   createVisEmbeddable();
-  //   // TODO: add more if needed
-  // }, [props.savedObjectId]);
 
   return (
     <div className="create-anomaly-detector">
       <EuiFlyout>
         <EuiFlyoutHeader hasBorder>
           <EuiTitle>
-            <h2 id="create-anomaly-detector__title">Create anomaly detector</h2>
+            <h2 id="create-anomaly-detector__title">Add anomaly detector</h2>
           </EuiTitle>
         </EuiFlyoutHeader>
         <EuiFlyoutBody>
           <EuiFlexGroup>
+            <EuiFlexItem>
+            <EuiCheckableCard
+              id="createNewDetector"
+              label="Create new detector"
+              value="createRadio"
+              checked={radio === 'createRadio'}
+              onChange={() => setRadio('createRadio')}
+            />
+            </EuiFlexItem>
+            <EuiFlexItem>
+              <EuiCheckableCard
+                id="associateExistingDetector"
+                label="Associate existing detector"
+                value="associateRadio"
+                checked={radio === 'associateRadio'}
+                onChange={() => setRadio('associateRadio')}
+                />
+            </EuiFlexItem>
+          </EuiFlexGroup>
+          <EuiSpacer />
+          <small>This is a short description of the feature to get users exicted. Learn more in the documentation.</small>
+          
+          
+          {/* <EuiFlexGroup>
             <EuiFlexItem>
               <div className="create-anomaly-detector__vis">
                 <EmbeddablePanel
@@ -124,25 +117,8 @@ function CreateAnomalyDetector({ embeddable }) {
                   <Features />
               </EuiAccordion>
               <EuiHorizontalRule margin="s" />
-              <EuiAccordion
-                  id={accordions.shingleSize}
-                  buttonContent={
-                    <EuiText>
-                      <h6>SHINGLE SIZE</h6>
-                    </EuiText>
-                  }
-                  initialIsOpen={false}
-                  // forceState={accordionOpen === accordions.detectorDetails ? 'open' : 'closed'}
-                  // onToggle={() =>
-                  //   setAccordionOpen(
-                  //     accordionOpen !== accordions.detectorDetails && accordions.detectorDetails
-                  //   )
-                  // }
-                >
-                  <ShingleSize />
-              </EuiAccordion>
             </EuiFlexItem>
-          </EuiFlexGroup>
+          </EuiFlexGroup>  */}
         </EuiFlyoutBody>
       </EuiFlyout>
     </div>
