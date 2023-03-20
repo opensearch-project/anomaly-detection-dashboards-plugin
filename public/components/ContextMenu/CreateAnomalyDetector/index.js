@@ -33,7 +33,9 @@ export const CreateAnomalyDetector = (props) => {
     const flyout = overlays.openFlyout(
       toMountPoint(
         <FormikWrapper {...{ getFormikOptions }}>
-          <CreateAnomalyDetectorExpanded {...{ ...props, onClose: () => flyout.close() }} />
+          <CreateAnomalyDetectorExpanded
+            {...{ ...props, onClose: () => flyout.close() }}
+          />
         </FormikWrapper>
       )
     );

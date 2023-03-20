@@ -3,13 +3,19 @@ import {
   DASHBOARD_CONTAINER_TYPE,
   DashboardContainer,
 } from '../../../../src/plugins/dashboard/public';
-import { IncompatibleActionError, createAction, Action } from '../../../../src/plugins/ui_actions/public';
+import {
+  IncompatibleActionError,
+  createAction,
+  Action,
+} from '../../../../src/plugins/ui_actions/public';
 import { isReferenceOrValueEmbeddable } from '../../../../src/plugins/embeddable/public';
 import { EuiIconType } from '@elastic/eui/src/components/icon/icon';
 
 export const ACTION_AD = 'ad';
 
-function isDashboard(embeddable: IEmbeddable): embeddable is DashboardContainer {
+function isDashboard(
+  embeddable: IEmbeddable
+): embeddable is DashboardContainer {
   return embeddable.type === DASHBOARD_CONTAINER_TYPE;
 }
 
@@ -54,7 +60,9 @@ export const createADAction = ({
         seriesParams.find((item) => item.type === 'line') ||
         series.find((item) => item.chart_type === 'line');
       const isValidVis = isLineGraph && paramsType !== 'table';
-      return Boolean(embeddable.parent && isDashboard(embeddable.parent) && isValidVis);
+      return Boolean(
+        embeddable.parent && isDashboard(embeddable.parent) && isValidVis
+      );
     },
     execute: async ({ embeddable }: ActionContext) => {
       if (!isReferenceOrValueEmbeddable(embeddable)) {
@@ -64,4 +72,3 @@ export const createADAction = ({
       onClick({ embeddable });
     },
   });
-  

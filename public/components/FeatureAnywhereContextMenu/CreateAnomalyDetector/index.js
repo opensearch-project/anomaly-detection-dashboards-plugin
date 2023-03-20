@@ -9,7 +9,7 @@ import {
   EuiTitle,
   EuiCheckableCard,
   EuiSpacer,
-  EuiFlyout
+  EuiFlyout,
 } from '@elastic/eui';
 // import {
 //   OuiCheckableCard
@@ -19,15 +19,17 @@ import { EmbeddablePanel } from '../../../../../../src/plugins/embeddable/public
 import DetectorDetails from './DetectorDetails';
 import Features from './Features';
 
-const accordions = ['detectorDetails', 'features', 'shingleSize', 'alerts', 'triggers'].reduce(
-  (acc, cur) => ({ ...acc, [cur]: cur }),
-  {}
-);
+const accordions = [
+  'detectorDetails',
+  'features',
+  'shingleSize',
+  'alerts',
+  'triggers',
+].reduce((acc, cur) => ({ ...acc, [cur]: cur }), {});
 
 function CreateAnomalyDetector({ embeddable }) {
   const [radio, setRadio] = useState('createRadio');
   const [accordionOpen, setAccordionOpen] = useState(accordions.triggers);
-
 
   return (
     <div className="create-anomaly-detector">
@@ -40,13 +42,13 @@ function CreateAnomalyDetector({ embeddable }) {
         <EuiFlyoutBody>
           <EuiFlexGroup>
             <EuiFlexItem>
-            <EuiCheckableCard
-              id="createNewDetector"
-              label="Create new detector"
-              value="createRadio"
-              checked={radio === 'createRadio'}
-              onChange={() => setRadio('createRadio')}
-            />
+              <EuiCheckableCard
+                id="createNewDetector"
+                label="Create new detector"
+                value="createRadio"
+                checked={radio === 'createRadio'}
+                onChange={() => setRadio('createRadio')}
+              />
             </EuiFlexItem>
             <EuiFlexItem>
               <EuiCheckableCard
@@ -55,13 +57,15 @@ function CreateAnomalyDetector({ embeddable }) {
                 value="associateRadio"
                 checked={radio === 'associateRadio'}
                 onChange={() => setRadio('associateRadio')}
-                />
+              />
             </EuiFlexItem>
           </EuiFlexGroup>
           <EuiSpacer />
-          <small>This is a short description of the feature to get users exicted. Learn more in the documentation.</small>
-          
-          
+          <small>
+            This is a short description of the feature to get users exicted.
+            Learn more in the documentation.
+          </small>
+
           {/* <EuiFlexGroup>
             <EuiFlexItem>
               <div className="create-anomaly-detector__vis">
@@ -122,6 +126,6 @@ function CreateAnomalyDetector({ embeddable }) {
         </EuiFlyoutBody>
       </EuiFlyout>
     </div>
-  )
+  );
 }
 export default CreateAnomalyDetector;
