@@ -3,7 +3,6 @@
   "version": "3.0.0.0",
   "opensearchDashboardsVersion": "3.0.0",
   "configPath": ["anomaly_detection_dashboards"],
-<<<<<<< HEAD
   "requiredPlugins": [
     "navigation",
     "uiActions",
@@ -12,13 +11,6 @@
     "opensearchDashboardsReact",
     "savedObjects"
   ],
-=======
-  "requiredPlugins": ["navigation",  "uiActions",
-  "dashboard",
-  "embeddable",
-  "opensearchDashboardsReact",
-  "savedObjects"],
->>>>>>> 6e93ee7 (working js manage detectors)
   "optionalPlugins": [],
   "server": true,
   "ui": true

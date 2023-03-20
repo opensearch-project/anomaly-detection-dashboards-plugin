@@ -18,11 +18,8 @@ import './styles.scss';
 import { EmbeddablePanel } from '../../../../../../src/plugins/embeddable/public';
 import DetectorDetails from './DetectorDetails';
 import Features from './Features';
-<<<<<<< HEAD
-=======
 import ShingleSize from './ShingleSize';
 import { util } from 'node-forge';
->>>>>>> 6e93ee7 (working js manage detectors)
 
 const accordions = [
   'detectorDetails',
@@ -57,10 +54,6 @@ function CreateAnomalyDetector({ embeddable }) {
   console.log("embed json: " + (JSON.parse(simpleStringify(embeddable))))
 // // safely handles circular references
 
-<<<<<<< HEAD
-=======
-
->>>>>>> 6e93ee7 (working js manage detectors)
   return (
     <div className="create-anomaly-detector">
       <EuiFlyout>

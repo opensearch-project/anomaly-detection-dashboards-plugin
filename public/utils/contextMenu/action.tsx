@@ -5,7 +5,10 @@ import { toMountPoint } from '../../../../../src/plugins/opensearch_dashboards_r
 import { Action } from '../../../../../src/plugins/ui_actions/public';
 import { createADAction } from '../../action/ad_dashboard_action';
 import CreateAnomalyDetector from '../../components/FeatureAnywhereContextMenu/CreateAnomalyDetector';
-import AssociatedDetectors from '../../components/FeatureAnywhereContextMenu/AssociatedDetectors';
+import { AssociatedDetectors } from '../../components/FeatureAnywhereContextMenu/AssociatedDetectors';
+import { CoreServicesContext } from '../../components/CoreServices/CoreServices';
+import { Provider } from 'react-redux';
+import configureStore from '../../redux/configureStore'
 
 // This is used to create all actions in the same context menu
 const grouping: Action['grouping'] = [
@@ -55,10 +58,16 @@ export const getActions = ({ core }) =>
         console.log('manage ad');
 =======
         const services = await core.getStartServices();
+        const http = services[0].http;
+        const store = configureStore(http);
         const openFlyout = services[0].overlays.openFlyout;
         const overlay = openFlyout(
           toMountPoint(
-            <AssociatedDetectors {...{ embeddable, closeFlyout: () => overlay.close(), core, services }} />
+            <Provider store={store}>
+              <CoreServicesContext.Provider value={services}>
+                <AssociatedDetectors {...{ embeddable, closeFlyout: () => overlay.close(), core, services }} />
+              </CoreServicesContext.Provider>
+            </Provider>
           ),
           { size: 'l' }
         );
