@@ -13,9 +13,12 @@ export const [getSavedFeatureAnywhereLoader, setSavedFeatureAnywhereLoader] =
 
 export const [getClient, setClient] =
   createGetterSetter<CoreStart['http']>('http');
+<<<<<<< HEAD
 
 export const [getEmbeddable, setEmbeddable] = 
   createGetterSetter<EmbeddableStart>('Embeddable');
 
 export const [getOverlays, setOverlays] = 
   createGetterSetter<OverlayStart>('Overlays');
+=======
+>>>>>>> a9065fb (prettier formating and merge conflicts)

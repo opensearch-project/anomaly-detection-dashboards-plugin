@@ -55,9 +55,9 @@ export class AnomalyDetectionOpenSearchDashboardsPlugin implements Plugin {
   }
 
   public start(core: CoreStart, plugins) {
-   setSavedFeatureAnywhereLoader(plugins.visAugmenter.savedAugmentVisLoader)
-  return {};
-}
+    setSavedFeatureAnywhereLoader(plugins.visAugmenter.savedAugmentVisLoader);
+    return {};
+  }
 
   public stop() {}
 }
