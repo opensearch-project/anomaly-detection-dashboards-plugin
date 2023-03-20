@@ -9,7 +9,7 @@
  * GitHub history for details.
  */
 
-import React, { useCallback, useMemo, useEffect, useState } from 'react';
+import React, { useMemo, useEffect, useState } from 'react';
 import {
   EuiFlyoutHeader,
   EuiTitle,
@@ -21,7 +21,7 @@ import {
   EuiFlyout,
   EuiFlexItem,
 } from '@elastic/eui';
-import { get } from 'lodash';
+import { get, isEmpty } from 'lodash';
 import '../styles.scss';
 import { getColumns } from '../utils/helpers';
 import { CoreServicesContext } from '../../../../components/CoreServices/CoreServices';
@@ -46,6 +46,16 @@ import {
   ISavedAugmentVis,
   VisLayerExpressionFn,
 } from '../../../../../../../src/plugins/vis_augmenter/public';
+import { ASSOCIATED_DETECTOR_ACTION } from '../utils/constants';
+import { ConfirmUnlinkDetectorModal } from '../components/ConfirmUnlinkDetectorModal/ConfirmUnlinkDetectorModal';
+
+interface ConfirmModalState {
+  isOpen: boolean;
+  action: ASSOCIATED_DETECTOR_ACTION;
+  isListLoading: boolean;
+  isRequestingToClose: boolean;
+  affectedDetector: DetectorListItem;
+}
 
 export const AssociatedDetectors = ({ embeddable, closeFlyout }) => {
   const core = React.useContext(CoreServicesContext) as CoreStart;
@@ -65,6 +75,20 @@ export const AssociatedDetectors = ({ embeddable, closeFlyout }) => {
     [] as DetectorListItem[]
   );
 
+  const [detectorToUnlink, setDetectorToUnlink] = useState(
+    {} as DetectorListItem
+  );
+  const [confirmModalState, setConfirmModalState] = useState<ConfirmModalState>(
+    {
+      isOpen: false,
+      //@ts-ignore
+      action: null,
+      isListLoading: false,
+      isRequestingToClose: false,
+      affectedDetector: {} as DetectorListItem,
+    }
+  );
+
   useEffect(() => {
     if (
       errorGettingDetectors &&
@@ -80,6 +104,25 @@ export const AssociatedDetectors = ({ embeddable, closeFlyout }) => {
       setIsLoadingFinalDetectors(false);
     }
   }, [errorGettingDetectors]);
+
+  // Update modal state if user decides to close
+  useEffect(() => {
+    if (confirmModalState.isRequestingToClose) {
+      if (isLoading) {
+        setConfirmModalState({
+          ...confirmModalState,
+          isListLoading: true,
+        });
+      } else {
+        setConfirmModalState({
+          ...confirmModalState,
+          isOpen: false,
+          isListLoading: false,
+          isRequestingToClose: false,
+        });
+      }
+    }
+  }, [confirmModalState.isRequestingToClose, isLoading]);
 
   useEffect(() => {
     getDetectors();
@@ -128,6 +171,34 @@ export const AssociatedDetectors = ({ embeddable, closeFlyout }) => {
     return detectorsToDisplay;
   };
 
+  const getUnlinkConfirmModal = () => {
+    if (confirmModalState.isOpen) {
+      return (
+        <ConfirmUnlinkDetectorModal
+          detector={confirmModalState.affectedDetector}
+          onUnlinkDetector={onUnlinkDetector}
+          onHide={handleHideModal}
+          onConfirm={handleConfirmModal}
+          isListLoading={isLoading}
+        />
+      );
+    }
+  };
+
+  const handleHideModal = () => {
+    setConfirmModalState({
+      ...confirmModalState,
+      isOpen: false,
+    });
+  };
+
+  const handleConfirmModal = () => {
+    setConfirmModalState({
+      ...confirmModalState,
+      isRequestingToClose: true,
+    });
+  };
+
   const getDetectors = async () => {
     dispatch(getDetectorList(GET_ALL_DETECTORS_QUERY_PARAMS));
   };
@@ -166,21 +237,33 @@ export const AssociatedDetectors = ({ embeddable, closeFlyout }) => {
     console.log('response: ' + JSON.stringify(response));
   };
 
-  const onUnlink = useCallback(
-    (item) => {
-      console.log('onUnlink', item);
-      closeFlyout();
-    },
-    [closeFlyout]
+  const onUnlinkDetector = async () => {
+    console.log('detectorToUnlink', detectorToUnlink);
+  };
+
+  const handleUnlinkDetectorAction = (detector: DetectorListItem) => {
+    //console.log('onUnlink: ', detector);
+    setDetectorToUnlink(detector);
+    if (!isEmpty(detector)) {
+      setConfirmModalState({
+        isOpen: true,
+        action: ASSOCIATED_DETECTOR_ACTION.UNLINK,
+        isListLoading: false,
+        isRequestingToClose: false,
+        affectedDetector: detector,
+      });
+    } else {
+      // might not need this
+      core.notifications.toasts.addWarning(
+        'Make sure selected detector has not been deleted'
+      );
+    }
+  };
+
+  const columns = useMemo(
+    () => getColumns({ handleUnlinkDetectorAction }),
+    [handleUnlinkDetectorAction]
   );
-  const onView = useCallback(
-    (item) => {
-      console.log('onView', item);
-      closeFlyout();
-    },
-    [closeFlyout]
-  );
-  const columns = useMemo(() => getColumns({ onUnlink, onView }), [onUnlink]);
 
   const tableProps = {
     items: selectedDetectors,
@@ -214,6 +297,7 @@ export const AssociatedDetectors = ({ embeddable, closeFlyout }) => {
         </EuiTitle>
       </EuiFlyoutHeader>
       <EuiFlyoutBody>
+        {getUnlinkConfirmModal()}
         {/* below buttons are just here for development/testing purposes*/}
         <EuiFlexItem grow={false}>
           <EuiButton
@@ -240,7 +324,6 @@ export const AssociatedDetectors = ({ embeddable, closeFlyout }) => {
         <EuiInMemoryTable {...tableProps} />
       </EuiFlyoutBody>
     </EuiFlyout>
-
     //</div>
   );
 };
