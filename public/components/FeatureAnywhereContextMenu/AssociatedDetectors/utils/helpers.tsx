@@ -24,7 +24,7 @@ export const renderState = (state: DETECTOR_STATE) => {
   );
 };
 
-export const getColumns = ({ onUnlink, onView }) =>
+export const getColumns = ({ handleUnlinkDetectorAction }) =>
   [
     {
       field: 'name',
@@ -68,7 +68,7 @@ export const getColumns = ({ onUnlink, onView }) =>
           name: 'Unlink Detector',
           description: 'Unlink Detector',
           icon: 'unlink',
-          onClick: onUnlink,
+          onClick: handleUnlinkDetectorAction,
         },
       ],
     },
