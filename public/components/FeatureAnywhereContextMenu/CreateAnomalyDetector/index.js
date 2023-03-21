@@ -18,8 +18,6 @@ import './styles.scss';
 import { EmbeddablePanel } from '../../../../../../src/plugins/embeddable/public';
 import DetectorDetails from './DetectorDetails';
 import Features from './Features';
-import ShingleSize from './ShingleSize';
-import { util } from 'node-forge';
 
 const accordions = [
   'detectorDetails',
@@ -32,27 +30,6 @@ const accordions = [
 function CreateAnomalyDetector({ embeddable }) {
   const [radio, setRadio] = useState('createRadio');
   const [accordionOpen, setAccordionOpen] = useState(accordions.triggers);
-  
-  function simpleStringify (object){
-    var simpleObject = {};
-    for (var prop in object ){
-        if (!object.hasOwnProperty(prop)){
-            continue;
-        }
-        if (typeof(object[prop]) == 'object'){
-            continue;
-        }
-        if (typeof(object[prop]) == 'function'){
-            continue;
-        }
-        simpleObject[prop] = object[prop];
-    }
-    return JSON.stringify(simpleObject); // returns cleaned up JSON
-};
-  
-  console.log("embeddable: " + simpleStringify(embeddable))
-  console.log("embed json: " + (JSON.parse(simpleStringify(embeddable))))
-// // safely handles circular references
 
   return (
     <div className="create-anomaly-detector">

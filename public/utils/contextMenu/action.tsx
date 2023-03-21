@@ -35,10 +35,18 @@ export const getActions = ({ core }) =>
       order: 100,
       onClick: async ({ embeddable }) => {
         const services = await core.getStartServices();
+        const http = services[0].http;
+        const store = configureStore(http);
         const openFlyout = services[0].overlays.openFlyout;
         openFlyout(
-          toMountPoint(<CreateAnomalyDetector {...{ embeddable }} />),
-          { size: 'l' }
+          toMountPoint(
+            <Provider store={store}>
+              <CoreServicesContext.Provider value={services}>
+                <CreateAnomalyDetector {...{ embeddable }} />
+              </CoreServicesContext.Provider>
+            </Provider>
+          ),
+          { size: 'm' }
         );
       },
     },
@@ -73,7 +81,7 @@ export const getActions = ({ core }) =>
               </CoreServicesContext.Provider>
             </Provider>
           ),
-          { size: 'l' }
+          { size: 'm' }
         );
       },
     },
