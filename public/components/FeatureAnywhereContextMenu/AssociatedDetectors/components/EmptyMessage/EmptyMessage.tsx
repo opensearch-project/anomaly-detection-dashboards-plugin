@@ -15,7 +15,7 @@ import React from 'react';
 const FILTER_TEXT = 'There are no detectors matching your search';
 
 interface EmptyDetectorProps {
-  //isFilterApplied: boolean;
+  isFilterApplied: boolean;
   embeddableTitle: string;
 }
 
@@ -29,8 +29,7 @@ export const EmptyAssociatedDetectorFlyoutMessage = (
     style={{ maxWidth: '45em' }}
     body={
       <EuiText>
-        <p>{`There are no anomaly detectors associated with ${props.embeddableTitle} visualization.`}</p>
-        {/* <p>{props.isFilterApplied ? FILTER_TEXT : `There are no anomaly detectors associated with ${props.embeddableTitle} visualization.`}</p> */}
+        <p>{props.isFilterApplied ? FILTER_TEXT : `There are no anomaly detectors associated with ${props.embeddableTitle} visualization.`}</p>
       </EuiText>
     }
   />

@@ -129,7 +129,7 @@ export const AssociatedDetectors = ({ embeddable, closeFlyout }) => {
   useEffect(() => {
     getDetectors();
   }, []);
-
+  
   // Handle all filtering / sorting of detectors
   useEffect(() => {
     // Gets all augmented saved objects
@@ -167,7 +167,7 @@ export const AssociatedDetectors = ({ embeddable, closeFlyout }) => {
     const detectorsToDisplay = detectors.filter((detector) =>
       savedAugmentDetectorsSet.has(detector.id)
     );
-    console.log('detectorsToDisplay: ' + JSON.stringify(detectorsToDisplay));
+    //console.log('detectorsToDisplay: ' + JSON.stringify(detectorsToDisplay));
     return detectorsToDisplay;
   };
 
@@ -234,18 +234,17 @@ export const AssociatedDetectors = ({ embeddable, closeFlyout }) => {
   };
 
   const getDetectors = async () => {
-    console.log('inside getDetectors()');
     dispatch(getDetectorList(GET_ALL_DETECTORS_QUERY_PARAMS));
   };
 
   // This method is only here for development/testing purposes.
   const getSavedObjects = async () => {
     const resp = await getSavedFeatureAnywhereLoader().findAll();
-    console.log('response: ' + JSON.stringify(resp));
+    //console.log('response: ' + JSON.stringify(resp));
   };
 
   const onAssociateExistingDetector = async () => {
-    console.log('inside create anomaly detector');
+   console.log('inside create anomaly detector');
   };
   // This method is only here for development/testing purposes.
   const createSavedObjects = async () => {
@@ -277,7 +276,6 @@ export const AssociatedDetectors = ({ embeddable, closeFlyout }) => {
   };
 
   const handleUnlinkDetectorAction = (detector: DetectorListItem) => {
-    //console.log('onUnlink: ', detector);
     setDetectorToUnlink(detector);
     if (!isEmpty(detector)) {
       setConfirmModalState({
@@ -300,6 +298,22 @@ export const AssociatedDetectors = ({ embeddable, closeFlyout }) => {
     [handleUnlinkDetectorAction]
   );
 
+  const renderEmptyMessage = () => {
+    if (isLoading) {
+      return 'Loading detectors...'
+    } else if (!isEmpty(selectedDetectors)) {
+      return (<EmptyAssociatedDetectorFlyoutMessage
+      isFilterApplied={true}
+      embeddableTitle={embeddableTitle}
+    />);
+    } else {
+      return (<EmptyAssociatedDetectorFlyoutMessage
+      isFilterApplied={false}
+      embeddableTitle={embeddableTitle}
+    />);
+    }
+  }
+
   const tableProps = {
     items: selectedDetectors,
     columns,
@@ -313,17 +327,10 @@ export const AssociatedDetectors = ({ embeddable, closeFlyout }) => {
     hasActions: true,
     pagination: true,
     sorting: true,
-    message: isLoading ? (
-      'Loading detectors...'
-    ) : (
-      <EmptyAssociatedDetectorFlyoutMessage
-        //isFilterApplied={search}
-        embeddableTitle={embeddableTitle}
-      />
-    ),
+    message: renderEmptyMessage(),
   };
-
   return (
+    
     //<div className="associated-detectors">
     <EuiFlyout ownFocus size="m" paddingSize="m" onClose={closeFlyout}>
       <EuiFlyoutHeader hasBorder>
