@@ -20,6 +20,7 @@ import {
   EuiButton,
   EuiFlyout,
   EuiFlexItem,
+  EuiFlexGroup,
 } from '@elastic/eui';
 import { get, isEmpty } from 'lodash';
 import '../styles.scss';
@@ -88,6 +89,7 @@ export const AssociatedDetectors = ({ embeddable, closeFlyout }) => {
       affectedDetector: {} as DetectorListItem,
     }
   );
+  const savedObjectLoader: SavedObjectLoader = getSavedFeatureAnywhereLoader();
 
   useEffect(() => {
     if (
@@ -130,8 +132,6 @@ export const AssociatedDetectors = ({ embeddable, closeFlyout }) => {
 
   // Handle all filtering / sorting of detectors
   useEffect(() => {
-    const savedObjectLoader: SavedObjectLoader =
-      getSavedFeatureAnywhereLoader();
     // Gets all augmented saved objects
     savedObjectLoader.findAll().then((resp: any) => {
       if (resp != undefined) {
@@ -171,6 +171,40 @@ export const AssociatedDetectors = ({ embeddable, closeFlyout }) => {
     return detectorsToDisplay;
   };
 
+  const onUnlinkDetector = async () => {
+    setIsLoadingFinalDetectors(true);
+    await savedObjectLoader.findAll().then(async (resp: any) => {
+      if (resp != undefined) {
+        const savedAugmentObjects: ISavedAugmentVis[] = get(resp, 'hits', []);
+        // gets all the saved object for this visualization
+        const savedAugmentForThisVisualization: ISavedAugmentVis[] =
+          savedAugmentObjects.filter(
+            (savedObj) => get(savedObj, 'visId', '') === embeddable.vis.id
+          );
+
+        const savedAugmentToUnlink = savedAugmentForThisVisualization.filter(
+          (savedObject) =>
+            get(savedObject, 'pluginResourceId', '') === detectorToUnlink.id
+        );
+
+        const savedObjectToUnlinkId = get(savedAugmentToUnlink[0], 'id', '');
+        await savedObjectLoader
+          .delete(savedObjectToUnlinkId)
+          .then((resp: any) => {})
+          .catch((error) => {
+            core.notifications.toasts.addDanger(
+              prettifyErrorMessage(
+                `Error unlinking selected detector: ${error}`
+              )
+            );
+          })
+          .finally(() => {
+            getDetectors();
+          });
+      }
+    });
+  };
+
   const getUnlinkConfirmModal = () => {
     if (confirmModalState.isOpen) {
       return (
@@ -200,6 +234,7 @@ export const AssociatedDetectors = ({ embeddable, closeFlyout }) => {
   };
 
   const getDetectors = async () => {
+    console.log('inside getDetectors()');
     dispatch(getDetectorList(GET_ALL_DETECTORS_QUERY_PARAMS));
   };
 
@@ -209,6 +244,9 @@ export const AssociatedDetectors = ({ embeddable, closeFlyout }) => {
     console.log('response: ' + JSON.stringify(resp));
   };
 
+  const onAssociateExistingDetector = async () => {
+    console.log('inside create anomaly detector');
+  };
   // This method is only here for development/testing purposes.
   const createSavedObjects = async () => {
     enum VisLayerTypes {
@@ -221,10 +259,10 @@ export const AssociatedDetectors = ({ embeddable, closeFlyout }) => {
         testArg: selectedDetectors[0].id,
       },
     } as VisLayerExpressionFn;
-
+    console.log('all Detectors: ' + JSON.stringify(allDetectors));
     const savedObjectToCreate = {
       title: 'test-title',
-      pluginResourceId: selectedDetectors[0].id,
+      pluginResourceId: 'bNZIp4UB3stq6UHwpWwS',
       visId: embeddable.vis.id,
       savedObjectType: 'visualization',
       visLayerExpressionFn: fn,
@@ -235,10 +273,7 @@ export const AssociatedDetectors = ({ embeddable, closeFlyout }) => {
 
     const response = await savedObject.save({});
     console.log('response: ' + JSON.stringify(response));
-  };
-
-  const onUnlinkDetector = async () => {
-    console.log('detectorToUnlink', detectorToUnlink);
+    getDetectors();
   };
 
   const handleUnlinkDetectorAction = (detector: DetectorListItem) => {
@@ -290,15 +325,35 @@ export const AssociatedDetectors = ({ embeddable, closeFlyout }) => {
 
   return (
     //<div className="associated-detectors">
-    <EuiFlyout ownFocus size="m" onClose={closeFlyout}>
+    <EuiFlyout ownFocus size="m" paddingSize="m" onClose={closeFlyout}>
       <EuiFlyoutHeader hasBorder>
         <EuiTitle size="s">
           <h2 id="associated-detectors__title">Associated anomaly detectors</h2>
         </EuiTitle>
       </EuiFlyoutHeader>
-      <EuiFlyoutBody>
+      <EuiFlyoutBody style={{ overflowY: 'auto' }}>
         {getUnlinkConfirmModal()}
         {/* below buttons are just here for development/testing purposes*/}
+        <EuiFlexGroup alignItems="center">
+          <EuiFlexItem component="span">
+            <EuiTitle size="xxs">
+              <h3>{embeddableTitle}</h3>
+            </EuiTitle>
+          </EuiFlexItem>
+          <EuiFlexItem>
+            <EuiButton
+              fill
+              iconType="link"
+              onClick={() => {
+                onAssociateExistingDetector();
+              }}
+            >
+              Associate a detector
+            </EuiButton>
+          </EuiFlexItem>
+        </EuiFlexGroup>
+        <EuiSpacer size="m" />
+        <EuiInMemoryTable {...tableProps} />
         <EuiFlexItem grow={false}>
           <EuiButton
             onClick={() => {
@@ -317,11 +372,6 @@ export const AssociatedDetectors = ({ embeddable, closeFlyout }) => {
             Get Saved Objects
           </EuiButton>
         </EuiFlexItem>
-        <EuiText>
-          <h4>{embeddableTitle}</h4>
-        </EuiText>
-        <EuiSpacer size="m" />
-        <EuiInMemoryTable {...tableProps} />
       </EuiFlyoutBody>
     </EuiFlyout>
     //</div>
