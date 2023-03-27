@@ -29,7 +29,11 @@ export const EmptyAssociatedDetectorFlyoutMessage = (
     style={{ maxWidth: '45em' }}
     body={
       <EuiText>
-        <p>{props.isFilterApplied ? FILTER_TEXT : `There are no anomaly detectors associated with ${props.embeddableTitle} visualization.`}</p>
+        <p>
+          {props.isFilterApplied
+            ? FILTER_TEXT
+            : `There are no anomaly detectors associated with ${props.embeddableTitle} visualization.`}
+        </p>
       </EuiText>
     }
   />
