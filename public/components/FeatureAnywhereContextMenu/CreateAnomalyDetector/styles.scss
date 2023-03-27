@@ -1,0 +1,25 @@
+.create-anomaly-detector {
+  .euiFlexItem.create-anomaly-detector__aside {
+    width: 400px;
+    flex-grow: 0;
+    flex-shrink: 0;
+    flex-basis: auto;
+  }
+
+  .euiAccordion__button {
+    align-items: flex-start;
+
+    &:hover,
+    &:focus {
+      text-decoration: none;
+
+      h6 {
+        text-decoration: underline;
+      }
+    }
+  }
+
+  &__vis {
+    height: 400px;
+  }
+}
