@@ -17,7 +17,6 @@ import { PLUGIN_NAME } from '../../../../utils/constants';
 import { Detector } from '../../../../models/interfaces';
 
 export const renderState = (state: DETECTOR_STATE) => {
-  console.log('detector State: ' + state);
   return (
     //@ts-ignore
     <EuiHealth color={stateToColorMap.get(state)}>{state}</EuiHealth>
