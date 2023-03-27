@@ -427,15 +427,19 @@ export const AnomalyDetailsChart = React.memo(
     return (
       <React.Fragment>
         {props.openOutOfRangeCallOut ? (
-          <EuiCallOut data-test-subj='outOfRangeCallOut'
-          title='Selected dates are out of the range'
-          color='primary'>            
-          {`Your selected dates are not in the range from when the detector
+          <EuiCallOut
+            data-test-subj="outOfRangeCallOut"
+            title="Selected dates are out of the range"
+            color="primary"
+          >
+            {`Your selected dates are not in the range from when the detector
           last started streaming data 
-          (${moment(get(props, 'detector.enabledTime')).format('MM/DD/YYYY hh:mm A')}).`}
+          (${moment(get(props, 'detector.enabledTime')).format(
+            'MM/DD/YYYY hh:mm A'
+          )}).`}
           </EuiCallOut>
         ) : null}
-        
+
         <EuiFlexGroup style={{ padding: '20px' }}>
           <EuiFlexItem>
             <EuiStat
