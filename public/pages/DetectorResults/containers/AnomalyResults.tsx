@@ -312,10 +312,11 @@ export function AnomalyResults(props: AnomalyResultsProps) {
             />
             <EuiText>
               <p>
-                Attempting to initialize the detector with historical data.
-                This initializing process takes approximately 1 minute if
-                you have data in each of the last{' '}
-                {32+get(detector, 'shingleSize', DEFAULT_SHINGLE_SIZE)}{' '} consecutive intervals.
+                Attempting to initialize the detector with historical data. This
+                initializing process takes approximately 1 minute if you have
+                data in each of the last{' '}
+                {32 + get(detector, 'shingleSize', DEFAULT_SHINGLE_SIZE)}{' '}
+                consecutive intervals.
               </p>
             </EuiText>
           </EuiFlexGroup>
