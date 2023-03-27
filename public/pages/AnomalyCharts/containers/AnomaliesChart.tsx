@@ -110,13 +110,10 @@ export const AnomaliesChart = React.memo((props: AnomaliesChartProps) => {
   const handleDateRangeChange = (startDate: number, endDate: number) => {
     props.onDateRangeChange(startDate, endDate);
     props.onZoomRangeChange(startDate, endDate);
-    if (
-      !props.isHistorical &&
-      endDate < get(props, 'detector.enabledTime') 
-    ) {
-      setShowOutOfRangeCallOut(true)
+    if (!props.isHistorical && endDate < get(props, 'detector.enabledTime')) {
+      setShowOutOfRangeCallOut(true);
     } else {
-      setShowOutOfRangeCallOut(false)
+      setShowOutOfRangeCallOut(false);
     }
   };
 
