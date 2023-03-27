@@ -66,7 +66,7 @@ import { detectorIsSample } from '../../Overview/utils/helpers';
 import { SampleIndexDetailsCallout } from '../../Overview/components/SampleIndexDetailsCallout/SampleIndexDetailsCallout';
 import { CoreStart } from '../../../../../../src/core/public';
 import { CoreServicesContext } from '../../../components/CoreServices/CoreServices';
-import { OutOfRangeModal } from '../components/OutOfRangeModal';
+import { DEFAULT_SHINGLE_SIZE } from '../../../utils/constants';
 
 interface AnomalyResultsProps extends RouteComponentProps {
   detectorId: string;
@@ -83,8 +83,6 @@ export function AnomalyResults(props: AnomalyResultsProps) {
   const detector = useSelector(
     (state: AppState) => state.ad.detectors[detectorId]
   );
-  const [outOfRangeModalOpen, setOutOfRangeModalOpen] =
-    useState<boolean>(false);
 
   useEffect(() => {
     core.chrome.setBreadcrumbs([
@@ -314,10 +312,10 @@ export function AnomalyResults(props: AnomalyResultsProps) {
             />
             <EuiText>
               <p>
-                Attempting to initialize the detector with historical data. This
-                initializing process takes approximately{' '}
-                {get(detector, 'detectionInterval.period.interval', 10)}{' '}
-                minutes.
+                Attempting to initialize the detector with historical data.
+                This initializing process takes approximately 1 minute if
+                you have data in each of the last{' '}
+                {32+get(detector, 'shingleSize', DEFAULT_SHINGLE_SIZE)}{' '} consecutive intervals.
               </p>
             </EuiText>
           </EuiFlexGroup>
@@ -417,17 +415,6 @@ export function AnomalyResults(props: AnomalyResultsProps) {
           <EuiSpacer size="l" />
           {
             <Fragment>
-              {outOfRangeModalOpen ? (
-                <EuiOverlayMask>
-                  <OutOfRangeModal
-                    onClose={() => setOutOfRangeModalOpen(false)}
-                    onConfirm={() => {
-                      props.onSwitchToHistorical();
-                    }}
-                    lastEnabledTime={get(detector, 'enabledTime') as number}
-                  />
-                </EuiOverlayMask>
-              ) : null}
               {isDetectorRunning ||
               isDetectorPaused ||
               isDetectorInitializing ||
@@ -570,7 +557,6 @@ export function AnomalyResults(props: AnomalyResultsProps) {
                     isFeatureDataMissing={isDetectorMissingData}
                     isNotSample={true}
                     isHistorical={false}
-                    openOutOfRangeModal={() => setOutOfRangeModalOpen(true)}
                   />
                 </Fragment>
               ) : detector ? (

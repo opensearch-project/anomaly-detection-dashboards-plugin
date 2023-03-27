@@ -12,83 +12,124 @@ on:
 env:
   OPENSEARCH_DASHBOARDS_VERSION: 'main'
   OPENSEARCH_VERSION: '3.0.0-SNAPSHOT'
+  OPENSEARCH_DASHBOARDS_FTREPO_VERSION: 'main'
+  ANOMALY_DETECTION_PLUGIN_VERSION: 'main'
 jobs:
   test-without-security:
     name: Run integ tests without security
     strategy:
       matrix:
-        os: [ubuntu-latest]
+        os: [ubuntu-latest, windows-latest]
         java: [11]
+        include:
+          - os: windows-latest
+            cypress_cache_folder: ~/AppData/Local/Cypress/Cache
+          - os: ubuntu-latest
+            cypress_cache_folder: ~/.cache/Cypress
     runs-on: ${{ matrix.os }}
     steps:
+      - name: Set up Java 11
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'corretto'
+          java-version: '11'
+
+      - name: Enable longer filenames
+        if: ${{ matrix.os == 'windows-latest' }}
+        run: git config --system core.longpaths true
+
       - name: Checkout Anomaly-Detection
         uses: actions/checkout@v2
         with:
           path: anomaly-detection
           repository: opensearch-project/anomaly-detection
-          ref: 'main'
-      - name: Run Opensearch with plugin
+          ref: ${{ env.ANOMALY_DETECTION_PLUGIN_VERSION }}
+
+      - name: Run OpenSearch with plugin
         run: |
           cd anomaly-detection
             ./gradlew run -Dopensearch.version=${{ env.OPENSEARCH_VERSION }} &
             timeout 300 bash -c 'while [[ "$(curl -s -o /dev/null -w ''%{http_code}'' localhost:9200)" != "200" ]]; do sleep 5; done'
+        shell: bash
+
       - name: Checkout OpenSearch Dashboards
         uses: actions/checkout@v2
         with:
           repository: opensearch-project/OpenSearch-Dashboards
           ref: ${{ env.OPENSEARCH_DASHBOARDS_VERSION }}
           path: OpenSearch-Dashboards
+
       - name: Checkout Anomaly Detection OpenSearch Dashboards plugin
         uses: actions/checkout@v2
         with:
           path: OpenSearch-Dashboards/plugins/anomaly-detection-dashboards-plugin
-      - name: Get node and yarn versions
-        id: versions_step
-        run: |
-          echo "::set-output name=node_version::$(node -p "(require('./OpenSearch-Dashboards/package.json').engines.node).match(/[.0-9]+/)[0]")"
-          echo "::set-output name=yarn_version::$(node -p "(require('./OpenSearch-Dashboards/package.json').engines.yarn).match(/[.0-9]+/)[0]")"
-      - name: Setup node
-        uses: actions/setup-node@v1
+
+      - name: Setup Node
+        uses: actions/setup-node@v3
         with:
-          node-version: ${{ steps.versions_step.outputs.node_version }}
+          node-version-file: './OpenSearch-Dashboards/.nvmrc'
           registry-url: 'https://registry.npmjs.org'
 
-      - name: Install correct yarn version for OpenSearch Dashboards
+      - name: Install Yarn
+        # Need to use bash to avoid having a windows/linux specific step
+        shell: bash
         run: |
-          npm uninstall -g yarn
-          echo "Installing yarn ${{ steps.versions_step.outputs.yarn_version }}"
-          npm i -g yarn@${{ steps.versions_step.outputs.yarn_version }}
+          YARN_VERSION=$(node -p "require('./OpenSearch-Dashboards/package.json').engines.yarn")
+          echo "Installing yarn@$YARN_VERSION"
+          npm i -g yarn@$YARN_VERSION
+
+      - run: node -v
+      - run: yarn -v
+
       - name: Bootstrap the plugin
         run: |
           cd OpenSearch-Dashboards/plugins/anomaly-detection-dashboards-plugin
           yarn osd bootstrap
+
       - name: Run OpenSearch Dashboards server
         run: |
           cd OpenSearch-Dashboards
           yarn start --no-base-path --no-watch &
-          sleep 300
+        shell: bash
+
+      # Window is slow so wait longer
+      - name: Sleep until OSD server starts - windows
+        if: ${{ matrix.os == 'windows-latest' }}
+        run: Start-Sleep -s 400
+        shell: powershell
+
+      - name: Sleep until OSD server starts - non-windows
+        if: ${{ matrix.os != 'windows-latest' }}
+        run: sleep 300
+        shell: bash
+
       - name: Checkout opensearch-dashboards-functional-test
         uses: actions/checkout@v2
         with:
           path: opensearch-dashboards-functional-test
           repository: opensearch-project/opensearch-dashboards-functional-test
-          ref: 'main' # TODO: change to a branch when the branching strategy in that repo has been established
+          ref: ${{ env.OPENSEARCH_DASHBOARDS_FTREPO_VERSION }}
+
       - name: Get Cypress version
         id: cypress_version
         run: |
           echo "::set-output name=cypress_version::$(cat ./opensearch-dashboards-functional-test/package.json | jq '.devDependencies.cypress' | tr -d '"')"
+
       - name: Cache Cypress
         id: cache-cypress
         uses: actions/cache@v1
         with:
-          path: ~/.cache/Cypress
+          path: ${{ matrix.cypress_cache_folder }}
           key: cypress-cache-v2-${{ runner.os }}-${{ hashFiles('**/package.json') }}
         env:
           CYPRESS_INSTALL_BINARY: ${{ steps.cypress_version.outputs.cypress_version }}
       - run: npx cypress cache list
       - run: npx cypress cache path
+
       - name: Run AD cypress tests
         uses: cypress-io/github-action@v2
         with:
           working-directory: opensearch-dashboards-functional-test
           command: yarn run cypress run --env SECURITY_ENABLED=false --spec cypress/integration/plugins/anomaly-detection-dashboards-plugin/*.js
+        env:
+          CYPRESS_CACHE_FOLDER: ${{ matrix.cypress_cache_folder }}   
