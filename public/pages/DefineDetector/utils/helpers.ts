@@ -89,8 +89,9 @@ export function filtersToFormik(detector: Detector): UIFilter[] {
         },
       ];
     } else {
-      curFilters.forEach((filter: UIFilter) =>
-        filter.filterType = curFilterType);
+      curFilters.forEach(
+        (filter: UIFilter) => (filter.filterType = curFilterType)
+      );
     }
   }
   return curFilters;

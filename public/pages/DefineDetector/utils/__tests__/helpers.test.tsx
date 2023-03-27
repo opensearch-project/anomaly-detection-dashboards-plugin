@@ -16,7 +16,11 @@ import {
   detectorDefinitionToFormik,
   filtersToFormik,
 } from '../../utils/helpers';
-import { Detector, OPERATORS_MAP, FILTER_TYPES } from '../../../../models/interfaces';
+import {
+  Detector,
+  OPERATORS_MAP,
+  FILTER_TYPES,
+} from '../../../../models/interfaces';
 
 describe('detectorDefinitionToFormik', () => {
   test('should return initialValues if detector is null', () => {
@@ -54,61 +58,58 @@ describe('detectorDefinitionToFormik', () => {
       windowDelay: randomDetector.windowDelay.period.interval,
     });
   });
-  test('upgrade old detector\'s filters to include filter type', () => {
+  test("upgrade old detector's filters to include filter type", () => {
     const randomDetector = getRandomDetector();
     randomDetector.uiMetadata = {
       features: {},
-      filters : [
+      filters: [
         {
-          fieldInfo : [
+          fieldInfo: [
             {
-              label : 'service',
-              type : DATA_TYPES.KEYWORD
-            }
+              label: 'service',
+              type: DATA_TYPES.KEYWORD,
+            },
           ],
-          fieldValue : "app_3",
-          operator : OPERATORS_MAP.IS
+          fieldValue: 'app_3',
+          operator: OPERATORS_MAP.IS,
         },
         {
-          fieldInfo : [
+          fieldInfo: [
             {
-              label : "host",
-              type : DATA_TYPES.KEYWORD
-            }
+              label: 'host',
+              type: DATA_TYPES.KEYWORD,
+            },
           ],
-          fieldValue : "server_2",
-          operator : OPERATORS_MAP.IS
-        }
+          fieldValue: 'server_2',
+          operator: OPERATORS_MAP.IS,
+        },
       ],
-      filterType : FILTER_TYPES.SIMPLE
+      filterType: FILTER_TYPES.SIMPLE,
     };
     const adFormikValues = filtersToFormik(randomDetector);
-    expect(adFormikValues).toEqual(
-      [
-        {
-          fieldInfo : [
-            {
-              label : 'service',
-              type : DATA_TYPES.KEYWORD
-            }
-          ],
-          fieldValue : "app_3",
-          operator : OPERATORS_MAP.IS,
-          filterType : FILTER_TYPES.SIMPLE
-        },
-        {
-          fieldInfo : [
-            {
-              label : "host",
-              type : DATA_TYPES.KEYWORD
-            }
-          ],
-          fieldValue : "server_2",
-          operator : OPERATORS_MAP.IS,
-          filterType : FILTER_TYPES.SIMPLE
-        }
-      ]
-    );
+    expect(adFormikValues).toEqual([
+      {
+        fieldInfo: [
+          {
+            label: 'service',
+            type: DATA_TYPES.KEYWORD,
+          },
+        ],
+        fieldValue: 'app_3',
+        operator: OPERATORS_MAP.IS,
+        filterType: FILTER_TYPES.SIMPLE,
+      },
+      {
+        fieldInfo: [
+          {
+            label: 'host',
+            type: DATA_TYPES.KEYWORD,
+          },
+        ],
+        fieldValue: 'server_2',
+        operator: OPERATORS_MAP.IS,
+        filterType: FILTER_TYPES.SIMPLE,
+      },
+    ]);
   });
-  
 });
