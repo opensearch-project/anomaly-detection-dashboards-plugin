@@ -16,10 +16,11 @@ import {
   Plugin,
 } from '../../../src/core/public';
 import { CONTEXT_MENU_TRIGGER } from '../../../src/plugins/embeddable/public';
-import { ACTION_AD, createADAction } from './action/ad_dashboard_action';
+import { ACTION_AD } from './action/ad_dashboard_action';
 import { PLUGIN_NAME } from './utils/constants';
 import { getActions } from './utils/contextMenu/action';
-import { setSavedFeatureAnywhereLoader } from './services';
+import { setClient, setSavedFeatureAnywhereLoader } from './services';
+import { overlayAnomaliesFunction } from './expressions';
 
 declare module '../../../src/plugins/ui_actions/public' {
   export interface ActionContextMapping {
@@ -45,8 +46,15 @@ export class AnomalyDetectionOpenSearchDashboardsPlugin implements Plugin {
       },
     });
 
+    // registers the expression function used to render anomalies on an Augmented Visualization
+    plugins.expressions.registerFunction(overlayAnomaliesFunction);
+
     // Create context menu actions. Pass core, to access service for flyouts.
     const actions = getActions({ core });
+
+    // Set the HTTP client so it can be pulled into expression fns to make
+    // direct server-side calls
+    setClient(core.http);
 
     // Add  actions to uiActions
     actions.forEach((action) => {
