@@ -20,6 +20,8 @@ import {
   AnomalyDetectionOpenSearchDashboardsPluginSetup,
   AnomalyDetectionOpenSearchDashboardsPluginStart,
 } from '.';
+import { overlayAnomaliesFunction } from './expressions/overlay_anomalies';
+import { setClient } from './services';
 
 export class AnomalyDetectionOpenSearchDashboardsPlugin
   implements
@@ -33,7 +35,8 @@ export class AnomalyDetectionOpenSearchDashboardsPlugin
   }
 
   public setup(
-    core: CoreSetup
+    core: CoreSetup,
+    plugins
   ): AnomalyDetectionOpenSearchDashboardsPluginSetup {
     core.application.register({
       id: 'anomaly-detection-dashboards',
@@ -50,6 +53,13 @@ export class AnomalyDetectionOpenSearchDashboardsPlugin
         return renderApp(coreStart, params);
       },
     });
+
+    // Set the HTTP client so it can be pulled into expression fns to make
+    // direct server-side calls
+    setClient(core.http);
+
+    // registers the expression function used to render anomalies on an Augmented Visualization
+    plugins.expressions.registerFunction(overlayAnomaliesFunction);
     return {};
   }
 
