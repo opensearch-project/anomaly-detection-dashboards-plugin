@@ -34,8 +34,7 @@
     "eslint-plugin-prefer-object-spread": "^1.2.1",
     "lint-staged": "^9.2.0",
     "moment": "^2.24.0",
-    "redux-mock-store": "^1.5.3",
-    "start-server-and-test": "^1.11.7"
+    "redux-mock-store": "^1.5.3"
   },
   "dependencies": {
     "babel-polyfill": "^6.26.0",
@@ -54,6 +53,8 @@
     "**/terser": "^4.8.1",
     "decode-uri-component": "^0.2.1",
     "json5": "^2.2.3",
-    "@sideway/formula": "^3.0.1"
+    "@sideway/formula": "^3.0.1",
+    "**/minimist": "^1.2.6",
+    "**/minimatch": "^3.0.5"
   }
 }
