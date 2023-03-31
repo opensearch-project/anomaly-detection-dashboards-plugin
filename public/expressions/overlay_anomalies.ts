@@ -74,12 +74,7 @@ const getAnomalies = async (
 
 const getDetectorName = async (detectorId: string) => {
   const resp = await getClient().get(`..${AD_NODE_API.DETECTOR}/${detectorId}`);
-  if (!isEmpty(Object.keys(resp.response))) {
-    const detectorName = get(resp.response, 'name', '');
-    return detectorName;
-  } else {
-    return '';
-  }
+  return get(resp.response, 'name', '');
 };
 
 // This takes anomalies and returns them as vis layer of type PointInTimeEvents
@@ -149,14 +144,19 @@ export const overlayAnomaliesFunction =
       const endTimeInMillis = parsedTimeRange?.max?.unix()
         ? parsedTimeRange?.max?.unix() * 1000
         : undefined;
-      const detectorName: string = await getDetectorName(detectorId);
-      const ADPluginResource = {
+      var ADPluginResource = {
         type: VIS_LAYER_PLUGIN_TYPE,
         id: detectorId,
-        name: detectorName,
+        name: '',
         urlPath: `${PLUGIN_NAME}#/detectors/${detectorId}/results`, //details page for detector in AD plugin
       };
       try {
+        const detectorName = await getDetectorName(detectorId);
+        if (detectorName === '') {
+          throw new Error('Anomaly Detector - Unable to get detector');
+        }
+        ADPluginResource.name = detectorName;
+
         if (startTimeInMillis === undefined || endTimeInMillis === undefined) {
           throw new RangeError('start or end time invalid');
         }
