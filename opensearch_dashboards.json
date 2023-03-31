@@ -3,12 +3,12 @@
   "version": "3.0.0.0",
   "opensearchDashboardsVersion": "3.0.0",
   "configPath": ["anomaly_detection_dashboards"],
-  "requiredPlugins": ["navigation", 
+  "requiredPlugins": [
     "opensearchDashboardsUtils",
     "expressions",
-    "data"
+    "data",
+    "visAugmenter"
   ],
-  "optionalPlugins":[],  
   "server": true,
   "ui": true
 }

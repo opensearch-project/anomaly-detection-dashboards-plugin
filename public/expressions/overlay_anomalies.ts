@@ -1,15 +1,9 @@
-// /*
-//  * SPDX-License-Identifier: Apache-2.0
-//  *
-//  * The OpenSearch Contributors require contributions made to
-//  * this file be licensed under the Apache-2.0 license or a
-//  * compatible open source license.
-//  *
-//  * Any modifications Copyright OpenSearch Contributors. See
-//  * GitHub history for details.
-//  */
+/*
+ * Copyright OpenSearch Contributors
+ * SPDX-License-Identifier: Apache-2.0
+ */
 
-import { get } from 'lodash';
+import { get, isEmpty } from 'lodash';
 import { i18n } from '@osd/i18n';
 import { ExpressionFunctionDefinition } from '../../../../src/plugins/expressions/public';
 import {
@@ -34,8 +28,13 @@ import {
   VisLayerError,
   VisLayerErrorTypes,
 } from '../../../../src/plugins/vis_augmenter/public';
-import { PLUGIN_NAME } from '../../public/utils/constants';
+import { PLUGIN_NAME } from '../utils/constants';
 import { NO_PERMISSIONS_KEY_WORD } from '../../server/utils/helpers';
+import {
+  ORIGIN_PLUGIN_VIS_LAYER,
+  TYPE_OF_EXPR_VIS_LAYERS,
+  VIS_LAYER_PLUGIN_TYPE,
+} from './constants';
 
 type Input = ExprVisLayers;
 type Output = Promise<ExprVisLayers>;
@@ -63,10 +62,6 @@ const getAnomalies = async (
     false
   );
 
-  // We set the http client in the plugin.ts setup() fn. We pull it in here to make a
-  // server-side call directly.
-  // Note we can't use the redux fns here (e.g., searchResults()) since it requires
-  // hooks (e.g., useDispatch()) which doesn't make sense in this context, plus is not allowed by React.
   const anomalySummaryResponse = await getClient().post(
     `..${AD_NODE_API.DETECTOR}/results/_search`,
     {
@@ -77,8 +72,18 @@ const getAnomalies = async (
   return parsePureAnomalies(anomalySummaryResponse);
 };
 
+const getDetectorName = async (detectorId: string) => {
+  const resp = await getClient().get(`..${AD_NODE_API.DETECTOR}/${detectorId}`);
+  if (!isEmpty(Object.keys(resp.response))) {
+    const detectorName = get(resp.response, 'name', '');
+    return detectorName;
+  } else {
+    return '';
+  }
+};
+
 // This takes anomalies and returns them as vis layer of type PointInTimeEvents
-const convertAnomaliesToLayer = (
+const convertAnomaliesToPointInTimeEventsVisLayer = (
   anomalies: AnomalyData[],
   ADPluginResource: PluginResource
 ): PointInTimeEventsVisLayer => {
@@ -89,18 +94,34 @@ const convertAnomaliesToLayer = (
     };
   });
   return {
-    originPlugin: 'anomaly-detection',
+    originPlugin: ORIGIN_PLUGIN_VIS_LAYER,
     type: VisLayerTypes.PointInTimeEvents,
     pluginResource: ADPluginResource,
     events: events,
   } as PointInTimeEventsVisLayer;
 };
 
+/*
+ * This function defines the Anomaly Detection expression function of type vis_layers.
+ * The expression-fn defined takes an argument of detectorId and an array of VisLayers as input,
+ * it then returns back the VisLayers array with an additional vislayer composed of anomalies.
+ *
+ * The purpose of this function is to allow us on the visualization rendering to gather additional
+ * overlays from an associated plugin resource such as an anomaly detector in this occasion. The VisLayers will
+ * now have anomaly data as one of its VisLayers.
+ *
+ * To create the new added VisLayer the function uses the detectorId and daterange from the search context
+ * to fetch anomalies. Next, the anomalies are mapped into events based on timestamps in order to convert them to a
+ * PointInTimeEventsVisLayer.
+ *
+ * If there are any errors fetching the anomalies the function will return a VisLayerError in the
+ * VisLayer detailing the error type.
+ */
 export const overlayAnomaliesFunction =
   (): OverlayAnomaliesExpressionFunctionDefinition => ({
     name,
-    type: 'vis_layers',
-    inputTypes: ['vis_layers'],
+    type: TYPE_OF_EXPR_VIS_LAYERS,
+    inputTypes: [TYPE_OF_EXPR_VIS_LAYERS],
     help: i18n.translate('data.functions.overlay_anomalies.help', {
       defaultMessage: 'Add an anomaly vis layer',
     }),
@@ -128,27 +149,28 @@ export const overlayAnomaliesFunction =
       const endTimeInMillis = parsedTimeRange?.max?.unix()
         ? parsedTimeRange?.max?.unix() * 1000
         : undefined;
+      const detectorName: string = await getDetectorName(detectorId);
       const ADPluginResource = {
-        type: 'anomaly-detection-type',
+        type: VIS_LAYER_PLUGIN_TYPE,
         id: detectorId,
-        name: PLUGIN_NAME,
-        urlPath: `${PLUGIN_NAME}#/detectors`,
+        name: detectorName,
+        urlPath: `${PLUGIN_NAME}#/detectors/${detectorId}/results`, //details page for detector in AD plugin
       };
       try {
         if (startTimeInMillis === undefined || endTimeInMillis === undefined) {
           throw new RangeError('start or end time invalid');
         }
-        const anomalies: AnomalyData[] = await getAnomalies(
+        const anomalies = await getAnomalies(
           detectorId,
           startTimeInMillis,
           endTimeInMillis
         );
-        const anomalyLayer = convertAnomaliesToLayer(
+        const anomalyLayer = convertAnomaliesToPointInTimeEventsVisLayer(
           anomalies,
           ADPluginResource
         );
         return {
-          type: 'vis_layers',
+          type: TYPE_OF_EXPR_VIS_LAYERS,
           layers: origVisLayers
             ? origVisLayers.concat(anomalyLayer)
             : ([anomalyLayer] as VisLayers),
@@ -162,7 +184,7 @@ export const overlayAnomaliesFunction =
         ) {
           visLayerError = {
             type: VisLayerErrorTypes.PERMISSIONS_FAILURE,
-            message: error, // might just change this to a generic message like rest of AD plugin
+            message: error, //TODO: might just change this to a generic message like rest of AD plugin
           };
         } else {
           visLayerError = {
@@ -183,7 +205,7 @@ export const overlayAnomaliesFunction =
           error: visLayerError,
         } as PointInTimeEventsVisLayer;
         return {
-          type: 'vis_layers',
+          type: TYPE_OF_EXPR_VIS_LAYERS,
           layers: origVisLayers
             ? origVisLayers.concat(anomalyErrorLayer)
             : ([anomalyErrorLayer] as VisLayers),
