@@ -20,4 +20,10 @@
   .visualization {
     padding: 0;
   }
+
+  &__frequency {
+    span {
+      text-transform: lowercase;
+    }
+  }
 }
