@@ -11,7 +11,7 @@ const DocumentationTitle = () => (
   <EuiFlexGroup>
     <EuiFlexItem>
       <span data-ui="documentation-title-text">
-        {i18n.translate('dashboard.actions.adMenuItem.documentation.displayName', {
+        {i18n.translate('dashboard.actions.alertingMenuItem.documentation.displayName', {
           defaultMessage: 'Documentation',
         })}
       </span>

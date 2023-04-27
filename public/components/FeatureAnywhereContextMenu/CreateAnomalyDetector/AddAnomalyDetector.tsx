@@ -82,7 +82,7 @@ function AddAnomalyDetector({
     setDelayValue(e.target.value);
   };
 
-  const detectorNameFromVis = embeddable.vis.title + ' anomaly detector 1';
+  const [detectorNameFromVis, setDetectorNameFromVis] = useState(formikToDetectorName(embeddable.vis.title))
   const aggList = embeddable.vis.data.aggs.aggs.filter((feature) => feature.schema == "metric");
   /**
    * [
@@ -146,7 +146,6 @@ function AddAnomalyDetector({
     setChecked(e.target.checked);
   };
 
-
   const getFeatureNameFromParams = (id) => {
     // const name = embeddable.vis.params.seriesParams.find((param) => get(param, 'data.id', '') == id).label
     // console.log("name: ", embeddable.vis.params.seriesParams)
@@ -182,12 +181,12 @@ function AddAnomalyDetector({
 
   const handleAddFeature =() => {
     const emptyFeatureComponenet = {
-      id: '',
-      featureName: '',
-      field: '',
-      aggMethod: ''
+      id: '11',
+      featureName: 'test',
+      field: 'byte',
+      aggMethod: 'min'
     }
-    setFeatureListToRender(feautreListToRender.push(emptyFeatureComponenet))
+    setFeatureListToRender([...feautreListToRender, emptyFeatureComponenet])
   }
 
 
@@ -197,7 +196,9 @@ function AddAnomalyDetector({
       dispatch(createDetector(values)).then(async (response) => {
         console.log("detector id here: " + response.response.id)
         dispatch(startDetector(response.response.id)).then((startDetectorResponse) => {
-          console.log("detector started");
+          core.notifications.toasts.addSuccess(
+            `Detector created: ${values.name}`
+          );
         })
         enum VisLayerTypes {
           PointInTimeEvents = 'PointInTimeEvents',
@@ -219,7 +220,6 @@ function AddAnomalyDetector({
         } as ISavedAugmentVis;
     
         const savedObject = await createAugmentVisSavedObject(savedObjectToCreate);
-        console.log('savedObject: ' + JSON.stringify(savedObject));
     
         const saveObjectResponse = await savedObject.save({});
         console.log('response: ' + JSON.stringify(saveObjectResponse));
@@ -232,7 +232,7 @@ function AddAnomalyDetector({
   }
 
   const initialDetectorValue = {
-    name: 'max_byte_212',
+    name: formikToDetectorName(embeddable.vis.title),
     indices:  formikToIndicesArray(embeddable.vis.data.aggs.indexPattern.title),
     timeField: embeddable.vis.data.indexPattern.timeFieldName,
     detectionInterval: {
@@ -249,10 +249,8 @@ function AddAnomalyDetector({
   }
 
   function formikToDetectorName(title) {
-    const detectorName = title + "anomaly detector 1";
+    const detectorName = title + "_anomaly_detector_" + Math.floor(100000 + Math.random() * 900000);
     detectorName.replace(/ /g, '_');
-    detectorName.replace('[', '');
-    detectorName.replace(']', '');
     return detectorName;
   }
 
@@ -393,7 +391,9 @@ function AddAnomalyDetector({
                           </EuiText>
                         }>
                         <EuiFormRow label="Detector name">
-                          <EuiFieldText value={detectorNameFromVis} />
+                          <EuiFieldText 
+                            value={detectorNameFromVis}
+                            onChange={(e) => setDetectorNameFromVis(e.target.value)} />
                         </EuiFormRow>
                       
                         <EuiFormRow label="Detector interval">
@@ -584,13 +584,16 @@ function AddAnomalyDetector({
                             </MinimalAccordion>
                           )
                         })}
-                        <EuiButton
+                        
+                      </EnhancedAccordion>
+                      <EuiSpacer size="m" />
+                      <div className="minimal-accordion">
+                        <EuiButton className="featureButton"
                           onClick={() => handleAddFeature()}
                           iconType="plusInCircle">
                           Add feature
                         </EuiButton>
-                        
-                      </EnhancedAccordion>
+                      </div>
                     </div>
                   )}
                 </div>

@@ -73,7 +73,7 @@ export const getActions = ({ core, plugins }) => {
         title: <DocumentationTitle />,
         icon: 'documentation' as EuiIconType,
         order: 98,
-        onClick: () => {
+        onExecute: () => {
           window.open(
             'https://opensearch.org/docs/latest/monitoring-plugins/anomaly-detection/index/',
             '_blank'
