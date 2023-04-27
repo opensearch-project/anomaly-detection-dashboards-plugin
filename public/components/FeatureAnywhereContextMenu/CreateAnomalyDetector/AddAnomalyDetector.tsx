@@ -83,8 +83,9 @@ function AddAnomalyDetector({
   };
 
   const detectorNameFromVis = embeddable.vis.title + ' anomaly detector 1';
-  const featureList = embeddable.vis.params.series;
-  console.log("feature list: " + featureList)
+  const seriesSize = embeddable.vis.params.series.length;
+  const featureList = embeddable.vis.params.series.filter((feature, index) => index < (seriesSize < 5 ? seriesSize : 5));
+  console.log("feature list size: " + featureList.length)
   console.log("feature name: " + featureList[0].label)
 
   const anomaliesOptions = [
@@ -118,122 +119,21 @@ function AddAnomalyDetector({
     setChecked(e.target.checked);
   };
 
-  let renderFeatureList = featureList.map((feature, index) => (
-    index < 5 &&
-    <MinimalAccordion 
-      id={feature.id} 
-      title={feature.label} 
-      subTitle={`Field: ${feature.metrics[0].field}, Aggregation method: ${feature.metrics[0].type}`}
-      initialIsOpen={false}
-      isUsingDivider={index == 0 ? false : true}
-      extraAction={
-        <EuiButtonIcon
-          iconType="trash"
-          color="text"
-          aria-label={`Delete ${feature.label}`}
-          onClick={() => deleteFeature(feature.id)}
-        />
-      }
-      >
-        <EuiFormRow label="Feature name">
-          <EuiFieldText value={feature.label} />
-        </EuiFormRow>
-        <EuiFormRow label="Find anomalies based on">
-        <EuiSelect
-          id="featureAnomalies1"
-          options={anomaliesOptions}
-          value={anomaliesValue}
-          onChange={(e) => anomaliesOnChange(e)}
-        />
-      </EuiFormRow>
-
-      <EuiSpacer size="s" />
-      <EuiFlexGroup alignItems={'flexStart'} gutterSize={'m'}>
-          <EuiFlexItem grow={1}>
-          <EuiFormRow label="Field">
-            <EuiFieldText value={feature.metrics[0].field} />
-          </EuiFormRow>
-          </EuiFlexItem>
-
-          <EuiFlexItem grow={1}>
-            <EuiFormRow label="Aggregation method">
-            <EuiSelect
-              id="aggreationMethod"
-              options={aggMethodOptions}
-              value={aggMethodValue}
-              onChange={(e) => aggMethodOnChange(e)}
-            />
-            </EuiFormRow>
-          </EuiFlexItem>
-        </EuiFlexGroup>
-    </MinimalAccordion>
-  ));
-
   let defaultFeatureList = []
   featureList.map((feature, index) => (
-    index < 5 && defaultFeatureList.push([{
+    defaultFeatureList.push({
       id: feature.id,
       featureName: feature.label,
       field: feature.metrics[0].field,
       aggMethod: feature.metrics[0].type
-    }])
+    })
   ))
-  console.log("defaultFeatureList: ", JSON.stringify(defaultFeatureList))
 
-  // const [feautreListToRender, setFeatureListToRender] = useState()
+  const [feautreListToRender, setFeatureListToRender] = useState(defaultFeatureList)
 
-  // function deleteFeature(excludeFeatureId) {
-  //   renderFeatureList = featureList.map((feature, index) => (
-  //     index < 5 && feature.id != excludeFeatureId &&
-  //     <MinimalAccordion 
-  //       id={feature.id} 
-  //       title={feature.label} 
-  //       subTitle={`Field: ${feature.metrics[0].field}, Aggregation method: ${feature.metrics[0].type}`}
-  //       initialIsOpen={false}
-  //       isUsingDivider={index == 0 ? false : true}
-  //       extraAction={
-  //         <EuiButtonIcon
-  //           iconType="trash"
-  //           color="text"
-  //           aria-label={`Delete ${feature.label}`}
-  //           onClick={() => deleteFeature(feature.id)}
-  //         />
-  //       }
-  //       >
-  //         <EuiFormRow label="Feature name">
-  //           <EuiFieldText value={feature.label} />
-  //         </EuiFormRow>
-  //         <EuiFormRow label="Find anomalies based on">
-  //         <EuiSelect
-  //           id="featureAnomalies1"
-  //           options={anomaliesOptions}
-  //           value={anomaliesValue}
-  //           onChange={(e) => anomaliesOnChange(e)}
-  //         />
-  //       </EuiFormRow>
-  
-  //       <EuiSpacer size="s" />
-  //       <EuiFlexGroup alignItems={'flexStart'} gutterSize={'m'}>
-  //           <EuiFlexItem grow={1}>
-  //           <EuiFormRow label="Field">
-  //             <EuiFieldText value={feature.metrics[0].field} />
-  //           </EuiFormRow>
-  //           </EuiFlexItem>
-  
-  //           <EuiFlexItem grow={1}>
-  //             <EuiFormRow label="Aggregation method">
-  //             <EuiSelect
-  //               id="aggreationMethod"
-  //               options={aggMethodOptions}
-  //               value={aggMethodValue}
-  //               onChange={(e) => aggMethodOnChange(e)}
-  //             />
-  //             </EuiFormRow>
-  //           </EuiFlexItem>
-  //         </EuiFlexGroup>
-  //     </MinimalAccordion>
-  //   ));
-  // }
+  const handleDeleteFeature = (id) => {
+    setFeatureListToRender(feautreListToRender.filter(feature => feature.id !== id))
+  }
 
 
   const handleSubmit = (values) => {
@@ -575,7 +475,57 @@ function AddAnomalyDetector({
                 
                         <EuiSpacer size="s" />
                 
-                        {renderFeatureList}
+                        {feautreListToRender.map((feature, index) => {
+                          return (
+                            <MinimalAccordion 
+                              id={feature.id} 
+                              title={feature.featureName} 
+                              subTitle={`Field: ${feature.field}, Aggregation method: ${feature.aggMethod}`}
+                              initialIsOpen={false}
+                              isUsingDivider={index == 0 ? false : true}
+                              extraAction={
+                                <EuiButtonIcon
+                                  iconType="trash"
+                                  color="text"
+                                  aria-label={`Delete ${feature.featureName}`}
+                                  onClick={() => handleDeleteFeature(feature.id)}
+                                />
+                              }
+                              >
+                                <EuiFormRow label="Feature name">
+                                  <EuiFieldText value={feature.featureName} />
+                                </EuiFormRow>
+                                <EuiFormRow label="Find anomalies based on">
+                                <EuiSelect
+                                  id="featureAnomalies1"
+                                  options={anomaliesOptions}
+                                  value={anomaliesValue}
+                                  onChange={(e) => anomaliesOnChange(e)}
+                                />
+                              </EuiFormRow>
+
+                              <EuiSpacer size="s" />
+                              <EuiFlexGroup alignItems={'flexStart'} gutterSize={'m'}>
+                                  <EuiFlexItem grow={1}>
+                                  <EuiFormRow label="Field">
+                                    <EuiFieldText value={feature.field} />
+                                  </EuiFormRow>
+                                  </EuiFlexItem>
+
+                                  <EuiFlexItem grow={1}>
+                                    <EuiFormRow label="Aggregation method">
+                                    <EuiSelect
+                                      id="aggreationMethod"
+                                      options={aggMethodOptions}
+                                      value={aggMethodValue}
+                                      onChange={(e) => aggMethodOnChange(e)}
+                                    />
+                                    </EuiFormRow>
+                                  </EuiFlexItem>
+                                </EuiFlexGroup>
+                            </MinimalAccordion>
+                          )
+                        })}
                         <EuiButton
                           onClick={() => window.alert('Button clicked')}
                           iconType="plusInCircle">
