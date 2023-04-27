@@ -34,7 +34,7 @@ import {
   VisLayerExpressionFn,
 } from '../../../../../../src/plugins/vis_augmenter/public';
 import { useDispatch, useSelector } from 'react-redux';
-import { snakeCase } from 'lodash';
+import { get, snakeCase, find } from 'lodash';
 import { Formik, FormikHelpers } from 'formik';
 import { formikToDetector, formikToFeatureAttributes } from 'public/pages/ReviewAndCreate/utils/helpers';
 import { RouteComponentProps } from 'react-router';
@@ -148,16 +148,24 @@ function AddAnomalyDetector({
 
 
   const getFeatureNameFromParams = (id) => {
-    console.log("hereeeee: ", JSON.stringify(embeddable.vis.params.seriesParams))
-    return embeddable.vis.params.seriesParams.map((param) => {
-      if (param.data.id == id) {
-        return param.data.label;
+    // const name = embeddable.vis.params.seriesParams.find((param) => get(param, 'data.id', '') == id).label
+    // console.log("name: ", embeddable.vis.params.seriesParams)
+    // embeddable.vis.params.seriesParams.map((param) => {
+    //   console.log("param: ", JSON.stringify(get(param.data.label, 'data.id', '') == id))
+
+    // });
+    // return "test";
+    let name = find(embeddable.vis.params.seriesParams, function (param) {
+      if (param.data.id === id) {
+        return true
       }
-    });
+    })
+    console.log("name: ", name)
+    return name.data.label
   }
 
   let defaultFeatureList = []
-  featureList.map((feature, index) => (
+  featureList.map((feature) => (
     defaultFeatureList.push({
       id: feature.id,
       featureName: getFeatureNameFromParams(feature.id),
@@ -225,8 +233,8 @@ function AddAnomalyDetector({
 
   const initialDetectorValue = {
     name: 'max_byte_212',
-    indices:  formikToIndicesArray(embeddable.vis.params.index_pattern),
-    timeField: embeddable.vis.params.time_field,
+    indices:  formikToIndicesArray(embeddable.vis.data.aggs.indexPattern.title),
+    timeField: embeddable.vis.data.indexPattern.timeFieldName,
     detectionInterval: {
       period: { interval: 10, unit: UNITS.MINUTES },
     },
@@ -254,10 +262,10 @@ function AddAnomalyDetector({
 
   function formikToFeatureAttributes(values) {
     //@ts-ignore
-    return values.slice(0, values.length).map(function (value) {
+    return values.map(function (value) {
       return {
         featureId: value.id,
-        featureName: value.label,
+        featureName: getFeatureNameFromParams(value.id),
         featureEnabled: true,
         importance: 1,
         aggregationQuery: formikToAggregation(value)
@@ -267,11 +275,13 @@ function AddAnomalyDetector({
 
   function formikToAggregation(value) {
     return {
-      [snakeCase(value.label)]: {
-        sum: { field: value.params.field },
+      [snakeCase(getFeatureNameFromParams(value.id))]: {
+        sum: { field: value.params.field.name },
       },
     }
   }
+
+  console.log("initialDetectorValue: ", JSON.stringify(initialDetectorValue))
     
 
   return (
