@@ -10,7 +10,9 @@
     "opensearchDashboardsReact",
     "savedObjects",
     "visAugmenter",
-    "opensearchDashboardsUtils"
+    "opensearchDashboardsUtils",
+    "data",
+    "expressions"
   ],
   "optionalPlugins": [],
   "server": true,
