@@ -196,11 +196,12 @@ function AddAnomalyDetector({
         }
         const fn = {
           type: VisLayerTypes.PointInTimeEvents,
-          name: 'test-fn',
+          name: 'overlay_anomalies',
           args: {
-            testArg: response.response.id,
+            detectorId: response.response.id,
           },
         } as VisLayerExpressionFn;
+        
         const savedObjectToCreate = {
           title: embeddable.vis.title,
           pluginResourceId: response.response.id,
