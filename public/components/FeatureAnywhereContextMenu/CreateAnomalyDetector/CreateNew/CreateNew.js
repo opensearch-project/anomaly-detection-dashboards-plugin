@@ -10,9 +10,7 @@ import {
   EuiIcon, 
   EuiText, 
   EuiSwitch, 
-  EuiLoadingSpinner,
-  EuiPanel,
-  EuiAccordion,
+  EuiButtonIcon,
   EuiFormRow,
   EuiFieldText,
   EuiCheckbox,
@@ -20,11 +18,14 @@ import {
   EuiFlexItem,
   EuiFlexGroup,
   EuiFieldNumber,
-  EuiCallOut
+  EuiCallOut,
+  EuiButtonEmpty
  } from '@elastic/eui';
 import { EmbeddablePanel } from '../../../../../../../src/plugins/embeddable/public';
 import './styles.scss';
 import EnhancedAccordion from '../../EnhancedAccordion';
+import MinimalAccordion from '../../MinimalAccordion';
+import { feature } from 'topojson-client';
 
 function CreateNew({ embeddable, closeFlyout, core, services, index }) {
   const [isShowVis, setIsShowVis] = useState(false);
@@ -34,24 +35,25 @@ function CreateNew({ embeddable, closeFlyout, core, services, index }) {
     push: (value) => console.log('pushed', value),
     goBack: closeFlyout,
   };
-  const createMonitorProps = {
-    ...history,
-    history,
-    httpClient: core.http,
-    // This is not expected to be used
-    setFlyout: () => null,
-    notifications: core.notifications,
-    isDarkMode: core.isDarkMode,
-    notificationService: services.notificationService,
-    edit: false,
-    updateMonitor: () => null,
-    staticContext: undefined,
-    isMinimal: true,
-    defaultName: `${title} anomaly detector 1`,
-    defaultIndex: index,
-    defaultTimeField: embeddable.vis.params.time_field,
-    isDefaultTriggerEnabled: true,
-  };
+
+  // const createDetectorProps = {
+  //   ...history,
+  //   history,
+  //   httpClient: core.http,
+  //   // This is not expected to be used
+  //   setFlyout: () => null,
+  //   notifications: core.notifications,
+  //   isDarkMode: core.isDarkMode,
+  //   notificationService: services.notificationService,
+  //   edit: false,
+  //   updateMonitor: () => null,
+  //   staticContext: undefined,
+  //   isMinimal: true,
+  //   defaultName: `${title} anomaly detector 1`,
+  //   defaultIndex: index,
+  //   defaultTimeField: embeddable.vis.params.time_field,
+  //   isDefaultTriggerEnabled: true,
+  // };
 
   const intervalOptions = [
     { value: 'option_one', text: '10 minutes' },
@@ -109,11 +111,57 @@ function CreateNew({ embeddable, closeFlyout, core, services, index }) {
     setChecked(e.target.checked);
   };
 
-  const detectorDetailsOnToggle = (isOpen) => {
-    setIsOpen(isOpen ? 'open' : 'closed');
-  };
+  const renderFeatureList = featureList.map((feature, index) => (
+    index < 5 &&
+    <MinimalAccordion 
+      id={feature.label} 
+      title={feature.label} 
+      subTitle={`Field: ${feature.metrics[0].field}, Aggregation method: ${feature.metrics[0].type}`}
+      initialIsOpen={false}
+      isUsingDivider={index == 0 ? false : true}
+      extraAction={
+        <EuiButtonIcon
+          iconType="trash"
+          color="text"
+          aria-label={`Delete ${feature.label}`}
+          //onClick={() => featureListHelpers(renderFeatureList, index)}
+        />
+      }
+      >
+        <EuiFormRow label="Feature name">
+          <EuiFieldText value={feature.label} />
+        </EuiFormRow>
+        <EuiFormRow label="Find anomalies based on">
+        <EuiSelect
+          id="featureAnomalies1"
+          options={anomaliesOptions}
+          value={anomaliesValue}
+          onChange={(e) => anomaliesOnChange(e)}
+        />
+      </EuiFormRow>
 
-  const [isOpen, setIsOpen] = useState('open');
+      <EuiSpacer size="s" />
+      <EuiFlexGroup alignItems={'flexStart'} gutterSize={'m'}>
+          <EuiFlexItem grow={1}>
+          <EuiFormRow label="Field">
+            <EuiFieldText value={feature.metrics[0].field} />
+          </EuiFormRow>
+          </EuiFlexItem>
+
+          <EuiFlexItem grow={1}>
+            <EuiFormRow label="Aggregation method">
+            <EuiSelect
+              id="aggreationMethod"
+              options={aggMethodOptions}
+              value={aggMethodValue}
+              onChange={(e) => aggMethodOnChange(e)}
+            />
+            </EuiFormRow>
+          </EuiFlexItem>
+        </EuiFlexGroup>
+    </MinimalAccordion>
+  ));
+
 
   return (
     <div className="create-new">
@@ -162,163 +210,143 @@ function CreateNew({ embeddable, closeFlyout, core, services, index }) {
       {/* {!index && <EuiLoadingSpinner size="l" />} */}
       {/* Do not initialize until index is available */}
 
-        {/* <EnhancedAccordion
-          id='detectorDetails'
-          title={detectorNameFromVis}
-          // onToggle={detectorDetailsOnToggle}
-          isOpen={isOpen}
-          subTitle={
-            <EuiText size="m">
-              <p>
-                Detector interval: 10 minutes; Window delay: 1 minutesss
-              </p>
-            </EuiText>
-          }>
-          <EuiFormRow label="Detector name">
-            <EuiFieldText value={detectorNameFromVis} />
-          </EuiFormRow>
-        
-          <EuiFormRow label="Detector interval">
-            <EuiSelect
-              id="detectorIntervalSelection"
-              options={intervalOptions}
-              value={intervalValue}
-              onChange={(e) => intervalOnChange(e)}
-            />
-          </EuiFormRow>
-          <EuiFormRow label="Window delay">
-            <EuiSelect
-              id="windowDelaySelection"
-              options={delayOptions}
-              value={delayValue}
-              onChange={(e) => delayOnChange(e)}
-            />
-          </EuiFormRow>
+      <EnhancedAccordion
+        id='detectorDetails'
+        title={detectorNameFromVis}
+        initialIsOpen={false}
+        subTitle={
+          <EuiText size="m">
+            <p>
+              Detector interval: 10 minutes; Window delay: 1 minutesss
+            </p>
+          </EuiText>
+        }>
+        <EuiFormRow label="Detector name">
+          <EuiFieldText value={detectorNameFromVis} />
+        </EuiFormRow>
+      
+        <EuiFormRow label="Detector interval">
+          <EuiSelect
+            id="detectorIntervalSelection"
+            options={intervalOptions}
+            value={intervalValue}
+            onChange={(e) => intervalOnChange(e)}
+          />
+        </EuiFormRow>
+        <EuiFormRow label="Window delay">
+          <EuiSelect
+            id="windowDelaySelection"
+            options={delayOptions}
+            value={delayValue}
+            onChange={(e) => delayOnChange(e)}
+          />
+        </EuiFormRow>
+      </EnhancedAccordion>
 
-        </EnhancedAccordion> */}
-        <EuiPanel hasBorder={true} hasShadow={true}>
-          <EuiAccordion id='detectorDetails' buttonContent={detectorNameFromVis}>
-            <EuiPanel hasBorder={true} hasShadow={true}>
-              <EuiSpacer size="xs" />
-              <EuiText size="s">
-                Detector interval: 10 minutes; Window delay: 1 minute
-              </EuiText>
-
-            <EuiSpacer size="m" />
-            <EuiFormRow label="Detector name">
-              <EuiFieldText value={detectorNameFromVis} />
-            </EuiFormRow>
-          
-            <EuiFormRow label="Detector interval">
-              <EuiFieldNumber
-                placeholder="10"
-                value={intervalValue}
-                onChange={(e) => intervalOnChange(e)}
-              />
-            </EuiFormRow>
-            <EuiFormRow label="Window delay">
-              <EuiFieldNumber
-                  placeholder="1"
-                  value={delayValue}
-                  onChange={(e) => delayOnChange(e)}
-              />
-            </EuiFormRow>
-          </EuiPanel>
-          </EuiAccordion>
-        </EuiPanel>
-
-     
-
-      <EuiSpacer size="s" />
-      <EuiPanel hasBorder={true} hasShadow={true}>
-        <EuiAccordion id='advancedConfiguration' buttonContent="Advanced Configuration">
+      <EuiSpacer size="m" />
+      
+      <EnhancedAccordion
+        id='advancedConfiguration'
+        title="Advanced Configuration"
+        initialIsOpen={false}>
 
         <EuiSpacer size="s" />
-        <EuiPanel hasBorder={true} hasShadow={true}>
-          <EuiAccordion id='shingleSize' buttonContent="Shingle size" initialIsOpen={false}>
+        <MinimalAccordion 
+          id='dataFilter' 
+          title="Data Filter" 
+          subTitle="Choose a data source subset to focus the data stream and reduce data noise."
+          initialIsOpen={false}>
+         
           <EuiSpacer size="s" />
-            <EuiText size="xs">
-              <p>
-                Set number of intervals in the model's detection window.
-              </p>
-            </EuiText>
-            <EuiSpacer size="m" />
-            <EuiText size="xs">
-              <p>
-                The anomaly detector expects the single size to be between 1 and 60. The default shingle size
-                is 8. We recommend that you don't choose 1 unless you have 2 or more features. Smaller values 
-                might increase recall but also false positives. Larger values might be useful for ignoring 
-                noise in a signal. 
-                <a
-                  href="https://opensearch.org/docs/latest/observing-your-data/ad/index/"
-                  target="_blank"
-                >
-                  Learn more <EuiIcon type="popout" />
-                </a>
-              </p>
-            </EuiText>
-            <EuiSpacer size="s" />
+          <EuiText size="xs">
+            <p>
+              Source: {embeddable.vis.params.index_pattern}
+            </p>
+          </EuiText>
+          <EuiSpacer size="s" />
+          <EuiButtonEmpty
+            size="xs"
+            onClick={() => {
+              push(EMPTY_UI_FILTER);
+            }}
+          >
+            + Add data filter
+          </EuiButtonEmpty>
+        </MinimalAccordion>
 
-            <EuiFieldNumber
-              placeholder="8"
-              value={shingleSizeValue}
-              onChange={(e) => shingleSizeOnChange(e)}
-              aria-label="intervals"
-            />
+        <MinimalAccordion 
+          id='shingleSize' 
+          title="Shingle size" 
+          subTitle="Set number of intervals in the model's detection window."
+          initialIsOpen={false}
+          isUsingDivider={true}>
+         
+          <EuiSpacer size="m" />
+          <EuiText size="xs">
+            <p>
+              The anomaly detector expects the single size to be between 1 and 60. The default shingle size
+              is 8. We recommend that you don't choose 1 unless you have 2 or more features. Smaller values 
+              might increase recall but also false positives. Larger values might be useful for ignoring 
+              noise in a signal. 
+              <a
+                href="https://opensearch.org/docs/latest/observing-your-data/ad/index/"
+                target="_blank"
+              >
+                Learn more <EuiIcon type="popout" />
+              </a>
+            </p>
+          </EuiText>
+          <EuiSpacer size="s" />
 
-          </EuiAccordion>
-        </EuiPanel>
+          <EuiFieldNumber
+            placeholder="8"
+            value={shingleSizeValue}
+            onChange={(e) => shingleSizeOnChange(e)}
+            aria-label="intervals"
+          />
 
-        <EuiSpacer size="s" />
-        <EuiPanel hasBorder={true} hasShadow={true}>
-          <EuiAccordion id='customResultIndex' buttonContent="Custom result index" initialIsOpen={false}>
-            <EuiText size="xs">
-              <p>
-                Store detector results to our own index.
-              </p>
-            </EuiText>
-            <EuiSpacer size="xs" />
-            <EuiCallOut 
-              title="The custom result index can't be changed after the detector is created" 
-              color="warning" 
-              iconType="warning" />
-            <EuiSpacer size="xs" />
-            <EuiCheckbox
-              id="customerResultIndexCheckbox"
-              label="Enable custom result index"
-              checked={checked}
-              onChange={(e) => onCustomerResultIndexCheckboxChange(e)}
-            />
-          </EuiAccordion>
-        </EuiPanel>
+        </MinimalAccordion>
 
-        <EuiSpacer size="s" />
-        <EuiPanel hasBorder={true} hasShadow={true}>
-          <EuiAccordion id='categoricalFields' buttonContent="Categorical fields" initialIsOpen={false}>
-            <EuiText size="xs">
-              <p>
-                Split a single time series into multiple time series based on categorical fields.
-              </p>
-            </EuiText>
-            <EuiSpacer size="xs" />
-            
-            <EuiText size="s">
-              <p>
-                The dashboard does not support high-cardinality detectors. 
-                <a
-                  href="https://opensearch.org/docs/latest/observing-your-data/ad/index/"
-                  target="_blank"
-                >
-                  Learn more <EuiIcon type="popout" />
-                </a>
-              </p>
-            </EuiText>
-          </EuiAccordion>
-        </EuiPanel>
+        <MinimalAccordion 
+          id='customResultIndex' 
+          title="Custom result index" 
+          subTitle="Store detector results to our own index."
+          initialIsOpen={false}
+          isUsingDivider={true}>
 
+          <EuiCallOut 
+            title="The custom result index can't be changed after the detector is created" 
+            color="warning" 
+            iconType="warning" />
+          <EuiSpacer size="xs" />
+          <EuiCheckbox
+            id="customerResultIndexCheckbox"
+            label="Enable custom result index"
+            checked={checked}
+            onChange={(e) => onCustomerResultIndexCheckboxChange(e)}
+          />
+        </MinimalAccordion>
 
-        </EuiAccordion>
-      </EuiPanel>
+        <MinimalAccordion 
+          id='categoricalFields' 
+          title="Categorical fields" 
+          subTitle="Split a single time series into multiple time series based on categorical fields."
+          initialIsOpen={false}
+          isUsingDivider={true}>
+
+          <EuiText size="s">
+            <p>
+              The dashboard does not support high-cardinality detectors. 
+              <a
+                href="https://opensearch.org/docs/latest/observing-your-data/ad/index/"
+                target="_blank"
+              >
+                Learn more <EuiIcon type="popout" />
+              </a>
+            </p>
+          </EuiText>
+        </MinimalAccordion>  
+      </EnhancedAccordion>
 
 
       <EuiSpacer size="l" />
@@ -326,147 +354,25 @@ function CreateNew({ embeddable, closeFlyout, core, services, index }) {
           <h3>Model Features </h3>
         </EuiTitle>
       <EuiSpacer size="m" />
-      <EuiPanel hasBorder={true} hasShadow={true}>
+
+      <EnhancedAccordion
+        id='modelFeatures'
+        title='Features'
+        initialIsOpen={true}>
 
         <EuiSpacer size="s" />
-        <EuiAccordion id='modelFeatures' buttonContent="Features" initialIsOpen={true}>
-        <EuiSpacer size="m" />
 
-          <EuiPanel hasBorder={true} hasShadow={true}>
-          <EuiAccordion id='feature0' buttonContent={featureList[0].label} initialIsOpen={false}>
-            <EuiFormRow label="Feature name">
-              <EuiFieldText value={featureList[0].label} />
-            </EuiFormRow>
-            <EuiFormRow label="Find anomalies based on">
-            <EuiSelect
-              id="featureAnomalies1"
-              options={anomaliesOptions}
-              value={anomaliesValue}
-              onChange={(e) => anomaliesOnChange(e)}
-            />
-          </EuiFormRow>
-
-          <EuiSpacer size="s" />
-          <EuiFlexGroup alignItems={'flexStart'} gutterSize={'m'}>
-              <EuiFlexItem grow={1}>
-              <EuiFormRow label="Field">
-                <EuiFieldText value={featureList[0].metrics[0].field} />
-              </EuiFormRow>
-              </EuiFlexItem>
-
-              <EuiFlexItem grow={1}>
-                <EuiFormRow label="Aggregation method">
-                <EuiSelect
-                  id="aggreationMethod"
-                  options={aggMethodOptions}
-                  value={aggMethodValue}
-                  onChange={(e) => aggMethodOnChange(e)}
-                />
-                </EuiFormRow>
-              </EuiFlexItem>
-            </EuiFlexGroup>
-          
-          </EuiAccordion>
-          <EuiSpacer size="" />
-          <EuiText size="xs">
-            <p>
-             Field: {featureList[0].metrics[0].field}, Aggregation method: {featureList[0].metrics[0].type}
-            </p>
-          </EuiText>
-          </EuiPanel>
-
-          <EuiSpacer size="s" />
-          <EuiPanel hasBorder={true} hasShadow={true}>
-            <EuiAccordion id='feature1' buttonContent={featureList[1].label} initialIsOpen={false}>
-              <EuiFormRow label="Feature name">
-                <EuiFieldText value={featureList[1].label} />
-              </EuiFormRow>
-              <EuiFormRow label="Find anomalies based on">
-              <EuiSelect
-                id="featureAnomalies1"
-                options={anomaliesOptions}
-                value={anomaliesValue}
-                onChange={(e) => anomaliesOnChange(e)}
-              />
-            </EuiFormRow>
-
-            <EuiSpacer size="s" />
-            <EuiFlexGroup alignItems={'flexStart'} gutterSize={'m'}>
-                <EuiFlexItem grow={1}>
-                <EuiFormRow label="Field">
-                  <EuiFieldText value={featureList[1].metrics[0].field} />
-                </EuiFormRow>
-                </EuiFlexItem>
-
-                <EuiFlexItem grow={1}>
-                  <EuiFormRow label="Aggregation method">
-                  <EuiSelect
-                    id="aggreationMethod"
-                    options={aggMethodOptions}
-                    value={aggMethodValue}
-                    onChange={(e) => aggMethodOnChange(e)}
-                  />
-                  </EuiFormRow>
-                </EuiFlexItem>
-              </EuiFlexGroup>
-            
-            </EuiAccordion>
-
-            <EuiSpacer size="" />
-            <EuiText size="xs">
-              <p>
-              Field: {featureList[1].metrics[0].field}, Aggregation method: {featureList[1].metrics[0].type}
-              </p>
-            </EuiText>
-          </EuiPanel>
-
-          <EuiSpacer size="s" />
-          <EuiPanel hasBorder={true} hasShadow={true}>
-            <EuiAccordion id='feature2' buttonContent={featureList[2].label} initialIsOpen={false}>
-              <EuiFormRow label="Feature name">
-                <EuiFieldText value={featureList[2].label} />
-              </EuiFormRow>
-              <EuiFormRow label="Find anomalies based on">
-              <EuiSelect
-                id="featureAnomalies1"
-                options={anomaliesOptions}
-                value={anomaliesValue}
-                onChange={(e) => anomaliesOnChange(e)}
-              />
-            </EuiFormRow>
-
-            <EuiSpacer size="s" />
-            <EuiFlexGroup alignItems={'flexStart'} gutterSize={'m'}>
-                <EuiFlexItem grow={1}>
-                <EuiFormRow label="Field">
-                  <EuiFieldText value={featureList[2].metrics[0].field} />
-                </EuiFormRow>
-                </EuiFlexItem>
-
-                <EuiFlexItem grow={1}>
-                  <EuiFormRow label="Aggregation method">
-                  <EuiSelect
-                    id="aggreationMethod"
-                    options={aggMethodOptions}
-                    value={aggMethodValue}
-                    onChange={(e) => aggMethodOnChange(e)}
-                  />
-                  </EuiFormRow>
-                </EuiFlexItem>
-              </EuiFlexGroup>
-            
-            </EuiAccordion>
-
-            <EuiSpacer size="" />
-            <EuiText size="xs">
-              <p>
-              Field: {featureList[2].metrics[0].field}, Aggregation method: {featureList[2].metrics[0].type}
-              </p>
-            </EuiText>
-          </EuiPanel>
-
-        </EuiAccordion>
-      </EuiPanel>      
+        {renderFeatureList}
+        <EnhancedAccordion
+          {...{
+            id: 'addFeature',
+            isButton: true,
+            iconType: 'plusInCircle',
+            title: 'Add feature',
+          }}
+        >
+        </EnhancedAccordion>
+      </EnhancedAccordion>
     </div>
   );
 }

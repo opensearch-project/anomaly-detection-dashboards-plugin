@@ -6,6 +6,9 @@ import { Action } from '../../../../../src/plugins/ui_actions/public';
 import { createADAction } from '../../action/ad_dashboard_action';
 import Container from '../../components/FeatureAnywhereContextMenu/Container';
 import DocumentationTitle from '../../components/FeatureAnywhereContextMenu/DocumentationTitle';
+import { Provider } from 'react-redux';
+import { CoreServicesContext } from '../../../public/components/CoreServices/CoreServices';
+import configureStore from '../../redux/configureStore';
 
 // This is used to create all actions in the same context menu
 const grouping: Action['grouping'] = [
@@ -22,18 +25,23 @@ export const getActions = ({ core, plugins }) => {
     async ({ embeddable }) => {
       const services = await core.getStartServices();
       const openFlyout = services[0].overlays.openFlyout;
+      const http = services[0].http;
+      const store = configureStore(http);
       const overlay = openFlyout(
         toMountPoint(
-          <Container
-            {...{
-              startingFlyout,
-              embeddable,
-              plugins,
-              closeFlyout: () => overlay.close(),
-              core,
-              services,
-            }}
-          />
+          <Provider store={store}>
+            <CoreServicesContext.Provider value={services}>
+              <Container
+                {...{
+                  startingFlyout,
+                  embeddable,
+                  plugins,
+                  closeFlyout: () => overlay.close(),
+                  core,
+                  services,
+                }}/>              
+              </CoreServicesContext.Provider>
+            </Provider>
         ),
         { size: 'm', className: 'context-menu__flyout' }
       );

@@ -1,15 +1,15 @@
 {
   "id": "anomalyDetectionDashboards",
-  "version": "3.0.0.0",
-  "opensearchDashboardsVersion": "3.0.0",
+  "version": "2.7.0.0",
+  "opensearchDashboardsVersion": "2.7.0",
   "configPath": ["anomaly_detection_dashboards"],
   "requiredPlugins": [
-    "navigation",
     "uiActions",
     "dashboard",
     "embeddable",
     "opensearchDashboardsReact",
-    "savedObjects"
+    "savedObjects",
+    "visAugmenter"
   ],
   "optionalPlugins": [],
   "server": true,
