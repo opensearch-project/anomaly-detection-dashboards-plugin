@@ -34,18 +34,16 @@ import {
   VisLayerExpressionFn,
 } from '../../../../../../src/plugins/vis_augmenter/public';
 import { useDispatch, useSelector } from 'react-redux';
-import { get, snakeCase, find } from 'lodash';
+import { snakeCase, find } from 'lodash';
 import { Formik, FormikHelpers } from 'formik';
 import { formikToDetector, formikToFeatureAttributes } from 'public/pages/ReviewAndCreate/utils/helpers';
-import { RouteComponentProps } from 'react-router';
 import { createDetector, startDetector } from '../../../../public/redux/reducers/ad';
 import { EmbeddablePanel } from '../../../../../../src/plugins/embeddable/public';
 import './styles.scss';
 import EnhancedAccordion from '../EnhancedAccordion';
 import MinimalAccordion from '../MinimalAccordion';
-import { Detector, UNITS, FeatureAttributes } from '../../../../public/models/interfaces';
+import { Detector, UNITS } from '../../../../public/models/interfaces';
 import { AppState } from '../../../../public/redux/reducers';
-import { render } from 'enzyme';
 
 function AddAnomalyDetector({
   embeddable,
@@ -62,53 +60,20 @@ function AddAnomalyDetector({
 
   const [isShowVis, setIsShowVis] = useState(false);
   const title = embeddable.getTitle();
-  const intervalOptions = [
-    { value: 'option_one', text: '10 minutes' },
-    { value: 'option_two', text: '1 minutes' },
-    { value: 'option_three', text: '5 minutes' },
-  ];
-  const [intervalValue, setIntervalalue] = useState(intervalOptions[0].value);
+
+  const [intervalValue, setIntervalalue] = useState(10);
   const intervalOnChange = (e) => {
     setIntervalalue(e.target.value);
   };
-
-  const delayOptions = [
-    { value: 'option_one', text: '10 minutes' },
-    { value: 'option_two', text: '1 minutes' },
-    { value: 'option_three', text: '5 minutes' },
-  ];
-  const [delayValue, setDelayValue] = useState(delayOptions[0].value);
+  
+  const [delayValue, setDelayValue] = useState(1);
   const delayOnChange = (e) => {
     setDelayValue(e.target.value);
   };
 
   const [detectorNameFromVis, setDetectorNameFromVis] = useState(formikToDetectorName(embeddable.vis.title))
   const aggList = embeddable.vis.data.aggs.aggs.filter((feature) => feature.schema == "metric");
-  /**
-   * [
-  {
-    "id": "1",
-    "enabled": true,
-    "type": "percentile_ranks",
-    "params": {
-      "field": "bytes",
-      "values": [
-        0
-      ]
-    },
-    "schema": "metric"
-  },
-  {
-    "id": "3",
-    "enabled": true,
-    "type": "max",
-    "params": {
-      "field": "bytes"
-    },
-    "schema": "metric"
-  }
-]
-   */
+
   const featureList = aggList.filter((feature, index) => index < (aggList.length < 5 ? aggList.length : 5));
   console.log("featureList: ", JSON.stringify(featureList))
 
@@ -386,7 +351,7 @@ function AddAnomalyDetector({
                         subTitle={
                           <EuiText size="m">
                             <p>
-                              Detector interval: 10 minutes; Window delay: 1 minutesss
+                              Detector interval: {intervalValue} minutes; Window delay: {delayValue} minute
                             </p>
                           </EuiText>
                         }>
@@ -397,21 +362,45 @@ function AddAnomalyDetector({
                         </EuiFormRow>
                       
                         <EuiFormRow label="Detector interval">
-                          <EuiSelect
-                            id="detectorIntervalSelection"
-                            options={intervalOptions}
-                            value={intervalValue}
-                            onChange={(e) => intervalOnChange(e)}
-                          />
+                          <EuiFlexGroup gutterSize="s" alignItems="center">
+                            <EuiFlexItem grow={false}>
+                              <EuiFieldNumber
+                                name="detectorInterval"
+                                id="detectorInterval"
+                                data-test-subj="detectionInterval"
+                                min={1}
+                                value={intervalValue}
+                                onChange={(e) => intervalOnChange(e)}
+                              />
+                            </EuiFlexItem>
+                            <EuiFlexItem>
+                              <EuiText>
+                                <p className="minutes">minutes</p>
+                              </EuiText>
+                            </EuiFlexItem>
+                          </EuiFlexGroup>
                         </EuiFormRow>
+
+
                         <EuiFormRow label="Window delay">
-                          <EuiSelect
-                            id="windowDelaySelection"
-                            options={delayOptions}
-                            value={delayValue}
-                            onChange={(e) => delayOnChange(e)}
-                          />
-                        </EuiFormRow>
+                          <EuiFlexGroup gutterSize="s" alignItems="center">
+                              <EuiFlexItem grow={false}>
+                                <EuiFieldNumber
+                                  name="detectorDelay"
+                                  id="detectorDelay"
+                                  data-test-subj="detectorDelay"
+                                  min={1}
+                                  value={delayValue}
+                                  onChange={(e) => delayOnChange(e)}
+                                />
+                              </EuiFlexItem>
+                              <EuiFlexItem>
+                                <EuiText>
+                                  <p className="minutes">minutes</p>
+                                </EuiText>
+                              </EuiFlexItem>
+                            </EuiFlexGroup>
+                          </EuiFormRow>
                       </EnhancedAccordion>
                 
                       <EuiSpacer size="m" />
