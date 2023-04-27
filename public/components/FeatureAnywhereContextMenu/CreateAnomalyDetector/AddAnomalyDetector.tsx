@@ -83,10 +83,37 @@ function AddAnomalyDetector({
   };
 
   const detectorNameFromVis = embeddable.vis.title + ' anomaly detector 1';
-  const seriesSize = embeddable.vis.params.series.length;
-  const featureList = embeddable.vis.params.series.filter((feature, index) => index < (seriesSize < 5 ? seriesSize : 5));
-  console.log("feature list size: " + featureList.length)
-  console.log("feature name: " + featureList[0].label)
+  const aggList = embeddable.vis.data.aggs.aggs.filter((feature) => feature.schema == "metric");
+  /**
+   * [
+  {
+    "id": "1",
+    "enabled": true,
+    "type": "percentile_ranks",
+    "params": {
+      "field": "bytes",
+      "values": [
+        0
+      ]
+    },
+    "schema": "metric"
+  },
+  {
+    "id": "3",
+    "enabled": true,
+    "type": "max",
+    "params": {
+      "field": "bytes"
+    },
+    "schema": "metric"
+  }
+]
+   */
+  const featureList = aggList.filter((feature, index) => index < (aggList.length < 5 ? aggList.length : 5));
+  console.log("featureList: ", JSON.stringify(featureList))
+
+  // console.log("feature list size: " + featureList.length)
+  // console.log("feature name: " + featureList[0].data.label)
 
   const anomaliesOptions = [
     { value: 'option_one', text: 'Field value' },
@@ -102,7 +129,7 @@ function AddAnomalyDetector({
     { value: 'sum', text: 'SUM' },
   ];
   const [aggMethodValue, setAggMethodValue] = useState(
-    featureList[0].metrics[0].type
+    'SUM'
   );
   const aggMethodOnChange = (e) => {
     setAggMethodValue(e.target.value);
@@ -119,20 +146,40 @@ function AddAnomalyDetector({
     setChecked(e.target.checked);
   };
 
+
+  const getFeatureNameFromParams = (id) => {
+    console.log("hereeeee: ", JSON.stringify(embeddable.vis.params.seriesParams))
+    return embeddable.vis.params.seriesParams.map((param) => {
+      if (param.data.id == id) {
+        return param.data.label;
+      }
+    });
+  }
+
   let defaultFeatureList = []
   featureList.map((feature, index) => (
     defaultFeatureList.push({
       id: feature.id,
-      featureName: feature.label,
-      field: feature.metrics[0].field,
-      aggMethod: feature.metrics[0].type
+      featureName: getFeatureNameFromParams(feature.id),
+      field: feature.params.field.name,
+      aggMethod: feature.type.title
     })
-  ))
+  )) 
 
   const [feautreListToRender, setFeatureListToRender] = useState(defaultFeatureList)
 
   const handleDeleteFeature = (id) => {
     setFeatureListToRender(feautreListToRender.filter(feature => feature.id !== id))
+  }
+
+  const handleAddFeature =() => {
+    const emptyFeatureComponenet = {
+      id: '',
+      featureName: '',
+      field: '',
+      aggMethod: ''
+    }
+    setFeatureListToRender(feautreListToRender.push(emptyFeatureComponenet))
   }
 
 
@@ -176,7 +223,7 @@ function AddAnomalyDetector({
   }
 
   const initialDetectorValue = {
-    name: 'eCommerce_Promotion_Tracking_anomaly_detector_232021',
+    name: 'max_byte_212',
     indices:  formikToIndicesArray(embeddable.vis.params.index_pattern),
     timeField: embeddable.vis.params.time_field,
     detectionInterval: {
@@ -192,13 +239,13 @@ function AddAnomalyDetector({
     resultIndex: undefined,
   }
 
-  // function formikToDetectorName(title) {
-  //   const detectorName = title + "anomaly detector 1";
-  //   detectorName.replace(/ /g, '_');
-  //   detectorName.replace('[', '');
-  //   detectorName.replace(']', '');
-  //   return detectorName;
-  // }
+  function formikToDetectorName(title) {
+    const detectorName = title + "anomaly detector 1";
+    detectorName.replace(/ /g, '_');
+    detectorName.replace('[', '');
+    detectorName.replace(']', '');
+    return detectorName;
+  }
 
   function formikToIndicesArray(indexString) {
     return [indexString];
@@ -220,7 +267,7 @@ function AddAnomalyDetector({
   function formikToAggregation(value) {
     return {
       [snakeCase(value.label)]: {
-        sum: { field: value.metrics[0].field },
+        sum: { field: value.params.field },
       },
     }
   }
@@ -527,7 +574,7 @@ function AddAnomalyDetector({
                           )
                         })}
                         <EuiButton
-                          onClick={() => window.alert('Button clicked')}
+                          onClick={() => handleAddFeature()}
                           iconType="plusInCircle">
                           Add feature
                         </EuiButton>
