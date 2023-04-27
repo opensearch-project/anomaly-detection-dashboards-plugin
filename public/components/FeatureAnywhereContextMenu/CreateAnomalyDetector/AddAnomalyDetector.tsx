@@ -36,7 +36,6 @@ import {
 import { useDispatch, useSelector } from 'react-redux';
 import { snakeCase, find } from 'lodash';
 import { Formik, FormikHelpers } from 'formik';
-import { formikToDetector, formikToFeatureAttributes } from 'public/pages/ReviewAndCreate/utils/helpers';
 import { createDetector, startDetector } from '../../../../public/redux/reducers/ad';
 import { EmbeddablePanel } from '../../../../../../src/plugins/embeddable/public';
 import './styles.scss';
@@ -44,6 +43,7 @@ import EnhancedAccordion from '../EnhancedAccordion';
 import MinimalAccordion from '../MinimalAccordion';
 import { Detector, UNITS } from '../../../../public/models/interfaces';
 import { AppState } from '../../../../public/redux/reducers';
+import { AGGREGATION_TYPES } from '../../../../public/pages/ConfigureModel/utils/constants';
 
 function AddAnomalyDetector({
   embeddable,
@@ -89,13 +89,11 @@ function AddAnomalyDetector({
     setAnomaliesValue(e.target.value);
   };
 
-  const aggMethodOptions = [
-    { value: 'avg', text: 'AVG' },
-    { value: 'sum', text: 'SUM' },
+  const AGGREGATION_TYPES = [
+    { value: 'avg', text: 'average()' },
   ];
-  const [aggMethodValue, setAggMethodValue] = useState(
-    'SUM'
-  );
+  
+  const [aggMethodValue, setAggMethodValue] = useState();
   const aggMethodOnChange = (e) => {
     setAggMethodValue(e.target.value);
   };
@@ -147,9 +145,9 @@ function AddAnomalyDetector({
   const handleAddFeature =() => {
     const emptyFeatureComponenet = {
       id: '11',
-      featureName: 'test',
+      featureName: 'featureName',
       field: 'byte',
-      aggMethod: 'min'
+      aggMethod: 'avg'
     }
     setFeatureListToRender([...feautreListToRender, emptyFeatureComponenet])
   }
@@ -563,8 +561,8 @@ function AddAnomalyDetector({
                                     <EuiFormRow label="Aggregation method">
                                     <EuiSelect
                                       id="aggreationMethod"
-                                      options={aggMethodOptions}
-                                      value={aggMethodValue}
+                                      options={AGGREGATION_TYPES}
+                                      value={feature.aggMethod}
                                       onChange={(e) => aggMethodOnChange(e)}
                                     />
                                     </EuiFormRow>
