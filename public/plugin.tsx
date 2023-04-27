@@ -19,6 +19,7 @@ import { CONTEXT_MENU_TRIGGER } from '../../../src/plugins/embeddable/public';
 import { ACTION_AD } from './action/ad_dashboard_action';
 import { PLUGIN_NAME } from './utils/constants';
 import { getActions } from './utils/contextMenu/getActions';
+import { setSavedFeatureAnywhereLoader } from './services';
 
 declare module '../../../src/plugins/ui_actions/public' {
   export interface ActionContextMapping {
@@ -53,7 +54,9 @@ export class AnomalyDetectionOpenSearchDashboardsPlugin implements Plugin {
     });
   }
 
-  public start() {}
-
+  public start(core: CoreStart, plugins) {
+    setSavedFeatureAnywhereLoader(plugins.visAugmenter.savedAugmentVisLoader);
+    return {};
+  }
   public stop() {}
 }
