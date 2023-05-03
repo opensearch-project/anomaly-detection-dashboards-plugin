@@ -69,7 +69,7 @@ export const getActions = ({ core, plugins }) => {
         onClick: getOnClick('associated'),
       },
       {
-        id: 'documentation',
+        id: 'documentationAnomalyDetector',
         title: <DocumentationTitle />,
         icon: 'documentation' as EuiIconType,
         order: 98,

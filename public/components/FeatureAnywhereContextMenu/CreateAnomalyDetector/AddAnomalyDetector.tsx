@@ -35,7 +35,7 @@ import {
 } from '../../../../../../src/plugins/vis_augmenter/public';
 import { useDispatch, useSelector } from 'react-redux';
 import { snakeCase, find } from 'lodash';
-import { Formik, FormikHelpers } from 'formik';
+import { Field, FieldProps, Form, Formik, FormikHelpers } from 'formik';
 import { createDetector, startDetector } from '../../../../public/redux/reducers/ad';
 import { EmbeddablePanel } from '../../../../../../src/plugins/embeddable/public';
 import './styles.scss';
@@ -44,6 +44,7 @@ import MinimalAccordion from '../MinimalAccordion';
 import { Detector, UNITS } from '../../../../public/models/interfaces';
 import { AppState } from '../../../../public/redux/reducers';
 import { AGGREGATION_TYPES } from '../../../../public/pages/ConfigureModel/utils/constants';
+import { DataFilterList } from '../../../../public/pages/DefineDetector/components/DataFilterList/DataFilterList';
 
 function AddAnomalyDetector({
   embeddable,
@@ -59,19 +60,27 @@ function AddAnomalyDetector({
 
 
   const [isShowVis, setIsShowVis] = useState(false);
+  const [accordionsOpen, setAccordionsOpen] = useState({});
+  const [detectorNameFromVis, setDetectorNameFromVis] = useState(formikToDetectorName(embeddable.vis.title))
+  const [intervalValue, setIntervalalue] = useState(10);
+  const [delayValue, setDelayValue] = useState(1);
+
+  const onAccordionToggle = (key) => {
+    const newAccordionsOpen = { ...accordionsOpen };
+    newAccordionsOpen[key] = !accordionsOpen[key];
+    setAccordionsOpen(newAccordionsOpen);
+  };
+
   const title = embeddable.getTitle();
 
-  const [intervalValue, setIntervalalue] = useState(10);
   const intervalOnChange = (e) => {
     setIntervalalue(e.target.value);
   };
   
-  const [delayValue, setDelayValue] = useState(1);
   const delayOnChange = (e) => {
     setDelayValue(e.target.value);
   };
 
-  const [detectorNameFromVis, setDetectorNameFromVis] = useState(formikToDetectorName(embeddable.vis.title))
   const aggList = embeddable.vis.data.aggs.aggs.filter((feature) => feature.schema == "metric");
 
   const featureList = aggList.filter((feature, index) => index < (aggList.length < 5 ? aggList.length : 5));
@@ -90,7 +99,7 @@ function AddAnomalyDetector({
   };
 
   const AGGREGATION_TYPES = [
-    { value: 'avg', text: 'average()' },
+    { value: 'sum', text: 'sum()' },
   ];
   
   const [aggMethodValue, setAggMethodValue] = useState();
@@ -98,7 +107,7 @@ function AddAnomalyDetector({
     setAggMethodValue(e.target.value);
   };
 
-  const [shingleSizeValue, setShingleSizeValue] = useState('');
+  const [shingleSizeValue, setShingleSizeValue] = useState(8);
 
   const shingleSizeOnChange = (e) => {
     setShingleSizeValue(e.target.value);
@@ -110,19 +119,11 @@ function AddAnomalyDetector({
   };
 
   const getFeatureNameFromParams = (id) => {
-    // const name = embeddable.vis.params.seriesParams.find((param) => get(param, 'data.id', '') == id).label
-    // console.log("name: ", embeddable.vis.params.seriesParams)
-    // embeddable.vis.params.seriesParams.map((param) => {
-    //   console.log("param: ", JSON.stringify(get(param.data.label, 'data.id', '') == id))
-
-    // });
-    // return "test";
     let name = find(embeddable.vis.params.seriesParams, function (param) {
       if (param.data.id === id) {
         return true
       }
     })
-    console.log("name: ", name)
     return name.data.label
   }
 
@@ -143,9 +144,10 @@ function AddAnomalyDetector({
   }
 
   const handleAddFeature =() => {
+    let uuid = Math.floor(100000 + Math.random() * 900000);
     const emptyFeatureComponenet = {
-      id: '11',
-      featureName: 'featureName',
+      id: uuid,
+      featureName: 'feature_' + uuid,
       field: 'byte',
       aggMethod: 'avg'
     }
@@ -153,14 +155,13 @@ function AddAnomalyDetector({
   }
 
 
-  const handleSubmit = (values) => {
-    console.log("values: " + JSON.stringify(values))
+  const handleSubmit = () => {
     try {
-      dispatch(createDetector(values)).then(async (response) => {
+      dispatch(createDetector(initialDetectorValue)).then(async (response) => {
         console.log("detector id here: " + response.response.id)
         dispatch(startDetector(response.response.id)).then((startDetectorResponse) => {
           core.notifications.toasts.addSuccess(
-            `Detector created: ${values.name}`
+            `Detector created: ${initialDetectorValue.name}`
           );
         })
         enum VisLayerTypes {
@@ -195,16 +196,16 @@ function AddAnomalyDetector({
   }
 
   const initialDetectorValue = {
-    name: formikToDetectorName(embeddable.vis.title),
+    name: detectorNameFromVis,
     indices:  formikToIndicesArray(embeddable.vis.data.aggs.indexPattern.title),
     timeField: embeddable.vis.data.indexPattern.timeFieldName,
     detectionInterval: {
-      period: { interval: 10, unit: UNITS.MINUTES },
+      period: { interval: intervalValue, unit: UNITS.MINUTES },
     },
     windowDelay: {
-      period: { interval: 1, unit: UNITS.MINUTES },
+      period: { interval: delayValue, unit: UNITS.MINUTES },
     },
-    shingleSize: 8,
+    shingleSize: shingleSizeValue,
     featureAttributes: formikToFeatureAttributes(featureList),
     filterQuery: { match_all: {} },
     description: '',
@@ -247,12 +248,12 @@ function AddAnomalyDetector({
 
   return (
     <div className="add-anomaly-detector">
-      <Formik initialValues={initialDetectorValue}
+      <Formik 
+        initialValues={initialDetectorValue}
         onSubmit={handleSubmit}
         validateOnChange={false}>
-          {(formikProps) => {
-            return (
-              <>
+          {(formikProps) => (
+            <Form>
               <EuiFlyoutHeader hasBorder>
                 <EuiTitle>
                   <h2 id="add-anomaly-detector__title">Add anomaly detector</h2>
@@ -346,6 +347,8 @@ function AddAnomalyDetector({
                         id='detectorDetails'
                         title={detectorNameFromVis}
                         initialIsOpen={false}
+                        isOpen={accordionsOpen.detectorDetails}
+                        onToggle={() => onAccordionToggle('detectorDetails')}
                         subTitle={
                           <EuiText size="m">
                             <p>
@@ -353,11 +356,13 @@ function AddAnomalyDetector({
                             </p>
                           </EuiText>
                         }>
+
                         <EuiFormRow label="Detector name">
                           <EuiFieldText 
                             value={detectorNameFromVis}
                             onChange={(e) => setDetectorNameFromVis(e.target.value)} />
                         </EuiFormRow>
+                        
                       
                         <EuiFormRow label="Detector interval">
                           <EuiFlexGroup gutterSize="s" alignItems="center">
@@ -406,6 +411,8 @@ function AddAnomalyDetector({
                       <EnhancedAccordion
                         id='advancedConfiguration'
                         title="Advanced Configuration"
+                        isOpen={accordionsOpen.advancedConfiguration}
+                        onToggle={() => onAccordionToggle('advancedConfiguration')}
                         initialIsOpen={false}>
                 
                         <EuiSpacer size="s" />
@@ -425,11 +432,13 @@ function AddAnomalyDetector({
                           <EuiButtonEmpty
                             size="xs"
                             onClick={() => {
-                              //push(EMPTY_UI_FILTER);
-                            }}
-                          >
+
+                            }}>
                             + Add data filter
                           </EuiButtonEmpty>
+                          {/* <DataFilterList
+                            formikProps={formikProps}
+                          /> */}
                         </MinimalAccordion>
                 
                         <MinimalAccordion 
@@ -457,7 +466,6 @@ function AddAnomalyDetector({
                           <EuiSpacer size="s" />
                 
                           <EuiFieldNumber
-                            placeholder="8"
                             value={shingleSizeValue}
                             onChange={(e) => shingleSizeOnChange(e)}
                             aria-label="intervals"
@@ -516,6 +524,8 @@ function AddAnomalyDetector({
                       <EnhancedAccordion
                         id='modelFeatures'
                         title='Features'
+                        isOpen={true}
+                        onToggle={() => onAccordionToggle('modelFeatures')}
                         initialIsOpen={true}>
                 
                         <EuiSpacer size="s" />
@@ -581,6 +591,8 @@ function AddAnomalyDetector({
                           Add feature
                         </EuiButton>
                       </div>
+                      <EuiSpacer size="m" />
+
                     </div>
                   )}
                 </div>
@@ -601,9 +613,8 @@ function AddAnomalyDetector({
                   </EuiFlexItem>
                 </EuiFlexGroup>
               </EuiFlyoutFooter>
-              </>
-            )
-          }}
+            </Form>
+          )}
       </Formik>
     </div>
   );
