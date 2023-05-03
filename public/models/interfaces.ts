@@ -191,7 +191,7 @@ export type Detector = {
   windowDelay: { period: Schedule };
   detectionInterval: { period: Schedule };
   shingleSize: number;
-  uiMetadata: UiMetaData;
+  uiMetadata?: UiMetaData;
   lastUpdateTime: number;
   enabled?: boolean;
   enabledTime?: number;

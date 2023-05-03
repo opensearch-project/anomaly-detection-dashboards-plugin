@@ -174,6 +174,7 @@ export function ReviewAndCreate(props: ReviewAndCreateProps) {
       setIsCreatingDetector(true);
       formikHelpers.setSubmitting(true);
       const detectorToCreate = formikToDetector(values);
+      console.log('detector to create: ', detectorToCreate);
       dispatch(createDetector(detectorToCreate))
         .then((response: any) => {
           core.notifications.toasts.addSuccess(

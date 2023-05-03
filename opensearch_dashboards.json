@@ -4,12 +4,15 @@
   "opensearchDashboardsVersion": "3.0.0",
   "configPath": ["anomaly_detection_dashboards"],
   "requiredPlugins": [
-    "navigation",
     "uiActions",
     "dashboard",
     "embeddable",
     "opensearchDashboardsReact",
-    "savedObjects"
+    "savedObjects",
+    "visAugmenter",
+    "opensearchDashboardsUtils",
+    "data",
+    "expressions"
   ],
   "optionalPlugins": [],
   "server": true,

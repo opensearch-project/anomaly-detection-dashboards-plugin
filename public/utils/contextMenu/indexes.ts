@@ -10,7 +10,11 @@ export const useIndex = (embeddable) => {
       });
 
       const newIndex = [
-        { health: 'green', label: 'opensearch_dashboards_sample_data_logs', status: 'open' },
+        {
+          health: 'green',
+          label: 'opensearch_dashboards_sample_data_logs',
+          status: 'open',
+        },
       ];
 
       setIndex(newIndex);

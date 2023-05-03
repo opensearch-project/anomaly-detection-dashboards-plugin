@@ -19,17 +19,18 @@ const EnhancedAccordion = ({
   isButton,
   iconType,
   extraAction,
+  initialIsOpen,
 }) => (
   <div className="euiPanel euiPanel--borderRadiusMedium euiPanel--plain euiPanel--hasShadow euiPanel--hasBorder euiPanel--flexGrowZero euiSplitPanel euiSplitPanel--row euiCheckableCard">
     <div className="euiPanel euiPanel--paddingMedium euiPanel--borderRadiusNone euiPanel--subdued euiPanel--noShadow euiPanel--noBorder euiPanel--flexGrowZero euiSplitPanel__inner">
       <EuiButtonIcon
         color="text"
-        onClick={onToggle}
         iconType="arrowRight"
         aria-label="Expand"
-        className={`enhanced-accordion__arrow ${isOpen ? 'enhanced-accordion__arrow--open' : ''} ${
-          isButton ? 'enhanced-accordion__arrow--hidden' : ''
-        }`}
+        onClick={onToggle}
+        className={`enhanced-accordion__arrow ${
+          isOpen ? 'enhanced-accordion__arrow--open' : ''
+        } ${isButton ? 'enhanced-accordion__arrow--hidden' : ''}`}
       />
     </div>
     <div className="enhanced-accordion__title-panel euiPanel euiPanel--borderRadiusNone euiPanel--transparent euiPanel--noShadow euiPanel--noBorder euiSplitPanel__inner">
@@ -37,9 +38,12 @@ const EnhancedAccordion = ({
         <EuiAccordion
           id={id}
           arrowDisplay="none"
-          extraAction={<div className="enhanced-accordion__extra">{extraAction}</div>}
+          extraAction={
+            <div className="enhanced-accordion__extra">{extraAction}</div>
+          }
           forceState={isOpen ? 'open' : 'closed'}
           onToggle={onToggle}
+          initialIsOpen={initialIsOpen}
           buttonContent={
             <div className="enhanced-accordion__title">
               <EuiTitle
@@ -68,11 +72,9 @@ const EnhancedAccordion = ({
       )}
       {isButton && (
         <EuiButtonEmpty
-          onClick={onToggle}
           iconType={iconType}
           className="enhanced-accordion__button"
-        >
-        </EuiButtonEmpty>
+        ></EuiButtonEmpty>
       )}
     </div>
   </div>

@@ -10,7 +10,14 @@ import {
 } from '@elastic/eui';
 import './styles.scss';
 
-function MinimalAccordion({ id, isOpen, onToggle, title, subTitle, children, isUsingDivider }) {
+function MinimalAccordion({
+  id,
+  title,
+  subTitle,
+  children,
+  isUsingDivider,
+  extraAction,
+}) {
   return (
     <div className="minimal-accordion">
       {isUsingDivider && (
@@ -33,8 +40,9 @@ function MinimalAccordion({ id, isOpen, onToggle, title, subTitle, children, isU
             )}
           </>
         }
-        forceState={isOpen ? 'open' : 'closed'}
-        onToggle={onToggle}
+        extraAction={
+          <div className="enhanced-accordion__extra">{extraAction}</div>
+        }
       >
         <EuiPanel
           hasShadow={false}
