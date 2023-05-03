@@ -36,7 +36,7 @@ function CreateNew({ embeddable, closeFlyout, core, services, index }) {
     goBack: closeFlyout,
   };
 
-  // const createDetectorProps = {
+  // const Create = {
   //   ...history,
   //   history,
   //   httpClient: core.http,
@@ -51,7 +51,7 @@ function CreateNew({ embeddable, closeFlyout, core, services, index }) {
   //   isMinimal: true,
   //   defaultName: `${title} anomaly detector 1`,
   //   defaultIndex: index,
-  //   defaultTimeField: embeddable.vis.params.time_field,
+  //   defaultTimeField: wme_field,
   //   isDefaultTriggerEnabled: true,
   // };
 
