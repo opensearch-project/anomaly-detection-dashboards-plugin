@@ -19,7 +19,7 @@ const EnhancedAccordion = ({
   isButton,
   iconType,
   extraAction,
-  initialIsOpen
+  initialIsOpen,
 }) => (
   <div className="euiPanel euiPanel--borderRadiusMedium euiPanel--plain euiPanel--hasShadow euiPanel--hasBorder euiPanel--flexGrowZero euiSplitPanel euiSplitPanel--row euiCheckableCard">
     <div className="euiPanel euiPanel--paddingMedium euiPanel--borderRadiusNone euiPanel--subdued euiPanel--noShadow euiPanel--noBorder euiPanel--flexGrowZero euiSplitPanel__inner">
@@ -28,9 +28,9 @@ const EnhancedAccordion = ({
         iconType="arrowRight"
         aria-label="Expand"
         onClick={onToggle}
-        className={`enhanced-accordion__arrow ${isOpen ? 'enhanced-accordion__arrow--open' : ''} ${
-          isButton ? 'enhanced-accordion__arrow--hidden' : ''
-        }`}
+        className={`enhanced-accordion__arrow ${
+          isOpen ? 'enhanced-accordion__arrow--open' : ''
+        } ${isButton ? 'enhanced-accordion__arrow--hidden' : ''}`}
       />
     </div>
     <div className="enhanced-accordion__title-panel euiPanel euiPanel--borderRadiusNone euiPanel--transparent euiPanel--noShadow euiPanel--noBorder euiSplitPanel__inner">
@@ -38,7 +38,9 @@ const EnhancedAccordion = ({
         <EuiAccordion
           id={id}
           arrowDisplay="none"
-          extraAction={<div className="enhanced-accordion__extra">{extraAction}</div>}
+          extraAction={
+            <div className="enhanced-accordion__extra">{extraAction}</div>
+          }
           forceState={isOpen ? 'open' : 'closed'}
           onToggle={onToggle}
           initialIsOpen={initialIsOpen}
@@ -72,8 +74,7 @@ const EnhancedAccordion = ({
         <EuiButtonEmpty
           iconType={iconType}
           className="enhanced-accordion__button"
-        >
-        </EuiButtonEmpty>
+        ></EuiButtonEmpty>
       )}
     </div>
   </div>

@@ -55,7 +55,7 @@ export class AnomalyDetectionOpenSearchDashboardsPlugin implements Plugin {
       plugins.uiActions.addTriggerAction(CONTEXT_MENU_TRIGGER, action);
     });
 
-        // Set the HTTP client so it can be pulled into expression fns to make
+    // Set the HTTP client so it can be pulled into expression fns to make
     // direct server-side calls
     setClient(core.http);
 

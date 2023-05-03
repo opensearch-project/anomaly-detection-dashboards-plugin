@@ -10,13 +10,14 @@ import {
 } from '@elastic/eui';
 import './styles.scss';
 
-function MinimalAccordion({ 
-  id, 
-  title, 
-  subTitle, 
-  children, 
+function MinimalAccordion({
+  id,
+  title,
+  subTitle,
+  children,
   isUsingDivider,
-  extraAction }) {
+  extraAction,
+}) {
   return (
     <div className="minimal-accordion">
       {isUsingDivider && (
@@ -39,7 +40,9 @@ function MinimalAccordion({
             )}
           </>
         }
-        extraAction={<div className="enhanced-accordion__extra">{extraAction}</div>}
+        extraAction={
+          <div className="enhanced-accordion__extra">{extraAction}</div>
+        }
       >
         <EuiPanel
           hasShadow={false}

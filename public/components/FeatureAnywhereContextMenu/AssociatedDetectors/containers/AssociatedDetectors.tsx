@@ -47,7 +47,7 @@ interface ConfirmModalState {
   affectedDetector: DetectorListItem;
 }
 
-function AssociatedDetectors({ embeddable, closeFlyout })  {
+function AssociatedDetectors({ embeddable, closeFlyout }) {
   const core = React.useContext(CoreServicesContext) as CoreStart;
   const dispatch = useDispatch();
   const allDetectors = useSelector((state: AppState) => state.ad.detectorList);
@@ -332,7 +332,6 @@ function AssociatedDetectors({ embeddable, closeFlyout })  {
       </EuiFlyout>
     </div>
   );
-};
-
+}
 
 export default AssociatedDetectors;

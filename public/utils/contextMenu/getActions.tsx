@@ -39,46 +39,53 @@ export const getActions = ({ core, plugins }) => {
                   closeFlyout: () => overlay.close(),
                   core,
                   services,
-                }}/>              
-              </CoreServicesContext.Provider>
-            </Provider>
+                }}
+              />
+            </CoreServicesContext.Provider>
+          </Provider>
         ),
         { size: 'm', className: 'context-menu__flyout' }
       );
     };
 
-    return [
-      {
-        grouping,
-        id: 'createAnomalyDetector',
-        title: i18n.translate('dashboard.actions.adMenuItem.createAnomalyDetector.displayName', {
+  return [
+    {
+      grouping,
+      id: 'createAnomalyDetector',
+      title: i18n.translate(
+        'dashboard.actions.adMenuItem.createAnomalyDetector.displayName',
+        {
           defaultMessage: 'Create anomaly detector',
-        }),
-        icon: 'plusInCircle' as EuiIconType,
-        order: 100,
-        onClick: getOnClick('create'),
-      },
-      {
-        grouping,
-        id: 'associatedAnomalyDetector',
-        title: i18n.translate('dashboard.actions.adMenuItem.associatedAnomalyDetector.displayName', {
+        }
+      ),
+      icon: 'plusInCircle' as EuiIconType,
+      order: 100,
+      onClick: getOnClick('create'),
+    },
+    {
+      grouping,
+      id: 'associatedAnomalyDetector',
+      title: i18n.translate(
+        'dashboard.actions.adMenuItem.associatedAnomalyDetector.displayName',
+        {
           defaultMessage: 'Associated anomaly detector',
-        }),
-        icon: 'gear' as EuiIconType,
-        order: 99,
-        onClick: getOnClick('associated'),
+        }
+      ),
+      icon: 'gear' as EuiIconType,
+      order: 99,
+      onClick: getOnClick('associated'),
+    },
+    {
+      id: 'documentationAnomalyDetector',
+      title: <DocumentationTitle />,
+      icon: 'documentation' as EuiIconType,
+      order: 98,
+      onExecute: () => {
+        window.open(
+          'https://opensearch.org/docs/latest/monitoring-plugins/anomaly-detection/index/',
+          '_blank'
+        );
       },
-      {
-        id: 'documentationAnomalyDetector',
-        title: <DocumentationTitle />,
-        icon: 'documentation' as EuiIconType,
-        order: 98,
-        onExecute: () => {
-          window.open(
-            'https://opensearch.org/docs/latest/monitoring-plugins/anomaly-detection/index/',
-            '_blank'
-          );
-        },
-      },
-    ].map((options) => createADAction({ ...options, grouping }));
-}
+    },
+  ].map((options) => createADAction({ ...options, grouping }));
+};

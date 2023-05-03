@@ -10,6 +10,5 @@ import { SavedObjectLoader } from '../../../src/plugins/saved_objects/public';
 export const [getSavedFeatureAnywhereLoader, setSavedFeatureAnywhereLoader] =
   createGetterSetter<SavedObjectLoader>('savedFeatureAnywhereLoader');
 
-
 export const [getClient, setClient] =
-createGetterSetter<CoreStart['http']>('http');
+  createGetterSetter<CoreStart['http']>('http');
