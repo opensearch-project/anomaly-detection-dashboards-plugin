@@ -26,7 +26,7 @@ import {
   EuiFieldNumber,
   EuiCallOut,
   EuiButtonEmpty,
-  EuiPanel
+  EuiPanel,
 } from '@elastic/eui';
 import './styles.scss';
 import {
@@ -46,18 +46,27 @@ import { EmbeddablePanel } from '../../../../../../src/plugins/embeddable/public
 import './styles.scss';
 import EnhancedAccordion from '../EnhancedAccordion';
 import MinimalAccordion from '../MinimalAccordion';
-import { FeatureAttributes, FEATURE_TYPE, UNITS } from '../../../../public/models/interfaces';
+import {
+  FeatureAttributes,
+  FEATURE_TYPE,
+  UNITS,
+} from '../../../../public/models/interfaces';
 import { AppState } from '../../../../public/redux/reducers';
-import { AGGREGATION_TYPES, FEATURE_TYPE_OPTIONS } from '../../../../public/pages/ConfigureModel/utils/constants';
+import {
+  AGGREGATION_TYPES,
+  FEATURE_TYPE_OPTIONS,
+} from '../../../../public/pages/ConfigureModel/utils/constants';
 import { DataFilterList } from '../../../../public/pages/DefineDetector/components/DataFilterList/DataFilterList';
-import { isInvalid, validateDetectorName } from '../../../../public/utils/utils';
+import {
+  isInvalid,
+  validateDetectorName,
+} from '../../../../public/utils/utils';
 import { CUSTOM_AD_RESULT_INDEX_PREFIX } from '../../../../server/utils/constants';
 import { Fragment } from 'react';
 import { formikToSimpleAggregation } from '../../../../public/pages/ConfigureModel/utils/helpers';
 import { FeaturesFormikValues } from '../../../../public/pages/ConfigureModel/models/interfaces';
 import { AggregationSelector } from '../../../../public/pages/ConfigureModel/components/AggregationSelector';
 import { CustomAggregation } from '../../../../public/pages/ConfigureModel/components/CustomAggregation';
-
 
 function AddAnomalyDetector({
   embeddable,
@@ -81,7 +90,6 @@ function AddAnomalyDetector({
 
   const [enabled, setEnabled] = useState<boolean>(false);
 
-
   const title = embeddable.getTitle();
 
   const onAccordionToggle = (key) => {
@@ -92,11 +100,11 @@ function AddAnomalyDetector({
   const onDetectorNameChange = (e, field) => {
     field.onChange(e);
     setDetectorNameFromVis(e.target.value);
-  }
+  };
   const onIntervalChange = (e, field) => {
     field.onChange(e);
     setIntervalalue(e.target.value);
-  }
+  };
   const onDelayChange = (e, field) => {
     field.onChange(e);
     setDelayValue(e.target.value);
@@ -160,7 +168,7 @@ function AddAnomalyDetector({
   };
 
   const handleSubmit = (values) => {
-    console.log("submit")
+    console.log('submit');
     try {
       dispatch(createDetector(values)).then(async (response) => {
         console.log('detector id here: ' + response.response.id);
@@ -220,7 +228,7 @@ function AddAnomalyDetector({
     description: '',
     resultIndex: undefined,
     filters: [],
-    featureList: featureListToFormik(featureList)
+    featureList: featureListToFormik(featureList),
   };
 
   function formikToDetectorName(title) {
@@ -264,11 +272,11 @@ function AddAnomalyDetector({
         featureName: getFeatureNameFromParams(feature.id),
         featureEnabled: true,
         featureType: FEATURE_TYPE.SIMPLE,
-        aggregationBy: "avg",
-        aggregationOf: [{label: feature.params.field.name}],
-        aggregationQuery: formikToAggregation(feature)
-      }
-    })
+        aggregationBy: 'avg',
+        aggregationOf: [{ label: feature.params.field.name }],
+        aggregationQuery: formikToAggregation(feature),
+      };
+    });
   }
 
   // const handleValidateName = async (detectorName: string) => {
@@ -424,14 +432,12 @@ function AddAnomalyDetector({
                               data-test-subj="detectorNameTextInputFlyout"
                               isInvalid={isInvalid(field.name, form)}
                               {...field}
-                              onChange={e =>
-                                onDetectorNameChange(e, field)
-                              }
+                              onChange={(e) => onDetectorNameChange(e, field)}
                             />
                           </EuiFormRow>
                         )}
                       </Field>
-                      
+
                       <Field name="detectionInterval">
                         {({ field, form }: FieldProps) => (
                           <EuiFormRow label="Detector interval">
@@ -441,7 +447,7 @@ function AddAnomalyDetector({
                                   data-test-subj="detectionIntervalFlyout"
                                   min={1}
                                   {...field}
-                                  onChange={e => onIntervalChange(e, field)}
+                                  onChange={(e) => onIntervalChange(e, field)}
                                 />
                               </EuiFlexItem>
                               <EuiFlexItem>
@@ -453,7 +459,7 @@ function AddAnomalyDetector({
                           </EuiFormRow>
                         )}
                       </Field>
-                      
+
                       <Field name="windowDelay">
                         {({ field, form }: FieldProps) => (
                           <EuiFormRow label="Window delay">
@@ -465,7 +471,7 @@ function AddAnomalyDetector({
                                   data-test-subj="detectorDelay"
                                   {...field}
                                   min={1}
-                                  onChange={e => onDelayChange(e, field)}
+                                  onChange={(e) => onDelayChange(e, field)}
                                 />
                               </EuiFlexItem>
                               <EuiFlexItem>
@@ -502,9 +508,7 @@ function AddAnomalyDetector({
                           <p>Source: {embeddable.vis.params.index_pattern}</p>
                         </EuiText>
                         <EuiSpacer size="s" />
-                        <DataFilterList
-                            formikProps={formikProps}
-                          />
+                        <DataFilterList formikProps={formikProps} />
                       </MinimalAccordion>
 
                       <MinimalAccordion
@@ -666,7 +670,10 @@ function AddAnomalyDetector({
                                       {...field}
                                       options={FEATURE_TYPE_OPTIONS}
                                       onChange={(e) => {
-                                        console.log("change", JSON.stringify(field))
+                                        console.log(
+                                          'change',
+                                          JSON.stringify(field)
+                                        );
                                         // formikProps.handleChange(e);
                                         // if (e.currentTarget.value === FEATURE_TYPE.CUSTOM) {
                                         //   const aggregationQuery = {
@@ -682,9 +689,14 @@ function AddAnomalyDetector({
                                       }}
                                     />
                                   </EuiFormRow>
-                                  {field.value.featureList[index].featureType === FEATURE_TYPE.SIMPLE && <AggregationSelector index={index} />}
-                                  {field.value.featureList[index].featureType === FEATURE_TYPE.CUSTOM && <CustomAggregation index={index} />}
-
+                                  {field.value.featureList[index]
+                                    .featureType === FEATURE_TYPE.SIMPLE && (
+                                    <AggregationSelector index={index} />
+                                  )}
+                                  {field.value.featureList[index]
+                                    .featureType === FEATURE_TYPE.CUSTOM && (
+                                    <CustomAggregation index={index} />
+                                  )}
                                 </Fragment>
                               )}
                             </Field>
@@ -718,8 +730,8 @@ function AddAnomalyDetector({
                     data-test-subj="adAnywhereCreateDetectorButton"
                     isLoading={formikProps.isSubmitting}
                     onClick={() => {
-                      console.log("formikProps: ", JSON.stringify(formikProps))
-                      formikProps.handleSubmit()
+                      console.log('formikProps: ', JSON.stringify(formikProps));
+                      formikProps.handleSubmit();
                     }}
                   >
                     {mode === 'existing' ? 'Associate' : 'Create'} detector
