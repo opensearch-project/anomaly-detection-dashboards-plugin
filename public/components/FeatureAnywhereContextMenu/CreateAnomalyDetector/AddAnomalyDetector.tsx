@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   EuiFlyoutHeader,
   EuiFlyoutBody,
@@ -67,6 +67,10 @@ import { formikToSimpleAggregation } from '../../../../public/pages/ConfigureMod
 import { FeaturesFormikValues } from '../../../../public/pages/ConfigureModel/models/interfaces';
 import { AggregationSelector } from '../../../../public/pages/ConfigureModel/components/AggregationSelector';
 import { CustomAggregation } from '../../../../public/pages/ConfigureModel/components/CustomAggregation';
+import {
+  getIndices,
+  getMappings,
+} from '../../../../public/redux/reducers/opensearch';
 
 function AddAnomalyDetector({
   embeddable,
@@ -78,7 +82,14 @@ function AddAnomalyDetector({
   index,
 }) {
   const dispatch = useDispatch();
-  const isLoading = useSelector((state: AppState) => state.ad.requesting);
+  const [queryText, setQueryText] = useState('');
+  useEffect(() => {
+    const getInitialIndices = async () => {
+      await dispatch(getIndices(queryText));
+    };
+    getInitialIndices();
+    dispatch(getMappings(embeddable.vis.data.aggs.indexPattern.title));
+  }, []);
 
   const [isShowVis, setIsShowVis] = useState(false);
   const [accordionsOpen, setAccordionsOpen] = useState({});
@@ -117,15 +128,18 @@ function AddAnomalyDetector({
   const featureList = aggList.filter(
     (feature, index) => index < (aggList.length < 5 ? aggList.length : 5)
   );
-  // console.log('featureList: ', JSON.stringify(featureList));
-
-  // console.log("feature list size: " + featureList.length)
-  // console.log("feature name: " + featureList[0].data.label)
 
   const [shingleSizeValue, setShingleSizeValue] = useState(8);
-
   const shingleSizeOnChange = (e) => {
     setShingleSizeValue(e.target.value);
+  };
+
+  const [featureTypeSelectedValue, setFeatureTypeSelectedValue] = useState(
+    FEATURE_TYPE.SIMPLE
+  );
+  const onFeatureTypeChange = (e, field) => {
+    field.onChange(e);
+    setFeatureTypeSelectedValue(e.target.value);
   };
 
   const getFeatureNameFromParams = (id) => {
@@ -134,7 +148,8 @@ function AddAnomalyDetector({
         return true;
       }
     });
-    return name.data.label;
+
+    return name.data.label.replace(/[^a-zA-Z0-9-_]/g, '_');
   };
 
   let defaultFeatureList = [];
@@ -236,7 +251,7 @@ function AddAnomalyDetector({
       title +
       '_anomaly_detector_' +
       Math.floor(100000 + Math.random() * 900000);
-    detectorName.replace(/ /g, '_');
+    detectorName.replace(/[^a-zA-Z0-9-_]/g, '_');
     return detectorName;
   }
 
@@ -265,6 +280,14 @@ function AddAnomalyDetector({
     };
   }
 
+  function formikToFeatureListAggregation(feature) {
+    return {
+      [snakeCase(getFeatureNameFromParams(feature.id))]: {
+        avg: { field: feature.field },
+      },
+    };
+  }
+
   function featureListToFormik(featureList): FeaturesFormikValues[] {
     return featureList.map((feature) => {
       return {
@@ -278,28 +301,6 @@ function AddAnomalyDetector({
       };
     });
   }
-
-  // const handleValidateName = async (detectorName: string) => {
-  //   if (isEmpty(detectorName)) {
-  //     return 'Detector name cannot be empty';
-  //   } else {
-  //     const error = validateDetectorName(detectorName);
-  //     if (error) {
-  //       return error;
-  //     }
-  //     const resp = await dispatch(matchDetector(detectorName));
-  //     const match = get(resp, 'response.match', false);
-  //     if (!match) {
-  //       return undefined;
-  //     }
-  //     //If more than one detectors found, duplicate exists.
-  //     if (match) {
-  //       return 'Duplicate detector name';
-  //     }
-  //   }
-  // };
-
-  //console.log('initialDetectorValue: ', JSON.stringify(initialDetectorValue));
 
   return (
     <div className="add-anomaly-detector">
@@ -658,7 +659,7 @@ function AddAnomalyDetector({
                               <EuiFieldText value={feature.featureName} />
                             </EuiFormRow>
 
-                            <Field>
+                            <Field name={`featureList.${index}.featureType`}>
                               {({ field, form }: FieldProps) => (
                                 <Fragment>
                                   <EuiFormRow
@@ -667,34 +668,33 @@ function AddAnomalyDetector({
                                     // error={getError(field.name, form)}
                                   >
                                     <EuiSelect
-                                      {...field}
                                       options={FEATURE_TYPE_OPTIONS}
+                                      {...field}
                                       onChange={(e) => {
-                                        console.log(
-                                          'change',
-                                          JSON.stringify(field)
-                                        );
-                                        // formikProps.handleChange(e);
-                                        // if (e.currentTarget.value === FEATURE_TYPE.CUSTOM) {
-                                        //   const aggregationQuery = {
-                                        //     [feature.featureName]: {
-                                        //       [feature.aggMethod]: { field: feature.field },
-                                        //     },
-                                        //   };
-                                        //   form.setFieldValue(
-                                        //     `featureList.${index}.aggregationQuery`,
-                                        //     JSON.stringify(aggregationQuery, null, 4)
-                                        //   );
-                                        // }
+                                        onFeatureTypeChange(e, field);
+                                        if (
+                                          e.currentTarget.value ===
+                                          FEATURE_TYPE.CUSTOM
+                                        ) {
+                                          const aggregationQuery =
+                                            formikToFeatureListAggregation(
+                                              feature
+                                            );
+                                          form.setFieldValue(
+                                            `featureList.${index}.aggregationQuery`,
+                                            JSON.stringify(
+                                              aggregationQuery,
+                                              null,
+                                              4
+                                            )
+                                          );
+                                        }
                                       }}
                                     />
                                   </EuiFormRow>
-                                  {field.value.featureList[index]
-                                    .featureType === FEATURE_TYPE.SIMPLE && (
+                                  {field.value === FEATURE_TYPE.SIMPLE ? (
                                     <AggregationSelector index={index} />
-                                  )}
-                                  {field.value.featureList[index]
-                                    .featureType === FEATURE_TYPE.CUSTOM && (
+                                  ) : (
                                     <CustomAggregation index={index} />
                                   )}
                                 </Fragment>
