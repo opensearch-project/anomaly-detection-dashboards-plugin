@@ -92,7 +92,7 @@ function AddAnomalyDetector({
   }, []);
 
   const [isShowVis, setIsShowVis] = useState(false);
-  const [accordionsOpen, setAccordionsOpen] = useState({});
+  const [accordionsOpen, setAccordionsOpen] = useState({ modelFeatures : true});
   const [detectorNameFromVis, setDetectorNameFromVis] = useState(
     formikToDetectorName(embeddable.vis.title)
   );
@@ -310,7 +310,7 @@ function AddAnomalyDetector({
         validateOnChange={false}
       >
         {(formikProps) => (
-          <Form>
+          <>
             <EuiFlyoutHeader hasBorder>
               <EuiTitle>
                 <h2 id="add-anomaly-detector__title">Add anomaly detector</h2>
@@ -439,14 +439,18 @@ function AddAnomalyDetector({
                         )}
                       </Field>
 
-                      <Field name="detectionInterval">
+                      <Field name="detectionInterval.period.interval">
                         {({ field, form }: FieldProps) => (
                           <EuiFormRow label="Detector interval">
+                            
                             <EuiFlexGroup gutterSize="s" alignItems="center">
                               <EuiFlexItem grow={false}>
+                              {console.log("field: ", JSON.stringify(field))}
+
                                 <EuiFieldNumber
                                   data-test-subj="detectionIntervalFlyout"
                                   min={1}
+                                  //value={intervalValue}
                                   {...field}
                                   onChange={(e) => onIntervalChange(e, field)}
                                 />
@@ -461,7 +465,7 @@ function AddAnomalyDetector({
                         )}
                       </Field>
 
-                      <Field name="windowDelay">
+                      <Field name="windowDelay.period.interval">
                         {({ field, form }: FieldProps) => (
                           <EuiFormRow label="Window delay">
                             <EuiFlexGroup gutterSize="s" alignItems="center">
@@ -634,7 +638,6 @@ function AddAnomalyDetector({
                       title="Features"
                       isOpen={accordionsOpen.modelFeatures}
                       onToggle={() => onAccordionToggle('modelFeatures')}
-                      initialIsOpen={true}
                     >
                       <EuiSpacer size="s" />
 
@@ -739,7 +742,7 @@ function AddAnomalyDetector({
                 </EuiFlexItem>
               </EuiFlexGroup>
             </EuiFlyoutFooter>
-          </Form>
+          </>        
         )}
       </Formik>
     </div>
