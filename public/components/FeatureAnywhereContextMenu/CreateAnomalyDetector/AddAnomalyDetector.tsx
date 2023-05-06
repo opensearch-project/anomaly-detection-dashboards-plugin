@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, Fragment } from 'react';
 import {
   EuiFlyoutHeader,
   EuiFlyoutBody,
@@ -50,19 +50,21 @@ import {
   FeatureAttributes,
   FEATURE_TYPE,
   UNITS,
+  Detector,
 } from '../../../../public/models/interfaces';
-import { AppState } from '../../../../public/redux/reducers';
 import {
   AGGREGATION_TYPES,
   FEATURE_TYPE_OPTIONS,
 } from '../../../../public/pages/ConfigureModel/utils/constants';
 import { DataFilterList } from '../../../../public/pages/DefineDetector/components/DataFilterList/DataFilterList';
 import {
+  convertTimestampToNumber,
+  getError,
   isInvalid,
   validateDetectorName,
+  validateFeatureName,
 } from '../../../../public/utils/utils';
 import { CUSTOM_AD_RESULT_INDEX_PREFIX } from '../../../../server/utils/constants';
-import { Fragment } from 'react';
 import { formikToSimpleAggregation } from '../../../../public/pages/ConfigureModel/utils/helpers';
 import { FeaturesFormikValues } from '../../../../public/pages/ConfigureModel/models/interfaces';
 import { AggregationSelector } from '../../../../public/pages/ConfigureModel/components/AggregationSelector';
@@ -71,6 +73,8 @@ import {
   getIndices,
   getMappings,
 } from '../../../../public/redux/reducers/opensearch';
+import { featuresToUIMetadata, formikToDetector, formikToFeatureAttributes, formikToFilterQuery } from '../../../../public/pages/ReviewAndCreate/utils/helpers';
+import { FormattedFormRow } from '../../../../public/components/FormattedFormRow/FormattedFormRow';
 
 function AddAnomalyDetector({
   embeddable,
@@ -98,7 +102,6 @@ function AddAnomalyDetector({
   );
   const [intervalValue, setIntervalalue] = useState(10);
   const [delayValue, setDelayValue] = useState(1);
-
   const [enabled, setEnabled] = useState<boolean>(false);
 
   const title = embeddable.getTitle();
@@ -165,10 +168,13 @@ function AddAnomalyDetector({
   const [feautreListToRender, setFeatureListToRender] =
     useState(defaultFeatureList);
 
+  const copyFeatureList = [...feautreListToRender];
+
   const handleDeleteFeature = (id) => {
     setFeatureListToRender(
       feautreListToRender.filter((feature) => feature.id !== id)
     );
+
   };
 
   const handleAddFeature = () => {
@@ -183,10 +189,9 @@ function AddAnomalyDetector({
   };
 
   const handleSubmit = (values) => {
-    console.log('submit');
     try {
-      dispatch(createDetector(values)).then(async (response) => {
-        console.log('detector id here: ' + response.response.id);
+      const detectorToCreate = formikValueToDetector(values)
+      dispatch(createDetector(detectorToCreate)).then(async (response) => {
         dispatch(startDetector(response.response.id)).then(
           (startDetectorResponse) => {
             core.notifications.toasts.addSuccess(
@@ -222,10 +227,69 @@ function AddAnomalyDetector({
       });
       closeFlyout();
     } catch (e) {
-      console.log('errrrrror: ' + e);
     } finally {
     }
   };
+
+  function formikValueToDetector(values): Detector {
+    const detectionDateRange = values.historical
+      ? {
+          startTime: convertTimestampToNumber(values.startTime),
+          endTime: convertTimestampToNumber(values.endTime),
+        }
+      : undefined;
+    var resultIndex = values.resultIndex;
+    if (resultIndex && resultIndex.trim().length > 0) {
+      resultIndex = CUSTOM_AD_RESULT_INDEX_PREFIX + resultIndex;
+    }
+    let detectorBody = {
+      name: values.name,
+      description: values.description,
+      indices: values.indices,
+      resultIndex: resultIndex,
+      filterQuery: formikToFilterQuery(values),
+      uiMetadata: {
+        features: { ...featuresToUIMetadata(featureListToUIMetadata(values.featureList)) },
+        filters: get(values, 'filters', []),
+      },
+      featureAttributes: formikToFeatureAttributes(values.featureList),
+      timeField: values.timeField,
+      detectionInterval: values.detectionInterval,
+      windowDelay: values.windowDelay,
+      shingleSize: values.shingleSize,
+      categoryField: !isEmpty(values?.categoryField)
+        ? values.categoryField
+        : undefined,
+    } as Detector;
+    // Optionally add detection date range
+    if (detectionDateRange) {
+      detectorBody = {
+        ...detectorBody,
+        //@ts-ignore
+        detectionDateRange: detectionDateRange,
+      };
+    }
+  
+    return detectorBody;
+  }
+
+  function featureListToUIMetadata(featureList) {
+    return featureList.map(function (value) {
+      const oneFeature = {
+        featureId: value.featureId,
+        featureName: value.featureName,
+        featureType: value.featureType,
+        featureEnable: true,
+        importance: 1,
+        aggregationBy: value.aggregationBy,
+        aggregationQuery: value.featureType === "simple_aggs" ? '{}' : formikToUIMetadataAggregation(value.featureId, value.aggregationBy, value.aggregationOf[0].label),
+        newFeature: true,
+        aggregationOf: formikToAggregationOf(value)
+      }
+
+      return oneFeature;
+    })
+  }
 
   const initialDetectorValue = {
     name: detectorNameFromVis,
@@ -238,12 +302,15 @@ function AddAnomalyDetector({
       period: { interval: delayValue, unit: UNITS.MINUTES },
     },
     shingleSize: shingleSizeValue,
-    featureAttributes: formikToFeatureAttributes(featureList),
+    featureAttributes: formikToFlyoutFeatureAttributes(featureList),
     filterQuery: { match_all: {} },
     description: '',
     resultIndex: undefined,
     filters: [],
     featureList: featureListToFormik(featureList),
+    categoryFieldEnabled	:	false,
+    realTime	:	true,
+    historical	:	false
   };
 
   function formikToDetectorName(title) {
@@ -259,7 +326,7 @@ function AddAnomalyDetector({
     return [indexString];
   }
 
-  function formikToFeatureAttributes(values) {
+  function formikToFlyoutFeatureAttributes(values) {
     //@ts-ignore
     return values.map(function (value) {
       return {
@@ -270,6 +337,24 @@ function AddAnomalyDetector({
         aggregationQuery: formikToAggregation(value),
       };
     });
+  }
+
+  function formikToAggregationOf(value) {
+    return [
+      {
+        label: value.aggregationOf[0].label,
+        type: "number"
+      }
+    ]
+  }
+
+  function formikToUIMetadataAggregation(featureId, aggMethod, fieldName) {
+    const returnVal = {
+      [snakeCase(getFeatureNameFromParams(featureId))]: {
+        [aggMethod]: { field: fieldName },
+      },
+    };
+    return returnVal
   }
 
   function formikToAggregation(value) {
@@ -410,11 +495,10 @@ function AddAnomalyDetector({
                     <EuiSpacer size="m" />
                     {/* {!index && <EuiLoadingSpinner size="l" />} */}
                     {/* Do not initialize until index is available */}
-
+                    
                     <EnhancedAccordion
                       id="detectorDetails"
                       title={detectorNameFromVis}
-                      initialIsOpen={false}
                       isOpen={accordionsOpen.detectorDetails}
                       onToggle={() => onAccordionToggle('detectorDetails')}
                       subTitle={
@@ -426,16 +510,20 @@ function AddAnomalyDetector({
                         </EuiText>
                       }
                     >
-                      <Field name="name">
+                      <Field name="name" validate={validateDetectorName}>
                         {({ field, form }: FieldProps) => (
-                          <EuiFormRow label="Detector name">
+                          <FormattedFormRow
+                            title="Name"
+                            isInvalid={isInvalid(field.name, form)}
+                            error={getError(field.name, form)}
+                          >
                             <EuiFieldText
                               data-test-subj="detectorNameTextInputFlyout"
                               isInvalid={isInvalid(field.name, form)}
                               {...field}
                               onChange={(e) => onDetectorNameChange(e, field)}
                             />
-                          </EuiFormRow>
+                          </FormattedFormRow>
                         )}
                       </Field>
 
@@ -444,9 +532,7 @@ function AddAnomalyDetector({
                           <EuiFormRow label="Detector interval">
                             
                             <EuiFlexGroup gutterSize="s" alignItems="center">
-                              <EuiFlexItem grow={false}>
-                              {console.log("field: ", JSON.stringify(field))}
-
+                              <EuiFlexItem grow={false}>                            
                                 <EuiFieldNumber
                                   data-test-subj="detectionIntervalFlyout"
                                   min={1}
@@ -645,7 +731,7 @@ function AddAnomalyDetector({
                         return (
                           <MinimalAccordion
                             id={feature.id}
-                            title={feature.featureName}
+                            title={feautreListToRender[index].featureName}
                             subTitle={`Field: ${feature.field}, Aggregation method: ${feature.aggMethod}`}
                             initialIsOpen={false}
                             isUsingDivider={index == 0 ? false : true}
@@ -657,18 +743,38 @@ function AddAnomalyDetector({
                                 onClick={() => handleDeleteFeature(feature.id)}
                               />
                             }
-                          >
-                            <EuiFormRow label="Feature name">
-                              <EuiFieldText value={feature.featureName} />
-                            </EuiFormRow>
+                            >
+                            <Field
+                              name={`featureList.${index}.featureName`}
+                              validate={validateFeatureName}
+                            >
+                              {({ field, form }: FieldProps) => (
+                                <FormattedFormRow
+                                  title="Feature name"
+                                  isInvalid={isInvalid(field.name, form)}
+                                  error={getError(field.name, form)}
+                                >
+                                  <EuiFieldText
+                                    data-test-subj={`featureNameTextInput-${index}`}
+                                    isInvalid={isInvalid(field.name, form)}
+                                    value={`featureList.${index}.featureName`}
+                                    {...field}
+                                    // onChange={(e) => {
+                                    //   const newFeatureList = [...feautreListToRender];
+                                    //   newFeatureList[index].featureName = field.value;
+                                    //   setFeatureListToRender(newFeatureList);
+                                    // }}
+                                  />
+                                </FormattedFormRow>                              
+                              )}
+                            </Field>
+                            
 
                             <Field name={`featureList.${index}.featureType`}>
                               {({ field, form }: FieldProps) => (
                                 <Fragment>
                                   <EuiFormRow
                                     label="Find anomalies based on"
-                                    // isInvalid={isInvalid(field.name, form)}
-                                    // error={getError(field.name, form)}
                                   >
                                     <EuiSelect
                                       options={FEATURE_TYPE_OPTIONS}
@@ -678,19 +784,21 @@ function AddAnomalyDetector({
                                         if (
                                           e.currentTarget.value ===
                                           FEATURE_TYPE.CUSTOM
-                                        ) {
-                                          const aggregationQuery =
-                                            formikToFeatureListAggregation(
-                                              feature
+                                        ) {                            
+                                          if (index > aggList.length - 1) {
+                                            const aggregationQuery =
+                                              formikToFeatureListAggregation(
+                                                feature
+                                              );
+                                            form.setFieldValue(
+                                              `featureList.${index}.aggregationQuery`,
+                                              JSON.stringify(
+                                                aggregationQuery,
+                                                null,
+                                                4
+                                              )
                                             );
-                                          form.setFieldValue(
-                                            `featureList.${index}.aggregationQuery`,
-                                            JSON.stringify(
-                                              aggregationQuery,
-                                              null,
-                                              4
-                                            )
-                                          );
+                                          }                                  
                                         }
                                       }}
                                     />
@@ -733,7 +841,6 @@ function AddAnomalyDetector({
                     data-test-subj="adAnywhereCreateDetectorButton"
                     isLoading={formikProps.isSubmitting}
                     onClick={() => {
-                      console.log('formikProps: ', JSON.stringify(formikProps));
                       formikProps.handleSubmit();
                     }}
                   >
