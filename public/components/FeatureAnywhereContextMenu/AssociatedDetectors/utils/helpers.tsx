@@ -58,8 +58,8 @@ export const getColumns = ({ handleUnlinkDetectorAction }) =>
       actions: [
         {
           type: 'icon',
-          name: 'Unlink Detector',
-          description: 'Unlink Detector',
+          name: 'Remove association',
+          description: 'Remove association',
           icon: 'unlink',
           onClick: handleUnlinkDetectorAction,
         },

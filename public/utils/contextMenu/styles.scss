@@ -1,0 +1,30 @@
+/*
+ * Copyright OpenSearch Contributors
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
+@import '@elastic/eui/src/global_styling/variables/index';
+
+.ad-dashboards-context-menu {
+  &__text-content {
+    &:hover {
+      text-decoration: none;
+    }
+  }
+
+  &__no-action {
+    cursor: default;
+
+    &:hover,
+    &:active {
+      text-decoration: none;
+      background-color: inherit;
+    }
+  }
+
+  &__view-events-text {
+    h5 {
+      color: inherit;
+    }
+  }
+}
