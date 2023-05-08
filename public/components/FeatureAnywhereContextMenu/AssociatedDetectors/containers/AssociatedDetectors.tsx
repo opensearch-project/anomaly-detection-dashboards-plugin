@@ -18,8 +18,6 @@ import {
 import { get, isEmpty } from 'lodash';
 import '../styles.scss';
 import { getColumns } from '../utils/helpers';
-import { CoreServicesContext } from '../../../../components/CoreServices/CoreServices';
-import { CoreStart } from '../../../../../../../src/core/public';
 import { useDispatch, useSelector } from 'react-redux';
 import { AppState } from '../../../../redux/reducers';
 import { DetectorListItem } from '../../../../models/interfaces';
@@ -35,11 +33,7 @@ import {
 } from '../../../../../server/utils/helpers';
 import { SavedObjectLoader } from '../../../../../../../src/plugins/saved_objects/public';
 import { EmptyAssociatedDetectorFlyoutMessage } from '../components/EmptyMessage/EmptyMessage';
-import {
-  ISavedAugmentVis,
-  VisLayerExpressionFn,
-  createAugmentVisSavedObject,
-} from '../../../../../../../src/plugins/vis_augmenter/public';
+import { ISavedAugmentVis } from '../../../../../../../src/plugins/vis_augmenter/public';
 import { ASSOCIATED_DETECTOR_ACTION } from '../utils/constants';
 import { ConfirmUnlinkDetectorModal } from '../components/ConfirmUnlinkDetectorModal/ConfirmUnlinkDetectorModal';
 
@@ -51,8 +45,7 @@ interface ConfirmModalState {
   affectedDetector: DetectorListItem;
 }
 
-function AssociatedDetectors({ embeddable, closeFlyout, setMode }) {
-  const core = React.useContext(CoreServicesContext) as CoreStart;
+function AssociatedDetectors({ embeddable, closeFlyout, core, setMode }) {
   const dispatch = useDispatch();
   const allDetectors = useSelector((state: AppState) => state.ad.detectorList);
   const isRequestingFromES = useSelector(
@@ -199,15 +192,11 @@ function AssociatedDetectors({ embeddable, closeFlyout, setMode }) {
         await savedObjectLoader
           .delete(savedObjectToUnlinkId)
           .then(async (resp: any) => {
-            console.log('inside delete after unlinking');
-            core.notifications.toasts.addSuccess(
-              `Detector created: ${values.name}`
-            );
-            // core.notifications.toasts.addSuccess({
-            //   title: `Association removed between the ${detectorToUnlink.name}
-            //   and the ${embeddableTitle} visualization`,
-            //   text: 'The detector\'s anomalies do not appear on the visualization. Refresh your dashboard to update the visualization',
-            // })
+            core.notifications.toasts.addSuccess({
+              title: `Association removed between the ${detectorToUnlink.name}
+              and the ${embeddableTitle} visualization`,
+              text: "The detector's anomalies do not appear on the visualization. Refresh your dashboard to update the visualization",
+            });
           })
           .catch((error) => {
             core.notifications.toasts.addDanger(
@@ -258,45 +247,6 @@ function AssociatedDetectors({ embeddable, closeFlyout, setMode }) {
   // TODO: this part is incomplete because it is pending on a different PR that will have all the associate existing changes
   const onAssociateExistingDetector = async () => {
     console.log('inside create anomaly detector');
-  };
-
-  // This method is only here for development/testing purposes.
-  const createSavedObjects = async () => {
-    enum VisLayerTypes {
-      PointInTimeEvents = 'PointInTimeEvents',
-    }
-    console.log('all Detectors: ' + JSON.stringify(allDetectors));
-
-    const fn = {
-      type: VisLayerTypes.PointInTimeEvents,
-      name: 'overlay_anomalies',
-      args: {
-        detectorId: 'pggP7ocBbTXmavYrSMaD',
-      },
-    } as VisLayerExpressionFn;
-
-    // const fn = {
-    //   type: VisLayerTypes.PointInTimeEvents,
-    //   name: 'test-fn',
-    //   args: {
-    //     testArg: 'bNZIp4UB3stq6UHwpWwS',
-    //   },
-    // } as VisLayerExpressionFn;
-
-    const savedObjectToCreate = {
-      title: 'test-title',
-      pluginResourceId: 'pggP7ocBbTXmavYrSMaD',
-      visId: embeddable.vis.id,
-      visLayerExpressionFn: fn,
-    } as ISavedAugmentVis;
-
-    const savedObject = await createAugmentVisSavedObject(savedObjectToCreate);
-    console.log('savedObject: ' + JSON.stringify(savedObject));
-
-    const response = await savedObject.save({});
-    console.log('response: ' + JSON.stringify(response));
-    core.notifications.toasts.addSuccess(`Detector created: ${values.name}`);
-    getDetectors();
   };
 
   const handleUnlinkDetectorAction = (detector: DetectorListItem) => {
@@ -388,15 +338,6 @@ function AssociatedDetectors({ embeddable, closeFlyout, setMode }) {
           </EuiFlexGroup>
           <EuiSpacer size="m" />
           <EuiInMemoryTable {...tableProps} />
-          <EuiFlexItem grow={false}>
-            <EuiButton
-              onClick={() => {
-                createSavedObjects();
-              }}
-            >
-              Create saved objects{' '}
-            </EuiButton>
-          </EuiFlexItem>
         </EuiFlyoutBody>
       </EuiFlyout>
     </div>
