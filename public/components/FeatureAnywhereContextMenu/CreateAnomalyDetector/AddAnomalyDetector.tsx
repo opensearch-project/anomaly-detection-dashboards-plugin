@@ -20,7 +20,6 @@ import {
   EuiFormRow,
   EuiFieldText,
   EuiCheckbox,
-  EuiSelect,
   EuiFlexItem,
   EuiFlexGroup,
   EuiFieldNumber,
@@ -34,12 +33,19 @@ import {
   ISavedAugmentVis,
   VisLayerExpressionFn,
 } from '../../../../../../src/plugins/vis_augmenter/public';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { snakeCase, find, isEmpty, get } from 'lodash';
-import { Field, FieldProps, Form, Formik, FormikHelpers } from 'formik';
+import {
+  Field,
+  FieldArray,
+  FieldArrayRenderProps,
+  FieldProps,
+  Form,
+  Formik,
+  FormikHelpers,
+} from 'formik';
 import {
   createDetector,
-  matchDetector,
   startDetector,
 } from '../../../../public/redux/reducers/ad';
 import { EmbeddablePanel } from '../../../../../../src/plugins/embeddable/public';
@@ -47,15 +53,10 @@ import './styles.scss';
 import EnhancedAccordion from '../EnhancedAccordion';
 import MinimalAccordion from '../MinimalAccordion';
 import {
-  FeatureAttributes,
   FEATURE_TYPE,
   UNITS,
   Detector,
 } from '../../../../public/models/interfaces';
-import {
-  AGGREGATION_TYPES,
-  FEATURE_TYPE_OPTIONS,
-} from '../../../../public/pages/ConfigureModel/utils/constants';
 import { DataFilterList } from '../../../../public/pages/DefineDetector/components/DataFilterList/DataFilterList';
 import {
   convertTimestampToNumber,
@@ -65,17 +66,21 @@ import {
   validateFeatureName,
 } from '../../../../public/utils/utils';
 import { CUSTOM_AD_RESULT_INDEX_PREFIX } from '../../../../server/utils/constants';
-import { formikToSimpleAggregation } from '../../../../public/pages/ConfigureModel/utils/helpers';
+import { initialFeatureValue } from '../../../../public/pages/ConfigureModel/utils/helpers';
 import { FeaturesFormikValues } from '../../../../public/pages/ConfigureModel/models/interfaces';
-import { AggregationSelector } from '../../../../public/pages/ConfigureModel/components/AggregationSelector';
-import { CustomAggregation } from '../../../../public/pages/ConfigureModel/components/CustomAggregation';
 import {
   getIndices,
   getMappings,
 } from '../../../../public/redux/reducers/opensearch';
-import { featuresToUIMetadata, formikToDetector, formikToFeatureAttributes, formikToFilterQuery } from '../../../../public/pages/ReviewAndCreate/utils/helpers';
+import {
+  featuresToUIMetadata,
+  formikToFeatureAttributes,
+  formikToFilterQuery,
+} from '../../../../public/pages/ReviewAndCreate/utils/helpers';
 import { FormattedFormRow } from '../../../../public/components/FormattedFormRow/FormattedFormRow';
 import AssociateExisting from './AssociateExisting/containers/AssociateExisting';
+import { FeatureAccordion } from '../../../../public/pages/ConfigureModel/components/FeatureAccordion';
+import { MAX_FEATURE_NUM } from '../../../../public/utils/constants';
 
 function AddAnomalyDetector({
   embeddable,
@@ -99,7 +104,7 @@ function AddAnomalyDetector({
   }, []);
 
   const [isShowVis, setIsShowVis] = useState(false);
-  const [accordionsOpen, setAccordionsOpen] = useState({ modelFeatures : true});
+  const [accordionsOpen, setAccordionsOpen] = useState({ modelFeatures: true });
   const [detectorNameFromVis, setDetectorNameFromVis] = useState(
     formikToDetectorName(embeddable.vis.title)
   );
@@ -140,14 +145,6 @@ function AddAnomalyDetector({
     setShingleSizeValue(e.target.value);
   };
 
-  const [featureTypeSelectedValue, setFeatureTypeSelectedValue] = useState(
-    FEATURE_TYPE.SIMPLE
-  );
-  const onFeatureTypeChange = (e, field) => {
-    field.onChange(e);
-    setFeatureTypeSelectedValue(e.target.value);
-  };
-
   const getFeatureNameFromParams = (id) => {
     let name = find(embeddable.vis.params.seriesParams, function (param) {
       if (param.data.id === id) {
@@ -168,32 +165,9 @@ function AddAnomalyDetector({
     })
   );
 
-  const [feautreListToRender, setFeatureListToRender] =
-    useState(defaultFeatureList);
-
-  const copyFeatureList = [...feautreListToRender];
-
-  const handleDeleteFeature = (id) => {
-    setFeatureListToRender(
-      feautreListToRender.filter((feature) => feature.id !== id)
-    );
-
-  };
-
-  const handleAddFeature = () => {
-    let uuid = Math.floor(100000 + Math.random() * 900000);
-    const emptyFeatureComponenet = {
-      id: uuid,
-      featureName: 'feature_' + uuid,
-      field: 'byte',
-      aggMethod: 'avg',
-    };
-    setFeatureListToRender([...feautreListToRender, emptyFeatureComponenet]);
-  };
-
   const handleSubmit = (values) => {
     try {
-      const detectorToCreate = formikValueToDetector(values)
+      const detectorToCreate = formikValueToDetector(values);
       dispatch(createDetector(detectorToCreate)).then(async (response) => {
         dispatch(startDetector(response.response.id)).then(
           (startDetectorResponse) => {
@@ -252,7 +226,9 @@ function AddAnomalyDetector({
       resultIndex: resultIndex,
       filterQuery: formikToFilterQuery(values),
       uiMetadata: {
-        features: { ...featuresToUIMetadata(featureListToUIMetadata(values.featureList)) },
+        features: {
+          ...featuresToUIMetadata(featureListToUIMetadata(values.featureList)),
+        },
         filters: get(values, 'filters', []),
       },
       featureAttributes: formikToFeatureAttributes(values.featureList),
@@ -272,7 +248,7 @@ function AddAnomalyDetector({
         detectionDateRange: detectionDateRange,
       };
     }
-  
+
     return detectorBody;
   }
 
@@ -285,13 +261,20 @@ function AddAnomalyDetector({
         featureEnable: true,
         importance: 1,
         aggregationBy: value.aggregationBy,
-        aggregationQuery: value.featureType === "simple_aggs" ? '{}' : formikToUIMetadataAggregation(value.featureId, value.aggregationBy, value.aggregationOf[0].label),
+        aggregationQuery:
+          value.featureType === 'simple_aggs'
+            ? '{}'
+            : formikToUIMetadataAggregation(
+                value.featureId,
+                value.aggregationBy,
+                value.aggregationOf[0].label
+              ),
         newFeature: true,
-        aggregationOf: formikToAggregationOf(value)
-      }
+        aggregationOf: formikToAggregationOf(value),
+      };
 
       return oneFeature;
-    })
+    });
   }
 
   const initialDetectorValue = {
@@ -311,9 +294,9 @@ function AddAnomalyDetector({
     resultIndex: undefined,
     filters: [],
     featureList: featureListToFormik(featureList),
-    categoryFieldEnabled	:	false,
-    realTime	:	true,
-    historical	:	false
+    categoryFieldEnabled: false,
+    realTime: true,
+    historical: false,
   };
 
   const handleAssociate = async (detectorId: string) => {
@@ -376,9 +359,9 @@ function AddAnomalyDetector({
     return [
       {
         label: value.aggregationOf[0].label,
-        type: "number"
-      }
-    ]
+        type: 'number',
+      },
+    ];
   }
 
   function formikToUIMetadataAggregation(featureId, aggMethod, fieldName) {
@@ -387,21 +370,13 @@ function AddAnomalyDetector({
         [aggMethod]: { field: fieldName },
       },
     };
-    return returnVal
+    return returnVal;
   }
 
   function formikToAggregation(value) {
     return {
       [snakeCase(getFeatureNameFromParams(value.id))]: {
         avg: { field: value.params.field.name },
-      },
-    };
-  }
-
-  function formikToFeatureListAggregation(feature) {
-    return {
-      [snakeCase(getFeatureNameFromParams(feature.id))]: {
-        avg: { field: feature.field },
       },
     };
   }
@@ -535,7 +510,7 @@ function AddAnomalyDetector({
                     <EuiSpacer size="m" />
                     {/* {!index && <EuiLoadingSpinner size="l" />} */}
                     {/* Do not initialize until index is available */}
-                    
+
                     <EnhancedAccordion
                       id="detectorDetails"
                       title={detectorNameFromVis}
@@ -570,13 +545,11 @@ function AddAnomalyDetector({
                       <Field name="detectionInterval.period.interval">
                         {({ field, form }: FieldProps) => (
                           <EuiFormRow label="Detector interval">
-                            
                             <EuiFlexGroup gutterSize="s" alignItems="center">
-                              <EuiFlexItem grow={false}>                            
+                              <EuiFlexItem grow={false}>
                                 <EuiFieldNumber
                                   data-test-subj="detectionIntervalFlyout"
                                   min={1}
-                                  //value={intervalValue}
                                   {...field}
                                   onChange={(e) => onIntervalChange(e, field)}
                                 />
@@ -767,105 +740,59 @@ function AddAnomalyDetector({
                     >
                       <EuiSpacer size="s" />
 
-                      {feautreListToRender.map((feature, index) => {
-                        return (
-                          <MinimalAccordion
-                            id={feature.id}
-                            title={feautreListToRender[index].featureName}
-                            subTitle={`Field: ${feature.field}, Aggregation method: ${feature.aggMethod}`}
-                            initialIsOpen={false}
-                            isUsingDivider={index == 0 ? false : true}
-                            extraAction={
-                              <EuiButtonIcon
-                                iconType="trash"
-                                color="text"
-                                aria-label={`Delete ${feature.featureName}`}
-                                onClick={() => handleDeleteFeature(feature.id)}
-                              />
-                            }
-                            >
-                            <Field
-                              name={`featureList.${index}.featureName`}
-                              validate={validateFeatureName}
-                            >
-                              {({ field, form }: FieldProps) => (
-                                <FormattedFormRow
-                                  title="Feature name"
-                                  isInvalid={isInvalid(field.name, form)}
-                                  error={getError(field.name, form)}
-                                >
-                                  <EuiFieldText
-                                    data-test-subj={`featureNameTextInput-${index}`}
-                                    isInvalid={isInvalid(field.name, form)}
-                                    value={`featureList.${index}.featureName`}
-                                    {...field}
-                                    // onChange={(e) => {
-                                    //   const newFeatureList = [...feautreListToRender];
-                                    //   newFeatureList[index].featureName = field.value;
-                                    //   setFeatureListToRender(newFeatureList);
-                                    // }}
+                      <FieldArray name="featureList">
+                        {({
+                          push,
+                          remove,
+                          form: { values },
+                        }: FieldArrayRenderProps) => {
+                          {
+                            console.log('values: ', { ...values });
+                          }
+                          return (
+                            <Fragment>
+                              {values.featureList.map(
+                                (feature: any, index: number) => (
+                                  <FeatureAccordion
+                                    onDelete={() => {
+                                      remove(index);
+                                    }}
+                                    index={index}
+                                    feature={feature}
+                                    handleChange={formikProps.handleChange}
                                   />
-                                </FormattedFormRow>                              
+                                )
                               )}
-                            </Field>
-                            
-
-                            <Field name={`featureList.${index}.featureType`}>
-                              {({ field, form }: FieldProps) => (
-                                <Fragment>
-                                  <EuiFormRow
-                                    label="Find anomalies based on"
-                                  >
-                                    <EuiSelect
-                                      options={FEATURE_TYPE_OPTIONS}
-                                      {...field}
-                                      onChange={(e) => {
-                                        onFeatureTypeChange(e, field);
-                                        if (
-                                          e.currentTarget.value ===
-                                          FEATURE_TYPE.CUSTOM
-                                        ) {                            
-                                          if (index > aggList.length - 1) {
-                                            const aggregationQuery =
-                                              formikToFeatureListAggregation(
-                                                feature
-                                              );
-                                            form.setFieldValue(
-                                              `featureList.${index}.aggregationQuery`,
-                                              JSON.stringify(
-                                                aggregationQuery,
-                                                null,
-                                                4
-                                              )
-                                            );
-                                          }                                  
-                                        }
-                                      }}
-                                    />
-                                  </EuiFormRow>
-                                  {field.value === FEATURE_TYPE.SIMPLE ? (
-                                    <AggregationSelector index={index} />
-                                  ) : (
-                                    <CustomAggregation index={index} />
-                                  )}
-                                </Fragment>
-                              )}
-                            </Field>
-                          </MinimalAccordion>
-                        );
-                      })}
+                              <EuiPanel paddingSize="none">
+                                <EuiButton
+                                  className="featureButton"
+                                  data-test-subj="addFeature"
+                                  isDisabled={
+                                    values.featureList.length >= MAX_FEATURE_NUM
+                                  }
+                                  onClick={() => {
+                                    push(initialFeatureValue());
+                                  }}
+                                >
+                                  Add another feature
+                                </EuiButton>
+                              </EuiPanel>
+                              <EuiSpacer size="s" />
+                              <EuiText className="content-panel-subTitle">
+                                <p>
+                                  You can add up to{' '}
+                                  {Math.max(
+                                    MAX_FEATURE_NUM - values.featureList.length,
+                                    0
+                                  )}{' '}
+                                  more features.
+                                </p>
+                              </EuiText>
+                            </Fragment>
+                          );
+                        }}
+                      </FieldArray>
                     </EnhancedAccordion>
-                    <EuiSpacer size="m" />
-                    <EuiPanel paddingSize="none">
-                      <EuiButtonEmpty
-                        className="featureButton"
-                        onClick={() => handleAddFeature()}
-                        iconType="plusInCircle"
-                      >
-                        Add feature
-                      </EuiButtonEmpty>
-                    </EuiPanel>
-                    <EuiSpacer size="m" />
                   </div>
                 )}
               </div>
@@ -898,7 +825,7 @@ function AddAnomalyDetector({
                 </EuiFlexItem>
               </EuiFlexGroup>
             </EuiFlyoutFooter>
-          </>        
+          </>
         )}
       </Formik>
     </div>
