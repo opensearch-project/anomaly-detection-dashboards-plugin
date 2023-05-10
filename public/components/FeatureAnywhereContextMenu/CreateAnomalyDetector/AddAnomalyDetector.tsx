@@ -747,9 +747,6 @@ function AddAnomalyDetector({
                           remove,
                           form: { values },
                         }: FieldArrayRenderProps) => {
-                          {
-                            console.log('values: ', { ...values });
-                          }
                           return (
                             <Fragment>
                               {values.featureList.map(

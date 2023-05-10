@@ -214,7 +214,6 @@ export const FeatureAccordion = (props: FeatureAccordionProps) => {
                     const aggregationQuery = formikToSimpleAggregation(
                       props.feature
                     );
-                    console.log("here: ", aggregationQuery)
                     form.setFieldValue(
                       `featureList.${props.index}.aggregationQuery`,
                       JSON.stringify(aggregationQuery, null, 4)
