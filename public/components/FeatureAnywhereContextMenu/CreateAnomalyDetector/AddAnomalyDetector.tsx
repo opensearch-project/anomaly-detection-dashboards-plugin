@@ -609,7 +609,7 @@ function AddAnomalyDetector({
                       >
                         <EuiSpacer size="s" />
                         <EuiText size="xs">
-                          <p>Source: {embeddable.vis.params.index_pattern}</p>
+                          <p>Source: {embeddable.vis.data.aggs.indexPattern.title}</p>
                         </EuiText>
                         <EuiSpacer size="s" />
                         <DataFilterList formikProps={formikProps} />
@@ -662,6 +662,7 @@ function AddAnomalyDetector({
                                 <EuiCheckbox
                                   id={'resultIndexCheckbox'}
                                   label="Enable custom result index"
+                                  checked={enabled}
                                   onChange={() => {
                                     if (enabled) {
                                       form.setFieldValue('resultIndex', '');
@@ -746,9 +747,6 @@ function AddAnomalyDetector({
                           remove,
                           form: { values },
                         }: FieldArrayRenderProps) => {
-                          {
-                            console.log('values: ', { ...values });
-                          }
                           return (
                             <Fragment>
                               {values.featureList.map(
@@ -760,6 +758,7 @@ function AddAnomalyDetector({
                                     index={index}
                                     feature={feature}
                                     handleChange={formikProps.handleChange}
+                                    displayMode='flyout'
                                   />
                                 )
                               )}
