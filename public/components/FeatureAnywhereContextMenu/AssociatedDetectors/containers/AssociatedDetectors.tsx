@@ -212,20 +212,6 @@ function AssociatedDetectors({ embeddable, closeFlyout, core, setMode }) {
     });
   };
 
-  const getUnlinkConfirmModal = () => {
-    if (confirmModalState.isOpen) {
-      return (
-        <ConfirmUnlinkDetectorModal
-          detector={confirmModalState.affectedDetector}
-          onUnlinkDetector={onUnlinkDetector}
-          onHide={handleHideModal}
-          onConfirm={handleConfirmModal}
-          isListLoading={isLoading}
-        />
-      );
-    }
-  };
-
   const handleHideModal = () => {
     setConfirmModalState({
       ...confirmModalState,
@@ -245,25 +231,19 @@ function AssociatedDetectors({ embeddable, closeFlyout, core, setMode }) {
   };
 
   // TODO: this part is incomplete because it is pending on a different PR that will have all the associate existing changes
-  const onAssociateExistingDetector = async () => {
+  const openAssociateDetectorFlyout = async () => {
     console.log('inside create anomaly detector');
   };
 
   const handleUnlinkDetectorAction = (detector: DetectorListItem) => {
     setDetectorToUnlink(detector);
-    if (!isEmpty(detector)) {
-      setConfirmModalState({
-        isOpen: true,
-        action: ASSOCIATED_DETECTOR_ACTION.UNLINK,
-        isListLoading: false,
-        isRequestingToClose: false,
-        affectedDetector: detector,
-      });
-    } else {
-      core.notifications.toasts.addWarning(
-        'Make sure selected detector has not been deleted'
-      );
-    }
+    setConfirmModalState({
+      isOpen: true,
+      action: ASSOCIATED_DETECTOR_ACTION.UNLINK,
+      isListLoading: false,
+      isRequestingToClose: false,
+      affectedDetector: detector,
+    });
   };
 
   const columns = useMemo(
@@ -317,7 +297,15 @@ function AssociatedDetectors({ embeddable, closeFlyout, core, setMode }) {
           </EuiTitle>
         </EuiFlyoutHeader>
         <EuiFlyoutBody style={{ overflowY: 'auto' }}>
-          {getUnlinkConfirmModal()}
+          {confirmModalState.isOpen ? (
+            <ConfirmUnlinkDetectorModal
+              detector={confirmModalState.affectedDetector}
+              onUnlinkDetector={onUnlinkDetector}
+              onHide={handleHideModal}
+              onConfirm={handleConfirmModal}
+              isListLoading={isLoading}
+            />
+          ) : null}
           <EuiFlexGroup alignItems="center">
             <EuiFlexItem component="span">
               <EuiTitle size="xxs">
@@ -329,7 +317,7 @@ function AssociatedDetectors({ embeddable, closeFlyout, core, setMode }) {
                 fill
                 iconType="link"
                 onClick={() => {
-                  onAssociateExistingDetector();
+                  openAssociateDetectorFlyout();
                 }}
               >
                 Associate a detector

@@ -1,10 +1,13 @@
 import React, { useState } from 'react';
 import './styles.scss';
 import AssociatedDetectors from '../AssociatedDetectors/containers/AssociatedDetectors';
+import { get } from 'lodash';
 
 const Container = ({ startingFlyout, ...props }) => {
   const { embeddable } = props;
-  const index = [{ label: embeddable?.vis?.data?.indexPattern?.title }];
+  const indices: { label: string }[] = [
+    { label: get(embeddable, 'vis.data.indexPattern.title', '') },
+  ];
   const [mode, setMode] = useState(startingFlyout);
   const [selectedDetectorId, setSelectedDetectorId] = useState();
 
@@ -18,7 +21,7 @@ const Container = ({ startingFlyout, ...props }) => {
         ...props,
         setMode,
         mode,
-        index,
+        indices,
         selectedDetectorId,
         setSelectedDetectorId,
       }}
