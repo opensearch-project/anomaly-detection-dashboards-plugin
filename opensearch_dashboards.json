@@ -7,7 +7,14 @@
     "opensearchDashboardsUtils",
     "expressions",
     "data",
-    "visAugmenter"
+    "visAugmenter",
+    "uiActions",
+    "dashboard",
+    "embeddable",
+    "opensearchDashboardsReact",
+    "savedObjects",
+    "visAugmenter",
+    "opensearchDashboardsUtils"
   ],
   "server": true,
   "ui": true
