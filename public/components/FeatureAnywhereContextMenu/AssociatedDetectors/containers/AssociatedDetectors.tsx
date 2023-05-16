@@ -32,10 +32,12 @@ import {
   NO_PERMISSIONS_KEY_WORD,
 } from '../../../../../server/utils/helpers';
 import { SavedObjectLoader } from '../../../../../../../src/plugins/saved_objects/public';
-import { EmptyAssociatedDetectorFlyoutMessage } from '../components/EmptyMessage/EmptyMessage';
+import {
+  EmptyAssociatedDetectorMessage,
+  ConfirmUnlinkDetectorModal,
+} from '../components';
 import { ISavedAugmentVis } from '../../../../../../../src/plugins/vis_augmenter/public';
 import { ASSOCIATED_DETECTOR_ACTION } from '../utils/constants';
-import { ConfirmUnlinkDetectorModal } from '../components/ConfirmUnlinkDetectorModal/ConfirmUnlinkDetectorModal';
 
 interface ConfirmModalState {
   isOpen: boolean;
@@ -256,14 +258,14 @@ function AssociatedDetectors({ embeddable, closeFlyout, core, setMode }) {
       return 'Loading detectors...';
     } else if (!isEmpty(selectedDetectors)) {
       return (
-        <EmptyAssociatedDetectorFlyoutMessage
+        <EmptyAssociatedDetectorMessage
           isFilterApplied={true}
           embeddableTitle={embeddableTitle}
         />
       );
     } else {
       return (
-        <EmptyAssociatedDetectorFlyoutMessage
+        <EmptyAssociatedDetectorMessage
           isFilterApplied={false}
           embeddableTitle={embeddableTitle}
         />

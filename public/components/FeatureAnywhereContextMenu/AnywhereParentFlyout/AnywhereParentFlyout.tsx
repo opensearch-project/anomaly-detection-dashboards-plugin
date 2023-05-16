@@ -1,10 +1,11 @@
-/* 
- * Copyright OpenSearch Contributors 
- * SPDX-License-Identifier: Apache-2.0 
+/*
+ * Copyright OpenSearch Contributors
+ * SPDX-License-Identifier: Apache-2.0
  */
 import React, { useState } from 'react';
 import { get } from 'lodash';
 import AddAnomalyDetector from '../CreateAnomalyDetector';
+import AssociatedDetectors from '../AssociatedDetectors/containers/AssociatedDetectors';
 import { getEmbeddable } from '../../../../public/services';
 
 const AnywhereParentFlyout = ({ startingFlyout, ...props }) => {
@@ -18,6 +19,7 @@ const AnywhereParentFlyout = ({ startingFlyout, ...props }) => {
 
   const AnywhereFlyout = {
     create: AddAnomalyDetector,
+    associated: AssociatedDetectors,
   }[mode];
 
   return (
@@ -30,7 +32,7 @@ const AnywhereParentFlyout = ({ startingFlyout, ...props }) => {
         selectedDetectorId,
         setSelectedDetectorId,
       }}
-  />
+    />
   );
 };
 

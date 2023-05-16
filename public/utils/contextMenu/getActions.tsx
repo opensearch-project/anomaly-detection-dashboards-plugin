@@ -7,13 +7,9 @@ import { createADAction } from '../../action/ad_dashboard_action';
 import AnywhereParentFlyout from '../../components/FeatureAnywhereContextMenu/AnywhereParentFlyout';
 import { Provider } from 'react-redux';
 import configureStore from '../../redux/configureStore';
-<<<<<<< HEAD
 import DocumentationTitle from '../../components/FeatureAnywhereContextMenu/DocumentationTitle/containers/DocumentationTitle';
 import { AD_DOCS_LINK, APM_TRACE } from '../constants';
 import { getClient, getOverlays } from '../../../public/services';
-=======
-import DocumentationTitle from '../../../public/components/FeatureAnywhereContextMenu/DocumentationTitle/containers/DocumentationTitle';
->>>>>>> 327dfbd (addressing comments)
 
 // This is used to create all actions in the same context menu
 const grouping: Action['grouping'] = [

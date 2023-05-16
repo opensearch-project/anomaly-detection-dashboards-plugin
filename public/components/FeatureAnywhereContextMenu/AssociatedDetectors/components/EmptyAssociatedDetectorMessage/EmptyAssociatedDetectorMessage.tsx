@@ -13,9 +13,7 @@ interface EmptyDetectorProps {
   embeddableTitle: string;
 }
 
-export const EmptyAssociatedDetectorFlyoutMessage = (
-  props: EmptyDetectorProps
-) => (
+export const EmptyAssociatedDetectorMessage = (props: EmptyDetectorProps) => (
   <EuiEmptyPrompt
     title={<h3>No anomaly detectors to display</h3>}
     titleSize="s"
