@@ -1,6 +1,6 @@
 import React from 'react';
 import { i18n } from '@osd/i18n';
-import { EuiIconType } from '@elastic/eui/src/components/icon/icon';
+import { EuiIconType } from '@elastic/eui';
 import { toMountPoint } from '../../../../../src/plugins/opensearch_dashboards_react/public';
 import { Action } from '../../../../../src/plugins/ui_actions/public';
 import { createADAction } from '../../action/ad_dashboard_action';
@@ -10,6 +10,7 @@ import { CoreServicesContext } from '../../../public/components/CoreServices/Cor
 import configureStore from '../../redux/configureStore';
 import DocumentationTitle from '../../components/FeatureAnywhereContextMenu/DocumentationTitle/containers/DocumentationTitle';
 import { AD_DOCS_LINK, APM_TRACE } from '../constants';
+import { CoreSetup } from '../../../../../src/core/public';
 
 // This is used to create all actions in the same context menu
 const grouping: Action['grouping'] = [
@@ -20,7 +21,12 @@ const grouping: Action['grouping'] = [
   },
 ];
 
-export const getActions = ({ core, plugins }) => {
+interface GetActionsProps {
+  core: CoreSetup;
+  plugins: any;
+}
+
+export const getActions = ({ core, plugins }: GetActionsProps) => {
   const getOnClick =
     (startingFlyout) =>
     async ({ embeddable }) => {
