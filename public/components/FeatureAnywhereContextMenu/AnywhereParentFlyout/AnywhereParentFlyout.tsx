@@ -7,6 +7,7 @@ import { get } from 'lodash';
 import AssociatedDetectors from '../AssociatedDetectors/containers/AssociatedDetectors';
 import { getEmbeddable } from '../../../../public/services';
 import AddAnomalyDetector from '../CreateAnomalyDetector/AddAnomalyDetector';
+import { DetectorListItem } from '../../../../public/models/interfaces';
 
 const AnywhereParentFlyout = ({ startingFlyout, ...props }) => {
   const embeddable = getEmbeddable().getEmbeddableFactory;
@@ -15,12 +16,15 @@ const AnywhereParentFlyout = ({ startingFlyout, ...props }) => {
   ];
 
   const [mode, setMode] = useState(startingFlyout);
-  const [selectedDetectorId, setSelectedDetectorId] = useState();
+  const [selectedDetector, setSelectedDetector] = useState(
+    {} as DetectorListItem
+  );
 
   const AnywhereFlyout = {
     create: AddAnomalyDetector,
     associated: AssociatedDetectors,
-  }[mode];
+    existing: AddAnomalyDetector,
+    }[mode];
 
   return (
     <AnywhereFlyout
@@ -29,8 +33,8 @@ const AnywhereParentFlyout = ({ startingFlyout, ...props }) => {
         setMode,
         mode,
         indices,
-        selectedDetectorId,
-        setSelectedDetectorId,
+        selectedDetector,
+        setSelectedDetector,
       }}
     />
   );

@@ -239,11 +239,6 @@ function AssociatedDetectors({ embeddable, closeFlyout, setMode }) {
     dispatch(getDetectorList(GET_ALL_DETECTORS_QUERY_PARAMS));
   };
 
-  // TODO: this part is incomplete because it is pending on a different PR that will have all the associate existing changes
-  const openAssociateDetectorFlyout = async () => {
-    console.log('inside create anomaly detector');
-  };
-
   const handleUnlinkDetectorAction = (detector: DetectorListItem) => {
     setDetectorToUnlink(detector);
     setConfirmModalState({
@@ -326,7 +321,7 @@ function AssociatedDetectors({ embeddable, closeFlyout, setMode }) {
                 fill
                 iconType="link"
                 onClick={() => {
-                  openAssociateDetectorFlyout();
+                  setMode('existing');
                 }}
               >
                 Associate a detector
