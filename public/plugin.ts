@@ -14,32 +14,25 @@ import {
   CoreSetup,
   CoreStart,
   Plugin,
-  PluginInitializerContext,
 } from '../../../src/core/public';
-import {
-  AnomalyDetectionOpenSearchDashboardsPluginSetup,
-  AnomalyDetectionOpenSearchDashboardsPluginStart,
-} from '.';
+import { CONTEXT_MENU_TRIGGER } from '../../../src/plugins/embeddable/public';
+import { ACTION_AD } from './action/ad_dashboard_action';
+import { PLUGIN_NAME } from './utils/constants';
+import { getActions } from './utils/contextMenu/getActions';
 import { overlayAnomaliesFunction } from './expressions/overlay_anomalies';
 import { setClient } from './services';
+import { AnomalyDetectionOpenSearchDashboardsPluginStart } from 'public';
 
-export class AnomalyDetectionOpenSearchDashboardsPlugin
-  implements
-    Plugin<
-      AnomalyDetectionOpenSearchDashboardsPluginSetup,
-      AnomalyDetectionOpenSearchDashboardsPluginStart
-    >
-{
-  constructor(private readonly initializerContext: PluginInitializerContext) {
-    // can retrieve config from initializerContext
+declare module '../../../src/plugins/ui_actions/public' {
+  export interface ActionContextMapping {
+    [ACTION_AD]: {};
   }
+}
 
-  public setup(
-    core: CoreSetup,
-    plugins
-  ): AnomalyDetectionOpenSearchDashboardsPluginSetup {
+export class AnomalyDetectionOpenSearchDashboardsPlugin implements Plugin {
+  public setup(core: CoreSetup, plugins) {
     core.application.register({
-      id: 'anomaly-detection-dashboards',
+      id: PLUGIN_NAME,
       title: 'Anomaly Detection',
       category: {
         id: 'opensearch',
@@ -49,9 +42,17 @@ export class AnomalyDetectionOpenSearchDashboardsPlugin
       order: 5000,
       mount: async (params: AppMountParameters) => {
         const { renderApp } = await import('./anomaly_detection_app');
-        const [coreStart, depsStart] = await core.getStartServices();
+        const [coreStart] = await core.getStartServices();
         return renderApp(coreStart, params);
       },
+    });
+
+    // Create context menu actions. Pass core, to access service for flyouts.
+    const actions = getActions({ core });
+
+    // Add  actions to uiActions
+    actions.forEach((action) => {
+      plugins.uiActions.addTriggerAction(CONTEXT_MENU_TRIGGER, action);
     });
 
     // Set the HTTP client so it can be pulled into expression fns to make

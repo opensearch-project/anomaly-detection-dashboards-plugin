@@ -1,5 +1,8 @@
+/* 
+ * Copyright OpenSearch Contributors 
+ * SPDX-License-Identifier: Apache-2.0 
+ */
 import React, { useState } from 'react';
-import './styles.scss';
 import { get } from 'lodash';
 import AddAnomalyDetector from '../CreateAnomalyDetector';
 
@@ -11,12 +14,12 @@ const AnywhereParentFlyout = ({ startingFlyout, ...props }) => {
   const [mode, setMode] = useState(startingFlyout);
   const [selectedDetectorId, setSelectedDetectorId] = useState();
 
-  const Flyout = {
+  const AnywhereFlyout = {
     create: AddAnomalyDetector,
   }[mode];
 
   return (
-    <Flyout
+    <AnywhereFlyout
       {...{
         ...props,
         setMode,
@@ -25,7 +28,7 @@ const AnywhereParentFlyout = ({ startingFlyout, ...props }) => {
         selectedDetectorId,
         setSelectedDetectorId,
       }}
-    />
+  />
   );
 };
 

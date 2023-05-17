@@ -8,15 +8,15 @@ import AnywhereParentFlyout from '../../components/FeatureAnywhereContextMenu/An
 import { Provider } from 'react-redux';
 import { CoreServicesContext } from '../../../public/components/CoreServices/CoreServices';
 import configureStore from '../../redux/configureStore';
-import DocumentationTitle from '../../../public/components/FeatureAnywhereContextMenu/DocumentationTitle/containers/DocumentationTitle';
-import { AD_DOCS_LINK } from '../constants';
+import DocumentationTitle from '../../components/FeatureAnywhereContextMenu/DocumentationTitle/containers/DocumentationTitle';
+import { AD_DOCS_LINK, APM_TRACE } from '../constants';
 
 // This is used to create all actions in the same context menu
 const grouping: Action['grouping'] = [
   {
     id: 'ad-dashboard-context-menu',
     getDisplayName: () => 'Anomaly Detector',
-    getIconType: () => 'apmTrace',
+    getIconType: () => APM_TRACE,
   },
 ];
 
@@ -81,7 +81,7 @@ export const getActions = ({ core, plugins }) => {
       title: <DocumentationTitle />,
       icon: 'documentation' as EuiIconType,
       order: 98,
-      onExecute: () => {
+      onClick: () => {
         window.open(
           AD_DOCS_LINK,
           '_blank'
