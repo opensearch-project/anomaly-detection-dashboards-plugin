@@ -5,12 +5,14 @@
 import React, { useState } from 'react';
 import { get } from 'lodash';
 import AddAnomalyDetector from '../CreateAnomalyDetector';
+import { getEmbeddable } from '../../../../public/services';
 
 const AnywhereParentFlyout = ({ startingFlyout, ...props }) => {
-  const { embeddable } = props;
+  const embeddable = getEmbeddable().getEmbeddableFactory;
   const indices: { label: string }[] = [
     { label: get(embeddable, 'vis.data.indexPattern.title', '') },
   ];
+
   const [mode, setMode] = useState(startingFlyout);
   const [selectedDetectorId, setSelectedDetectorId] = useState();
 

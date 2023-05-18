@@ -23,10 +23,9 @@ const grouping: Action['grouping'] = [
 
 interface GetActionsProps {
   core: CoreSetup;
-  plugins: any;
 }
 
-export const getActions = ({ core, plugins }: GetActionsProps) => {
+export const getActions = ({ core }: GetActionsProps) => {
   const getOnClick =
     (startingFlyout) =>
     async ({ embeddable }) => {
@@ -42,7 +41,6 @@ export const getActions = ({ core, plugins }: GetActionsProps) => {
                 {...{
                   startingFlyout,
                   embeddable,
-                  plugins,
                   closeFlyout: () => overlay.close(),
                   core,
                   services,
