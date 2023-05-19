@@ -10,7 +10,6 @@ import { CoreServicesContext } from '../../../public/components/CoreServices/Cor
 import configureStore from '../../redux/configureStore';
 import DocumentationTitle from '../../components/FeatureAnywhereContextMenu/DocumentationTitle/containers/DocumentationTitle';
 import { AD_DOCS_LINK, APM_TRACE } from '../constants';
-import { CoreSetup } from '../../../../../src/core/public';
 
 // This is used to create all actions in the same context menu
 const grouping: Action['grouping'] = [
@@ -21,6 +20,7 @@ const grouping: Action['grouping'] = [
   },
 ];
 
+
 interface GetActionsProps {
   core: CoreSetup;
 }
@@ -29,6 +29,7 @@ export const getActions = ({ core }: GetActionsProps) => {
   const getOnClick =
     (startingFlyout) =>
     async ({ embeddable }) => {
+      //const services = core;
       const services = await core.getStartServices();
       const openFlyout = services[0].overlays.openFlyout;
       const http = services[0].http;
@@ -38,13 +39,10 @@ export const getActions = ({ core }: GetActionsProps) => {
           <Provider store={store}>
             <CoreServicesContext.Provider value={services}>
               <AnywhereParentFlyout
-                {...{
-                  startingFlyout,
-                  embeddable,
-                  closeFlyout: () => overlay.close(),
-                  core,
-                  services,
-                }}
+                startingFlyout={startingFlyout}
+                embeddable={embeddable}
+                closeFlyout={() => overlay.close()}
+                services={services}
               />
             </CoreServicesContext.Provider>
           </Provider>
