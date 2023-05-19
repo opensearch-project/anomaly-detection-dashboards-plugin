@@ -29,7 +29,6 @@ export const getActions = ({ core }: GetActionsProps) => {
   const getOnClick =
     (startingFlyout) =>
     async ({ embeddable }) => {
-      //const services = core;
       const services = await core.getStartServices();
       const openFlyout = services[0].overlays.openFlyout;
       const http = services[0].http;
