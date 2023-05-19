@@ -6,10 +6,10 @@ import { Action } from '../../../../../src/plugins/ui_actions/public';
 import { createADAction } from '../../action/ad_dashboard_action';
 import AnywhereParentFlyout from '../../components/FeatureAnywhereContextMenu/AnywhereParentFlyout';
 import { Provider } from 'react-redux';
-import { CoreServicesContext } from '../../../public/components/CoreServices/CoreServices';
 import configureStore from '../../redux/configureStore';
 import DocumentationTitle from '../../components/FeatureAnywhereContextMenu/DocumentationTitle/containers/DocumentationTitle';
 import { AD_DOCS_LINK, APM_TRACE } from '../constants';
+import { getClient, getOverlays } from '../../../public/services';
 
 // This is used to create all actions in the same context menu
 const grouping: Action['grouping'] = [
@@ -20,30 +20,21 @@ const grouping: Action['grouping'] = [
   },
 ];
 
-
-interface GetActionsProps {
-  core: CoreSetup;
-}
-
-export const getActions = ({ core }: GetActionsProps) => {
+export const getActions = () => {
   const getOnClick =
     (startingFlyout) =>
     async ({ embeddable }) => {
-      const services = await core.getStartServices();
-      const openFlyout = services[0].overlays.openFlyout;
-      const http = services[0].http;
-      const store = configureStore(http);
+      const overlayService = getOverlays();
+      const openFlyout = overlayService.openFlyout;
+      const store = configureStore(getClient());
       const overlay = openFlyout(
         toMountPoint(
           <Provider store={store}>
-            <CoreServicesContext.Provider value={services}>
-              <AnywhereParentFlyout
+            <AnywhereParentFlyout
                 startingFlyout={startingFlyout}
                 embeddable={embeddable}
                 closeFlyout={() => overlay.close()}
-                services={services}
               />
-            </CoreServicesContext.Provider>
           </Provider>
         ),
         { size: 'm', className: 'context-menu__flyout' }

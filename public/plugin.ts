@@ -20,8 +20,9 @@ import { ACTION_AD } from './action/ad_dashboard_action';
 import { PLUGIN_NAME } from './utils/constants';
 import { getActions } from './utils/contextMenu/getActions';
 import { overlayAnomaliesFunction } from './expressions/overlay_anomalies';
-import { setClient, setEmbeddable } from './services';
+import { setClient, setEmbeddable, setOverlays } from './services';
 import { AnomalyDetectionOpenSearchDashboardsPluginStart } from 'public';
+import { createStartServicesGetter } from '../../../src/plugins/opensearch_dashboards_utils/public';
 
 declare module '../../../src/plugins/ui_actions/public' {
   export interface ActionContextMapping {
@@ -39,6 +40,7 @@ export interface AnomalyDetectionStartDeps {
 
 export class AnomalyDetectionOpenSearchDashboardsPlugin implements 
   Plugin<AnomalyDetectionSetupDeps, AnomalyDetectionStartDeps> {
+    
     public setup(core: CoreSetup, plugins: any) {
       core.application.register({
         id: PLUGIN_NAME,
@@ -61,7 +63,7 @@ export class AnomalyDetectionOpenSearchDashboardsPlugin implements
       setClient(core.http);
 
       // Create context menu actions. Pass core, to access service for flyouts.
-      const actions = getActions({ core });
+      const actions = getActions();
 
       // Add  actions to uiActions
       actions.forEach((action) => {
@@ -78,6 +80,7 @@ export class AnomalyDetectionOpenSearchDashboardsPlugin implements
       {embeddable }: AnomalyDetectionStartDeps
     ): AnomalyDetectionOpenSearchDashboardsPluginStart {
       setEmbeddable(embeddable);
+      setOverlays(core.overlays);
       return {};
     }
 }
