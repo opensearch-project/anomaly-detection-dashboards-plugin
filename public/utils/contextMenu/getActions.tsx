@@ -9,7 +9,7 @@ import { Provider } from 'react-redux';
 import configureStore from '../../redux/configureStore';
 import DocumentationTitle from '../../components/FeatureAnywhereContextMenu/DocumentationTitle/containers/DocumentationTitle';
 import { AD_DOCS_LINK, APM_TRACE } from '../constants';
-import { getClient, getOverlays } from '../../../public/services';
+import { getClient, getNotifications, getOverlays } from '../../../public/services';
 
 // This is used to create all actions in the same context menu
 const grouping: Action['grouping'] = [
@@ -33,6 +33,7 @@ export const getActions = () => {
             <AnywhereParentFlyout
                 startingFlyout={startingFlyout}
                 embeddable={embeddable}
+                notification={getNotifications()}
                 closeFlyout={() => overlay.close()}
               />
           </Provider>

@@ -13,6 +13,7 @@ import {
   AppMountParameters,
   CoreSetup,
   CoreStart,
+  NotificationsStart,
   Plugin,
 } from '../../../src/core/public';
 import { CONTEXT_MENU_TRIGGER, EmbeddableSetup, EmbeddableStart } from '../../../src/plugins/embeddable/public';
@@ -20,9 +21,8 @@ import { ACTION_AD } from './action/ad_dashboard_action';
 import { PLUGIN_NAME } from './utils/constants';
 import { getActions } from './utils/contextMenu/getActions';
 import { overlayAnomaliesFunction } from './expressions/overlay_anomalies';
-import { setClient, setEmbeddable, setOverlays } from './services';
+import { setClient, setEmbeddable, setNotifications, setOverlays } from './services';
 import { AnomalyDetectionOpenSearchDashboardsPluginStart } from 'public';
-import { createStartServicesGetter } from '../../../src/plugins/opensearch_dashboards_utils/public';
 
 declare module '../../../src/plugins/ui_actions/public' {
   export interface ActionContextMapping {
@@ -36,6 +36,7 @@ export interface AnomalyDetectionSetupDeps {
 
 export interface AnomalyDetectionStartDeps {
   embeddable: EmbeddableStart;
+  notifications: NotificationsStart;
 }
 
 export class AnomalyDetectionOpenSearchDashboardsPlugin implements 
@@ -62,7 +63,7 @@ export class AnomalyDetectionOpenSearchDashboardsPlugin implements
       // direct server-side calls
       setClient(core.http);
 
-      // Create context menu actions. Pass core, to access service for flyouts.
+      // Create context menu actions
       const actions = getActions();
 
       // Add  actions to uiActions
@@ -81,6 +82,7 @@ export class AnomalyDetectionOpenSearchDashboardsPlugin implements
     ): AnomalyDetectionOpenSearchDashboardsPluginStart {
       setEmbeddable(embeddable);
       setOverlays(core.overlays);
+      setNotifications(core.notifications);
       return {};
     }
 }
