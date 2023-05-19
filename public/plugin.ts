@@ -14,58 +14,73 @@ import {
   CoreSetup,
   CoreStart,
   Plugin,
-  PluginInitializerContext,
 } from '../../../src/core/public';
-import {
-  AnomalyDetectionOpenSearchDashboardsPluginSetup,
-  AnomalyDetectionOpenSearchDashboardsPluginStart,
-} from '.';
+import { CONTEXT_MENU_TRIGGER, EmbeddableSetup, EmbeddableStart } from '../../../src/plugins/embeddable/public';
+import { ACTION_AD } from './action/ad_dashboard_action';
+import { PLUGIN_NAME } from './utils/constants';
+import { getActions } from './utils/contextMenu/getActions';
 import { overlayAnomaliesFunction } from './expressions/overlay_anomalies';
-import { setClient } from './services';
+import { setClient, setEmbeddable, setOverlays } from './services';
+import { AnomalyDetectionOpenSearchDashboardsPluginStart } from 'public';
+import { createStartServicesGetter } from '../../../src/plugins/opensearch_dashboards_utils/public';
 
-export class AnomalyDetectionOpenSearchDashboardsPlugin
-  implements
-    Plugin<
-      AnomalyDetectionOpenSearchDashboardsPluginSetup,
-      AnomalyDetectionOpenSearchDashboardsPluginStart
-    >
-{
-  constructor(private readonly initializerContext: PluginInitializerContext) {
-    // can retrieve config from initializerContext
+declare module '../../../src/plugins/ui_actions/public' {
+  export interface ActionContextMapping {
+    [ACTION_AD]: {};
   }
+}
 
-  public setup(
-    core: CoreSetup,
-    plugins
-  ): AnomalyDetectionOpenSearchDashboardsPluginSetup {
-    core.application.register({
-      id: 'anomaly-detection-dashboards',
-      title: 'Anomaly Detection',
-      category: {
-        id: 'opensearch',
-        label: 'OpenSearch Plugins',
-        order: 2000,
-      },
-      order: 5000,
-      mount: async (params: AppMountParameters) => {
-        const { renderApp } = await import('./anomaly_detection_app');
-        const [coreStart, depsStart] = await core.getStartServices();
-        return renderApp(coreStart, params);
-      },
-    });
+export interface AnomalyDetectionSetupDeps {
+  embeddable: EmbeddableSetup;
+}
 
-    // Set the HTTP client so it can be pulled into expression fns to make
-    // direct server-side calls
-    setClient(core.http);
+export interface AnomalyDetectionStartDeps {
+  embeddable: EmbeddableStart;
+}
 
-    // registers the expression function used to render anomalies on an Augmented Visualization
-    plugins.expressions.registerFunction(overlayAnomaliesFunction);
-    return {};
-  }
+export class AnomalyDetectionOpenSearchDashboardsPlugin implements 
+  Plugin<AnomalyDetectionSetupDeps, AnomalyDetectionStartDeps> {
+    
+    public setup(core: CoreSetup, plugins: any) {
+      core.application.register({
+        id: PLUGIN_NAME,
+        title: 'Anomaly Detection',
+        category: {
+          id: 'opensearch',
+          label: 'OpenSearch Plugins',
+          order: 2000,
+        },
+        order: 5000,
+        mount: async (params: AppMountParameters) => {
+          const { renderApp } = await import('./anomaly_detection_app');
+          const [coreStart] = await core.getStartServices();
+          return renderApp(coreStart, params);
+        },
+      });
 
-  public start(
-    core: CoreStart
-  ): AnomalyDetectionOpenSearchDashboardsPluginStart {
-    return {};
-  }
+      // Set the HTTP client so it can be pulled into expression fns to make
+      // direct server-side calls
+      setClient(core.http);
+
+      // Create context menu actions. Pass core, to access service for flyouts.
+      const actions = getActions();
+
+      // Add  actions to uiActions
+      actions.forEach((action) => {
+        plugins.uiActions.addTriggerAction(CONTEXT_MENU_TRIGGER, action);
+      });
+
+      // registers the expression function used to render anomalies on an Augmented Visualization
+      plugins.expressions.registerFunction(overlayAnomaliesFunction);
+      return {};
+    }
+
+    public start(
+      core: CoreStart,
+      {embeddable }: AnomalyDetectionStartDeps
+    ): AnomalyDetectionOpenSearchDashboardsPluginStart {
+      setEmbeddable(embeddable);
+      setOverlays(core.overlays);
+      return {};
+    }
 }
