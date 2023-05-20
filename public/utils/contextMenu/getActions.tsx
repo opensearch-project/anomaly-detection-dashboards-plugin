@@ -9,7 +9,11 @@ import { Provider } from 'react-redux';
 import configureStore from '../../redux/configureStore';
 import DocumentationTitle from '../../components/FeatureAnywhereContextMenu/DocumentationTitle/containers/DocumentationTitle';
 import { AD_DOCS_LINK, APM_TRACE } from '../constants';
-import { getClient, getNotifications, getOverlays } from '../../../public/services';
+import {
+  getClient,
+  getNotifications,
+  getOverlays,
+} from '../../../public/services';
 
 // This is used to create all actions in the same context menu
 const grouping: Action['grouping'] = [
@@ -31,11 +35,11 @@ export const getActions = () => {
         toMountPoint(
           <Provider store={store}>
             <AnywhereParentFlyout
-                startingFlyout={startingFlyout}
-                embeddable={embeddable}
-                notification={getNotifications()}
-                closeFlyout={() => overlay.close()}
-              />
+              startingFlyout={startingFlyout}
+              embeddable={embeddable}
+              notification={getNotifications()}
+              closeFlyout={() => overlay.close()}
+            />
           </Provider>
         ),
         { size: 'm', className: 'context-menu__flyout' }
@@ -75,10 +79,7 @@ export const getActions = () => {
       icon: 'documentation' as EuiIconType,
       order: 98,
       onClick: () => {
-        window.open(
-          AD_DOCS_LINK,
-          '_blank'
-        );
+        window.open(AD_DOCS_LINK, '_blank');
       },
     },
   ].map((options) => createADAction({ ...options, grouping }));

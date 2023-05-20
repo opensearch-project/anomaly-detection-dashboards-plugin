@@ -67,7 +67,10 @@ import {
   validatePositiveInteger,
 } from '../../../../public/utils/utils';
 import { CUSTOM_AD_RESULT_INDEX_PREFIX } from '../../../../server/utils/constants';
-import { focusOnFirstWrongFeature, initialFeatureValue } from '../../../../public/pages/ConfigureModel/utils/helpers';
+import {
+  focusOnFirstWrongFeature,
+  initialFeatureValue,
+} from '../../../../public/pages/ConfigureModel/utils/helpers';
 import { FeaturesFormikValues } from '../../../../public/pages/ConfigureModel/models/interfaces';
 import {
   getIndices,
@@ -80,7 +83,10 @@ import {
 } from '../../../../public/pages/ReviewAndCreate/utils/helpers';
 import { FormattedFormRow } from '../../../../public/components/FormattedFormRow/FormattedFormRow';
 import { FeatureAccordion } from '../../../../public/pages/ConfigureModel/components/FeatureAccordion';
-import { AD_DOCS_LINK, MAX_FEATURE_NUM } from '../../../../public/utils/constants';
+import {
+  AD_DOCS_LINK,
+  MAX_FEATURE_NUM,
+} from '../../../../public/utils/constants';
 
 function AddAnomalyDetector({
   embeddable,
@@ -151,13 +157,11 @@ function AddAnomalyDetector({
   const handleValidationAndSubmit = (formikProps) => {
     if (!isEmpty(formikProps.errors)) {
       focusOnFirstWrongFeature(formikProps.errors, formikProps.setFieldTouched);
-      notification.toasts.addDanger(
-        'One or more input fields is invalid'
-      );
+      notification.toasts.addDanger('One or more input fields is invalid');
     } else {
       handleSubmit(formikProps.values);
     }
-  }
+  };
 
   const handleSubmit = (values, formikHelpers) => {
     try {
@@ -165,9 +169,7 @@ function AddAnomalyDetector({
       dispatch(createDetector(detectorToCreate)).then(async (response) => {
         dispatch(startDetector(response.response.id)).then(
           (startDetectorResponse) => {
-            notification.toasts.addSuccess(
-              `Detector created: ${values.name}`
-            );
+            notification.toasts.addSuccess(`Detector created: ${values.name}`);
           }
         );
         enum VisLayerTypes {
@@ -317,7 +319,6 @@ function AddAnomalyDetector({
 
     const response = await savedObject.save({});
     closeFlyout();
-
   };
 
   function formikToDetectorName(title) {
@@ -576,7 +577,10 @@ function AddAnomalyDetector({
                       >
                         <EuiSpacer size="s" />
                         <EuiText size="xs">
-                          <p>Source: {embeddable.vis.data.aggs.indexPattern.title}</p>
+                          <p>
+                            Source:{' '}
+                            {embeddable.vis.data.aggs.indexPattern.title}
+                          </p>
                         </EuiText>
                         <EuiSpacer size="s" />
                         <DataFilterList formikProps={formikProps} />
@@ -590,7 +594,10 @@ function AddAnomalyDetector({
                         isUsingDivider={true}
                       >
                         <EuiSpacer size="m" />
-                        <Field name="shingleSize" validate={validatePositiveInteger}>
+                        <Field
+                          name="shingleSize"
+                          validate={validatePositiveInteger}
+                        >
                           {({ field, form }: FieldProps) => (
                             <FormattedFormRow
                               title="Shingle size"
@@ -737,7 +744,7 @@ function AddAnomalyDetector({
                                     index={index}
                                     feature={feature}
                                     handleChange={formikProps.handleChange}
-                                    displayMode='flyout'
+                                    displayMode="flyout"
                                   />
                                 )
                               )}
@@ -781,7 +788,7 @@ function AddAnomalyDetector({
                   <EuiButtonEmpty onClick={closeFlyout}>Cancel</EuiButtonEmpty>
                 </EuiFlexItem>
                 <EuiFlexItem grow={false}>
-                {mode === 'existing' ? (
+                  {mode === 'existing' ? (
                     <EuiButton
                       fill={true}
                       data-test-subj="adAnywhereCreateDetectorButton"

@@ -1,6 +1,6 @@
-/* 
- * Copyright OpenSearch Contributors 
- * SPDX-License-Identifier: Apache-2.0 
+/*
+ * Copyright OpenSearch Contributors
+ * SPDX-License-Identifier: Apache-2.0
  */
 import React, { useState } from 'react';
 import { get } from 'lodash';
@@ -30,7 +30,7 @@ const AnywhereParentFlyout = ({ startingFlyout, ...props }) => {
         selectedDetectorId,
         setSelectedDetectorId,
       }}
-  />
+    />
   );
 };
 
