@@ -271,6 +271,59 @@ function AddAnomalyDetector({ embeddable, closeFlyout, mode, setMode }) {
     historical: false,
   };
 
+  const handleAssociate = async (detector: DetectorListItem) => {
+    enum VisLayerTypes {
+      PointInTimeEvents = 'PointInTimeEvents',
+    }
+
+    const fn = {
+      type: VisLayerTypes.PointInTimeEvents,
+      name: 'overlay_anomalies',
+      args: {
+        detectorId: detector.id,
+      },
+    } as VisLayerExpressionFn;
+
+    const pluginResource = {
+      type: 'anomay-detection',
+      id: detector.id,
+    } as ISavedPluginResource;
+
+    const savedObjectToCreate = {
+      title: embeddable.vis.title,
+      originPlugin: ORIGIN_PLUGIN_VIS_LAYER,
+      pluginResource: pluginResource,
+      visId: embeddable.vis.id,
+      savedObjectType: 'visualization',
+      visLayerExpressionFn: fn,
+    } as ISavedAugmentVis;
+
+    createAugmentVisSavedObject(savedObjectToCreate)
+      .then((savedObject: any) => {
+        savedObject
+          .save({})
+          .then((response: any) => {
+            notifications.toasts.addSuccess({
+              title: `The ${detector.name} is associated with the ${title} visualization`,
+              text: "The detector's anomalies do not appear on the visualization. Refresh your dashboard to update the visualization",
+            });
+            closeFlyout();
+          })
+          .catch((error) => {
+            notifications.toasts.addDanger(
+              prettifyErrorMessage(
+                `Error associating selected detector: ${error}`
+              )
+            );
+          });
+      })
+      .catch((error) => {
+        notifications.toasts.addDanger(
+          prettifyErrorMessage(`Error associating selected detector: ${error}`)
+        );
+      });
+  };
+
   return (
     <div className="add-anomaly-detector">
       <Formik

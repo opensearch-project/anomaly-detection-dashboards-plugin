@@ -98,7 +98,7 @@ export function AssociateExisting(
           []
         );
         const curDetectorsToDisplayOnList =
-          getExistingDetectorsAvalableToAssociate(
+          getExistingDetectorsAvailableToAssociate(
             Object.values(allDetectors),
             savedAugmentObjectsArr
           );
@@ -110,7 +110,7 @@ export function AssociateExisting(
 
   // cross checks all the detectors that exist with all the savedAugment Objects to only display ones
   // that are associated to the current visualization
-  const getExistingDetectorsAvalableToAssociate = (
+  const getExistingDetectorsAvailableToAssociate = (
     detectors: DetectorListItem[],
     savedAugmentObjects: ISavedAugmentVis[]
   ) => {
@@ -124,7 +124,7 @@ export function AssociateExisting(
     // Map all detector IDs for all the found augmented vis objects
     const savedAugmentDetectorsSet = new Set(
       savedAugmentForThisVisualization.map((savedObject) =>
-        get(savedObject, 'pluginResourceId', '')
+        get(savedObject, 'pluginResource.id', '')
       )
     );
 
@@ -168,19 +168,8 @@ export function AssociateExisting(
     existingDetectorsAvailableToAssociate,
   ]);
 
-  const detector = useMemo(
-    () =>
-      existingDetectorsAvailableToAssociate &&
-      associateExistingProps.selectedDetector &&
-      existingDetectorsAvailableToAssociate.find(
-        (detector) =>
-          detector.id === get(associateExistingProps.selectedDetector, 'id', '')
-      ),
-    [
-      associateExistingProps.selectedDetector,
-      existingDetectorsAvailableToAssociate,
-    ]
-  );
+  const detector = associateExistingProps.selectedDetector;
+
   const options = useMemo(() => {
     if (!existingDetectorsAvailableToAssociate) {
       return [];
@@ -210,8 +199,7 @@ export function AssociateExisting(
       <EuiText size="xs" color="subdued" style={{ paddingBottom: '3px' }}>
         Eligible detectors don't include high-cardinality detectors.
       </EuiText>
-      {!existingDetectorsAvailableToAssociate && <EuiLoadingSpinner size="l" />}
-      {existingDetectorsAvailableToAssociate && (
+      {existingDetectorsAvailableToAssociate ? (
         <EuiComboBox
           isLoading={isLoading}
           id="associate-existing__select"
@@ -233,6 +221,8 @@ export function AssociateExisting(
           singleSelection
           placeholder="Search for an anomaly detector"
         />
+      ) : (
+        <EuiLoadingSpinner size="l" />
       )}
       <EuiSpacer size="xl" />
       {detector && (
@@ -256,7 +246,7 @@ export function AssociateExisting(
           <EuiHorizontalRule margin="m" />
           <ul className="associate-existing__detector-details">
             {[
-              ['Indexes', (detector) => detector.indices],
+              ['Indices', (detector) => detector.indices],
               [
                 'Anomalies last 24 hours',
                 (detector) => detector.totalAnomalies,
