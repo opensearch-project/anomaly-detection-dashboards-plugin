@@ -1,3 +1,8 @@
+/*
+ * Copyright OpenSearch Contributors
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
 import React from 'react';
 import { i18n } from '@osd/i18n';
 import { EuiIconType } from '@elastic/eui';
@@ -31,10 +36,10 @@ export const getActions = () => {
         toMountPoint(
           <Provider store={store}>
             <AnywhereParentFlyout
-                startingFlyout={startingFlyout}
-                embeddable={embeddable}
-                closeFlyout={() => overlay.close()}
-              />
+              startingFlyout={startingFlyout}
+              embeddable={embeddable}
+              closeFlyout={() => overlay.close()}
+            />
           </Provider>
         ),
         { size: 'm', className: 'context-menu__flyout' }
@@ -74,10 +79,7 @@ export const getActions = () => {
       icon: 'documentation' as EuiIconType,
       order: 98,
       onClick: () => {
-        window.open(
-          AD_DOCS_LINK,
-          '_blank'
-        );
+        window.open(AD_DOCS_LINK, '_blank');
       },
     },
   ].map((options) => createADAction({ ...options, grouping }));
