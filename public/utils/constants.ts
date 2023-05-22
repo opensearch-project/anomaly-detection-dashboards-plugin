@@ -53,7 +53,8 @@ export const ANOMALY_RESULT_INDEX = '.opendistro-anomaly-results';
 
 export const BASE_DOCS_LINK = 'https://opensearch.org/docs/monitoring-plugins';
 
-export const AD_DOCS_LINK = 'https://opensearch.org/docs/latest/observing-your-data/ad/index/';
+export const AD_DOCS_LINK =
+  'https://opensearch.org/docs/latest/observing-your-data/ad/index/';
 
 export const MAX_DETECTORS = 1000;
 

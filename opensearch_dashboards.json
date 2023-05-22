@@ -16,7 +16,6 @@
     "visAugmenter",
     "opensearchDashboardsUtils"
   ],
-  "optionalPlugins": [],
   "server": true,
   "ui": true
 }
