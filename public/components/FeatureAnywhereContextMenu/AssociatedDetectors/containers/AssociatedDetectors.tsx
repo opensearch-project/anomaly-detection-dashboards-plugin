@@ -21,7 +21,10 @@ import { getColumns } from '../utils/helpers';
 import { useDispatch, useSelector } from 'react-redux';
 import { AppState } from '../../../../redux/reducers';
 import { DetectorListItem } from '../../../../models/interfaces';
-import { getSavedFeatureAnywhereLoader } from '../../../../services';
+import {
+  getSavedFeatureAnywhereLoader,
+  getNotifications,
+} from '../../../../services';
 import {
   GET_ALL_DETECTORS_QUERY_PARAMS,
   SINGLE_DETECTOR_NOT_FOUND_MSG,
@@ -47,7 +50,7 @@ interface ConfirmModalState {
   affectedDetector: DetectorListItem;
 }
 
-function AssociatedDetectors({ embeddable, closeFlyout, core, setMode }) {
+function AssociatedDetectors({ embeddable, closeFlyout, setMode }) {
   const dispatch = useDispatch();
   const allDetectors = useSelector((state: AppState) => state.ad.detectorList);
   const isRequestingFromES = useSelector(
@@ -81,13 +84,15 @@ function AssociatedDetectors({ embeddable, closeFlyout, core, setMode }) {
   // Establish savedObjectLoader for all operations on vis_augment saved objects
   const savedObjectLoader: SavedObjectLoader = getSavedFeatureAnywhereLoader();
 
+  const notifications = getNotifications();
+
   useEffect(() => {
     if (
       errorGettingDetectors &&
       !errorGettingDetectors.includes(SINGLE_DETECTOR_NOT_FOUND_MSG)
     ) {
       console.error(errorGettingDetectors);
-      core.notifications.toasts.addDanger(
+      notifications.toasts.addDanger(
         typeof errorGettingDetectors === 'string' &&
           errorGettingDetectors.includes(NO_PERMISSIONS_KEY_WORD)
           ? prettifyErrorMessage(errorGettingDetectors)
@@ -141,7 +146,7 @@ function AssociatedDetectors({ embeddable, closeFlyout, core, setMode }) {
         }
       })
       .catch((error) => {
-        core.notifications.toasts.addDanger(
+        notifications.toasts.addDanger(
           prettifyErrorMessage(`Unable to fetch associated detectors: ${error}`)
         );
       });
@@ -178,10 +183,14 @@ function AssociatedDetectors({ embeddable, closeFlyout, core, setMode }) {
     await savedObjectLoader.findAll().then(async (resp: any) => {
       if (resp != undefined) {
         // gets all the saved object for this visualization
-        const savedAugmentForThisVisualization: ISavedAugmentVis[] =
-        get(resp, 'hits', [] as ISavedAugmentVis[]).filter(
-            (savedObj: ISavedAugmentVis[]) => get(savedObj, 'visId', '') === embeddable.vis.id
-          );
+        const savedAugmentForThisVisualization: ISavedAugmentVis[] = get(
+          resp,
+          'hits',
+          [] as ISavedAugmentVis[]
+        ).filter(
+          (savedObj: ISavedAugmentVis[]) =>
+            get(savedObj, 'visId', '') === embeddable.vis.id
+        );
 
         // find saved augment object matching detector we want to unlink
         // There should only be one detector and vis pairing
@@ -192,14 +201,14 @@ function AssociatedDetectors({ embeddable, closeFlyout, core, setMode }) {
         await savedObjectLoader
           .delete(get(savedAugmentToUnlink, 'id', ''))
           .then(async (resp: any) => {
-            core.notifications.toasts.addSuccess({
+            notifications.toasts.addSuccess({
               title: `Association removed between the ${detectorToUnlink.name}
               and the ${embeddableTitle} visualization`,
               text: "The detector's anomalies do not appear on the visualization. Refresh your dashboard to update the visualization",
             });
           })
           .catch((error) => {
-            core.notifications.toasts.addDanger(
+            notifications.toasts.addDanger(
               prettifyErrorMessage(
                 `Error unlinking selected detector: ${error}`
               )

@@ -27,6 +27,7 @@ import { overlayAnomaliesFunction } from './expressions/overlay_anomalies';
 import {
   setClient,
   setEmbeddable,
+  setNotifications,
   setOverlays,
   setSavedFeatureAnywhereLoader,
 } from './services';
@@ -92,6 +93,7 @@ export class AnomalyDetectionOpenSearchDashboardsPlugin
     setEmbeddable(embeddable);
     setOverlays(core.overlays);
     setSavedFeatureAnywhereLoader(visAugmenter.savedAugmentVisLoader);
+    setNotifications(core.notifications);
     return {};
   }
 }
