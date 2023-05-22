@@ -4,7 +4,6 @@
  */
 import React, { useState } from 'react';
 import { get } from 'lodash';
-import AddAnomalyDetector from '../CreateAnomalyDetector';
 import AssociatedDetectors from '../AssociatedDetectors/containers/AssociatedDetectors';
 import { getEmbeddable } from '../../../../public/services';
 
@@ -18,7 +17,6 @@ const AnywhereParentFlyout = ({ startingFlyout, ...props }) => {
   const [selectedDetectorId, setSelectedDetectorId] = useState();
 
   const AnywhereFlyout = {
-    create: AddAnomalyDetector,
     associated: AssociatedDetectors,
   }[mode];
 

@@ -162,7 +162,7 @@ function AssociatedDetectors({ embeddable, closeFlyout, core, setMode }) {
     // Map all detector IDs for all the found augmented vis objects
     const savedAugmentDetectorsSet = new Set(
       savedAugmentForThisVisualization.map((savedObject) =>
-        get(savedObject, 'pluginResourceId', '')
+        get(savedObject, 'pluginResource.id', '')
       )
     );
 
@@ -177,22 +177,20 @@ function AssociatedDetectors({ embeddable, closeFlyout, core, setMode }) {
     setIsLoadingFinalDetectors(true);
     await savedObjectLoader.findAll().then(async (resp: any) => {
       if (resp != undefined) {
-        const savedAugmentObjects: ISavedAugmentVis[] = get(resp, 'hits', []);
         // gets all the saved object for this visualization
         const savedAugmentForThisVisualization: ISavedAugmentVis[] =
-          savedAugmentObjects.filter(
-            (savedObj) => get(savedObj, 'visId', '') === embeddable.vis.id
+        get(resp, 'hits', [] as ISavedAugmentVis[]).filter(
+            (savedObj: ISavedAugmentVis[]) => get(savedObj, 'visId', '') === embeddable.vis.id
           );
 
-        // find saved Augment object matching detector we want to unlink
+        // find saved augment object matching detector we want to unlink
         // There should only be one detector and vis pairing
         const savedAugmentToUnlink = savedAugmentForThisVisualization.find(
           (savedObject) =>
-            get(savedObject, 'pluginResourceId', '') === detectorToUnlink.id
+            get(savedObject, 'pluginResource.id', '') === detectorToUnlink.id
         );
-        const savedObjectToUnlinkId = get(savedAugmentToUnlink, 'id', '');
         await savedObjectLoader
-          .delete(savedObjectToUnlinkId)
+          .delete(get(savedAugmentToUnlink, 'id', ''))
           .then(async (resp: any) => {
             core.notifications.toasts.addSuccess({
               title: `Association removed between the ${detectorToUnlink.name}
