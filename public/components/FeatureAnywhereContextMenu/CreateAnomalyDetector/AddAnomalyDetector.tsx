@@ -16,7 +16,6 @@ import {
   EuiIcon,
   EuiText,
   EuiSwitch,
-  EuiButtonIcon,
   EuiFormRow,
   EuiFieldText,
   EuiCheckbox,
@@ -43,13 +42,14 @@ import {
   FieldProps,
   Form,
   Formik,
-  FormikHelpers,
 } from 'formik';
 import {
   createDetector,
   startDetector,
 } from '../../../../public/redux/reducers/ad';
-import { EmbeddablePanel } from '../../../../../../src/plugins/embeddable/public';
+import {
+  EmbeddableRenderer,
+} from '../../../../../../src/plugins/embeddable/public';
 import './styles.scss';
 import EnhancedAccordion from '../EnhancedAccordion';
 import MinimalAccordion from '../MinimalAccordion';
@@ -526,14 +526,7 @@ function AddAnomalyDetector({
                       }`}
                     >
                       <EuiSpacer size="s" />
-                      <EmbeddablePanel
-                        embeddable={embeddable}
-                        getActions={() => Promise.resolve([])}
-                        inspector={{ isAvailable: () => false }}
-                        hideHeader
-                        isRetained
-                        isBorderless
-                      />
+                      <EmbeddableRenderer embeddable={embeddable} />
                     </div>
                     <EuiSpacer size="l" />
                     <EuiTitle size="s">
