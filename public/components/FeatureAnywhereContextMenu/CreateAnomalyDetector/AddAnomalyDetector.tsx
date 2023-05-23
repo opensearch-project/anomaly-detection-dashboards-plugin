@@ -144,7 +144,6 @@ function AddAnomalyDetector({ embeddable, closeFlyout, mode, setMode }) {
   const notifications = getNotifications();
 
   const handleValidationAndSubmit = (formikProps) => {
-    console.log('formikProps: ', JSON.stringify(formikProps));
     if (!isEmpty(formikProps.errors)) {
       focusOnFirstWrongFeature(formikProps.errors, formikProps.setFieldTouched);
       notifications.toasts.addDanger('One or more input fields is invalid');
@@ -155,7 +154,6 @@ function AddAnomalyDetector({ embeddable, closeFlyout, mode, setMode }) {
 
   const handleSubmit = (formikProps) => {
     formikProps.setSubmitting(true);
-
     try {
       const detectorToCreate = formikToDetector(formikProps.values);
       dispatch(createDetector(detectorToCreate))
