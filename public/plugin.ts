@@ -30,8 +30,11 @@ import {
   setEmbeddable,
   setNotifications,
   setOverlays,
+  setSavedFeatureAnywhereLoader
 } from './services';
 import { AnomalyDetectionOpenSearchDashboardsPluginStart } from 'public';
+import { VisAugmenterStart } from '../../../src/plugins/vis_augmenter/public';
+
 
 declare module '../../../src/plugins/ui_actions/public' {
   export interface ActionContextMapping {
@@ -46,6 +49,7 @@ export interface AnomalyDetectionSetupDeps {
 export interface AnomalyDetectionStartDeps {
   embeddable: EmbeddableStart;
   notifications: NotificationsStart;
+  visAugmenter: VisAugmenterStart;
 }
 
 export class AnomalyDetectionOpenSearchDashboardsPlugin
@@ -75,7 +79,7 @@ export class AnomalyDetectionOpenSearchDashboardsPlugin
     // Create context menu actions
     const actions = getActions();
 
-    // Add  actions to uiActions
+    // Add actions to uiActions
     actions.forEach((action) => {
       plugins.uiActions.addTriggerAction(CONTEXT_MENU_TRIGGER, action);
     });
@@ -87,10 +91,11 @@ export class AnomalyDetectionOpenSearchDashboardsPlugin
 
   public start(
     core: CoreStart,
-    { embeddable }: AnomalyDetectionStartDeps
+    { embeddable, visAugmenter }: AnomalyDetectionStartDeps
   ): AnomalyDetectionOpenSearchDashboardsPluginStart {
     setEmbeddable(embeddable);
     setOverlays(core.overlays);
+    setSavedFeatureAnywhereLoader(visAugmenter.savedAugmentVisLoader);
     setNotifications(core.notifications);
     return {};
   }
