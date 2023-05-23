@@ -156,7 +156,7 @@ function AssociatedDetectors({ embeddable, closeFlyout, setMode }) {
     // Map all detector IDs for all the found augmented vis objects
     const savedAugmentDetectorsSet = new Set(
       savedAugmentForThisVisualization.map((savedObject) =>
-        get(savedObject, 'pluginResourceId', '')
+        get(savedObject, 'pluginResource.id', '')
       )
     );
 
@@ -182,7 +182,7 @@ function AssociatedDetectors({ embeddable, closeFlyout, setMode }) {
         // There should only be one detector and vis pairing
         const savedAugmentToUnlink = savedAugmentForThisVisualization.find(
           (savedObject) =>
-            get(savedObject, 'pluginResourceId', '') === detectorToUnlink.id
+            get(savedObject, 'pluginResource.id', '') === detectorToUnlink.id
         );
         const savedObjectToUnlinkId = get(savedAugmentToUnlink, 'id', '');
         await savedObjectLoader

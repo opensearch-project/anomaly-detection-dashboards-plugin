@@ -16,7 +16,6 @@ import {
   EuiIcon,
   EuiText,
   EuiSwitch,
-  EuiButtonIcon,
   EuiFormRow,
   EuiFieldText,
   EuiCheckbox,
@@ -31,6 +30,7 @@ import './styles.scss';
 import {
   createAugmentVisSavedObject,
   ISavedAugmentVis,
+  ISavedPluginResource,
   VisLayerExpressionFn,
 } from '../../../../../../src/plugins/vis_augmenter/public';
 import { useDispatch } from 'react-redux';
@@ -42,13 +42,14 @@ import {
   FieldProps,
   Form,
   Formik,
-  FormikHelpers,
 } from 'formik';
 import {
   createDetector,
   startDetector,
 } from '../../../../public/redux/reducers/ad';
-import { EmbeddablePanel } from '../../../../../../src/plugins/embeddable/public';
+import {
+  EmbeddableRenderer,
+} from '../../../../../../src/plugins/embeddable/public';
 import './styles.scss';
 import EnhancedAccordion from '../EnhancedAccordion';
 import MinimalAccordion from '../MinimalAccordion';
@@ -81,6 +82,8 @@ import { FormattedFormRow } from '../../../../public/components/FormattedFormRow
 import AssociateExisting from './AssociateExisting/containers/AssociateExisting';
 import { FeatureAccordion } from '../../../../public/pages/ConfigureModel/components/FeatureAccordion';
 import { MAX_FEATURE_NUM } from '../../../../public/utils/constants';
+import { ORIGIN_PLUGIN_VIS_LAYER } from '../../../../public/expressions/constants';
+import { prettifyErrorMessage } from '../../../../server/utils/helpers';
 
 function AddAnomalyDetector({
   embeddable,
@@ -187,9 +190,15 @@ function AddAnomalyDetector({
           },
         } as VisLayerExpressionFn;
 
+        const pluginResource = {
+          type: 'anomay-detection',
+          id: response.response.id,
+        } as ISavedPluginResource;
+
         const savedObjectToCreate = {
           title: embeddable.vis.title,
-          pluginResourceId: response.response.id,
+          originPlugin: ORIGIN_PLUGIN_VIS_LAYER,
+          pluginResource: pluginResource,
           visId: embeddable.vis.id,
           savedObjectType: 'visualization',
           visLayerExpressionFn: fn,
@@ -313,20 +322,43 @@ function AddAnomalyDetector({
       },
     } as VisLayerExpressionFn;
 
+    const pluginResource = {
+      type: 'anomay-detection',
+      id: detectorId,
+    } as ISavedPluginResource;
+
     const savedObjectToCreate = {
       title: 'test-title',
-      pluginResourceId: detectorId,
+      originPlugin: ORIGIN_PLUGIN_VIS_LAYER,
+      pluginResource: pluginResource,
       visId: embeddable.vis.id,
       visLayerExpressionFn: fn,
     } as ISavedAugmentVis;
 
-    const savedObject = await createAugmentVisSavedObject(savedObjectToCreate);
-    console.log('savedObject: ' + JSON.stringify(savedObject));
-
-    const response = await savedObject.save({});
-    console.log('response: ' + JSON.stringify(response));
-    closeFlyout();
-
+    createAugmentVisSavedObject(savedObjectToCreate)
+      .then((savedObject: any) => {
+        savedObject
+          .save({})
+          .then((response: any) => {
+            core.notifications.toasts.addSuccess({
+              title: `The detector is associated with the ${title} visualization`,
+              text: "The detector's anomalies do not appear on the visualization. Refresh your dashboard to update the visualization",
+            });
+            closeFlyout();
+          })
+          .catch((error) => {
+            core.notifications.toasts.addDanger(
+              prettifyErrorMessage(
+                `Error associating selected detector: ${error}`
+              )
+            );
+          });
+      })
+      .catch((error) => {
+        core.notifications.toasts.addDanger(
+          prettifyErrorMessage(`Error associating selected detector: ${error}`)
+        );
+      });
   };
 
   function formikToDetectorName(title) {
@@ -494,14 +526,7 @@ function AddAnomalyDetector({
                       }`}
                     >
                       <EuiSpacer size="s" />
-                      <EmbeddablePanel
-                        embeddable={embeddable}
-                        getActions={() => Promise.resolve([])}
-                        inspector={{ isAvailable: () => false }}
-                        hideHeader
-                        isRetained
-                        isBorderless
-                      />
+                      <EmbeddableRenderer embeddable={embeddable} />
                     </div>
                     <EuiSpacer size="l" />
                     <EuiTitle size="s">
@@ -609,7 +634,10 @@ function AddAnomalyDetector({
                       >
                         <EuiSpacer size="s" />
                         <EuiText size="xs">
-                          <p>Source: {embeddable.vis.data.aggs.indexPattern.title}</p>
+                          <p>
+                            Source:{' '}
+                            {embeddable.vis.data.aggs.indexPattern.title}
+                          </p>
                         </EuiText>
                         <EuiSpacer size="s" />
                         <DataFilterList formikProps={formikProps} />
@@ -758,7 +786,7 @@ function AddAnomalyDetector({
                                     index={index}
                                     feature={feature}
                                     handleChange={formikProps.handleChange}
-                                    displayMode='flyout'
+                                    displayMode="flyout"
                                   />
                                 )
                               )}
@@ -802,7 +830,7 @@ function AddAnomalyDetector({
                   <EuiButtonEmpty onClick={closeFlyout}>Cancel</EuiButtonEmpty>
                 </EuiFlexItem>
                 <EuiFlexItem grow={false}>
-                {mode === 'existing' ? (
+                  {mode === 'existing' ? (
                     <EuiButton
                       fill={true}
                       data-test-subj="adAnywhereCreateDetectorButton"

@@ -97,25 +97,19 @@ export const FeatureAccordion = (props: FeatureAccordionProps) => {
   };
 
   const deleteAction = (onClick: any) => {
-    if (props.displayMode === "flyout") {
+    if (props.displayMode === 'flyout') {
       return (
-        <EuiButtonIcon 
-          size="s" 
-          onClick={onClick} 
+        <EuiButtonIcon
+          size="s"
+          onClick={onClick}
           disabled={false}
           iconType="trash"
           color="text"
-        >
-        </EuiButtonIcon>
+        ></EuiButtonIcon>
       );
     } else {
       return (
-        <EuiButton 
-          size="s" 
-          color="danger" 
-          onClick={onClick} 
-          disabled={false}
-        >
+        <EuiButton size="s" color="danger" onClick={onClick} disabled={false}>
           Delete
         </EuiButton>
       );
