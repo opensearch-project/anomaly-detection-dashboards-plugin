@@ -125,7 +125,7 @@ export function AssociateExisting(
     // Map all detector IDs for all the found augmented vis objects
     const savedAugmentDetectorsSet = new Set(
       savedAugmentForThisVisualization.map((savedObject) =>
-        get(savedObject, 'pluginResourceId', '')
+        get(savedObject, 'pluginResource.id', '')
       )
     );
 
