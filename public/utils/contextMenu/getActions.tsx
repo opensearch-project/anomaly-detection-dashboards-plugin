@@ -16,7 +16,6 @@ import DocumentationTitle from '../../components/FeatureAnywhereContextMenu/Docu
 import { AD_DOCS_LINK, APM_TRACE } from '../constants';
 import {
   getClient,
-  getNotifications,
   getOverlays,
 } from '../../../public/services';
 
