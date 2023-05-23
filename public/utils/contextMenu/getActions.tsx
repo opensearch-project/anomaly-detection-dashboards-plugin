@@ -37,7 +37,6 @@ export const getActions = () => {
             <AnywhereParentFlyout
               startingFlyout={startingFlyout}
               embeddable={embeddable}
-              notification={getNotifications()}
               closeFlyout={() => overlay.close()}
             />
           </Provider>
