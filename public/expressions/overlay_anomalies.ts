@@ -39,13 +39,14 @@ import {
 
 type Input = ExprVisLayers;
 type Output = Promise<ExprVisLayers>;
+type Name = typeof OVERLAY_ANOMALIES;
 
 interface Arguments {
   detectorId: string;
 }
 
 export type OverlayAnomaliesExpressionFunctionDefinition =
-  ExpressionFunctionDefinition<'overlay_anomalies', Input, Arguments, Output>;
+  ExpressionFunctionDefinition<Name, Input, Arguments, Output>;
 
 // This gets all the needed anomalies for the given detector ID and time range
 const getAnomalies = async (
