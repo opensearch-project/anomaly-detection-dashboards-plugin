@@ -32,6 +32,7 @@ import {
   ISavedAugmentVis,
   ISavedPluginResource,
   VisLayerExpressionFn,
+  VisLayerTypes,
 } from '../../../../../../src/plugins/vis_augmenter/public';
 import { useDispatch } from 'react-redux';
 import { isEmpty, get } from 'lodash';
@@ -82,7 +83,11 @@ import {
 } from '../../../../public/utils/constants';
 import { getNotifications } from '../../../../public/services';
 import { prettifyErrorMessage } from '../../../../server/utils/helpers';
-import { ORIGIN_PLUGIN_VIS_LAYER, OVERLAY_ANOMALIES, POINT_IN_TIME_EVENTS, VIS_LAYER_PLUGIN_TYPE } from '../../../../public/expressions/constants';
+import {
+  ORIGIN_PLUGIN_VIS_LAYER,
+  OVERLAY_ANOMALIES,
+  VIS_LAYER_PLUGIN_TYPE,
+} from '../../../../public/expressions/constants';
 import { formikToDetectorName, visFeatureListToFormik } from './helpers';
 
 function AddAnomalyDetector({ embeddable, closeFlyout, mode, setMode }) {
@@ -169,7 +174,7 @@ function AddAnomalyDetector({ embeddable, closeFlyout, mode, setMode }) {
             });
 
           const fn = {
-            type: POINT_IN_TIME_EVENTS,
+            type: VisLayerTypes.PointInTimeEvents,
             name: OVERLAY_ANOMALIES,
             args: {
               detectorId: response.response.id,
@@ -180,7 +185,7 @@ function AddAnomalyDetector({ embeddable, closeFlyout, mode, setMode }) {
             type: VIS_LAYER_PLUGIN_TYPE,
             id: response.response.id,
           } as ISavedPluginResource;
-      
+
           const savedObjectToCreate = {
             title: embeddable.vis.title,
             originPlugin: ORIGIN_PLUGIN_VIS_LAYER,
@@ -189,7 +194,7 @@ function AddAnomalyDetector({ embeddable, closeFlyout, mode, setMode }) {
             savedObjectType: 'visualization',
             visLayerExpressionFn: fn,
           } as ISavedAugmentVis;
-          
+
           const savedObject = await createAugmentVisSavedObject(
             savedObjectToCreate
           );
@@ -235,7 +240,10 @@ function AddAnomalyDetector({ embeddable, closeFlyout, mode, setMode }) {
     description: '',
     resultIndex: undefined,
     filters: [],
-    featureList: visFeatureListToFormik(featureList, embeddable.vis.params.seriesParams),
+    featureList: visFeatureListToFormik(
+      featureList,
+      embeddable.vis.params.seriesParams
+    ),
     categoryFieldEnabled: false,
     realTime: true,
     historical: false,
@@ -457,7 +465,6 @@ function AddAnomalyDetector({ embeddable, closeFlyout, mode, setMode }) {
                         id="dataFilter"
                         title="Data Filter"
                         subTitle="Choose a data source subset to focus the data stream and reduce data noise."
-                        initialIsOpen={false}
                       >
                         <EuiSpacer size="s" />
                         <EuiText size="xs">
@@ -474,7 +481,6 @@ function AddAnomalyDetector({ embeddable, closeFlyout, mode, setMode }) {
                         id="shingleSize"
                         title="Shingle size"
                         subTitle="Set number of intervals in the model's detection window."
-                        initialIsOpen={false}
                         isUsingDivider={true}
                       >
                         <EuiSpacer size="m" />
@@ -522,7 +528,6 @@ function AddAnomalyDetector({ embeddable, closeFlyout, mode, setMode }) {
                         id="customResultIndex"
                         title="Custom result index"
                         subTitle="Store detector results to our own index."
-                        initialIsOpen={false}
                         isUsingDivider={true}
                       >
                         <Field name="resultIndex">
@@ -579,7 +584,6 @@ function AddAnomalyDetector({ embeddable, closeFlyout, mode, setMode }) {
                         id="categoricalFields"
                         title="Categorical fields"
                         subTitle="Split a single time series into multiple time series based on categorical fields."
-                        initialIsOpen={false}
                         isUsingDivider={true}
                       >
                         <EuiText size="s">

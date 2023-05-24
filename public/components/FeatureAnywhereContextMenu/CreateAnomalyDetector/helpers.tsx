@@ -1,8 +1,11 @@
-import { FEATURE_TYPE } from "../../../../public/models/interfaces";
+import { FEATURE_TYPE } from '../../../../public/models/interfaces';
 import { FeaturesFormikValues } from '../../../../public/pages/ConfigureModel/models/interfaces';
-import { find, snakeCase } from "lodash";
+import { find, snakeCase } from 'lodash';
 
-export function visFeatureListToFormik(featureList, seriesParams): FeaturesFormikValues[] {
+export function visFeatureListToFormik(
+  featureList,
+  seriesParams
+): FeaturesFormikValues[] {
   return featureList.map((feature) => {
     return {
       featureId: feature.id,
@@ -13,16 +16,16 @@ export function visFeatureListToFormik(featureList, seriesParams): FeaturesFormi
       newFeature: false,
       aggregationBy: 'sum',
       aggregationOf: visAggregationToFormik(feature),
-      aggregationQuery: JSON.stringify(visAggregationQueryToFormik(feature, seriesParams)),
+      aggregationQuery: JSON.stringify(
+        visAggregationQueryToFormik(feature, seriesParams)
+      ),
     };
   });
 }
 
 export function formikToDetectorName(title) {
   const detectorName =
-    title +
-    '_anomaly_detector_' +
-    Math.floor(100000 + Math.random() * 900000);
+    title + '_anomaly_detector_' + Math.floor(100000 + Math.random() * 900000);
   detectorName.replace(/[^a-zA-Z0-9-_]/g, '_');
   return detectorName;
 }
@@ -53,4 +56,3 @@ function visAggregationQueryToFormik(value, seriesParams) {
     },
   };
 }
-

@@ -11,6 +11,3 @@ export const VIS_LAYER_PLUGIN_TYPE = 'Anomaly Detectors';
 export const TYPE_OF_EXPR_VIS_LAYERS = 'vis_layers';
 
 export const OVERLAY_ANOMALIES = 'overlay_anomalies"';
-
-export const POINT_IN_TIME_EVENTS = 'PointInTimeEvents';
-            
