@@ -20,6 +20,7 @@ import {
   EuiButton,
   EuiFieldText,
   EuiCheckbox,
+  EuiButtonIcon,
 } from '@elastic/eui';
 import { Field, FieldProps } from 'formik';
 import {
@@ -40,6 +41,7 @@ interface FeatureAccordionProps {
   index: number;
   feature: any;
   handleChange(event: React.ChangeEvent<HTMLSelectElement>): void;
+  displayMode?: string;
 }
 
 export const FeatureAccordion = (props: FeatureAccordionProps) => {
@@ -94,11 +96,25 @@ export const FeatureAccordion = (props: FeatureAccordionProps) => {
     );
   };
 
-  const deleteAction = (onClick: any) => (
-    <EuiButton size="s" color="danger" onClick={onClick} disabled={false}>
-      Delete
-    </EuiButton>
-  );
+  const deleteAction = (onClick: any) => {
+    if (props.displayMode === 'flyout') {
+      return (
+        <EuiButtonIcon
+          size="s"
+          onClick={onClick}
+          disabled={false}
+          iconType="trash"
+          color="text"
+        ></EuiButtonIcon>
+      );
+    } else {
+      return (
+        <EuiButton size="s" color="danger" onClick={onClick} disabled={false}>
+          Delete
+        </EuiButton>
+      );
+    }
+  };
 
   return (
     <EuiAccordion

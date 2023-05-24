@@ -13,6 +13,7 @@ import {
   AppMountParameters,
   CoreSetup,
   CoreStart,
+  NotificationsStart,
   Plugin,
 } from '../../../src/core/public';
 import {
@@ -29,10 +30,11 @@ import {
   setEmbeddable,
   setNotifications,
   setOverlays,
-  setSavedFeatureAnywhereLoader,
+  setSavedFeatureAnywhereLoader
 } from './services';
 import { AnomalyDetectionOpenSearchDashboardsPluginStart } from 'public';
 import { VisAugmenterStart } from '../../../src/plugins/vis_augmenter/public';
+
 
 declare module '../../../src/plugins/ui_actions/public' {
   export interface ActionContextMapping {
@@ -46,6 +48,7 @@ export interface AnomalyDetectionSetupDeps {
 
 export interface AnomalyDetectionStartDeps {
   embeddable: EmbeddableStart;
+  notifications: NotificationsStart;
   visAugmenter: VisAugmenterStart;
 }
 
@@ -73,7 +76,7 @@ export class AnomalyDetectionOpenSearchDashboardsPlugin
     // direct server-side calls
     setClient(core.http);
 
-    // Create context menu actions. Pass core, to access service for flyouts.
+    // Create context menu actions
     const actions = getActions();
 
     // Add actions to uiActions
