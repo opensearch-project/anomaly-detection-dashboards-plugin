@@ -46,6 +46,7 @@ import {
 import {
   createDetector,
   getDetectorCount,
+  matchDetector,
   startDetector,
 } from '../../../../public/redux/reducers/ad';
 import { EmbeddableRenderer } from '../../../../../../src/plugins/embeddable/public';
@@ -195,6 +196,7 @@ function AddAnomalyDetector({ embeddable, closeFlyout, mode, setMode }) {
             visLayerExpressionFn: fn,
           } as ISavedAugmentVis;
 
+          // TODO: catch saved object failure
           const savedObject = await createAugmentVisSavedObject(
             savedObjectToCreate
           );
@@ -226,6 +228,26 @@ function AddAnomalyDetector({ embeddable, closeFlyout, mode, setMode }) {
     } catch (e) {
     } finally {
       formikProps.setSubmitting(false);
+    }
+  };
+
+  const validateVisDetectorName = async (detectorName: string) => {
+    if (isEmpty(detectorName)) {
+      return 'Detector name cannot be empty';
+    } else {
+      const error = validateDetectorName(detectorName);
+      if (error) {
+        return error;
+      }
+      const resp = await dispatch(matchDetector(detectorName));
+      const match = get(resp, 'response.match', false);
+      if (!match) {
+        return undefined;
+      }
+      //If more than one detectors found, duplicate exists.
+      if (match) {
+        return 'Duplicate detector name';
+      }
     }
   };
 
@@ -360,7 +382,7 @@ function AddAnomalyDetector({ embeddable, closeFlyout, mode, setMode }) {
                         </EuiText>
                       }
                     >
-                      <Field name="name" validate={validateDetectorName}>
+                      <Field name="name" validate={validateVisDetectorName}>
                         {({ field, form }: FieldProps) => (
                           <FormattedFormRow
                             title="Name"

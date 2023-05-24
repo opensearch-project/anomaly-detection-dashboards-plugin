@@ -32,6 +32,7 @@ import { PLUGIN_NAME } from '../utils/constants';
 import { NO_PERMISSIONS_KEY_WORD } from '../../server/utils/helpers';
 import {
   ORIGIN_PLUGIN_VIS_LAYER,
+  OVERLAY_ANOMALIES,
   TYPE_OF_EXPR_VIS_LAYERS,
   VIS_LAYER_PLUGIN_TYPE,
 } from './constants';
@@ -42,8 +43,6 @@ type Output = Promise<ExprVisLayers>;
 interface Arguments {
   detectorId: string;
 }
-
-const name = 'overlay_anomalies';
 
 export type OverlayAnomaliesExpressionFunctionDefinition =
   ExpressionFunctionDefinition<'overlay_anomalies', Input, Arguments, Output>;
@@ -112,9 +111,10 @@ const convertAnomaliesToPointInTimeEventsVisLayer = (
  * If there are any errors fetching the anomalies the function will return a VisLayerError in the
  * VisLayer detailing the error type.
  */
+
 export const overlayAnomaliesFunction =
   (): OverlayAnomaliesExpressionFunctionDefinition => ({
-    name,
+    name: OVERLAY_ANOMALIES,
     type: TYPE_OF_EXPR_VIS_LAYERS,
     inputTypes: [TYPE_OF_EXPR_VIS_LAYERS],
     help: i18n.translate('data.functions.overlay_anomalies.help', {

@@ -1,6 +1,9 @@
+import { dispatch } from 'd3';
+import { matchDetector } from 'public/redux/reducers/ad';
+import { validateDetectorName } from 'public/utils/utils';
 import { FEATURE_TYPE } from '../../../../public/models/interfaces';
 import { FeaturesFormikValues } from '../../../../public/pages/ConfigureModel/models/interfaces';
-import { find, snakeCase } from 'lodash';
+import { find, get, isEmpty, snakeCase } from 'lodash';
 
 export function visFeatureListToFormik(
   featureList,
