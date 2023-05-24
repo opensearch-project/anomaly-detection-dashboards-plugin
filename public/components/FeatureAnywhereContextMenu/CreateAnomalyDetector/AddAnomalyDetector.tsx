@@ -30,10 +30,11 @@ import './styles.scss';
 import {
   createAugmentVisSavedObject,
   ISavedAugmentVis,
+  ISavedPluginResource,
   VisLayerExpressionFn,
 } from '../../../../../../src/plugins/vis_augmenter/public';
 import { useDispatch } from 'react-redux';
-import { snakeCase, find, isEmpty, get } from 'lodash';
+import { isEmpty, get } from 'lodash';
 import {
   Field,
   FieldArray,
@@ -50,7 +51,6 @@ import { EmbeddableRenderer } from '../../../../../../src/plugins/embeddable/pub
 import './styles.scss';
 import EnhancedAccordion from '../EnhancedAccordion';
 import MinimalAccordion from '../MinimalAccordion';
-import { FEATURE_TYPE } from '../../../../public/models/interfaces';
 import { DataFilterList } from '../../../../public/pages/DefineDetector/components/DataFilterList/DataFilterList';
 import {
   getError,
@@ -68,7 +68,6 @@ import {
   focusOnFirstWrongFeature,
   initialFeatureValue,
 } from '../../../../public/pages/ConfigureModel/utils/helpers';
-import { FeaturesFormikValues } from '../../../../public/pages/ConfigureModel/models/interfaces';
 import {
   getIndices,
   getMappings,
@@ -83,6 +82,8 @@ import {
 } from '../../../../public/utils/constants';
 import { getNotifications } from '../../../../public/services';
 import { prettifyErrorMessage } from '../../../../server/utils/helpers';
+import { ORIGIN_PLUGIN_VIS_LAYER, OVERLAY_ANOMALIES, POINT_IN_TIME_EVENTS, VIS_LAYER_PLUGIN_TYPE } from '../../../../public/expressions/constants';
+import { formikToDetectorName, visFeatureListToFormik } from './helpers';
 
 function AddAnomalyDetector({ embeddable, closeFlyout, mode, setMode }) {
   const dispatch = useDispatch();
@@ -131,18 +132,7 @@ function AddAnomalyDetector({ embeddable, closeFlyout, mode, setMode }) {
       (aggList.length < MAX_FEATURE_NUM ? aggList.length : MAX_FEATURE_NUM)
   );
 
-  const getFeatureNameFromVisParams = (id) => {
-    let name = find(embeddable.vis.params.seriesParams, function (param) {
-      if (param.data.id === id) {
-        return true;
-      }
-    });
-
-    return name.data.label.replace(/[^a-zA-Z0-9-_]/g, '_');
-  };
-
   const notifications = getNotifications();
-
   const handleValidationAndSubmit = (formikProps) => {
     if (!isEmpty(formikProps.errors)) {
       focusOnFirstWrongFeature(formikProps.errors, formikProps.setFieldTouched);
@@ -177,25 +167,29 @@ function AddAnomalyDetector({ embeddable, closeFlyout, mode, setMode }) {
                 )
               );
             });
-          enum VisLayerTypes {
-            PointInTimeEvents = 'PointInTimeEvents',
-          }
+
           const fn = {
-            type: VisLayerTypes.PointInTimeEvents,
-            name: 'overlay_anomalies',
+            type: POINT_IN_TIME_EVENTS,
+            name: OVERLAY_ANOMALIES,
             args: {
               detectorId: response.response.id,
             },
           } as VisLayerExpressionFn;
 
+          const pluginResource = {
+            type: VIS_LAYER_PLUGIN_TYPE,
+            id: response.response.id,
+          } as ISavedPluginResource;
+      
           const savedObjectToCreate = {
             title: embeddable.vis.title,
-            pluginResourceId: response.response.id,
+            originPlugin: ORIGIN_PLUGIN_VIS_LAYER,
+            pluginResource: pluginResource,
             visId: embeddable.vis.id,
             savedObjectType: 'visualization',
             visLayerExpressionFn: fn,
           } as ISavedAugmentVis;
-
+          
           const savedObject = await createAugmentVisSavedObject(
             savedObjectToCreate
           );
@@ -241,53 +235,11 @@ function AddAnomalyDetector({ embeddable, closeFlyout, mode, setMode }) {
     description: '',
     resultIndex: undefined,
     filters: [],
-    featureList: visFeatureListToFormik(featureList),
+    featureList: visFeatureListToFormik(featureList, embeddable.vis.params.seriesParams),
     categoryFieldEnabled: false,
     realTime: true,
     historical: false,
   };
-
-  function formikToDetectorName(title) {
-    const detectorName =
-      title +
-      '_anomaly_detector_' +
-      Math.floor(100000 + Math.random() * 900000);
-    detectorName.replace(/[^a-zA-Z0-9-_]/g, '_');
-    return detectorName;
-  }
-
-  function visAggregationToFormik(value) {
-    return [
-      {
-        label: value.params.field.name,
-        type: 'number',
-      },
-    ];
-  }
-
-  function visAggregationQueryToFormik(value) {
-    return {
-      [snakeCase(getFeatureNameFromVisParams(value.id))]: {
-        sum: { field: value.params.field.name },
-      },
-    };
-  }
-
-  function visFeatureListToFormik(featureList): FeaturesFormikValues[] {
-    return featureList.map((feature) => {
-      return {
-        featureId: feature.id,
-        featureName: getFeatureNameFromVisParams(feature.id),
-        featureEnabled: true,
-        featureType: FEATURE_TYPE.SIMPLE,
-        importance: 1,
-        newFeature: false,
-        aggregationBy: 'sum',
-        aggregationOf: visAggregationToFormik(feature),
-        aggregationQuery: JSON.stringify(visAggregationQueryToFormik(feature)),
-      };
-    });
-  }
 
   return (
     <div className="add-anomaly-detector">
