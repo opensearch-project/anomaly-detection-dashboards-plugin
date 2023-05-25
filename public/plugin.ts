@@ -13,6 +13,7 @@ import {
   AppMountParameters,
   CoreSetup,
   CoreStart,
+  NotificationsSetup,
   NotificationsStart,
   Plugin,
 } from '../../../src/core/public';
@@ -30,11 +31,18 @@ import {
   setEmbeddable,
   setNotifications,
   setOverlays,
-  setSavedFeatureAnywhereLoader
+  setSavedFeatureAnywhereLoader,
+  setUiActions,
 } from './services';
 import { AnomalyDetectionOpenSearchDashboardsPluginStart } from 'public';
-import { VisAugmenterStart } from '../../../src/plugins/vis_augmenter/public';
-
+import {
+  VisAugmenterSetup,
+  VisAugmenterStart,
+} from '../../../src/plugins/vis_augmenter/public';
+import {
+  UiActionsSetup,
+  UiActionsStart,
+} from '../../../src/plugins/ui_actions/public';
 
 declare module '../../../src/plugins/ui_actions/public' {
   export interface ActionContextMapping {
@@ -42,14 +50,19 @@ declare module '../../../src/plugins/ui_actions/public' {
   }
 }
 
+//TODO: there is currently no savedAugmentVisLoader in VisAugmentSetup interface, this needs to be fixed
 export interface AnomalyDetectionSetupDeps {
   embeddable: EmbeddableSetup;
+  notifications: NotificationsSetup;
+  visAugmenter: VisAugmenterSetup;
+  //uiActions: UiActionsSetup;
 }
 
 export interface AnomalyDetectionStartDeps {
   embeddable: EmbeddableStart;
   notifications: NotificationsStart;
   visAugmenter: VisAugmenterStart;
+  uiActions: UiActionsStart;
 }
 
 export class AnomalyDetectionOpenSearchDashboardsPlugin
@@ -72,6 +85,12 @@ export class AnomalyDetectionOpenSearchDashboardsPlugin
       },
     });
 
+    // // set embeddable plugin for feature anywhere create flyout
+    // setEmbeddable(embeddable);
+
+    // // set vis argumenter loader for feature anywhere associated flyout
+    // setSavedFeatureAnywhereLoader(visAugmenter.savedAugmentVisLoader);
+
     // Set the HTTP client so it can be pulled into expression fns to make
     // direct server-side calls
     setClient(core.http);
@@ -91,12 +110,13 @@ export class AnomalyDetectionOpenSearchDashboardsPlugin
 
   public start(
     core: CoreStart,
-    { embeddable, visAugmenter }: AnomalyDetectionStartDeps
+    { embeddable, visAugmenter, uiActions }: AnomalyDetectionStartDeps
   ): AnomalyDetectionOpenSearchDashboardsPluginStart {
     setEmbeddable(embeddable);
     setOverlays(core.overlays);
     setSavedFeatureAnywhereLoader(visAugmenter.savedAugmentVisLoader);
     setNotifications(core.notifications);
+    setUiActions(uiActions);
     return {};
   }
 }

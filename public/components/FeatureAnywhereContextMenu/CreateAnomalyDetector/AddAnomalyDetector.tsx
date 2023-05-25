@@ -80,9 +80,11 @@ import { FeatureAccordion } from '../../../../public/pages/ConfigureModel/compon
 import {
   AD_DOCS_LINK,
   AD_HIGH_CARDINALITY_LINK,
+  ALERTING_PLUGIN_NAME,
+  DEFAULT_SHINGLE_SIZE,
   MAX_FEATURE_NUM,
 } from '../../../../public/utils/constants';
-import { getNotifications } from '../../../../public/services';
+import { getNotifications, getUiActions } from '../../../../public/services';
 import { prettifyErrorMessage } from '../../../../server/utils/helpers';
 import {
   ORIGIN_PLUGIN_VIS_LAYER,
@@ -90,9 +92,22 @@ import {
   VIS_LAYER_PLUGIN_TYPE,
 } from '../../../../public/expressions/constants';
 import { formikToDetectorName, visFeatureListToFormik } from './helpers';
+import { AssociateExisting } from './AssociateExisting';
+import { mountReactNode } from '../../../../../../src/core/public/utils';
+import { CoreServicesContext } from '../../../../public/components/CoreServices/CoreServices';
+import { CoreStart } from '../../../../../../src/core/public';
 
-function AddAnomalyDetector({ embeddable, closeFlyout, mode, setMode }) {
+function AddAnomalyDetector({
+  embeddable,
+  closeFlyout,
+  mode,
+  setMode,
+  selectedDetector,
+  setSelectedDetector,
+}) {
   const dispatch = useDispatch();
+  const core = React.useContext(CoreServicesContext) as CoreStart;
+
   const [queryText, setQueryText] = useState('');
   useEffect(() => {
     const getInitialIndices = async () => {
@@ -148,21 +163,43 @@ function AddAnomalyDetector({ embeddable, closeFlyout, mode, setMode }) {
     }
   };
 
-  const handleSubmit = (formikProps) => {
+  const getAugmentVisSavedObject = (detectorId: string) => {
+    const fn = {
+      type: VisLayerTypes.PointInTimeEvents,
+      name: OVERLAY_ANOMALIES,
+      args: {
+        detectorId: detectorId,
+      },
+    } as VisLayerExpressionFn;
+
+    const pluginResource = {
+      type: VIS_LAYER_PLUGIN_TYPE,
+      id: detectorId,
+    } as ISavedPluginResource;
+
+    return {
+      title: embeddable.vis.title,
+      originPlugin: ORIGIN_PLUGIN_VIS_LAYER,
+      pluginResource: pluginResource,
+      visId: embeddable.vis.id,
+      visLayerExpressionFn: fn,
+    } as ISavedAugmentVis;
+  };
+
+  //DONE 1. if detector is created succesfully, started succesfully and associated succesfully and alerting exists -> show end message with alerting button
+  //DONE 2. If detector is created succesfully, started succesfully and associated succesfully and alerting doesn't exist -> show end message with OUT alerting button
+  //DONE 3. If detector is created succesfully, started succesfully and fails association -> show one toast with detector created and started succesfully and one toast with failed association
+  //DONE 4. If detector is created succesfully, fails starting and fails association -> show one toast with detector created succesfully, one toast with failed association
+  //DONE 5. If detector is created successfully, fails starting and fails associating -> show one toast with detector created succesfully, one toast with fail starting, one toast with failed association
+  //DONE 6. If detector fails creating -> show one toast with detector failed creating
+  const handleSubmit = async (formikProps) => {
     formikProps.setSubmitting(true);
     try {
       const detectorToCreate = formikToDetector(formikProps.values);
       dispatch(createDetector(detectorToCreate))
         .then(async (response) => {
-          notifications.toasts.addSuccess(
-            `Detector created: ${formikProps.values.name}`
-          );
           dispatch(startDetector(response.response.id))
-            .then((startDetectorResponse) => {
-              notifications.toasts.addSuccess(
-                `Successfully started the real-time detector`
-              );
-            })
+            .then((startDetectorResponse) => {})
             .catch((err: any) => {
               notifications.toasts.addDanger(
                 prettifyErrorMessage(
@@ -174,34 +211,54 @@ function AddAnomalyDetector({ embeddable, closeFlyout, mode, setMode }) {
               );
             });
 
-          const fn = {
-            type: VisLayerTypes.PointInTimeEvents,
-            name: OVERLAY_ANOMALIES,
-            args: {
-              detectorId: response.response.id,
-            },
-          } as VisLayerExpressionFn;
+          const detectorId = response.response.id;
 
-          const pluginResource = {
-            type: VIS_LAYER_PLUGIN_TYPE,
-            id: response.response.id,
-          } as ISavedPluginResource;
+          const augmentVisSavedObjectToCreate: ISavedAugmentVis =
+            getAugmentVisSavedObject(detectorId);
 
-          const savedObjectToCreate = {
-            title: embeddable.vis.title,
-            originPlugin: ORIGIN_PLUGIN_VIS_LAYER,
-            pluginResource: pluginResource,
-            visId: embeddable.vis.id,
-            savedObjectType: 'visualization',
-            visLayerExpressionFn: fn,
-          } as ISavedAugmentVis;
-
-          // TODO: catch saved object failure
-          const savedObject = await createAugmentVisSavedObject(
-            savedObjectToCreate
-          );
-
-          const saveObjectResponse = await savedObject.save({});
+          createAugmentVisSavedObject(augmentVisSavedObjectToCreate)
+            .then((savedObject: any) => {
+              savedObject
+                .save({})
+                .then((response: any) => {
+                  const shingleSize = get(
+                    formikProps.values,
+                    'shingleSize',
+                    DEFAULT_SHINGLE_SIZE
+                  );
+                  const detectorId = get(savedObject, 'pluginResource.id', '');
+                  notifications.toasts.addSuccess({
+                    title: `The ${formikProps.values.name} is associated with the ${title} visualization`,
+                    text: mountReactNode(
+                      getEverythingSuccesfulButton(detectorId, shingleSize)
+                    ),
+                  });
+                  closeFlyout();
+                })
+                .catch((error) => {
+                  console.error(
+                    `Error associating selected detector4: ${error}`
+                  );
+                  notifications.toasts.addDanger(
+                    prettifyErrorMessage(
+                      `Error associating selected detector in save process: ${error}`
+                    )
+                  );
+                  notifications.toasts.addSuccess(
+                    `Detector created: ${formikProps.values.name}`
+                  );
+                });
+            })
+            .catch((error) => {
+              notifications.toasts.addDanger(
+                prettifyErrorMessage(
+                  `Error associating selected detector3 in crate process: ${error}`
+                )
+              );
+              notifications.toasts.addSuccess(
+                `Detector created: ${formikProps.values.name}`
+              );
+            });
         })
         .catch((err: any) => {
           dispatch(getDetectorCount()).then((response: any) => {
@@ -229,6 +286,74 @@ function AddAnomalyDetector({ embeddable, closeFlyout, mode, setMode }) {
     } finally {
       formikProps.setSubmitting(false);
     }
+  };
+
+  const getEverythingSuccesfulButton = (detectorId, shingleSize) => {
+    return (
+      <EuiText>
+        <p>
+          `Attempting to initialize the detector with historical data. This
+          initializing process takes approximately 1 minute if you have data in
+          each of the last ${32 + shingleSize} consecutive intervals.`
+        </p>
+        {alertingExists(detectorId) ? (
+          <EuiFlexItem>
+            <EuiButton onClick={() => openAlerting(detectorId)}>
+              Set Up Alerts
+            </EuiButton>{' '}
+            <p>set up alerts</p>
+          </EuiFlexItem>
+        ) : null}
+      </EuiText>
+    );
+  };
+
+  const alertingExists = (detectorId) => {
+    try {
+      const uiActionService = getUiActions();
+      uiActionService.getTrigger('ALERTING_TRIGGER_AD_ID');
+      return true;
+    } catch (e) {
+      console.error('No allerting trigger exists', e);
+      return false;
+    }
+  };
+
+  const openAlerting = (detectorId) => {
+    const uiActionService = getUiActions();
+    uiActionService
+      .getTrigger('ALERTING_TRIGGER_AD_ID')
+      .exec({ embeddable, detectorId });
+  };
+
+  const handleAssociate = async (detector: DetectorListItem) => {
+    const augmentVisSavedObjectToCreate: ISavedAugmentVis =
+      getAugmentVisSavedObject(detector.id);
+
+    createAugmentVisSavedObject(augmentVisSavedObjectToCreate)
+      .then((savedObject: any) => {
+        savedObject
+          .save({})
+          .then((response: any) => {
+            notifications.toasts.addSuccess({
+              title: `The ${detector.name} is associated with the ${title} visualization`,
+              text: "The detector's anomalies do not appear on the visualization. Refresh your dashboard to update the visualization",
+            });
+            closeFlyout();
+          })
+          .catch((error) => {
+            notifications.toasts.addDanger(
+              prettifyErrorMessage(
+                `Error associating selected detector: ${error}`
+              )
+            );
+          });
+      })
+      .catch((error) => {
+        notifications.toasts.addDanger(
+          prettifyErrorMessage(`Error associating selected detector: ${error}`)
+        );
+      });
   };
 
   const validateVisDetectorName = async (detectorName: string) => {
@@ -269,59 +394,6 @@ function AddAnomalyDetector({ embeddable, closeFlyout, mode, setMode }) {
     categoryFieldEnabled: false,
     realTime: true,
     historical: false,
-  };
-
-  const handleAssociate = async (detector: DetectorListItem) => {
-    enum VisLayerTypes {
-      PointInTimeEvents = 'PointInTimeEvents',
-    }
-
-    const fn = {
-      type: VisLayerTypes.PointInTimeEvents,
-      name: 'overlay_anomalies',
-      args: {
-        detectorId: detector.id,
-      },
-    } as VisLayerExpressionFn;
-
-    const pluginResource = {
-      type: 'anomay-detection',
-      id: detector.id,
-    } as ISavedPluginResource;
-
-    const savedObjectToCreate = {
-      title: embeddable.vis.title,
-      originPlugin: ORIGIN_PLUGIN_VIS_LAYER,
-      pluginResource: pluginResource,
-      visId: embeddable.vis.id,
-      savedObjectType: 'visualization',
-      visLayerExpressionFn: fn,
-    } as ISavedAugmentVis;
-
-    createAugmentVisSavedObject(savedObjectToCreate)
-      .then((savedObject: any) => {
-        savedObject
-          .save({})
-          .then((response: any) => {
-            notifications.toasts.addSuccess({
-              title: `The ${detector.name} is associated with the ${title} visualization`,
-              text: "The detector's anomalies do not appear on the visualization. Refresh your dashboard to update the visualization",
-            });
-            closeFlyout();
-          })
-          .catch((error) => {
-            notifications.toasts.addDanger(
-              prettifyErrorMessage(
-                `Error associating selected detector: ${error}`
-              )
-            );
-          });
-      })
-      .catch((error) => {
-        notifications.toasts.addDanger(
-          prettifyErrorMessage(`Error associating selected detector: ${error}`)
-        );
-      });
   };
 
   return (
@@ -378,6 +450,13 @@ function AddAnomalyDetector({ embeddable, closeFlyout, mode, setMode }) {
                   ))}
                 </EuiFormFieldset>
                 <EuiSpacer size="m" />
+                {mode === 'existing' && (
+                  <AssociateExisting
+                    embeddableVisId={embeddable.vis.id}
+                    selectedDetector={selectedDetector}
+                    setSelectedDetector={setSelectedDetector}
+                  ></AssociateExisting>
+                )}
                 {mode === 'create' && (
                   <div className="create-new">
                     <EuiText size="xs">
@@ -748,16 +827,27 @@ function AddAnomalyDetector({ embeddable, closeFlyout, mode, setMode }) {
                   <EuiButtonEmpty onClick={closeFlyout}>Cancel</EuiButtonEmpty>
                 </EuiFlexItem>
                 <EuiFlexItem grow={false}>
-                  <EuiButton
-                    fill={true}
-                    data-test-subj="adAnywhereCreateDetectorButton"
-                    isLoading={formikProps.isSubmitting}
-                    onClick={() => {
-                      handleValidationAndSubmit(formikProps);
-                    }}
-                  >
-                    Create Detector
-                  </EuiButton>
+                  {mode === 'existing' ? (
+                    <EuiButton
+                      fill={true}
+                      data-test-subj="adAnywhereCreateDetectorButton"
+                      isLoading={formikProps.isSubmitting}
+                      onClick={() => handleAssociate(selectedDetector)}
+                    >
+                      associate detector
+                    </EuiButton>
+                  ) : (
+                    <EuiButton
+                      fill={true}
+                      data-test-subj="adAnywhereCreateDetectorButton"
+                      isLoading={formikProps.isSubmitting}
+                      onClick={() => {
+                        handleValidationAndSubmit(formikProps);
+                      }}
+                    >
+                      create detector
+                    </EuiButton>
+                  )}
                 </EuiFlexItem>
               </EuiFlexGroup>
             </EuiFlyoutFooter>

@@ -252,7 +252,7 @@ export function AssociateExisting(
                 (detector) => detector.totalAnomalies,
               ],
               [
-                'Last real-time occurence',
+                'Last real-time occurrence',
                 (detector) => renderTime(detector.lastActiveAnomaly),
               ],
             ].map(([label, getValue]) => (

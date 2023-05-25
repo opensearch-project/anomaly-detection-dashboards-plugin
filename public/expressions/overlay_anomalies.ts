@@ -33,6 +33,7 @@ import { NO_PERMISSIONS_KEY_WORD } from '../../server/utils/helpers';
 import {
   ORIGIN_PLUGIN_VIS_LAYER,
   OVERLAY_ANOMALIES,
+  PLUGIN_EVENT_TYPE,
   TYPE_OF_EXPR_VIS_LAYERS,
   VIS_LAYER_PLUGIN_TYPE,
 } from './constants';
@@ -204,6 +205,7 @@ export const overlayAnomaliesFunction =
           pluginResource: ADPluginResource,
           events: [],
           error: visLayerError,
+          pluginEventType: PLUGIN_EVENT_TYPE,
         } as PointInTimeEventsVisLayer;
         return {
           type: TYPE_OF_EXPR_VIS_LAYERS,
