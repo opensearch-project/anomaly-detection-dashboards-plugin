@@ -137,9 +137,6 @@ export const getAlertingCreateMonitorLink = (
     const navLinks = get(core, 'chrome.navLinks', undefined);
     const url = `${navLinks.get(ALERTING_PLUGIN_NAME)?.url}`;
     const alertingRootUrl = getPluginRootPath(url, ALERTING_PLUGIN_NAME);
-    console.log('navLinks: ' + JSON.stringify(navLinks));
-    console.log('url: ' + JSON.stringify(url));
-    console.log('alertingRootUrl: ' + JSON.stringify(alertingRootUrl));
     return !resultIndex
       ? `${alertingRootUrl}#/create-monitor?searchType=ad&adId=${detectorId}&name=${detectorName}&interval=${
           2 * detectorInterval

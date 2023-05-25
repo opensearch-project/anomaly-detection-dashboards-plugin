@@ -80,7 +80,6 @@ import { FeatureAccordion } from '../../../../public/pages/ConfigureModel/compon
 import {
   AD_DOCS_LINK,
   AD_HIGH_CARDINALITY_LINK,
-  ALERTING_PLUGIN_NAME,
   DEFAULT_SHINGLE_SIZE,
   MAX_FEATURE_NUM,
 } from '../../../../public/utils/constants';
@@ -106,8 +105,6 @@ function AddAnomalyDetector({
   setSelectedDetector,
 }) {
   const dispatch = useDispatch();
-  const core = React.useContext(CoreServicesContext) as CoreStart;
-
   const [queryText, setQueryText] = useState('');
   useEffect(() => {
     const getInitialIndices = async () => {
@@ -186,12 +183,13 @@ function AddAnomalyDetector({
     } as ISavedAugmentVis;
   };
 
-  //DONE 1. if detector is created succesfully, started succesfully and associated succesfully and alerting exists -> show end message with alerting button
-  //DONE 2. If detector is created succesfully, started succesfully and associated succesfully and alerting doesn't exist -> show end message with OUT alerting button
-  //DONE 3. If detector is created succesfully, started succesfully and fails association -> show one toast with detector created and started succesfully and one toast with failed association
-  //DONE 4. If detector is created succesfully, fails starting and fails association -> show one toast with detector created succesfully, one toast with failed association
-  //DONE 5. If detector is created successfully, fails starting and fails associating -> show one toast with detector created succesfully, one toast with fail starting, one toast with failed association
-  //DONE 6. If detector fails creating -> show one toast with detector failed creating
+  // Error handeling/notification cases listed here as many things are being done sequentially
+  //1. if detector is created succesfully, started succesfully and associated succesfully and alerting exists -> show end message with alerting button
+  //2. If detector is created succesfully, started succesfully and associated succesfully and alerting doesn't exist -> show end message with OUT alerting button
+  //3. If detector is created succesfully, started succesfully and fails association -> show one toast with detector created, and one toast with failed association
+  //4. If detector is created succesfully, fails starting and fails association -> show one toast with detector created succesfully, one toast with failed association
+  //5. If detector is created successfully, fails starting and fails associating -> show one toast with detector created succesfully, one toast with fail starting, one toast with failed association
+  //6. If detector fails creating -> show one toast with detector failed creating
   const handleSubmit = async (formikProps) => {
     formikProps.setSubmitting(true);
     try {
@@ -230,14 +228,14 @@ function AddAnomalyDetector({
                   notifications.toasts.addSuccess({
                     title: `The ${formikProps.values.name} is associated with the ${title} visualization`,
                     text: mountReactNode(
-                      getEverythingSuccesfulButton(detectorId, shingleSize)
+                      getEverythingSuccessfulButton(detectorId, shingleSize)
                     ),
                   });
                   closeFlyout();
                 })
                 .catch((error) => {
                   console.error(
-                    `Error associating selected detector4: ${error}`
+                    `Error associating selected detector: ${error}`
                   );
                   notifications.toasts.addDanger(
                     prettifyErrorMessage(
@@ -252,7 +250,7 @@ function AddAnomalyDetector({
             .catch((error) => {
               notifications.toasts.addDanger(
                 prettifyErrorMessage(
-                  `Error associating selected detector3 in crate process: ${error}`
+                  `Error associating selected detector in create process: ${error}`
                 )
               );
               notifications.toasts.addSuccess(
@@ -288,38 +286,44 @@ function AddAnomalyDetector({
     }
   };
 
-  const getEverythingSuccesfulButton = (detectorId, shingleSize) => {
+  const getEverythingSuccessfulButton = (detectorId, shingleSize) => {
     return (
       <EuiText>
         <p>
-          `Attempting to initialize the detector with historical data. This
+          Attempting to initialize the detector with historical data. This
           initializing process takes approximately 1 minute if you have data in
-          each of the last ${32 + shingleSize} consecutive intervals.`
+          each of the last {32 + shingleSize} consecutive intervals.
         </p>
         {alertingExists(detectorId) ? (
-          <EuiFlexItem>
-            <EuiButton onClick={() => openAlerting(detectorId)}>
-              Set Up Alerts
-            </EuiButton>{' '}
-            <p>set up alerts</p>
-          </EuiFlexItem>
+          <EuiFlexGroup>
+            <EuiFlexItem>
+              <p>Set up alerts to be notifified of any anomalies.</p>
+            </EuiFlexItem>
+            <EuiFlexItem grow={false}>
+              <div>
+                <EuiButton onClick={() => openAlerting(detectorId)}>
+                  Set up alerts
+                </EuiButton>{' '}
+              </div>
+            </EuiFlexItem>
+          </EuiFlexGroup>
         ) : null}
       </EuiText>
     );
   };
 
-  const alertingExists = (detectorId) => {
+  const alertingExists = () => {
     try {
       const uiActionService = getUiActions();
       uiActionService.getTrigger('ALERTING_TRIGGER_AD_ID');
       return true;
     } catch (e) {
-      console.error('No allerting trigger exists', e);
+      console.error('No alerting trigger exists', e);
       return false;
     }
   };
 
-  const openAlerting = (detectorId) => {
+  const openAlerting = (detectorId: string) => {
     const uiActionService = getUiActions();
     uiActionService
       .getTrigger('ALERTING_TRIGGER_AD_ID')
@@ -834,7 +838,7 @@ function AddAnomalyDetector({
                       isLoading={formikProps.isSubmitting}
                       onClick={() => handleAssociate(selectedDetector)}
                     >
-                      associate detector
+                      Associate detector
                     </EuiButton>
                   ) : (
                     <EuiButton
@@ -845,7 +849,7 @@ function AddAnomalyDetector({
                         handleValidationAndSubmit(formikProps);
                       }}
                     >
-                      create detector
+                      Create detector
                     </EuiButton>
                   )}
                 </EuiFlexItem>

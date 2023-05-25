@@ -12,4 +12,4 @@ export const TYPE_OF_EXPR_VIS_LAYERS = 'vis_layers';
 
 export const OVERLAY_ANOMALIES = 'overlay_anomalies';
 
-export const PLUGIN_EVENT_TYPE = 'anomalies';
+export const PLUGIN_EVENT_TYPE = 'Anomalies';
