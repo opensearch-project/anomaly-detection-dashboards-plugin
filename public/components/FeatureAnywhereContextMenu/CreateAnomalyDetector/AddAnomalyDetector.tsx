@@ -243,7 +243,6 @@ function AddAnomalyDetector({
                       getEverythingSuccessfulButton(detectorId, shingleSize)
                     ),
                     className: 'createdAndAssociatedSuccessToast',
-                    toastLifeTimeMs: 3000000,
                   });
                   closeFlyout();
                 })
