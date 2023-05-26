@@ -31,6 +31,7 @@ import {
   createAugmentVisSavedObject,
   ISavedAugmentVis,
   ISavedPluginResource,
+  SavedAugmentVisLoader,
   VisLayerExpressionFn,
   VisLayerTypes,
 } from '../../../../../../src/plugins/vis_augmenter/public';
@@ -83,7 +84,12 @@ import {
   DEFAULT_SHINGLE_SIZE,
   MAX_FEATURE_NUM,
 } from '../../../../public/utils/constants';
-import { getNotifications, getUiActions } from '../../../../public/services';
+import {
+  getNotifications,
+  getSavedFeatureAnywhereLoader,
+  getUISettings,
+  getUiActions,
+} from '../../../../public/services';
 import { prettifyErrorMessage } from '../../../../server/utils/helpers';
 import {
   ORIGIN_PLUGIN_VIS_LAYER,
@@ -93,8 +99,7 @@ import {
 import { formikToDetectorName, visFeatureListToFormik } from './helpers';
 import { AssociateExisting } from './AssociateExisting';
 import { mountReactNode } from '../../../../../../src/core/public/utils';
-import { CoreServicesContext } from '../../../../public/components/CoreServices/CoreServices';
-import { CoreStart } from '../../../../../../src/core/public';
+import { FLYOUT_MODES } from '../AnywhereParentFlyout/constants';
 
 function AddAnomalyDetector({
   embeddable,
@@ -160,6 +165,10 @@ function AddAnomalyDetector({
     }
   };
 
+  const uiSettings = getUISettings();
+  const savedObjectLoader: SavedAugmentVisLoader =
+    getSavedFeatureAnywhereLoader();
+
   const getAugmentVisSavedObject = (detectorId: string) => {
     const fn = {
       type: VisLayerTypes.PointInTimeEvents,
@@ -210,11 +219,14 @@ function AddAnomalyDetector({
             });
 
           const detectorId = response.response.id;
-
           const augmentVisSavedObjectToCreate: ISavedAugmentVis =
             getAugmentVisSavedObject(detectorId);
 
-          createAugmentVisSavedObject(augmentVisSavedObjectToCreate)
+          createAugmentVisSavedObject(
+            augmentVisSavedObjectToCreate,
+            uiSettings,
+            savedObjectLoader
+          )
             .then((savedObject: any) => {
               savedObject
                 .save({})
@@ -230,12 +242,14 @@ function AddAnomalyDetector({
                     text: mountReactNode(
                       getEverythingSuccessfulButton(detectorId, shingleSize)
                     ),
+                    className: 'createdAndAssociatedSuccessToast',
+                    toastLifeTimeMs: 3000000,
                   });
                   closeFlyout();
                 })
                 .catch((error) => {
                   console.error(
-                    `Error associating selected detector: ${error}`
+                    `Error associating selected detector in save process: ${error}`
                   );
                   notifications.toasts.addDanger(
                     prettifyErrorMessage(
@@ -248,6 +262,9 @@ function AddAnomalyDetector({
                 });
             })
             .catch((error) => {
+              console.error(
+                `Error associating selected detector in create process: ${error}`
+              );
               notifications.toasts.addDanger(
                 prettifyErrorMessage(
                   `Error associating selected detector in create process: ${error}`
@@ -294,16 +311,16 @@ function AddAnomalyDetector({
           initializing process takes approximately 1 minute if you have data in
           each of the last {32 + shingleSize} consecutive intervals.
         </p>
-        {alertingExists(detectorId) ? (
+        {alertingExists() ? (
           <EuiFlexGroup>
             <EuiFlexItem>
-              <p>Set up alerts to be notifified of any anomalies.</p>
+              <p>Set up alerts to be notified of any anomalies.</p>
             </EuiFlexItem>
             <EuiFlexItem grow={false}>
               <div>
                 <EuiButton onClick={() => openAlerting(detectorId)}>
                   Set up alerts
-                </EuiButton>{' '}
+                </EuiButton>
               </div>
             </EuiFlexItem>
           </EuiFlexGroup>
@@ -334,7 +351,11 @@ function AddAnomalyDetector({
     const augmentVisSavedObjectToCreate: ISavedAugmentVis =
       getAugmentVisSavedObject(detector.id);
 
-    createAugmentVisSavedObject(augmentVisSavedObjectToCreate)
+    createAugmentVisSavedObject(
+      augmentVisSavedObjectToCreate,
+      uiSettings,
+      savedObjectLoader
+    )
       .then((savedObject: any) => {
         savedObject
           .save({})
@@ -454,14 +475,14 @@ function AddAnomalyDetector({
                   ))}
                 </EuiFormFieldset>
                 <EuiSpacer size="m" />
-                {mode === 'existing' && (
+                {mode === FLYOUT_MODES.existing && (
                   <AssociateExisting
                     embeddableVisId={embeddable.vis.id}
                     selectedDetector={selectedDetector}
                     setSelectedDetector={setSelectedDetector}
                   ></AssociateExisting>
                 )}
-                {mode === 'create' && (
+                {mode === FLYOUT_MODES.create && (
                   <div className="create-new">
                     <EuiText size="xs">
                       <p>
@@ -831,7 +852,7 @@ function AddAnomalyDetector({
                   <EuiButtonEmpty onClick={closeFlyout}>Cancel</EuiButtonEmpty>
                 </EuiFlexItem>
                 <EuiFlexItem grow={false}>
-                  {mode === 'existing' ? (
+                  {mode === FLYOUT_MODES.existing ? (
                     <EuiButton
                       fill={true}
                       data-test-subj="adAnywhereCreateDetectorButton"

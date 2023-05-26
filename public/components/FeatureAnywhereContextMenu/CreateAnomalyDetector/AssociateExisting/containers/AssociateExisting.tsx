@@ -31,10 +31,16 @@ import {
   NO_PERMISSIONS_KEY_WORD,
   prettifyErrorMessage,
 } from '../../../../../../server/utils/helpers';
-import { SavedObjectLoader } from '../../../../../../../../src/plugins/saved_objects/public';
 import { getDetectorList } from '../../../../../redux/reducers/ad';
-import { getSavedFeatureAnywhereLoader } from '../../../../../services';
-import { ISavedAugmentVis } from '../../../../../../../../src/plugins/vis_augmenter/public';
+import {
+  getSavedFeatureAnywhereLoader,
+  getUISettings,
+} from '../../../../../services';
+import {
+  ISavedAugmentVis,
+  SavedAugmentVisLoader,
+  getAugmentVisSavedObjs,
+} from '../../../../../../../../src/plugins/vis_augmenter/public';
 import { stateToColorMap } from '../../../../../pages/utils/constants';
 import {
   BASE_DOCS_LINK,
@@ -57,6 +63,7 @@ export function AssociateExisting(
   const isRequestingFromES = useSelector(
     (state: AppState) => state.ad.requesting
   );
+  const uiSettings = getUISettings();
   const [isLoadingFinalDetectors, setIsLoadingFinalDetectors] =
     useState<boolean>(true);
   const isLoading = isRequestingFromES || isLoadingFinalDetectors;
@@ -69,7 +76,8 @@ export function AssociateExisting(
   ] = useState([] as DetectorListItem[]);
 
   // Establish savedObjectLoader for all operations on vis augmented saved objects
-  const savedObjectLoader: SavedObjectLoader = getSavedFeatureAnywhereLoader();
+  const savedObjectLoader: SavedAugmentVisLoader =
+    getSavedFeatureAnywhereLoader();
 
   useEffect(() => {
     if (
@@ -89,14 +97,13 @@ export function AssociateExisting(
 
   // Handle all changes in the assoicated detectors such as unlinking or new detectors associated
   useEffect(() => {
-    // Gets all augmented saved objects
-    savedObjectLoader.findAll().then((resp: any) => {
-      if (resp != undefined) {
-        const savedAugmentObjectsArr: ISavedAugmentVis[] = get(
-          resp,
-          'hits',
-          []
-        );
+    // Gets all augmented saved objects for the given visualization
+    getAugmentVisSavedObjs(
+      associateExistingProps.embeddableVisId,
+      savedObjectLoader,
+      uiSettings
+    ).then((savedAugmentObjectsArr: any) => {
+      if (savedAugmentObjectsArr != undefined) {
         const curDetectorsToDisplayOnList =
           getExistingDetectorsAvailableToAssociate(
             Object.values(allDetectors),
@@ -112,15 +119,8 @@ export function AssociateExisting(
   // that are associated to the current visualization
   const getExistingDetectorsAvailableToAssociate = (
     detectors: DetectorListItem[],
-    savedAugmentObjects: ISavedAugmentVis[]
+    savedAugmentForThisVisualization: ISavedAugmentVis[]
   ) => {
-    // Filter all savedAugmentObjects that aren't linked to the specific visualization
-    const savedAugmentForThisVisualization: ISavedAugmentVis[] =
-      savedAugmentObjects.filter(
-        (savedObj) =>
-          get(savedObj, 'visId', '') === associateExistingProps.embeddableVisId
-      );
-
     // Map all detector IDs for all the found augmented vis objects
     const savedAugmentDetectorsSet = new Set(
       savedAugmentForThisVisualization.map((savedObject) =>

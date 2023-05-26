@@ -33,6 +33,7 @@ import {
   setOverlays,
   setSavedFeatureAnywhereLoader,
   setUiActions,
+  setUISettings,
 } from './services';
 import { AnomalyDetectionOpenSearchDashboardsPluginStart } from 'public';
 import {
@@ -112,6 +113,7 @@ export class AnomalyDetectionOpenSearchDashboardsPlugin
     core: CoreStart,
     { embeddable, visAugmenter, uiActions }: AnomalyDetectionStartDeps
   ): AnomalyDetectionOpenSearchDashboardsPluginStart {
+    setUISettings(core.uiSettings);
     setEmbeddable(embeddable);
     setOverlays(core.overlays);
     setSavedFeatureAnywhereLoader(visAugmenter.savedAugmentVisLoader);
