@@ -224,8 +224,8 @@ function AddAnomalyDetector({
 
           createAugmentVisSavedObject(
             augmentVisSavedObjectToCreate,
-            uiSettings,
-            savedObjectLoader
+            savedObjectLoader,
+            uiSettings
           )
             .then((savedObject: any) => {
               savedObject
@@ -352,8 +352,8 @@ function AddAnomalyDetector({
 
     createAugmentVisSavedObject(
       augmentVisSavedObjectToCreate,
-      uiSettings,
-      savedObjectLoader
+      savedObjectLoader,
+      uiSettings
     )
       .then((savedObject: any) => {
         savedObject
