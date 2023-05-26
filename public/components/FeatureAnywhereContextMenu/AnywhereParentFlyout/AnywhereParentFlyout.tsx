@@ -6,7 +6,8 @@ import React, { useState } from 'react';
 import { get } from 'lodash';
 import AssociatedDetectors from '../AssociatedDetectors/containers/AssociatedDetectors';
 import { getEmbeddable } from '../../../../public/services';
-import AddAnomalyDetector from '../CreateAnomalyDetector/AddAnomalyDetector';
+import AddAnomalyDetector from '../CreateAnomalyDetector';
+import { FLYOUT_MODES } from './constants';
 
 const AnywhereParentFlyout = ({ startingFlyout, ...props }) => {
   const embeddable = getEmbeddable().getEmbeddableFactory;
@@ -15,11 +16,12 @@ const AnywhereParentFlyout = ({ startingFlyout, ...props }) => {
   ];
 
   const [mode, setMode] = useState(startingFlyout);
-  const [selectedDetectorId, setSelectedDetectorId] = useState();
+  const [selectedDetector, setSelectedDetector] = useState(undefined);
 
   const AnywhereFlyout = {
-    create: AddAnomalyDetector,
-    associated: AssociatedDetectors,
+    [FLYOUT_MODES.create]: AddAnomalyDetector,
+    [FLYOUT_MODES.associated]: AssociatedDetectors,
+    [FLYOUT_MODES.existing]: AddAnomalyDetector,
   }[mode];
 
   return (
@@ -29,8 +31,8 @@ const AnywhereParentFlyout = ({ startingFlyout, ...props }) => {
         setMode,
         mode,
         indices,
-        selectedDetectorId,
-        setSelectedDetectorId,
+        selectedDetector,
+        setSelectedDetector,
       }}
     />
   );

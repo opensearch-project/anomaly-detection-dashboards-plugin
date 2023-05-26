@@ -15,6 +15,7 @@ import configureStore from '../../redux/configureStore';
 import DocumentationTitle from '../../components/FeatureAnywhereContextMenu/DocumentationTitle/containers/DocumentationTitle';
 import { AD_DOCS_LINK, APM_TRACE } from '../constants';
 import { getClient, getOverlays } from '../../../public/services';
+import { FLYOUT_MODES } from '../../../public/components/FeatureAnywhereContextMenu/AnywhereParentFlyout/constants';
 
 // This is used to create all actions in the same context menu
 const grouping: Action['grouping'] = [
@@ -58,7 +59,7 @@ export const getActions = () => {
       ),
       icon: 'plusInCircle' as EuiIconType,
       order: 100,
-      onClick: getOnClick('create'),
+      onClick: getOnClick(FLYOUT_MODES.create),
     },
     {
       grouping,
@@ -71,7 +72,7 @@ export const getActions = () => {
       ),
       icon: 'gear' as EuiIconType,
       order: 99,
-      onClick: getOnClick('associated'),
+      onClick: getOnClick(FLYOUT_MODES.associated),
     },
     {
       id: 'documentationAnomalyDetector',

@@ -24,6 +24,7 @@ import { DetectorListItem } from '../../../../models/interfaces';
 import {
   getSavedFeatureAnywhereLoader,
   getNotifications,
+  getUISettings,
 } from '../../../../services';
 import {
   GET_ALL_DETECTORS_QUERY_PARAMS,
@@ -39,7 +40,11 @@ import {
   EmptyAssociatedDetectorMessage,
   ConfirmUnlinkDetectorModal,
 } from '../components';
-import { ISavedAugmentVis } from '../../../../../../../src/plugins/vis_augmenter/public';
+import {
+  ISavedAugmentVis,
+  SavedAugmentVisLoader,
+  getAugmentVisSavedObjs,
+} from '../../../../../../../src/plugins/vis_augmenter/public';
 import { ASSOCIATED_DETECTOR_ACTION } from '../utils/constants';
 
 interface ConfirmModalState {
@@ -82,8 +87,10 @@ function AssociatedDetectors({ embeddable, closeFlyout, setMode }) {
   );
 
   // Establish savedObjectLoader for all operations on vis_augment saved objects
-  const savedObjectLoader: SavedObjectLoader = getSavedFeatureAnywhereLoader();
+  const savedObjectLoader: SavedAugmentVisLoader =
+    getSavedFeatureAnywhereLoader();
 
+  const uiSettings = getUISettings();
   const notifications = getNotifications();
 
   useEffect(() => {
@@ -127,15 +134,12 @@ function AssociatedDetectors({ embeddable, closeFlyout, setMode }) {
 
   // Handles all changes in the assoicated detectors such as unlinking or new detectors associated
   useEffect(() => {
-    // Gets all augmented saved objects
-    savedObjectLoader
-      .findAll()
-      .then((resp: any) => {
-        if (resp != undefined) {
-          const savedAugmentObjectsArr: ISavedAugmentVis[] = get(
-            resp,
-            'hits',
-            []
+    // Gets all augmented saved objects that are associated to the given visualization
+    getAugmentVisSavedObjs(embeddable.vis.id, savedObjectLoader, uiSettings)
+      .then((savedAugmentObjectsArr: any) => {
+        if (savedAugmentObjectsArr != undefined) {
+          console.log(
+            'savedAugmentObjectsArr: ' + JSON.stringify(savedAugmentObjectsArr)
           );
           const curSelectedDetectors = getAssociatedDetectors(
             Object.values(allDetectors),
@@ -156,14 +160,8 @@ function AssociatedDetectors({ embeddable, closeFlyout, setMode }) {
   // that are associated to the current visualization
   const getAssociatedDetectors = (
     detectors: DetectorListItem[],
-    savedAugmentObjects: ISavedAugmentVis[]
+    savedAugmentForThisVisualization: ISavedAugmentVis[]
   ) => {
-    // Filter all savedAugmentObjects that aren't linked to the specific visualization
-    const savedAugmentForThisVisualization: ISavedAugmentVis[] =
-      savedAugmentObjects.filter(
-        (savedObj) => get(savedObj, 'visId', '') === embeddable.vis.id
-      );
-
     // Map all detector IDs for all the found augmented vis objects
     const savedAugmentDetectorsSet = new Set(
       savedAugmentForThisVisualization.map((savedObject) =>
@@ -180,18 +178,13 @@ function AssociatedDetectors({ embeddable, closeFlyout, setMode }) {
 
   const onUnlinkDetector = async () => {
     setIsLoadingFinalDetectors(true);
-    await savedObjectLoader.findAll().then(async (resp: any) => {
-      if (resp != undefined) {
-        // gets all the saved object for this visualization
-        const savedAugmentForThisVisualization: ISavedAugmentVis[] = get(
-          resp,
-          'hits',
-          [] as ISavedAugmentVis[]
-        ).filter(
-          (savedObj: ISavedAugmentVis[]) =>
-            get(savedObj, 'visId', '') === embeddable.vis.id
-        );
-
+    // Gets all augmented saved objects that are associated to the given visualization
+    await getAugmentVisSavedObjs(
+      embeddable.vis.id,
+      savedObjectLoader,
+      uiSettings
+    ).then(async (savedAugmentForThisVisualization: any) => {
+      if (savedAugmentForThisVisualization != undefined) {
         // find saved augment object matching detector we want to unlink
         // There should only be one detector and vis pairing
         const savedAugmentToUnlink = savedAugmentForThisVisualization.find(
@@ -237,11 +230,6 @@ function AssociatedDetectors({ embeddable, closeFlyout, setMode }) {
 
   const getDetectors = async () => {
     dispatch(getDetectorList(GET_ALL_DETECTORS_QUERY_PARAMS));
-  };
-
-  // TODO: this part is incomplete because it is pending on a different PR that will have all the associate existing changes
-  const openAssociateDetectorFlyout = async () => {
-    console.log('inside create anomaly detector');
   };
 
   const handleUnlinkDetectorAction = (detector: DetectorListItem) => {
@@ -326,7 +314,7 @@ function AssociatedDetectors({ embeddable, closeFlyout, setMode }) {
                 fill
                 iconType="link"
                 onClick={() => {
-                  openAssociateDetectorFlyout();
+                  setMode('existing');
                 }}
               >
                 Associate a detector

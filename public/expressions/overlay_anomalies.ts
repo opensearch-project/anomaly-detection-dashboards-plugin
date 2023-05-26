@@ -29,10 +29,15 @@ import {
   VisLayerErrorTypes,
 } from '../../../../src/plugins/vis_augmenter/public';
 import { PLUGIN_NAME } from '../utils/constants';
-import { NO_PERMISSIONS_KEY_WORD } from '../../server/utils/helpers';
+import {
+  CANT_FIND_KEY_WORD,
+  DOES_NOT_HAVE_PERMISSIONS_KEY_WORD,
+  NO_PERMISSIONS_KEY_WORD,
+} from '../../server/utils/helpers';
 import {
   ORIGIN_PLUGIN_VIS_LAYER,
   OVERLAY_ANOMALIES,
+  PLUGIN_EVENT_TYPE,
   TYPE_OF_EXPR_VIS_LAYERS,
   VIS_LAYER_PLUGIN_TYPE,
 } from './constants';
@@ -40,6 +45,8 @@ import {
 type Input = ExprVisLayers;
 type Output = Promise<ExprVisLayers>;
 type Name = typeof OVERLAY_ANOMALIES;
+
+const DETECTOR_HAS_BEEN_DELETED = 'detector has been deleted';
 
 interface Arguments {
   detectorId: string;
@@ -72,9 +79,9 @@ const getAnomalies = async (
   return parsePureAnomalies(anomalySummaryResponse);
 };
 
-const getDetectorName = async (detectorId: string) => {
+const getDetectorResponse = async (detectorId: string) => {
   const resp = await getClient().get(`..${AD_NODE_API.DETECTOR}/${detectorId}`);
-  return get(resp.response, 'name', '');
+  return resp;
 };
 
 // This takes anomalies and returns them as vis layer of type PointInTimeEvents
@@ -152,7 +159,17 @@ export const overlayAnomaliesFunction =
         urlPath: `${PLUGIN_NAME}#/detectors/${detectorId}/results`, //details page for detector in AD plugin
       };
       try {
-        const detectorName = await getDetectorName(detectorId);
+        const detectorResponse = await getDetectorResponse(detectorId);
+        if (get(detectorResponse, 'error', '').includes(CANT_FIND_KEY_WORD)) {
+          throw new Error('Anomaly Detector - ' + DETECTOR_HAS_BEEN_DELETED);
+        } else if (
+          get(detectorResponse, 'error', '').includes(
+            DOES_NOT_HAVE_PERMISSIONS_KEY_WORD
+          )
+        ) {
+          throw new Error(get(detectorResponse, 'error', ''));
+        }
+        const detectorName = get(detectorResponse.response, 'name', '');
         if (detectorName === '') {
           throw new Error('Anomaly Detector - Unable to get detector');
         }
@@ -177,15 +194,24 @@ export const overlayAnomaliesFunction =
             : ([anomalyLayer] as VisLayers),
         };
       } catch (error) {
-        console.log('Anomaly Detector - Unable to get anomalies: ', error);
+        console.error('Anomaly Detector - Unable to get anomalies: ', error);
         let visLayerError: VisLayerError = {} as VisLayerError;
         if (
           typeof error === 'string' &&
-          error.includes(NO_PERMISSIONS_KEY_WORD)
+          (error.includes(NO_PERMISSIONS_KEY_WORD) ||
+            error.includes(DOES_NOT_HAVE_PERMISSIONS_KEY_WORD))
         ) {
           visLayerError = {
             type: VisLayerErrorTypes.PERMISSIONS_FAILURE,
-            message: error, //TODO: might just change this to a generic message like rest of AD plugin
+            message: error,
+          };
+        } else if (
+          typeof error === 'string' &&
+          error.includes(DETECTOR_HAS_BEEN_DELETED)
+        ) {
+          visLayerError = {
+            type: VisLayerErrorTypes.RESOURCE_DELETED,
+            message: error,
           };
         } else {
           visLayerError = {
@@ -204,6 +230,7 @@ export const overlayAnomaliesFunction =
           pluginResource: ADPluginResource,
           events: [],
           error: visLayerError,
+          pluginEventType: PLUGIN_EVENT_TYPE,
         } as PointInTimeEventsVisLayer;
         return {
           type: TYPE_OF_EXPR_VIS_LAYERS,
