@@ -2,13 +2,13 @@
  * Copyright OpenSearch Contributors
  * SPDX-License-Identifier: Apache-2.0
  */
-module.exports = {
-  process() {
+export = {
+  process(): { code: string } {
     return {
       code: `module.exports = {};`,
     };
   },
-  getCacheKey() {
+  getCacheKey(): string {
     return 'svgTransform';
   },
 };

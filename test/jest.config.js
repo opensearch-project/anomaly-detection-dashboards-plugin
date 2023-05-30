@@ -46,7 +46,7 @@ module.exports = {
   globalSetup: '<rootDir>/global-setup.js',
   transform: {
     '\\.[jt]sx?$': 'babel-jest',
-    '^.+\\.svg$': '<rootDir>/test/mocks/transformMock.js',
-    '^.+\\.html$': '<rootDir>/test/mocks/transformMock.js',
+    '^.+\\.svg$': '<rootDir>/test/mocks/transformMock.ts',
+    '^.+\\.html$': '<rootDir>/test/mocks/transformMock.ts',
   },
 };
