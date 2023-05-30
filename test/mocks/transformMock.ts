@@ -7,12 +7,12 @@
  * The transform configuration in Jest allows you to 
  * specify custom transformation logic for specific file types during testing. 
  */
-export = {
+module.exports = {
   /**
    * This function is responsible for transforming the file.
    * @returns the string module.exports = {};, which is an empty CommonJS module.
    */
-  process(): { code: string } {
+  process() {
     return {
       code: `module.exports = {};`,
     };
@@ -21,7 +21,7 @@ export = {
    * The cache key helps Jest determine if a file needs to be retransformed or if it can use the cached transformation result. 
    * @returns a unique string that serves as a cache key for the transformation. 
    */
-  getCacheKey(): string {
+  getCacheKey() {
     return 'svgTransform';
   },
 };
