@@ -19,7 +19,7 @@ export = {
   },
   /**
    * The cache key helps Jest determine if a file needs to be retransformed or if it can use the cached transformation result. 
-   * @returns returns a unique string that serves as a cache key for the transformation. 
+   * @returns a unique string that serves as a cache key for the transformation. 
    */
   getCacheKey(): string {
     return 'svgTransform';
