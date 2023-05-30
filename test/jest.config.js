@@ -44,6 +44,11 @@ module.exports = {
   testPathIgnorePatterns: ['<rootDir>/build/', '<rootDir>/node_modules/'],
   transformIgnorePatterns: ['<rootDir>/node_modules'],
   globalSetup: '<rootDir>/global-setup.js',
+
+  /**
+   * This configuration specifies different file extensions 
+   * and the corresponding transformers to be used
+   */
   transform: {
     '\\.[jt]sx?$': 'babel-jest',
     '^.+\\.svg$': '<rootDir>/test/mocks/transformMock.ts',
