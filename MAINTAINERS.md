@@ -4,9 +4,18 @@ This document contains a list of maintainers in this repo. See [opensearch-proje
 
 ## Current Maintainers
 
-| Maintainer              | GitHub ID                                               | Affiliation |
-| ----------------------- | ------------------------------------------------------- | ----------- |
-| Tyler Ohlsen            | [ohltyler](https://github.com/ohltyler)                 | Amazon      |
+| Maintainer              | GitHub ID                                                | Affiliation |
+| ----------------------- | -------------------------------------------------------- | ----------- |
+| Tyler Ohlsen            | [ohltyler](https://github.com/ohltyler)                  | Amazon      |
+| Kaituo Li               | [kaituo](https://github.com/kaituo)                      | Amazon      |
+| Jackie Han              | [jackiehanyang](https://github.com/jackiehanyang)        | Amazon      |
+| Amit Galitzky           | [amitgalitz](https://github.com/amitgalitz)              | Amazon      |
+| Sean Zheng              | [sean-zheng-amazon](https://github.com/sean-zheng-amazon)| Amazon      |
+
+## Emeritus Maintainers
+
+| Maintainer        | GitHub ID                                               | Affiliation |
+| ----------------- | ------------------------------------------------------- | ----------- |
 | Yaliang                 | [ylwu-amzn](https://github.com/ylwu-amzn)               | Amazon      |
 | Yizhe Liu               | [yizheliu-amazon](https://github.com/yizheliu-amazon)   | Amazon      |
 | Vijayan Balasubramanian | [VijayanB](https://github.com/VijayanB)                 | Amazon      |
