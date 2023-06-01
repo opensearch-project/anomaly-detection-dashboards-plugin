@@ -35,9 +35,11 @@ import {
   NO_PERMISSIONS_KEY_WORD,
 } from '../../server/utils/helpers';
 import {
+  DETECTOR_HAS_BEEN_DELETED,
   ORIGIN_PLUGIN_VIS_LAYER,
   OVERLAY_ANOMALIES,
   PLUGIN_EVENT_TYPE,
+  START_OR_END_TIME_INVALID_ERROR,
   TYPE_OF_EXPR_VIS_LAYERS,
   VIS_LAYER_PLUGIN_TYPE,
 } from './constants';
@@ -45,8 +47,6 @@ import {
 type Input = ExprVisLayers;
 type Output = Promise<ExprVisLayers>;
 type Name = typeof OVERLAY_ANOMALIES;
-
-const DETECTOR_HAS_BEEN_DELETED = 'detector has been deleted';
 
 interface Arguments {
   detectorId: string;
@@ -56,7 +56,7 @@ export type OverlayAnomaliesExpressionFunctionDefinition =
   ExpressionFunctionDefinition<Name, Input, Arguments, Output>;
 
 // This gets all the needed anomalies for the given detector ID and time range
-const getAnomalies = async (
+export const getAnomalies = async (
   detectorId: string,
   startTime: number,
   endTime: number
@@ -66,7 +66,7 @@ const getAnomalies = async (
     endTime,
     detectorId,
     undefined,
-    false
+    true
   );
 
   const anomalySummaryResponse = await getClient().post(
@@ -79,13 +79,13 @@ const getAnomalies = async (
   return parsePureAnomalies(anomalySummaryResponse);
 };
 
-const getDetectorResponse = async (detectorId: string) => {
+export const getDetectorResponse = async (detectorId: string) => {
   const resp = await getClient().get(`..${AD_NODE_API.DETECTOR}/${detectorId}`);
   return resp;
 };
 
 // This takes anomalies and returns them as vis layer of type PointInTimeEvents
-const convertAnomaliesToPointInTimeEventsVisLayer = (
+export const convertAnomaliesToPointInTimeEventsVisLayer = (
   anomalies: AnomalyData[],
   ADPluginResource: PluginResource
 ): PointInTimeEventsVisLayer => {
@@ -101,6 +101,56 @@ const convertAnomaliesToPointInTimeEventsVisLayer = (
     pluginResource: ADPluginResource,
     events: events,
   } as PointInTimeEventsVisLayer;
+};
+
+const checkIfPermissionErrors = (error): boolean => {
+  return typeof error === 'string'
+    ? error.includes(NO_PERMISSIONS_KEY_WORD) ||
+        error.includes(DOES_NOT_HAVE_PERMISSIONS_KEY_WORD)
+    : get(error, 'message', '').includes(NO_PERMISSIONS_KEY_WORD) ||
+        get(error, 'message', '').includes(DOES_NOT_HAVE_PERMISSIONS_KEY_WORD);
+};
+
+//Helps convert any possible errors into either permission, deletion or fetch related failures
+export const getVisLayerError = (error): VisLayerError => {
+  let visLayerError: VisLayerError = {} as VisLayerError;
+  if (checkIfPermissionErrors(error)) {
+    visLayerError = {
+      type: VisLayerErrorTypes.PERMISSIONS_FAILURE,
+      message:
+        error === 'string'
+          ? error
+          : error instanceof Error
+          ? get(error, 'message', '')
+          : '',
+    };
+  } else if (
+    typeof error === 'string'
+      ? error.includes(DETECTOR_HAS_BEEN_DELETED)
+      : get(error, 'message', '').includes(DETECTOR_HAS_BEEN_DELETED)
+  ) {
+    console.log('inside resource deleted');
+    visLayerError = {
+      type: VisLayerErrorTypes.RESOURCE_DELETED,
+      message:
+        error === 'string'
+          ? error
+          : error instanceof Error
+          ? get(error, 'message', '')
+          : '',
+    };
+  } else {
+    visLayerError = {
+      type: VisLayerErrorTypes.FETCH_FAILURE,
+      message:
+        error === 'string'
+          ? error
+          : error instanceof Error
+          ? get(error, 'message', '')
+          : '',
+    };
+  }
+  return visLayerError;
 };
 
 /*
@@ -176,7 +226,7 @@ export const overlayAnomaliesFunction =
         ADPluginResource.name = detectorName;
 
         if (startTimeInMillis === undefined || endTimeInMillis === undefined) {
-          throw new RangeError('start or end time invalid');
+          throw new RangeError(START_OR_END_TIME_INVALID_ERROR);
         }
         const anomalies = await getAnomalies(
           detectorId,
@@ -195,35 +245,7 @@ export const overlayAnomaliesFunction =
         };
       } catch (error) {
         console.error('Anomaly Detector - Unable to get anomalies: ', error);
-        let visLayerError: VisLayerError = {} as VisLayerError;
-        if (
-          typeof error === 'string' &&
-          (error.includes(NO_PERMISSIONS_KEY_WORD) ||
-            error.includes(DOES_NOT_HAVE_PERMISSIONS_KEY_WORD))
-        ) {
-          visLayerError = {
-            type: VisLayerErrorTypes.PERMISSIONS_FAILURE,
-            message: error,
-          };
-        } else if (
-          typeof error === 'string' &&
-          error.includes(DETECTOR_HAS_BEEN_DELETED)
-        ) {
-          visLayerError = {
-            type: VisLayerErrorTypes.RESOURCE_DELETED,
-            message: error,
-          };
-        } else {
-          visLayerError = {
-            type: VisLayerErrorTypes.FETCH_FAILURE,
-            message:
-              error === 'string'
-                ? error
-                : error instanceof Error
-                ? error.message
-                : '',
-          };
-        }
+        const visLayerError = getVisLayerError(error);
         const anomalyErrorLayer = {
           type: VisLayerTypes.PointInTimeEvents,
           originPlugin: PLUGIN_NAME,

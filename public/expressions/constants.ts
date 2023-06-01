@@ -13,3 +13,7 @@ export const TYPE_OF_EXPR_VIS_LAYERS = 'vis_layers';
 export const OVERLAY_ANOMALIES = 'overlay_anomalies';
 
 export const PLUGIN_EVENT_TYPE = 'Anomalies';
+
+export const DETECTOR_HAS_BEEN_DELETED = 'detector has been deleted';
+
+export const START_OR_END_TIME_INVALID_ERROR = 'start or end time invalid';
