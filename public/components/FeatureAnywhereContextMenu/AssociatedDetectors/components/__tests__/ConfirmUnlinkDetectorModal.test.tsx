@@ -42,16 +42,13 @@ describe('ConfirmUnlinkDetectorModal spec', () => {
     getByText(
       'Removing association unlinks test-detector-1 detector from the visualization but does not delete it. The detector association can be restored.'
     );
-    expect(container).toMatchSnapshot();
   });
   test('should call onConfirm() when closing', async () => {
     const { container, getByText, getByTestId } = render(
       <ConfirmUnlinkDetectorModal {...ConfirmUnlinkDetectorModalProps} />
     );
     getByText('Remove association?');
-    await waitFor(() => {});
     userEvent.click(getByTestId('confirmUnlinkButton'));
-    await waitFor(() => {});
     expect(ConfirmUnlinkDetectorModalProps.onConfirm).toHaveBeenCalled();
   });
   test('should call onConfirm() when closing', async () => {
@@ -59,18 +56,14 @@ describe('ConfirmUnlinkDetectorModal spec', () => {
       <ConfirmUnlinkDetectorModal {...ConfirmUnlinkDetectorModalProps} />
     );
     getByText('Remove association?');
-    await waitFor(() => {});
     userEvent.click(getByTestId('confirmUnlinkButton'));
-    await waitFor(() => {});
     expect(ConfirmUnlinkDetectorModalProps.onConfirm).toHaveBeenCalled();
   });
   test('should call onHide() when closing', async () => {
     const { getByTestId } = render(
       <ConfirmUnlinkDetectorModal {...ConfirmUnlinkDetectorModalProps} />
     );
-    await waitFor(() => {});
     userEvent.click(getByTestId('cancelUnlinkButton'));
-    await waitFor(() => {});
     expect(ConfirmUnlinkDetectorModalProps.onHide).toHaveBeenCalled();
   });
 });

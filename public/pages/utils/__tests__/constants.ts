@@ -71,20 +71,20 @@ export const FAKE_ENTITY_ANOMALY_SUMMARIES = {
   anomalySummaries: [FAKE_ENTITY_ANOMALY_SUMMARY],
 } as EntityAnomalySummaries;
 
-export const anomalyResultQuery = {
+export const ANOMALY_RESULT_QUERY = {
   anomaly_grade: 0.10949221682655441,
   data_start_time: 1651817250642,
   data_end_time: 1651817310642,
   detector_id: 'gtU2l4ABuV34PY9ITTdm',
 };
-export const anomalyResultQueryPerDetector = {
+export const ANOMALY_RESULT_QUERY_PER_DETECTOR = {
   anomaly_grade: 0.10949221682655441,
   data_start_time: 1651817250642,
   data_end_time: 1651817310642,
   detector_id: 'gtU2l4ABuV34PY9ITTdm',
   name: 'test3',
 };
-export const selectedDetectors = [
+export const SELECTED_DETECTORS = [
   {
     id: 'gtU2l4ABuV34PY9ITTdm',
     name: 'test2',
@@ -135,7 +135,10 @@ export const selectedDetectors = [
   },
 ] as DetectorListItem[];
 
-export const anomalyResultSummary = {
+export const ANOMALY_RESULT_SUMMARY_DETECTOR_ID: string =
+  'hNX8l4ABuV34PY9I1EAZ';
+
+export const ANOMALY_RESULT_SUMMARY = {
   ok: true,
   response: {
     took: 1,
@@ -155,7 +158,7 @@ export const anomalyResultSummary = {
       hits: [
         {
           _index: '.opendistro-anomaly-results-history-2022.05.06-1',
-          _id: 'hNX8l4ABuV34PY9I1EAZ',
+          _id: ANOMALY_RESULT_SUMMARY_DETECTOR_ID,
           _version: 1,
           _seq_no: 2980,
           _primary_term: 1,
@@ -237,7 +240,7 @@ export const anomalyResultSummary = {
   },
 };
 
-export const noAnomaliesResultResponse = {
+export const NO_ANOMALIES_RESULT_RESPONSE = {
   ok: true,
   response: {
     took: 13,
@@ -282,7 +285,7 @@ export const noAnomaliesResultResponse = {
   },
 };
 
-export const parsedAnomalies: AnomalyData[] = [
+export const PARSED_ANOMALIES: AnomalyData[] = [
   {
     anomalyGrade: 0.11,
     confidence: 0.98,

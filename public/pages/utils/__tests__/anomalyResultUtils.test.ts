@@ -21,7 +21,7 @@ import {
   FeatureAttributes,
   AnomalyData,
 } from '../../../models/interfaces';
-import { anomalyResultSummary, parsedAnomalies } from './constants';
+import { ANOMALY_RESULT_SUMMARY, PARSED_ANOMALIES } from './constants';
 
 describe('anomalyResultUtils', () => {
   let randomDetector_20_min: Detector;
@@ -574,9 +574,9 @@ describe('anomalyResultUtils', () => {
   describe('parsePureAnomalies()', () => {
     test('parse anomalies', async () => {
       const parsedPureAnomalies: AnomalyData[] = await parsePureAnomalies(
-        anomalyResultSummary
+        ANOMALY_RESULT_SUMMARY
       );
-      expect(parsedPureAnomalies).toStrictEqual(parsedAnomalies);
+      expect(parsedPureAnomalies).toStrictEqual(PARSED_ANOMALIES);
     });
   });
 });

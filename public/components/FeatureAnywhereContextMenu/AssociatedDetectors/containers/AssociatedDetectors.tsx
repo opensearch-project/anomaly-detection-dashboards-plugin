@@ -138,9 +138,6 @@ function AssociatedDetectors({ embeddable, closeFlyout, setMode }) {
     getAugmentVisSavedObjs(embeddable.vis.id, savedObjectLoader, uiSettings)
       .then((savedAugmentObjectsArr: any) => {
         if (savedAugmentObjectsArr != undefined) {
-          console.log(
-            'savedAugmentObjectsArr: ' + JSON.stringify(savedAugmentObjectsArr)
-          );
           const curSelectedDetectors = getAssociatedDetectors(
             Object.values(allDetectors),
             savedAugmentObjectsArr
