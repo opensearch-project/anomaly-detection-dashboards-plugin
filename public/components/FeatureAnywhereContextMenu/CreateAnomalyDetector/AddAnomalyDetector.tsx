@@ -437,6 +437,7 @@ function AddAnomalyDetector({
       <Formik
         initialValues={initialDetectorValue}
         onSubmit={handleSubmit}
+        validateOnChange={true}
         validate={validateFeatures}
       >
         {(formikProps) => (
