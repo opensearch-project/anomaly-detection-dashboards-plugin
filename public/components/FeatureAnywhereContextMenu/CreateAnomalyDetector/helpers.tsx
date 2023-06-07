@@ -63,13 +63,15 @@ function visAggregationQueryToFormik(value, seriesParams) {
   if (Object.values(value.params).length !== 0) {
     return {
       [snakeCase(getFeatureNameFromVisParams(value.id, seriesParams))]: {
-        [visAggregationTypeToFormik(value)]: { field: value.params?.field?.name },
+        [visAggregationTypeToFormik(value)]: {
+          field: value.params?.field?.name,
+        },
       },
     };
   }
   // for count type of vis, there's no field name in the embeddable schema
   // return '' as the csutom expression query
-  return ''
+  return '';
 }
 
 function visAggregationTypeToFormik(feature) {
@@ -78,8 +80,7 @@ function visAggregationTypeToFormik(feature) {
     return aggType;
   }
   if (aggType === 'count') {
-    return 'value_count'
+    return 'value_count';
   }
   return 'sum';
 }
-

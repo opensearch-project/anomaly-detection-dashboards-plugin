@@ -109,7 +109,7 @@ function AddAnomalyDetector({
   setMode,
   selectedDetector,
   setSelectedDetector,
-}) { 
+}) {
   const dispatch = useDispatch();
   const [queryText, setQueryText] = useState('');
   useEffect(() => {
@@ -163,13 +163,17 @@ function AddAnomalyDetector({
       formikProps.validateForm().then((errors) => {
         if (!isEmpty(errors)) {
           focusOnFirstWrongFeature(errors, formikProps.setFieldTouched);
-          notifications.toasts.addDanger('One or more input fields is invalid.');
+          notifications.toasts.addDanger(
+            'One or more input fields is invalid.'
+          );
         } else {
           handleSubmit(formikProps);
         }
-      })
+      });
     } else {
-      notifications.toasts.addDanger('One or more features are required to check for anomalies.');
+      notifications.toasts.addDanger(
+        'One or more features are required to check for anomalies.'
+      );
     }
   };
 
@@ -775,7 +779,7 @@ function AddAnomalyDetector({
                         <EuiText size="s">
                           <p>
                             The dashboard does not support high-cardinality
-                            detectors. 
+                            detectors.
                             <a href={AD_HIGH_CARDINALITY_LINK} target="_blank">
                               Learn more <EuiIcon type="popout" />
                             </a>
@@ -796,7 +800,6 @@ function AddAnomalyDetector({
                       isOpen={accordionsOpen.modelFeatures}
                       onToggle={() => onAccordionToggle('modelFeatures')}
                     >
-
                       <FieldArray name="featureList">
                         {({
                           push,
@@ -851,7 +854,6 @@ function AddAnomalyDetector({
                       </FieldArray>
                     </EnhancedAccordion>
                     <EuiSpacer size="m" />
-
                   </div>
                 )}
               </div>
