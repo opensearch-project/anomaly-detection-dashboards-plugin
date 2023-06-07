@@ -39,7 +39,7 @@ export const getAnomalies = async (
     endTime,
     detectorId,
     undefined,
-    true
+    false
   );
   let anomalySummaryResponse;
   if (resultIndex === '') {
