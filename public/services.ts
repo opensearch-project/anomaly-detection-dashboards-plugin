@@ -34,3 +34,14 @@ export const [getUiActions, setUiActions] =
 
 export const [getUISettings, setUISettings] =
   createGetterSetter<IUiSettingsClient>('UISettings');
+
+// This is primarily used for mocking this module and each of its fns in tests.
+export default {
+  getSavedFeatureAnywhereLoader,
+  getUISettings,
+  getUiActions,
+  getEmbeddable,
+  getNotifications,
+  getOverlays,
+  setUISettings
+};
