@@ -22,6 +22,7 @@ import {
   EuiCheckbox,
   EuiButtonIcon,
 } from '@elastic/eui';
+import './styles.scss';
 import { Field, FieldProps } from 'formik';
 import {
   required,
@@ -137,7 +138,7 @@ export const FeatureAccordion = (props: FeatureAccordionProps) => {
       buttonClassName={
         props.index === 0
           ? 'euiAccordionForm__noTopPaddingButton'
-          : 'euiAccordionForm__button'
+          : 'euiFormAccordion_button'
       }
       className="euiAccordion__noTopBorder"
       paddingSize="l"

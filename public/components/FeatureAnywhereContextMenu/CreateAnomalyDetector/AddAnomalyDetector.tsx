@@ -109,9 +109,7 @@ function AddAnomalyDetector({
   setMode,
   selectedDetector,
   setSelectedDetector,
-}) {
-  console.log(embeddable);
-
+}) { 
   const dispatch = useDispatch();
   const [queryText, setQueryText] = useState('');
   useEffect(() => {
@@ -160,16 +158,19 @@ function AddAnomalyDetector({
 
   const notifications = getNotifications();
   const handleValidationAndSubmit = (formikProps) => {
-    console.log("formikProps, ", JSON.stringify(formikProps))
-    formikProps.setFieldTouched('featureList', true);
-    formikProps.validateForm().then((errors) => {
-      if (!isEmpty(errors)) {
-        focusOnFirstWrongFeature(errors, formikProps.setFieldTouched);
-        notifications.toasts.addDanger('One or more input fields is invalid');
-      } else {
-        handleSubmit(formikProps);
-      }
-    })
+    if (formikProps.values.featureList.length !== 0) {
+      formikProps.setFieldTouched('featureList', true);
+      formikProps.validateForm().then((errors) => {
+        if (!isEmpty(errors)) {
+          focusOnFirstWrongFeature(errors, formikProps.setFieldTouched);
+          notifications.toasts.addDanger('One or more input fields is invalid.');
+        } else {
+          handleSubmit(formikProps);
+        }
+      })
+    } else {
+      notifications.toasts.addDanger('One or more features are required to check for anomalies.');
+    }
   };
 
   const uiSettings = getUISettings();
@@ -210,9 +211,9 @@ function AddAnomalyDetector({
     formikProps.setSubmitting(true);
     try {
       const detectorToCreate = formikToDetector(formikProps.values);
-      dispatch(createDetector(detectorToCreate))
+      await dispatch(createDetector(detectorToCreate))
         .then(async (response) => {
-          dispatch(startDetector(response.response.id))
+          await dispatch(startDetector(response.response.id))
             .then((startDetectorResponse) => {})
             .catch((err: any) => {
               notifications.toasts.addDanger(
@@ -229,7 +230,7 @@ function AddAnomalyDetector({
           const augmentVisSavedObjectToCreate: ISavedAugmentVis =
             getAugmentVisSavedObject(detectorId);
 
-          createAugmentVisSavedObject(
+          await createAugmentVisSavedObject(
             augmentVisSavedObjectToCreate,
             savedObjectLoader,
             uiSettings
@@ -539,8 +540,8 @@ function AddAnomalyDetector({
                       subTitle={
                         <EuiText size="m">
                           <p>
-                            Detector interval: {intervalValue} minutes; Window
-                            delay: {delayValue} minutes
+                            Detector interval: {intervalValue} minute(s); Window
+                            delay: {delayValue} minute(s)
                           </p>
                         </EuiText>
                       }
@@ -591,7 +592,7 @@ function AddAnomalyDetector({
                                   </EuiFlexItem>
                                   <EuiFlexItem>
                                     <EuiText>
-                                      <p className="minutes">minutes</p>
+                                      <p className="minutes">minute(s)</p>
                                     </EuiText>
                                   </EuiFlexItem>
                                 </EuiFlexGroup>
@@ -625,7 +626,7 @@ function AddAnomalyDetector({
                               </EuiFlexItem>
                               <EuiFlexItem>
                                 <EuiText>
-                                  <p className="minutes">minutes</p>
+                                  <p className="minutes">minute(s)</p>
                                 </EuiText>
                               </EuiFlexItem>
                             </EuiFlexGroup>
@@ -817,6 +818,8 @@ function AddAnomalyDetector({
                                   />
                                 )
                               )}
+
+                              <EuiSpacer size="m" />
                               <EuiPanel paddingSize="none">
                                 <EuiButton
                                   className="featureButton"
@@ -847,6 +850,8 @@ function AddAnomalyDetector({
                         }}
                       </FieldArray>
                     </EnhancedAccordion>
+                    <EuiSpacer size="m" />
+
                   </div>
                 )}
               </div>

@@ -1,9 +1,12 @@
-import { dispatch } from 'd3';
-import { matchDetector } from 'public/redux/reducers/ad';
-import { validateDetectorName } from 'public/utils/utils';
+/*
+ * Copyright OpenSearch Contributors
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
 import { FEATURE_TYPE } from '../../../../public/models/interfaces';
 import { FeaturesFormikValues } from '../../../../public/pages/ConfigureModel/models/interfaces';
-import { find, get, isEmpty, snakeCase } from 'lodash';
+import { find, snakeCase } from 'lodash';
+import { AGGREGATION_TYPES } from '../../../../public/pages/ConfigureModel/utils/constants';
 
 export function visFeatureListToFormik(
   featureList,
@@ -17,7 +20,7 @@ export function visFeatureListToFormik(
       featureType: FEATURE_TYPE.SIMPLE,
       importance: 1,
       newFeature: false,
-      aggregationBy: 'sum',
+      aggregationBy: visAggregationTypeToFormik(feature),
       aggregationOf: visAggregationToFormik(feature),
       aggregationQuery: JSON.stringify(
         visAggregationQueryToFormik(feature, seriesParams)
@@ -47,30 +50,36 @@ function visAggregationToFormik(value) {
   if (Object.values(value.params).length !== 0) {
     return [
       {
-        label: value.params.field.name,
+        label: value.params?.field?.name,
         type: value.type,
       },
     ];
   }
-  return [
-    {
-      label: '',
-      type: value.type,
-    },
-  ];
+  // for count type of vis, there's no field name in the embeddable schema
+  return [];
 }
 
 function visAggregationQueryToFormik(value, seriesParams) {
   if (Object.values(value.params).length !== 0) {
     return {
       [snakeCase(getFeatureNameFromVisParams(value.id, seriesParams))]: {
-        sum: { field: value.params.field.name },
+        [visAggregationTypeToFormik(value)]: { field: value.params?.field?.name },
       },
     };
   }
-  return {
-    [snakeCase(getFeatureNameFromVisParams(value.id, seriesParams))]: {
-      sum: { field: 'count' },
-    },
-  };
+  // for count type of vis, there's no field name in the embeddable schema
+  // return '' as the csutom expression query
+  return ''
 }
+
+function visAggregationTypeToFormik(feature) {
+  const aggType = feature.__type.name;
+  if (AGGREGATION_TYPES.some((type) => type.value === aggType)) {
+    return aggType;
+  }
+  if (aggType === 'count') {
+    return 'value_count'
+  }
+  return 'sum';
+}
+
