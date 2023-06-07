@@ -70,6 +70,7 @@ import {
 import {
   focusOnFirstWrongFeature,
   initialFeatureValue,
+  validateFeatures,
 } from '../../../../public/pages/ConfigureModel/utils/helpers';
 import {
   getIndices,
@@ -109,6 +110,8 @@ function AddAnomalyDetector({
   selectedDetector,
   setSelectedDetector,
 }) {
+  console.log(embeddable);
+
   const dispatch = useDispatch();
   const [queryText, setQueryText] = useState('');
   useEffect(() => {
@@ -157,12 +160,16 @@ function AddAnomalyDetector({
 
   const notifications = getNotifications();
   const handleValidationAndSubmit = (formikProps) => {
-    if (!isEmpty(formikProps.errors)) {
-      focusOnFirstWrongFeature(formikProps.errors, formikProps.setFieldTouched);
-      notifications.toasts.addDanger('One or more input fields is invalid');
-    } else {
-      handleSubmit(formikProps);
-    }
+    console.log("formikProps, ", JSON.stringify(formikProps))
+    formikProps.setFieldTouched('featureList', true);
+    formikProps.validateForm().then((errors) => {
+      if (!isEmpty(errors)) {
+        focusOnFirstWrongFeature(errors, formikProps.setFieldTouched);
+        notifications.toasts.addDanger('One or more input fields is invalid');
+      } else {
+        handleSubmit(formikProps);
+      }
+    })
   };
 
   const uiSettings = getUISettings();
@@ -425,7 +432,7 @@ function AddAnomalyDetector({
       <Formik
         initialValues={initialDetectorValue}
         onSubmit={handleSubmit}
-        validateOnChange={true}
+        validate={validateFeatures}
       >
         {(formikProps) => (
           <>
@@ -767,7 +774,7 @@ function AddAnomalyDetector({
                         <EuiText size="s">
                           <p>
                             The dashboard does not support high-cardinality
-                            detectors.
+                            detectors. 
                             <a href={AD_HIGH_CARDINALITY_LINK} target="_blank">
                               Learn more <EuiIcon type="popout" />
                             </a>
@@ -788,7 +795,6 @@ function AddAnomalyDetector({
                       isOpen={accordionsOpen.modelFeatures}
                       onToggle={() => onAccordionToggle('modelFeatures')}
                     >
-                      <EuiSpacer size="s" />
 
                       <FieldArray name="featureList">
                         {({

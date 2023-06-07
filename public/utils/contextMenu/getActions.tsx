@@ -21,7 +21,7 @@ import { FLYOUT_MODES } from '../../../public/components/FeatureAnywhereContextM
 const grouping: Action['grouping'] = [
   {
     id: 'ad-dashboard-context-menu',
-    getDisplayName: () => 'Anomaly Detector',
+    getDisplayName: () => 'Anomaly Detection',
     getIconType: () => APM_TRACE,
   },
 ];
@@ -54,7 +54,7 @@ export const getActions = () => {
       title: i18n.translate(
         'dashboard.actions.adMenuItem.createAnomalyDetector.displayName',
         {
-          defaultMessage: 'Create anomaly detector',
+          defaultMessage: 'Add anomaly detector',
         }
       ),
       icon: 'plusInCircle' as EuiIconType,

@@ -44,18 +44,33 @@ const getFeatureNameFromVisParams = (id, seriesParams) => {
 };
 
 function visAggregationToFormik(value) {
+  if (Object.values(value.params).length !== 0) {
+    return [
+      {
+        label: value.params.field.name,
+        type: value.type,
+      },
+    ];
+  }
   return [
     {
-      label: value.params.field.name,
-      type: 'number',
+      label: '',
+      type: value.type,
     },
   ];
 }
 
 function visAggregationQueryToFormik(value, seriesParams) {
+  if (Object.values(value.params).length !== 0) {
+    return {
+      [snakeCase(getFeatureNameFromVisParams(value.id, seriesParams))]: {
+        sum: { field: value.params.field.name },
+      },
+    };
+  }
   return {
     [snakeCase(getFeatureNameFromVisParams(value.id, seriesParams))]: {
-      sum: { field: value.params.field.name },
+      sum: { field: 'count' },
     },
   };
 }
