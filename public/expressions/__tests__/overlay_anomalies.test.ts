@@ -43,7 +43,8 @@ describe('overlay_anomalies spec', () => {
       const receivedAnomalies = await getAnomalies(
         ANOMALY_RESULT_SUMMARY_DETECTOR_ID,
         1589258564789,
-        1589258684789
+        1589258684789,
+        ''
       );
       expect(receivedAnomalies).toStrictEqual(PARSED_ANOMALIES);
     });
@@ -54,7 +55,8 @@ describe('overlay_anomalies spec', () => {
       const receivedAnomalies = await getAnomalies(
         ANOMALY_RESULT_SUMMARY_DETECTOR_ID,
         1589258564789,
-        1589258684789
+        1589258684789,
+        ''
       );
       expect(receivedAnomalies).toStrictEqual([]);
     });
@@ -63,7 +65,8 @@ describe('overlay_anomalies spec', () => {
       const receivedAnomalies = await getAnomalies(
         ANOMALY_RESULT_SUMMARY_DETECTOR_ID,
         1589258564789,
-        1589258684789
+        1589258684789,
+        ''
       );
       expect(receivedAnomalies).toStrictEqual([]);
     });

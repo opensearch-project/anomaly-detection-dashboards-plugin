@@ -35,7 +35,6 @@ import {
   prettifyErrorMessage,
   NO_PERMISSIONS_KEY_WORD,
 } from '../../../../../server/utils/helpers';
-import { SavedObjectLoader } from '../../../../../../../src/plugins/saved_objects/public';
 import {
   EmptyAssociatedDetectorMessage,
   ConfirmUnlinkDetectorModal,
@@ -284,7 +283,7 @@ function AssociatedDetectors({ embeddable, closeFlyout, setMode }) {
     <div className="associated-detectors">
       <EuiFlyout ownFocus size="m" paddingSize="m" onClose={closeFlyout}>
         <EuiFlyoutHeader hasBorder>
-          <EuiTitle size="s">
+          <EuiTitle>
             <h2 id="associated-detectors__title">
               Associated anomaly detectors
             </h2>
@@ -303,7 +302,7 @@ function AssociatedDetectors({ embeddable, closeFlyout, setMode }) {
           <EuiFlexGroup alignItems="center">
             <EuiFlexItem component="span">
               <EuiTitle size="xxs">
-                <h3>{embeddableTitle}</h3>
+                <h3>Visualization: {embeddableTitle}</h3>
               </EuiTitle>
             </EuiFlexItem>
             <EuiFlexItem>

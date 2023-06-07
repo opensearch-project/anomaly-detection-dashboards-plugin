@@ -31,22 +31,32 @@ import { get } from 'lodash';
 export const getAnomalies = async (
   detectorId: string,
   startTime: number,
-  endTime: number
+  endTime: number,
+  resultIndex: string
 ): Promise<AnomalyData[]> => {
   const anomalySummaryQuery = getAnomalySummaryQuery(
     startTime,
     endTime,
     detectorId,
     undefined,
-    false
+    true
   );
-
-  const anomalySummaryResponse = await getClient().post(
-    `..${AD_NODE_API.DETECTOR}/results/_search`,
-    {
-      body: JSON.stringify(anomalySummaryQuery),
-    }
-  );
+  let anomalySummaryResponse;
+  if (resultIndex === '') {
+    anomalySummaryResponse = await getClient().post(
+      `..${AD_NODE_API.DETECTOR}/results/_search`,
+      {
+        body: JSON.stringify(anomalySummaryQuery),
+      }
+    );
+  } else {
+    anomalySummaryResponse = await getClient().post(
+      `..${AD_NODE_API.DETECTOR}/results/_search/${resultIndex}/true`,
+      {
+        body: JSON.stringify(anomalySummaryQuery),
+      }
+    );
+  }
 
   return parsePureAnomalies(anomalySummaryResponse);
 };

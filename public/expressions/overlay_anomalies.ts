@@ -114,6 +114,7 @@ export const overlayAnomaliesFunction =
           throw new Error(get(detectorResponse, 'error', ''));
         }
         const detectorName = get(detectorResponse.response, 'name', '');
+        const resultIndex = get(detectorResponse.response, 'resultIndex', '');
         if (detectorName === '') {
           throw new Error('Anomaly Detector - Unable to get detector');
         }
@@ -125,7 +126,8 @@ export const overlayAnomaliesFunction =
         const anomalies = await getAnomalies(
           detectorId,
           startTimeInMillis,
-          endTimeInMillis
+          endTimeInMillis,
+          resultIndex
         );
         const anomalyLayer = convertAnomaliesToPointInTimeEventsVisLayer(
           anomalies,
