@@ -43,5 +43,5 @@ export default {
   getEmbeddable,
   getNotifications,
   getOverlays,
-  setUISettings
+  setUISettings,
 };

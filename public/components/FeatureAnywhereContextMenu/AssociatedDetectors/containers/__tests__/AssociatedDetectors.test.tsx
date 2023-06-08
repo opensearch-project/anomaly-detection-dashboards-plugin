@@ -1,12 +1,6 @@
 /*
+ * Copyright OpenSearch Contributors
  * SPDX-License-Identifier: Apache-2.0
- *
- * The OpenSearch Contributors require contributions made to
- * this file be licensed under the Apache-2.0 license or a
- * compatible open source license.
- *
- * Modifications Copyright OpenSearch Contributors. See
- * GitHub history for details.
  */
 
 import React from 'react';
@@ -35,7 +29,7 @@ import {
   VisLayerTypes,
   createSavedAugmentVisLoader,
   setUISettings as setVisAugUISettings,
-   getMockAugmentVisSavedObjectClient,
+  getMockAugmentVisSavedObjectClient,
   SavedObjectLoaderAugmentVis,
 } from '../../../../../../../../src/plugins/vis_augmenter/public';
 import { getAugmentVisSavedObjs } from '../../../../../../../../src/plugins/vis_augmenter/public/utils';
@@ -96,7 +90,6 @@ jest.mock('../../../../../services', () => ({
   },
 }));
 
-
 jest.mock(
   '../../../../../../../../src/plugins/vis_augmenter/public/utils',
   () => ({
@@ -108,9 +101,7 @@ const visEmbeddable = createMockVisEmbeddable(
   'test-title',
   false
 );
-// const uiSettingsMock = uiSettingsServiceMock.createStartContract();
-// setUISettings(uiSettingsMock);
-// setVisAugUISettings(uiSettingsMock);
+
 const renderWithRouter = (visEmbeddable: VisualizeEmbeddable) => ({
   ...render(
     <Provider store={configureStore(httpClientMock)}>
@@ -177,8 +168,8 @@ describe('AssociatedDetectors spec', () => {
         response: { detectorList: [], totalDetectors: 0 },
       });
       (getAugmentVisSavedObjs as jest.Mock).mockImplementation(() =>
-          Promise.resolve(savedObjects)
-        );
+        Promise.resolve(savedObjects)
+      );
       const { getByText } = renderWithRouter(visEmbeddable);
       getByText('Loading detectors...');
       getByText('Real-time state');
@@ -186,82 +177,87 @@ describe('AssociatedDetectors spec', () => {
     });
   });
 
-    describe('renders either one or zero detectors', () => {
-      test('renders one associated detector', async () => {
-        httpClientMock.get = jest.fn().mockResolvedValue({
-          ok: true,
-          response: {
-            detectorList: detectorsToAssociate,
-            totalDetectors: detectorsToAssociate.length,
-          },
-        });
-        (getAugmentVisSavedObjs as jest.Mock).mockImplementation(() =>
-          Promise.resolve(savedObjects)
-        );
-        const { getByText, queryByText } = renderWithRouter(visEmbeddable);
-        getByText('Loading detectors...');
-        await waitFor(() => getByText('detector_name_0'));
-        getByText('5');
-        expect(queryByText('detector_name_1')).toBeNull();
-     });
-      test('renders no associated detectors', async () => {
-        // const existingDetectors = [detectorTwo];
-
-        httpClientMock.get = jest.fn().mockResolvedValue({
-          ok: true,
-          response: {
-            detectorList: [detectorsToAssociate[1]],
-            totalDetectors: 1,
-          },
-        });
-        (getAugmentVisSavedObjs as jest.Mock).mockImplementation(() =>
-          Promise.resolve(savedObjects)
-        );
-        const { getByText, findByText } = renderWithRouter(visEmbeddable);
-        getByText('Loading detectors...');
-        await waitFor(() =>
-        findByText(
-            'There are no anomaly detectors associated with test-title visualization.'
-          , undefined, {timeout: 100000})
-        );
-      }, 150000);
-    });
-
-    describe('tests unlink functionality', () => {
-      test('unlinks a single detector', async () => {
-        //const existingDetectors = [detectorOne, detectorTwo];
-        httpClientMock.get = jest.fn().mockResolvedValue({
-          ok: true,
-          response: {
-            detectorList: detectorsToAssociate,
-            totalDetectors: detectorsToAssociate.length,
-          },
-        });
-        (getAugmentVisSavedObjs as jest.Mock).mockImplementation(() =>
-          Promise.resolve(savedObjects)
-        );
-        const { getByText, queryByText, getAllByTestId } =
-          renderWithRouter(visEmbeddable);
-        getByText('Loading detectors...');
-        await waitFor(() => getByText('detector_name_0'));
-        getByText('5');
-        expect(queryByText('detector_name_1')).toBeNull();
-        userEvent.click(getAllByTestId('unlinkButton')[0]);
-        await waitFor(() =>
-          getByText(
-            'Removing association unlinks detector_name_0 detector from the visualization but does not delete it. The detector association can be restored.'
-          )
-        );
-        userEvent.click(getAllByTestId('confirmUnlinkButton')[0]);
-        expect(
-          (await getAugmentVisSavedObjs("valid-obj-id-0", augmentVisLoader, uiSettingsMock))
-            .length
-        ).toEqual(2);
-        await waitFor(() => expect(mockDeleteFn).toHaveBeenCalledTimes(1));
+  describe('renders either one or zero detectors', () => {
+    test('renders one associated detector', async () => {
+      httpClientMock.get = jest.fn().mockResolvedValue({
+        ok: true,
+        response: {
+          detectorList: detectorsToAssociate,
+          totalDetectors: detectorsToAssociate.length,
+        },
       });
-    });
+      (getAugmentVisSavedObjs as jest.Mock).mockImplementation(() =>
+        Promise.resolve(savedObjects)
+      );
+      const { getByText, queryByText } = renderWithRouter(visEmbeddable);
+      getByText('Loading detectors...');
+      await waitFor(() => getByText('detector_name_0'));
+      getByText('5');
+      expect(queryByText('detector_name_1')).toBeNull();
+    }, 80000);
+    test('renders no associated detectors', async () => {
+      httpClientMock.get = jest.fn().mockResolvedValue({
+        ok: true,
+        response: {
+          detectorList: [detectorsToAssociate[1]],
+          totalDetectors: 1,
+        },
+      });
+      (getAugmentVisSavedObjs as jest.Mock).mockImplementation(() =>
+        Promise.resolve(savedObjects)
+      );
+      const { getByText, findByText } = renderWithRouter(visEmbeddable);
+      getByText('Loading detectors...');
+      await waitFor(() =>
+        findByText(
+          'There are no anomaly detectors associated with test-title visualization.',
+          undefined,
+          { timeout: 100000 }
+        )
+      );
+    }, 150000);
+  });
+
+  describe('tests unlink functionality', () => {
+    test('unlinks a single detector', async () => {
+      httpClientMock.get = jest.fn().mockResolvedValue({
+        ok: true,
+        response: {
+          detectorList: detectorsToAssociate,
+          totalDetectors: detectorsToAssociate.length,
+        },
+      });
+      (getAugmentVisSavedObjs as jest.Mock).mockImplementation(() =>
+        Promise.resolve(savedObjects)
+      );
+      const { getByText, queryByText, getAllByTestId } =
+        renderWithRouter(visEmbeddable);
+      getByText('Loading detectors...');
+      await waitFor(() => getByText('detector_name_0'));
+      getByText('5');
+      expect(queryByText('detector_name_1')).toBeNull();
+      userEvent.click(getAllByTestId('unlinkButton')[0]);
+      await waitFor(() =>
+        getByText(
+          'Removing association unlinks detector_name_0 detector from the visualization but does not delete it. The detector association can be restored.'
+        )
+      );
+      userEvent.click(getAllByTestId('confirmUnlinkButton')[0]);
+      expect(
+        (
+          await getAugmentVisSavedObjs(
+            'valid-obj-id-0',
+            augmentVisLoader,
+            uiSettingsMock
+          )
+        ).length
+      ).toEqual(2);
+      await waitFor(() => expect(mockDeleteFn).toHaveBeenCalledTimes(1));
+    }, 100000);
+  });
 });
 
+//I have a new beforeEach because I making a lot more detectors and saved objects for these tests
 describe('test over 10 associated objects functionality', () => {
   let augmentVisLoader: SavedObjectLoaderAugmentVis;
   let mockDeleteFn: jest.Mock;
@@ -374,7 +370,7 @@ describe('test over 10 associated objects functionality', () => {
       Promise.resolve(savedObjects)
     );
 
-    const { getByText, queryByText, getAllByTestId, findByText } =
+    const { queryByText, getAllByTestId, findByText } =
       renderWithRouter(visEmbeddable);
 
     // initial load only first 10 detectors (string sort means detector_name_0 -> detector_name_9 show up)

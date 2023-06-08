@@ -413,17 +413,11 @@ function AddAnomalyDetector({
             closeFlyout();
           })
           .catch((error) => {
-            notifications.toasts.addDanger(
-              prettifyErrorMessage(
-                `Error associating selected detector: ${error}`
-              )
-            );
+            notifications.toasts.addDanger(prettifyErrorMessage(error));
           });
       })
       .catch((error) => {
-        notifications.toasts.addDanger(
-          prettifyErrorMessage(`Error associating selected detector: ${error}`)
-        );
+        notifications.toasts.addDanger(prettifyErrorMessage(error));
       });
   };
 

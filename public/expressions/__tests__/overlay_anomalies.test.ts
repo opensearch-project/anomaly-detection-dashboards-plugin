@@ -20,6 +20,7 @@ import {
 } from '../../pages/utils/__tests__/constants';
 import {
   DETECTOR_HAS_BEEN_DELETED,
+  PLUGIN_EVENT_TYPE,
   START_OR_END_TIME_INVALID_ERROR,
   VIS_LAYER_PLUGIN_TYPE,
 } from '../constants';
@@ -104,6 +105,7 @@ describe('overlay_anomalies spec', () => {
           type: 'Anomaly Detectors',
           urlPath: `anomaly-detection-dashboards#/detectors/${ANOMALY_RESULT_SUMMARY_DETECTOR_ID}/results`,
         },
+        pluginEventType: PLUGIN_EVENT_TYPE,
         type: 'PointInTimeEvents',
       };
       const pointInTimeEventsVisLayer =

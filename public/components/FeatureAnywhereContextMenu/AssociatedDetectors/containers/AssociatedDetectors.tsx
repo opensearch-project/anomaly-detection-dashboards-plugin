@@ -93,8 +93,6 @@ function AssociatedDetectors({ embeddable, closeFlyout, setMode }) {
   const notifications = getNotifications();
 
   useEffect(() => {
-    console.log("errorGettingDetectors: " + errorGettingDetectors)
-    //console.log("state.ad.errorMessage: " + state.ad.errorMessage)
     if (
       errorGettingDetectors &&
       !errorGettingDetectors.includes(SINGLE_DETECTOR_NOT_FOUND_MSG)

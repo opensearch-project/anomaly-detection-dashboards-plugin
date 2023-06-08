@@ -83,7 +83,7 @@ export const convertAnomaliesToPointInTimeEventsVisLayer = (
     type: VisLayerTypes.PointInTimeEvents,
     pluginResource: ADPluginResource,
     events: events,
-    pluginEventType: PLUGIN_EVENT_TYPE
+    pluginEventType: PLUGIN_EVENT_TYPE,
   } as PointInTimeEventsVisLayer;
 };
 

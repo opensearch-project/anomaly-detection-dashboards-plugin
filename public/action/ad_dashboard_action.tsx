@@ -14,6 +14,9 @@ import {
 } from '../../../../src/plugins/ui_actions/public';
 import { isReferenceOrValueEmbeddable } from '../../../../src/plugins/embeddable/public';
 import { EuiIconType } from '@elastic/eui/src/components/icon/icon';
+import { isEmpty } from 'lodash';
+import { VisualizeEmbeddable } from '../../../../src/plugins/visualizations/public';
+import { isEligibleForVisLayers } from '../../../../src/plugins/vis_augmenter/public';
 
 export const ACTION_AD = 'ad';
 
@@ -57,15 +60,13 @@ export const createADAction = ({
     type: ACTION_AD,
     grouping,
     isCompatible: async ({ embeddable }: ActionContext) => {
-      const paramsType = embeddable.vis?.params?.type;
-      const seriesParams = embeddable.vis?.params?.seriesParams || [];
-      const series = embeddable.vis?.params?.series || [];
-      const isLineGraph =
-        seriesParams.find((item) => item.type === 'line') ||
-        series.find((item) => item.chart_type === 'line');
-      const isValidVis = isLineGraph && paramsType !== 'table';
+      const vis = (embeddable as VisualizeEmbeddable).vis;
       return Boolean(
-        embeddable.parent && isDashboard(embeddable.parent) && isValidVis
+        embeddable.parent &&
+          isDashboard(embeddable.parent) &&
+          vis !== undefined &&
+          isEligibleForVisLayers(vis) &&
+          !isEmpty((embeddable as VisualizeEmbeddable).visLayers)
       );
     },
     execute: async ({ embeddable }: ActionContext) => {
