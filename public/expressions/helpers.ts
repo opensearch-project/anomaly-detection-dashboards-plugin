@@ -20,6 +20,7 @@ import {
 import {
   DETECTOR_HAS_BEEN_DELETED,
   ORIGIN_PLUGIN_VIS_LAYER,
+  PLUGIN_EVENT_TYPE,
 } from './constants';
 import {
   DOES_NOT_HAVE_PERMISSIONS_KEY_WORD,
@@ -82,6 +83,7 @@ export const convertAnomaliesToPointInTimeEventsVisLayer = (
     type: VisLayerTypes.PointInTimeEvents,
     pluginResource: ADPluginResource,
     events: events,
+    pluginEventType: PLUGIN_EVENT_TYPE
   } as PointInTimeEventsVisLayer;
 };
 
