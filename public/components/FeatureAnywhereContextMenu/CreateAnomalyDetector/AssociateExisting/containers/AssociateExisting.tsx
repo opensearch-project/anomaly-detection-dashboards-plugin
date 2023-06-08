@@ -206,7 +206,7 @@ export function AssociateExisting(
           options={options}
           selectedOptions={selectedOptions}
           onChange={(selectedOptions) => {
-            let detector = {} as DetectorListItem | undefined;
+            let detector = undefined as DetectorListItem | undefined;
 
             if (selectedOptions && selectedOptions.length) {
               const match = existingDetectorsAvailableToAssociate.find(
@@ -234,7 +234,7 @@ export function AssociateExisting(
               </EuiText>
               <EuiSpacer size="s" />
               <EuiHealth color={stateToColorMap.get(detector.curState)}>
-                {renderTime(detector.enabledTime)}
+                Running since {renderTime(detector.enabledTime)}
               </EuiHealth>
             </EuiFlexItem>
             <EuiFlexItem grow={false}>
