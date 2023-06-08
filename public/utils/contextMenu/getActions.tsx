@@ -13,7 +13,7 @@ import AnywhereParentFlyout from '../../components/FeatureAnywhereContextMenu/An
 import { Provider } from 'react-redux';
 import configureStore from '../../redux/configureStore';
 import DocumentationTitle from '../../components/FeatureAnywhereContextMenu/DocumentationTitle/containers/DocumentationTitle';
-import { AD_DOCS_LINK, APM_TRACE } from '../constants';
+import { AD_FEATURE_ANYWHERE_LINK, APM_TRACE } from '../constants';
 import { getClient, getOverlays } from '../../../public/services';
 import { FLYOUT_MODES } from '../../../public/components/FeatureAnywhereContextMenu/AnywhereParentFlyout/constants';
 
@@ -80,7 +80,7 @@ export const getActions = () => {
       icon: 'documentation' as EuiIconType,
       order: 98,
       onClick: () => {
-        window.open(AD_DOCS_LINK, '_blank');
+        window.open(AD_FEATURE_ANYWHERE_LINK, '_blank');
       },
     },
   ].map((options) => createADAction({ ...options, grouping }));
