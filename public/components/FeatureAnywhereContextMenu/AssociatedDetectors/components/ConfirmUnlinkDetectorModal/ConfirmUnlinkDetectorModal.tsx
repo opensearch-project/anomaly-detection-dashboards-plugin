@@ -34,7 +34,7 @@ export const ConfirmUnlinkDetectorModal = (
   return (
     <EuiOverlayMask>
       <EuiModal
-        data-test-subj="startDetectorsModal"
+        data-test-subj="unlinkDetectorsModal"
         onClose={props.onHide}
         maxWidth={450}
       >
@@ -52,14 +52,14 @@ export const ConfirmUnlinkDetectorModal = (
         <EuiModalFooter>
           {isLoading ? null : (
             <EuiButtonEmpty
-              data-test-subj="cancelButton"
+              data-test-subj="cancelUnlinkButton"
               onClick={props.onHide}
             >
               Cancel
             </EuiButtonEmpty>
           )}
           <EuiButton
-            data-test-subj="confirmButton"
+            data-test-subj="confirmUnlinkButton"
             color="primary"
             fill
             isLoading={isLoading}

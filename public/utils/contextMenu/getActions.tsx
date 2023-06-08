@@ -67,10 +67,10 @@ export const getActions = () => {
       title: i18n.translate(
         'dashboard.actions.adMenuItem.associatedAnomalyDetector.displayName',
         {
-          defaultMessage: 'Associated anomaly detector',
+          defaultMessage: 'Associated detectors',
         }
       ),
-      icon: 'gear' as EuiIconType,
+      icon: 'kqlSelector' as EuiIconType,
       order: 99,
       onClick: getOnClick(FLYOUT_MODES.associated),
     },

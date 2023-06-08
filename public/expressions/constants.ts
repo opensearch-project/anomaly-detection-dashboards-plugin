@@ -19,3 +19,7 @@ export const PLUGIN_AUGMENTATION_ENABLE_SETTING =
 
 export const PLUGIN_AUGMENTATION_MAX_OBJECTS_SETTING =
   'visualization:enablePluginAugmentation.maxPluginObjects';
+
+export const DETECTOR_HAS_BEEN_DELETED = 'detector has been deleted';
+
+export const START_OR_END_TIME_INVALID_ERROR = 'start or end time invalid';

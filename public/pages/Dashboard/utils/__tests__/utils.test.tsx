@@ -8,16 +8,10 @@ import {
   getLatestAnomalyResultsByTimeRange,
   getLatestAnomalyResultsForDetectorsByTimeRange,
 } from '../utils';
-import { httpClientMock, coreServicesMock } from '../../../../../test/mocks';
 import {
-  Detector,
-  FeatureAttributes,
-  DetectorListItem,
-} from '../../../../models/interfaces';
-import {
-  selectedDetectors,
-  anomalyResultQuery,
-  anomalyResultQueryPerDetector,
+  SELECTED_DETECTORS,
+  ANOMALY_RESULT_QUERY,
+  ANOMALY_RESULT_QUERY_PER_DETECTOR,
 } from '../../../../pages/utils/__tests__/constants';
 const anomalyResult = {
   detector_id: 'gtU2l4ABuV34PY9ITTdm',
@@ -114,14 +108,14 @@ describe('get latest anomaly result by time range', () => {
       'opensearch-ad-plugin-result-*',
       false
     );
-    expect(response[0]).toStrictEqual(anomalyResultQuery);
+    expect(response[0]).toStrictEqual(ANOMALY_RESULT_QUERY);
   }, 10000);
 });
 describe('get latest anomaly result for detectors', () => {
   test('get latest by detectors and time range ', async () => {
     const response = await getLatestAnomalyResultsForDetectorsByTimeRange(
       jest.fn(),
-      selectedDetectors,
+      SELECTED_DETECTORS,
       '30m',
       jest.fn().mockResolvedValue(searchResponseGetLatestAnomalyResults),
       -1,
@@ -131,6 +125,6 @@ describe('get latest anomaly result for detectors', () => {
       'opensearch-ad-plugin-result-*',
       false
     );
-    expect(response[0]).toStrictEqual(anomalyResultQueryPerDetector);
+    expect(response[0]).toStrictEqual(ANOMALY_RESULT_QUERY_PER_DETECTOR);
   }, 10000);
 });

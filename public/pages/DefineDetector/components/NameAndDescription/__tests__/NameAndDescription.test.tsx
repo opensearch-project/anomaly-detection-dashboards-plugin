@@ -29,11 +29,14 @@ describe('<NameAndDescription /> spec', () => {
     expect(container.firstChild).toMatchSnapshot();
   });
   test('shows error for detector name input when toggling focus/blur', async () => {
-    const handleValidateName = jest.fn().mockImplementation(() => {
-      throw 'Required';
+    const handleValidateName = jest.fn().mockImplementationOnce(() => {
+      return 'Required';
     });
     const { queryByText, findByText, getByPlaceholderText } = render(
-      <Formik initialValues={{ name: '' }} onSubmit={jest.fn()}>
+      <Formik
+        initialValues={{ name: '', description: 'one' }}
+        onSubmit={jest.fn()}
+      >
         {() => (
           <div>
             <NameAndDescription onValidateDetectorName={handleValidateName} />
@@ -49,6 +52,7 @@ describe('<NameAndDescription /> spec', () => {
     expect(handleValidateName).toHaveBeenCalledTimes(1);
     expect(findByText('Required')).not.toBeNull();
   });
+
   test('shows error for detector description input when toggling focus/bur', async () => {
     const { queryByText, findByText, getByPlaceholderText } = render(
       <Formik
