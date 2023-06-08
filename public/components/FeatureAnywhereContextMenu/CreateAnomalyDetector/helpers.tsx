@@ -43,8 +43,8 @@ const getFeatureNameFromVisParams = (id, seriesParams) => {
     }
   });
 
-  const formaedFeatureName = name.data.label.replace(/[^a-zA-Z0-9-_]/g, '_');
-  return formaedFeatureName
+  const formatedFeatureName = name.data.label.replace(/[^a-zA-Z0-9-_]/g, '_');
+  return formatedFeatureName
 };
 
 function visAggregationToFormik(value) {
