@@ -70,6 +70,7 @@ import {
 import {
   focusOnFirstWrongFeature,
   initialFeatureValue,
+  validateFeatures,
 } from '../../../../public/pages/ConfigureModel/utils/helpers';
 import {
   getIndices,
@@ -95,6 +96,8 @@ import {
   ORIGIN_PLUGIN_VIS_LAYER,
   OVERLAY_ANOMALIES,
   VIS_LAYER_PLUGIN_TYPE,
+  PLUGIN_AUGMENTATION_ENABLE_SETTING,
+  PLUGIN_AUGMENTATION_MAX_OBJECTS_SETTING,
 } from '../../../../public/expressions/constants';
 import { formikToDetectorName, visFeatureListToFormik } from './helpers';
 import { AssociateExisting } from './AssociateExisting';
@@ -157,11 +160,55 @@ function AddAnomalyDetector({
 
   const notifications = getNotifications();
   const handleValidationAndSubmit = (formikProps) => {
-    if (!isEmpty(formikProps.errors)) {
-      focusOnFirstWrongFeature(formikProps.errors, formikProps.setFieldTouched);
-      notifications.toasts.addDanger('One or more input fields is invalid');
+    if (formikProps.values.featureList.length !== 0) {
+      formikProps.setFieldTouched('featureList', true);
+      formikProps.validateForm().then(async (errors) => {
+        if (!isEmpty(errors)) {
+          focusOnFirstWrongFeature(errors, formikProps.setFieldTouched);
+          notifications.toasts.addDanger(
+            'One or more input fields is invalid.'
+          );
+        } else {
+          const isAugmentationEnabled = uiSettings.get(
+            PLUGIN_AUGMENTATION_ENABLE_SETTING
+          );
+          if (!isAugmentationEnabled) {
+            notifications.toasts.addDanger(
+              'Visualization augmentation is disabled, please enable visualization:enablePluginAugmentation.'
+            );
+          } else {
+            const maxAssociatedCount = uiSettings.get(
+              PLUGIN_AUGMENTATION_MAX_OBJECTS_SETTING
+            );
+            await savedObjectLoader.findAll().then(async (resp) => {
+              if (resp !== undefined) {
+                const savedAugmentObjects = get(resp, 'hits', []);
+                // gets all the saved object for this visualization
+                const savedObjectsForThisVisualization =
+                  savedAugmentObjects.filter(
+                    (savedObj) =>
+                      get(savedObj, 'visId', '') === embeddable.vis.id
+                  );
+                if (
+                  maxAssociatedCount <= savedObjectsForThisVisualization.length
+                ) {
+                  notifications.toasts.addDanger(
+                    `Cannot create the detector and associate it to the visualization due to the limit of the max
+                    amount of associated plugin resources (${maxAssociatedCount}) with
+                    ${savedObjectsForThisVisualization.length} associated to the visualization`
+                  );
+                } else {
+                  handleSubmit(formikProps);
+                }
+              }
+            });
+          }
+        }
+      });
     } else {
-      handleSubmit(formikProps);
+      notifications.toasts.addDanger(
+        'One or more features are required.'
+      );
     }
   };
 
@@ -203,7 +250,7 @@ function AddAnomalyDetector({
     formikProps.setSubmitting(true);
     try {
       const detectorToCreate = formikToDetector(formikProps.values);
-      dispatch(createDetector(detectorToCreate))
+      await dispatch(createDetector(detectorToCreate))
         .then(async (response) => {
           dispatch(startDetector(response.response.id))
             .then((startDetectorResponse) => {})
@@ -222,7 +269,7 @@ function AddAnomalyDetector({
           const augmentVisSavedObjectToCreate: ISavedAugmentVis =
             getAugmentVisSavedObject(detectorId);
 
-          createAugmentVisSavedObject(
+          await createAugmentVisSavedObject(
             augmentVisSavedObjectToCreate,
             savedObjectLoader,
             uiSettings
@@ -408,7 +455,7 @@ function AddAnomalyDetector({
     windowDelay: delayValue,
     shingleSize: 8,
     filterQuery: { match_all: {} },
-    description: '',
+    description: 'Created based on ' + embeddable.vis.title,
     resultIndex: undefined,
     filters: [],
     featureList: visFeatureListToFormik(
@@ -426,6 +473,7 @@ function AddAnomalyDetector({
         initialValues={initialDetectorValue}
         onSubmit={handleSubmit}
         validateOnChange={true}
+        validate={validateFeatures}
       >
         {(formikProps) => (
           <>
@@ -532,8 +580,8 @@ function AddAnomalyDetector({
                       subTitle={
                         <EuiText size="m">
                           <p>
-                            Detector interval: {intervalValue} minutes; Window
-                            delay: {delayValue} minutes
+                            Detector interval: {intervalValue} minute(s); Window
+                            delay: {delayValue} minute(s)
                           </p>
                         </EuiText>
                       }
@@ -584,7 +632,7 @@ function AddAnomalyDetector({
                                   </EuiFlexItem>
                                   <EuiFlexItem>
                                     <EuiText>
-                                      <p className="minutes">minutes</p>
+                                      <p className="minutes">minute(s)</p>
                                     </EuiText>
                                   </EuiFlexItem>
                                 </EuiFlexGroup>
@@ -618,7 +666,7 @@ function AddAnomalyDetector({
                               </EuiFlexItem>
                               <EuiFlexItem>
                                 <EuiText>
-                                  <p className="minutes">minutes</p>
+                                  <p className="minutes">minute(s)</p>
                                 </EuiText>
                               </EuiFlexItem>
                             </EuiFlexGroup>
@@ -788,8 +836,6 @@ function AddAnomalyDetector({
                       isOpen={accordionsOpen.modelFeatures}
                       onToggle={() => onAccordionToggle('modelFeatures')}
                     >
-                      <EuiSpacer size="s" />
-
                       <FieldArray name="featureList">
                         {({
                           push,
@@ -811,6 +857,8 @@ function AddAnomalyDetector({
                                   />
                                 )
                               )}
+
+                              <EuiSpacer size="m" />
                               <EuiPanel paddingSize="none">
                                 <EuiButton
                                   className="featureButton"
@@ -841,6 +889,7 @@ function AddAnomalyDetector({
                         }}
                       </FieldArray>
                     </EnhancedAccordion>
+                    <EuiSpacer size="m" />
                   </div>
                 )}
               </div>
