@@ -5,9 +5,8 @@
 
 import { FEATURE_TYPE } from '../../../../public/models/interfaces';
 import { FeaturesFormikValues } from '../../../../public/pages/ConfigureModel/models/interfaces';
-import { find, get, snakeCase } from 'lodash';
+import { find, snakeCase } from 'lodash';
 import { AGGREGATION_TYPES } from '../../../../public/pages/ConfigureModel/utils/constants';
-import { getSavedFeatureAnywhereLoader } from '../../../../public/services';
 
 export function visFeatureListToFormik(
   featureList,
@@ -37,24 +36,6 @@ export function formikToDetectorName(title) {
   return detectorName;
 }
 
-export async function isExceededMaxAssociatedCount(visId, savedObjLoader) {
-  const loader =
-    savedObjLoader !== undefined
-      ? savedObjLoader
-      : getSavedFeatureAnywhereLoader();
-
-  await loader.findAll().then(async (resp) => {
-    if (resp !== undefined) {
-      const savedAugmentObjects = get(resp, 'hits', []);
-      // gets all the saved object for this visualization
-      const savedObjectsForThisVisualization = savedAugmentObjects.filter(
-        (savedObj) => get(savedObj, 'visId', '') === visId
-      );
-      return savedObjectsForThisVisualization.length;
-    }
-  });
-}
-
 const getFeatureNameFromVisParams = (id, seriesParams) => {
   let name = find(seriesParams, function (param) {
     if (param.data.id === id) {
@@ -74,7 +55,7 @@ function visAggregationToFormik(value) {
       },
     ];
   }
-  // for count type of vis, there's no field name in the embeddable schema
+  // for count type of vis, there's no field name in the embeddable-vis schema
   return [];
 }
 
@@ -88,8 +69,8 @@ function visAggregationQueryToFormik(value, seriesParams) {
       },
     };
   }
-  // for count type of vis, there's no field name in the embeddable schema
-  // return '' as the csutom expression query
+  // for count type of vis, there's no field name in the embeddable-vis schema
+  // return '' as the custom expression query
   return '';
 }
 

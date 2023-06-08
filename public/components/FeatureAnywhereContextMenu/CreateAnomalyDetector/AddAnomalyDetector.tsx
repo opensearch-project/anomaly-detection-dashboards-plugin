@@ -207,7 +207,7 @@ function AddAnomalyDetector({
       });
     } else {
       notifications.toasts.addDanger(
-        'One or more features are required to check for anomalies.'
+        'One or more features are required.'
       );
     }
   };
