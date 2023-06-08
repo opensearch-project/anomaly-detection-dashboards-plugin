@@ -96,6 +96,8 @@ import {
   ORIGIN_PLUGIN_VIS_LAYER,
   OVERLAY_ANOMALIES,
   VIS_LAYER_PLUGIN_TYPE,
+  PLUGIN_AUGMENTATION_ENABLE_SETTING,
+  PLUGIN_AUGMENTATION_MAX_OBJECTS_SETTING,
 } from '../../../../public/expressions/constants';
 import { formikToDetectorName, visFeatureListToFormik } from './helpers';
 import { AssociateExisting } from './AssociateExisting';
@@ -160,14 +162,47 @@ function AddAnomalyDetector({
   const handleValidationAndSubmit = (formikProps) => {
     if (formikProps.values.featureList.length !== 0) {
       formikProps.setFieldTouched('featureList', true);
-      formikProps.validateForm().then((errors) => {
+      formikProps.validateForm().then(async (errors) => {
         if (!isEmpty(errors)) {
           focusOnFirstWrongFeature(errors, formikProps.setFieldTouched);
           notifications.toasts.addDanger(
             'One or more input fields is invalid.'
           );
         } else {
-          handleSubmit(formikProps);
+          const isAugmentationEnabled = uiSettings.get(
+            PLUGIN_AUGMENTATION_ENABLE_SETTING
+          );
+          if (!isAugmentationEnabled) {
+            notifications.toasts.addDanger(
+              'Visualization augmentation is disabled, please enable visualization:enablePluginAugmentation.'
+            );
+          } else {
+            const maxAssociatedCount = uiSettings.get(
+              PLUGIN_AUGMENTATION_MAX_OBJECTS_SETTING
+            );
+            await savedObjectLoader.findAll().then(async (resp) => {
+              if (resp !== undefined) {
+                const savedAugmentObjects = get(resp, 'hits', []);
+                // gets all the saved object for this visualization
+                const savedObjectsForThisVisualization =
+                  savedAugmentObjects.filter(
+                    (savedObj) =>
+                      get(savedObj, 'visId', '') === embeddable.vis.id
+                  );
+                if (
+                  maxAssociatedCount <= savedObjectsForThisVisualization.length
+                ) {
+                  notifications.toasts.addDanger(
+                    `Cannot create the detector and associate it to the visualization due to the limit of the max
+                    amount of associated plugin resources (${maxAssociatedCount}) with
+                    ${savedObjectsForThisVisualization.length} associated to the visualization`
+                  );
+                } else {
+                  handleSubmit(formikProps);
+                }
+              }
+            });
+          }
         }
       });
     } else {
@@ -217,7 +252,7 @@ function AddAnomalyDetector({
       const detectorToCreate = formikToDetector(formikProps.values);
       await dispatch(createDetector(detectorToCreate))
         .then(async (response) => {
-          await dispatch(startDetector(response.response.id))
+          dispatch(startDetector(response.response.id))
             .then((startDetectorResponse) => {})
             .catch((err: any) => {
               notifications.toasts.addDanger(
@@ -420,7 +455,7 @@ function AddAnomalyDetector({
     windowDelay: delayValue,
     shingleSize: 8,
     filterQuery: { match_all: {} },
-    description: '',
+    description: 'Created based on ' + embeddable.vis.title,
     resultIndex: undefined,
     filters: [],
     featureList: visFeatureListToFormik(

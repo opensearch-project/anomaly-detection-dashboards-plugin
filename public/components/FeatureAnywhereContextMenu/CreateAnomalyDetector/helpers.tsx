@@ -5,8 +5,9 @@
 
 import { FEATURE_TYPE } from '../../../../public/models/interfaces';
 import { FeaturesFormikValues } from '../../../../public/pages/ConfigureModel/models/interfaces';
-import { find, snakeCase } from 'lodash';
+import { find, get, snakeCase } from 'lodash';
 import { AGGREGATION_TYPES } from '../../../../public/pages/ConfigureModel/utils/constants';
+import { getSavedFeatureAnywhereLoader } from '../../../../public/services';
 
 export function visFeatureListToFormik(
   featureList,
@@ -34,6 +35,24 @@ export function formikToDetectorName(title) {
     title + '_anomaly_detector_' + Math.floor(100000 + Math.random() * 900000);
   detectorName.replace(/[^a-zA-Z0-9-_]/g, '_');
   return detectorName;
+}
+
+export async function isExceededMaxAssociatedCount(visId, savedObjLoader) {
+  const loader =
+    savedObjLoader !== undefined
+      ? savedObjLoader
+      : getSavedFeatureAnywhereLoader();
+
+  await loader.findAll().then(async (resp) => {
+    if (resp !== undefined) {
+      const savedAugmentObjects = get(resp, 'hits', []);
+      // gets all the saved object for this visualization
+      const savedObjectsForThisVisualization = savedAugmentObjects.filter(
+        (savedObj) => get(savedObj, 'visId', '') === visId
+      );
+      return savedObjectsForThisVisualization.length;
+    }
+  });
 }
 
 const getFeatureNameFromVisParams = (id, seriesParams) => {
