@@ -59,6 +59,9 @@ export const AD_DOCS_LINK =
 export const AD_HIGH_CARDINALITY_LINK =
   'https://opensearch.org/docs/latest/observing-your-data/ad/index/#optional-set-category-fields-for-high-cardinality';
 
+export const AD_FEATURE_ANYWHERE_LINK =
+  'https://opensearch.org/docs/latest/observing-your-data/ad/dashboards-anomaly-detection/';
+
 export const MAX_DETECTORS = 1000;
 
 export const MAX_ANOMALIES = 10000;

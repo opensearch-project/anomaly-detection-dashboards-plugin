@@ -32,18 +32,19 @@ export function visFeatureListToFormik(
 export function formikToDetectorName(title) {
   const detectorName =
     title + '_anomaly_detector_' + Math.floor(100000 + Math.random() * 900000);
-  detectorName.replace(/[^a-zA-Z0-9-_]/g, '_');
-  return detectorName;
+  const formattedName = detectorName.replace(/[^a-zA-Z0-9\-_]/g, '_');
+  return formattedName;
 }
 
 const getFeatureNameFromVisParams = (id, seriesParams) => {
-  let name = find(seriesParams, function (param) {
+  const name = find(seriesParams, function (param) {
     if (param.data.id === id) {
       return true;
     }
   });
 
-  return name.data.label.replace(/[^a-zA-Z0-9-_]/g, '_');
+  const formattedFeatureName = name.data.label.replace(/[^a-zA-Z0-9-_]/g, '_');
+  return formattedFeatureName
 };
 
 function visAggregationToFormik(value) {
