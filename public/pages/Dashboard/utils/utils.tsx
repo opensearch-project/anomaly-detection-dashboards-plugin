@@ -313,7 +313,6 @@ export const buildColors = palleteBuilder(
   rgbColors.map(([r, g, b]) => [r, g, b, 0.8])
 );
 
-// referred to here: https://tiny.amazon.com/337xpvcq/githelaselasblobv1822stor
 export const fillOutColors = (d: any, i: number, a: any[]) => {
   return buildColors(i / (a.length + 1));
 };
