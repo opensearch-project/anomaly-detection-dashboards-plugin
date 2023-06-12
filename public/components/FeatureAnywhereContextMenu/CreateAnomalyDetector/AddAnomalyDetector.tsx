@@ -103,6 +103,7 @@ import { formikToDetectorName, visFeatureListToFormik } from './helpers';
 import { AssociateExisting } from './AssociateExisting';
 import { mountReactNode } from '../../../../../../src/core/public/utils';
 import { FLYOUT_MODES } from '../AnywhereParentFlyout/constants';
+import { DetectorListItem } from '../../../../public/models/interfaces';
 
 function AddAnomalyDetector({
   embeddable,
@@ -206,9 +207,7 @@ function AddAnomalyDetector({
         }
       });
     } else {
-      notifications.toasts.addDanger(
-        'One or more features are required.'
-      );
+      notifications.toasts.addDanger('One or more features are required.');
     }
   };
 

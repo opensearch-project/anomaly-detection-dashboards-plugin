@@ -14,7 +14,6 @@ import {
 } from '../../../../src/plugins/ui_actions/public';
 import { isReferenceOrValueEmbeddable } from '../../../../src/plugins/embeddable/public';
 import { EuiIconType } from '@elastic/eui/src/components/icon/icon';
-import { isEmpty } from 'lodash';
 import { VisualizeEmbeddable } from '../../../../src/plugins/visualizations/public';
 import { isEligibleForVisLayers } from '../../../../src/plugins/vis_augmenter/public';
 
@@ -65,15 +64,13 @@ export const createADAction = ({
         embeddable.parent &&
           isDashboard(embeddable.parent) &&
           vis !== undefined &&
-          isEligibleForVisLayers(vis) &&
-          !isEmpty((embeddable as VisualizeEmbeddable).visLayers)
+          isEligibleForVisLayers(vis)
       );
     },
     execute: async ({ embeddable }: ActionContext) => {
       if (!isReferenceOrValueEmbeddable(embeddable)) {
         throw new IncompatibleActionError();
       }
-
       onClick({ embeddable });
     },
   });
