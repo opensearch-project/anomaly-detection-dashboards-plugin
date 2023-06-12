@@ -186,7 +186,11 @@ export function AssociateExisting(
         <p>
           View existing anomaly detectors across your system and add the
           detector(s) to a dashboard and visualization.{' '}
-          <a href={`${BASE_DOCS_LINK}/ad`} target="_blank">
+          <a
+            href={`${BASE_DOCS_LINK}/ad`}
+            target="_blank"
+            style={{ display: 'inline-block' }}
+          >
             Learn more <EuiIcon type="popout" />
           </a>
         </p>
@@ -218,7 +222,7 @@ export function AssociateExisting(
           }}
           aria-label="Select an anomaly detector to associate"
           isClearable
-          singleSelection
+          singleSelection={{ asPlainText: true }}
           placeholder="Search for an anomaly detector"
         />
       ) : (
@@ -238,7 +242,12 @@ export function AssociateExisting(
               </EuiHealth>
             </EuiFlexItem>
             <EuiFlexItem grow={false}>
-              <EuiLink href={`${PLUGIN_NAME}#/detectors/${detector.id}`}>
+              <EuiLink
+                style={{ paddingTop: '3px' }}
+                href={`${PLUGIN_NAME}#/detectors/${detector.id}`}
+                target="_blank"
+                icon="popout"
+              >
                 View detector page
               </EuiLink>
             </EuiFlexItem>

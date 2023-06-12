@@ -305,16 +305,18 @@ function AssociatedDetectors({ embeddable, closeFlyout, setMode }) {
                 <h3>Visualization: {embeddableTitle}</h3>
               </EuiTitle>
             </EuiFlexItem>
-            <EuiFlexItem>
-              <EuiButton
-                fill
-                iconType="link"
-                onClick={() => {
-                  setMode('existing');
-                }}
-              >
-                Associate a detector
-              </EuiButton>
+            <EuiFlexItem grow={false}>
+              <div>
+                <EuiButton
+                  fill
+                  iconType="link"
+                  onClick={() => {
+                    setMode('existing');
+                  }}
+                >
+                  Associate a detector
+                </EuiButton>
+              </div>
             </EuiFlexItem>
           </EuiFlexGroup>
           <EuiSpacer size="m" />

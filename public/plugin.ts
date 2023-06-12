@@ -40,10 +40,7 @@ import {
   VisAugmenterSetup,
   VisAugmenterStart,
 } from '../../../src/plugins/vis_augmenter/public';
-import {
-  UiActionsSetup,
-  UiActionsStart,
-} from '../../../src/plugins/ui_actions/public';
+import { UiActionsStart } from '../../../src/plugins/ui_actions/public';
 
 declare module '../../../src/plugins/ui_actions/public' {
   export interface ActionContextMapping {
