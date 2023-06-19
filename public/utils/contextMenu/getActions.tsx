@@ -23,6 +23,8 @@ const grouping: Action['grouping'] = [
     id: 'ad-dashboard-context-menu',
     getDisplayName: () => 'Anomaly Detection',
     getIconType: () => APM_TRACE,
+    category: 'vis_augmenter',
+    order: 20,
   },
 ];
 
