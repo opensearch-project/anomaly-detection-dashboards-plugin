@@ -672,7 +672,7 @@ function AddAnomalyDetector({
 
                     <EnhancedAccordion
                       id="advancedConfiguration"
-                      title="Advanced Configuration"
+                      title="Advanced configuration"
                       isOpen={accordionsOpen.advancedConfiguration}
                       onToggle={() =>
                         onAccordionToggle('advancedConfiguration')
