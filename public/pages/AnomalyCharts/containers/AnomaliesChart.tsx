@@ -171,6 +171,9 @@ export const AnomaliesChart = React.memo((props: AnomaliesChartProps) => {
       }}
       isPaused={true}
       commonlyUsedRanges={DATE_PICKER_QUICK_OPTIONS}
+      updateButtonProps={{
+        fill: false,
+      }}
     />
   );
 
