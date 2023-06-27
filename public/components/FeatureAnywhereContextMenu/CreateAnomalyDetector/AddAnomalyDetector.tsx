@@ -808,7 +808,7 @@ function AddAnomalyDetector({
                         <EuiText size="s">
                           <p>
                             The dashboard does not support high-cardinality
-                            detectors.
+                            detectors.&nbsp;
                             <a href={AD_HIGH_CARDINALITY_LINK} target="_blank">
                               Learn more <EuiIcon type="popout" />
                             </a>
