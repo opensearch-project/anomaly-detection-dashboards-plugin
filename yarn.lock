@@ -25,6 +25,90 @@
   dependencies:
     "@hapi/hoek" "^9.0.0"
 
+"@node-rs/xxhash-android-arm-eabi@1.4.0":
+  version "1.4.0"
+  resolved "https://registry.yarnpkg.com/@node-rs/xxhash-android-arm-eabi/-/xxhash-android-arm-eabi-1.4.0.tgz#55ace4d3882686d1e379aaf613e1338d78f13fc8"
+  integrity sha512-JuZNqt5/znWkIGteikQdS+HT9S0JsMYi06S4yzU/sMKLCIPvD0MnCTXlYtuDcgRIKScCaepAsSQVomnAyLFNNA==
+
+"@node-rs/xxhash-android-arm64@1.4.0":
+  version "1.4.0"
+  resolved "https://registry.yarnpkg.com/@node-rs/xxhash-android-arm64/-/xxhash-android-arm64-1.4.0.tgz#2290c53ceabda804afb4c45679613d833a6385a0"
+  integrity sha512-BZzQO5jlgsIr9HhiqTwZjYqlfVeZiu+7PaoAdNEOq+i/SjyAqv1jGSkyek4rBSAiodyNkXcbE0eQtomeN6a55w==
+
+"@node-rs/xxhash-darwin-arm64@1.4.0":
+  version "1.4.0"
+  resolved "https://registry.yarnpkg.com/@node-rs/xxhash-darwin-arm64/-/xxhash-darwin-arm64-1.4.0.tgz#96df4f48b13deb6899e84ed0882bdbd0a4856f13"
+  integrity sha512-JlEAzTsQaqJaWVse/JP//6QKBIhzqzTlvNY4uEbi8TaZMfvDDhW//ClXM6CkSV799GJxAYPu1LXa4+OeBQpa7Q==
+
+"@node-rs/xxhash-darwin-x64@1.4.0":
+  version "1.4.0"
+  resolved "https://registry.yarnpkg.com/@node-rs/xxhash-darwin-x64/-/xxhash-darwin-x64-1.4.0.tgz#9df3ca3a87354dd5386aadfa20ad032a299c2b8f"
+  integrity sha512-9ycVJfzLvw1wc6Tgq0giLkMn5nGOBawTeOA17t27dQFdY/scZPz583DO7w+eznMnlzUXwoLiloanUebRhy+piQ==
+
+"@node-rs/xxhash-freebsd-x64@1.4.0":
+  version "1.4.0"
+  resolved "https://registry.yarnpkg.com/@node-rs/xxhash-freebsd-x64/-/xxhash-freebsd-x64-1.4.0.tgz#24b0c0bfd33429303688b4af78f9d323daa0fb5b"
+  integrity sha512-vFRDr6qA0gHWQDjuSxXcdzM4Ppk+5VebEhc76zkWrRVc6RG60fxLo5B4j6QwMwXGTYaG8HMv/nQhAgbnOCWWxQ==
+
+"@node-rs/xxhash-linux-arm-gnueabihf@1.4.0":
+  version "1.4.0"
+  resolved "https://registry.yarnpkg.com/@node-rs/xxhash-linux-arm-gnueabihf/-/xxhash-linux-arm-gnueabihf-1.4.0.tgz#4c09f70cd39429fb1a52f3567085e949603d4817"
+  integrity sha512-0KS6y1caqbtPanos9XNMekWpozCHA6QSlQzaZyn9Hn+Z+mYpR5+NoWixefhp06jt59qF9+LkkF3C9fSEHYmq/w==
+
+"@node-rs/xxhash-linux-arm64-gnu@1.4.0":
+  version "1.4.0"
+  resolved "https://registry.yarnpkg.com/@node-rs/xxhash-linux-arm64-gnu/-/xxhash-linux-arm64-gnu-1.4.0.tgz#e92d7026614506fb4db309977127fd8589fabd7c"
+  integrity sha512-QI97JK2qiQhVgRtUBMgA1ZjPLpwnz11SE2Mw1jryejmyH9EXKKiCyt2FweO6MVP7bEuMxcdajBho4pEL7s/QsA==
+
+"@node-rs/xxhash-linux-arm64-musl@1.4.0":
+  version "1.4.0"
+  resolved "https://registry.yarnpkg.com/@node-rs/xxhash-linux-arm64-musl/-/xxhash-linux-arm64-musl-1.4.0.tgz#a8b16233a86c116e6af32a69278248d17b2d09e7"
+  integrity sha512-dtMid4OMkNBYGJkjoT1jdkENpV8m8MGp3lliDN8C+2znZUQM8KFRTXRkfaq4lgzu3Y2XeYzsLOoBsBd3Hgf7gA==
+
+"@node-rs/xxhash-linux-x64-gnu@1.4.0":
+  version "1.4.0"
+  resolved "https://registry.yarnpkg.com/@node-rs/xxhash-linux-x64-gnu/-/xxhash-linux-x64-gnu-1.4.0.tgz#385ec91396ebaa2b73abf419be3971ec893dcbd1"
+  integrity sha512-OeOQL10cG62wL1IVoeC74xESmefHU7r3xiZMTP2hK5Dh3FdF2sa3x/Db9BcGXlaokg/lMGDxuTuzOLC2Rv/wlQ==
+
+"@node-rs/xxhash-linux-x64-musl@1.4.0":
+  version "1.4.0"
+  resolved "https://registry.yarnpkg.com/@node-rs/xxhash-linux-x64-musl/-/xxhash-linux-x64-musl-1.4.0.tgz#715bb962502b0ec69e1fc19db22ac035c63d30c7"
+  integrity sha512-kZ8wNi5bH9b+ZpuPlSbFd6JXk8CKbfCvCPZ0Vk0IqLkzB6PihQflnZPM9r0QZ2jtFgyfWmpbFK4YxwX9YcyLog==
+
+"@node-rs/xxhash-win32-arm64-msvc@1.4.0":
+  version "1.4.0"
+  resolved "https://registry.yarnpkg.com/@node-rs/xxhash-win32-arm64-msvc/-/xxhash-win32-arm64-msvc-1.4.0.tgz#4a3a4ebcb50c73e4309e429b28eb44dbf8f7f71f"
+  integrity sha512-Ggv66jlhQvj4XgQqNgl2JKQ7My/97PvPZi5jKbcS7t65wJC36J6XERQwRPdupO8UH63XfPqb7HJqrgmiz8tmlA==
+
+"@node-rs/xxhash-win32-ia32-msvc@1.4.0":
+  version "1.4.0"
+  resolved "https://registry.yarnpkg.com/@node-rs/xxhash-win32-ia32-msvc/-/xxhash-win32-ia32-msvc-1.4.0.tgz#fdfdb43e41113a8baf15779ca53bb637d2e1bc8f"
+  integrity sha512-mYpF1+7unqKKGsPn7Y8X6SqP2Bc5BU5dsHBKhAGAuvrMg9W63zM+YWM8/fpNGfFlOrjiKRvXHZ96nrZyzoxeBw==
+
+"@node-rs/xxhash-win32-x64-msvc@1.4.0":
+  version "1.4.0"
+  resolved "https://registry.yarnpkg.com/@node-rs/xxhash-win32-x64-msvc/-/xxhash-win32-x64-msvc-1.4.0.tgz#aee714a4ae0121f3947f94139adf13f5b6d93d12"
+  integrity sha512-rKuqWHuQNlrfjIOkQW3oCBta/GUlyVoUkKB13aVr8uixOs/eneuDaYJx2h02FAAWlWCKADFnMxgDl0LVFBy53w==
+
+"@node-rs/xxhash@^1.3.0":
+  version "1.4.0"
+  resolved "https://registry.yarnpkg.com/@node-rs/xxhash/-/xxhash-1.4.0.tgz#1e75850e0e530c9224e8e5ba4056d52e8868291b"
+  integrity sha512-UpSOParhMqbQ7hsYovN2e+uqvWqHJiCDvFl8gDzMcXgBY/PkI2zo2zhdRAZdz48c6/dke+0WjCKy90wDVQxS6g==
+  optionalDependencies:
+    "@node-rs/xxhash-android-arm-eabi" "1.4.0"
+    "@node-rs/xxhash-android-arm64" "1.4.0"
+    "@node-rs/xxhash-darwin-arm64" "1.4.0"
+    "@node-rs/xxhash-darwin-x64" "1.4.0"
+    "@node-rs/xxhash-freebsd-x64" "1.4.0"
+    "@node-rs/xxhash-linux-arm-gnueabihf" "1.4.0"
+    "@node-rs/xxhash-linux-arm64-gnu" "1.4.0"
+    "@node-rs/xxhash-linux-arm64-musl" "1.4.0"
+    "@node-rs/xxhash-linux-x64-gnu" "1.4.0"
+    "@node-rs/xxhash-linux-x64-musl" "1.4.0"
+    "@node-rs/xxhash-win32-arm64-msvc" "1.4.0"
+    "@node-rs/xxhash-win32-ia32-msvc" "1.4.0"
+    "@node-rs/xxhash-win32-x64-msvc" "1.4.0"
+
 "@nodelib/fs.scandir@2.1.5":
   version "2.1.5"
   resolved "https://registry.yarnpkg.com/@nodelib/fs.scandir/-/fs.scandir-2.1.5.tgz#7619c2eb21b25483f6d167548b4cfd5a7488c3d5"
@@ -2172,7 +2256,7 @@ loader-runner@^2.4.0:
   resolved "https://registry.yarnpkg.com/loader-runner/-/loader-runner-2.4.0.tgz#ed47066bfe534d7e84c4c7b9998c2a75607d9357"
   integrity sha512-Jsmr89RcXGIwivFY21FcRrisYZfvLMTWx5kOLc+JTxtpBOG6xML0vzbc6SEQG2FO9/4Fc3wW4LVcB5DmGflaRw==
 
-loader-utils@^1.2.3, loader-utils@^2.0.4:
+loader-utils@^2.0.4:
   version "2.0.4"
   resolved "https://registry.yarnpkg.com/loader-utils/-/loader-utils-2.0.4.tgz#8b5cb38b5c34a9a018ee1fc0e6a066d1dfcc528c"
   integrity sha512-xXqpXoINfFhgua9xiqD8fPFHgkoq1mmmpE92WlDbm9rNRd/EbRb+Gqf908T2DMfuHjjJlksiK2RbHVOdD/MqSw==
@@ -3479,11 +3563,12 @@ tapable@^1.0.0, tapable@^1.1.3:
   resolved "https://registry.yarnpkg.com/tapable/-/tapable-1.1.3.tgz#a1fccc06b58db61fd7a45da2da44f5f3a3e67ba2"
   integrity sha512-4WK/bYZmj8xLr+HUCODHGF1ZFzsYffasLUgEiMBY4fgtltdO6B4WJtlSbPaDTLpYTcGVwM2qLnFTICEcNxs3kA==
 
-terser-webpack-plugin@^1.4.3:
-  version "1.4.5"
-  resolved "https://registry.yarnpkg.com/terser-webpack-plugin/-/terser-webpack-plugin-1.4.5.tgz#a217aefaea330e734ffacb6120ec1fa312d6040b"
-  integrity sha512-04Rfe496lN8EYruwi6oPQkG0vo8C+HT49X687FZnpPF0qMAIHONI6HEXYPKDOE8e5HjXTyKfqRd/agHtH0kOtw==
+"terser-webpack-plugin@npm:@amoo-miki/terser-webpack-plugin@1.4.5-rc.2":
+  version "1.4.5-rc.2"
+  resolved "https://registry.yarnpkg.com/@amoo-miki/terser-webpack-plugin/-/terser-webpack-plugin-1.4.5-rc.2.tgz#046c062ef22c126c2544718674bc6624e3651b9c"
+  integrity sha512-JFSGSzsWgSHEqQXlnHDh3gw+jdVdVlWM2Irdps9P/yWYNY/5VjuG8sdoW4mbuP8/HM893/k8N+ipbeqsd8/xpA==
   dependencies:
+    "@node-rs/xxhash" "^1.3.0"
     cacache "^12.0.2"
     find-cache-dir "^2.1.0"
     is-wsl "^1.1.0"
@@ -3708,11 +3793,12 @@ webpack-sources@^1.4.0, webpack-sources@^1.4.1:
     source-list-map "^2.0.0"
     source-map "~0.6.1"
 
-webpack@^4.41.5:
-  version "4.46.0"
-  resolved "https://registry.yarnpkg.com/webpack/-/webpack-4.46.0.tgz#bf9b4404ea20a073605e0a011d188d77cb6ad542"
-  integrity sha512-6jJuJjg8znb/xRItk7bkT0+Q7AHCYjjFnvKIWQPkNIOyRqoCGvkOs0ipeQzrqz4l5FtN5ZI/ukEHroeX/o1/5Q==
+"webpack@npm:@amoo-miki/webpack@4.46.0-rc.2":
+  version "4.46.0-rc.2"
+  resolved "https://registry.yarnpkg.com/@amoo-miki/webpack/-/webpack-4.46.0-rc.2.tgz#36824597c14557a7bb0a8e13203e30275e7b02bd"
+  integrity sha512-Y/ZqxTHOoDF1kz3SR63Y9SZGTDUpZNNFrisTRHofWhP8QvNX3LMN+TCmEP56UfLaiLVKMcaiFjx8kFb2TgyBaQ==
   dependencies:
+    "@node-rs/xxhash" "^1.3.0"
     "@webassemblyjs/ast" "1.9.0"
     "@webassemblyjs/helper-module-context" "1.9.0"
     "@webassemblyjs/wasm-edit" "1.9.0"
@@ -3725,7 +3811,7 @@ webpack@^4.41.5:
     eslint-scope "^4.0.3"
     json-parse-better-errors "^1.0.2"
     loader-runner "^2.4.0"
-    loader-utils "^1.2.3"
+    loader-utils "^2.0.4"
     memory-fs "^0.4.1"
     micromatch "^3.1.10"
     mkdirp "^0.5.3"
@@ -3733,7 +3819,7 @@ webpack@^4.41.5:
     node-libs-browser "^2.2.1"
     schema-utils "^1.0.0"
     tapable "^1.1.3"
-    terser-webpack-plugin "^1.4.3"
+    terser-webpack-plugin "npm:@amoo-miki/terser-webpack-plugin@1.4.5-rc.2"
     watchpack "^1.7.4"
     webpack-sources "^1.4.1"
 
