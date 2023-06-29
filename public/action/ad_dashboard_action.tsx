@@ -16,6 +16,7 @@ import { isReferenceOrValueEmbeddable } from '../../../../src/plugins/embeddable
 import { EuiIconType } from '@elastic/eui/src/components/icon/icon';
 import { VisualizeEmbeddable } from '../../../../src/plugins/visualizations/public';
 import { isEligibleForVisLayers } from '../../../../src/plugins/vis_augmenter/public';
+import { getUISettings } from '../services';
 
 export const ACTION_AD = 'ad';
 
@@ -62,9 +63,10 @@ export const createADAction = ({
       const vis = (embeddable as VisualizeEmbeddable).vis;
       return Boolean(
         embeddable.parent &&
+          embeddable.getInput()?.viewMode === 'view' &&
           isDashboard(embeddable.parent) &&
           vis !== undefined &&
-          isEligibleForVisLayers(vis)
+          isEligibleForVisLayers(vis, getUISettings())
       );
     },
     execute: async ({ embeddable }: ActionContext) => {

@@ -83,11 +83,7 @@ export class AnomalyDetectionOpenSearchDashboardsPlugin
       },
     });
 
-    // // set embeddable plugin for feature anywhere create flyout
-    // setEmbeddable(embeddable);
-
-    // // set vis argumenter loader for feature anywhere associated flyout
-    // setSavedFeatureAnywhereLoader(visAugmenter.savedAugmentVisLoader);
+    setUISettings(core.uiSettings);
 
     // Set the HTTP client so it can be pulled into expression fns to make
     // direct server-side calls

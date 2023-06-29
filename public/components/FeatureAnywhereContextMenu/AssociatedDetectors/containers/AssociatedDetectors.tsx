@@ -281,7 +281,13 @@ function AssociatedDetectors({ embeddable, closeFlyout, setMode }) {
   };
   return (
     <div className="associated-detectors">
-      <EuiFlyout style={{ maxWidth: '740px' }} ownFocus size="m" paddingSize="m" onClose={closeFlyout}>
+      <EuiFlyout
+        style={{ maxWidth: '740px' }}
+        ownFocus
+        size="m"
+        paddingSize="m"
+        onClose={closeFlyout}
+      >
         <EuiFlyoutHeader hasBorder>
           <EuiTitle>
             <h2 id="associated-detectors__title">
