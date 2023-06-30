@@ -34,6 +34,7 @@ import {
   setSavedFeatureAnywhereLoader,
   setUiActions,
   setUISettings,
+  setQueryService
 } from './services';
 import { AnomalyDetectionOpenSearchDashboardsPluginStart } from 'public';
 import {
@@ -41,6 +42,7 @@ import {
   VisAugmenterStart,
 } from '../../../src/plugins/vis_augmenter/public';
 import { UiActionsStart } from '../../../src/plugins/ui_actions/public';
+import { DataPublicPluginStart } from '../../../src/plugins/data/public';
 
 declare module '../../../src/plugins/ui_actions/public' {
   export interface ActionContextMapping {
@@ -61,6 +63,7 @@ export interface AnomalyDetectionStartDeps {
   notifications: NotificationsStart;
   visAugmenter: VisAugmenterStart;
   uiActions: UiActionsStart;
+  data: DataPublicPluginStart;
 }
 
 export class AnomalyDetectionOpenSearchDashboardsPlugin
@@ -104,7 +107,7 @@ export class AnomalyDetectionOpenSearchDashboardsPlugin
 
   public start(
     core: CoreStart,
-    { embeddable, visAugmenter, uiActions }: AnomalyDetectionStartDeps
+    { embeddable, visAugmenter, uiActions, data }: AnomalyDetectionStartDeps
   ): AnomalyDetectionOpenSearchDashboardsPluginStart {
     setUISettings(core.uiSettings);
     setEmbeddable(embeddable);
@@ -112,6 +115,7 @@ export class AnomalyDetectionOpenSearchDashboardsPlugin
     setSavedFeatureAnywhereLoader(visAugmenter.savedAugmentVisLoader);
     setNotifications(core.notifications);
     setUiActions(uiActions);
+    setQueryService(data.query);
     return {};
   }
 }

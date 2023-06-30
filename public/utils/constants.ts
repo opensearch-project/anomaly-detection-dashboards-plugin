@@ -97,4 +97,4 @@ export enum MISSING_FEATURE_DATA_SEVERITY {
 
 export const SPACE_STR = ' ';
 
-export const APM_TRACE = 'apmTrace';
+export const ANOMALY_DETECTION_ICON = 'anomalyDetection';
