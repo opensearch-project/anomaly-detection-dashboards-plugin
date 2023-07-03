@@ -51,6 +51,7 @@ const EnhancedAccordion = ({
           buttonContent={
             <div className="enhanced-accordion__title">
               <EuiTitle
+                data-test-subj="accordionTitleButton"
                 size="s"
                 onClick={onToggle}
                 role="button"

@@ -74,7 +74,7 @@ export const convertAnomaliesToPointInTimeEventsVisLayer = (
 ): PointInTimeEventsVisLayer => {
   const events = anomalies.map((anomaly: AnomalyData) => {
     return {
-      timestamp: anomaly.startTime + (anomaly.endTime - anomaly.startTime) / 2,
+      timestamp: anomaly.startTime,
       metadata: {},
     };
   });

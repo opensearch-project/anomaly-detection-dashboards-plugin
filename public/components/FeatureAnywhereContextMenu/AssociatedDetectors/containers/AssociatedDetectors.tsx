@@ -314,6 +314,7 @@ function AssociatedDetectors({ embeddable, closeFlyout, setMode }) {
             <EuiFlexItem grow={false}>
               <div>
                 <EuiButton
+                  data-test-subj="associateDetectorButton"
                   fill
                   iconType="link"
                   onClick={() => {
