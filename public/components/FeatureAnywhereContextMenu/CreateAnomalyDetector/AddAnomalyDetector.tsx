@@ -29,6 +29,7 @@ import {
 import './styles.scss';
 import {
   createAugmentVisSavedObject,
+  fetchVisEmbeddable,
   ISavedAugmentVis,
   ISavedPluginResource,
   SavedAugmentVisLoader,
@@ -50,7 +51,7 @@ import {
   matchDetector,
   startDetector,
 } from '../../../../public/redux/reducers/ad';
-import { EmbeddableRenderer } from '../../../../../../src/plugins/embeddable/public';
+import { EmbeddableRenderer, ErrorEmbeddable } from '../../../../../../src/plugins/embeddable/public';
 import './styles.scss';
 import EnhancedAccordion from '../EnhancedAccordion';
 import MinimalAccordion from '../MinimalAccordion';
@@ -86,10 +87,12 @@ import {
   MAX_FEATURE_NUM,
 } from '../../../../public/utils/constants';
 import {
+  getEmbeddable,
   getNotifications,
   getSavedFeatureAnywhereLoader,
   getUISettings,
   getUiActions,
+  getQueryService
 } from '../../../../public/services';
 import { prettifyErrorMessage } from '../../../../server/utils/helpers';
 import {
@@ -104,6 +107,7 @@ import { AssociateExisting } from './AssociateExisting';
 import { mountReactNode } from '../../../../../../src/core/public/utils';
 import { FLYOUT_MODES } from '../AnywhereParentFlyout/constants';
 import { DetectorListItem } from '../../../../public/models/interfaces';
+import { VisualizeEmbeddable } from '../../../../../../src/plugins/visualizations/public';
 
 function AddAnomalyDetector({
   embeddable,
@@ -115,14 +119,24 @@ function AddAnomalyDetector({
 }) {
   const dispatch = useDispatch();
   const [queryText, setQueryText] = useState('');
+  const [generatedEmbeddable, setGeneratedEmbeddable] = useState<
+  VisualizeEmbeddable | ErrorEmbeddable
+>();
+
   useEffect(() => {
     const getInitialIndices = async () => {
       await dispatch(getIndices(queryText));
     };
     getInitialIndices();
     dispatch(getMappings(embeddable.vis.data.aggs.indexPattern.title));
-  }, []);
 
+    const createEmbeddable = async () => {
+      const visEmbeddable = await fetchVisEmbeddable(embeddable.vis.id, getEmbeddable(), getQueryService());
+      setGeneratedEmbeddable(visEmbeddable);
+    };
+
+    createEmbeddable();
+  }, []);
   const [isShowVis, setIsShowVis] = useState(false);
   const [accordionsOpen, setAccordionsOpen] = useState({ modelFeatures: true });
   const [detectorNameFromVis, setDetectorNameFromVis] = useState(
@@ -557,7 +571,7 @@ function AddAnomalyDetector({
                       }`}
                     >
                       <EuiSpacer size="s" />
-                      <EmbeddableRenderer embeddable={embeddable} />
+                      <EmbeddableRenderer embeddable={generatedEmbeddable} />
                     </div>
                     <EuiSpacer size="l" />
                     <EuiTitle size="s">

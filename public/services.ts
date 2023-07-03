@@ -9,6 +9,7 @@ import {
   NotificationsStart,
   OverlayStart,
 } from '../../../src/core/public';
+import { DataPublicPluginStart } from '../../../src/plugins/data/public';
 import { EmbeddableStart } from '../../../src/plugins/embeddable/public';
 import { createGetterSetter } from '../../../src/plugins/opensearch_dashboards_utils/public';
 import { UiActionsStart } from '../../../src/plugins/ui_actions/public';
@@ -35,6 +36,9 @@ export const [getUiActions, setUiActions] =
 export const [getUISettings, setUISettings] =
   createGetterSetter<IUiSettingsClient>('UISettings');
 
+export const [getQueryService, setQueryService] = 
+createGetterSetter<DataPublicPluginStart['query']>('Query');
+
 // This is primarily used for mocking this module and each of its fns in tests.
 export default {
   getSavedFeatureAnywhereLoader,
@@ -44,4 +48,5 @@ export default {
   getNotifications,
   getOverlays,
   setUISettings,
+  setQueryService,
 };

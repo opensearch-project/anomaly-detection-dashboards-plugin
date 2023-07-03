@@ -13,7 +13,7 @@ import AnywhereParentFlyout from '../../components/FeatureAnywhereContextMenu/An
 import { Provider } from 'react-redux';
 import configureStore from '../../redux/configureStore';
 import DocumentationTitle from '../../components/FeatureAnywhereContextMenu/DocumentationTitle/containers/DocumentationTitle';
-import { AD_FEATURE_ANYWHERE_LINK, APM_TRACE } from '../constants';
+import { AD_FEATURE_ANYWHERE_LINK, ANOMALY_DETECTION_ICON } from '../constants';
 import { getClient, getOverlays } from '../../../public/services';
 import { FLYOUT_MODES } from '../../../public/components/FeatureAnywhereContextMenu/AnywhereParentFlyout/constants';
 
@@ -22,7 +22,7 @@ const grouping: Action['grouping'] = [
   {
     id: 'ad-dashboard-context-menu',
     getDisplayName: () => 'Anomaly Detection',
-    getIconType: () => APM_TRACE,
+    getIconType: () => ANOMALY_DETECTION_ICON,
     category: 'vis_augmenter',
     order: 20,
   },
