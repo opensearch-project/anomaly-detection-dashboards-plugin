@@ -566,7 +566,7 @@ function AddAnomalyDetector({
                     <EuiSpacer size="m" />
 
                     <EnhancedAccordion
-                      id="detectorDetails"
+                      id="detectorDetailsAccordion"
                       title={detectorNameFromVis}
                       isOpen={accordionsOpen.detectorDetails}
                       onToggle={() => onAccordionToggle('detectorDetails')}
@@ -671,7 +671,7 @@ function AddAnomalyDetector({
                     <EuiSpacer size="m" />
 
                     <EnhancedAccordion
-                      id="advancedConfiguration"
+                      id="advancedConfigurationAccordion"
                       title="Advanced configuration"
                       isOpen={accordionsOpen.advancedConfiguration}
                       onToggle={() =>
@@ -824,7 +824,7 @@ function AddAnomalyDetector({
                     <EuiSpacer size="m" />
 
                     <EnhancedAccordion
-                      id="modelFeatures"
+                      id="modelFeaturesAccordion"
                       title="Features"
                       isOpen={accordionsOpen.modelFeatures}
                       onToggle={() => onAccordionToggle('modelFeatures')}
@@ -896,7 +896,7 @@ function AddAnomalyDetector({
                   {mode === FLYOUT_MODES.existing ? (
                     <EuiButton
                       fill={true}
-                      data-test-subj="adAnywhereCreateDetectorButton"
+                      data-test-subj="adAnywhereAssociateDetectorButton"
                       isLoading={formikProps.isSubmitting}
                       onClick={() => handleAssociate(selectedDetector)}
                     >
