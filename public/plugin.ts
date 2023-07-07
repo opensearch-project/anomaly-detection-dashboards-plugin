@@ -34,7 +34,7 @@ import {
   setSavedFeatureAnywhereLoader,
   setUiActions,
   setUISettings,
-  setQueryService
+  setQueryService,
 } from './services';
 import { AnomalyDetectionOpenSearchDashboardsPluginStart } from 'public';
 import {

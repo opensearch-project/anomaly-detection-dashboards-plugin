@@ -36,8 +36,8 @@ export const [getUiActions, setUiActions] =
 export const [getUISettings, setUISettings] =
   createGetterSetter<IUiSettingsClient>('UISettings');
 
-export const [getQueryService, setQueryService] = 
-createGetterSetter<DataPublicPluginStart['query']>('Query');
+export const [getQueryService, setQueryService] =
+  createGetterSetter<DataPublicPluginStart['query']>('Query');
 
 // This is primarily used for mocking this module and each of its fns in tests.
 export default {

@@ -983,6 +983,7 @@ function AddAnomalyDetector({
                   ) : (
                     <EuiButton
                       fill={true}
+                      disabled={associationLimitReached}
                       data-test-subj="adAnywhereCreateDetectorButton"
                       isLoading={formikProps.isSubmitting}
                       onClick={() => {

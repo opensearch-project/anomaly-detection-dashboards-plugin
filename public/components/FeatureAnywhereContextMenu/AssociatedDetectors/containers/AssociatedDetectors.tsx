@@ -144,6 +144,11 @@ function AssociatedDetectors({ embeddable, closeFlyout, setMode }) {
     getAugmentVisSavedObjs(embeddable.vis.id, savedObjectLoader, uiSettings)
       .then((savedAugmentObjectsArr: any) => {
         if (savedAugmentObjectsArr != undefined) {
+          if (maxAssociatedCount <= savedAugmentObjectsArr.length) {
+            setAssociationLimitReached(true);
+          } else {
+            setAssociationLimitReached(false);
+          }
           const curSelectedDetectors = getAssociatedDetectors(
             Object.values(allDetectors),
             savedAugmentObjectsArr
@@ -152,11 +157,6 @@ function AssociatedDetectors({ embeddable, closeFlyout, setMode }) {
           maxAssociatedCount = uiSettings.get(
             PLUGIN_AUGMENTATION_MAX_OBJECTS_SETTING
           );
-          if (maxAssociatedCount <= curSelectedDetectors.length) {
-            setAssociationLimitReached(true);
-          } else {
-            setAssociationLimitReached(false);
-          }
           setIsLoadingFinalDetectors(false);
         }
       })
