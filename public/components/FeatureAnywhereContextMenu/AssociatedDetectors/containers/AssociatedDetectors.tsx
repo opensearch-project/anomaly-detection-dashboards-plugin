@@ -14,6 +14,7 @@ import {
   EuiFlyout,
   EuiFlexItem,
   EuiFlexGroup,
+  EuiCallOut,
 } from '@elastic/eui';
 import { get, isEmpty } from 'lodash';
 import '../styles.scss';
@@ -45,6 +46,7 @@ import {
   getAugmentVisSavedObjs,
 } from '../../../../../../../src/plugins/vis_augmenter/public';
 import { ASSOCIATED_DETECTOR_ACTION } from '../utils/constants';
+import { PLUGIN_AUGMENTATION_MAX_OBJECTS_SETTING } from '../../../../../public/expressions/constants';
 
 interface ConfirmModalState {
   isOpen: boolean;
@@ -74,6 +76,8 @@ function AssociatedDetectors({ embeddable, closeFlyout, setMode }) {
   const [detectorToUnlink, setDetectorToUnlink] = useState(
     {} as DetectorListItem
   );
+  const [associationLimitReached, setAssociationLimitReached] =
+    useState<boolean>(false);
   const [confirmModalState, setConfirmModalState] = useState<ConfirmModalState>(
     {
       isOpen: false,
@@ -91,6 +95,9 @@ function AssociatedDetectors({ embeddable, closeFlyout, setMode }) {
 
   const uiSettings = getUISettings();
   const notifications = getNotifications();
+  let maxAssociatedCount = uiSettings.get(
+    PLUGIN_AUGMENTATION_MAX_OBJECTS_SETTING
+  );
 
   useEffect(() => {
     if (
@@ -137,11 +144,19 @@ function AssociatedDetectors({ embeddable, closeFlyout, setMode }) {
     getAugmentVisSavedObjs(embeddable.vis.id, savedObjectLoader, uiSettings)
       .then((savedAugmentObjectsArr: any) => {
         if (savedAugmentObjectsArr != undefined) {
+          if (maxAssociatedCount <= savedAugmentObjectsArr.length) {
+            setAssociationLimitReached(true);
+          } else {
+            setAssociationLimitReached(false);
+          }
           const curSelectedDetectors = getAssociatedDetectors(
             Object.values(allDetectors),
             savedAugmentObjectsArr
           );
           setSelectedDetectors(curSelectedDetectors);
+          maxAssociatedCount = uiSettings.get(
+            PLUGIN_AUGMENTATION_MAX_OBJECTS_SETTING
+          );
           setIsLoadingFinalDetectors(false);
         }
       })
@@ -295,6 +310,19 @@ function AssociatedDetectors({ embeddable, closeFlyout, setMode }) {
             </h2>
           </EuiTitle>
         </EuiFlyoutHeader>
+        {associationLimitReached ? (
+          <EuiCallOut
+            title={`Limit reached. No more than ${maxAssociatedCount} objects can be associated with a visualization`}
+            style={{ margin: '16px' }}
+            size="s"
+            color="warning"
+            iconType="alert"
+          >
+            Adding more objects may affect cluster performance and prevent
+            dashboards from rendering properly. Remove associations before
+            adding new ones.
+          </EuiCallOut>
+        ) : null}
         <EuiFlyoutBody style={{ overflowY: 'auto' }}>
           {confirmModalState.isOpen ? (
             <ConfirmUnlinkDetectorModal
@@ -316,6 +344,7 @@ function AssociatedDetectors({ embeddable, closeFlyout, setMode }) {
                 <EuiButton
                   data-test-subj="associateDetectorButton"
                   fill
+                  disabled={associationLimitReached}
                   iconType="link"
                   onClick={() => {
                     setMode('existing');

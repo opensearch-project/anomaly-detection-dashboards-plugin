@@ -51,7 +51,10 @@ import {
   matchDetector,
   startDetector,
 } from '../../../../public/redux/reducers/ad';
-import { EmbeddableRenderer, ErrorEmbeddable } from '../../../../../../src/plugins/embeddable/public';
+import {
+  EmbeddableRenderer,
+  ErrorEmbeddable,
+} from '../../../../../../src/plugins/embeddable/public';
 import './styles.scss';
 import EnhancedAccordion from '../EnhancedAccordion';
 import MinimalAccordion from '../MinimalAccordion';
@@ -92,7 +95,7 @@ import {
   getSavedFeatureAnywhereLoader,
   getUISettings,
   getUiActions,
-  getQueryService
+  getQueryService,
 } from '../../../../public/services';
 import { prettifyErrorMessage } from '../../../../server/utils/helpers';
 import {
@@ -120,8 +123,8 @@ function AddAnomalyDetector({
   const dispatch = useDispatch();
   const [queryText, setQueryText] = useState('');
   const [generatedEmbeddable, setGeneratedEmbeddable] = useState<
-  VisualizeEmbeddable | ErrorEmbeddable
->();
+    VisualizeEmbeddable | ErrorEmbeddable
+  >();
 
   useEffect(() => {
     const getInitialIndices = async () => {
@@ -131,7 +134,11 @@ function AddAnomalyDetector({
     dispatch(getMappings(embeddable.vis.data.aggs.indexPattern.title));
 
     const createEmbeddable = async () => {
-      const visEmbeddable = await fetchVisEmbeddable(embeddable.vis.id, getEmbeddable(), getQueryService());
+      const visEmbeddable = await fetchVisEmbeddable(
+        embeddable.vis.id,
+        getEmbeddable(),
+        getQueryService()
+      );
       setGeneratedEmbeddable(visEmbeddable);
     };
 
@@ -145,6 +152,8 @@ function AddAnomalyDetector({
   const [intervalValue, setIntervalalue] = useState(10);
   const [delayValue, setDelayValue] = useState(1);
   const [enabled, setEnabled] = useState<boolean>(false);
+  const [associationLimitReached, setAssociationLimitReached] =
+    useState<boolean>(false);
 
   const title = embeddable.getTitle();
   const onAccordionToggle = (key) => {
@@ -228,6 +237,67 @@ function AddAnomalyDetector({
   const uiSettings = getUISettings();
   const savedObjectLoader: SavedAugmentVisLoader =
     getSavedFeatureAnywhereLoader();
+
+  let maxAssociatedCount = uiSettings.get(
+    PLUGIN_AUGMENTATION_MAX_OBJECTS_SETTING
+  );
+
+  useEffect(async () => {
+    // Gets all augmented saved objects
+    await savedObjectLoader.findAll().then(async (resp) => {
+      if (resp !== undefined) {
+        const savedAugmentObjects = get(resp, 'hits', []);
+        // gets all the saved object for this visualization
+        const savedObjectsForThisVisualization = savedAugmentObjects.filter(
+          (savedObj) => get(savedObj, 'visId', '') === embeddable.vis.id
+        );
+        if (maxAssociatedCount <= savedObjectsForThisVisualization.length) {
+          setAssociationLimitReached(true);
+        } else {
+          setAssociationLimitReached(false);
+        }
+      }
+    });
+  }, []);
+
+  const getEmbeddableSection = () => {
+    return (
+      <>
+        <EuiText size="xs">
+          <p>
+            Create and configure an anomaly detector to automatically detect
+            anomalies in your data and to view real-time results on the
+            visualization.{' '}
+            <a href={AD_DOCS_LINK} target="_blank">
+              Learn more <EuiIcon type="popout" />
+            </a>
+          </p>
+        </EuiText>
+        <EuiSpacer size="m" />
+        <div className="create-new__title-and-toggle">
+          <EuiTitle size="xxs">
+            <h4>
+              <EuiIcon type="visLine" className="create-new__title-icon" />
+              {title}
+            </h4>
+          </EuiTitle>
+          <EuiSwitch
+            label="Show visualization"
+            checked={isShowVis}
+            onChange={() => setIsShowVis(!isShowVis)}
+          />
+        </div>
+        <div
+          className={`create-new__vis ${
+            !isShowVis && 'create-new__vis--hidden'
+          }`}
+        >
+          <EuiSpacer size="s" />
+          <EmbeddableRenderer embeddable={embeddable} />
+        </div>
+      </>
+    );
+  };
 
   const getAugmentVisSavedObject = (detectorId: string) => {
     const fn = {
@@ -490,134 +560,235 @@ function AddAnomalyDetector({
               </EuiTitle>
             </EuiFlyoutHeader>
             <EuiFlyoutBody>
-              <div className="add-anomaly-detector__scroll">
-                <EuiFormFieldset
-                  legend={{
-                    display: 'hidden',
-                    children: (
-                      <EuiTitle>
-                        <span>
-                          Options to create a new detector or associate an
-                          existing detector
-                        </span>
-                      </EuiTitle>
-                    ),
-                  }}
-                  className="add-anomaly-detector__modes"
-                >
-                  {[
-                    {
-                      id: 'add-anomaly-detector__create',
-                      label: 'Create new detector',
-                      value: 'create',
-                    },
-                    {
-                      id: 'add-anomaly-detector__existing',
-                      label: 'Associate existing detector',
-                      value: 'existing',
-                    },
-                  ].map((option) => (
-                    <EuiCheckableCard
-                      {...{
-                        ...option,
-                        key: option.id,
-                        name: option.id,
-                        checked: option.value === mode,
-                        onChange: () => setMode(option.value),
-                      }}
-                    />
-                  ))}
-                </EuiFormFieldset>
-                <EuiSpacer size="m" />
-                {mode === FLYOUT_MODES.existing && (
-                  <AssociateExisting
-                    embeddableVisId={embeddable.vis.id}
-                    selectedDetector={selectedDetector}
-                    setSelectedDetector={setSelectedDetector}
-                  ></AssociateExisting>
-                )}
-                {mode === FLYOUT_MODES.create && (
-                  <div className="create-new">
-                    <EuiText size="xs">
-                      <p>
-                        Create and configure an anomaly detector to
-                        automatically detect anomalies in your data and to view
-                        real-time results on the visualization.{' '}
-                        <a href={AD_DOCS_LINK} target="_blank">
-                          Learn more <EuiIcon type="popout" />
-                        </a>
-                      </p>
-                    </EuiText>
-                    <EuiSpacer size="m" />
-                    <div className="create-new__title-and-toggle">
-                      <EuiTitle size="xxs">
-                        <h4>
-                          <EuiIcon
-                            type="visLine"
-                            className="create-new__title-icon"
-                          />
-                          {title}
-                        </h4>
-                      </EuiTitle>
-                      <EuiSwitch
-                        label="Show visualization"
-                        checked={isShowVis}
-                        onChange={() => setIsShowVis(!isShowVis)}
+              {associationLimitReached ? (
+                <div>
+                  <EuiCallOut
+                    title={`Limit reached. No more than ${maxAssociatedCount} objects can be associated with a visualization`}
+                    style={{ marginBottom: '8px' }}
+                    size="s"
+                    color="warning"
+                    iconType="alert"
+                  >
+                    Adding more objects may affect cluster performance and
+                    prevent dashboards from rendering properly. Remove
+                    associations before adding new ones.
+                  </EuiCallOut>
+                  {getEmbeddableSection()}
+                </div>
+              ) : (
+                <div className="add-anomaly-detector__scroll">
+                  <EuiFormFieldset
+                    legend={{
+                      display: 'hidden',
+                      children: (
+                        <EuiTitle>
+                          <span>
+                            Options to create a new detector or associate an
+                            existing detector
+                          </span>
+                        </EuiTitle>
+                      ),
+                    }}
+                    className="add-anomaly-detector__modes"
+                  >
+                    {[
+                      {
+                        id: 'add-anomaly-detector__create',
+                        label: 'Create new detector',
+                        value: 'create',
+                      },
+                      {
+                        id: 'add-anomaly-detector__existing',
+                        label: 'Associate existing detector',
+                        value: 'existing',
+                      },
+                    ].map((option) => (
+                      <EuiCheckableCard
+                        {...{
+                          ...option,
+                          key: option.id,
+                          name: option.id,
+                          checked: option.value === mode,
+                          onChange: () => setMode(option.value),
+                        }}
                       />
-                    </div>
-                    <div
-                      className={`create-new__vis ${
-                        !isShowVis && 'create-new__vis--hidden'
-                      }`}
-                    >
-                      <EuiSpacer size="s" />
-                      <EmbeddableRenderer embeddable={generatedEmbeddable} />
-                    </div>
-                    <EuiSpacer size="l" />
-                    <EuiTitle size="s">
-                      <h3>Detector details</h3>
-                    </EuiTitle>
-                    <EuiSpacer size="m" />
+                    ))}
+                  </EuiFormFieldset>
+                  <EuiSpacer size="m" />
+                  {mode === FLYOUT_MODES.existing && (
+                    <AssociateExisting
+                      embeddableVisId={embeddable.vis.id}
+                      selectedDetector={selectedDetector}
+                      setSelectedDetector={setSelectedDetector}
+                    ></AssociateExisting>
+                  )}
+                  {mode === FLYOUT_MODES.create && (
+                    <div className="create-new">
+                      {getEmbeddableSection()}
+                      <EuiSpacer size="l" />
+                      <EuiTitle size="s">
+                        <h3>Detector details</h3>
+                      </EuiTitle>
+                      <EuiSpacer size="m" />
 
-                    <EnhancedAccordion
-                      id="detectorDetailsAccordion"
-                      title={detectorNameFromVis}
-                      isOpen={accordionsOpen.detectorDetails}
-                      onToggle={() => onAccordionToggle('detectorDetails')}
-                      subTitle={
-                        <EuiText size="m">
-                          <p>
-                            Detector interval: {intervalValue} minute(s); Window
-                            delay: {delayValue} minute(s)
-                          </p>
-                        </EuiText>
-                      }
-                    >
-                      <Field name="name" validate={validateVisDetectorName}>
-                        {({ field, form }: FieldProps) => (
-                          <FormattedFormRow
-                            title="Name"
-                            isInvalid={isInvalid(field.name, form)}
-                            error={getError(field.name, form)}
-                          >
-                            <EuiFieldText
-                              data-test-subj="detectorNameTextInputFlyout"
+                      <EnhancedAccordion
+                        id="detectorDetailsAccordion"
+                        title={detectorNameFromVis}
+                        isOpen={accordionsOpen.detectorDetails}
+                        onToggle={() => onAccordionToggle('detectorDetails')}
+                        subTitle={
+                          <EuiText size="m">
+                            <p>
+                              Detector interval: {intervalValue} minute(s);
+                              Window delay: {delayValue} minute(s)
+                            </p>
+                          </EuiText>
+                        }
+                      >
+                        <Field name="name" validate={validateVisDetectorName}>
+                          {({ field, form }: FieldProps) => (
+                            <FormattedFormRow
+                              title="Name"
                               isInvalid={isInvalid(field.name, form)}
-                              {...field}
-                              onChange={(e) => onDetectorNameChange(e, field)}
-                            />
-                          </FormattedFormRow>
-                        )}
-                      </Field>
+                              error={getError(field.name, form)}
+                            >
+                              <EuiFieldText
+                                data-test-subj="detectorNameTextInputFlyout"
+                                isInvalid={isInvalid(field.name, form)}
+                                {...field}
+                                onChange={(e) => onDetectorNameChange(e, field)}
+                              />
+                            </FormattedFormRow>
+                          )}
+                        </Field>
 
-                      <EuiSpacer size="s" />
-                      <Field name="interval" validate={validatePositiveInteger}>
-                        {({ field, form }: FieldProps) => (
-                          <EuiFlexGroup>
-                            <EuiFlexItem style={{ maxWidth: '70%' }}>
+                        <EuiSpacer size="s" />
+                        <Field
+                          name="interval"
+                          validate={validatePositiveInteger}
+                        >
+                          {({ field, form }: FieldProps) => (
+                            <EuiFlexGroup>
+                              <EuiFlexItem style={{ maxWidth: '70%' }}>
+                                <FormattedFormRow
+                                  fullWidth
+                                  title="Detector interval"
+                                  isInvalid={isInvalid(field.name, form)}
+                                  error={getError(field.name, form)}
+                                >
+                                  <EuiFlexGroup
+                                    gutterSize="s"
+                                    alignItems="center"
+                                  >
+                                    <EuiFlexItem grow={false}>
+                                      <EuiFieldNumber
+                                        id="detectionInterval"
+                                        placeholder="Detector interval"
+                                        data-test-subj="detectionInterval"
+                                        min={1}
+                                        {...field}
+                                        onChange={(e) =>
+                                          onIntervalChange(e, field)
+                                        }
+                                      />
+                                    </EuiFlexItem>
+                                    <EuiFlexItem>
+                                      <EuiText>
+                                        <p className="minutes">minute(s)</p>
+                                      </EuiText>
+                                    </EuiFlexItem>
+                                  </EuiFlexGroup>
+                                </FormattedFormRow>
+                              </EuiFlexItem>
+                            </EuiFlexGroup>
+                          )}
+                        </Field>
+
+                        <EuiSpacer size="s" />
+                        <Field
+                          name="windowDelay"
+                          validate={validateNonNegativeInteger}
+                        >
+                          {({ field, form }: FieldProps) => (
+                            <FormattedFormRow
+                              fullWidth
+                              title="Window delay"
+                              isInvalid={isInvalid(field.name, form)}
+                              error={getError(field.name, form)}
+                            >
+                              <EuiFlexGroup gutterSize="s" alignItems="center">
+                                <EuiFlexItem grow={false}>
+                                  <EuiFieldNumber
+                                    id="windowDelay"
+                                    placeholder="Window delay"
+                                    data-test-subj="windowDelay"
+                                    {...field}
+                                    onChange={(e) => onDelayChange(e, field)}
+                                  />
+                                </EuiFlexItem>
+                                <EuiFlexItem>
+                                  <EuiText>
+                                    <p className="minutes">minute(s)</p>
+                                  </EuiText>
+                                </EuiFlexItem>
+                              </EuiFlexGroup>
+                            </FormattedFormRow>
+                          )}
+                        </Field>
+                      </EnhancedAccordion>
+
+                      <EuiSpacer size="m" />
+
+                      <EnhancedAccordion
+                        id="advancedConfigurationAccordion"
+                        title="Advanced configuration"
+                        isOpen={accordionsOpen.advancedConfiguration}
+                        onToggle={() =>
+                          onAccordionToggle('advancedConfiguration')
+                        }
+                        initialIsOpen={false}
+                      >
+                        <EuiSpacer size="s" />
+                        <MinimalAccordion
+                          id="dataFilter"
+                          title="Data Filter"
+                          subTitle="Choose a data source subset to focus the data stream and reduce data noise."
+                        >
+                          <EuiSpacer size="s" />
+                          <EuiText size="xs">
+                            <p>
+                              Source:{' '}
+                              {embeddable.vis.data.aggs.indexPattern.title}
+                            </p>
+                          </EuiText>
+                          <EuiSpacer size="s" />
+                          <DataFilterList formikProps={formikProps} />
+                        </MinimalAccordion>
+
+                        <MinimalAccordion
+                          id="shingleSize"
+                          title="Shingle size"
+                          subTitle="Set number of intervals in the model's detection window."
+                          isUsingDivider={true}
+                        >
+                          <EuiSpacer size="m" />
+                          <Field
+                            name="shingleSize"
+                            validate={validatePositiveInteger}
+                          >
+                            {({ field, form }: FieldProps) => (
                               <FormattedFormRow
-                                fullWidth
-                                title="Detector interval"
+                                title="Shingle size"
+                                hint={[
+                                  `Set the number of intervals to consider in a detection
+                                window for your model. The anomaly detector expects the
+                                shingle size to be in the range of 1 and 60. The default
+                                shingle size is 8. We recommend that you don’t choose 1
+                                unless you have two or more features. Smaller values might
+                                increase recall but also false positives. Larger values
+                                might be useful for ignoring noise in a signal.`,
+                                ]}
+                                hintLink={AD_DOCS_LINK}
                                 isInvalid={isInvalid(field.name, form)}
                                 error={getError(field.name, form)}
                               >
@@ -627,279 +798,172 @@ function AddAnomalyDetector({
                                 >
                                   <EuiFlexItem grow={false}>
                                     <EuiFieldNumber
-                                      id="detectionInterval"
-                                      placeholder="Detector interval"
-                                      data-test-subj="detectionInterval"
-                                      min={1}
+                                      id="shingleSize"
+                                      placeholder="Shingle size"
+                                      data-test-subj="shingleSize"
                                       {...field}
-                                      onChange={(e) =>
-                                        onIntervalChange(e, field)
-                                      }
                                     />
                                   </EuiFlexItem>
                                   <EuiFlexItem>
                                     <EuiText>
-                                      <p className="minutes">minute(s)</p>
+                                      <p className="minutes">intervals</p>
                                     </EuiText>
                                   </EuiFlexItem>
                                 </EuiFlexGroup>
                               </FormattedFormRow>
-                            </EuiFlexItem>
-                          </EuiFlexGroup>
-                        )}
-                      </Field>
+                            )}
+                          </Field>
+                        </MinimalAccordion>
 
-                      <EuiSpacer size="s" />
-                      <Field
-                        name="windowDelay"
-                        validate={validateNonNegativeInteger}
-                      >
-                        {({ field, form }: FieldProps) => (
-                          <FormattedFormRow
-                            fullWidth
-                            title="Window delay"
-                            isInvalid={isInvalid(field.name, form)}
-                            error={getError(field.name, form)}
-                          >
-                            <EuiFlexGroup gutterSize="s" alignItems="center">
-                              <EuiFlexItem grow={false}>
-                                <EuiFieldNumber
-                                  id="windowDelay"
-                                  placeholder="Window delay"
-                                  data-test-subj="windowDelay"
-                                  {...field}
-                                  onChange={(e) => onDelayChange(e, field)}
-                                />
-                              </EuiFlexItem>
-                              <EuiFlexItem>
-                                <EuiText>
-                                  <p className="minutes">minute(s)</p>
-                                </EuiText>
-                              </EuiFlexItem>
-                            </EuiFlexGroup>
-                          </FormattedFormRow>
-                        )}
-                      </Field>
-                    </EnhancedAccordion>
-
-                    <EuiSpacer size="m" />
-
-                    <EnhancedAccordion
-                      id="advancedConfigurationAccordion"
-                      title="Advanced configuration"
-                      isOpen={accordionsOpen.advancedConfiguration}
-                      onToggle={() =>
-                        onAccordionToggle('advancedConfiguration')
-                      }
-                      initialIsOpen={false}
-                    >
-                      <EuiSpacer size="s" />
-                      <MinimalAccordion
-                        id="dataFilter"
-                        title="Data Filter"
-                        subTitle="Choose a data source subset to focus the data stream and reduce data noise."
-                      >
-                        <EuiSpacer size="s" />
-                        <EuiText size="xs">
-                          <p>
-                            Source:{' '}
-                            {embeddable.vis.data.aggs.indexPattern.title}
-                          </p>
-                        </EuiText>
-                        <EuiSpacer size="s" />
-                        <DataFilterList formikProps={formikProps} />
-                      </MinimalAccordion>
-
-                      <MinimalAccordion
-                        id="shingleSize"
-                        title="Shingle size"
-                        subTitle="Set number of intervals in the model's detection window."
-                        isUsingDivider={true}
-                      >
-                        <EuiSpacer size="m" />
-                        <Field
-                          name="shingleSize"
-                          validate={validatePositiveInteger}
+                        <MinimalAccordion
+                          id="customResultIndex"
+                          title="Custom result index"
+                          subTitle="Store detector results to our own index."
+                          isUsingDivider={true}
                         >
-                          {({ field, form }: FieldProps) => (
-                            <FormattedFormRow
-                              title="Shingle size"
-                              hint={[
-                                `Set the number of intervals to consider in a detection
-                                window for your model. The anomaly detector expects the
-                                shingle size to be in the range of 1 and 60. The default
-                                shingle size is 8. We recommend that you don’t choose 1
-                                unless you have two or more features. Smaller values might
-                                increase recall but also false positives. Larger values
-                                might be useful for ignoring noise in a signal.`,
-                              ]}
-                              hintLink={AD_DOCS_LINK}
-                              isInvalid={isInvalid(field.name, form)}
-                              error={getError(field.name, form)}
-                            >
-                              <EuiFlexGroup gutterSize="s" alignItems="center">
-                                <EuiFlexItem grow={false}>
-                                  <EuiFieldNumber
-                                    id="shingleSize"
-                                    placeholder="Shingle size"
-                                    data-test-subj="shingleSize"
-                                    {...field}
-                                  />
-                                </EuiFlexItem>
+                          <Field name="resultIndex">
+                            {({ field, form }: FieldProps) => (
+                              <EuiFlexGroup direction="column">
                                 <EuiFlexItem>
-                                  <EuiText>
-                                    <p className="minutes">intervals</p>
-                                  </EuiText>
-                                </EuiFlexItem>
-                              </EuiFlexGroup>
-                            </FormattedFormRow>
-                          )}
-                        </Field>
-                      </MinimalAccordion>
-
-                      <MinimalAccordion
-                        id="customResultIndex"
-                        title="Custom result index"
-                        subTitle="Store detector results to our own index."
-                        isUsingDivider={true}
-                      >
-                        <Field name="resultIndex">
-                          {({ field, form }: FieldProps) => (
-                            <EuiFlexGroup direction="column">
-                              <EuiFlexItem>
-                                <EuiCheckbox
-                                  id={'resultIndexCheckbox'}
-                                  label="Enable custom result index"
-                                  checked={enabled}
-                                  onChange={() => {
-                                    if (enabled) {
-                                      form.setFieldValue('resultIndex', '');
-                                    }
-                                    setEnabled(!enabled);
-                                  }}
-                                />
-                              </EuiFlexItem>
-
-                              {enabled ? (
-                                <EuiFlexItem>
-                                  <EuiCallOut
-                                    data-test-subj="cannotEditResultIndexCallout"
-                                    title="You can't change the custom result index after you create the detector. You can manage the result index with the Index Management plugin."
-                                    color="warning"
-                                    iconType="alert"
-                                    size="s"
-                                  ></EuiCallOut>
-                                </EuiFlexItem>
-                              ) : null}
-
-                              {enabled ? (
-                                <EuiFlexItem>
-                                  <EuiFormRow
-                                    label="Field"
-                                    isInvalid={isInvalid(field.name, form)}
-                                    helpText={`Custom result index name must contain less than 255 characters including the prefix "opensearch-ad-plugin-result-". Valid characters are a-z, 0-9, -(hyphen) and _(underscore).`}
-                                  >
-                                    <EuiFieldText
-                                      id="resultIndex"
-                                      placeholder="Enter result index name"
-                                      prepend={CUSTOM_AD_RESULT_INDEX_PREFIX}
-                                      {...field}
-                                    />
-                                  </EuiFormRow>
-                                </EuiFlexItem>
-                              ) : null}
-                            </EuiFlexGroup>
-                          )}
-                        </Field>
-                      </MinimalAccordion>
-
-                      <MinimalAccordion
-                        id="categoricalFields"
-                        title="Categorical fields"
-                        subTitle="Split a single time series into multiple time series based on categorical fields."
-                        isUsingDivider={true}
-                      >
-                        <EuiText size="s">
-                          <p>
-                            The dashboard does not support high-cardinality
-                            detectors.&nbsp;
-                            <a href={AD_HIGH_CARDINALITY_LINK} target="_blank">
-                              Learn more <EuiIcon type="popout" />
-                            </a>
-                          </p>
-                        </EuiText>
-                      </MinimalAccordion>
-                    </EnhancedAccordion>
-
-                    <EuiSpacer size="l" />
-                    <EuiTitle size="s">
-                      <h3>Model Features</h3>
-                    </EuiTitle>
-                    <EuiSpacer size="m" />
-
-                    <EnhancedAccordion
-                      id="modelFeaturesAccordion"
-                      title="Features"
-                      isOpen={accordionsOpen.modelFeatures}
-                      onToggle={() => onAccordionToggle('modelFeatures')}
-                    >
-                      <FieldArray name="featureList">
-                        {({
-                          push,
-                          remove,
-                          form: { values },
-                        }: FieldArrayRenderProps) => {
-                          return (
-                            <Fragment>
-                              {values.featureList.map(
-                                (feature: any, index: number) => (
-                                  <FeatureAccordion
-                                    onDelete={() => {
-                                      remove(index);
+                                  <EuiCheckbox
+                                    id={'resultIndexCheckbox'}
+                                    label="Enable custom result index"
+                                    checked={enabled}
+                                    onChange={() => {
+                                      if (enabled) {
+                                        form.setFieldValue('resultIndex', '');
+                                      }
+                                      setEnabled(!enabled);
                                     }}
-                                    index={index}
-                                    feature={feature}
-                                    handleChange={formikProps.handleChange}
-                                    displayMode="flyout"
                                   />
-                                )
-                              )}
+                                </EuiFlexItem>
 
-                              <EuiSpacer size="m" />
-                              <EuiPanel paddingSize="none">
-                                <EuiButton
-                                  className="featureButton"
-                                  data-test-subj="addFeature"
-                                  isDisabled={
-                                    values.featureList.length >= MAX_FEATURE_NUM
-                                  }
-                                  onClick={() => {
-                                    push(initialFeatureValue());
-                                  }}
-                                >
-                                  Add another feature
-                                </EuiButton>
-                              </EuiPanel>
-                              <EuiSpacer size="s" />
-                              <EuiText className="content-panel-subTitle">
-                                <p>
-                                  You can add up to{' '}
-                                  {Math.max(
-                                    MAX_FEATURE_NUM - values.featureList.length,
-                                    0
-                                  )}{' '}
-                                  more features.
-                                </p>
-                              </EuiText>
-                            </Fragment>
-                          );
-                        }}
-                      </FieldArray>
-                    </EnhancedAccordion>
-                    <EuiSpacer size="m" />
-                  </div>
-                )}
-              </div>
+                                {enabled ? (
+                                  <EuiFlexItem>
+                                    <EuiCallOut
+                                      data-test-subj="cannotEditResultIndexCallout"
+                                      title="You can't change the custom result index after you create the detector. You can manage the result index with the Index Management plugin."
+                                      color="warning"
+                                      iconType="alert"
+                                      size="s"
+                                    ></EuiCallOut>
+                                  </EuiFlexItem>
+                                ) : null}
+
+                                {enabled ? (
+                                  <EuiFlexItem>
+                                    <EuiFormRow
+                                      label="Field"
+                                      isInvalid={isInvalid(field.name, form)}
+                                      helpText={`Custom result index name must contain less than 255 characters including the prefix "opensearch-ad-plugin-result-". Valid characters are a-z, 0-9, -(hyphen) and _(underscore).`}
+                                    >
+                                      <EuiFieldText
+                                        id="resultIndex"
+                                        placeholder="Enter result index name"
+                                        prepend={CUSTOM_AD_RESULT_INDEX_PREFIX}
+                                        {...field}
+                                      />
+                                    </EuiFormRow>
+                                  </EuiFlexItem>
+                                ) : null}
+                              </EuiFlexGroup>
+                            )}
+                          </Field>
+                        </MinimalAccordion>
+
+                        <MinimalAccordion
+                          id="categoricalFields"
+                          title="Categorical fields"
+                          subTitle="Split a single time series into multiple time series based on categorical fields."
+                          isUsingDivider={true}
+                        >
+                          <EuiText size="s">
+                            <p>
+                              The dashboard does not support high-cardinality
+                              detectors.&nbsp;
+                              <a
+                                href={AD_HIGH_CARDINALITY_LINK}
+                                target="_blank"
+                              >
+                                Learn more <EuiIcon type="popout" />
+                              </a>
+                            </p>
+                          </EuiText>
+                        </MinimalAccordion>
+                      </EnhancedAccordion>
+
+                      <EuiSpacer size="l" />
+                      <EuiTitle size="s">
+                        <h3>Model Features</h3>
+                      </EuiTitle>
+                      <EuiSpacer size="m" />
+
+                      <EnhancedAccordion
+                        id="modelFeaturesAccordion"
+                        title="Features"
+                        isOpen={accordionsOpen.modelFeatures}
+                        onToggle={() => onAccordionToggle('modelFeatures')}
+                      >
+                        <FieldArray name="featureList">
+                          {({
+                            push,
+                            remove,
+                            form: { values },
+                          }: FieldArrayRenderProps) => {
+                            return (
+                              <Fragment>
+                                {values.featureList.map(
+                                  (feature: any, index: number) => (
+                                    <FeatureAccordion
+                                      onDelete={() => {
+                                        remove(index);
+                                      }}
+                                      index={index}
+                                      feature={feature}
+                                      handleChange={formikProps.handleChange}
+                                      displayMode="flyout"
+                                    />
+                                  )
+                                )}
+
+                                <EuiSpacer size="m" />
+                                <EuiPanel paddingSize="none">
+                                  <EuiButton
+                                    className="featureButton"
+                                    data-test-subj="addFeature"
+                                    isDisabled={
+                                      values.featureList.length >=
+                                      MAX_FEATURE_NUM
+                                    }
+                                    onClick={() => {
+                                      push(initialFeatureValue());
+                                    }}
+                                  >
+                                    Add another feature
+                                  </EuiButton>
+                                </EuiPanel>
+                                <EuiSpacer size="s" />
+                                <EuiText className="content-panel-subTitle">
+                                  <p>
+                                    You can add up to{' '}
+                                    {Math.max(
+                                      MAX_FEATURE_NUM -
+                                        values.featureList.length,
+                                      0
+                                    )}{' '}
+                                    more features.
+                                  </p>
+                                </EuiText>
+                              </Fragment>
+                            );
+                          }}
+                        </FieldArray>
+                      </EnhancedAccordion>
+                      <EuiSpacer size="m" />
+                    </div>
+                  )}
+                </div>
+              )}
             </EuiFlyoutBody>
             <EuiFlyoutFooter>
               <EuiFlexGroup justifyContent="spaceBetween">
@@ -919,6 +983,7 @@ function AddAnomalyDetector({
                   ) : (
                     <EuiButton
                       fill={true}
+                      disabled={associationLimitReached}
                       data-test-subj="adAnywhereCreateDetectorButton"
                       isLoading={formikProps.isSubmitting}
                       onClick={() => {
