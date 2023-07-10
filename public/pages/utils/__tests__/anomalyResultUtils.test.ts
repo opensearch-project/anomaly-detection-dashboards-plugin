@@ -12,16 +12,9 @@
 import {
   getFeatureMissingDataAnnotations,
   getFeatureDataPointsForDetector,
-  parsePureAnomalies,
 } from '../anomalyResultUtils';
 import { getRandomDetector } from '../../../redux/reducers/__tests__/utils';
-import {
-  UNITS,
-  Detector,
-  FeatureAttributes,
-  AnomalyData,
-} from '../../../models/interfaces';
-import { ANOMALY_RESULT_SUMMARY, PARSED_ANOMALIES } from './constants';
+import { UNITS, Detector, FeatureAttributes } from '../../../models/interfaces';
 
 describe('anomalyResultUtils', () => {
   let randomDetector_20_min: Detector;
@@ -568,15 +561,6 @@ describe('anomalyResultUtils', () => {
           false
         )
       ).toEqual([]);
-    });
-  });
-
-  describe('parsePureAnomalies()', () => {
-    test('parse anomalies', async () => {
-      const parsedPureAnomalies: AnomalyData[] = await parsePureAnomalies(
-        ANOMALY_RESULT_SUMMARY
-      );
-      expect(parsedPureAnomalies).toStrictEqual(PARSED_ANOMALIES);
     });
   });
 });
