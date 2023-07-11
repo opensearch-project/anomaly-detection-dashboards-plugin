@@ -3,8 +3,19 @@
   "version": "2.9.0.0",
   "opensearchDashboardsVersion": "2.9.0",
   "configPath": ["anomaly_detection_dashboards"],
-  "requiredPlugins": ["navigation"],
-  "optionalPlugins": [],
+  "requiredPlugins": [
+    "opensearchDashboardsUtils",
+    "expressions",
+    "data",
+    "visAugmenter",
+    "uiActions",
+    "dashboard",
+    "embeddable",
+    "opensearchDashboardsReact",
+    "savedObjects",
+    "visAugmenter",
+    "opensearchDashboardsUtils"
+  ],
   "server": true,
   "ui": true
 }
