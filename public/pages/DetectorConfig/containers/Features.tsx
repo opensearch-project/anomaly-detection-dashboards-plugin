@@ -234,6 +234,7 @@ export const Features = (props: FeaturesProps) => {
             titleSize="s"
           >
             <EuiBasicTable
+              data-test-subj="featureTable"
               items={sortedItems}
               columns={columns}
               cellProps={getCellProps}
