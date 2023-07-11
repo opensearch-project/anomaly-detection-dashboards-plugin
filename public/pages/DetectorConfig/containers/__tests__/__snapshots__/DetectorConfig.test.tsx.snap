@@ -566,6 +566,7 @@ exports[`<DetectorConfig /> spec renders the component 1`] = `
                 >
                   <div
                     class="euiBasicTable"
+                    data-test-subj="featureTable"
                   >
                     <div>
                       <div
@@ -1727,6 +1728,7 @@ exports[`<DetectorConfig /> spec renders the component with 2 custom and 1 simpl
                 >
                   <div
                     class="euiBasicTable"
+                    data-test-subj="featureTable"
                   >
                     <div>
                       <div

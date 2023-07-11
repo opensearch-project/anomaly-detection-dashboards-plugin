@@ -88,9 +88,7 @@ describe('overlay_anomalies spec', () => {
   });
   describe('convertAnomaliesToPointInTimeEventsVisLayer()', () => {
     test('convert anomalies to PointInTimeEventsVisLayer', async () => {
-      const expectedTimeStamp =
-        PARSED_ANOMALIES[0].startTime +
-        (PARSED_ANOMALIES[0].endTime - PARSED_ANOMALIES[0].startTime) / 2;
+      const expectedTimeStamp = PARSED_ANOMALIES[0].startTime;
       const expectedPointInTimeEventsVisLayer = {
         events: [
           {

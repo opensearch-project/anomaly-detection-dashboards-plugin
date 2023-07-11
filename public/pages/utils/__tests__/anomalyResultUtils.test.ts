@@ -8,7 +8,7 @@
  * Modifications Copyright OpenSearch Contributors. See
  * GitHub history for details.
  */
- 
+
 import {
   getFeatureMissingDataAnnotations,
   getFeatureDataPointsForDetector,
@@ -22,7 +22,7 @@ import {
   AnomalyData,
 } from '../../../models/interfaces';
 import { ANOMALY_RESULT_SUMMARY, PARSED_ANOMALIES } from './constants';
- 
+
 describe('anomalyResultUtils', () => {
   let randomDetector_20_min: Detector;
   let randomDetector_20_sec: Detector;
@@ -50,7 +50,7 @@ describe('anomalyResultUtils', () => {
         },
       ] as FeatureAttributes[],
     };
- 
+
     randomDetector_20_sec = {
       ...getRandomDetector(true),
       detectionInterval: {
@@ -570,7 +570,7 @@ describe('anomalyResultUtils', () => {
       ).toEqual([]);
     });
   });
- 
+
   describe('parsePureAnomalies()', () => {
     test('parse anomalies', async () => {
       const parsedPureAnomalies: AnomalyData[] = await parsePureAnomalies(
