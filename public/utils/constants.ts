@@ -53,6 +53,15 @@ export const ANOMALY_RESULT_INDEX = '.opendistro-anomaly-results';
 
 export const BASE_DOCS_LINK = 'https://opensearch.org/docs/monitoring-plugins';
 
+export const AD_DOCS_LINK =
+  'https://opensearch.org/docs/latest/observing-your-data/ad/index/';
+
+export const AD_HIGH_CARDINALITY_LINK =
+  'https://opensearch.org/docs/latest/observing-your-data/ad/index/#optional-set-category-fields-for-high-cardinality';
+
+export const AD_FEATURE_ANYWHERE_LINK =
+  'https://opensearch.org/docs/latest/observing-your-data/ad/dashboards-anomaly-detection/';
+
 export const MAX_DETECTORS = 1000;
 
 export const MAX_ANOMALIES = 10000;
@@ -87,3 +96,5 @@ export enum MISSING_FEATURE_DATA_SEVERITY {
 }
 
 export const SPACE_STR = ' ';
+
+export const ANOMALY_DETECTION_ICON = 'anomalyDetection';

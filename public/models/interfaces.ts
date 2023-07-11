@@ -217,6 +217,7 @@ export type DetectorListItem = {
   lastActiveAnomaly: number;
   lastUpdateTime: number;
   enabledTime?: number;
+  detectorType?: string;
 };
 
 export type EntityData = {

@@ -6,7 +6,7 @@
 import { render, waitFor } from '@testing-library/react';
 import React from 'react';
 import { AnomaliesLiveChart } from '../AnomaliesLiveChart';
-import { selectedDetectors } from '../../../../pages/utils/__tests__/constants';
+import { SELECTED_DETECTORS } from '../../../../pages/utils/__tests__/constants';
 import { Provider } from 'react-redux';
 import { coreServicesMock } from '../../../../../test/mocks';
 import { CoreServicesContext } from '../../../../components/CoreServices/CoreServices';
@@ -45,7 +45,7 @@ describe('<AnomaliesLiveChart /> spec', () => {
     const { container, getByTestId, getAllByText, getByText } = render(
       <Provider store={mockedStore()}>
         <CoreServicesContext.Provider value={coreServicesMock}>
-          <AnomaliesLiveChart {...selectedDetectors} />
+          <AnomaliesLiveChart {...SELECTED_DETECTORS} />
         </CoreServicesContext.Provider>
       </Provider>
     );

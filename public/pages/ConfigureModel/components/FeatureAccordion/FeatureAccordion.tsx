@@ -20,7 +20,9 @@ import {
   EuiButton,
   EuiFieldText,
   EuiCheckbox,
+  EuiButtonIcon,
 } from '@elastic/eui';
+import './styles.scss';
 import { Field, FieldProps } from 'formik';
 import {
   required,
@@ -40,6 +42,7 @@ interface FeatureAccordionProps {
   index: number;
   feature: any;
   handleChange(event: React.ChangeEvent<HTMLSelectElement>): void;
+  displayMode?: string;
 }
 
 export const FeatureAccordion = (props: FeatureAccordionProps) => {
@@ -78,6 +81,18 @@ export const FeatureAccordion = (props: FeatureAccordionProps) => {
   };
 
   const featureButtonContent = (feature: any, index: number) => {
+    if (props.displayMode === 'flyout') {
+      return (
+        <div id={`featureAccordionHeaders.${index}`}>
+          <EuiTitle size="xxs">
+            <h5 style={{ marginTop: '-5px', fontWeight: 400 }}>
+              {feature.featureName ? feature.featureName : 'Add feature'}
+            </h5>
+          </EuiTitle>
+          {showSubtitle ? showFeatureDescription(feature) : null}
+        </div>
+      );
+    }
     return (
       <div id={`featureAccordionHeaders.${index}`}>
         <EuiFlexGroup gutterSize="s" alignItems="center" responsive={false}>
@@ -94,11 +109,25 @@ export const FeatureAccordion = (props: FeatureAccordionProps) => {
     );
   };
 
-  const deleteAction = (onClick: any) => (
-    <EuiButton size="s" color="danger" onClick={onClick} disabled={false}>
-      Delete
-    </EuiButton>
-  );
+  const deleteAction = (onClick: any) => {
+    if (props.displayMode === 'flyout') {
+      return (
+        <EuiButtonIcon
+          size="s"
+          onClick={onClick}
+          disabled={false}
+          iconType="trash"
+          color="text"
+        ></EuiButtonIcon>
+      );
+    } else {
+      return (
+        <EuiButton size="s" color="danger" onClick={onClick} disabled={false}>
+          Delete
+        </EuiButton>
+      );
+    }
+  };
 
   return (
     <EuiAccordion
@@ -109,7 +138,7 @@ export const FeatureAccordion = (props: FeatureAccordionProps) => {
       buttonClassName={
         props.index === 0
           ? 'euiAccordionForm__noTopPaddingButton'
-          : 'euiAccordionForm__button'
+          : 'euiFormAccordion_button'
       }
       className="euiAccordion__noTopBorder"
       paddingSize="l"
