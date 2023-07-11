@@ -8,14 +8,21 @@
  * Modifications Copyright OpenSearch Contributors. See
  * GitHub history for details.
  */
-
+ 
 import {
   getFeatureMissingDataAnnotations,
   getFeatureDataPointsForDetector,
+  parsePureAnomalies,
 } from '../anomalyResultUtils';
 import { getRandomDetector } from '../../../redux/reducers/__tests__/utils';
-import { UNITS, Detector, FeatureAttributes } from '../../../models/interfaces';
-
+import {
+  UNITS,
+  Detector,
+  FeatureAttributes,
+  AnomalyData,
+} from '../../../models/interfaces';
+import { ANOMALY_RESULT_SUMMARY, PARSED_ANOMALIES } from './constants';
+ 
 describe('anomalyResultUtils', () => {
   let randomDetector_20_min: Detector;
   let randomDetector_20_sec: Detector;
@@ -43,7 +50,7 @@ describe('anomalyResultUtils', () => {
         },
       ] as FeatureAttributes[],
     };
-
+ 
     randomDetector_20_sec = {
       ...getRandomDetector(true),
       detectionInterval: {
@@ -561,6 +568,15 @@ describe('anomalyResultUtils', () => {
           false
         )
       ).toEqual([]);
+    });
+  });
+ 
+  describe('parsePureAnomalies()', () => {
+    test('parse anomalies', async () => {
+      const parsedPureAnomalies: AnomalyData[] = await parsePureAnomalies(
+        ANOMALY_RESULT_SUMMARY
+      );
+      expect(parsedPureAnomalies).toStrictEqual(PARSED_ANOMALIES);
     });
   });
 });
