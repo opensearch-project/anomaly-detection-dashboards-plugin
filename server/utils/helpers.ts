@@ -66,6 +66,10 @@ const PERMISSIONS_ERROR_PATTERN =
 
 export const NO_PERMISSIONS_KEY_WORD = 'no permissions';
 
+export const DOES_NOT_HAVE_PERMISSIONS_KEY_WORD = 'does not have permissions';
+
+export const CANT_FIND_KEY_WORD = "Can't find";
+
 export const prettifyErrorMessage = (rawErrorMessage: string) => {
   if (isEmpty(rawErrorMessage) || rawErrorMessage === 'undefined') {
     return 'Unknown error is returned.';

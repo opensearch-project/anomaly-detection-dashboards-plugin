@@ -1,0 +1,69 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`ConfirmUnlinkDetectorModal spec renders the component with filter applied 1`] = `
+<div>
+  <div
+    class="euiEmptyPrompt"
+    data-test-subj="emptyAssociatedDetectorFlyoutMessage"
+    style="max-width: 45em;"
+  >
+    <h3
+      class="euiTitle euiTitle--small"
+    >
+      No anomaly detectors to display
+    </h3>
+    <span
+      class="euiTextColor euiTextColor--subdued"
+    >
+      <div
+        class="euiSpacer euiSpacer--m"
+      />
+      <div
+        class="euiText euiText--medium"
+      >
+        <div
+          class="euiText euiText--medium"
+        >
+          <p>
+            There are no detectors matching your search
+          </p>
+        </div>
+      </div>
+    </span>
+  </div>
+</div>
+`;
+
+exports[`ConfirmUnlinkDetectorModal spec renders the component with filter applied 2`] = `
+<div>
+  <div
+    class="euiEmptyPrompt"
+    data-test-subj="emptyAssociatedDetectorFlyoutMessage"
+    style="max-width: 45em;"
+  >
+    <h3
+      class="euiTitle euiTitle--small"
+    >
+      No anomaly detectors to display
+    </h3>
+    <span
+      class="euiTextColor euiTextColor--subdued"
+    >
+      <div
+        class="euiSpacer euiSpacer--m"
+      />
+      <div
+        class="euiText euiText--medium"
+      >
+        <div
+          class="euiText euiText--medium"
+        >
+          <p>
+            There are no anomaly detectors associated with test-title visualization.
+          </p>
+        </div>
+      </div>
+    </span>
+  </div>
+</div>
+`;
