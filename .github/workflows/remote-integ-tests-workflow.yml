@@ -46,7 +46,7 @@ jobs:
 
       - name: Run OpenSearch with plugin
         run: |
-          OPENSEARCH_VERSION=$(node -p "require('../../opensearch_dashboards.json').opensearchDashboardsVersion")-SNAPSHOT
+          OPENSEARCH_VERSION=$(node -p "require('../opensearch_dashboards.json').opensearchDashboardsVersion")-SNAPSHOT
           echo "Using OpenSearch version $OPENSEARCH_VERSION"
           cd anomaly-detection
             ./gradlew run -Dopensearch.version=$OPENSEARCH_VERSION &
