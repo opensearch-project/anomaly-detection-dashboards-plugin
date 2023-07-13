@@ -67,6 +67,8 @@ jobs:
       - run: yarn -v
 
       - name: Get OpenSearch version
+        # Need to use bash to avoid having a windows/linux specific step
+        shell: bash
         run: |
           cd OpenSearch-Dashboards/plugins/anomaly-detection-dashboards-plugin
           OPENSEARCH_VERSION=$(node -p "require('./opensearch_dashboards.json').opensearchDashboardsVersion")-SNAPSHOT
