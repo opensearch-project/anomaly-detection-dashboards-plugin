@@ -11,7 +11,6 @@ on:
       - "*"
 env:
   OPENSEARCH_DASHBOARDS_VERSION: 'main'
-  OPENSEARCH_VERSION: '3.0.0-SNAPSHOT'
   OPENSEARCH_DASHBOARDS_FTREPO_VERSION: 'main'
   ANOMALY_DETECTION_PLUGIN_VERSION: 'main'
 jobs:
@@ -47,8 +46,10 @@ jobs:
 
       - name: Run OpenSearch with plugin
         run: |
+          OPENSEARCH_VERSION=$(node -p "require('./opensearch_dashboards.json').opensearchDashboardsVersion")-SNAPSHOT
+          echo "Using OpenSearch version $OPENSEARCH_VERSION"
           cd anomaly-detection
-            ./gradlew run -Dopensearch.version=${{ env.OPENSEARCH_VERSION }} &
+            ./gradlew run -Dopensearch.version=$OPENSEARCH_VERSION &
             timeout 300 bash -c 'while [[ "$(curl -s -o /dev/null -w ''%{http_code}'' localhost:9200)" != "200" ]]; do sleep 5; done'
         shell: bash
 
