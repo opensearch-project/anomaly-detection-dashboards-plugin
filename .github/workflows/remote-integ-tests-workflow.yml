@@ -70,6 +70,7 @@ jobs:
         run: |
           cd OpenSearch-Dashboards/plugins/anomaly-detection-dashboards-plugin
           OPENSEARCH_VERSION=$(node -p "require('./opensearch_dashboards.json').opensearchDashboardsVersion")-SNAPSHOT
+          echo "Using OpenSearch version $OPENSEARCH_VERSION"
 
       - name: Checkout Anomaly-Detection
         uses: actions/checkout@v2
