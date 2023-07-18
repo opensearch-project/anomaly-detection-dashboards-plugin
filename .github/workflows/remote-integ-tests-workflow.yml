@@ -66,14 +66,6 @@ jobs:
       - run: node -v
       - run: yarn -v
 
-      - name: Get OpenSearch version
-        # Need to use bash to avoid having a windows/linux specific step
-        shell: bash
-        run: |
-          cd OpenSearch-Dashboards/plugins/anomaly-detection-dashboards-plugin
-          OPENSEARCH_VERSION=$(node -p "require('./opensearch_dashboards.json').opensearchDashboardsVersion")-SNAPSHOT
-          echo "Using OpenSearch version $OPENSEARCH_VERSION"
-
       - name: Checkout Anomaly-Detection
         uses: actions/checkout@v2
         with:
@@ -84,8 +76,11 @@ jobs:
       - name: Run OpenSearch with plugin
         run: |
           cd anomaly-detection
-            ./gradlew run -Dopensearch.version=$OPENSEARCH_VERSION &
-            timeout 300 bash -c 'while [[ "$(curl -s -o /dev/null -w ''%{http_code}'' localhost:9200)" != "200" ]]; do sleep 5; done'
+          CONFIG_PATH=../OpenSearch-Dashboards/plugins/anomaly-detection-dashboards-plugin/opensearch_dashboards.json
+          OPENSEARCH_VERSION=$(node -p "require('$CONFIG_PATH').opensearchDashboardsVersion")-SNAPSHOT
+          echo "Using OpenSearch version $OPENSEARCH_VERSION"
+          ./gradlew run -Dopensearch.version=$OPENSEARCH_VERSION &
+          timeout 300 bash -c 'while [[ "$(curl -s -o /dev/null -w ''%{http_code}'' localhost:9200)" != "200" ]]; do sleep 5; done'
         shell: bash
 
       - name: Bootstrap the plugin
