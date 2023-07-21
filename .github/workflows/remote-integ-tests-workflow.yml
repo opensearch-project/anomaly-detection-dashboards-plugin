@@ -9,10 +9,6 @@ on:
   pull_request:
     branches:
       - "*"
-env:
-  OPENSEARCH_DASHBOARDS_VERSION: 'main'
-  OPENSEARCH_DASHBOARDS_FTREPO_VERSION: 'main'
-  ANOMALY_DETECTION_PLUGIN_VERSION: 'main'
 jobs:
   test-without-security:
     name: Run integ tests without security
@@ -41,7 +37,7 @@ jobs:
         uses: actions/checkout@v2
         with:
           repository: opensearch-project/OpenSearch-Dashboards
-          ref: ${{ env.OPENSEARCH_DASHBOARDS_VERSION }}
+          ref: '${{ github.base_ref }}'
           path: OpenSearch-Dashboards
 
       - name: Checkout Anomaly Detection OpenSearch Dashboards plugin
@@ -71,7 +67,7 @@ jobs:
         with:
           path: anomaly-detection
           repository: opensearch-project/anomaly-detection
-          ref: ${{ env.ANOMALY_DETECTION_PLUGIN_VERSION }}
+          ref: '${{ github.base_ref }}'
 
       - name: Run OpenSearch with plugin
         run: |
@@ -110,7 +106,7 @@ jobs:
         with:
           path: opensearch-dashboards-functional-test
           repository: opensearch-project/opensearch-dashboards-functional-test
-          ref: ${{ env.OPENSEARCH_DASHBOARDS_FTREPO_VERSION }}
+          ref: '${{ github.base_ref }}'
 
       - name: Get Cypress version
         id: cypress_version
@@ -132,6 +128,6 @@ jobs:
         uses: cypress-io/github-action@v2
         with:
           working-directory: opensearch-dashboards-functional-test
-          command: yarn run cypress run --env SECURITY_ENABLED=false --spec cypress/integration/plugins/anomaly-detection-dashboards-plugin/*.js
+          command: yarn run cypress run --env SECURITY_ENABLED=false --spec cypress/integration/plugins/anomaly-detection-dashboards-plugin/**/*.js
         env:
           CYPRESS_CACHE_FOLDER: ${{ matrix.cypress_cache_folder }}   
