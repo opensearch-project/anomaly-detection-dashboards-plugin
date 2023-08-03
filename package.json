@@ -1,10 +1,10 @@
 {
   "name": "anomaly-detection-dashboards",
-  "version": "1.3.11.0",
+  "version": "1.3.12.0",
   "description": "OpenSearch Anomaly Detection Dashboards Plugin",
   "main": "index.js",
   "config": {
-    "plugin_version": "1.3.10.0",
+    "plugin_version": "1.3.12.0",
     "plugin_name": "anomalyDetectionDashboards",
     "plugin_zip_name": "anomaly-detection-dashboards"
   },
@@ -34,8 +34,7 @@
     "eslint-plugin-prefer-object-spread": "^1.2.1",
     "lint-staged": "^9.2.0",
     "moment": "^2.24.0",
-    "redux-mock-store": "^1.5.3",
-    "start-server-and-test": "^1.11.7"
+    "redux-mock-store": "^1.5.3"
   },
   "dependencies": {
     "babel-polyfill": "^6.26.0",
@@ -52,12 +51,14 @@
     "**/glob-parent": "^6.0.0",
     "**/loader-utils": "^2.0.4",
     "**/terser": "^4.8.1",
+    "expect": "^26.4.2",
     "decode-uri-component": "^0.2.1",
     "json5": "^2.2.3",
     "@sideway/formula": "^3.0.1",
     "minimist": "^1.2.6",
     "minimatch": "^3.1.2",
     "axios": "^0.21.4",
-    "semver": "^5.7.2"
+    "semver": "^7.5.3",
+    "pretty-format":"^26.4.2"
   }
 }
