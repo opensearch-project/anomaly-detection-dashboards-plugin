@@ -45,8 +45,7 @@ export const DetectorJobs = (props: DetectorJobsProps) => {
                   props.detector,
                   isHCDetector,
                   false,
-                  false,
-                  'enabled'
+                  false
                 )}
               </p>
             }
