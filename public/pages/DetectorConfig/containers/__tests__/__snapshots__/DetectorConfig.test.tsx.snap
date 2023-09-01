@@ -1086,7 +1086,7 @@ exports[`<DetectorConfig /> spec renders the component 1`] = `
                         class="enabled"
                       >
                         <div
-                          class="euiHealth euiHealth--textSizeS enabled"
+                          class="euiHealth euiHealth--textSizeS"
                           data-test-subj="detectorStateInitializing"
                         >
                           <div
@@ -2328,7 +2328,7 @@ exports[`<DetectorConfig /> spec renders the component with 2 custom and 1 simpl
                         class="enabled"
                       >
                         <div
-                          class="euiHealth euiHealth--textSizeS enabled"
+                          class="euiHealth euiHealth--textSizeS"
                           data-test-subj="detectorStateInitializing"
                         >
                           <div
