@@ -1086,7 +1086,7 @@ exports[`<DetectorConfig /> spec renders the component 1`] = `
                         class="enabled"
                       >
                         <div
-                          class="euiHealth euiHealth--textSizeS enabled"
+                          class="euiHealth euiHealth--textSizeS"
                           data-test-subj="detectorStateInitializing"
                         >
                           <div
@@ -1770,7 +1770,7 @@ exports[`<DetectorConfig /> spec renders the component with 2 custom and 1 simpl
                                         xmlns="http://www.w3.org/2000/svg"
                                       >
                                         <path
-                                          d="M13.069 5.157L8.384 9.768a.546.546 0 01-.768 0L2.93 5.158a.552.552 0 00-.771 0 .53.53 0 000 .759l4.684 4.61c.641.631 1.672.63 2.312 0l4.684-4.61a.53.53 0 000-.76.552.552 0 00-.771 0z"
+                                          d="M13.069 5.157 8.384 9.768a.546.546 0 0 1-.768 0L2.93 5.158a.552.552 0 0 0-.771 0 .53.53 0 0 0 0 .759l4.684 4.61c.641.631 1.672.63 2.312 0l4.684-4.61a.53.53 0 0 0 0-.76.552.552 0 0 0-.771 0Z"
                                           fill-rule="non-zero"
                                         />
                                       </svg>
@@ -1829,7 +1829,7 @@ exports[`<DetectorConfig /> spec renders the component with 2 custom and 1 simpl
                                     xmlns="http://www.w3.org/2000/svg"
                                   >
                                     <path
-                                      d="M8 4.207v8.237c0 .307-.224.556-.5.556s-.5-.249-.5-.556V4.207L2.904 8.303a.5.5 0 01-.707-.707l4.242-4.242a1.5 1.5 0 012.122 0l4.242 4.242a.5.5 0 11-.707.707L8 4.207z"
+                                      d="M8 4.207v8.237c0 .307-.224.556-.5.556s-.5-.249-.5-.556V4.207L2.904 8.303a.5.5 0 0 1-.707-.707l4.242-4.242a1.5 1.5 0 0 1 2.122 0l4.242 4.242a.5.5 0 1 1-.707.707L8 4.207Z"
                                     />
                                   </svg>
                                 </span>
@@ -2328,7 +2328,7 @@ exports[`<DetectorConfig /> spec renders the component with 2 custom and 1 simpl
                         class="enabled"
                       >
                         <div
-                          class="euiHealth euiHealth--textSizeS enabled"
+                          class="euiHealth euiHealth--textSizeS"
                           data-test-subj="detectorStateInitializing"
                         >
                           <div
