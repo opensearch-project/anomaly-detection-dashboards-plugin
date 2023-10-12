@@ -14,6 +14,7 @@ This document contains a list of maintainers in this repo. See [opensearch-proje
 | Dan Widdis              | [dbwiddis](https://github.com/dbwiddis)                  | Amazon      |
 | Owais Kazi              | [owaiskazi19](https://github.com/owaiskazi19)            | Amazon      |
 | Josh Palis              | [joshpalis](https://github.com/joshpalis)                | Amazon      |
+| Sudipto Guha            | [sudiptoguha](https://github.com/sudiptoguha)            | Amazon      |
 
 ## Emeritus Maintainers
 
