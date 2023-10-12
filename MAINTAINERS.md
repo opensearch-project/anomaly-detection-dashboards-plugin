@@ -11,6 +11,10 @@ This document contains a list of maintainers in this repo. See [opensearch-proje
 | Jackie Han              | [jackiehanyang](https://github.com/jackiehanyang)        | Amazon      |
 | Amit Galitzky           | [amitgalitz](https://github.com/amitgalitz)              | Amazon      |
 | Sean Zheng              | [sean-zheng-amazon](https://github.com/sean-zheng-amazon)| Amazon      |
+| Dan Widdis              | [dbwiddis](https://github.com/dbwiddis)                  | Amazon      |
+| Owais Kazi              | [owaiskazi19](https://github.com/owaiskazi19)            | Amazon      |
+| Josh Palis              | [joshpalis](https://github.com/joshpalis)                | Amazon      |
+| Sudipto Guha            | [sudiptoguha](https://github.com/sudiptoguha)            | Amazon      |
 
 ## Emeritus Maintainers
 
