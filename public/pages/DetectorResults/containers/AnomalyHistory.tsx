@@ -174,6 +174,12 @@ export const AnomalyHistory = (props: AnomalyHistoryProps) => {
   const backgroundColor = darkModeEnabled() ? '#29017' : '#F7F7F7';
   const resultIndex = get(props, 'detector.resultIndex', '');
 
+  // Utility fn to only fetch data when either it is non-historical, or historical and
+  // there is a populated task ID which will be used to fetch the historical results
+  const isValidToFetch = () => {
+    return !props.isHistorical || (props.isHistorical && taskId.current);
+  };
+
   // Tracking which parent category fields the user has selected to filter by.
   const [selectedCategoryFields, setSelectedCategoryFields] = useState(
     getCategoryFieldOptions(detectorCategoryField)
@@ -326,7 +332,8 @@ export const AnomalyHistory = (props: AnomalyHistoryProps) => {
   useEffect(() => {
     if (
       !isEmpty(bucketizedAnomalyResults) &&
-      !isDateRangeOversize(zoomRange, detectorInterval, MAX_ANOMALIES)
+      !isDateRangeOversize(zoomRange, detectorInterval, MAX_ANOMALIES) &&
+      isValidToFetch()
     ) {
       setBucketizedAnomalyResults(undefined);
       if (isHCDetector && selectedHeatmapCell) {
@@ -351,14 +358,16 @@ export const AnomalyHistory = (props: AnomalyHistoryProps) => {
   }, [zoomRange]);
 
   useEffect(() => {
-    fetchRawAnomalyResults(isHCDetector);
-    if (
-      !isHCDetector &&
-      isDateRangeOversize(dateRange, detectorInterval, MAX_ANOMALIES)
-    ) {
-      getBucketizedAnomalyResults();
-    } else {
-      setBucketizedAnomalyResults(undefined);
+    if (isValidToFetch()) {
+      fetchRawAnomalyResults(isHCDetector);
+      if (
+        !isHCDetector &&
+        isDateRangeOversize(dateRange, detectorInterval, MAX_ANOMALIES)
+      ) {
+        getBucketizedAnomalyResults();
+      } else {
+        setBucketizedAnomalyResults(undefined);
+      }
     }
   }, [dateRange, props.detector]);
 
@@ -400,13 +409,7 @@ export const AnomalyHistory = (props: AnomalyHistoryProps) => {
       );
       const detectorResultResponse = props.isHistorical
         ? await dispatch(
-            getDetectorResults(
-              taskId.current || '',
-              params,
-              true,
-              resultIndex,
-              true
-            )
+            getDetectorResults(taskId.current, params, true, resultIndex, true)
           ).catch((error: any) => {
             setIsLoading(false);
             setIsLoadingAnomalyResults(false);
@@ -459,17 +462,19 @@ export const AnomalyHistory = (props: AnomalyHistoryProps) => {
   useEffect(() => {
     // For any change, we will want to clear any selected heatmap cell to clear any populated charts / graphs
     setSelectedHeatmapCell(undefined);
-    fetchHCAnomalySummaries();
+    if (isValidToFetch()) {
+      fetchHCAnomalySummaries();
+    }
   }, [selectedCategoryFields]);
 
   useEffect(() => {
-    if (isHCDetector) {
+    if (isHCDetector && isValidToFetch()) {
       fetchHCAnomalySummaries();
     }
   }, [dateRange, heatmapDisplayOption]);
 
   useEffect(() => {
-    if (selectedHeatmapCell) {
+    if (selectedHeatmapCell && isValidToFetch()) {
       if (
         isMultiCategory &&
         get(selectedCategoryFields, 'length', 0) <
@@ -493,7 +498,7 @@ export const AnomalyHistory = (props: AnomalyHistoryProps) => {
 
   // Getting the latest sets of time series based on the selected parent + child entities
   useEffect(() => {
-    if (selectedHeatmapCell) {
+    if (selectedHeatmapCell && isValidToFetch()) {
       // Get a list of entity lists, where each list represents a unique entity combination of
       // all parent + child entities (a single model). And, for each one of these lists, fetch the time series data.
       const entityCombosToFetch = getAllEntityCombos(
