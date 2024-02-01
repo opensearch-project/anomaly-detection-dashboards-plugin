@@ -128,6 +128,6 @@ jobs:
         uses: cypress-io/github-action@v2
         with:
           working-directory: opensearch-dashboards-functional-test
-          command: yarn run cypress run --env SECURITY_ENABLED=false --spec cypress/integration/plugins/anomaly-detection-dashboards-plugin/**/*.js --browser electron
+          command: yarn run cypress run --headed --env SECURITY_ENABLED=false --spec cypress/integration/plugins/anomaly-detection-dashboards-plugin/**/*.js
         env:
           CYPRESS_CACHE_FOLDER: ${{ matrix.cypress_cache_folder }}   
