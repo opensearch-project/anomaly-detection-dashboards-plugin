@@ -53,6 +53,8 @@
     "decode-uri-component": "^0.2.1",
     "json5": "^2.2.3",
     "@sideway/formula": "^3.0.1",
-    "semver": "^5.7.2"
+    "semver": "^5.7.2",
+    "browserify-sign": "^4.2.2",
+    "axios": "^1.6.1"
   }
 }
