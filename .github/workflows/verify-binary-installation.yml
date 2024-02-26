@@ -1,0 +1,54 @@
+name: 'Install Dashboards with Plugin via Binary'
+
+on: [push, pull_request]
+env:
+  OPENSEARCH_VERSION: '3.0.0'
+  CI: 1
+  # avoid warnings like "tput: No value for $TERM and no -T specified"
+  TERM: xterm
+
+jobs:
+  verify-binary-installation:
+    name: Run binary installation
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest]
+        # TODO: add windows support when OSD core is stable on windows
+    runs-on: ${{ matrix.os }}
+    steps:  
+      - name: Checkout Branch
+        uses: actions/checkout@v3
+
+      - name: Set env
+        run: |
+          opensearch_version=$(node -p "require('./opensearch_dashboards.json').opensearchDashboardsVersion")
+          plugin_version=$(node -p "require('./opensearch_dashboards.json').version")
+          echo "OPENSEARCH_VERSION=$opensearch_version" >> $GITHUB_ENV
+          echo "PLUGIN_VERSION=$plugin_version" >> $GITHUB_ENV
+        shell: bash
+
+      - name: Run Opensearch
+        uses: derek-ho/start-opensearch@v2
+        with:
+          opensearch-version: ${{ env.OPENSEARCH_VERSION }}
+          security-enabled: false
+
+      - name: Run Dashboard
+        id: setup-dashboards
+        uses: derek-ho/setup-opensearch-dashboards@v1
+        with:
+          plugin_name: anomaly-detection-dashboards-plugin
+          built_plugin_name: anomalyDetectionDashboards
+          install_zip: true
+
+      - name: Start the binary
+        run: | 
+          nohup ./bin/opensearch-dashboards &
+        working-directory: ${{ steps.setup-dashboards.outputs.dashboards-binary-directory }}
+        shell: bash
+
+      - name: Health check 
+        run: |
+          timeout 300 bash -c 'while [[ "$(curl http://localhost:5601/api/status | jq -r '.status.overall.state')" != "green" ]]; do sleep 5; done'
+        shell: bash
