@@ -35,6 +35,13 @@ import SampleDataService, {
   registerSampleDataRoutes,
 } from './routes/sampleData';
 import { DEFAULT_HEADERS } from './utils/constants';
+import { DataSourcePluginSetup } from '../../../src/plugins/data_source/server/types';
+import { DataSourceManagementPlugin } from '../../../src/plugins/data_source_management/public';
+
+export interface ADPluginSetupDependencies {
+  dataSourceManagement: ReturnType<DataSourceManagementPlugin['setup']>;
+  dataSource: DataSourcePluginSetup;
+}
 
 export class AnomalyDetectionOpenSearchDashboardsPlugin
   implements
@@ -50,20 +57,39 @@ export class AnomalyDetectionOpenSearchDashboardsPlugin
     this.logger = initializerContext.logger.get();
     this.globalConfig$ = initializerContext.config.legacy.globalConfig$;
   }
-  public async setup(core: CoreSetup) {
+  public async setup(core: CoreSetup, {dataSource} : ADPluginSetupDependencies) {
     // Get any custom/overridden headers
     const globalConfig = await this.globalConfig$.pipe(first()).toPromise();
     const { customHeaders, ...rest } = globalConfig.opensearch;
 
-    // Create OpenSearch client w/ relevant plugins and headers
-    const client: ILegacyClusterClient = core.opensearch.legacy.createClient(
-      'anomaly_detection',
-      {
-        plugins: [adPlugin, alertingPlugin],
-        customHeaders: { ...customHeaders, ...DEFAULT_HEADERS },
-        ...rest,
-      }
-    );
+    const dataSourceEnabled = !!dataSource;
+
+    let client: ILegacyClusterClient | undefined = undefined;
+
+    if (!dataSourceEnabled) {
+      client = core.opensearch.legacy.createClient(
+        'anomaly_detection',
+        {
+          plugins: [adPlugin, alertingPlugin],
+          customHeaders: { ...customHeaders, ...DEFAULT_HEADERS },
+          ...rest,
+        }
+      )
+    } else {
+      dataSource.registerCustomApiSchema(adPlugin)
+      dataSource.registerCustomApiSchema(alertingPlugin)
+
+    }
+
+    // // Create OpenSearch client w/ relevant plugins and headers
+    // const client: ILegacyClusterClient = core.opensearch.legacy.createClient(
+    //   'anomaly_detection',
+    //   {
+    //     plugins: [adPlugin, alertingPlugin],
+    //     customHeaders: { ...customHeaders, ...DEFAULT_HEADERS },
+    //     ...rest,
+    //   }
+    // );
 
     // Create router
     const apiRouter: Router = createRouter(

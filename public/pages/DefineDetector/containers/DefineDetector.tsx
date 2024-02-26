@@ -50,6 +50,8 @@ import { Detector, FILTER_TYPES } from '../../../models/interfaces';
 import { prettifyErrorMessage } from '../../../../server/utils/helpers';
 import { DETECTOR_STATE } from '../../../../server/utils/constants';
 import { ModelConfigurationFormikValues } from 'public/pages/ConfigureModel/models/interfaces';
+import { getNotifications, getSavedObjectsClient } from '../../../services';
+import { ClusterSelector } from '../../../../../../src/plugins/data_source_management/public';
 
 interface DefineDetectorRouterProps {
   detectorId?: string;
@@ -71,6 +73,7 @@ export const DefineDetector = (props: DefineDetectorProps) => {
   const detectorId: string = get(props, 'match.params.detectorId', '');
   const { detector, hasError } = useFetchDetectorInfo(detectorId);
   const [newIndexSelected, setNewIndexSelected] = useState<boolean>(false);
+  const [selectedDataSource, setSelectedDataSource] = useState<string>();
 
   // To handle backward compatibility, we need to pass some fields via
   // props to the subcomponents so they can render correctly
@@ -89,6 +92,12 @@ export const DefineDetector = (props: DefineDetectorProps) => {
     undefined
   ) as FILTER_TYPES;
   const oldFilterQuery = get(detector, 'filterQuery', undefined);
+
+  const onSelectedDataSource = (e) => {
+    const dataConnectionId = e[0] ? e[0].id : undefined;
+    setSelectedDataSource(dataConnectionId);
+    console.log(dataConnectionId);
+  }
 
   // Jump to top of page on first load
   useEffect(() => {
@@ -249,10 +258,20 @@ export const DefineDetector = (props: DefineDetectorProps) => {
                 </EuiPageHeaderSection>
               </EuiPageHeader>
               <Fragment>
+                
                 <NameAndDescription
                   onValidateDetectorName={handleValidateName}
                 />
                 <EuiSpacer />
+                <ClusterSelector 
+                  savedObjectsClient={getSavedObjectsClient()}
+                  notifications={getNotifications()}
+                  onSelectedDataSource={onSelectedDataSource}
+                  disabled={false}  
+                  hideLocalCluster={false}     
+                  fullWidth={true}   
+                  />
+                  <EuiSpacer />
                 <DataSource
                   formikProps={formikProps}
                   origIndex={

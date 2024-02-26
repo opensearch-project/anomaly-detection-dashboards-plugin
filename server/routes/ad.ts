@@ -198,11 +198,17 @@ export default class AdService {
           .asScoped(request)
           .callAsCurrentUser('ad.updateDetector', params);
       } else {
-        response = await this.client
-          .asScoped(request)
-          .callAsCurrentUser('ad.createDetector', {
+        const client = context.dataSource.opensearch.legacy.getClient('4585f560-d1ef-11ee-aa63-2181676cc573');
+
+        response = await client
+          .callAPI('ad.createDetector', {
             body: params.body,
           });
+        // response = await this.client
+        //   .asScoped(request)
+        //   .callAsCurrentUser('ad.createDetector', {
+        //     body: params.body,
+        //   });
       }
       const resp = {
         ...response.anomaly_detector,
@@ -1080,13 +1086,20 @@ export default class AdService {
     request: OpenSearchDashboardsRequest,
     opensearchDashboardsResponse: OpenSearchDashboardsResponseFactory
   ): Promise<IOpenSearchDashboardsResponse<any>> => {
+    console.log("here")
     try {
       const { detectorName } = request.params as { detectorName: string };
-      const response = await this.client
-        .asScoped(request)
-        .callAsCurrentUser('ad.matchDetector', {
-          detectorName,
-        });
+      const client = context.dataSource.opensearch.legacy.getClient('4585f560-d1ef-11ee-aa63-2181676cc573');
+
+      const response = await client
+          .callAPI('ad.matchDetector', {
+            detectorName
+          });
+      // const response = await this.client
+      //   .asScoped(request)
+      //   .callAsCurrentUser('ad.matchDetector', {
+      //     detectorName,
+      //   });
       return opensearchDashboardsResponse.ok({
         body: {
           ok: true,

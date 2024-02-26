@@ -35,6 +35,7 @@ import {
   setUiActions,
   setUISettings,
   setQueryService,
+  setSavedObjectsClient
 } from './services';
 import { AnomalyDetectionOpenSearchDashboardsPluginStart } from 'public';
 import {
@@ -116,6 +117,7 @@ export class AnomalyDetectionOpenSearchDashboardsPlugin
     setNotifications(core.notifications);
     setUiActions(uiActions);
     setQueryService(data.query);
+    setSavedObjectsClient(core.savedObjects.client);
     return {};
   }
 }
