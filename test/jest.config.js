@@ -41,5 +41,8 @@ module.exports = {
   clearMocks: true,
   modulePathIgnorePatterns: ['<rootDir>/offline-module-cache/'],
   testPathIgnorePatterns: ['<rootDir>/build/', '<rootDir>/node_modules/'],
-  transformIgnorePatterns: ['<rootDir>/node_modules'],
+  transform: {
+    '^.+\\.(js|jsx|ts|tsx|cjs)$': 'babel-jest',
+  },
+  transformIgnorePatterns: ['<rootDir>/node_modules/(?!@adobe/css-tools)'],
 };
