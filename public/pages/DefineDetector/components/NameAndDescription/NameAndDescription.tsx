@@ -16,11 +16,23 @@ import ContentPanel from '../../../../components/ContentPanel/ContentPanel';
 import { getError, isInvalid } from '../../../../utils/utils';
 import { validateDetectorDesc } from './utils/validation';
 import { FormattedFormRow } from '../../../../components/FormattedFormRow/FormattedFormRow';
+import { useState } from 'react';
+import { getNotifications, getSavedObjectsClient } from '../../../../services';
+import { ClusterSelector } from '../../../../../../../src/plugins/data_source_management/public';
 
 interface NameAndDescriptionProps {
   onValidateDetectorName: (detectorName: string) => Promise<any>;
 }
+
+
 function NameAndDescription(props: NameAndDescriptionProps) {
+  const [selectedDataSource, setSelectedDataSource] = useState<string>();
+
+  const onSelectedDataSource = (e) => {
+    const dataConnectionId = e[0] ? e[0].id : undefined;
+    setSelectedDataSource(dataConnectionId);
+    console.log(dataConnectionId);
+  }
   return (
     <ContentPanel title="Detector details" titleSize="s">
       <Field name="name" validate={props.onValidateDetectorName}>
@@ -44,6 +56,7 @@ function NameAndDescription(props: NameAndDescriptionProps) {
           </FormattedFormRow>
         )}
       </Field>
+     
       <Field name="description" validate={validateDetectorDesc}>
         {({ field, form }: FieldProps) => (
           <FormattedFormRow

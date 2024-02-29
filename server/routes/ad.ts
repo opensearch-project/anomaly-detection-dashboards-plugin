@@ -245,12 +245,19 @@ export default class AdService {
       const requestBody = JSON.stringify(
         convertPreviewInputKeysToSnakeCase(request.body)
       );
+      const client = context.dataSource.opensearch.legacy.getClient('4585f560-d1ef-11ee-aa63-2181676cc573');
+
       const response = await this.client
-        .asScoped(request)
-        .callAsCurrentUser('ad.validateDetector', {
+        .callAPI('ad.validateDetector', {
           body: requestBody,
           validationType: validationType,
         });
+      // const response = await this.client
+      //   .asScoped(request)
+      //   .callAsCurrentUser('ad.validateDetector', {
+      //     body: requestBody,
+      //     validationType: validationType,
+      //   });
       return opensearchDashboardsResponse.ok({
         body: {
           ok: true,

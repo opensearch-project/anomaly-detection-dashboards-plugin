@@ -352,6 +352,14 @@ export const DetectorList = (props: ListProps) => {
     });
   };
 
+  const [selectedDataSource, setSelectedDataSource] = useState<string>();
+
+  const handleDataSourceChange = (e) => {
+    const dataConnectionId = e[0] ? e[0].id : undefined;
+    setSelectedDataSource(dataConnectionId);
+    console.log(dataConnectionId);
+  }
+
   const handleResetFilter = () => {
     setState((state) => ({
       ...state,
@@ -668,6 +676,7 @@ export const DetectorList = (props: ListProps) => {
             indexOptions={indexOptions}
             onDetectorStateChange={handleDetectorStateChange}
             onIndexChange={handleIndexChange}
+            onDataSourceChange={handleDataSourceChange}
             onSearchDetectorChange={handleSearchDetectorChange}
             onSearchIndexChange={handleSearchIndexChange}
             onPageClick={handlePageChange}
