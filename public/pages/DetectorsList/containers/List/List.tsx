@@ -14,7 +14,6 @@ import {
   EuiBasicTable,
   EuiButton,
   EuiComboBoxOptionProps,
-  EuiHorizontalRule,
   EuiPage,
   EuiPageBody,
   EuiSpacer,
@@ -191,11 +190,14 @@ export const DetectorList = (props: ListProps) => {
   const visibleAliases = get(opensearchState, 'aliases', []) as IndexAlias[];
   const indexOptions = getVisibleOptions(visibleIndices, visibleAliases);
 
+  const queryParams = getURLQueryParams(props.location);
   const [state, setState] = useState<ListState>({
     page: 0,
-    queryParams: getURLQueryParams(props.location),
+    queryParams,
     selectedDetectorStates: ALL_DETECTOR_STATES,
-    selectedIndices: ALL_INDICES,
+    selectedIndices: queryParams.indices
+      ? queryParams.indices.split(',')
+      : ALL_INDICES,
   });
 
   // Set breadcrumbs on page initialization
@@ -211,7 +213,7 @@ export const DetectorList = (props: ListProps) => {
     const { history, location } = props;
     const updatedParams = {
       ...state.queryParams,
-      indices: state.selectedIndices.join(' '),
+      indices: state.selectedIndices.join(','),
       from: state.page * state.queryParams.size,
     };
 
