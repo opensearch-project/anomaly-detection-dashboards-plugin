@@ -89,6 +89,7 @@ export type GetDetectorsQueryParams = {
   indices?: string;
   sortDirection: SORT_DIRECTION;
   sortField: string;
+  dataSourceId?: string;
 };
 
 export type GetAdMonitorsQueryParams = {

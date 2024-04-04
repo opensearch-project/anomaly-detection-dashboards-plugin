@@ -24,6 +24,7 @@ import {
   CUSTOM_AD_RESULT_INDEX_PREFIX,
 } from '../utils/constants';
 import {
+  getClientBasedOnDataSource,
   mapKeysDeep,
   toCamel,
   toFixedNumberForAnomaly,
@@ -103,9 +104,11 @@ export function registerADRoutes(apiRouter: Router, adService: AdService) {
 
 export default class AdService {
   private client: any;
+  dataSourceEnabled: boolean;
 
-  constructor(client: any) {
+  constructor(client: any, dataSourceEnabled: boolean) {
     this.client = client;
+    this.dataSourceEnabled = dataSourceEnabled;
   }
 
   deleteDetector = async (
@@ -592,6 +595,7 @@ export default class AdService {
         indices = '',
         sortDirection = SORT_DIRECTION.DESC,
         sortField = 'name',
+        dataSourceId = '',
       } = request.query as GetDetectorsQueryParams;
       const mustQueries = [];
       if (search.trim()) {
@@ -634,10 +638,16 @@ export default class AdService {
           },
         },
       };
-      const response: any = await this.client
-        .asScoped(request)
-        .callAsCurrentUser('ad.searchDetector', { body: requestBody });
-
+      const callWithRequest = getClientBasedOnDataSource(
+        context,
+        this.dataSourceEnabled,
+        request,
+        dataSourceId,
+        this.client
+      );
+      const response = await callWithRequest('ad.searchDetector', {
+        body: requestBody,
+      });
       const totalDetectors = get(response, 'hits.total.value', 0);
 
       //Get all detectors from search detector API
@@ -668,9 +678,9 @@ export default class AdService {
         resultIndex: CUSTOM_AD_RESULT_INDEX_PREFIX + '*',
         onlyQueryCustomResultIndex: 'false',
       } as {};
-      const aggregationResult = await this.client
-        .asScoped(request)
-        .callAsCurrentUser('ad.searchResultsFromCustomResultIndex', {
+      const aggregationResult = await callWithRequest(
+        'ad.searchResultsFromCustomResultIndex',
+        {
           ...requestParams,
           body: getResultAggregationQuery(allDetectorIds, {
             from,
@@ -680,7 +690,8 @@ export default class AdService {
             search,
             indices,
           }),
-        });
+        }
+      );
       const aggsDetectors = get(
         aggregationResult,
         'aggregations.unique_detectors.buckets',
@@ -733,16 +744,12 @@ export default class AdService {
       let realtimeTasksResponse = {} as any;
       let historicalTasksResponse = {} as any;
       try {
-        realtimeTasksResponse = await this.client
-          .asScoped(request)
-          .callAsCurrentUser('ad.searchTasks', {
-            body: getLatestDetectorTasksQuery(true),
-          });
-        historicalTasksResponse = await this.client
-          .asScoped(request)
-          .callAsCurrentUser('ad.searchTasks', {
-            body: getLatestDetectorTasksQuery(false),
-          });
+        realtimeTasksResponse = await callWithRequest('ad.searchTasks', {
+          body: getLatestDetectorTasksQuery(true),
+        });
+        historicalTasksResponse = await callWithRequest('ad.searchTasks', {
+          body: getLatestDetectorTasksQuery(false),
+        });
       } catch (err) {
         if (!isIndexNotFoundError(err)) {
           throw err;

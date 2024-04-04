@@ -40,7 +40,7 @@ export const [getQueryService, setQueryService] =
   createGetterSetter<DataPublicPluginStart['query']>('Query');
 
 export const [getSavedObjectsClient, setSavedObjectsClient] =
-createGetterSetter<CoreStart['savedObjects']['client']>('SavedObjectsClient');
+  createGetterSetter<CoreStart['savedObjects']['client']>('SavedObjectsClient');
 
 // This is primarily used for mocking this module and each of its fns in tests.
 export default {
@@ -52,5 +52,5 @@ export default {
   getOverlays,
   setUISettings,
   setQueryService,
-  getSavedObjectsClient
+  getSavedObjectsClient,
 };

@@ -23,8 +23,9 @@ import { DefineDetector } from '../DefineDetector/containers/DefineDetector';
 import { ConfigureModel } from '../ConfigureModel/containers/ConfigureModel';
 import { DashboardOverview } from '../Dashboard/Container/DashboardOverview';
 import { CoreServicesConsumer } from '../../components/CoreServices/CoreServices';
-import { CoreStart } from '../../../../../src/core/public';
+import { CoreStart, MountPoint } from '../../../../../src/core/public';
 import { AnomalyDetectionOverview } from '../Overview';
+import { DataSourceManagementPluginSetup } from '../../../../../src/plugins/data_source_management/public';
 
 enum Navigation {
   AnomalyDetection = 'Anomaly detection',
@@ -32,9 +33,16 @@ enum Navigation {
   Detectors = 'Detectors',
 }
 
-interface MainProps extends RouteComponentProps {}
+interface MainProps extends RouteComponentProps {
+  dataSourceEnabled: boolean;
+  dataSourceManagement: DataSourceManagementPluginSetup;
+  setHeaderActionMenu: (menuMount: MountPoint | undefined) => void;
+}
 
 export function Main(props: MainProps) {
+  const { dataSourceEnabled, dataSourceManagement, setHeaderActionMenu } =
+    props;
+
   const hideSideNavBar = useSelector(
     (state: AppState) => state.adApp.hideSideNavBar
   );
@@ -83,7 +91,12 @@ export function Main(props: MainProps) {
                   exact
                   path={APP_PATH.LIST_DETECTORS}
                   render={(props: RouteComponentProps<ListRouterParams>) => (
-                    <DetectorList {...props} />
+                    <DetectorList
+                      dataSourceEnabled={dataSourceEnabled}
+                      dataSourceManagement={dataSourceManagement}
+                      setActionMenu={setHeaderActionMenu}
+                      {...props}
+                    />
                   )}
                 />
                 <Route

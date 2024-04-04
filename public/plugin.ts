@@ -44,6 +44,7 @@ import {
 } from '../../../src/plugins/vis_augmenter/public';
 import { UiActionsStart } from '../../../src/plugins/ui_actions/public';
 import { DataPublicPluginStart } from '../../../src/plugins/data/public';
+import { DataSourceManagementPluginSetup } from '../../../src/plugins/data_source_management/public';
 
 declare module '../../../src/plugins/ui_actions/public' {
   export interface ActionContextMapping {
@@ -56,6 +57,7 @@ export interface AnomalyDetectionSetupDeps {
   embeddable: EmbeddableSetup;
   notifications: NotificationsSetup;
   visAugmenter: VisAugmenterSetup;
+  dataSourceManagement: DataSourceManagementPluginSetup;
   //uiActions: UiActionsSetup;
 }
 
@@ -83,7 +85,12 @@ export class AnomalyDetectionOpenSearchDashboardsPlugin
       mount: async (params: AppMountParameters) => {
         const { renderApp } = await import('./anomaly_detection_app');
         const [coreStart] = await core.getStartServices();
-        return renderApp(coreStart, params);
+        return renderApp(
+          coreStart,
+          params,
+          plugins.dataSourceManagement,
+          plugins.dataSource
+        );
       },
     });
 

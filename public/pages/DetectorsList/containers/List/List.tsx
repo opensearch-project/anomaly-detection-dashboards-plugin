@@ -21,7 +21,7 @@ import {
 } from '@elastic/eui';
 import { debounce, get, isEmpty } from 'lodash';
 import queryString from 'querystring';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { RouteComponentProps } from 'react-router';
 import {
@@ -45,13 +45,16 @@ import {
 } from '../../../../redux/reducers/opensearch';
 import { APP_PATH, PLUGIN_NAME } from '../../../../utils/constants';
 import { DETECTOR_STATE } from '../../../../../server/utils/constants';
-import { getVisibleOptions, sanitizeSearchText } from '../../../utils/helpers';
+import {
+  getAllDetectorsQueryParamsWithDataSourceId,
+  getVisibleOptions,
+  sanitizeSearchText,
+} from '../../../utils/helpers';
 import { EmptyDetectorMessage } from '../../components/EmptyMessage/EmptyMessage';
 import { ListFilters } from '../../components/ListFilters/ListFilters';
 import {
   MAX_DETECTORS,
   MAX_SELECTED_INDICES,
-  GET_ALL_DETECTORS_QUERY_PARAMS,
   ALL_DETECTOR_STATES,
   ALL_INDICES,
   SINGLE_DETECTOR_NOT_FOUND_MSG,
@@ -79,8 +82,13 @@ import {
   NO_PERMISSIONS_KEY_WORD,
   prettifyErrorMessage,
 } from '../../../../../server/utils/helpers';
-import { CoreStart } from '../../../../../../../src/core/public';
+import { CoreStart, MountPoint } from '../../../../../../../src/core/public';
 import { CoreServicesContext } from '../../../../components/CoreServices/CoreServices';
+import {
+  DataSourceManagementPluginSetup,
+  DataSourceSelectableConfig,
+} from '../../../../../../../src/plugins/data_source_management/public';
+import { getNotifications, getSavedObjectsClient } from '../../../../services';
 
 export interface ListRouterParams {
   from: string;
@@ -89,13 +97,19 @@ export interface ListRouterParams {
   indices: string;
   sortDirection: SORT_DIRECTION;
   sortField: string;
+  dataSourceId: string;
 }
-interface ListProps extends RouteComponentProps<ListRouterParams> {}
+interface ListProps extends RouteComponentProps<ListRouterParams> {
+  dataSourceEnabled: boolean;
+  dataSourceManagement: DataSourceManagementPluginSetup;
+  setActionMenu: (menuMount: MountPoint | undefined) => void;
+}
 interface ListState {
   page: number;
   queryParams: GetDetectorsQueryParams;
   selectedDetectorStates: DETECTOR_STATE[];
   selectedIndices: string[];
+  selectedDataSourceId: string;
 }
 interface ConfirmModalState {
   isOpen: boolean;
@@ -195,7 +209,12 @@ export const DetectorList = (props: ListProps) => {
     page: 0,
     queryParams: getURLQueryParams(props.location),
     selectedDetectorStates: ALL_DETECTOR_STATES,
-    selectedIndices: ALL_INDICES,
+    selectedIndices: queryParams.indices
+      ? queryParams.indices.split(',')
+      : ALL_INDICES,
+    selectedDataSourceId: queryParams.dataSourceId
+      ? queryParams.dataSourceId
+      : '',
   });
 
   // Set breadcrumbs on page initialization
@@ -213,6 +232,7 @@ export const DetectorList = (props: ListProps) => {
       ...state.queryParams,
       indices: state.selectedIndices.join(' '),
       from: state.page * state.queryParams.size,
+      dataSourceId: state.selectedDataSourceId,
     };
 
     history.replace({
@@ -227,6 +247,7 @@ export const DetectorList = (props: ListProps) => {
     state.queryParams,
     state.selectedDetectorStates,
     state.selectedIndices,
+    state.selectedDataSourceId,
   ]);
 
   // Handle all filtering / sorting of detectors
@@ -244,7 +265,8 @@ export const DetectorList = (props: ListProps) => {
     const curDetectorsToDisplay = getDetectorsToDisplay(
       curSelectedDetectors,
       state.page,
-      state.queryParams.size
+      state.queryParams.size,
+      state.selectedDataSourceId
     );
     setDetectorsToDisplay(curDetectorsToDisplay);
 
@@ -271,7 +293,11 @@ export const DetectorList = (props: ListProps) => {
   }, [confirmModalState.isRequestingToClose, isLoading]);
 
   const getUpdatedDetectors = async () => {
-    dispatch(getDetectorList(GET_ALL_DETECTORS_QUERY_PARAMS));
+    dispatch(
+      getDetectorList(
+        getAllDetectorsQueryParamsWithDataSourceId(state.selectedDataSourceId)
+      )
+    );
   };
 
   const handlePageChange = (pageNumber: number) => {
@@ -558,6 +584,16 @@ export const DetectorList = (props: ListProps) => {
     });
   };
 
+  const handleDataSourceChange = (e) => {
+    const dataConnectionId = e[0] ? e[0].id : undefined;
+
+    setState({
+      ...state,
+      page: 0,
+      selectedDataSourceId: dataConnectionId,
+    });
+  };
+
   const getConfirmModal = () => {
     if (confirmModalState.isOpen) {
       //@ts-ignore
@@ -632,9 +668,28 @@ export const DetectorList = (props: ListProps) => {
 
   const confirmModal = getConfirmModal();
 
+  const DataSourceMenu =
+    props.dataSourceManagement.ui.getDataSourceMenu<DataSourceSelectableConfig>();
+  const renderDataSourceComponent = useMemo(() => {
+    return (
+      <DataSourceMenu
+        setMenuMountPoint={props.setActionMenu}
+        componentType={'DataSourceSelectable'}
+        componentConfig={{
+          fullWidth: false,
+          savedObjects: getSavedObjectsClient(),
+          notifications: getNotifications(),
+          onSelectedDataSources: (dataSources) =>
+            handleDataSourceChange(dataSources),
+        }}
+      />
+    );
+  }, [getSavedObjectsClient(), getNotifications(), props.setActionMenu]);
+
   return (
     <EuiPage>
       <EuiPageBody>
+        {props.dataSourceEnabled && renderDataSourceComponent}
         <ContentPanel
           title={
             isLoading

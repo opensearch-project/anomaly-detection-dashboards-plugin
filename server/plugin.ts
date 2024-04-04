@@ -57,7 +57,10 @@ export class AnomalyDetectionOpenSearchDashboardsPlugin
     this.logger = initializerContext.logger.get();
     this.globalConfig$ = initializerContext.config.legacy.globalConfig$;
   }
-  public async setup(core: CoreSetup, {dataSource} : ADPluginSetupDependencies) {
+  public async setup(
+    core: CoreSetup,
+    { dataSource }: ADPluginSetupDependencies
+  ) {
     // Get any custom/overridden headers
     const globalConfig = await this.globalConfig$.pipe(first()).toPromise();
     const { customHeaders, ...rest } = globalConfig.opensearch;
@@ -67,29 +70,15 @@ export class AnomalyDetectionOpenSearchDashboardsPlugin
     let client: ILegacyClusterClient | undefined = undefined;
 
     if (!dataSourceEnabled) {
-      client = core.opensearch.legacy.createClient(
-        'anomaly_detection',
-        {
-          plugins: [adPlugin, alertingPlugin],
-          customHeaders: { ...customHeaders, ...DEFAULT_HEADERS },
-          ...rest,
-        }
-      )
+      client = core.opensearch.legacy.createClient('anomaly_detection', {
+        plugins: [adPlugin, alertingPlugin],
+        customHeaders: { ...customHeaders, ...DEFAULT_HEADERS },
+        ...rest,
+      });
     } else {
-      dataSource.registerCustomApiSchema(adPlugin)
-      dataSource.registerCustomApiSchema(alertingPlugin)
-
+      dataSource.registerCustomApiSchema(adPlugin);
+      dataSource.registerCustomApiSchema(alertingPlugin);
     }
-
-    // // Create OpenSearch client w/ relevant plugins and headers
-    // const client: ILegacyClusterClient = core.opensearch.legacy.createClient(
-    //   'anomaly_detection',
-    //   {
-    //     plugins: [adPlugin, alertingPlugin],
-    //     customHeaders: { ...customHeaders, ...DEFAULT_HEADERS },
-    //     ...rest,
-    //   }
-    // );
 
     // Create router
     const apiRouter: Router = createRouter(
@@ -98,7 +87,7 @@ export class AnomalyDetectionOpenSearchDashboardsPlugin
     );
 
     // Create services & register with OpenSearch client
-    const adService = new AdService(client);
+    const adService = new AdService(client, dataSourceEnabled);
     const alertingService = new AlertingService(client);
     const opensearchService = new OpenSearchService(client);
     const sampleDataService = new SampleDataService(client);
