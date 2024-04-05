@@ -27,6 +27,7 @@ import {
   OpenSearchDashboardsResponseFactory,
   IOpenSearchDashboardsResponse,
 } from '../../../../src/core/server';
+import { getClientBasedOnDataSource } from '../utils/helpers';
 
 type SearchParams = {
   index: string;
@@ -49,9 +50,11 @@ export function registerOpenSearchRoutes(
 
 export default class OpenSearchService {
   private client: any;
+  dataSourceEnabled: boolean;
 
-  constructor(client: any) {
+  constructor(client: any, dataSourceEnabled: boolean) {
     this.client = client;
+    this.dataSourceEnabled = dataSourceEnabled;
   }
 
   executeSearch = async (
@@ -88,9 +91,14 @@ export default class OpenSearchService {
 
       const params: SearchParams = { index, size, body: requestBody };
 
-      const results: SearchResponse<any> = await this.client
-        .asScoped(request)
-        .callAsCurrentUser('search', params);
+      const callWithRequest = getClientBasedOnDataSource(
+        context, 
+        this.dataSourceEnabled, 
+        request, 
+        '4585f560-d1ef-11ee-aa63-2181676cc573',
+        this.client);
+
+      const results: SearchResponse<any> = await callWithRequest('search', params);
 
       return opensearchDashboardsResponse.ok({
         body: { ok: true, response: results },
@@ -113,9 +121,15 @@ export default class OpenSearchService {
   ): Promise<IOpenSearchDashboardsResponse<any>> => {
     const { index } = request.query as { index: string };
     try {
-      const response: CatIndex[] = await this.client
-        .asScoped(request)
-        .callAsCurrentUser('cat.indices', {
+      const callWithRequest = getClientBasedOnDataSource(
+        context, 
+        this.dataSourceEnabled, 
+        request, 
+        '4585f560-d1ef-11ee-aa63-2181676cc573',
+        this.client);
+
+      const response: CatIndex[] = await callWithRequest(
+        'cat.indices', {
           index,
           format: 'json',
           h: 'health,index',
@@ -150,9 +164,15 @@ export default class OpenSearchService {
   ): Promise<IOpenSearchDashboardsResponse<any>> => {
     const { alias } = request.query as { alias: string };
     try {
-      const response: IndexAlias[] = await this.client
-        .asScoped(request)
-        .callAsCurrentUser('cat.aliases', {
+      const callWithRequest = getClientBasedOnDataSource(
+        context, 
+        this.dataSourceEnabled, 
+        request, 
+        '4585f560-d1ef-11ee-aa63-2181676cc573',
+        this.client);
+
+      const response: IndexAlias[] = await callWithRequest(
+        'cat.aliases', {
           alias,
           format: 'json',
           h: 'alias,index',
@@ -180,8 +200,14 @@ export default class OpenSearchService {
     const index = request.body.index;
     //@ts-ignore
     const body = request.body.body;
+    const callWithRequest = getClientBasedOnDataSource(
+      context, 
+      this.dataSourceEnabled, 
+      request, 
+      '4585f560-d1ef-11ee-aa63-2181676cc573',
+      this.client);
     try {
-      await this.client.asScoped(request).callAsCurrentUser('indices.create', {
+      await callWithRequest('indices.create', {
         index: index,
         body: body,
       });
@@ -195,9 +221,7 @@ export default class OpenSearchService {
       });
     }
     try {
-      const response: CatIndex[] = await this.client
-        .asScoped(request)
-        .callAsCurrentUser('cat.indices', {
+      const response: CatIndex[] = await callWithRequest('cat.indices', {
           index,
           format: 'json',
           h: 'health,index',
@@ -223,9 +247,14 @@ export default class OpenSearchService {
   ): Promise<IOpenSearchDashboardsResponse<any>> => {
     const body = request.body;
     try {
-      const response: any = await this.client
-        .asScoped(request)
-        .callAsCurrentUser('bulk', {
+      const callWithRequest = getClientBasedOnDataSource(
+        context, 
+        this.dataSourceEnabled, 
+        request, 
+        '4585f560-d1ef-11ee-aa63-2181676cc573',
+        this.client);
+
+      const response: any = await callWithRequest('bulk', {
           body: body,
         });
       return opensearchDashboardsResponse.ok({
@@ -248,8 +277,15 @@ export default class OpenSearchService {
     opensearchDashboardsResponse: OpenSearchDashboardsResponseFactory
   ): Promise<IOpenSearchDashboardsResponse<any>> => {
     const index = request.query as { index: string };
+    const callWithRequest = getClientBasedOnDataSource(
+      context, 
+      this.dataSourceEnabled, 
+      request, 
+      '4585f560-d1ef-11ee-aa63-2181676cc573',
+      this.client);
+
     try {
-      await this.client.asScoped(request).callAsCurrentUser('indices.delete', {
+      await callWithRequest('indices.delete', {
         index: index,
       });
     } catch (err) {
@@ -268,9 +304,8 @@ export default class OpenSearchService {
       }
     }
     try {
-      const response: CatIndex[] = await this.client
-        .asScoped(request)
-        .callAsCurrentUser('cat.indices', {
+      const response: CatIndex[] = await callWithRequest(
+        'cat.indices', {
           index,
           format: 'json',
           h: 'health,index',
@@ -296,9 +331,15 @@ export default class OpenSearchService {
   ): Promise<IOpenSearchDashboardsResponse<any>> => {
     const { index } = request.query as { index: string };
     try {
-      const response = await this.client
-        .asScoped(request)
-        .callAsCurrentUser('indices.getMapping', {
+      const callWithRequest = getClientBasedOnDataSource(
+        context, 
+        this.dataSourceEnabled, 
+        request, 
+        '4585f560-d1ef-11ee-aa63-2181676cc573',
+        this.client);
+
+      const response = await callWithRequest(
+        'indices.getMapping', {
           index,
         });
       return opensearchDashboardsResponse.ok({

@@ -81,6 +81,16 @@ export const GET_ALL_DETECTORS_QUERY_PARAMS = {
   sortField: 'name',
 };
 
+export const getAllDetectorsQueryParamsWithDataSourceId = (dataSourceId: string) => ({
+  from: 0,
+  search: '',
+  indices: '',
+  size: MAX_DETECTORS,
+  sortDirection: SORT_DIRECTION.ASC,
+  sortField: 'name',
+  dataSourceId: dataSourceId,
+});
+
 export const ALL_DETECTORS_MESSAGE = 'All detectors';
 export const ALL_DETECTOR_STATES_MESSAGE = 'All detector states';
 export const ALL_INDICES_MESSAGE = 'All indices';

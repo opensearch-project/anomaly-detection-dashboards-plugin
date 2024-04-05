@@ -12,6 +12,7 @@
 import React, { Fragment, useState, useEffect } from 'react';
 import { AnomaliesLiveChart } from '../Components/AnomaliesLiveChart';
 import { AnomaliesDistributionChart } from '../Components/AnomaliesDistribution';
+import queryString from 'querystring';
 
 import { useDispatch, useSelector } from 'react-redux';
 import { get, isEmpty, cloneDeep } from 'lodash';
@@ -29,17 +30,17 @@ import {
 } from '@elastic/eui';
 import { AnomalousDetectorsList } from '../Components/AnomalousDetectorsList';
 import {
-  GET_ALL_DETECTORS_QUERY_PARAMS,
   ALL_DETECTORS_MESSAGE,
   ALL_DETECTOR_STATES_MESSAGE,
   ALL_INDICES_MESSAGE,
+  getAllDetectorsQueryParamsWithDataSourceId
 } from '../utils/constants';
 import { AppState } from '../../../redux/reducers';
-import { CatIndex, IndexAlias } from '../../../../server/models/types';
+import { CatIndex, IndexAlias, MDSQueryParams } from '../../../../server/models/types';
 import { getVisibleOptions } from '../../utils/helpers';
 import { BREADCRUMBS } from '../../../utils/constants';
 import { DETECTOR_STATE } from '../../../../server/utils/constants';
-import { getDetectorStateOptions } from '../../DetectorsList/utils/helpers';
+import { getDetectorStateOptions, getURLQueryParams } from '../../DetectorsList/utils/helpers';
 import { DashboardHeader } from '../Components/utils/DashboardHeader';
 import { EmptyDashboard } from '../Components/EmptyDashboard/EmptyDashboard';
 import {
@@ -47,9 +48,26 @@ import {
   NO_PERMISSIONS_KEY_WORD,
 } from '../../../../server/utils/helpers';
 import { CoreServicesContext } from '../../../components/CoreServices/CoreServices';
-import { CoreStart } from '../../../../../../src/core/public';
+import { CoreStart, MountPoint } from '../../../../../../src/core/public';
+import { DataSourceManagementPluginSetup, DataSourceSelectableConfig } from '../../../../../../src/plugins/data_source_management/public';
+import { getNotifications, getSavedObjectsClient } from '../../../services';
+import { RouteComponentProps } from 'react-router-dom';
 
-export function DashboardOverview() {
+export interface DashboardOverviewRouterParams {
+  dataSourceId: string;
+}
+
+interface OverviewProps extends RouteComponentProps<DashboardOverviewRouterParams> {
+  dataSourceManagement: DataSourceManagementPluginSetup;
+  setActionMenu: (menuMount: MountPoint | undefined) => void;
+}
+
+interface MDSOverviewState {
+  queryParams: MDSQueryParams;
+  selectedDataSourceId: string;
+}
+
+export function DashboardOverview(props: OverviewProps) {
   const core = React.useContext(CoreServicesContext) as CoreStart;
   const dispatch = useDispatch();
   const adState = useSelector((state: AppState) => state.ad);
@@ -65,6 +83,12 @@ export function DashboardOverview() {
   const [selectedDetectorsName, setSelectedDetectorsName] = useState(
     [] as string[]
   );
+  const queryParams = getURLQueryParams(props.location);
+  const [MDSOverviewState, setMDSOverviewState] = useState<MDSOverviewState>({
+    queryParams,
+    selectedDataSourceId: queryParams.dataSourceId ? queryParams.dataSourceId : '',
+  });
+
   const getDetectorOptions = (detectorsIdMap: {
     [key: string]: DetectorListItem;
   }) => {
@@ -107,6 +131,14 @@ export function DashboardOverview() {
     setSelectedDetectorStates(selectedStates);
     setAllDetectorStatesSelected(isEmpty(selectedStates));
   };
+
+  const handleDataSourceChange = (e) => {
+    const dataConnectionId = e[0] ? e[0].id : undefined;
+    setMDSOverviewState({
+      queryParams: dataConnectionId,
+      selectedDataSourceId: dataConnectionId,
+    });
+  }
 
   const opensearchState = useSelector((state: AppState) => state.opensearch);
 
@@ -157,14 +189,22 @@ export function DashboardOverview() {
   };
 
   const intializeDetectors = async () => {
-    dispatch(getDetectorList(GET_ALL_DETECTORS_QUERY_PARAMS));
+    dispatch(getDetectorList(getAllDetectorsQueryParamsWithDataSourceId(MDSOverviewState.selectedDataSourceId)));
     dispatch(getIndices(''));
     dispatch(getAliases(''));
   };
 
   useEffect(() => {
+    const { history, location } = props;
+    const updatedParams = {
+      dataSourceId: MDSOverviewState.selectedDataSourceId,
+    };
+    history.replace({
+      ...location,
+      search: queryString.stringify(updatedParams),
+    })
     intializeDetectors();
-  }, []);
+  }, [MDSOverviewState]);
 
   useEffect(() => {
     if (errorGettingDetectors) {
@@ -193,13 +233,26 @@ export function DashboardOverview() {
     filterSelectedDetectors(
       selectedDetectorsName,
       selectedDetectorStates,
-      selectedIndices
+      selectedIndices,
     );
   }, [selectedDetectorsName, selectedIndices, selectedDetectorStates]);
+
+  const DataSourceMenu = props.dataSourceManagement.ui.getDataSourceMenu<DataSourceSelectableConfig>();
 
   return (
     <div style={{ height: '1200px' }}>
       <Fragment>
+        <DataSourceMenu
+          setMenuMountPoint={props.setActionMenu}
+          componentType={'DataSourceSelectable'}
+          componentConfig={{
+            savedObjects:getSavedObjectsClient(),
+            notifications:getNotifications(),
+            hideLocalCluster: true,
+            fullWidth: true,
+            onSelectedDataSources: (dataSources) => handleDataSourceChange(dataSources),
+          }}
+        />
         <DashboardHeader hasDetectors={totalRealtimeDetectors > 0} />
         {isLoadingDetectors ? (
           <div>

@@ -18,7 +18,7 @@ import {
 import handleActions from '../utils/handleActions';
 import { Detector, DetectorListItem } from '../../models/interfaces';
 import { AD_NODE_API } from '../../../utils/constants';
-import { GetDetectorsQueryParams } from '../../../server/models/types';
+import { GetDetectorsQueryParams, MDSQueryParams } from '../../../server/models/types';
 import { cloneDeep, get } from 'lodash';
 import moment from 'moment';
 import { DETECTOR_STATE } from '../../../server/utils/constants';
@@ -369,7 +369,8 @@ const reducer = handleActions<Detectors>(
   initialDetectorsState
 );
 
-export const createDetector = (requestBody: Detector): APIAction => ({
+export const createDetector = (requestBody: Detector): APIAction => (
+  {
   type: CREATE_DETECTOR,
   request: (client: HttpSetup) =>
     client.post(`..${AD_NODE_API.DETECTOR}`, {
@@ -388,20 +389,24 @@ export const validateDetector = (
     }),
 });
 
-export const getDetector = (detectorId: string): APIAction => ({
-  type: GET_DETECTOR,
-  request: (client: HttpSetup) =>
-    client.get(`..${AD_NODE_API.DETECTOR}/${detectorId}`),
-  detectorId,
-});
+export const getDetector = (detectorId: string): APIAction => {
+  return {  
+    type: GET_DETECTOR,
+    request: (client: HttpSetup) => 
+      client.get(`..${AD_NODE_API.DETECTOR}/${detectorId}`),
+    detectorId,
+  };
+};
 
-export const getDetectorList = (
-  queryParams: GetDetectorsQueryParams
-): APIAction => ({
-  type: GET_DETECTOR_LIST,
-  request: (client: HttpSetup) =>
-    client.get(`..${AD_NODE_API.DETECTOR}`, { query: queryParams }),
-});
+
+export const getDetectorList = (queryParams: GetDetectorsQueryParams): APIAction => {
+  console.log(queryParams);
+  return {
+    type: GET_DETECTOR_LIST,
+    request: (client: HttpSetup) =>
+      client.get(`..${AD_NODE_API.DETECTOR}`, { query: queryParams }),
+  };
+};
 
 export const searchDetector = (requestBody: any): APIAction => ({
   type: SEARCH_DETECTOR,

@@ -17,11 +17,9 @@ import {
   EuiFlexItem,
   EuiPagination,
 } from '@elastic/eui';
-import React, { useState } from 'react';
+import React from 'react';
 import { getDetectorStateOptions } from '../../utils/helpers';
 import { DETECTOR_STATE } from '../../../../utils/constants';
-import { ClusterSelector } from '../../../../../../../src/plugins/data_source_management/public';
-import { getNotifications, getSavedObjectsClient } from '../../../../services';
 
 interface ListFiltersProps {
   activePage: number;
@@ -32,7 +30,6 @@ interface ListFiltersProps {
   indexOptions: EuiComboBoxOptionProps[];
   onDetectorStateChange: (options: EuiComboBoxOptionProps[]) => void;
   onIndexChange: (options: EuiComboBoxOptionProps[]) => void;
-  onDataSourceChange: (e: any) => void;
   onSearchDetectorChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   onSearchIndexChange: (searchValue: string) => void;
   onPageClick: (pageNumber: number) => void;
@@ -65,17 +62,6 @@ export const ListFilters = (props: ListFiltersProps) => (
         }
         fullWidth={true}
       />
-    </EuiFlexItem>
-    <EuiFlexItem>
-      <ClusterSelector 
-        savedObjectsClient={getSavedObjectsClient()}
-        notifications={getNotifications()}
-        onSelectedDataSource={props.onDataSourceChange}
-        disabled={false}  
-        hideLocalCluster={false}     
-        fullWidth={true}   
-      />
-    
     </EuiFlexItem>
     
     <EuiFlexItem>

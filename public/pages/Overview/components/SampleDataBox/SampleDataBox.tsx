@@ -34,6 +34,7 @@ interface SampleDataBoxProps {
   isDataLoaded: boolean;
   detectorId: string;
   buttonDataTestSubj?: string;
+  dataSourceId?: string;
 }
 
 export const SampleDataBox = (props: SampleDataBoxProps) => {
@@ -114,7 +115,7 @@ export const SampleDataBox = (props: SampleDataBoxProps) => {
               {props.isDataLoaded ? (
                 <EuiLink
                   data-test-subj="viewSampleDetectorLink"
-                  href={`${PLUGIN_NAME}#/detectors/${props.detectorId}`}
+                  href={`${PLUGIN_NAME}#/detectors/${props.detectorId}/results?dataSourceId=${props.dataSourceId}`}
                 >
                   View detector and sample data
                 </EuiLink>

@@ -34,6 +34,7 @@ import { SAMPLE_TYPE } from '../../../../server/utils/constants';
 import {
   GET_SAMPLE_DETECTORS_QUERY_PARAMS,
   GET_SAMPLE_INDICES_QUERY,
+  getSampleDetectorsQueryParamsWithDataSouceId,
 } from '../../utils/constants';
 import { AppState } from '../../../redux/reducers';
 import { getDetectorList } from '../../../redux/reducers/ad';
@@ -54,14 +55,31 @@ import {
 import { SampleDataBox } from '../components/SampleDataBox/SampleDataBox';
 import { SampleDetailsFlyout } from '../components/SampleDetailsFlyout/SampleDetailsFlyout';
 import { prettifyErrorMessage } from '../../../../server/utils/helpers';
-import { CoreStart } from '../../../../../../src/core/public';
+import { CoreStart, MountPoint } from '../../../../../../src/core/public';
 import { CoreServicesContext } from '../../../components/CoreServices/CoreServices';
 import ContentPanel from '../../../components/ContentPanel/ContentPanel';
 import { CreateWorkflowStepDetails } from '../components/CreateWorkflowStepDetails';
 import { CreateWorkflowStepSeparator } from '../components/CreateWorkflowStepSeparator';
+import { DataSourceManagementPluginSetup, DataSourceSelectableConfig } from '../../../../../../src/plugins/data_source_management/public';
+import { getNotifications, getSavedObjectsClient } from '../../../../public/services';
+import { MDSQueryParams } from 'server/models/types';
+import { RouteComponentProps } from 'react-router-dom';
+import queryString from 'querystring';
+import { getURLQueryParams } from '../../../../public/pages/DetectorsList/utils/helpers';
 
-interface AnomalyDetectionOverviewProps {
+interface AnomalyDetectionOverviewProps extends RouteComponentProps<OverviewRouterParams> {
   isLoadingDetectors: boolean;
+  dataSourceManagement: DataSourceManagementPluginSetup;
+  setActionMenu: (menuMount: MountPoint | undefined) => void;
+}
+
+interface OverviewRouterParams {
+  dataSourceId: string;
+}
+
+interface MDSOverviewState {
+  queryParams: MDSQueryParams;
+  selectedDataSourceId: string;
 }
 
 export function AnomalyDetectionOverview(props: AnomalyDetectionOverviewProps) {
@@ -70,6 +88,8 @@ export function AnomalyDetectionOverview(props: AnomalyDetectionOverviewProps) {
   const visibleSampleIndices = useSelector(
     (state: AppState) => state.opensearch.indices
   );
+
+  console.log(props);
 
   const allSampleDetectors = Object.values(
     useSelector((state: AppState) => state.ad.detectorList)
@@ -86,9 +106,15 @@ export function AnomalyDetectionOverview(props: AnomalyDetectionOverviewProps) {
     useState<boolean>(false);
   const [showHostHealthDetailsFlyout, setShowHostHealthDetailsFlyout] =
     useState<boolean>(false);
+  
+  const queryParams = getURLQueryParams(props.location);
+  const [MDSOverviewState, setMDSOverviewState] = useState<MDSOverviewState>({
+    queryParams,
+    selectedDataSourceId: queryParams.dataSourceId ? queryParams.dataSourceId : '',
+  });
 
   const getAllSampleDetectors = async () => {
-    await dispatch(getDetectorList(GET_SAMPLE_DETECTORS_QUERY_PARAMS)).catch(
+    await dispatch(getDetectorList(getSampleDetectorsQueryParamsWithDataSouceId(MDSOverviewState.selectedDataSourceId))).catch(
       (error: any) => {
         console.error('Error getting all detectors: ', error);
       }
@@ -108,9 +134,17 @@ export function AnomalyDetectionOverview(props: AnomalyDetectionOverviewProps) {
 
   // Getting all initial sample detectors & indices
   useEffect(() => {
+    const { history, location } = props;
+    const updatedParams = {
+      dataSourceId: MDSOverviewState.selectedDataSourceId,
+    };
+    history.replace({
+      ...location,
+      search: queryString.stringify(updatedParams),
+    })
     getAllSampleDetectors();
     getAllSampleIndices();
-  }, []);
+  }, [MDSOverviewState]);
 
   // Create and populate sample index, create and start sample detector
   const handleLoadData = async (
@@ -175,6 +209,16 @@ export function AnomalyDetectionOverview(props: AnomalyDetectionOverviewProps) {
     }
   };
 
+  const handleDataSourceChange = (e) => {
+    const dataConnectionId = e[0] ? e[0].id : undefined;
+    setMDSOverviewState({
+      queryParams: dataConnectionId,
+      selectedDataSourceId: dataConnectionId,
+    });
+  }
+
+  const DataSourceMenu = props.dataSourceManagement.ui.getDataSourceMenu<DataSourceSelectableConfig>();
+
   return props.isLoadingDetectors ? (
     <div>
       <EuiLoadingSpinner size="xl" />
@@ -182,6 +226,17 @@ export function AnomalyDetectionOverview(props: AnomalyDetectionOverviewProps) {
   ) : (
     <Fragment>
       <EuiPageHeader>
+        <DataSourceMenu
+          setMenuMountPoint={props.setActionMenu}
+          componentType={'DataSourceSelectable'}
+          componentConfig={{
+            savedObjects:getSavedObjectsClient(),
+            notifications:getNotifications(),
+            hideLocalCluster: true,
+            fullWidth: true,
+            onSelectedDataSources: (dataSources) => handleDataSourceChange(dataSources),
+          }}
+        />
         <EuiFlexGroup justifyContent="spaceBetween">
           <EuiFlexItem grow={false}>
             <EuiTitle size="l" data-test-subj="overviewTitle">
@@ -274,6 +329,7 @@ export function AnomalyDetectionOverview(props: AnomalyDetectionOverviewProps) {
                 sampleHttpResponses.detectorName,
                 sampleHttpResponses.legacyDetectorName
               )}
+              dataSourceId={MDSOverviewState.selectedDataSourceId}
             />
           </EuiFlexItem>
           <EuiFlexItem>
@@ -306,6 +362,7 @@ export function AnomalyDetectionOverview(props: AnomalyDetectionOverviewProps) {
                 sampleEcommerce.detectorName,
                 sampleEcommerce.legacyDetectorName
               )}
+              dataSourceId={MDSOverviewState.selectedDataSourceId}
             />
           </EuiFlexItem>
           <EuiFlexItem>
@@ -340,6 +397,7 @@ export function AnomalyDetectionOverview(props: AnomalyDetectionOverviewProps) {
                 sampleHostHealth.detectorName,
                 sampleHostHealth.legacyDetectorName
               )}
+              dataSourceId={MDSOverviewState.selectedDataSourceId}
             />
           </EuiFlexItem>
           <EuiSpacer size="m" />

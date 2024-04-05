@@ -22,6 +22,7 @@ import {
   OpenSearchDashboardsResponseFactory,
   IOpenSearchDashboardsResponse,
 } from '../../../../src/core/server';
+import { getClientBasedOnDataSource } from '../utils/helpers';
 
 export function registerAlertingRoutes(
   apiRouter: Router,
@@ -33,9 +34,11 @@ export function registerAlertingRoutes(
 
 export default class AlertingService {
   private client: any;
+  dataSourceEnabled: boolean;
 
-  constructor(client: any) {
+  constructor(client: any, dataSourceEnabled: boolean) {
     this.client = client;
+    this.dataSourceEnabled = dataSourceEnabled;
   }
 
   searchMonitors = async (
@@ -71,9 +74,16 @@ export default class AlertingService {
           },
         },
       };
-      const response: SearchResponse<Monitor> = await this.client
-        .asScoped(request)
-        .callAsCurrentUser('alerting.searchMonitors', { body: requestBody });
+
+      const callWithRequest = getClientBasedOnDataSource(
+        context, 
+        this.dataSourceEnabled, 
+        request, 
+        '4585f560-d1ef-11ee-aa63-2181676cc573',
+        this.client);
+
+      const response: SearchResponse<Monitor> = await callWithRequest(
+        'alerting.searchMonitors', { body: requestBody });
       const totalMonitors = get(response, 'hits.total.value', 0);
       const allMonitors = get(response, 'hits.hits', []).reduce(
         (acc: any, monitor: any) => ({
@@ -123,9 +133,16 @@ export default class AlertingService {
         startTime?: number;
         endTime?: number;
       };
-      const response = await this.client
-        .asScoped(request)
-        .callAsCurrentUser('alerting.searchAlerts', {
+
+      const callWithRequest = getClientBasedOnDataSource(
+        context, 
+        this.dataSourceEnabled, 
+        request, 
+        '4585f560-d1ef-11ee-aa63-2181676cc573',
+        this.client);
+
+      const response = await callWithRequest(
+        'alerting.searchAlerts', {
           monitorId: monitorId,
           startTime: startTime,
           endTime: endTime,

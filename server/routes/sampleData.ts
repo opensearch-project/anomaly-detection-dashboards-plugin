@@ -35,9 +35,11 @@ export function registerSampleDataRoutes(
 
 export default class SampleDataService {
   private client: any;
+  dataSourceEnabled: boolean;
 
-  constructor(client: any) {
+  constructor(client: any, dataSourceEnabled: boolean) {
     this.client = client;
+    this.dataSourceEnabled = dataSourceEnabled;
   }
 
   // Get the zip file stored in server, unzip it, and bulk insert it

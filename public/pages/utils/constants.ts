@@ -53,6 +53,7 @@ export const DEFAULT_QUERY_PARAMS = {
   size: 20,
   sortDirection: SORT_DIRECTION.ASC,
   sortField: 'name',
+  dataSourceId: '',
 };
 
 export const GET_ALL_DETECTORS_QUERY_PARAMS = {
@@ -63,6 +64,28 @@ export const GET_ALL_DETECTORS_QUERY_PARAMS = {
   sortDirection: SORT_DIRECTION.ASC,
   sortField: 'name',
 };
+
+export const getAllDetectorsQueryParamsWithDataSourceId = (dataSourceId: string) => ({
+  from: 0,
+  search: '',
+  indices: '',
+  size: MAX_DETECTORS,
+  sortDirection: SORT_DIRECTION.ASC,
+  sortField: 'name',
+  dataSourceId: dataSourceId,
+});
+
+
+export const getSampleDetectorsQueryParamsWithDataSouceId = (dataSourceId: string) => (
+  {
+  from: 0,
+  search: 'sample',
+  indices: '',
+  size: MAX_DETECTORS,
+  sortDirection: SORT_DIRECTION.ASC,
+  sortField: 'name',
+  dataSourceId: dataSourceId,
+});
 
 export const GET_SAMPLE_DETECTORS_QUERY_PARAMS = {
   from: 0,

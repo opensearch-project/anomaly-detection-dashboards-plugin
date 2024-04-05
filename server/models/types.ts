@@ -109,6 +109,10 @@ export type DetectorResultsQueryParams = {
   dateRangeFilter?: DateRangeFilter;
 };
 
+export type MDSQueryParams = {
+  dataSourceId?: string;
+}
+
 export type Entity = {
   name: string;
   value: string;

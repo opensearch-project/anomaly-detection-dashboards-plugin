@@ -205,9 +205,10 @@ export const DetectorList = (props: ListProps) => {
   const visibleAliases = get(opensearchState, 'aliases', []) as IndexAlias[];
   const indexOptions = getVisibleOptions(visibleIndices, visibleAliases);
 
+  const queryParams = getURLQueryParams(props.location);
   const [state, setState] = useState<ListState>({
     page: 0,
-    queryParams: getURLQueryParams(props.location),
+    queryParams: queryParams,
     selectedDetectorStates: ALL_DETECTOR_STATES,
     selectedIndices: queryParams.indices
       ? queryParams.indices.split(',')
@@ -258,7 +259,7 @@ export const DetectorList = (props: ListProps) => {
       state.selectedIndices,
       state.selectedDetectorStates,
       state.queryParams.sortField,
-      state.queryParams.sortDirection
+      state.queryParams.sortDirection,
     );
     setSelectedDetectors(curSelectedDetectors);
 
@@ -291,7 +292,6 @@ export const DetectorList = (props: ListProps) => {
       }
     }
   }, [confirmModalState.isRequestingToClose, isLoading]);
-
   const getUpdatedDetectors = async () => {
     dispatch(
       getDetectorList(
@@ -377,14 +377,6 @@ export const DetectorList = (props: ListProps) => {
       selectedIndices: indices,
     });
   };
-
-  const [selectedDataSource, setSelectedDataSource] = useState<string>();
-
-  const handleDataSourceChange = (e) => {
-    const dataConnectionId = e[0] ? e[0].id : undefined;
-    setSelectedDataSource(dataConnectionId);
-    console.log(dataConnectionId);
-  }
 
   const handleResetFilter = () => {
     setState((state) => ({
@@ -731,7 +723,6 @@ export const DetectorList = (props: ListProps) => {
             indexOptions={indexOptions}
             onDetectorStateChange={handleDetectorStateChange}
             onIndexChange={handleIndexChange}
-            onDataSourceChange={handleDataSourceChange}
             onSearchDetectorChange={handleSearchDetectorChange}
             onSearchIndexChange={handleSearchIndexChange}
             onPageClick={handlePageChange}

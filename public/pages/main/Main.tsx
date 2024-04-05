@@ -21,11 +21,12 @@ import { APP_PATH } from '../../utils/constants';
 import { DetectorDetail } from '../DetectorDetail';
 import { DefineDetector } from '../DefineDetector/containers/DefineDetector';
 import { ConfigureModel } from '../ConfigureModel/containers/ConfigureModel';
-import { DashboardOverview } from '../Dashboard/Container/DashboardOverview';
+import { DashboardOverview, DashboardOverviewRouterParams } from '../Dashboard/Container/DashboardOverview';
 import { CoreServicesConsumer } from '../../components/CoreServices/CoreServices';
 import { CoreStart, MountPoint } from '../../../../../src/core/public';
 import { AnomalyDetectionOverview } from '../Overview';
 import { DataSourceManagementPluginSetup } from '../../../../../src/plugins/data_source_management/public';
+import { getURLQueryParams } from '../DetectorsList/utils/helpers';
 
 enum Navigation {
   AnomalyDetection = 'Anomaly detection',
@@ -51,6 +52,23 @@ export function Main(props: MainProps) {
   const totalDetectors = adState.totalDetectors;
   const errorGettingDetectors = adState.errorMessage;
   const isLoadingDetectors = adState.requesting;
+  const queryParams = getURLQueryParams(props.location);
+  const dataSourceId = queryParams.dataSourceId ? queryParams.dataSourceId : '';
+
+  const constructHrefWithDataSourceId = (basePath, existingParams, dataSourceId) => {
+    // Construct the full URL
+    const fullUrl = `${window.location.origin}${basePath}?${existingParams}`;
+    //console.log("fullUrl: ", fullUrl);
+    const url = new URL(fullUrl);
+    //console.log(url);
+    url.searchParams.set('dataSourceId', dataSourceId);  // Append or update dataSourceId
+    
+    // Return the constructed URL, excluding the origin part to match your structure
+    return `#${url.pathname}${url.search}`;
+  };
+
+  const existingParams = "from=0&size=20&search=&indices=&sortField=name&sortDirection=asc&dataSourceId=4585f560-d1ef-11ee-aa63-2181676cc573";  
+
   const sideNav = [
     {
       name: Navigation.AnomalyDetection,
@@ -60,13 +78,13 @@ export function Main(props: MainProps) {
         {
           name: Navigation.Dashboard,
           id: 1,
-          href: `#${APP_PATH.DASHBOARD}`,
+          href: `#${APP_PATH.DASHBOARD}?dataSourceId=${dataSourceId}`,
           isSelected: props.location.pathname === APP_PATH.DASHBOARD,
         },
         {
           name: Navigation.Detectors,
           id: 2,
-          href: `#${APP_PATH.LIST_DETECTORS}`,
+          href: constructHrefWithDataSourceId(APP_PATH.LIST_DETECTORS, existingParams, dataSourceId),
           isSelected: props.location.pathname === APP_PATH.LIST_DETECTORS,
         },
       ],
@@ -85,7 +103,12 @@ export function Main(props: MainProps) {
               <Switch>
                 <Route
                   path={APP_PATH.DASHBOARD}
-                  render={(props: RouteComponentProps) => <DashboardOverview />}
+                  render={(props: RouteComponentProps<DashboardOverviewRouterParams>) => 
+                    <DashboardOverview 
+                      dataSourceManagement={dataSourceManagement}
+                      setActionMenu={setHeaderActionMenu}
+                      {...props}
+                    />}
                 />
                 <Route
                   exact
@@ -122,9 +145,15 @@ export function Main(props: MainProps) {
                 />
                 <Route
                   path={APP_PATH.DETECTOR_DETAIL}
-                  render={(props: RouteComponentProps) => (
-                    <DetectorDetail {...props} />
-                  )}
+                  render={(props: RouteComponentProps) => {
+                    return (
+                      <DetectorDetail 
+                        dataSourceEnabled={dataSourceEnabled}
+                        dataSourceManagement={dataSourceManagement}
+                        setActionMenu={setHeaderActionMenu}
+                        {...props} />
+                    );
+                  }}
                 />
                 <Route
                   exact
@@ -135,22 +164,37 @@ export function Main(props: MainProps) {
                 />
                 <Route
                   path={APP_PATH.OVERVIEW}
-                  render={() => (
+                  render={(props: RouteComponentProps) => (
                     <AnomalyDetectionOverview
                       isLoadingDetectors={isLoadingDetectors}
+                      dataSourceManagement={dataSourceManagement}
+                      setActionMenu={setHeaderActionMenu}
+                      {...props}
                     />
                   )}
                 />
-                <Route path="/">
-                  {totalDetectors > 0 ? (
-                    // </div>
-                    <DashboardOverview />
-                  ) : (
-                    <AnomalyDetectionOverview
-                      isLoadingDetectors={isLoadingDetectors}
-                    />
-                  )}
-                </Route>
+                <Route 
+                  path="/"
+                  render={(props: RouteComponentProps<DashboardOverviewRouterParams>) => 
+                    totalDetectors > 0 ? (
+                      <DashboardOverview 
+                        dataSourceManagement={dataSourceManagement}
+                        setActionMenu={setHeaderActionMenu}
+                        {...props}
+                      />
+                    ) : (
+                      <AnomalyDetectionOverview
+                        isLoadingDetectors={isLoadingDetectors}
+                        dataSourceManagement={dataSourceManagement}
+                        setActionMenu={setHeaderActionMenu}
+                        {...props}
+                      />
+                    )
+                  }
+                />        
+
+
+                  
               </Switch>
             </EuiPageBody>
           </EuiPage>

@@ -33,8 +33,6 @@ import { ModelConfigurationFormikValues } from '../../../ConfigureModel/models/i
 import { INITIAL_MODEL_CONFIGURATION_VALUES } from '../../../ConfigureModel/utils/constants';
 import { FILTER_TYPES } from '../../../../models/interfaces';
 import { getNotifications, getSavedObjectsClient } from '../../../../services';
-import { ClusterSelector } from '../../../../../../../src/plugins/data_source_management/public';
-
 
 interface DataSourceProps {
   formikProps: FormikProps<DetectorDefinitionFormikValues>;
@@ -105,18 +103,6 @@ export function DataSource(props: DataSourceProps) {
 
   return (
     <ContentPanel title="Data Source" titleSize="s">
-      <FormattedFormRow
-        title='Cluster Source'>
-          <ClusterSelector 
-          savedObjectsClient={getSavedObjectsClient()}
-          notifications={getNotifications()}
-          onSelectedDataSource={onSelectedDataSource}
-          disabled={false}  
-          hideLocalCluster={false}     
-          fullWidth={true}   
-          />
-
-      </FormattedFormRow>
       
       {props.isEdit && isDifferentIndex() ? (
         <div>

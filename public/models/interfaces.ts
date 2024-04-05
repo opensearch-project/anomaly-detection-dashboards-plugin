@@ -205,6 +205,7 @@ export type Detector = {
   taskState?: DETECTOR_STATE;
   taskProgress?: number;
   taskError?: string;
+  dataSourceId? : string;
 };
 
 export type DetectorListItem = {
