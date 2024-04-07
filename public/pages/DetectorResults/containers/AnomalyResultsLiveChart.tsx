@@ -60,6 +60,7 @@ import { getDetectorLiveResults } from '../../../redux/reducers/liveAnomalyResul
 
 interface AnomalyResultsLiveChartProps {
   detector: Detector;
+  dataSourceId: string;
 }
 
 export const AnomalyResultsLiveChart = (
@@ -80,6 +81,7 @@ export const AnomalyResultsLiveChart = (
     'detectionInterval.period.interval',
     1
   );
+  const dataSourceId = props.dataSourceId;
   const startDateTime = moment().subtract(
     detectionInterval * LIVE_CHART_CONFIG.MONITORING_INTERVALS,
     'minutes'
@@ -133,6 +135,7 @@ export const AnomalyResultsLiveChart = (
         await dispatch(
           getDetectorLiveResults(
             detectorId,
+            dataSourceId,
             queryParams,
             false,
             resultIndex,

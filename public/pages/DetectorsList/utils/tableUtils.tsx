@@ -65,9 +65,9 @@ export const staticColumn = [
     align: 'left',
     width: '15%',
     render: (name: string, detector: Detector) => (
-      <EuiLink href={`${PLUGIN_NAME}#/detectors/${detector.id}`}>
-        {name}
-      </EuiLink>
+    <EuiLink href={`${PLUGIN_NAME}#/detectors/${detector.id}/results?dataSourceId=${detector.dataSourceId}`}>        
+      {name}
+    </EuiLink>
     ),
   },
   {
@@ -112,7 +112,7 @@ export const staticColumn = [
     width: '15%',
     render: (name: string, detector: Detector) => {
       return !isEmpty(detector.taskId) ? (
-        <EuiLink href={`${PLUGIN_NAME}#/detectors/${detector.id}/historical`}>
+        <EuiLink href={`${PLUGIN_NAME}#/detectors/${detector.id}/historical?dataSourceId=${detector.dataSourceId}`}>
           View results
         </EuiLink>
       ) : (

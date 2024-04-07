@@ -123,7 +123,11 @@ export function Main(props: MainProps) {
                 <Route
                   path={APP_PATH.DETECTOR_DETAIL}
                   render={(props: RouteComponentProps) => (
-                    <DetectorDetail {...props} />
+                    <DetectorDetail 
+                      dataSourceEnabled={dataSourceEnabled}
+                      dataSourceManagement={dataSourceManagement}
+                      setActionMenu={setHeaderActionMenu}
+                      {...props} />
                   )}
                 />
                 <Route

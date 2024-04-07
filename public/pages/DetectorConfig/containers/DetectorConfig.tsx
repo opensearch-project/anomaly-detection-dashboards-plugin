@@ -21,6 +21,7 @@ import { getDetector } from '../../../redux/reducers/ad';
 import { EuiLoadingSpinner } from '@elastic/eui';
 interface DetectorConfigProps extends RouteComponentProps {
   detectorId: string;
+  dataSourceId: string;
   onEditFeatures(): void;
   onEditDetector(): void;
 }
@@ -32,7 +33,7 @@ export function DetectorConfig(props: DetectorConfigProps) {
   );
 
   useEffect(() => {
-    dispatch(getDetector(props.detectorId));
+    dispatch(getDetector(props.detectorId, props.dataSourceId));
   }, []);
 
   return (

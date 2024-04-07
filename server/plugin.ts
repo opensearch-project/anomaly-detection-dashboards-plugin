@@ -89,7 +89,7 @@ export class AnomalyDetectionOpenSearchDashboardsPlugin
     // Create services & register with OpenSearch client
     const adService = new AdService(client, dataSourceEnabled);
     const alertingService = new AlertingService(client);
-    const opensearchService = new OpenSearchService(client);
+    const opensearchService = new OpenSearchService(client, dataSourceEnabled);
     const sampleDataService = new SampleDataService(client);
 
     // Register server routes with the service

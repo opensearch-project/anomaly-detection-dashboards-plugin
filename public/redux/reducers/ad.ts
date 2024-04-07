@@ -388,11 +388,11 @@ export const validateDetector = (
     }),
 });
 
-export const getDetector = (detectorId: string): APIAction => ({
+export const getDetector = (detectorId: string, dataSourceId: string): APIAction => ({
   type: GET_DETECTOR,
-  request: (client: HttpSetup) =>
-    client.get(`..${AD_NODE_API.DETECTOR}/${detectorId}`),
-  detectorId,
+  request: (client: HttpSetup) => 
+    client.get(`..${AD_NODE_API.DETECTOR}/${detectorId}/${dataSourceId}`),
+  detectorId, dataSourceId
 });
 
 export const getDetectorList = (
@@ -423,28 +423,29 @@ export const updateDetector = (
   detectorId,
 });
 
-export const deleteDetector = (detectorId: string): APIAction => ({
+export const deleteDetector = (detectorId: string, dataSourceId: string): APIAction => ({
   type: DELETE_DETECTOR,
   request: (client: HttpSetup) =>
-    client.delete(`..${AD_NODE_API.DETECTOR}/${detectorId}`),
+    client.delete(`..${AD_NODE_API.DETECTOR}/${detectorId}/${dataSourceId}`),
   detectorId,
 });
 
-export const startDetector = (detectorId: string): APIAction => ({
+export const startDetector = (detectorId: string, dataSourceId: string): APIAction => ({
   type: START_DETECTOR,
   request: (client: HttpSetup) =>
-    client.post(`..${AD_NODE_API.DETECTOR}/${detectorId}/start`),
+    client.post(`..${AD_NODE_API.DETECTOR}/${detectorId}/${dataSourceId}/start`),
   detectorId,
 });
 
 export const startHistoricalDetector = (
   detectorId: string,
+  dataSourceId: string,
   startTime: number,
   endTime: number
 ): APIAction => ({
   type: START_HISTORICAL_DETECTOR,
   request: (client: HttpSetup) =>
-    client.post(`..${AD_NODE_API.DETECTOR}/${detectorId}/start`, {
+    client.post(`..${AD_NODE_API.DETECTOR}/${detectorId}/${dataSourceId}/start`, {
       body: JSON.stringify({
         startTime: startTime,
         endTime: endTime,
@@ -455,17 +456,17 @@ export const startHistoricalDetector = (
   endTime,
 });
 
-export const stopDetector = (detectorId: string): APIAction => ({
+export const stopDetector = (detectorId: string, dataSourceId: string): APIAction => ({
   type: STOP_DETECTOR,
   request: (client: HttpSetup) =>
-    client.post(`..${AD_NODE_API.DETECTOR}/${detectorId}/stop/${false}`),
+    client.post(`..${AD_NODE_API.DETECTOR}/${detectorId}/${dataSourceId}/stop/${false}`),
   detectorId,
 });
 
-export const stopHistoricalDetector = (detectorId: string): APIAction => ({
+export const stopHistoricalDetector = (detectorId: string, dataSourceId: string): APIAction => ({
   type: STOP_HISTORICAL_DETECTOR,
   request: (client: HttpSetup) =>
-    client.post(`..${AD_NODE_API.DETECTOR}/${detectorId}/stop/${true}`),
+    client.post(`..${AD_NODE_API.DETECTOR}/${detectorId}/${dataSourceId}/stop/${true}`),
   detectorId,
 });
 

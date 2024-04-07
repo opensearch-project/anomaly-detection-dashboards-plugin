@@ -53,6 +53,7 @@ import { HistoricalDetectorCallout } from '../components/HistoricalDetectorCallo
 
 interface HistoricalDetectorResultsProps extends RouteComponentProps {
   detectorId: string;
+  dataSourceId: string;
 }
 
 export function HistoricalDetectorResults(
@@ -62,6 +63,7 @@ export function HistoricalDetectorResults(
   const isDark = darkModeEnabled();
   const dispatch = useDispatch();
   const detectorId: string = get(props, 'match.params.detectorId', '');
+  const dataSourceId = props.dataSourceId;
 
   const adState = useSelector((state: AppState) => state.ad);
   const allDetectors = adState.detectors;
@@ -81,7 +83,7 @@ export function HistoricalDetectorResults(
 
   const fetchDetector = async () => {
     try {
-      await dispatch(getDetector(detectorId));
+      await dispatch(getDetector(detectorId, dataSourceId));
     } catch {}
   };
 
@@ -113,7 +115,7 @@ export function HistoricalDetectorResults(
 
   const startHistoricalTask = async (startTime: number, endTime: number) => {
     try {
-      dispatch(startHistoricalDetector(props.detectorId, startTime, endTime))
+      dispatch(startHistoricalDetector(props.detectorId, dataSourceId, startTime, endTime))
         .then((response: any) => {
           setTaskId(get(response, 'response._id'));
           core.notifications.toasts.addSuccess(
@@ -141,9 +143,9 @@ export function HistoricalDetectorResults(
   const onStopDetector = async () => {
     try {
       setIsStoppingDetector(true);
-      await dispatch(stopHistoricalDetector(detectorId));
+      await dispatch(stopHistoricalDetector(detectorId, dataSourceId));
       await waitForMs(HISTORICAL_DETECTOR_STOP_THRESHOLD);
-      dispatch(getDetector(detectorId)).then((response: any) => {
+      dispatch(getDetector(detectorId, dataSourceId)).then((response: any) => {
         if (get(response, 'response.curState') !== DETECTOR_STATE.DISABLED) {
           throw 'please try again.';
         } else {
@@ -254,6 +256,7 @@ export function HistoricalDetectorResults(
                   <AnomalyHistory
                     key={taskId}
                     detector={detector}
+                    dataSourceId={dataSourceId}
                     monitor={undefined}
                     isFeatureDataMissing={false}
                     isHistorical={true}

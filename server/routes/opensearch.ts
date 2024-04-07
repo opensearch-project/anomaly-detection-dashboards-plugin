@@ -27,6 +27,7 @@ import {
   OpenSearchDashboardsResponseFactory,
   IOpenSearchDashboardsResponse,
 } from '../../../../src/core/server';
+import { getClientBasedOnDataSource } from '../utils/helpers';
 
 type SearchParams = {
   index: string;
@@ -38,7 +39,7 @@ export function registerOpenSearchRoutes(
   apiRouter: Router,
   opensearchService: OpenSearchService
 ) {
-  apiRouter.get('/_indices', opensearchService.getIndices);
+  apiRouter.get('/_indices/{dataSourceId}', opensearchService.getIndices);
   apiRouter.get('/_aliases', opensearchService.getAliases);
   apiRouter.get('/_mappings', opensearchService.getMapping);
   apiRouter.post('/_search', opensearchService.executeSearch);
@@ -49,9 +50,11 @@ export function registerOpenSearchRoutes(
 
 export default class OpenSearchService {
   private client: any;
+  dataSourceEnabled: boolean;
 
-  constructor(client: any) {
+  constructor(client: any, dataSourceEnabled: boolean) {
     this.client = client;
+    this.dataSourceEnabled = dataSourceEnabled;
   }
 
   executeSearch = async (
@@ -112,14 +115,22 @@ export default class OpenSearchService {
     opensearchDashboardsResponse: OpenSearchDashboardsResponseFactory
   ): Promise<IOpenSearchDashboardsResponse<any>> => {
     const { index } = request.query as { index: string };
+    const { dataSourceId } = request.params as { dataSourceId: string };
     try {
-      const response: CatIndex[] = await this.client
-        .asScoped(request)
-        .callAsCurrentUser('cat.indices', {
-          index,
-          format: 'json',
-          h: 'health,index',
-        });
+      const callWithRequest = getClientBasedOnDataSource(
+        context, 
+        this.dataSourceEnabled, 
+        request, 
+        dataSourceId,
+        this.client);
+
+        const response: CatIndex[] = await callWithRequest(
+          'cat.indices', {
+            index,
+            format: 'json',
+            h: 'health,index',
+          });
+
       return opensearchDashboardsResponse.ok({
         body: { ok: true, response: { indices: response } },
       });

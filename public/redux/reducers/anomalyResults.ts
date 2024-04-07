@@ -94,6 +94,7 @@ const reducer = handleActions<Anomalies>(
 
 export const getDetectorResults = (
   id: string,
+  dataSourceId: string,
   queryParams: any,
   isHistorical: boolean,
   resultIndex: string,
@@ -104,7 +105,7 @@ export const getDetectorResults = (
         type: DETECTOR_RESULTS,
         request: (client: HttpSetup) =>
           client.get(
-            `..${AD_NODE_API.DETECTOR}/${id}/results/${isHistorical}`,
+            `..${AD_NODE_API.DETECTOR}/${id}/${dataSourceId}/results/${isHistorical}`,
             {
               query: queryParams,
             }
@@ -114,7 +115,7 @@ export const getDetectorResults = (
         type: DETECTOR_RESULTS,
         request: (client: HttpSetup) =>
           client.get(
-            `..${AD_NODE_API.DETECTOR}/${id}/results/${isHistorical}/${resultIndex}/${onlyQueryCustomResultIndex}`,
+            `..${AD_NODE_API.DETECTOR}/${id}/${dataSourceId}/results/${isHistorical}/${resultIndex}/${onlyQueryCustomResultIndex}`,
             {
               query: queryParams,
             }
@@ -124,13 +125,14 @@ export const getDetectorResults = (
 export const searchResults = (
   requestBody: any,
   resultIndex: string,
+  dataSourceId: string,
   onlyQueryCustomResultIndex: boolean
 ): APIAction =>
   !resultIndex
     ? {
         type: SEARCH_ANOMALY_RESULTS,
         request: (client: HttpSetup) =>
-          client.post(`..${AD_NODE_API.DETECTOR}/results/_search`, {
+          client.post(`..${AD_NODE_API.DETECTOR}/results/${dataSourceId}/_search`, {
             body: JSON.stringify(requestBody),
           }),
       }
@@ -138,7 +140,7 @@ export const searchResults = (
         type: SEARCH_ANOMALY_RESULTS,
         request: (client: HttpSetup) =>
           client.post(
-            `..${AD_NODE_API.DETECTOR}/results/_search/${resultIndex}/${onlyQueryCustomResultIndex}`,
+            `..${AD_NODE_API.DETECTOR}/results/${dataSourceId}/_search/${resultIndex}/${onlyQueryCustomResultIndex}`,
             {
               body: JSON.stringify(requestBody),
             }
@@ -147,13 +149,14 @@ export const searchResults = (
 
 export const getTopAnomalyResults = (
   detectorId: string,
+  dataSourceId: string,
   isHistorical: boolean,
   requestBody: any
 ): APIAction => ({
   type: GET_TOP_ANOMALY_RESULTS,
   request: (client: HttpSetup) =>
     client.post(
-      `..${AD_NODE_API.DETECTOR}/${detectorId}/_topAnomalies/${isHistorical}`,
+      `..${AD_NODE_API.DETECTOR}/${detectorId}/${dataSourceId}/_topAnomalies/${isHistorical}`,
       {
         body: JSON.stringify(requestBody),
       }
