@@ -63,12 +63,11 @@ import { DataSourceManagementPluginSetup, DataSourceViewConfig } from '../../../
 export interface DetectorRouterProps {
   detectorId?: string;
 }
-interface DetectorDetailProps
-  extends RouteComponentProps<DetectorRouterProps> {
-    dataSourceEnabled: boolean;
-    dataSourceManagement: DataSourceManagementPluginSetup;
-    setActionMenu: (menuMount: MountPoint | undefined) => void;
-  }
+interface DetectorDetailProps extends RouteComponentProps<DetectorRouterProps> {
+  dataSourceEnabled: boolean;
+  dataSourceManagement: DataSourceManagementPluginSetup;
+  setActionMenu: (menuMount: MountPoint | undefined) => void;
+}
 
 const tabs = [
   {
@@ -109,10 +108,11 @@ export const DetectorDetail = (props: DetectorDetailProps) => {
   const core = React.useContext(CoreServicesContext) as CoreStart;
   const dispatch = useDispatch();
   const detectorId = get(props, 'match.params.detectorId', '') as string;
+
   const location = useLocation();
   const queryParams = new URLSearchParams(location.search);
   const dataSourceId = queryParams.get('dataSourceId') as string;
-
+  
   const { detector, hasError, isLoadingDetector, errorMessage } =
     useFetchDetectorInfo(detectorId);
   const { monitor, fetchMonitorError, isLoadingMonitor } =
@@ -166,7 +166,7 @@ export const DetectorDetail = (props: DetectorDetailProps) => {
   // detector starts, result index recreated or user switches tabs to re-fetch detector)
   useEffect(() => {
     const getInitialIndices = async () => {
-      await dispatch(getIndices('')).catch((error: any) => {
+      await dispatch(getIndices('', dataSourceId)).catch((error: any) => {
         console.error(error);
         core.notifications.toasts.addDanger('Error getting all indices');
       });
@@ -271,8 +271,8 @@ export const DetectorDetail = (props: DetectorDetailProps) => {
       // Await for the start detector call to succeed before displaying toast.
       // Don't wait for get detector call; the page will be updated
       // via hooks automatically when the new detector info is returned.
-      await dispatch(startDetector(detectorId));
-      dispatch(getDetector(detectorId));
+      await dispatch(startDetector(detectorId, dataSourceId));
+      dispatch(getDetector(detectorId, dataSourceId));
       core.notifications.toasts.addSuccess(
         `Successfully started the detector job`
       );
@@ -288,10 +288,10 @@ export const DetectorDetail = (props: DetectorDetailProps) => {
   const handleStopAdJob = async (detectorId: string, listener?: Listener) => {
     try {
       if (isRTJobRunning) {
-        await dispatch(stopDetector(detectorId));
+        await dispatch(stopDetector(detectorId, dataSourceId));
       }
       if (isHistoricalJobRunning) {
-        await dispatch(stopHistoricalDetector(detectorId));
+        await dispatch(stopHistoricalDetector(detectorId, dataSourceId));
       }
       core.notifications.toasts.addSuccess(
         `Successfully stopped the ${runningJobsAsString}`
@@ -312,7 +312,7 @@ export const DetectorDetail = (props: DetectorDetailProps) => {
 
   const handleDelete = useCallback(async (detectorId: string) => {
     try {
-      await dispatch(deleteDetector(detectorId));
+      await dispatch(deleteDetector(detectorId, dataSourceId));
       core.notifications.toasts.addSuccess(`Successfully deleted the detector`);
       hideDeleteDetectorModal();
       props.history.push('/detectors');
@@ -360,7 +360,6 @@ export const DetectorDetail = (props: DetectorDetailProps) => {
       ></EuiCallOut>
     ) : null;
 
-
   const DataSourceMenu = props.dataSourceManagement.ui.getDataSourceMenu<DataSourceViewConfig>();
 
   return (
@@ -374,14 +373,18 @@ export const DetectorDetail = (props: DetectorDetailProps) => {
               : { ...lightStyles, flexGrow: 'unset' }),
           }}
         >
+
+        {props.dataSourceEnabled && (
           <DataSourceMenu
             setMenuMountPoint={props.setActionMenu}
             componentType={'DataSourceView'}
             componentConfig={{
-              activeOption: [{label: 'mydatasource', id: dataSourceId}],
+              // give a placeholder label for now, will update it once neo team allows empty label field
+              activeOption: [{label: 'labelPlaceHolder', id: dataSourceId}],
               fullWidth: true
             }}
           />
+        )}
           <EuiFlexGroup
             justifyContent="spaceBetween"
             style={{ padding: '10px' }}
@@ -563,7 +566,7 @@ export const DetectorDetail = (props: DetectorDetailProps) => {
             <AnomalyResults
               {...resultsProps}
               detectorId={detectorId}
-              
+              dataSourceId={dataSourceId}
               onStartDetector={() => handleStartAdJob(detectorId)}
               onStopDetector={() => handleStopAdJob(detectorId)}
               onSwitchToConfiguration={handleSwitchToConfigurationTab}
@@ -578,6 +581,7 @@ export const DetectorDetail = (props: DetectorDetailProps) => {
             <HistoricalDetectorResults
               {...configProps}
               detectorId={detectorId}
+              dataSourceId={dataSourceId}
             />
           )}
         />
@@ -588,6 +592,7 @@ export const DetectorDetail = (props: DetectorDetailProps) => {
             <DetectorConfig
               {...configProps}
               detectorId={detectorId}
+              dataSourceId={dataSourceId}
               onEditFeatures={handleEditFeature}
               onEditDetector={handleEditDetector}
             />

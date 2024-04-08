@@ -65,9 +65,9 @@ export const staticColumn = [
     align: 'left',
     width: '15%',
     render: (name: string, detector: Detector) => (
-      <EuiLink href={`${PLUGIN_NAME}#/detectors/${detector.id}/results?dataSourceId=${detector.dataSourceId}`}>
-        {name}
-      </EuiLink>
+    <EuiLink href={`${PLUGIN_NAME}#/detectors/${detector.id}/results?dataSourceId=${detector.dataSourceId}`}>        
+      {name}
+    </EuiLink>
     ),
   },
   {

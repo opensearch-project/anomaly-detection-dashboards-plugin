@@ -246,10 +246,10 @@ const reducer = handleActions<OpenSearchState>(
   initialState
 );
 
-export const getIndices = (searchKey: string = ''): APIAction => ({
+export const getIndices = (searchKey: string = '', dataSourceId: string): APIAction => ({
   type: GET_INDICES,
   request: (client: HttpSetup) =>
-    client.get(`..${AD_NODE_API._INDICES}`, { query: { index: searchKey } }),
+    client.get(`..${AD_NODE_API._INDICES}/${dataSourceId}`, { query: { index: searchKey } }),
 });
 
 export const getAliases = (searchKey: string = ''): APIAction => ({

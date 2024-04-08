@@ -35,7 +35,7 @@ import {
   setUiActions,
   setUISettings,
   setQueryService,
-  setSavedObjectsClient
+  setSavedObjectsClient,
 } from './services';
 import { AnomalyDetectionOpenSearchDashboardsPluginStart } from 'public';
 import {

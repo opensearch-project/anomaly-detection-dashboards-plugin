@@ -20,7 +20,10 @@ import {
 } from 'lodash';
 
 import { MIN_IN_MILLI_SECS } from './constants';
-import { ILegacyCustomClusterClient, LegacyCallAPIOptions, OpenSearchDashboardsRequest } from '../../../../src/core/server';
+import {
+  LegacyCallAPIOptions,
+  OpenSearchDashboardsRequest,
+} from '../../../../src/core/server';
 
 export const SHOW_DECIMAL_NUMBER_THRESHOLD = 0.01;
 

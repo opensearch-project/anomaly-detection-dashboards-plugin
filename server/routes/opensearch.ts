@@ -39,7 +39,7 @@ export function registerOpenSearchRoutes(
   apiRouter: Router,
   opensearchService: OpenSearchService
 ) {
-  apiRouter.get('/_indices', opensearchService.getIndices);
+  apiRouter.get('/_indices/{dataSourceId}', opensearchService.getIndices);
   apiRouter.get('/_aliases', opensearchService.getAliases);
   apiRouter.get('/_mappings', opensearchService.getMapping);
   apiRouter.post('/_search', opensearchService.executeSearch);
@@ -120,20 +120,22 @@ export default class OpenSearchService {
     opensearchDashboardsResponse: OpenSearchDashboardsResponseFactory
   ): Promise<IOpenSearchDashboardsResponse<any>> => {
     const { index } = request.query as { index: string };
+    const { dataSourceId } = request.params as { dataSourceId: string };
     try {
       const callWithRequest = getClientBasedOnDataSource(
         context, 
         this.dataSourceEnabled, 
         request, 
-        '4585f560-d1ef-11ee-aa63-2181676cc573',
+        dataSourceId,
         this.client);
 
-      const response: CatIndex[] = await callWithRequest(
-        'cat.indices', {
-          index,
-          format: 'json',
-          h: 'health,index',
-        });
+        const response: CatIndex[] = await callWithRequest(
+          'cat.indices', {
+            index,
+            format: 'json',
+            h: 'health,index',
+          });
+
       return opensearchDashboardsResponse.ok({
         body: { ok: true, response: { indices: response } },
       });

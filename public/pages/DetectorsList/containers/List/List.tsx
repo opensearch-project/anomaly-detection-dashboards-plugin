@@ -14,7 +14,6 @@ import {
   EuiBasicTable,
   EuiButton,
   EuiComboBoxOptionProps,
-  EuiHorizontalRule,
   EuiPage,
   EuiPageBody,
   EuiSpacer,
@@ -208,7 +207,7 @@ export const DetectorList = (props: ListProps) => {
   const queryParams = getURLQueryParams(props.location);
   const [state, setState] = useState<ListState>({
     page: 0,
-    queryParams: queryParams,
+    queryParams,
     selectedDetectorStates: ALL_DETECTOR_STATES,
     selectedIndices: queryParams.indices
       ? queryParams.indices.split(',')
@@ -231,7 +230,7 @@ export const DetectorList = (props: ListProps) => {
     const { history, location } = props;
     const updatedParams = {
       ...state.queryParams,
-      indices: state.selectedIndices.join(' '),
+      indices: state.selectedIndices.join(','),
       from: state.page * state.queryParams.size,
       dataSourceId: state.selectedDataSourceId,
     };
