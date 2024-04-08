@@ -39,8 +39,8 @@ import { DataSourcePluginSetup } from '../../../src/plugins/data_source/server/t
 import { DataSourceManagementPlugin } from '../../../src/plugins/data_source_management/public';
 
 export interface ADPluginSetupDependencies {
-  dataSourceManagement: ReturnType<DataSourceManagementPlugin['setup']>;
-  dataSource: DataSourcePluginSetup;
+  dataSourceManagement?: ReturnType<DataSourceManagementPlugin['setup']>;
+  dataSource?: DataSourcePluginSetup;
 }
 
 export class AnomalyDetectionOpenSearchDashboardsPlugin
