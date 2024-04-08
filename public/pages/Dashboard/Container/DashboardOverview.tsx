@@ -9,7 +9,7 @@
  * GitHub history for details.
  */
 
-import React, { Fragment, useState, useEffect } from 'react';
+import React, { Fragment, useState, useEffect, useMemo } from 'react';
 import { AnomaliesLiveChart } from '../Components/AnomaliesLiveChart';
 import { AnomaliesDistributionChart } from '../Components/AnomaliesDistribution';
 import queryString from 'querystring';
@@ -237,22 +237,28 @@ export function DashboardOverview(props: OverviewProps) {
     );
   }, [selectedDetectorsName, selectedIndices, selectedDetectorStates]);
 
-  const DataSourceMenu = props.dataSourceManagement.ui.getDataSourceMenu<DataSourceSelectableConfig>();
+  const DataSourceMenu =
+    props.dataSourceManagement.ui.getDataSourceMenu<DataSourceSelectableConfig>();
+  const renderDataSourceComponent = useMemo(() => {
+    return (
+      <DataSourceMenu
+        setMenuMountPoint={props.setActionMenu}
+        componentType={'DataSourceSelectable'}
+        componentConfig={{
+          fullWidth: false,
+          savedObjects: getSavedObjectsClient(),
+          notifications: getNotifications(),
+          onSelectedDataSources: (dataSources) =>
+            handleDataSourceChange(dataSources),
+        }}
+      />
+    );
+  }, [getSavedObjectsClient(), getNotifications(), props.setActionMenu]);
 
   return (
     <div style={{ height: '1200px' }}>
       <Fragment>
-        <DataSourceMenu
-          setMenuMountPoint={props.setActionMenu}
-          componentType={'DataSourceSelectable'}
-          componentConfig={{
-            savedObjects:getSavedObjectsClient(),
-            notifications:getNotifications(),
-            hideLocalCluster: true,
-            fullWidth: true,
-            onSelectedDataSources: (dataSources) => handleDataSourceChange(dataSources),
-          }}
-        />
+        {renderDataSourceComponent}
         <DashboardHeader hasDetectors={totalRealtimeDetectors > 0} />
         {isLoadingDetectors ? (
           <div>
