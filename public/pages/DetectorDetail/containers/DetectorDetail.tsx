@@ -59,6 +59,7 @@ import { DETECTOR_STATE } from '../../../../server/utils/constants';
 import { CatIndex } from '../../../../server/models/types';
 import { containsIndex } from '../utils/helpers';
 import { DataSourceManagementPluginSetup, DataSourceViewConfig } from '../../../../../../src/plugins/data_source_management/public';
+import { getNotifications, getSavedObjectsClient } from '../../../services';
 
 export interface DetectorRouterProps {
   detectorId?: string;
@@ -378,9 +379,10 @@ export const DetectorDetail = (props: DetectorDetailProps) => {
             setMenuMountPoint={props.setActionMenu}
             componentType={'DataSourceView'}
             componentConfig={{
-              // give a placeholder label for now, will update it once neo team allows empty label field
-              activeOption: [{label: 'labelPlaceHolder', id: dataSourceId}],
-              fullWidth: true
+              activeOption: [{ id: dataSourceId}],
+              fullWidth: false,
+              savedObjects: getSavedObjectsClient(),
+              notifications: getNotifications(),
             }}
           />
         )}

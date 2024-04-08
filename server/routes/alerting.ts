@@ -22,20 +22,23 @@ import {
   OpenSearchDashboardsResponseFactory,
   IOpenSearchDashboardsResponse,
 } from '../../../../src/core/server';
+import { getClientBasedOnDataSource } from '../utils/helpers';
 
 export function registerAlertingRoutes(
   apiRouter: Router,
   alertingService: AlertingService
 ) {
-  apiRouter.post('/monitors/_search', alertingService.searchMonitors);
+  apiRouter.post('/monitors/_search/{detectorId}', alertingService.searchMonitors);
   apiRouter.get('/monitors/alerts', alertingService.searchAlerts);
 }
 
 export default class AlertingService {
   private client: any;
+  dataSourceEnabled: boolean;
 
-  constructor(client: any) {
+  constructor(client: any, dataSourceEnabled: boolean) {
     this.client = client;
+    this.dataSourceEnabled = dataSourceEnabled;
   }
 
   searchMonitors = async (
@@ -44,6 +47,8 @@ export default class AlertingService {
     opensearchDashboardsResponse: OpenSearchDashboardsResponseFactory
   ): Promise<IOpenSearchDashboardsResponse<any>> => {
     try {
+      const { dataSourceId } = request.params as { dataSourceId: string };
+
       const requestBody = {
         size: MAX_MONITORS,
         query: {
@@ -71,9 +76,16 @@ export default class AlertingService {
           },
         },
       };
-      const response: SearchResponse<Monitor> = await this.client
-        .asScoped(request)
-        .callAsCurrentUser('alerting.searchMonitors', { body: requestBody });
+
+      const callWithRequest = getClientBasedOnDataSource(
+        context, 
+        this.dataSourceEnabled, 
+        request, 
+        dataSourceId,
+        this.client);
+        
+      const response: SearchResponse<Monitor> = await callWithRequest(
+        'alerting.searchMonitors', { body: requestBody });
       const totalMonitors = get(response, 'hits.total.value', 0);
       const allMonitors = get(response, 'hits.hits', []).reduce(
         (acc: any, monitor: any) => ({

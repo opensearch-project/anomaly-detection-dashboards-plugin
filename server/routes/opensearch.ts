@@ -40,7 +40,7 @@ export function registerOpenSearchRoutes(
   opensearchService: OpenSearchService
 ) {
   apiRouter.get('/_indices/{dataSourceId}', opensearchService.getIndices);
-  apiRouter.get('/_aliases', opensearchService.getAliases);
+  apiRouter.get('/_aliases/{dataSourceId}', opensearchService.getAliases);
   apiRouter.get('/_mappings', opensearchService.getMapping);
   apiRouter.post('/_search', opensearchService.executeSearch);
   apiRouter.put('/create_index', opensearchService.createIndex);
@@ -160,10 +160,17 @@ export default class OpenSearchService {
     opensearchDashboardsResponse: OpenSearchDashboardsResponseFactory
   ): Promise<IOpenSearchDashboardsResponse<any>> => {
     const { alias } = request.query as { alias: string };
+    const { dataSourceId } = request.params as { dataSourceId: string };
+
     try {
-      const response: IndexAlias[] = await this.client
-        .asScoped(request)
-        .callAsCurrentUser('cat.aliases', {
+      const callWithRequest = getClientBasedOnDataSource(
+        context, 
+        this.dataSourceEnabled, 
+        request, 
+        dataSourceId,
+        this.client);
+      const response: IndexAlias[] = await callWithRequest(
+        'cat.aliases', {
           alias,
           format: 'json',
           h: 'alias,index',

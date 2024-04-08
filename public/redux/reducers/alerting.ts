@@ -94,9 +94,9 @@ const reducer = handleActions<Monitors>(
   initialDetectorsState
 );
 
-export const searchMonitors = (): APIAction => ({
+export const searchMonitors = (dataSourceId: string): APIAction => ({
   type: SEARCH_MONITORS,
-  request: (client: HttpSetup) => client.post(`..${ALERTING_NODE_API._SEARCH}`),
+  request: (client: HttpSetup) => client.post(`..${ALERTING_NODE_API._SEARCH}/${dataSourceId}`),
 });
 
 export const searchAlerts = (

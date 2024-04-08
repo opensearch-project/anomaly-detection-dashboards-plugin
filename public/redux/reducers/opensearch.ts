@@ -252,10 +252,10 @@ export const getIndices = (searchKey: string = '', dataSourceId: string): APIAct
     client.get(`..${AD_NODE_API._INDICES}/${dataSourceId}`, { query: { index: searchKey } }),
 });
 
-export const getAliases = (searchKey: string = ''): APIAction => ({
+export const getAliases = (searchKey: string = '', dataSourceId: string): APIAction => ({
   type: GET_ALIASES,
   request: (client: HttpSetup) =>
-    client.get(`..${AD_NODE_API._ALIASES}`, { query: { alias: searchKey } }),
+    client.get(`..${AD_NODE_API._ALIASES}/${dataSourceId}`, { query: { alias: searchKey } }),
 });
 
 export const getMappings = (searchKey: string = ''): APIAction => ({
@@ -295,11 +295,11 @@ export const deleteIndex = (index: string): APIAction => ({
 });
 
 export const getPrioritizedIndices =
-  (searchKey: string): ThunkAction =>
+  (searchKey: string, datSourceId: string): ThunkAction =>
   async (dispatch, getState) => {
     //Fetch Indices and Aliases with text provided
-    await dispatch(getIndices(searchKey));
-    await dispatch(getAliases(searchKey));
+    await dispatch(getIndices(searchKey, datSourceId));
+    await dispatch(getAliases(searchKey, datSourceId));
     const osState = getState().opensearch;
     const exactMatchedIndices = osState.indices;
     const exactMatchedAliases = osState.aliases;
@@ -311,8 +311,8 @@ export const getPrioritizedIndices =
       };
     } else {
       //No results found for exact match, append wildCard and get partial matches if exists
-      await dispatch(getIndices(`${searchKey}*`));
-      await dispatch(getAliases(`${searchKey}*`));
+      await dispatch(getIndices(`${searchKey}*`, datSourceId));
+      await dispatch(getAliases(`${searchKey}*`, datSourceId));
       const osState = getState().opensearch;
       const partialMatchedIndices = osState.indices;
       const partialMatchedAliases = osState.aliases;

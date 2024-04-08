@@ -170,7 +170,7 @@ export const DetectorList = (props: ListProps) => {
   const [indexQuery, setIndexQuery] = useState('');
   useEffect(() => {
     const getInitialIndices = async () => {
-      await dispatch(getIndices(indexQuery));
+      await dispatch(getIndices(indexQuery, state.selectedDataSourceId));
     };
     getInitialIndices();
   }, []);
@@ -178,7 +178,7 @@ export const DetectorList = (props: ListProps) => {
   // Getting all initial monitors
   useEffect(() => {
     const getInitialMonitors = async () => {
-      dispatch(searchMonitors());
+      dispatch(searchMonitors(state.selectedDataSourceId));
     };
     getInitialMonitors();
   }, []);
@@ -339,7 +339,7 @@ export const DetectorList = (props: ListProps) => {
     if (searchValue !== indexQuery) {
       const sanitizedQuery = sanitizeSearchText(searchValue);
       setIndexQuery(sanitizedQuery);
-      await dispatch(getPrioritizedIndices(sanitizedQuery));
+      await dispatch(getPrioritizedIndices(sanitizedQuery, state.selectedDataSourceId));
       setState((state) => ({
         ...state,
         page: 0,
@@ -479,7 +479,7 @@ export const DetectorList = (props: ListProps) => {
       DETECTOR_ACTION.START
     ).map((detector) => detector.id);
     const promises = validIds.map(async (id: string) => {
-      return dispatch(startDetector(id));
+      return dispatch(startDetector(id, state.selectedDataSourceId));
     });
     await Promise.all(promises)
       .then(() => {
@@ -506,7 +506,7 @@ export const DetectorList = (props: ListProps) => {
       DETECTOR_ACTION.STOP
     ).map((detector) => detector.id);
     const promises = validIds.map(async (id: string) => {
-      return dispatch(stopDetector(id));
+      return dispatch(stopDetector(id, state.selectedDataSourceId));
     });
     await Promise.all(promises)
       .then(() => {
@@ -538,7 +538,7 @@ export const DetectorList = (props: ListProps) => {
       DETECTOR_ACTION.DELETE
     ).map((detector) => detector.id);
     const promises = validIds.map(async (id: string) => {
-      return dispatch(deleteDetector(id));
+      return dispatch(deleteDetector(id, state.selectedDataSourceId));
     });
     await Promise.all(promises)
       .then(() => {
