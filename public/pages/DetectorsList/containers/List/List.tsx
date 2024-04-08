@@ -576,14 +576,20 @@ export const DetectorList = (props: ListProps) => {
     });
   };
 
-  const handleDataSourceChange = (e) => {
-    const dataConnectionId = e[0] ? e[0].id : undefined;
-
-    setState({
-      ...state,
-      page: 0,
-      selectedDataSourceId: dataConnectionId,
-    });
+  const handleDataSourceChange = ([selectedDataSource]) => {
+    const dataSourceId = selectedDataSource?.id;
+  
+    if (!dataSourceId) {
+      core.notifications.toasts.addDanger(
+        prettifyErrorMessage('Unable to set data source.')
+      );
+    } else {
+      setState((prevState) => ({
+        ...prevState,
+        page: 0,
+        selectedDataSourceId: dataSourceId,
+      }));
+    }
   };
 
   const getConfirmModal = () => {
