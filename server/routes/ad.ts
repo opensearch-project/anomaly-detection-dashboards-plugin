@@ -69,7 +69,7 @@ export function registerADRoutes(apiRouter: Router, adService: AdService) {
     '/detectors/results/{dataSourceId}/_search/{resultIndex}/{onlyQueryCustomResultIndex}',
     adService.searchResults
   );
-  apiRouter.get('/detectors', adService.getDetectors);
+  apiRouter.get('/detectors/{dataSourceId}', adService.getDetectors);
   apiRouter.post('/detectors/preview', adService.previewDetector);
   apiRouter.get(
     '/detectors/{id}/{dataSourceId}/results/{isHistorical}/{resultIndex}/{onlyQueryCustomResultIndex}',

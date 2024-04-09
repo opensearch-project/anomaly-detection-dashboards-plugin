@@ -402,7 +402,7 @@ export const getDetectorList = (queryParams: GetDetectorsQueryParams): APIAction
   return {
     type: GET_DETECTOR_LIST,
     request: (client: HttpSetup) =>
-      client.get(`..${AD_NODE_API.DETECTOR}`, { query: queryParams }),
+      client.get(`..${AD_NODE_API.DETECTOR}/${queryParams.dataSourceId}}`, { query: queryParams }),
   };
 };
 
