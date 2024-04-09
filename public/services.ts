@@ -10,6 +10,7 @@ import {
   OverlayStart,
 } from '../../../src/core/public';
 import { DataPublicPluginStart } from '../../../src/plugins/data/public';
+import { DataSourceManagementPluginSetup } from '../../../src/plugins/data_source_management/public';
 import { EmbeddableStart } from '../../../src/plugins/embeddable/public';
 import { createGetterSetter } from '../../../src/plugins/opensearch_dashboards_utils/public';
 import { UiActionsStart } from '../../../src/plugins/ui_actions/public';
@@ -41,6 +42,9 @@ export const [getQueryService, setQueryService] =
 
 export const [getSavedObjectsClient, setSavedObjectsClient] =
   createGetterSetter<CoreStart['savedObjects']['client']>('SavedObjectsClient');
+
+export const [getDataSourceManagementPlugin, setDataSourceManagementPlugin] = 
+  createGetterSetter<DataSourceManagementPluginSetup>('DataSourceManagement');
 
 // This is primarily used for mocking this module and each of its fns in tests.
 export default {

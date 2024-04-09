@@ -58,15 +58,14 @@ import {
 import { DETECTOR_STATE } from '../../../../server/utils/constants';
 import { CatIndex } from '../../../../server/models/types';
 import { containsIndex } from '../utils/helpers';
-import { DataSourceManagementPluginSetup, DataSourceViewConfig } from '../../../../../../src/plugins/data_source_management/public';
-import { getNotifications, getSavedObjectsClient } from '../../../services';
+import { DataSourceViewConfig } from '../../../../../../src/plugins/data_source_management/public';
+import { getDataSourceManagementPlugin, getNotifications, getSavedObjectsClient } from '../../../services';
 
 export interface DetectorRouterProps {
   detectorId?: string;
 }
 interface DetectorDetailProps extends RouteComponentProps<DetectorRouterProps> {
   dataSourceEnabled: boolean;
-  dataSourceManagement: DataSourceManagementPluginSetup;
   setActionMenu: (menuMount: MountPoint | undefined) => void;
 }
 
@@ -360,7 +359,7 @@ export const DetectorDetail = (props: DetectorDetailProps) => {
       ></EuiCallOut>
     ) : null;
 
-  const DataSourceMenu = props.dataSourceManagement.ui.getDataSourceMenu<DataSourceViewConfig>();
+  const DataSourceMenu = getDataSourceManagementPlugin().ui.getDataSourceMenu<DataSourceViewConfig>();
 
   return (
     <React.Fragment>

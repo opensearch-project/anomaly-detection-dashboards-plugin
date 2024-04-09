@@ -84,10 +84,9 @@ import {
 import { CoreStart, MountPoint } from '../../../../../../../src/core/public';
 import { CoreServicesContext } from '../../../../components/CoreServices/CoreServices';
 import {
-  DataSourceManagementPluginSetup,
   DataSourceSelectableConfig,
 } from '../../../../../../../src/plugins/data_source_management/public';
-import { getNotifications, getSavedObjectsClient } from '../../../../services';
+import { getDataSourceManagementPlugin, getNotifications, getSavedObjectsClient } from '../../../../services';
 
 export interface ListRouterParams {
   from: string;
@@ -100,7 +99,6 @@ export interface ListRouterParams {
 }
 interface ListProps extends RouteComponentProps<ListRouterParams> {
   dataSourceEnabled: boolean;
-  dataSourceManagement: DataSourceManagementPluginSetup;
   setActionMenu: (menuMount: MountPoint | undefined) => void;
 }
 interface ListState {
@@ -661,7 +659,7 @@ export const DetectorList = (props: ListProps) => {
   const confirmModal = getConfirmModal();
 
   const DataSourceMenu =
-    props.dataSourceManagement.ui.getDataSourceMenu<DataSourceSelectableConfig>();
+    getDataSourceManagementPlugin().ui.getDataSourceMenu<DataSourceSelectableConfig>();
   const renderDataSourceComponent = useMemo(() => {
     return (
       <DataSourceMenu

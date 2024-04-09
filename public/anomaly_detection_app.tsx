@@ -17,13 +17,11 @@ import { Main } from './pages/main';
 import { Provider } from 'react-redux';
 import configureStore from './redux/configureStore';
 import { CoreServicesContext } from './components/CoreServices/CoreServices';
-import { DataSourceManagementPluginSetup } from '../../../src/plugins/data_source_management/public';
 import { DataSourcePluginSetup } from '../../../src/plugins/data_source/public';
 
 export function renderApp(
   coreStart: CoreStart,
   params: AppMountParameters,
-  dataSourceManagement: DataSourceManagementPluginSetup,
   dataSource: DataSourcePluginSetup
 ) {
   const http = coreStart.http;
@@ -45,7 +43,6 @@ export function renderApp(
             <CoreServicesContext.Provider value={coreStart}>
               <Main
                 dataSourceEnabled={dataSource.dataSourceEnabled}
-                dataSourceManagement={dataSourceManagement}
                 setHeaderActionMenu={params.setHeaderActionMenu}
                 {...props}
               />

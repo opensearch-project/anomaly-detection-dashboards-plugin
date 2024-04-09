@@ -25,7 +25,6 @@ import { DashboardOverview } from '../Dashboard/Container/DashboardOverview';
 import { CoreServicesConsumer } from '../../components/CoreServices/CoreServices';
 import { CoreStart, MountPoint } from '../../../../../src/core/public';
 import { AnomalyDetectionOverview } from '../Overview';
-import { DataSourceManagementPluginSetup } from '../../../../../src/plugins/data_source_management/public';
 
 enum Navigation {
   AnomalyDetection = 'Anomaly detection',
@@ -35,12 +34,11 @@ enum Navigation {
 
 interface MainProps extends RouteComponentProps {
   dataSourceEnabled: boolean;
-  dataSourceManagement: DataSourceManagementPluginSetup;
   setHeaderActionMenu: (menuMount: MountPoint | undefined) => void;
 }
 
 export function Main(props: MainProps) {
-  const { dataSourceEnabled, dataSourceManagement, setHeaderActionMenu } =
+  const { dataSourceEnabled, setHeaderActionMenu } =
     props;
 
   const hideSideNavBar = useSelector(
@@ -93,7 +91,6 @@ export function Main(props: MainProps) {
                   render={(props: RouteComponentProps<ListRouterParams>) => (
                     <DetectorList
                       dataSourceEnabled={dataSourceEnabled}
-                      dataSourceManagement={dataSourceManagement}
                       setActionMenu={setHeaderActionMenu}
                       {...props}
                     />
@@ -125,7 +122,6 @@ export function Main(props: MainProps) {
                   render={(props: RouteComponentProps) => (
                     <DetectorDetail 
                       dataSourceEnabled={dataSourceEnabled}
-                      dataSourceManagement={dataSourceManagement}
                       setActionMenu={setHeaderActionMenu}
                       {...props} />
                   )}
