@@ -23,6 +23,7 @@ import { MIN_IN_MILLI_SECS } from './constants';
 import {
   LegacyCallAPIOptions,
   OpenSearchDashboardsRequest,
+  RequestHandlerContext,
 } from '../../../../src/core/server';
 
 export const SHOW_DECIMAL_NUMBER_THRESHOLD = 0.01;
@@ -87,7 +88,7 @@ export const prettifyErrorMessage = (rawErrorMessage: string) => {
 };
 
 export function getClientBasedOnDataSource(
-  context: any,
+  context: RequestHandlerContext,
   dataSourceEnabled: boolean,
   request: OpenSearchDashboardsRequest,
   dataSourceId: string,
