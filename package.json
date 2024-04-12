@@ -1,10 +1,10 @@
 {
   "name": "anomaly-detection-dashboards",
-  "version": "2.11.0.0",
+  "version": "3.0.0.0",
   "description": "OpenSearch Anomaly Detection Dashboards Plugin",
   "main": "index.js",
   "config": {
-    "plugin_version": "2.11.0.0",
+    "plugin_version": "3.0.0.0",
     "plugin_name": "anomalyDetectionDashboards",
     "plugin_zip_name": "anomaly-detection-dashboards"
   },
