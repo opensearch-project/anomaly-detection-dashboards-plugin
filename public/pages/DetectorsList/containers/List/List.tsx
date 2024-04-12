@@ -84,7 +84,7 @@ import {
 import { CoreStart, MountPoint } from '../../../../../../../src/core/public';
 import { CoreServicesContext } from '../../../../components/CoreServices/CoreServices';
 import { DataSourceSelectableConfig } from '../../../../../../../src/plugins/data_source_management/public';
-import { getDataSourceManagementPlugin, getNotifications, getSavedObjectsClient } from '../../../../services';
+import { getDataSourceManagementPlugin, getDataSourcePlugin, getNotifications, getSavedObjectsClient } from '../../../../services';
 
 export interface ListRouterParams {
   from: string;
@@ -96,7 +96,6 @@ export interface ListRouterParams {
   dataSourceId: string;
 }
 interface ListProps extends RouteComponentProps<ListRouterParams> {
-  dataSourceEnabled: boolean;
   setActionMenu: (menuMount: MountPoint | undefined) => void;
 }
 interface ListState {
@@ -133,6 +132,8 @@ export const DetectorList = (props: ListProps) => {
     (state: AppState) => state.ad.requesting
   );
 
+  const dataSourceEnabled = getDataSourcePlugin().dataSourceEnabled;
+
   const [selectedDetectors, setSelectedDetectors] = useState(
     [] as DetectorListItem[]
   );
@@ -165,7 +166,7 @@ export const DetectorList = (props: ListProps) => {
   // Getting all initial monitors
   useEffect(() => {
     const getInitialMonitors = async () => {
-      if (props.dataSourceEnabled ? state.selectedDataSourceId : true) {
+      if (dataSourceEnabled ? state.selectedDataSourceId : true) {
         dispatch(searchMonitors(state.selectedDataSourceId));
       }
     };
@@ -240,7 +241,7 @@ export const DetectorList = (props: ListProps) => {
 
     setIsLoadingFinalDetectors(true);
 
-    if (props.dataSourceEnabled ? state.selectedDataSourceId : true) {
+    if (dataSourceEnabled ? state.selectedDataSourceId : true) {
       getUpdatedDetectors();
     }
   }, [
@@ -496,7 +497,7 @@ export const DetectorList = (props: ListProps) => {
         );
       })
       .finally(() => {
-        if (props.dataSourceEnabled ? state.selectedDataSourceId : true) {
+        if (dataSourceEnabled ? state.selectedDataSourceId : true) {
           getUpdatedDetectors();
         }
       });
@@ -690,7 +691,7 @@ export const DetectorList = (props: ListProps) => {
   return (
     <EuiPage>
       <EuiPageBody>
-        {props.dataSourceEnabled && renderDataSourceComponent}
+        {dataSourceEnabled && renderDataSourceComponent}
         <ContentPanel
           title={
             isLoading

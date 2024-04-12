@@ -58,7 +58,7 @@ import ContentPanel from '../../../components/ContentPanel/ContentPanel';
 import { CreateWorkflowStepDetails } from '../components/CreateWorkflowStepDetails';
 import { CreateWorkflowStepSeparator } from '../components/CreateWorkflowStepSeparator';
 import { DataSourceSelectableConfig } from '../../../../../../src/plugins/data_source_management/public';
-import { getDataSourceManagementPlugin, getNotifications, getSavedObjectsClient } from '../../../../public/services';
+import { getDataSourceManagementPlugin, getDataSourcePlugin, getNotifications, getSavedObjectsClient } from '../../../../public/services';
 import { MDSQueryParams } from 'server/models/types';
 import { RouteComponentProps } from 'react-router-dom';
 import queryString from 'querystring';
@@ -66,7 +66,6 @@ import { getURLQueryParams } from '../../../../public/pages/DetectorsList/utils/
 import { getSampleDetectorsQueryParamsWithDataSouceId } from '../../../../public/pages/utils/helpers';
 
 interface AnomalyDetectionOverviewProps extends RouteComponentProps {
-  dataSourceEnabled: boolean;
   setActionMenu: (menuMount: MountPoint | undefined) => void;
 }
 
@@ -83,11 +82,10 @@ export function AnomalyDetectionOverview(props: AnomalyDetectionOverviewProps) {
   const visibleSampleIndices = useSelector(
     (state: AppState) => state.opensearch.indices
   );
-
   const allSampleDetectors = Object.values(
     useSelector((state: AppState) => state.ad.detectorList)
   );
-
+  const dataSourceEnabled = getDataSourcePlugin().dataSourceEnabled;
   const [isLoadingHttpData, setIsLoadingHttpData] = useState<boolean>(false);
   const [isLoadingEcommerceData, setIsLoadingEcommerceData] =
     useState<boolean>(false);
@@ -122,7 +120,7 @@ export function AnomalyDetectionOverview(props: AnomalyDetectionOverviewProps) {
       search: queryString.stringify(updatedParams),
     })
 
-    if (props.dataSourceEnabled ? MDSOverviewState.selectedDataSourceId : true) {
+    if (dataSourceEnabled ? MDSOverviewState.selectedDataSourceId : true) {
       fetchData();
     }
   }, [MDSOverviewState]);
@@ -241,7 +239,7 @@ export function AnomalyDetectionOverview(props: AnomalyDetectionOverviewProps) {
   ) : (
     <Fragment>
       <EuiPageHeader>
-        {props.dataSourceEnabled && renderDataSourceComponent}
+        {dataSourceEnabled && renderDataSourceComponent}
         <EuiFlexGroup justifyContent="spaceBetween">
           <EuiFlexItem grow={false}>
             <EuiTitle size="l" data-test-subj="overviewTitle">

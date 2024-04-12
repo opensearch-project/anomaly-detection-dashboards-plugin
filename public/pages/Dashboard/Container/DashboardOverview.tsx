@@ -49,11 +49,10 @@ import {
 import { CoreServicesContext } from '../../../components/CoreServices/CoreServices';
 import { CoreStart, MountPoint } from '../../../../../../src/core/public';
 import { DataSourceSelectableConfig } from '../../../../../../src/plugins/data_source_management/public';
-import { getDataSourceManagementPlugin, getNotifications, getSavedObjectsClient } from '../../../services';
+import { getDataSourceManagementPlugin, getDataSourcePlugin, getNotifications, getSavedObjectsClient } from '../../../services';
 import { RouteComponentProps } from 'react-router-dom';
 
 interface OverviewProps extends RouteComponentProps {
-  dataSourceEnabled: boolean;
   setActionMenu: (menuMount: MountPoint | undefined) => void;
 }
 
@@ -70,6 +69,8 @@ export function DashboardOverview(props: OverviewProps) {
   const totalRealtimeDetectors = Object.values(allDetectorList).length;
   const errorGettingDetectors = adState.errorMessage;
   const isLoadingDetectors = adState.requesting;
+
+  const dataSourceEnabled = getDataSourcePlugin().dataSourceEnabled;
 
   const [currentDetectors, setCurrentDetectors] = useState(
     Object.values(allDetectorList)
@@ -204,7 +205,7 @@ export function DashboardOverview(props: OverviewProps) {
       ...location,
       search: queryString.stringify(updatedParams),
     })
-    if (props.dataSourceEnabled ? MDSOverviewState.selectedDataSourceId : true) {
+    if (dataSourceEnabled ? MDSOverviewState.selectedDataSourceId : true) {
       intializeDetectors();
     }
   }, [MDSOverviewState]);
@@ -262,7 +263,7 @@ export function DashboardOverview(props: OverviewProps) {
   return (
     <div style={{ height: '1200px' }}>
       <Fragment>
-        {renderDataSourceComponent}
+        {dataSourceEnabled && renderDataSourceComponent}
         <DashboardHeader hasDetectors={totalRealtimeDetectors > 0} />
         {isLoadingDetectors ? (
           <div>

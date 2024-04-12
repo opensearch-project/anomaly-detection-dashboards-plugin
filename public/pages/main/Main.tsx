@@ -34,12 +34,11 @@ enum Navigation {
 }
 
 interface MainProps extends RouteComponentProps {
-  dataSourceEnabled: boolean;
   setHeaderActionMenu: (menuMount: MountPoint | undefined) => void;
 }
 
 export function Main(props: MainProps) {
-  const { dataSourceEnabled, setHeaderActionMenu } = props;
+  const { setHeaderActionMenu } = props;
 
   const hideSideNavBar = useSelector(
     (state: AppState) => state.adApp.hideSideNavBar
@@ -96,7 +95,6 @@ export function Main(props: MainProps) {
                   path={APP_PATH.DASHBOARD}
                   render={(props: RouteComponentProps) => 
                     <DashboardOverview 
-                      dataSourceEnabled={dataSourceEnabled}
                       setActionMenu={setHeaderActionMenu}
                       {...props}
                     />}
@@ -106,7 +104,6 @@ export function Main(props: MainProps) {
                   path={APP_PATH.LIST_DETECTORS}
                   render={(props: RouteComponentProps<ListRouterParams>) => (
                     <DetectorList
-                      dataSourceEnabled={dataSourceEnabled}
                       setActionMenu={setHeaderActionMenu}
                       {...props}
                     />
@@ -137,7 +134,6 @@ export function Main(props: MainProps) {
                   path={APP_PATH.DETECTOR_DETAIL}
                   render={(props: RouteComponentProps) => (
                     <DetectorDetail 
-                      dataSourceEnabled={dataSourceEnabled}
                       setActionMenu={setHeaderActionMenu}
                       {...props} />
                   )}
@@ -153,7 +149,6 @@ export function Main(props: MainProps) {
                   path={APP_PATH.OVERVIEW}
                   render={(props: RouteComponentProps) => (
                     <AnomalyDetectionOverview
-                      dataSourceEnabled={dataSourceEnabled}
                       setActionMenu={setHeaderActionMenu}
                       {...props}
                     />
@@ -164,13 +159,11 @@ export function Main(props: MainProps) {
                   render={(props: RouteComponentProps) => 
                     totalDetectors > 0 ? (
                       <DashboardOverview 
-                        dataSourceEnabled={dataSourceEnabled}
                         setActionMenu={setHeaderActionMenu}
                         {...props}
                       />
                     ) : (
                       <AnomalyDetectionOverview
-                        dataSourceEnabled={dataSourceEnabled}
                         setActionMenu={setHeaderActionMenu}
                         {...props}
                       />

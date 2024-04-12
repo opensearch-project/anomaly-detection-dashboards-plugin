@@ -59,13 +59,12 @@ import { DETECTOR_STATE } from '../../../../server/utils/constants';
 import { CatIndex } from '../../../../server/models/types';
 import { containsIndex } from '../utils/helpers';
 import { DataSourceViewConfig } from '../../../../../../src/plugins/data_source_management/public';
-import { getDataSourceManagementPlugin, getNotifications, getSavedObjectsClient } from '../../../services';
+import { getDataSourceManagementPlugin, getDataSourcePlugin, getNotifications, getSavedObjectsClient } from '../../../services';
 
 export interface DetectorRouterProps {
   detectorId?: string;
 }
 interface DetectorDetailProps extends RouteComponentProps<DetectorRouterProps> {
-  dataSourceEnabled: boolean;
   setActionMenu: (menuMount: MountPoint | undefined) => void;
 }
 
@@ -107,14 +106,14 @@ export const DetectorDetail = (props: DetectorDetailProps) => {
   const core = React.useContext(CoreServicesContext) as CoreStart;
   const dispatch = useDispatch();
   const detectorId = get(props, 'match.params.detectorId', '') as string;
-
+  const dataSourceEnabled = getDataSourcePlugin().dataSourceEnabled;
   const location = useLocation();
   const queryParams = new URLSearchParams(location.search);
   const dataSourceId = queryParams.get('dataSourceId') as string;
   
   const { detector, hasError, isLoadingDetector, errorMessage } =
     useFetchDetectorInfo(detectorId, dataSourceId);
-  const { monitor} = useFetchMonitorInfo(detectorId, dataSourceId, props.dataSourceEnabled);
+  const { monitor} = useFetchMonitorInfo(detectorId, dataSourceId, dataSourceEnabled);
   const visibleIndices = useSelector(
     (state: AppState) => state.opensearch.indices
   ) as CatIndex[];
