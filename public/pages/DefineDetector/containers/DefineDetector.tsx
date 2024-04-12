@@ -249,12 +249,10 @@ export const DefineDetector = (props: DefineDetectorProps) => {
                 </EuiPageHeaderSection>
               </EuiPageHeader>
               <Fragment>
-                
                 <NameAndDescription
                   onValidateDetectorName={handleValidateName}
                 />
                 <EuiSpacer />
-              
                 <DataSource
                   formikProps={formikProps}
                   origIndex={

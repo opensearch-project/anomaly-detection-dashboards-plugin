@@ -9,7 +9,7 @@
  * GitHub history for details.
  */
 
-import { CatIndex, IndexAlias, MDSQueryParams } from '../../../server/models/types';
+import { CatIndex, IndexAlias } from '../../../server/models/types';
 import sortBy from 'lodash/sortBy';
 import { DetectorListItem } from '../../models/interfaces';
 import { SORT_DIRECTION } from '../../../server/utils/constants';
@@ -122,6 +122,17 @@ export const getAllDetectorsQueryParamsWithDataSourceId = (
 ) => ({
   from: 0,
   search: '',
+  indices: '',
+  size: MAX_DETECTORS,
+  sortDirection: SORT_DIRECTION.ASC,
+  sortField: 'name',
+  dataSourceId: dataSourceId,
+});
+
+export const getSampleDetectorsQueryParamsWithDataSouceId = (dataSourceId: string) => (
+  {
+  from: 0,
+  search: 'sample',
   indices: '',
   size: MAX_DETECTORS,
   sortDirection: SORT_DIRECTION.ASC,

@@ -32,7 +32,6 @@ import { DetectorDefinitionFormikValues } from '../../models/interfaces';
 import { ModelConfigurationFormikValues } from '../../../ConfigureModel/models/interfaces';
 import { INITIAL_MODEL_CONFIGURATION_VALUES } from '../../../ConfigureModel/utils/constants';
 import { FILTER_TYPES } from '../../../../models/interfaces';
-import { getNotifications, getSavedObjectsClient } from '../../../../services';
 
 interface DataSourceProps {
   formikProps: FormikProps<DetectorDefinitionFormikValues>;
@@ -45,13 +44,6 @@ interface DataSourceProps {
 }
 
 export function DataSource(props: DataSourceProps) {
-  const [selectedDataSource, setSelectedDataSource] = useState<string>();
-
-  const onSelectedDataSource = (e) => {
-    const dataConnectionId = e[0] ? e[0].id : undefined;
-    setSelectedDataSource(dataConnectionId);
-    console.log(dataConnectionId);
-  }
   const dispatch = useDispatch();
   const [indexName, setIndexName] = useState<string>(
     props.formikProps.values.index[0]?.label
@@ -103,7 +95,6 @@ export function DataSource(props: DataSourceProps) {
 
   return (
     <ContentPanel title="Data Source" titleSize="s">
-      
       {props.isEdit && isDifferentIndex() ? (
         <div>
           <EuiCallOut
@@ -115,11 +106,9 @@ export function DataSource(props: DataSourceProps) {
           <EuiSpacer />
         </div>
       ) : null}
-      
       <Field name="index" validate={validateIndex}>
         {({ field, form }: FieldProps) => {
           return (
-            
             <FormattedFormRow
               title="Index"
               hint="Choose an index or index pattern as the data source."

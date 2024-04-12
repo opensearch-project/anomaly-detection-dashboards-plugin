@@ -35,7 +35,6 @@ interface ListFiltersProps {
   onPageClick: (pageNumber: number) => void;
 }
 export const ListFilters = (props: ListFiltersProps) => (
-  
   <EuiFlexGroup gutterSize="s">
     <EuiFlexItem grow={false} style={{ width: '40%' }}>
       <EuiFieldSearch
@@ -63,7 +62,6 @@ export const ListFilters = (props: ListFiltersProps) => (
         fullWidth={true}
       />
     </EuiFlexItem>
-    
     <EuiFlexItem>
       <EuiComboBox
         id="selectedIndices"
@@ -82,8 +80,6 @@ export const ListFilters = (props: ListFiltersProps) => (
         fullWidth={true}
       />
     </EuiFlexItem>
-  
-
     {props.pageCount > 1 ? (
       <EuiFlexItem grow={false} style={{ justifyContent: 'center' }}>
         <EuiPagination

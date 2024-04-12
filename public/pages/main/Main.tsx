@@ -59,7 +59,7 @@ export function Main(props: MainProps) {
   };
   const dashboardHref = dataSourceId ? `#${APP_PATH.DASHBOARD}?dataSourceId=${dataSourceId}` : `#${APP_PATH.DASHBOARD}`;
   const overviewHref = dataSourceId ? `#${APP_PATH.OVERVIEW}?dataSourceId=${dataSourceId}` : `#${APP_PATH.OVERVIEW}`;
-  
+
   const sideNav = [
     {
       name: Navigation.AnomalyDetection,
@@ -176,10 +176,7 @@ export function Main(props: MainProps) {
                       />
                     )
                   }
-                />        
-
-
-                  
+                />
               </Switch>
             </EuiPageBody>
           </EuiPage>

@@ -32,7 +32,6 @@ import {
 import { SAMPLE_TYPE } from '../../../../server/utils/constants';
 import {
   GET_SAMPLE_INDICES_QUERY,
-  getSampleDetectorsQueryParamsWithDataSouceId,
 } from '../../utils/constants';
 import { AppState } from '../../../redux/reducers';
 import { getDetectorList } from '../../../redux/reducers/ad';
@@ -64,6 +63,7 @@ import { MDSQueryParams } from 'server/models/types';
 import { RouteComponentProps } from 'react-router-dom';
 import queryString from 'querystring';
 import { getURLQueryParams } from '../../../../public/pages/DetectorsList/utils/helpers';
+import { getSampleDetectorsQueryParamsWithDataSouceId } from '../../../../public/pages/utils/helpers';
 
 interface AnomalyDetectionOverviewProps extends RouteComponentProps {
   dataSourceEnabled: boolean;
@@ -125,7 +125,6 @@ export function AnomalyDetectionOverview(props: AnomalyDetectionOverviewProps) {
     if (props.dataSourceEnabled ? MDSOverviewState.selectedDataSourceId : true) {
       fetchData();
     }
-
   }, [MDSOverviewState]);
 
   // fetch smaple detectors and sample indices
