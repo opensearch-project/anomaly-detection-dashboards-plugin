@@ -219,7 +219,7 @@ export type DetectorListItem = {
   lastUpdateTime: number;
   enabledTime?: number;
   detectorType?: string;
-  dataSourceId: string;
+  dataSourceId?: string;
 };
 
 export type EntityData = {
