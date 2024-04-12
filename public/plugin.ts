@@ -36,6 +36,7 @@ import {
   setUISettings,
   setQueryService,
   setSavedObjectsClient,
+  setDataSourceManagementPlugin,
 } from './services';
 import { AnomalyDetectionOpenSearchDashboardsPluginStart } from 'public';
 import {
@@ -88,7 +89,6 @@ export class AnomalyDetectionOpenSearchDashboardsPlugin
         return renderApp(
           coreStart,
           params,
-          plugins.dataSourceManagement,
           plugins.dataSource
         );
       },
@@ -99,6 +99,8 @@ export class AnomalyDetectionOpenSearchDashboardsPlugin
     // Set the HTTP client so it can be pulled into expression fns to make
     // direct server-side calls
     setClient(core.http);
+
+    setDataSourceManagementPlugin(plugins.dataSourceManagement);
 
     // Create context menu actions
     const actions = getActions();

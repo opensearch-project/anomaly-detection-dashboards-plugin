@@ -49,16 +49,12 @@ import {
 } from '../../../../server/utils/helpers';
 import { CoreServicesContext } from '../../../components/CoreServices/CoreServices';
 import { CoreStart, MountPoint } from '../../../../../../src/core/public';
-import { DataSourceManagementPluginSetup, DataSourceSelectableConfig } from '../../../../../../src/plugins/data_source_management/public';
-import { getNotifications, getSavedObjectsClient } from '../../../services';
+import { DataSourceSelectableConfig } from '../../../../../../src/plugins/data_source_management/public';
+import { getDataSourceManagementPlugin, getNotifications, getSavedObjectsClient } from '../../../services';
 import { RouteComponentProps } from 'react-router-dom';
 
-export interface DashboardOverviewRouterParams {
-  dataSourceId: string;
-}
-
-interface OverviewProps extends RouteComponentProps<DashboardOverviewRouterParams> {
-  dataSourceManagement: DataSourceManagementPluginSetup;
+interface OverviewProps extends RouteComponentProps {
+  dataSourceEnabled: boolean;
   setActionMenu: (menuMount: MountPoint | undefined) => void;
 }
 
@@ -132,12 +128,18 @@ export function DashboardOverview(props: OverviewProps) {
     setAllDetectorStatesSelected(isEmpty(selectedStates));
   };
 
-  const handleDataSourceChange = (e) => {
-    const dataConnectionId = e[0] ? e[0].id : undefined;
-    setMDSOverviewState({
-      queryParams: dataConnectionId,
-      selectedDataSourceId: dataConnectionId,
-    });
+  const handleDataSourceChange = ([event]) => {
+    const dataSourceId = event?.id;
+    if (!dataSourceId) {
+      getNotifications().toasts.addDanger(
+        prettifyErrorMessage('Unable to set data source.')
+      );
+    } else {
+      setMDSOverviewState({
+        queryParams: dataSourceId,
+        selectedDataSourceId: dataSourceId,
+      });
+    }
   }
 
   const opensearchState = useSelector((state: AppState) => state.opensearch);
@@ -190,8 +192,8 @@ export function DashboardOverview(props: OverviewProps) {
 
   const intializeDetectors = async () => {
     dispatch(getDetectorList(getAllDetectorsQueryParamsWithDataSourceId(MDSOverviewState.selectedDataSourceId)));
-    dispatch(getIndices(''));
-    dispatch(getAliases(''));
+    dispatch(getIndices('', MDSOverviewState.selectedDataSourceId));
+    dispatch(getAliases('', MDSOverviewState.selectedDataSourceId));
   };
 
   useEffect(() => {
@@ -203,7 +205,9 @@ export function DashboardOverview(props: OverviewProps) {
       ...location,
       search: queryString.stringify(updatedParams),
     })
-    intializeDetectors();
+    if (props.dataSourceEnabled ? MDSOverviewState.selectedDataSourceId : true) {
+      intializeDetectors();
+    }
   }, [MDSOverviewState]);
 
   useEffect(() => {
@@ -238,7 +242,7 @@ export function DashboardOverview(props: OverviewProps) {
   }, [selectedDetectorsName, selectedIndices, selectedDetectorStates]);
 
   const DataSourceMenu =
-    props.dataSourceManagement.ui.getDataSourceMenu<DataSourceSelectableConfig>();
+    getDataSourceManagementPlugin().ui.getDataSourceMenu<DataSourceSelectableConfig>();
   const renderDataSourceComponent = useMemo(() => {
     return (
       <DataSourceMenu
@@ -246,6 +250,7 @@ export function DashboardOverview(props: OverviewProps) {
         componentType={'DataSourceSelectable'}
         componentConfig={{
           fullWidth: false,
+          activeOption:[{ id: MDSOverviewState.selectedDataSourceId }],
           savedObjects: getSavedObjectsClient(),
           notifications: getNotifications(),
           onSelectedDataSources: (dataSources) =>
@@ -307,12 +312,15 @@ export function DashboardOverview(props: OverviewProps) {
               </EuiFlexItem>
             </EuiFlexGroup>
             <EuiSpacer />
-            <AnomaliesLiveChart selectedDetectors={currentDetectors} />
+            <AnomaliesLiveChart 
+              selectedDetectors={currentDetectors}
+              dataSourceId={MDSOverviewState.selectedDataSourceId} />
             <EuiSpacer />
             <EuiFlexGroup justifyContent="spaceBetween">
               <EuiFlexItem grow={6}>
                 <AnomaliesDistributionChart
                   selectedDetectors={currentDetectors}
+                  dataSourceId={MDSOverviewState.selectedDataSourceId}
                 />
               </EuiFlexItem>
               <EuiFlexItem grow={3}>

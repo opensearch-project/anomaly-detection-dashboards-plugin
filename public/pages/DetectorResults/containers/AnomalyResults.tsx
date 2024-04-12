@@ -71,6 +71,7 @@ import { DEFAULT_SHINGLE_SIZE } from '../../../utils/constants';
 interface AnomalyResultsProps extends RouteComponentProps {
   detectorId: string;
   dataSourceId: string;
+  dataSourceEnabled: boolean;
   onStartDetector(): void;
   onStopDetector(): void;
   onSwitchToConfiguration(): void;
@@ -92,11 +93,15 @@ export function AnomalyResults(props: AnomalyResultsProps) {
       BREADCRUMBS.DETECTORS,
       { text: detector ? detector.name : '' },
     ]);
-    dispatch(getDetector(detectorId, dataSourceId));
+    if (props.dataSourceEnabled ? dataSourceId : true) {
+      dispatch(getDetector(detectorId, dataSourceId));
+    }
   }, []);
 
   const fetchDetector = async () => {
-    dispatch(getDetector(detectorId, dataSourceId));
+    if (props.dataSourceEnabled ? dataSourceId : true) {
+      dispatch(getDetector(detectorId, dataSourceId));
+    }
   };
 
   useEffect(() => {

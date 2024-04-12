@@ -17,12 +17,11 @@ import {
   EuiFlexItem,
   EuiFlexGroup,
   EuiLink,
-  EuiIcon,
   EuiButton,
   EuiLoadingSpinner,
   EuiFlexGrid,
 } from '@elastic/eui';
-import React, { Fragment, useEffect, useState } from 'react';
+import React, { Fragment, useEffect, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import {
   APP_PATH,
@@ -32,7 +31,6 @@ import {
 } from '../../../utils/constants';
 import { SAMPLE_TYPE } from '../../../../server/utils/constants';
 import {
-  GET_SAMPLE_DETECTORS_QUERY_PARAMS,
   GET_SAMPLE_INDICES_QUERY,
   getSampleDetectorsQueryParamsWithDataSouceId,
 } from '../../utils/constants';
@@ -60,21 +58,16 @@ import { CoreServicesContext } from '../../../components/CoreServices/CoreServic
 import ContentPanel from '../../../components/ContentPanel/ContentPanel';
 import { CreateWorkflowStepDetails } from '../components/CreateWorkflowStepDetails';
 import { CreateWorkflowStepSeparator } from '../components/CreateWorkflowStepSeparator';
-import { DataSourceManagementPluginSetup, DataSourceSelectableConfig } from '../../../../../../src/plugins/data_source_management/public';
-import { getNotifications, getSavedObjectsClient } from '../../../../public/services';
+import { DataSourceSelectableConfig } from '../../../../../../src/plugins/data_source_management/public';
+import { getDataSourceManagementPlugin, getNotifications, getSavedObjectsClient } from '../../../../public/services';
 import { MDSQueryParams } from 'server/models/types';
 import { RouteComponentProps } from 'react-router-dom';
 import queryString from 'querystring';
 import { getURLQueryParams } from '../../../../public/pages/DetectorsList/utils/helpers';
 
-interface AnomalyDetectionOverviewProps extends RouteComponentProps<OverviewRouterParams> {
-  isLoadingDetectors: boolean;
-  dataSourceManagement: DataSourceManagementPluginSetup;
+interface AnomalyDetectionOverviewProps extends RouteComponentProps {
+  dataSourceEnabled: boolean;
   setActionMenu: (menuMount: MountPoint | undefined) => void;
-}
-
-interface OverviewRouterParams {
-  dataSourceId: string;
 }
 
 interface MDSOverviewState {
@@ -84,12 +77,12 @@ interface MDSOverviewState {
 
 export function AnomalyDetectionOverview(props: AnomalyDetectionOverviewProps) {
   const core = React.useContext(CoreServicesContext) as CoreStart;
+  const isLoadingSampleDetectors = useSelector((state: AppState) => state.ad.requesting);
+  const isLoadingSampleIndices = useSelector((state: AppState) => state.opensearch.requesting);
   const dispatch = useDispatch();
   const visibleSampleIndices = useSelector(
     (state: AppState) => state.opensearch.indices
   );
-
-  console.log(props);
 
   const allSampleDetectors = Object.values(
     useSelector((state: AppState) => state.ad.detectorList)
@@ -113,20 +106,6 @@ export function AnomalyDetectionOverview(props: AnomalyDetectionOverviewProps) {
     selectedDataSourceId: queryParams.dataSourceId ? queryParams.dataSourceId : '',
   });
 
-  const getAllSampleDetectors = async () => {
-    await dispatch(getDetectorList(getSampleDetectorsQueryParamsWithDataSouceId(MDSOverviewState.selectedDataSourceId))).catch(
-      (error: any) => {
-        console.error('Error getting all detectors: ', error);
-      }
-    );
-  };
-
-  const getAllSampleIndices = async () => {
-    await dispatch(getIndices(GET_SAMPLE_INDICES_QUERY)).catch((error: any) => {
-      console.error('Error getting all indices: ', error);
-    });
-  };
-
   // Set breadcrumbs on page initialization
   useEffect(() => {
     core.chrome.setBreadcrumbs([BREADCRUMBS.ANOMALY_DETECTOR]);
@@ -142,9 +121,24 @@ export function AnomalyDetectionOverview(props: AnomalyDetectionOverviewProps) {
       ...location,
       search: queryString.stringify(updatedParams),
     })
-    getAllSampleDetectors();
-    getAllSampleIndices();
+
+    if (props.dataSourceEnabled ? MDSOverviewState.selectedDataSourceId : true) {
+      fetchData();
+    }
+
   }, [MDSOverviewState]);
+
+  // fetch smaple detectors and sample indices
+  const fetchData = async () => {
+    await dispatch(getDetectorList(getSampleDetectorsQueryParamsWithDataSouceId(MDSOverviewState.selectedDataSourceId))).catch(
+      (error: any) => {
+        console.error('Error getting sample detectors: ', error);
+      }
+    );
+    await dispatch(getIndices(GET_SAMPLE_INDICES_QUERY, MDSOverviewState.selectedDataSourceId)).catch((error: any) => {
+      console.error('Error getting sample indices: ', error);
+    });
+  };
 
   // Create and populate sample index, create and start sample detector
   const handleLoadData = async (
@@ -159,7 +153,7 @@ export function AnomalyDetectionOverview(props: AnomalyDetectionOverviewProps) {
 
     // Create the index (if it doesn't exist yet)
     if (!containsSampleIndex(visibleSampleIndices, sampleType)) {
-      await dispatch(createIndex(indexConfig)).catch((error: any) => {
+      await dispatch(createIndex(indexConfig, MDSOverviewState.selectedDataSourceId)).catch((error: any) => {
         errorDuringAction = true;
         errorMessage =
           'Error creating sample index. ' + prettifyErrorMessage(error);
@@ -169,7 +163,7 @@ export function AnomalyDetectionOverview(props: AnomalyDetectionOverviewProps) {
 
     // Get the sample data from the server and bulk insert
     if (!errorDuringAction) {
-      await dispatch(createSampleData(sampleType)).catch((error: any) => {
+      await dispatch(createSampleData(sampleType, MDSOverviewState.selectedDataSourceId)).catch((error: any) => {
         errorDuringAction = true;
         errorMessage = prettifyErrorMessage(error.message);
         console.error('Error bulk inserting data: ', errorMessage);
@@ -178,11 +172,11 @@ export function AnomalyDetectionOverview(props: AnomalyDetectionOverviewProps) {
 
     // Create the detector
     if (!errorDuringAction) {
-      await dispatch(createDetector(detectorConfig))
+      await dispatch(createDetector(detectorConfig, MDSOverviewState.selectedDataSourceId))
         .then(function (response: any) {
           const detectorId = response.response.id;
           // Start the detector
-          dispatch(startDetector(detectorId)).catch((error: any) => {
+          dispatch(startDetector(detectorId, MDSOverviewState.selectedDataSourceId)).catch((error: any) => {
             errorDuringAction = true;
             errorMessage = prettifyErrorMessage(error.message);
             console.error('Error starting sample detector: ', errorMessage);
@@ -194,9 +188,7 @@ export function AnomalyDetectionOverview(props: AnomalyDetectionOverviewProps) {
           console.error('Error creating sample detector: ', errorMessage);
         });
     }
-
-    getAllSampleDetectors();
-    getAllSampleIndices();
+    fetchData();
     setLoadingState(false);
     if (!errorDuringAction) {
       core.notifications.toasts.addSuccess(
@@ -209,34 +201,48 @@ export function AnomalyDetectionOverview(props: AnomalyDetectionOverviewProps) {
     }
   };
 
-  const handleDataSourceChange = (e) => {
-    const dataConnectionId = e[0] ? e[0].id : undefined;
-    setMDSOverviewState({
-      queryParams: dataConnectionId,
-      selectedDataSourceId: dataConnectionId,
-    });
+  const handleDataSourceChange = ([event]) => {
+    const dataSourceId = event?.id;
+
+    if (!dataSourceId) {
+      getNotifications().toasts.addDanger(
+        prettifyErrorMessage('Unable to set data source.')
+      );
+    } else {
+      setMDSOverviewState({
+        queryParams: dataSourceId,
+        selectedDataSourceId: dataSourceId,
+      });
+    }
   }
 
-  const DataSourceMenu = props.dataSourceManagement.ui.getDataSourceMenu<DataSourceSelectableConfig>();
+  const DataSourceMenu =
+    getDataSourceManagementPlugin().ui.getDataSourceMenu<DataSourceSelectableConfig>();
+  const renderDataSourceComponent = useMemo(() => {
+    return (
+      <DataSourceMenu
+        setMenuMountPoint={props.setActionMenu}
+        componentType={'DataSourceSelectable'}
+        componentConfig={{
+          fullWidth: false,
+          activeOption:[{ id: MDSOverviewState.selectedDataSourceId }],
+          savedObjects: getSavedObjectsClient(),
+          notifications: getNotifications(),
+          onSelectedDataSources: (dataSources) =>
+            handleDataSourceChange(dataSources),
+        }}
+      />
+    );
+  }, [getSavedObjectsClient, getNotifications, props.setActionMenu]);
 
-  return props.isLoadingDetectors ? (
+  return isLoadingSampleDetectors && isLoadingSampleIndices ? (
     <div>
       <EuiLoadingSpinner size="xl" />
     </div>
   ) : (
     <Fragment>
       <EuiPageHeader>
-        <DataSourceMenu
-          setMenuMountPoint={props.setActionMenu}
-          componentType={'DataSourceSelectable'}
-          componentConfig={{
-            savedObjects:getSavedObjectsClient(),
-            notifications:getNotifications(),
-            hideLocalCluster: true,
-            fullWidth: true,
-            onSelectedDataSources: (dataSources) => handleDataSourceChange(dataSources),
-          }}
-        />
+        {props.dataSourceEnabled && renderDataSourceComponent}
         <EuiFlexGroup justifyContent="spaceBetween">
           <EuiFlexItem grow={false}>
             <EuiTitle size="l" data-test-subj="overviewTitle">

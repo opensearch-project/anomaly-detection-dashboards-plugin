@@ -21,11 +21,10 @@ import { APP_PATH } from '../../utils/constants';
 import { DetectorDetail } from '../DetectorDetail';
 import { DefineDetector } from '../DefineDetector/containers/DefineDetector';
 import { ConfigureModel } from '../ConfigureModel/containers/ConfigureModel';
-import { DashboardOverview, DashboardOverviewRouterParams } from '../Dashboard/Container/DashboardOverview';
+import { DashboardOverview } from '../Dashboard/Container/DashboardOverview';
 import { CoreServicesConsumer } from '../../components/CoreServices/CoreServices';
 import { CoreStart, MountPoint } from '../../../../../src/core/public';
 import { AnomalyDetectionOverview } from '../Overview';
-import { DataSourceManagementPluginSetup } from '../../../../../src/plugins/data_source_management/public';
 import { getURLQueryParams } from '../DetectorsList/utils/helpers';
 
 enum Navigation {
@@ -36,13 +35,11 @@ enum Navigation {
 
 interface MainProps extends RouteComponentProps {
   dataSourceEnabled: boolean;
-  dataSourceManagement: DataSourceManagementPluginSetup;
   setHeaderActionMenu: (menuMount: MountPoint | undefined) => void;
 }
 
 export function Main(props: MainProps) {
-  const { dataSourceEnabled, dataSourceManagement, setHeaderActionMenu } =
-    props;
+  const { dataSourceEnabled, setHeaderActionMenu } = props;
 
   const hideSideNavBar = useSelector(
     (state: AppState) => state.adApp.hideSideNavBar
@@ -50,35 +47,29 @@ export function Main(props: MainProps) {
 
   const adState = useSelector((state: AppState) => state.ad);
   const totalDetectors = adState.totalDetectors;
-  const errorGettingDetectors = adState.errorMessage;
-  const isLoadingDetectors = adState.requesting;
   const queryParams = getURLQueryParams(props.location);
   const dataSourceId = queryParams.dataSourceId ? queryParams.dataSourceId : '';
-
+  const existingParams = "from=0&size=20&search=&indices=&sortField=name&sortDirection=asc";  
   const constructHrefWithDataSourceId = (basePath, existingParams, dataSourceId) => {
-    // Construct the full URL
     const fullUrl = `${window.location.origin}${basePath}?${existingParams}`;
-    //console.log("fullUrl: ", fullUrl);
     const url = new URL(fullUrl);
-    //console.log(url);
-    url.searchParams.set('dataSourceId', dataSourceId);  // Append or update dataSourceId
+    url.searchParams.set('dataSourceId', dataSourceId); 
     
-    // Return the constructed URL, excluding the origin part to match your structure
     return `#${url.pathname}${url.search}`;
   };
-
-  const existingParams = "from=0&size=20&search=&indices=&sortField=name&sortDirection=asc&dataSourceId=4585f560-d1ef-11ee-aa63-2181676cc573";  
-
+  const dashboardHref = dataSourceId ? `#${APP_PATH.DASHBOARD}?dataSourceId=${dataSourceId}` : `#${APP_PATH.DASHBOARD}`;
+  const overviewHref = dataSourceId ? `#${APP_PATH.OVERVIEW}?dataSourceId=${dataSourceId}` : `#${APP_PATH.OVERVIEW}`;
+  
   const sideNav = [
     {
       name: Navigation.AnomalyDetection,
       id: 0,
-      href: `#${APP_PATH.OVERVIEW}`,
+      href: overviewHref,
       items: [
         {
           name: Navigation.Dashboard,
           id: 1,
-          href: `#${APP_PATH.DASHBOARD}?dataSourceId=${dataSourceId}`,
+          href: dashboardHref,
           isSelected: props.location.pathname === APP_PATH.DASHBOARD,
         },
         {
@@ -103,9 +94,9 @@ export function Main(props: MainProps) {
               <Switch>
                 <Route
                   path={APP_PATH.DASHBOARD}
-                  render={(props: RouteComponentProps<DashboardOverviewRouterParams>) => 
+                  render={(props: RouteComponentProps) => 
                     <DashboardOverview 
-                      dataSourceManagement={dataSourceManagement}
+                      dataSourceEnabled={dataSourceEnabled}
                       setActionMenu={setHeaderActionMenu}
                       {...props}
                     />}
@@ -116,7 +107,6 @@ export function Main(props: MainProps) {
                   render={(props: RouteComponentProps<ListRouterParams>) => (
                     <DetectorList
                       dataSourceEnabled={dataSourceEnabled}
-                      dataSourceManagement={dataSourceManagement}
                       setActionMenu={setHeaderActionMenu}
                       {...props}
                     />
@@ -148,7 +138,6 @@ export function Main(props: MainProps) {
                   render={(props: RouteComponentProps) => (
                     <DetectorDetail 
                       dataSourceEnabled={dataSourceEnabled}
-                      dataSourceManagement={dataSourceManagement}
                       setActionMenu={setHeaderActionMenu}
                       {...props} />
                   )}
@@ -164,8 +153,7 @@ export function Main(props: MainProps) {
                   path={APP_PATH.OVERVIEW}
                   render={(props: RouteComponentProps) => (
                     <AnomalyDetectionOverview
-                      isLoadingDetectors={isLoadingDetectors}
-                      dataSourceManagement={dataSourceManagement}
+                      dataSourceEnabled={dataSourceEnabled}
                       setActionMenu={setHeaderActionMenu}
                       {...props}
                     />
@@ -173,17 +161,16 @@ export function Main(props: MainProps) {
                 />
                 <Route 
                   path="/"
-                  render={(props: RouteComponentProps<DashboardOverviewRouterParams>) => 
+                  render={(props: RouteComponentProps) => 
                     totalDetectors > 0 ? (
                       <DashboardOverview 
-                        dataSourceManagement={dataSourceManagement}
+                        dataSourceEnabled={dataSourceEnabled}
                         setActionMenu={setHeaderActionMenu}
                         {...props}
                       />
                     ) : (
                       <AnomalyDetectionOverview
-                        isLoadingDetectors={isLoadingDetectors}
-                        dataSourceManagement={dataSourceManagement}
+                        dataSourceEnabled={dataSourceEnabled}
                         setActionMenu={setHeaderActionMenu}
                         {...props}
                       />

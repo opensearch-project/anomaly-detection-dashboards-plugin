@@ -1,3 +1,4 @@
+
 /*
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -58,14 +59,14 @@ import {
 import { DETECTOR_STATE } from '../../../../server/utils/constants';
 import { CatIndex } from '../../../../server/models/types';
 import { containsIndex } from '../utils/helpers';
-import { DataSourceManagementPluginSetup, DataSourceViewConfig } from '../../../../../../src/plugins/data_source_management/public';
+import { DataSourceViewConfig } from '../../../../../../src/plugins/data_source_management/public';
+import { getDataSourceManagementPlugin, getNotifications, getSavedObjectsClient } from '../../../services';
 
 export interface DetectorRouterProps {
   detectorId?: string;
 }
 interface DetectorDetailProps extends RouteComponentProps<DetectorRouterProps> {
   dataSourceEnabled: boolean;
-  dataSourceManagement: DataSourceManagementPluginSetup;
   setActionMenu: (menuMount: MountPoint | undefined) => void;
 }
 
@@ -104,7 +105,6 @@ interface DetectorDetailModel {
 }
 
 export const DetectorDetail = (props: DetectorDetailProps) => {
-  console.log(props);
   const core = React.useContext(CoreServicesContext) as CoreStart;
   const dispatch = useDispatch();
   const detectorId = get(props, 'match.params.detectorId', '') as string;
@@ -114,9 +114,8 @@ export const DetectorDetail = (props: DetectorDetailProps) => {
   const dataSourceId = queryParams.get('dataSourceId') as string;
   
   const { detector, hasError, isLoadingDetector, errorMessage } =
-    useFetchDetectorInfo(detectorId);
-  const { monitor, fetchMonitorError, isLoadingMonitor } =
-    useFetchMonitorInfo(detectorId);
+    useFetchDetectorInfo(detectorId, dataSourceId);
+  const { monitor} = useFetchMonitorInfo(detectorId, dataSourceId, props.dataSourceEnabled);
   const visibleIndices = useSelector(
     (state: AppState) => state.opensearch.indices
   ) as CatIndex[];
@@ -165,15 +164,17 @@ export const DetectorDetail = (props: DetectorDetailProps) => {
   // Getting all visible indices. Will re-fetch if changes to the detector (e.g.,
   // detector starts, result index recreated or user switches tabs to re-fetch detector)
   useEffect(() => {
-    const getInitialIndices = async () => {
-      await dispatch(getIndices('', dataSourceId)).catch((error: any) => {
-        console.error(error);
-        core.notifications.toasts.addDanger('Error getting all indices');
-      });
-    };
-    // only need to check if indices exist after detector finishes loading
-    if (!isLoadingDetector) {
-      getInitialIndices();
+    if (props.dataSourceEnabled ? dataSourceId : true) {
+      const getInitialIndices = async () => {
+        await dispatch(getIndices('', dataSourceId)).catch((error: any) => {
+          console.error(error);
+          core.notifications.toasts.addDanger('Error getting all indices');
+        });
+      };
+      // only need to check if indices exist after detector finishes loading
+      if (!isLoadingDetector) {
+        getInitialIndices();
+      }
     }
   }, [detector]);
 
@@ -255,9 +256,9 @@ export const DetectorDetail = (props: DetectorDetailProps) => {
     const listener: Listener = {
       onSuccess: () => {
         if (detectorDetailModel.showStopDetectorModalFor === 'detector') {
-          props.history.push(`/detectors/${detectorId}/edit?dataSourceId=${dataSourceId}`);
+          props.history.push(`/detectors/${detectorId}/edit`);
         } else {
-          props.history.push(`/detectors/${detectorId}/features?dataSourceId=${dataSourceId}`);
+          props.history.push(`/detectors/${detectorId}/features`);
         }
         hideStopDetectorModal();
       },
@@ -360,7 +361,7 @@ export const DetectorDetail = (props: DetectorDetailProps) => {
       ></EuiCallOut>
     ) : null;
 
-  const DataSourceMenu = props.dataSourceManagement.ui.getDataSourceMenu<DataSourceViewConfig>();
+  const DataSourceMenu = getDataSourceManagementPlugin().ui.getDataSourceMenu<DataSourceViewConfig>();
 
   return (
     <React.Fragment>
@@ -379,9 +380,10 @@ export const DetectorDetail = (props: DetectorDetailProps) => {
             setMenuMountPoint={props.setActionMenu}
             componentType={'DataSourceView'}
             componentConfig={{
-              // give a placeholder label for now, will update it once neo team allows empty label field
-              activeOption: [{label: 'labelPlaceHolder', id: dataSourceId}],
-              fullWidth: true
+              activeOption: [{ id: dataSourceId}],
+              fullWidth: false,
+              savedObjects: getSavedObjectsClient(),
+              notifications: getNotifications(),
             }}
           />
         )}
@@ -567,6 +569,7 @@ export const DetectorDetail = (props: DetectorDetailProps) => {
               {...resultsProps}
               detectorId={detectorId}
               dataSourceId={dataSourceId}
+              dataSourceEnabled={props.dataSourceEnabled}
               onStartDetector={() => handleStartAdJob(detectorId)}
               onStopDetector={() => handleStopAdJob(detectorId)}
               onSwitchToConfiguration={handleSwitchToConfigurationTab}

@@ -60,43 +60,85 @@ type PutDetectorParams = {
 };
 
 export function registerADRoutes(apiRouter: Router, adService: AdService) {
+  // create detector
   apiRouter.post('/detectors', adService.putDetector);
-  apiRouter.put('/detectors/{detectorId}', adService.putDetector);
+  apiRouter.post('/detectors/{dataSourceId}', adService.putDetector);
+
+  // put detector
+  apiRouter.put('/detectors/{detectorId}', 
+    adService.putDetector);
+  apiRouter.put('/detectors/{detectorId}/{dataSourceId}', 
+    adService.putDetector);
+
   apiRouter.post('/detectors/_search', adService.searchDetector);
-  apiRouter.post('/detectors/results/_search/', adService.searchResults);
-  apiRouter.post('/detectors/results/{dataSourceId}/_search', adService.searchResults);
-  apiRouter.post(
-    '/detectors/results/{dataSourceId}/_search/{resultIndex}/{onlyQueryCustomResultIndex}',
-    adService.searchResults
-  );
-  apiRouter.get('/detectors/{dataSourceId}', adService.getDetectors);
+  
+
+  // post search anomaly results
+  apiRouter.post('/detectors/results/_search/', 
+    adService.searchResults);
+  apiRouter.post('/detectors/results/{dataSourceId}/_search', 
+    adService.searchResults);
+  apiRouter.post('/detectors/results/_search/{resultIndex}/{onlyQueryCustomResultIndex}',
+    adService.searchResults);
+  apiRouter.post('/detectors/results/{dataSourceId}/_search/{resultIndex}/{onlyQueryCustomResultIndex}',
+    adService.searchResults);
+
+  // list detectors
+  apiRouter.get('/detectors/_list', 
+    adService.getDetectors);
+  apiRouter.get('/detectors/_list/{dataSourceId}', 
+    adService.getDetectors);
+
   apiRouter.post('/detectors/preview', adService.previewDetector);
-  apiRouter.get(
-    '/detectors/{id}/{dataSourceId}/results/{isHistorical}/{resultIndex}/{onlyQueryCustomResultIndex}',
-    adService.getAnomalyResults
-  );
-  apiRouter.get(
-    '/detectors/{id}/{dataSourceId}/results/{isHistorical}',
-    adService.getAnomalyResults
-  );
-  apiRouter.delete('/detectors/{detectorId}/{dataSourceId}', adService.deleteDetector);
-  apiRouter.post('/detectors/{detectorId}/{dataSourceId}/start', adService.startDetector);
-  apiRouter.post(
-    '/detectors/{detectorId}/{dataSourceId}/stop/{isHistorical}',
-    adService.stopDetector
-  );
+
+  // get detector anomaly results
+  apiRouter.get('/detectors/{id}/results/{isHistorical}/{resultIndex}/{onlyQueryCustomResultIndex}',
+    adService.getAnomalyResults);
+  apiRouter.get('/detectors/{id}/{dataSourceId}/results/{isHistorical}/{resultIndex}/{onlyQueryCustomResultIndex}',
+    adService.getAnomalyResults);
+  apiRouter.get('/detectors/{id}/results/{isHistorical}',
+    adService.getAnomalyResults);
+  apiRouter.get('/detectors/{id}/{dataSourceId}/results/{isHistorical}',
+    adService.getAnomalyResults);
+
+  // delete detector
+  apiRouter.delete('/detectors/{detectorId}', 
+    adService.deleteDetector);
+  apiRouter.delete('/detectors/{detectorId}/{dataSourceId}',
+    adService.deleteDetector);
+
+  // start detector
+  apiRouter.post('/detectors/{detectorId}/start', 
+    adService.startDetector);
+  apiRouter.post('/detectors/{detectorId}/{dataSourceId}/start', 
+    adService.startDetector);
+
+  // stop detector
+  apiRouter.post('/detectors/{detectorId}/stop/{isHistorical}',
+    adService.stopDetector);
+  apiRouter.post('/detectors/{detectorId}/{dataSourceId}/stop/{isHistorical}',
+    adService.stopDetector);
+
   apiRouter.get(
     '/detectors/{detectorId}/_profile',
     adService.getDetectorProfile
   );
-  apiRouter.get('/detectors/{detectorId}/{dataSourceId}', adService.getDetector);
+
+  // get detector
+  apiRouter.get('/detectors/{detectorId}', 
+    adService.getDetector);
+  apiRouter.get('/detectors/{detectorId}/{dataSourceId}', 
+    adService.getDetector);
 
   apiRouter.get('/detectors/{detectorName}/_match', adService.matchDetector);
   apiRouter.get('/detectors/_count', adService.getDetectorCount);
-  apiRouter.post(
-    '/detectors/{detectorId}/{dataSourceId}/_topAnomalies/{isHistorical}',
-    adService.getTopAnomalyResults
-  );
+
+  // post get top anomaly results
+  apiRouter.post('/detectors/{detectorId}/_topAnomalies/{isHistorical}',
+    adService.getTopAnomalyResults);
+  apiRouter.post('/detectors/{detectorId}/{dataSourceId}/_topAnomalies/{isHistorical}',
+    adService.getTopAnomalyResults);
+
   apiRouter.post(
     '/detectors/_validate/{validationType}',
     adService.validateDetector
@@ -119,7 +161,7 @@ export default class AdService {
   ): Promise<IOpenSearchDashboardsResponse<any>> => {
     try {
       const { detectorId } = request.params as { detectorId: string };
-      const { dataSourceId } = request.params as { dataSourceId: string };
+      const { dataSourceId = "" } = request.params as { dataSourceId?: string };
       const callWithRequest = getClientBasedOnDataSource(
         context, 
         this.dataSourceEnabled, 
@@ -189,6 +231,8 @@ export default class AdService {
   ): Promise<IOpenSearchDashboardsResponse<any>> => {
     try {
       const { detectorId } = request.params as { detectorId: string };
+      const { dataSourceId = "" } = request.params as { dataSourceId?: string };
+
       //@ts-ignore
       const ifSeqNo = request.body.seqNo;
       //@ts-ignore
@@ -205,14 +249,18 @@ export default class AdService {
       };
       let response;
 
+      const callWithRequest = getClientBasedOnDataSource(
+        context, 
+        this.dataSourceEnabled, 
+        request, 
+        dataSourceId,
+        this.client);
+
+
       if (isNumber(ifSeqNo) && isNumber(ifPrimaryTerm)) {
-        response = await this.client
-          .asScoped(request)
-          .callAsCurrentUser('ad.updateDetector', params);
+        response = await callWithRequest('ad.updateDetector', params);
       } else {
-        response = await this.client
-          .asScoped(request)
-          .callAsCurrentUser('ad.createDetector', {
+        response = await callWithRequest('ad.createDetector', {
             body: params.body,
           });
       }
@@ -281,7 +329,7 @@ export default class AdService {
   ): Promise<IOpenSearchDashboardsResponse<any>> => {
     try {
       const { detectorId } = request.params as { detectorId: string };
-      const { dataSourceId } = request.params as { dataSourceId: string };
+      const { dataSourceId = "" } = request.params as { dataSourceId?: string };
       const callWithRequest = getClientBasedOnDataSource(
         context, 
         this.dataSourceEnabled, 
@@ -389,7 +437,7 @@ export default class AdService {
   ): Promise<IOpenSearchDashboardsResponse<any>> => {
     try {
       const { detectorId } = request.params as { detectorId: string };
-      const { dataSourceId } = request.params as { dataSourceId: string };
+      const { dataSourceId = "" } = request.params as { dataSourceId?: string };
       //@ts-ignore
       const startTime = request.body?.startTime;
       //@ts-ignore
@@ -440,11 +488,12 @@ export default class AdService {
     opensearchDashboardsResponse: OpenSearchDashboardsResponseFactory
   ): Promise<IOpenSearchDashboardsResponse<any>> => {
     try {
-      let { detectorId, dataSourceId, isHistorical } = request.params as {
+      let { detectorId, isHistorical } = request.params as {
         detectorId: string;
-        dataSourceId: string;
         isHistorical: any;
       };
+      const { dataSourceId = "" } = request.params as { dataSourceId?: string };
+
       isHistorical = JSON.parse(isHistorical) as boolean;
       const requestPath = isHistorical
         ? 'ad.stopHistoricalDetector'
@@ -556,11 +605,12 @@ export default class AdService {
     opensearchDashboardsResponse: OpenSearchDashboardsResponseFactory
   ): Promise<IOpenSearchDashboardsResponse<any>> => {
     try {
-      var { resultIndex, dataSourceId, onlyQueryCustomResultIndex } = request.params as {
+      var { resultIndex, onlyQueryCustomResultIndex } = request.params as {
         resultIndex: string;
-        dataSourceId: string;
         onlyQueryCustomResultIndex: boolean;
       };
+      const { dataSourceId = "" } = request.params as { dataSourceId?: string };
+
       if (
         !resultIndex ||
         !resultIndex.startsWith(CUSTOM_AD_RESULT_INDEX_PREFIX)
@@ -859,14 +909,15 @@ export default class AdService {
     request: OpenSearchDashboardsRequest,
     opensearchDashboardsResponse: OpenSearchDashboardsResponseFactory
   ): Promise<IOpenSearchDashboardsResponse<any>> => {
-    let { id, dataSourceId, isHistorical, resultIndex, onlyQueryCustomResultIndex } =
+    let { id, isHistorical, resultIndex, onlyQueryCustomResultIndex } =
       request.params as {
         id: string;
-        dataSourceId: string;
         isHistorical: any;
         resultIndex: string;
         onlyQueryCustomResultIndex: boolean;
       };
+    const { dataSourceId = "" } = request.params as { dataSourceId?: string };
+
     if (
       !resultIndex ||
       !resultIndex.startsWith(CUSTOM_AD_RESULT_INDEX_PREFIX)
@@ -1099,11 +1150,12 @@ export default class AdService {
     opensearchDashboardsResponse: OpenSearchDashboardsResponseFactory
   ): Promise<IOpenSearchDashboardsResponse<any>> => {
     try {
-      let { detectorId, dataSourceId, isHistorical } = request.params as {
+      let { detectorId, isHistorical } = request.params as {
         detectorId: string;
-        dataSourceId: string;
         isHistorical: any;
       };
+      const { dataSourceId = "" } = request.params as { dataSourceId?: string };
+
       isHistorical = JSON.parse(isHistorical) as boolean;
       const requestPath = isHistorical
         ? 'ad.topHistoricalAnomalyResults'

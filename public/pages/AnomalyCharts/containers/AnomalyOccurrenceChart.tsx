@@ -44,6 +44,7 @@ interface AnomalyOccurrenceChartProps {
   isHCDetector?: boolean;
   isHistorical?: boolean;
   selectedHeatmapCell?: HeatmapCell;
+  dataSourceId?: string;
 }
 
 export const AnomalyOccurrenceChart = React.memo(
@@ -82,6 +83,7 @@ export const AnomalyOccurrenceChart = React.memo(
           isHCDetector={props.isHCDetector}
           isHistorical={props.isHistorical}
           selectedHeatmapCell={props.selectedHeatmapCell}
+          dataSourceId={props.dataSourceId}
         />
         {props.isHCDetector && props.selectedHeatmapCell === undefined ? (
           <EuiBadge className={'anomaly-detail-chart-center'} color={'default'}>

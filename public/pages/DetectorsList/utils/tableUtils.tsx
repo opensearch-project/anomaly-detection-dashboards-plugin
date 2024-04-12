@@ -64,11 +64,17 @@ export const staticColumn = [
     textOnly: true,
     align: 'left',
     width: '15%',
-    render: (name: string, detector: Detector) => (
-    <EuiLink href={`${PLUGIN_NAME}#/detectors/${detector.id}/results?dataSourceId=${detector.dataSourceId}`}>        
-      {name}
-    </EuiLink>
-    ),
+    render: (name: string, detector: Detector) => {
+      let href = `${PLUGIN_NAME}#/detectors/${detector.id}/results`;
+      if (detector.dataSourceId) {
+        href += `?dataSourceId=${detector.dataSourceId}`;
+      }
+      return (
+        <EuiLink href={href}>
+          {name}
+        </EuiLink>
+      );
+    },
   },
   {
     field: 'indices',
@@ -111,13 +117,21 @@ export const staticColumn = [
     align: 'left',
     width: '15%',
     render: (name: string, detector: Detector) => {
-      return !isEmpty(detector.taskId) ? (
-        <EuiLink href={`${PLUGIN_NAME}#/detectors/${detector.id}/historical?dataSourceId=${detector.dataSourceId}`}>
-          View results
-        </EuiLink>
-      ) : (
-        <EuiText>-</EuiText>
-      );
+      if (!isEmpty(detector.taskId)) {
+        let href = `${PLUGIN_NAME}#/detectors/${detector.id}/historical`;
+        if (detector.dataSourceId) {
+          href += `?dataSourceId=${detector.dataSourceId}`;
+        }
+        return (
+          <EuiLink href={href}>
+            View results
+          </EuiLink>
+        );
+      } else {
+        return (
+          <EuiText>-</EuiText>
+        );
+      }
     },
   },
   {

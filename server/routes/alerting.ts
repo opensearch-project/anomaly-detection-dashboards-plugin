@@ -29,6 +29,8 @@ export function registerAlertingRoutes(
   alertingService: AlertingService
 ) {
   apiRouter.post('/monitors/_search', alertingService.searchMonitors);
+  apiRouter.post('/monitors/_search/{dataSourceId}', alertingService.searchMonitors);
+
   apiRouter.get('/monitors/alerts', alertingService.searchAlerts);
 }
 
@@ -47,6 +49,8 @@ export default class AlertingService {
     opensearchDashboardsResponse: OpenSearchDashboardsResponseFactory
   ): Promise<IOpenSearchDashboardsResponse<any>> => {
     try {
+      const { dataSourceId = "" } = request.params as { dataSourceId?: string };
+
       const requestBody = {
         size: MAX_MONITORS,
         query: {
@@ -79,7 +83,7 @@ export default class AlertingService {
         context, 
         this.dataSourceEnabled, 
         request, 
-        '4585f560-d1ef-11ee-aa63-2181676cc573',
+        dataSourceId,
         this.client);
 
       const response: SearchResponse<Monitor> = await callWithRequest(
@@ -133,16 +137,9 @@ export default class AlertingService {
         startTime?: number;
         endTime?: number;
       };
-
-      const callWithRequest = getClientBasedOnDataSource(
-        context, 
-        this.dataSourceEnabled, 
-        request, 
-        '4585f560-d1ef-11ee-aa63-2181676cc573',
-        this.client);
-
-      const response = await callWithRequest(
-        'alerting.searchAlerts', {
+      const response = await this.client
+        .asScoped(request)
+        .callAsCurrentUser('alerting.searchAlerts', {
           monitorId: monitorId,
           startTime: startTime,
           endTime: endTime,

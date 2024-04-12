@@ -876,6 +876,7 @@ export const AnomalyHistory = (props: AnomalyHistoryProps) => {
         entityAnomalySummaries={entityAnomalySummaries}
         selectedCategoryFields={selectedCategoryFields}
         handleCategoryFieldsChange={handleCategoryFieldsChange}
+        dataSourceId={dataSourceId}
       >
         <div style={{ padding: '20px' }}>
           {isHCDetector
@@ -919,6 +920,7 @@ export const AnomalyHistory = (props: AnomalyHistoryProps) => {
                   isHCDetector={isHCDetector}
                   isHistorical={props.isHistorical}
                   selectedHeatmapCell={selectedHeatmapCell}
+                  dataSourceId={dataSourceId}
                 />,
                 <EuiSpacer size="m" />,
               ]

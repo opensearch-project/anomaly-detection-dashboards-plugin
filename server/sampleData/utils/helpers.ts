@@ -19,7 +19,7 @@ import {
 import fs from 'fs';
 import { createUnzip } from 'zlib';
 import { isEmpty } from 'lodash';
-import { prettifyErrorMessage } from '../../utils/helpers';
+import { getClientBasedOnDataSource, prettifyErrorMessage } from '../../utils/helpers';
 
 const BULK_INSERT_SIZE = 500;
 
@@ -27,8 +27,12 @@ export const loadSampleData = (
   filePath: string,
   indexName: string,
   client: any,
-  request: OpenSearchDashboardsRequest
+  request: OpenSearchDashboardsRequest,
+  context: RequestHandlerContext,
+  dataSourceEnabled: boolean
 ) => {
+  const { dataSourceId = "" } = request.params as { dataSourceId?: string };
+
   return new Promise((resolve, reject) => {
     let count: number = 0;
     let docs: any[] = [];
@@ -95,10 +99,17 @@ export const loadSampleData = (
       }
     });
 
+    const callWithRequest = getClientBasedOnDataSource(
+      context, 
+      dataSourceEnabled, 
+      request, 
+      dataSourceId,
+      client);
+
     const bulkInsert = async (docs: any[]) => {
       try {
         const bulkBody = prepareBody(docs, offset);
-        const resp = await client.asScoped(request).callAsCurrentUser('bulk', {
+        const resp = await callWithRequest('bulk', {
           body: bulkBody,
         });
         if (resp.errors) {

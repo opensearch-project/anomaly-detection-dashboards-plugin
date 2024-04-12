@@ -83,11 +83,8 @@ import {
 } from '../../../../../server/utils/helpers';
 import { CoreStart, MountPoint } from '../../../../../../../src/core/public';
 import { CoreServicesContext } from '../../../../components/CoreServices/CoreServices';
-import {
-  DataSourceManagementPluginSetup,
-  DataSourceSelectableConfig,
-} from '../../../../../../../src/plugins/data_source_management/public';
-import { getNotifications, getSavedObjectsClient } from '../../../../services';
+import { DataSourceSelectableConfig } from '../../../../../../../src/plugins/data_source_management/public';
+import { getDataSourceManagementPlugin, getNotifications, getSavedObjectsClient } from '../../../../services';
 
 export interface ListRouterParams {
   from: string;
@@ -100,7 +97,6 @@ export interface ListRouterParams {
 }
 interface ListProps extends RouteComponentProps<ListRouterParams> {
   dataSourceEnabled: boolean;
-  dataSourceManagement: DataSourceManagementPluginSetup;
   setActionMenu: (menuMount: MountPoint | undefined) => void;
 }
 interface ListState {
@@ -166,19 +162,12 @@ export const DetectorList = (props: ListProps) => {
     isStopDisabled: false,
   });
 
-  // Getting all initial indices
-  const [indexQuery, setIndexQuery] = useState('');
-  useEffect(() => {
-    const getInitialIndices = async () => {
-      await dispatch(getIndices(indexQuery));
-    };
-    getInitialIndices();
-  }, []);
-
   // Getting all initial monitors
   useEffect(() => {
     const getInitialMonitors = async () => {
-      dispatch(searchMonitors());
+      if (props.dataSourceEnabled ? state.selectedDataSourceId : true) {
+        dispatch(searchMonitors(state.selectedDataSourceId));
+      }
     };
     getInitialMonitors();
   }, []);
@@ -225,6 +214,15 @@ export const DetectorList = (props: ListProps) => {
     ]);
   }, []);
 
+  // Getting all initial indices
+  const [indexQuery, setIndexQuery] = useState('');
+  useEffect(() => {
+    const getInitialIndices = async () => {
+      await dispatch(getIndices(indexQuery, state.selectedDataSourceId));
+    };
+    getInitialIndices();
+  }, [state.selectedDataSourceId]);
+
   // Refresh data if user change any parameters / filter / sort
   useEffect(() => {
     const { history, location } = props;
@@ -241,7 +239,10 @@ export const DetectorList = (props: ListProps) => {
     });
 
     setIsLoadingFinalDetectors(true);
-    getUpdatedDetectors();
+
+    if (props.dataSourceEnabled ? state.selectedDataSourceId : true) {
+      getUpdatedDetectors();
+    }
   }, [
     state.page,
     state.queryParams,
@@ -291,6 +292,7 @@ export const DetectorList = (props: ListProps) => {
       }
     }
   }, [confirmModalState.isRequestingToClose, isLoading]);
+
   const getUpdatedDetectors = async () => {
     dispatch(
       getDetectorList(
@@ -338,7 +340,7 @@ export const DetectorList = (props: ListProps) => {
     if (searchValue !== indexQuery) {
       const sanitizedQuery = sanitizeSearchText(searchValue);
       setIndexQuery(sanitizedQuery);
-      await dispatch(getPrioritizedIndices(sanitizedQuery));
+      await dispatch(getPrioritizedIndices(sanitizedQuery, state.selectedDataSourceId));
       setState((state) => ({
         ...state,
         page: 0,
@@ -478,7 +480,7 @@ export const DetectorList = (props: ListProps) => {
       DETECTOR_ACTION.START
     ).map((detector) => detector.id);
     const promises = validIds.map(async (id: string) => {
-      return dispatch(startDetector(id));
+      return dispatch(startDetector(id, state.selectedDataSourceId));
     });
     await Promise.all(promises)
       .then(() => {
@@ -494,7 +496,9 @@ export const DetectorList = (props: ListProps) => {
         );
       })
       .finally(() => {
-        getUpdatedDetectors();
+        if (props.dataSourceEnabled ? state.selectedDataSourceId : true) {
+          getUpdatedDetectors();
+        }
       });
   };
 
@@ -505,7 +509,7 @@ export const DetectorList = (props: ListProps) => {
       DETECTOR_ACTION.STOP
     ).map((detector) => detector.id);
     const promises = validIds.map(async (id: string) => {
-      return dispatch(stopDetector(id));
+      return dispatch(stopDetector(id, state.selectedDataSourceId));
     });
     await Promise.all(promises)
       .then(() => {
@@ -537,7 +541,7 @@ export const DetectorList = (props: ListProps) => {
       DETECTOR_ACTION.DELETE
     ).map((detector) => detector.id);
     const promises = validIds.map(async (id: string) => {
-      return dispatch(deleteDetector(id));
+      return dispatch(deleteDetector(id, state.selectedDataSourceId));
     });
     await Promise.all(promises)
       .then(() => {
@@ -575,14 +579,19 @@ export const DetectorList = (props: ListProps) => {
     });
   };
 
-  const handleDataSourceChange = (e) => {
-    const dataConnectionId = e[0] ? e[0].id : undefined;
-
-    setState({
-      ...state,
-      page: 0,
-      selectedDataSourceId: dataConnectionId,
-    });
+  const handleDataSourceChange = ([event]) => {
+    const dataSourceId = event?.id;
+    if (!dataSourceId) {
+      getNotifications().toasts.addDanger(
+        prettifyErrorMessage('Unable to set data source.')
+      );
+    } else {
+      setState((prevState) => ({
+        ...prevState,
+        page: 0,
+        selectedDataSourceId: dataSourceId,
+      }));
+    }
   };
 
   const getConfirmModal = () => {
@@ -660,7 +669,7 @@ export const DetectorList = (props: ListProps) => {
   const confirmModal = getConfirmModal();
 
   const DataSourceMenu =
-    props.dataSourceManagement.ui.getDataSourceMenu<DataSourceSelectableConfig>();
+    getDataSourceManagementPlugin().ui.getDataSourceMenu<DataSourceSelectableConfig>();
   const renderDataSourceComponent = useMemo(() => {
     return (
       <DataSourceMenu
@@ -668,6 +677,7 @@ export const DetectorList = (props: ListProps) => {
         componentType={'DataSourceSelectable'}
         componentConfig={{
           fullWidth: false,
+          activeOption:[{ id: state.selectedDataSourceId }],
           savedObjects: getSavedObjectsClient(),
           notifications: getNotifications(),
           onSelectedDataSources: (dataSources) =>
