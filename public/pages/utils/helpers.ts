@@ -128,13 +128,3 @@ export const getAllDetectorsQueryParamsWithDataSourceId = (
   sortField: 'name',
   dataSourceId: dataSourceId,
 });
-
-export const getMDSQueryParams = (location: {
-  search: string 
-}): MDSQueryParams => {
-  const params = new URLSearchParams(location.search);
-  const dataSourceId = params.get('dataSourceId');
-  return {
-    dataSourceId: dataSourceId || '',
-  };
- }

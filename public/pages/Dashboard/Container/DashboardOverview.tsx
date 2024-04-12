@@ -33,11 +33,10 @@ import {
   ALL_DETECTORS_MESSAGE,
   ALL_DETECTOR_STATES_MESSAGE,
   ALL_INDICES_MESSAGE,
-  getAllDetectorsQueryParamsWithDataSourceId
 } from '../utils/constants';
 import { AppState } from '../../../redux/reducers';
 import { CatIndex, IndexAlias, MDSQueryParams } from '../../../../server/models/types';
-import { getVisibleOptions } from '../../utils/helpers';
+import { getAllDetectorsQueryParamsWithDataSourceId, getVisibleOptions } from '../../utils/helpers';
 import { BREADCRUMBS } from '../../../utils/constants';
 import { DETECTOR_STATE } from '../../../../server/utils/constants';
 import { getDetectorStateOptions, getURLQueryParams } from '../../DetectorsList/utils/helpers';
