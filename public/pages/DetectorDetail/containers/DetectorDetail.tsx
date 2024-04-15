@@ -24,10 +24,10 @@ import {
   EuiLoadingSpinner,
   EuiButton,
 } from '@elastic/eui';
-import { CoreStart } from '../../../../../../src/core/public';
+import { CoreStart, MountPoint } from '../../../../../../src/core/public';
 import { CoreServicesContext } from '../../../components/CoreServices/CoreServices';
 import { get, isEmpty } from 'lodash';
-import { RouteComponentProps, Switch, Route, Redirect } from 'react-router-dom';
+import { RouteComponentProps, Switch, Route, Redirect, useLocation } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { useFetchDetectorInfo } from '../../CreateDetectorSteps/hooks/useFetchDetectorInfo';
 import { useHideSideNavBar } from '../../main/hooks/useHideSideNavBar';
@@ -58,12 +58,15 @@ import {
 import { DETECTOR_STATE } from '../../../../server/utils/constants';
 import { CatIndex } from '../../../../server/models/types';
 import { containsIndex } from '../utils/helpers';
+import { DataSourceViewConfig } from '../../../../../../src/plugins/data_source_management/public';
+import { getDataSourceManagementPlugin, getDataSourcePlugin, getNotifications, getSavedObjectsClient } from '../../../services';
 
 export interface DetectorRouterProps {
   detectorId?: string;
 }
-interface DetectorDetailProps
-  extends RouteComponentProps<DetectorRouterProps> {}
+interface DetectorDetailProps extends RouteComponentProps<DetectorRouterProps> {
+  setActionMenu: (menuMount: MountPoint | undefined) => void;
+}
 
 const tabs = [
   {
@@ -103,10 +106,14 @@ export const DetectorDetail = (props: DetectorDetailProps) => {
   const core = React.useContext(CoreServicesContext) as CoreStart;
   const dispatch = useDispatch();
   const detectorId = get(props, 'match.params.detectorId', '') as string;
+  const dataSourceEnabled = getDataSourcePlugin().dataSourceEnabled;
+  const location = useLocation();
+  const queryParams = new URLSearchParams(location.search);
+  const dataSourceId = queryParams.get('dataSourceId') as string;
+  
   const { detector, hasError, isLoadingDetector, errorMessage } =
-    useFetchDetectorInfo(detectorId);
-  const { monitor, fetchMonitorError, isLoadingMonitor } =
-    useFetchMonitorInfo(detectorId);
+    useFetchDetectorInfo(detectorId, dataSourceId);
+  const { monitor} = useFetchMonitorInfo(detectorId, dataSourceId, dataSourceEnabled);
   const visibleIndices = useSelector(
     (state: AppState) => state.opensearch.indices
   ) as CatIndex[];
@@ -155,15 +162,17 @@ export const DetectorDetail = (props: DetectorDetailProps) => {
   // Getting all visible indices. Will re-fetch if changes to the detector (e.g.,
   // detector starts, result index recreated or user switches tabs to re-fetch detector)
   useEffect(() => {
-    const getInitialIndices = async () => {
-      await dispatch(getIndices('')).catch((error: any) => {
-        console.error(error);
-        core.notifications.toasts.addDanger('Error getting all indices');
-      });
-    };
-    // only need to check if indices exist after detector finishes loading
-    if (!isLoadingDetector) {
-      getInitialIndices();
+    if (props.dataSourceEnabled ? dataSourceId : true) {
+      const getInitialIndices = async () => {
+        await dispatch(getIndices('', dataSourceId)).catch((error: any) => {
+          console.error(error);
+          core.notifications.toasts.addDanger('Error getting all indices');
+        });
+      };
+      // only need to check if indices exist after detector finishes loading
+      if (!isLoadingDetector) {
+        getInitialIndices();
+      }
     }
   }, [detector]);
 
@@ -201,7 +210,7 @@ export const DetectorDetail = (props: DetectorDetailProps) => {
       ...detectorDetailModel,
       selectedTab: DETECTOR_DETAIL_TABS.CONFIGURATIONS,
     });
-    props.history.push(`/detectors/${detectorId}/configurations`);
+    props.history.push(`/detectors/${detectorId}/configurations?dataSourceId=${dataSourceId}`);
   }, []);
 
   const handleSwitchToHistoricalTab = useCallback(() => {
@@ -209,7 +218,7 @@ export const DetectorDetail = (props: DetectorDetailProps) => {
       ...detectorDetailModel,
       selectedTab: DETECTOR_DETAIL_TABS.HISTORICAL,
     });
-    props.history.push(`/detectors/${detectorId}/historical`);
+    props.history.push(`/detectors/${detectorId}/historical?dataSourceId=${dataSourceId}`);
   }, []);
 
   const handleTabChange = (route: DETECTOR_DETAIL_TABS) => {
@@ -217,7 +226,7 @@ export const DetectorDetail = (props: DetectorDetailProps) => {
       ...detectorDetailModel,
       selectedTab: route,
     });
-    props.history.push(`/detectors/${detectorId}/${route}`);
+    props.history.push(`/detectors/${detectorId}/${route}?dataSourceId=${dataSourceId}`);
   };
 
   const hideMonitorCalloutModal = () => {
@@ -261,8 +270,8 @@ export const DetectorDetail = (props: DetectorDetailProps) => {
       // Await for the start detector call to succeed before displaying toast.
       // Don't wait for get detector call; the page will be updated
       // via hooks automatically when the new detector info is returned.
-      await dispatch(startDetector(detectorId));
-      dispatch(getDetector(detectorId));
+      await dispatch(startDetector(detectorId, dataSourceId));
+      dispatch(getDetector(detectorId, dataSourceId));
       core.notifications.toasts.addSuccess(
         `Successfully started the detector job`
       );
@@ -278,10 +287,10 @@ export const DetectorDetail = (props: DetectorDetailProps) => {
   const handleStopAdJob = async (detectorId: string, listener?: Listener) => {
     try {
       if (isRTJobRunning) {
-        await dispatch(stopDetector(detectorId));
+        await dispatch(stopDetector(detectorId, dataSourceId));
       }
       if (isHistoricalJobRunning) {
-        await dispatch(stopHistoricalDetector(detectorId));
+        await dispatch(stopHistoricalDetector(detectorId, dataSourceId));
       }
       core.notifications.toasts.addSuccess(
         `Successfully stopped the ${runningJobsAsString}`
@@ -302,7 +311,7 @@ export const DetectorDetail = (props: DetectorDetailProps) => {
 
   const handleDelete = useCallback(async (detectorId: string) => {
     try {
-      await dispatch(deleteDetector(detectorId));
+      await dispatch(deleteDetector(detectorId, dataSourceId));
       core.notifications.toasts.addSuccess(`Successfully deleted the detector`);
       hideDeleteDetectorModal();
       props.history.push('/detectors');
@@ -350,6 +359,8 @@ export const DetectorDetail = (props: DetectorDetailProps) => {
       ></EuiCallOut>
     ) : null;
 
+  const DataSourceMenu = getDataSourceManagementPlugin().ui.getDataSourceMenu<DataSourceViewConfig>();
+
   return (
     <React.Fragment>
       {!isEmpty(detector) && !hasError ? (
@@ -361,6 +372,19 @@ export const DetectorDetail = (props: DetectorDetailProps) => {
               : { ...lightStyles, flexGrow: 'unset' }),
           }}
         >
+
+        {props.dataSourceEnabled && (
+          <DataSourceMenu
+            setMenuMountPoint={props.setActionMenu}
+            componentType={'DataSourceView'}
+            componentConfig={{
+              activeOption: [{ id: dataSourceId}],
+              fullWidth: false,
+              savedObjects: getSavedObjectsClient(),
+              notifications: getNotifications(),
+            }}
+          />
+        )}
           <EuiFlexGroup
             justifyContent="spaceBetween"
             style={{ padding: '10px' }}
@@ -542,6 +566,8 @@ export const DetectorDetail = (props: DetectorDetailProps) => {
             <AnomalyResults
               {...resultsProps}
               detectorId={detectorId}
+              dataSourceId={dataSourceId}
+              dataSourceEnabled={props.dataSourceEnabled}
               onStartDetector={() => handleStartAdJob(detectorId)}
               onStopDetector={() => handleStopAdJob(detectorId)}
               onSwitchToConfiguration={handleSwitchToConfigurationTab}
@@ -556,6 +582,7 @@ export const DetectorDetail = (props: DetectorDetailProps) => {
             <HistoricalDetectorResults
               {...configProps}
               detectorId={detectorId}
+              dataSourceId={dataSourceId}
             />
           )}
         />
@@ -566,6 +593,7 @@ export const DetectorDetail = (props: DetectorDetailProps) => {
             <DetectorConfig
               {...configProps}
               detectorId={detectorId}
+              dataSourceId={dataSourceId}
               onEditFeatures={handleEditFeature}
               onEditDetector={handleEditDetector}
             />

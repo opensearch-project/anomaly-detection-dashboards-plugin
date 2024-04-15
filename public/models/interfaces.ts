@@ -205,6 +205,7 @@ export type Detector = {
   taskState?: DETECTOR_STATE;
   taskProgress?: number;
   taskError?: string;
+  dataSourceId? : string;
 };
 
 export type DetectorListItem = {
@@ -218,6 +219,7 @@ export type DetectorListItem = {
   lastUpdateTime: number;
   enabledTime?: number;
   detectorType?: string;
+  dataSourceId?: string;
 };
 
 export type EntityData = {

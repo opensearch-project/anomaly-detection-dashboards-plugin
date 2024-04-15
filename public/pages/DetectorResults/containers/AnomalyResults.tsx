@@ -70,6 +70,8 @@ import { DEFAULT_SHINGLE_SIZE } from '../../../utils/constants';
 
 interface AnomalyResultsProps extends RouteComponentProps {
   detectorId: string;
+  dataSourceId: string;
+  dataSourceEnabled: boolean;
   onStartDetector(): void;
   onStopDetector(): void;
   onSwitchToConfiguration(): void;
@@ -80,7 +82,8 @@ export function AnomalyResults(props: AnomalyResultsProps) {
   const core = React.useContext(CoreServicesContext) as CoreStart;
   const dispatch = useDispatch();
   const detectorId = props.detectorId;
-  const detector = useSelector(
+  const dataSourceId = props.dataSourceId;
+  const detector = useSelector(    
     (state: AppState) => state.ad.detectors[detectorId]
   );
 
@@ -90,11 +93,15 @@ export function AnomalyResults(props: AnomalyResultsProps) {
       BREADCRUMBS.DETECTORS,
       { text: detector ? detector.name : '' },
     ]);
-    dispatch(getDetector(detectorId));
+    if (props.dataSourceEnabled ? dataSourceId : true) {
+      dispatch(getDetector(detectorId, dataSourceId));
+    }
   }, []);
 
   const fetchDetector = async () => {
-    dispatch(getDetector(detectorId));
+    if (props.dataSourceEnabled ? dataSourceId : true) {
+      dispatch(getDetector(detectorId, dataSourceId));
+    }
   };
 
   useEffect(() => {
@@ -247,7 +254,7 @@ export function AnomalyResults(props: AnomalyResultsProps) {
     try {
       const resultIndex = get(detector, 'resultIndex', '');
       const detectorResultResponse = await dispatch(
-        getDetectorResults(detectorId, params, false, resultIndex, true)
+        getDetectorResults(detectorId, dataSourceId, params, false, resultIndex, true)
       );
       const featuresData = get(
         detectorResultResponse,
@@ -550,10 +557,14 @@ export function AnomalyResults(props: AnomalyResultsProps) {
                       </EuiFlexItem>
                     </EuiFlexGroup>
                   ) : null}
-                  <AnomalyResultsLiveChart detector={detector} />
+                  <AnomalyResultsLiveChart 
+                    detector={detector} 
+                    dataSourceId={dataSourceId}
+                  />
                   <EuiSpacer size="l" />
                   <AnomalyHistory
                     detector={detector}
+                    dataSourceId={dataSourceId}
                     monitor={monitor}
                     isFeatureDataMissing={isDetectorMissingData}
                     isNotSample={true}

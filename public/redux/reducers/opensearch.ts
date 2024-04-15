@@ -246,17 +246,25 @@ const reducer = handleActions<OpenSearchState>(
   initialState
 );
 
-export const getIndices = (searchKey: string = ''): APIAction => ({
-  type: GET_INDICES,
-  request: (client: HttpSetup) =>
-    client.get(`..${AD_NODE_API._INDICES}`, { query: { index: searchKey } }),
-});
+export const getIndices = (searchKey = '', dataSourceId = '') => {
+  const baseUrl = `..${AD_NODE_API._INDICES}`;
+  const url = dataSourceId ? `${baseUrl}/${dataSourceId}` : baseUrl;
 
-export const getAliases = (searchKey: string = ''): APIAction => ({
-  type: GET_ALIASES,
-  request: (client: HttpSetup) =>
-    client.get(`..${AD_NODE_API._ALIASES}`, { query: { alias: searchKey } }),
-});
+  return {
+    type: GET_INDICES,
+    request: (client: HttpSetup) => client.get(url, { query: { index: searchKey } }),
+  };
+};
+
+export const getAliases = (searchKey: string = '', dataSourceId = ''): APIAction => {
+  const baseUrl = `..${AD_NODE_API._ALIASES}`;
+  const url = dataSourceId ? `${baseUrl}/${dataSourceId}` : baseUrl;
+
+  return {
+    type: GET_ALIASES,
+    request: (client: HttpSetup) => client.get(url, { query: { alias: searchKey } }),
+  };
+};
 
 export const getMappings = (searchKey: string = ''): APIAction => ({
   type: GET_MAPPINGS,
@@ -274,19 +282,25 @@ export const searchOpenSearch = (requestData: any): APIAction => ({
     }),
 });
 
-export const createIndex = (indexConfig: any): APIAction => ({
-  type: CREATE_INDEX,
-  request: (client: HttpSetup) =>
-    client.put(`..${AD_NODE_API.CREATE_INDEX}`, {
-      body: JSON.stringify(indexConfig),
-    }),
-});
+export const createIndex = (indexConfig: any, dataSourceId = ''): APIAction => {
+  const url = dataSourceId ? `${AD_NODE_API.CREATE_INDEX}/${dataSourceId}` : AD_NODE_API.CREATE_INDEX;
+  return {
+    type: CREATE_INDEX,
+    request: (client: HttpSetup) =>
+      client.put(`..${url}`, {
+        body: JSON.stringify(indexConfig),
+      }),
+  };
+}
 
-export const bulk = (body: any): APIAction => ({
-  type: BULK,
-  request: (client: HttpSetup) =>
-    client.post(`..${AD_NODE_API.BULK}`, { body: JSON.stringify(body) }),
-});
+export const bulk = (body: any, dataSourceId = ''): APIAction => {
+  const url = dataSourceId ? `${AD_NODE_API.BULK}/${dataSourceId}` : AD_NODE_API.BULK;
+  return {
+    type: BULK,
+    request: (client: HttpSetup) =>
+      client.post(`..${url}`, { body: JSON.stringify(body) }),
+  };
+};
 
 export const deleteIndex = (index: string): APIAction => ({
   type: DELETE_INDEX,
@@ -295,11 +309,11 @@ export const deleteIndex = (index: string): APIAction => ({
 });
 
 export const getPrioritizedIndices =
-  (searchKey: string): ThunkAction =>
+  (searchKey: string, dataSourceId = ''): ThunkAction =>
   async (dispatch, getState) => {
     //Fetch Indices and Aliases with text provided
-    await dispatch(getIndices(searchKey));
-    await dispatch(getAliases(searchKey));
+    await dispatch(getIndices(searchKey, dataSourceId));
+    await dispatch(getAliases(searchKey, dataSourceId));
     const osState = getState().opensearch;
     const exactMatchedIndices = osState.indices;
     const exactMatchedAliases = osState.aliases;
@@ -311,8 +325,8 @@ export const getPrioritizedIndices =
       };
     } else {
       //No results found for exact match, append wildCard and get partial matches if exists
-      await dispatch(getIndices(`${searchKey}*`));
-      await dispatch(getAliases(`${searchKey}*`));
+      await dispatch(getIndices(`${searchKey}*`, dataSourceId));
+      await dispatch(getAliases(`${searchKey}*`, dataSourceId));
       const osState = getState().opensearch;
       const partialMatchedIndices = osState.indices;
       const partialMatchedAliases = osState.aliases;

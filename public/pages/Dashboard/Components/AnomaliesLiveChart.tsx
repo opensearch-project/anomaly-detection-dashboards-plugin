@@ -57,6 +57,7 @@ import { searchResults } from '../../../redux/reducers/anomalyResults';
 
 export interface AnomaliesLiveChartProps {
   selectedDetectors: DetectorListItem[];
+  dataSourceId?: string;
 }
 
 interface LiveTimeRangeState {
@@ -102,7 +103,8 @@ export const AnomaliesLiveChart = (props: AnomaliesLiveChartProps) => {
         1,
         true,
         ALL_CUSTOM_AD_RESULT_INDICES,
-        false
+        false,
+        props.dataSourceId
       );
     } catch (err) {
       console.log(
@@ -126,7 +128,8 @@ export const AnomaliesLiveChart = (props: AnomaliesLiveChartProps) => {
         MAX_LIVE_DETECTORS,
         false,
         ALL_CUSTOM_AD_RESULT_INDICES,
-        false
+        false,
+        props.dataSourceId
       );
     setLiveAnomalyData(latestLiveAnomalyResult);
 

@@ -113,6 +113,7 @@ interface AnomalyDetailsChartProps {
   selectedHeatmapCell?: HeatmapCell;
   onDatePickerRangeChange?(startDate: number, endDate: number): void;
   openOutOfRangeCallOut?: boolean;
+  dataSourceId?: string;
 }
 
 export const AnomalyDetailsChart = React.memo(
@@ -174,7 +175,7 @@ export const AnomalyDetailsChart = React.memo(
         zoomRange.endDate,
         taskId
       );
-      dispatch(searchResults(anomalyDataRangeQuery, resultIndex, true))
+      dispatch(searchResults(anomalyDataRangeQuery, resultIndex, props.dataSourceId, true))
         .then((response: any) => {
           // Only retrieve buckets that are in the anomaly results range. This is so
           // we don't show aggregate results for where there is no data at all
@@ -193,7 +194,7 @@ export const AnomalyDetailsChart = React.memo(
             taskId,
             selectedAggId
           );
-          dispatch(searchResults(historicalAggQuery, resultIndex, true))
+          dispatch(searchResults(historicalAggQuery, resultIndex, props.dataSourceId, true))
             .then((response: any) => {
               const aggregatedAnomalies = parseHistoricalAggregatedAnomalies(
                 response,
@@ -229,7 +230,7 @@ export const AnomalyDetailsChart = React.memo(
           zoomRange.endDate,
           taskId
         );
-        dispatch(searchResults(anomalyDataRangeQuery, resultIndex, true))
+        dispatch(searchResults(anomalyDataRangeQuery, resultIndex, props.dataSourceId, true))
           .then((response: any) => {
             const dataStartDate = get(
               response,

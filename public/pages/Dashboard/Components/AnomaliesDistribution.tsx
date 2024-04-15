@@ -35,6 +35,7 @@ import { ALL_CUSTOM_AD_RESULT_INDICES } from '../../utils/constants';
 import { searchResults } from '../../../redux/reducers/anomalyResults';
 export interface AnomaliesDistributionChartProps {
   selectedDetectors: DetectorListItem[];
+  dataSourceId?: string;
 }
 
 export const AnomaliesDistributionChart = (
@@ -66,6 +67,7 @@ export const AnomaliesDistributionChart = (
       await getAnomalyDistributionForDetectorsByTimeRange(
         searchResults,
         props.selectedDetectors,
+        props.dataSourceId,
         timeRange,
         dispatch,
         0,

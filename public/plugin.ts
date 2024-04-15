@@ -35,6 +35,9 @@ import {
   setUiActions,
   setUISettings,
   setQueryService,
+  setSavedObjectsClient,
+  setDataSourceManagementPlugin,
+  setDataSourcePlugin,
 } from './services';
 import { AnomalyDetectionOpenSearchDashboardsPluginStart } from 'public';
 import {
@@ -43,6 +46,8 @@ import {
 } from '../../../src/plugins/vis_augmenter/public';
 import { UiActionsStart } from '../../../src/plugins/ui_actions/public';
 import { DataPublicPluginStart } from '../../../src/plugins/data/public';
+import { DataSourceManagementPluginSetup } from '../../../src/plugins/data_source_management/public';
+import { DataSourcePluginSetup } from '../../../src/plugins/data_source/public';
 
 declare module '../../../src/plugins/ui_actions/public' {
   export interface ActionContextMapping {
@@ -55,7 +60,8 @@ export interface AnomalyDetectionSetupDeps {
   embeddable: EmbeddableSetup;
   notifications: NotificationsSetup;
   visAugmenter: VisAugmenterSetup;
-  //uiActions: UiActionsSetup;
+  dataSourceManagement: DataSourceManagementPluginSetup;
+  dataSource: DataSourcePluginSetup;
 }
 
 export interface AnomalyDetectionStartDeps {
@@ -82,7 +88,10 @@ export class AnomalyDetectionOpenSearchDashboardsPlugin
       mount: async (params: AppMountParameters) => {
         const { renderApp } = await import('./anomaly_detection_app');
         const [coreStart] = await core.getStartServices();
-        return renderApp(coreStart, params);
+        return renderApp(
+          coreStart,
+          params,
+        );
       },
     });
 
@@ -91,6 +100,10 @@ export class AnomalyDetectionOpenSearchDashboardsPlugin
     // Set the HTTP client so it can be pulled into expression fns to make
     // direct server-side calls
     setClient(core.http);
+
+    setDataSourceManagementPlugin(plugins.dataSourceManagement);
+
+    setDataSourcePlugin(plugins.dataSource);
 
     // Create context menu actions
     const actions = getActions();
@@ -116,6 +129,7 @@ export class AnomalyDetectionOpenSearchDashboardsPlugin
     setNotifications(core.notifications);
     setUiActions(uiActions);
     setQueryService(data.query);
+    setSavedObjectsClient(core.savedObjects.client);
     return {};
   }
 }

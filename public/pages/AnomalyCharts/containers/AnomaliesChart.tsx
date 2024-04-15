@@ -85,6 +85,7 @@ export interface AnomaliesChartProps {
   selectedCategoryFields?: any[];
   handleCategoryFieldsChange(selectedOptions: any[]): void;
   openOutOfRangeCallOut?: boolean;
+  dataSourceId?: string;
 }
 
 export const AnomaliesChart = React.memo((props: AnomaliesChartProps) => {
@@ -345,6 +346,7 @@ export const AnomaliesChart = React.memo((props: AnomaliesChartProps) => {
                               isHCDetector={props.isHCDetector}
                               isHistorical={props.isHistorical}
                               selectedHeatmapCell={props.selectedHeatmapCell}
+                              dataSourceId={props.dataSourceId}
                             />,
                             <EuiSpacer size="m" />,
                             <FeatureBreakDown
@@ -399,6 +401,7 @@ export const AnomaliesChart = React.memo((props: AnomaliesChartProps) => {
               isHistorical={props.isHistorical}
               onDatePickerRangeChange={handleDatePickerRangeChange}
               openOutOfRangeCallOut={showOutOfRangeCallOut}
+              dataSourceId={props.dataSourceId}
             />
           )}
         </EuiFlexGroup>
