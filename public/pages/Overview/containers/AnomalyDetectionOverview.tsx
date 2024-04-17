@@ -232,6 +232,12 @@ export function AnomalyDetectionOverview(props: AnomalyDetectionOverviewProps) {
     );
   }, [getSavedObjectsClient, getNotifications, props.setActionMenu]);
 
+  const createDetectorUrl = `${PLUGIN_NAME}#` + 
+    (dataSourceEnabled ? 
+      `${APP_PATH.CREATE_DETECTOR_STEPS}?dataSourceId=${MDSOverviewState.selectedDataSourceId}` :
+      `${APP_PATH.CREATE_DETECTOR_STEPS}`
+    );
+
   return isLoadingSampleDetectors && isLoadingSampleIndices ? (
     <div>
       <EuiLoadingSpinner size="xl" />
@@ -249,7 +255,7 @@ export function AnomalyDetectionOverview(props: AnomalyDetectionOverviewProps) {
           <EuiFlexItem grow={false}>
             <EuiButton
               fill
-              href={`${PLUGIN_NAME}#${APP_PATH.CREATE_DETECTOR_STEPS}`}
+              href={createDetectorUrl}
               data-test-subj="add_detector"
             >
               Create detector

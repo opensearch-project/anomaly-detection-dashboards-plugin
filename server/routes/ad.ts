@@ -76,11 +76,11 @@ export function registerADRoutes(apiRouter: Router, adService: AdService) {
   // post search anomaly results
   apiRouter.post('/detectors/results/_search/', 
     adService.searchResults);
-  apiRouter.post('/detectors/results/{dataSourceId}/_search', 
+  apiRouter.post('/detectors/results/_search/{dataSourceId}', 
     adService.searchResults);
   apiRouter.post('/detectors/results/_search/{resultIndex}/{onlyQueryCustomResultIndex}',
     adService.searchResults);
-  apiRouter.post('/detectors/results/{dataSourceId}/_search/{resultIndex}/{onlyQueryCustomResultIndex}',
+  apiRouter.post('/detectors/results/_search/{resultIndex}/{onlyQueryCustomResultIndex}/{dataSourceId}',
     adService.searchResults);
 
   // list detectors
@@ -94,11 +94,11 @@ export function registerADRoutes(apiRouter: Router, adService: AdService) {
   // get detector anomaly results
   apiRouter.get('/detectors/{id}/results/{isHistorical}/{resultIndex}/{onlyQueryCustomResultIndex}',
     adService.getAnomalyResults);
-  apiRouter.get('/detectors/{id}/{dataSourceId}/results/{isHistorical}/{resultIndex}/{onlyQueryCustomResultIndex}',
+  apiRouter.get('/detectors/{id}/results/{isHistorical}/{resultIndex}/{onlyQueryCustomResultIndex}/{dataSourceId}',
     adService.getAnomalyResults);
   apiRouter.get('/detectors/{id}/results/{isHistorical}',
     adService.getAnomalyResults);
-  apiRouter.get('/detectors/{id}/{dataSourceId}/results/{isHistorical}',
+  apiRouter.get('/detectors/{id}/results/{isHistorical}/{dataSourceId}',
     adService.getAnomalyResults);
 
   // delete detector
@@ -110,13 +110,13 @@ export function registerADRoutes(apiRouter: Router, adService: AdService) {
   // start detector
   apiRouter.post('/detectors/{detectorId}/start', 
     adService.startDetector);
-  apiRouter.post('/detectors/{detectorId}/{dataSourceId}/start', 
+  apiRouter.post('/detectors/{detectorId}/start/{dataSourceId}', 
     adService.startDetector);
 
   // stop detector
   apiRouter.post('/detectors/{detectorId}/stop/{isHistorical}',
     adService.stopDetector);
-  apiRouter.post('/detectors/{detectorId}/{dataSourceId}/stop/{isHistorical}',
+  apiRouter.post('/detectors/{detectorId}/stop/{isHistorical}/{dataSourceId}',
     adService.stopDetector);
 
   apiRouter.get(
@@ -136,7 +136,7 @@ export function registerADRoutes(apiRouter: Router, adService: AdService) {
   // post get top anomaly results
   apiRouter.post('/detectors/{detectorId}/_topAnomalies/{isHistorical}',
     adService.getTopAnomalyResults);
-  apiRouter.post('/detectors/{detectorId}/{dataSourceId}/_topAnomalies/{isHistorical}',
+  apiRouter.post('/detectors/{detectorId}/_topAnomalies/{isHistorical}/{dataSourceId}',
     adService.getTopAnomalyResults);
 
   apiRouter.post(

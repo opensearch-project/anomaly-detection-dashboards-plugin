@@ -28,9 +28,7 @@ export const useFetchMonitorInfo = (
 } => {
   const dispatch = useDispatch();
   useEffect(() => {
-    if (dataSourceEnabled ? dataSourceId : true) {
-      dispatch(searchMonitors(dataSourceId));
-    }
+    dispatch(searchMonitors(dataSourceId));
   }, []);
 
   const isMonitorRequesting = useSelector(

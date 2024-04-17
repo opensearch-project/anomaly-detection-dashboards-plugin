@@ -166,9 +166,7 @@ export const DetectorList = (props: ListProps) => {
   // Getting all initial monitors
   useEffect(() => {
     const getInitialMonitors = async () => {
-      if (dataSourceEnabled ? state.selectedDataSourceId : true) {
-        dispatch(searchMonitors(state.selectedDataSourceId));
-      }
+      dispatch(searchMonitors(state.selectedDataSourceId));
     };
     getInitialMonitors();
   }, []);
@@ -241,9 +239,7 @@ export const DetectorList = (props: ListProps) => {
 
     setIsLoadingFinalDetectors(true);
 
-    if (dataSourceEnabled ? state.selectedDataSourceId : true) {
-      getUpdatedDetectors();
-    }
+    getUpdatedDetectors();
   }, [
     state.page,
     state.queryParams,
@@ -496,9 +492,7 @@ export const DetectorList = (props: ListProps) => {
         );
       })
       .finally(() => {
-        if (dataSourceEnabled ? state.selectedDataSourceId : true) {
-          getUpdatedDetectors();
-        }
+        getUpdatedDetectors();
       });
   };
 
@@ -689,6 +683,12 @@ export const DetectorList = (props: ListProps) => {
 
   const columns = getColumns(state.selectedDataSourceId);
 
+  const createDetectorUrl = `${PLUGIN_NAME}#` + 
+  (dataSourceEnabled ? 
+    `${APP_PATH.CREATE_DETECTOR}?dataSourceId=${state.selectedDataSourceId}` :
+    `${APP_PATH.CREATE_DETECTOR}`
+  );
+
   return (
     <EuiPage>
       <EuiPageBody>
@@ -712,7 +712,7 @@ export const DetectorList = (props: ListProps) => {
             <EuiButton
               data-test-subj="createDetectorButton"
               fill
-              href={`${PLUGIN_NAME}#${APP_PATH.CREATE_DETECTOR}`}
+              href={createDetectorUrl}
             >
               Create detector
             </EuiButton>,

@@ -205,9 +205,7 @@ export function DashboardOverview(props: OverviewProps) {
       ...location,
       search: queryString.stringify(updatedParams),
     })
-    if (dataSourceEnabled ? MDSOverviewState.selectedDataSourceId : true) {
-      intializeDetectors();
-    }
+    intializeDetectors();
   }, [MDSOverviewState]);
 
   useEffect(() => {

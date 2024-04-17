@@ -443,8 +443,8 @@ export const deleteDetector = (detectorId: string, dataSourceId = ''): APIAction
 };
 
 export const startDetector = (detectorId: string, dataSourceId = ''): APIAction => {
-  const baseUrl = `..${AD_NODE_API.DETECTOR}/${detectorId}`;
-  const url = dataSourceId ? `${baseUrl}/${dataSourceId}/start` : `${baseUrl}/start`;
+  const baseUrl = `..${AD_NODE_API.DETECTOR}/${detectorId}/start`;
+  const url = dataSourceId ? `${baseUrl}/${dataSourceId}` : baseUrl;
 
   return {
     type: START_DETECTOR,
@@ -477,8 +477,8 @@ export const startHistoricalDetector = (
 };
 
 export const stopDetector = (detectorId: string, dataSourceId = ''): APIAction => {
-  const baseUrl = `..${AD_NODE_API.DETECTOR}/${detectorId}`;
-  const url = dataSourceId ? `${baseUrl}/${dataSourceId}/stop/${false}` : `${baseUrl}/stop/${false}`;
+  const baseUrl = `..${AD_NODE_API.DETECTOR}/${detectorId}/stop/${false}`;
+  const url = dataSourceId ? `${baseUrl}/${dataSourceId}` : baseUrl;
 
   return {
     type: STOP_DETECTOR,

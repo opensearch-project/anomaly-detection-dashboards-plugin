@@ -161,17 +161,15 @@ export const DetectorDetail = (props: DetectorDetailProps) => {
   // Getting all visible indices. Will re-fetch if changes to the detector (e.g.,
   // detector starts, result index recreated or user switches tabs to re-fetch detector)
   useEffect(() => {
-    if (dataSourceEnabled ? dataSourceId : true) {
-      const getInitialIndices = async () => {
-        await dispatch(getIndices('', dataSourceId)).catch((error: any) => {
-          console.error(error);
-          core.notifications.toasts.addDanger('Error getting all indices');
-        });
-      };
-      // only need to check if indices exist after detector finishes loading
-      if (!isLoadingDetector) {
-        getInitialIndices();
-      }
+    const getInitialIndices = async () => {
+      await dispatch(getIndices('', dataSourceId)).catch((error: any) => {
+        console.error(error);
+        core.notifications.toasts.addDanger('Error getting all indices');
+      });
+    };
+    // only need to check if indices exist after detector finishes loading
+    if (!isLoadingDetector) {
+      getInitialIndices();
     }
   }, [detector]);
 

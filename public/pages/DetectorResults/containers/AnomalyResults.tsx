@@ -96,15 +96,11 @@ export function AnomalyResults(props: AnomalyResultsProps) {
       BREADCRUMBS.DETECTORS,
       { text: detector ? detector.name : '' },
     ]);
-    if (dataSourceEnabled ? dataSourceId : true) {
-      dispatch(getDetector(detectorId, dataSourceId));
-    }
+    dispatch(getDetector(detectorId, dataSourceId));
   }, []);
 
   const fetchDetector = async () => {
-    if (dataSourceEnabled ? dataSourceId : true) {
-      dispatch(getDetector(detectorId, dataSourceId));
-    }
+    dispatch(getDetector(detectorId, dataSourceId));
   };
 
   useEffect(() => {
