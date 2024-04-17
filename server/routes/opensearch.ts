@@ -124,21 +124,21 @@ export default class OpenSearchService {
     opensearchDashboardsResponse: OpenSearchDashboardsResponseFactory
   ): Promise<IOpenSearchDashboardsResponse<any>> => {
     const { index } = request.query as { index: string };
-    const { dataSourceId = "" } = request.params as { dataSourceId?: string };
+    const { dataSourceId = '' } = request.params as { dataSourceId?: string };
     try {
       const callWithRequest = getClientBasedOnDataSource(
-        context, 
-        this.dataSourceEnabled, 
-        request, 
+        context,
+        this.dataSourceEnabled,
+        request,
         dataSourceId,
-        this.client);
+        this.client
+      );
 
-        const response: CatIndex[] = await callWithRequest(
-          'cat.indices', {
-            index,
-            format: 'json',
-            h: 'health,index',
-          });
+      const response: CatIndex[] = await callWithRequest('cat.indices', {
+        index,
+        format: 'json',
+        h: 'health,index',
+      });
 
       return opensearchDashboardsResponse.ok({
         body: { ok: true, response: { indices: response } },
@@ -169,22 +169,22 @@ export default class OpenSearchService {
     opensearchDashboardsResponse: OpenSearchDashboardsResponseFactory
   ): Promise<IOpenSearchDashboardsResponse<any>> => {
     const { alias } = request.query as { alias: string };
-    const { dataSourceId = "" } = request.params as { dataSourceId?: string };
+    const { dataSourceId = '' } = request.params as { dataSourceId?: string };
 
     try {
       const callWithRequest = getClientBasedOnDataSource(
-        context, 
-        this.dataSourceEnabled, 
-        request, 
+        context,
+        this.dataSourceEnabled,
+        request,
         dataSourceId,
-        this.client);
+        this.client
+      );
 
-      const response: IndexAlias[] = await callWithRequest(
-        'cat.aliases', {
-          alias,
-          format: 'json',
-          h: 'alias,index',
-        });
+      const response: IndexAlias[] = await callWithRequest('cat.aliases', {
+        alias,
+        format: 'json',
+        h: 'alias,index',
+      });
       return opensearchDashboardsResponse.ok({
         body: { ok: true, response: { aliases: response } },
       });
@@ -204,18 +204,19 @@ export default class OpenSearchService {
     request: OpenSearchDashboardsRequest,
     opensearchDashboardsResponse: OpenSearchDashboardsResponseFactory
   ): Promise<IOpenSearchDashboardsResponse<any>> => {
-    const { dataSourceId = "" } = request.params as { dataSourceId?: string };
+    const { dataSourceId = '' } = request.params as { dataSourceId?: string };
 
     //@ts-ignore
     const index = request.body.index;
     //@ts-ignore
     const body = request.body.body;
     const callWithRequest = getClientBasedOnDataSource(
-      context, 
-      this.dataSourceEnabled, 
-      request, 
+      context,
+      this.dataSourceEnabled,
+      request,
       dataSourceId,
-      this.client);
+      this.client
+    );
     try {
       await callWithRequest('indices.create', {
         index: index,
@@ -232,10 +233,10 @@ export default class OpenSearchService {
     }
     try {
       const response: CatIndex[] = await callWithRequest('cat.indices', {
-          index,
-          format: 'json',
-          h: 'health,index',
-        });
+        index,
+        format: 'json',
+        h: 'health,index',
+      });
       return opensearchDashboardsResponse.ok({
         body: { ok: true, response: { indices: response } },
       });
@@ -255,19 +256,20 @@ export default class OpenSearchService {
     request: OpenSearchDashboardsRequest,
     opensearchDashboardsResponse: OpenSearchDashboardsResponseFactory
   ): Promise<IOpenSearchDashboardsResponse<any>> => {
-    const { dataSourceId = "" } = request.params as { dataSourceId?: string };
+    const { dataSourceId = '' } = request.params as { dataSourceId?: string };
     const body = request.body;
     try {
       const callWithRequest = getClientBasedOnDataSource(
-        context, 
-        this.dataSourceEnabled, 
-        request, 
+        context,
+        this.dataSourceEnabled,
+        request,
         dataSourceId,
-        this.client);
+        this.client
+      );
 
       const response: any = await callWithRequest('bulk', {
-          body: body,
-        });
+        body: body,
+      });
       return opensearchDashboardsResponse.ok({
         body: { ok: true, response: { response } },
       });

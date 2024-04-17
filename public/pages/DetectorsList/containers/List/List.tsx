@@ -84,7 +84,12 @@ import {
 import { CoreStart, MountPoint } from '../../../../../../../src/core/public';
 import { CoreServicesContext } from '../../../../components/CoreServices/CoreServices';
 import { DataSourceSelectableConfig } from '../../../../../../../src/plugins/data_source_management/public';
-import { getDataSourceManagementPlugin, getDataSourcePlugin, getNotifications, getSavedObjectsClient } from '../../../../services';
+import {
+  getDataSourceManagementPlugin,
+  getDataSourcePlugin,
+  getNotifications,
+  getSavedObjectsClient,
+} from '../../../../services';
 
 export interface ListRouterParams {
   from: string;
@@ -132,7 +137,7 @@ export const DetectorList = (props: ListProps) => {
     (state: AppState) => state.ad.requesting
   );
 
-  const dataSourceEnabled = getDataSourcePlugin().dataSourceEnabled;
+  const dataSourceEnabled = getDataSourcePlugin()?.dataSourceEnabled || false;
 
   const [selectedDetectors, setSelectedDetectors] = useState(
     [] as DetectorListItem[]
@@ -166,9 +171,7 @@ export const DetectorList = (props: ListProps) => {
   // Getting all initial monitors
   useEffect(() => {
     const getInitialMonitors = async () => {
-      if (dataSourceEnabled ? state.selectedDataSourceId : true) {
-        dispatch(searchMonitors(state.selectedDataSourceId));
-      }
+      dispatch(searchMonitors(state.selectedDataSourceId));
     };
     getInitialMonitors();
   }, []);
@@ -241,9 +244,7 @@ export const DetectorList = (props: ListProps) => {
 
     setIsLoadingFinalDetectors(true);
 
-    if (dataSourceEnabled ? state.selectedDataSourceId : true) {
-      getUpdatedDetectors();
-    }
+    getUpdatedDetectors();
   }, [
     state.page,
     state.queryParams,
@@ -260,14 +261,14 @@ export const DetectorList = (props: ListProps) => {
       state.selectedIndices,
       state.selectedDetectorStates,
       state.queryParams.sortField,
-      state.queryParams.sortDirection,
+      state.queryParams.sortDirection
     );
     setSelectedDetectors(curSelectedDetectors);
 
     const curDetectorsToDisplay = getDetectorsToDisplay(
       curSelectedDetectors,
       state.page,
-      state.queryParams.size,
+      state.queryParams.size
     );
     setDetectorsToDisplay(curDetectorsToDisplay);
 
@@ -340,7 +341,9 @@ export const DetectorList = (props: ListProps) => {
     if (searchValue !== indexQuery) {
       const sanitizedQuery = sanitizeSearchText(searchValue);
       setIndexQuery(sanitizedQuery);
-      await dispatch(getPrioritizedIndices(sanitizedQuery, state.selectedDataSourceId));
+      await dispatch(
+        getPrioritizedIndices(sanitizedQuery, state.selectedDataSourceId)
+      );
       setState((state) => ({
         ...state,
         page: 0,
@@ -496,9 +499,7 @@ export const DetectorList = (props: ListProps) => {
         );
       })
       .finally(() => {
-        if (dataSourceEnabled ? state.selectedDataSourceId : true) {
-          getUpdatedDetectors();
-        }
+        getUpdatedDetectors();
       });
   };
 
@@ -668,24 +669,27 @@ export const DetectorList = (props: ListProps) => {
 
   const confirmModal = getConfirmModal();
 
-  const DataSourceMenu =
-    getDataSourceManagementPlugin().ui.getDataSourceMenu<DataSourceSelectableConfig>();
-  const renderDataSourceComponent = useMemo(() => {
-    return (
-      <DataSourceMenu
-        setMenuMountPoint={props.setActionMenu}
-        componentType={'DataSourceSelectable'}
-        componentConfig={{
-          fullWidth: false,
-          activeOption:[{ id: state.selectedDataSourceId }],
-          savedObjects: getSavedObjectsClient(),
-          notifications: getNotifications(),
-          onSelectedDataSources: (dataSources) =>
-            handleDataSourceChange(dataSources),
-        }}
-      />
-    );
-  }, [getSavedObjectsClient(), getNotifications(), props.setActionMenu]);
+  let renderDataSourceComponent = null;
+  if (dataSourceEnabled) {
+    const DataSourceMenu =
+      getDataSourceManagementPlugin().ui.getDataSourceMenu<DataSourceSelectableConfig>();
+    renderDataSourceComponent = useMemo(() => {
+      return (
+        <DataSourceMenu
+          setMenuMountPoint={props.setActionMenu}
+          componentType={'DataSourceSelectable'}
+          componentConfig={{
+            fullWidth: false,
+            activeOption: [{ id: state.selectedDataSourceId }],
+            savedObjects: getSavedObjectsClient(),
+            notifications: getNotifications(),
+            onSelectedDataSources: (dataSources) =>
+              handleDataSourceChange(dataSources),
+          }}
+        />
+      );
+    }, [getSavedObjectsClient(), getNotifications(), props.setActionMenu]);
+  }
 
   const columns = getColumns(state.selectedDataSourceId);
 

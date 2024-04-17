@@ -54,15 +54,17 @@ const reducer = handleActions<SampleDataState>(
   initialState
 );
 
-export const createSampleData = (sampleDataType: SAMPLE_TYPE, dataSourceId = ''): APIAction => {
-  const url = dataSourceId ? 
-  `..${AD_NODE_API.CREATE_SAMPLE_DATA}/${sampleDataType}/${dataSourceId}` : 
-  `..${AD_NODE_API.CREATE_SAMPLE_DATA}/${sampleDataType}`;
+export const createSampleData = (
+  sampleDataType: SAMPLE_TYPE,
+  dataSourceId = ''
+): APIAction => {
+  const url = dataSourceId
+    ? `..${AD_NODE_API.CREATE_SAMPLE_DATA}/${sampleDataType}/${dataSourceId}`
+    : `..${AD_NODE_API.CREATE_SAMPLE_DATA}/${sampleDataType}`;
 
   return {
     type: CREATE_SAMPLE_DATA,
-    request: (client: HttpSetup) =>
-      client.post(url),
+    request: (client: HttpSetup) => client.post(url),
   };
 };
 

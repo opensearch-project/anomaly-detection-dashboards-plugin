@@ -88,10 +88,7 @@ export class AnomalyDetectionOpenSearchDashboardsPlugin
       mount: async (params: AppMountParameters) => {
         const { renderApp } = await import('./anomaly_detection_app');
         const [coreStart] = await core.getStartServices();
-        return renderApp(
-          coreStart,
-          params,
-        );
+        return renderApp(coreStart, params);
       },
     });
 

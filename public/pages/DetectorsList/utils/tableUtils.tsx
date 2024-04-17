@@ -57,7 +57,7 @@ export function getColumns(dataSourceId) {
       field: 'name',
       name: (
         <EuiToolTip content="The name of the detector">
-           <span style={columnStyle}>Detector{''}</span>
+          <span style={columnStyle}>Detector{''}</span>
         </EuiToolTip>
       ),
       sortable: true,
@@ -119,15 +119,9 @@ export function getColumns(dataSourceId) {
           if (dataSourceId) {
             href += `?dataSourceId=${dataSourceId}`;
           }
-          return (
-            <EuiLink href={href}>
-              View results
-            </EuiLink>
-          );
+          return <EuiLink href={href}>View results</EuiLink>;
         } else {
-          return (
-            <EuiText>-</EuiText>
-          );
+          return <EuiText>-</EuiText>;
         }
       },
     },
@@ -172,5 +166,5 @@ export function getColumns(dataSourceId) {
       width: '16%',
       render: renderTime,
     },
-  ]as EuiBasicTableColumn<any>[];
+  ] as EuiBasicTableColumn<any>[];
 }

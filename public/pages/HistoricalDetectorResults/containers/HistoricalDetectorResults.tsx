@@ -64,7 +64,8 @@ export function HistoricalDetectorResults(
   const dispatch = useDispatch();
   const detectorId: string = get(props, 'match.params.detectorId', '');
   const location = useLocation();
-  const dataSourceId = new URLSearchParams(location.search).get(DATA_SOURCE_ID) || '';
+  const dataSourceId =
+    new URLSearchParams(location.search).get(DATA_SOURCE_ID) || '';
 
   const adState = useSelector((state: AppState) => state.ad);
   const allDetectors = adState.detectors;
@@ -116,7 +117,14 @@ export function HistoricalDetectorResults(
 
   const startHistoricalTask = async (startTime: number, endTime: number) => {
     try {
-      dispatch(startHistoricalDetector(props.detectorId, dataSourceId, startTime, endTime))
+      dispatch(
+        startHistoricalDetector(
+          props.detectorId,
+          dataSourceId,
+          startTime,
+          endTime
+        )
+      )
         .then((response: any) => {
           setTaskId(get(response, 'response._id'));
           core.notifications.toasts.addSuccess(

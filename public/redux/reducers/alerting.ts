@@ -94,10 +94,10 @@ const reducer = handleActions<Monitors>(
   initialDetectorsState
 );
 
-export const searchMonitors = ( dataSourceId = ''): APIAction => {
+export const searchMonitors = (dataSourceId = ''): APIAction => {
   const baseUrl = `..${ALERTING_NODE_API._SEARCH}`;
   const url = dataSourceId ? `${baseUrl}/${dataSourceId}` : baseUrl;
-  
+
   return {
     type: SEARCH_MONITORS,
     request: (client: HttpSetup) => client.post(url),

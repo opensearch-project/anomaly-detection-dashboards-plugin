@@ -252,17 +252,22 @@ export const getIndices = (searchKey = '', dataSourceId = '') => {
 
   return {
     type: GET_INDICES,
-    request: (client: HttpSetup) => client.get(url, { query: { index: searchKey } }),
+    request: (client: HttpSetup) =>
+      client.get(url, { query: { index: searchKey } }),
   };
 };
 
-export const getAliases = (searchKey: string = '', dataSourceId = ''): APIAction => {
+export const getAliases = (
+  searchKey: string = '',
+  dataSourceId = ''
+): APIAction => {
   const baseUrl = `..${AD_NODE_API._ALIASES}`;
   const url = dataSourceId ? `${baseUrl}/${dataSourceId}` : baseUrl;
 
   return {
     type: GET_ALIASES,
-    request: (client: HttpSetup) => client.get(url, { query: { alias: searchKey } }),
+    request: (client: HttpSetup) =>
+      client.get(url, { query: { alias: searchKey } }),
   };
 };
 
@@ -283,7 +288,9 @@ export const searchOpenSearch = (requestData: any): APIAction => ({
 });
 
 export const createIndex = (indexConfig: any, dataSourceId = ''): APIAction => {
-  const url = dataSourceId ? `${AD_NODE_API.CREATE_INDEX}/${dataSourceId}` : AD_NODE_API.CREATE_INDEX;
+  const url = dataSourceId
+    ? `${AD_NODE_API.CREATE_INDEX}/${dataSourceId}`
+    : AD_NODE_API.CREATE_INDEX;
   return {
     type: CREATE_INDEX,
     request: (client: HttpSetup) =>
@@ -291,10 +298,12 @@ export const createIndex = (indexConfig: any, dataSourceId = ''): APIAction => {
         body: JSON.stringify(indexConfig),
       }),
   };
-}
+};
 
 export const bulk = (body: any, dataSourceId = ''): APIAction => {
-  const url = dataSourceId ? `${AD_NODE_API.BULK}/${dataSourceId}` : AD_NODE_API.BULK;
+  const url = dataSourceId
+    ? `${AD_NODE_API.BULK}/${dataSourceId}`
+    : AD_NODE_API.BULK;
   return {
     type: BULK,
     request: (client: HttpSetup) =>

@@ -39,7 +39,8 @@ interface SampleDataBoxProps {
 
 export const SampleDataBox = (props: SampleDataBoxProps) => {
   const location = useLocation();
-  const dataSourceId = new URLSearchParams(location.search).get(DATA_SOURCE_ID) || '';
+  const dataSourceId =
+    new URLSearchParams(location.search).get(DATA_SOURCE_ID) || '';
   return (
     <div style={{ height: 'auto' }}>
       <EuiCard

@@ -100,16 +100,14 @@ export const getDetectorResults = (
   resultIndex: string,
   onlyQueryCustomResultIndex: boolean
 ): APIAction => {
-  let baseUrl = `..${AD_NODE_API.DETECTOR}/${id}`;
+  let url = `..${AD_NODE_API.DETECTOR}/${id}/results/${isHistorical}`;
 
-  // append dataSourceId to the url if it has a truthy value
-  if (dataSourceId) {
-    baseUrl += `/${dataSourceId}`;
-  }
-  // construct the final url based on whether resultIndex is provided
-  let url = baseUrl + `/results/${isHistorical}`;
   if (resultIndex) {
     url += `/${resultIndex}/${onlyQueryCustomResultIndex}`;
+  }
+
+  if (dataSourceId) {
+    url += `/${dataSourceId}`;
   }
 
   return {
@@ -124,18 +122,20 @@ export const searchResults = (
   dataSourceId = '',
   onlyQueryCustomResultIndex: boolean
 ): APIAction => {
-  let baseUrl = `..${AD_NODE_API.DETECTOR}/results`;
+  let baseUrl = `..${AD_NODE_API.DETECTOR}/results/_search`;
+
+  if (resultIndex) {
+    baseUrl += `/${resultIndex}/${onlyQueryCustomResultIndex}`;
+  }
+
   if (dataSourceId) {
     baseUrl += `/${dataSourceId}`;
-  }
-  let url = baseUrl + '/_search';
-  if (resultIndex) {
-    url += `/${resultIndex}/${onlyQueryCustomResultIndex}`;
   }
 
   return {
     type: SEARCH_ANOMALY_RESULTS,
-    request: (client: HttpSetup) => client.post(url, { body: JSON.stringify(requestBody) }),
+    request: (client: HttpSetup) =>
+      client.post(baseUrl, { body: JSON.stringify(requestBody) }),
   };
 };
 
@@ -145,15 +145,13 @@ export const getTopAnomalyResults = (
   isHistorical: boolean,
   requestBody: any
 ): APIAction => {
-  let baseUrl = `..${AD_NODE_API.DETECTOR}/${detectorId}`;
-  if (dataSourceId) {
-    baseUrl += `/${dataSourceId}`;
-  }
-  const url = `${baseUrl}/_topAnomalies/${isHistorical}`;
+  const baseUrl = `..${AD_NODE_API.DETECTOR}/${detectorId}/_topAnomalies/${isHistorical}`;
+  const url = dataSourceId ? `${baseUrl}/${dataSourceId}` : baseUrl;
 
   return {
     type: GET_TOP_ANOMALY_RESULTS,
-    request: (client: HttpSetup) => client.post(url, { body: JSON.stringify(requestBody) }),
+    request: (client: HttpSetup) =>
+      client.post(url, { body: JSON.stringify(requestBody) }),
   };
 };
 

@@ -44,10 +44,10 @@ export const [getQueryService, setQueryService] =
 export const [getSavedObjectsClient, setSavedObjectsClient] =
   createGetterSetter<CoreStart['savedObjects']['client']>('SavedObjectsClient');
 
-export const [getDataSourceManagementPlugin, setDataSourceManagementPlugin] = 
+export const [getDataSourceManagementPlugin, setDataSourceManagementPlugin] =
   createGetterSetter<DataSourceManagementPluginSetup>('DataSourceManagement');
 
-export const [getDataSourcePlugin, setDataSourcePlugin] = 
+export const [getDataSourcePlugin, setDataSourcePlugin] =
   createGetterSetter<DataSourcePluginSetup>('DataSource');
 
 // This is primarily used for mocking this module and each of its fns in tests.

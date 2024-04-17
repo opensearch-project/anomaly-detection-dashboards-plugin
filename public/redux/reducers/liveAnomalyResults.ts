@@ -57,19 +57,21 @@ const reducer = handleActions<Anomalies>(
 
 export const getDetectorLiveResults = (
   detectorId: string,
-  dataSourceId: string = '', 
+  dataSourceId: string = '',
   queryParams: DetectorResultsQueryParams,
   isHistorical: boolean,
   resultIndex: string,
   onlyQueryCustomResultIndex: boolean
 ): APIAction => {
-  let baseUrl = `..${AD_NODE_API.DETECTOR}/${detectorId}`;
-  if (dataSourceId) {
-    baseUrl += `/${dataSourceId}`;
+  let url = `..${AD_NODE_API.DETECTOR}/${detectorId}/results/${isHistorical}`;
+
+  if (resultIndex) {
+    url += `/${resultIndex}/${onlyQueryCustomResultIndex}`;
   }
-  const url = !resultIndex
-    ? `${baseUrl}/results/${isHistorical}`
-    : `${baseUrl}/results/${isHistorical}/${resultIndex}/${onlyQueryCustomResultIndex}`;
+
+  if (dataSourceId) {
+    url += `/${dataSourceId}`;
+  }
 
   return {
     type: DETECTOR_LIVE_RESULTS,
