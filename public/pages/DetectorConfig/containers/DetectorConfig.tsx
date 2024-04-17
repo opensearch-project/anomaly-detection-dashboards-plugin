@@ -14,26 +14,28 @@ import { DetectorDefinitionFields } from '../../ReviewAndCreate/components/Detec
 import { Features } from './Features';
 import { DetectorJobs } from './DetectorJobs';
 import { EuiSpacer, EuiPage, EuiPageBody } from '@elastic/eui';
-import { RouteComponentProps } from 'react-router';
+import { RouteComponentProps, useLocation } from 'react-router';
 import { AppState } from '../../../redux/reducers';
 import { useSelector, useDispatch } from 'react-redux';
 import { getDetector } from '../../../redux/reducers/ad';
 import { EuiLoadingSpinner } from '@elastic/eui';
+import { DATA_SOURCE_ID } from '../../../utils/constants';
 interface DetectorConfigProps extends RouteComponentProps {
   detectorId: string;
-  dataSourceId: string;
   onEditFeatures(): void;
   onEditDetector(): void;
 }
 
 export function DetectorConfig(props: DetectorConfigProps) {
   const dispatch = useDispatch();
+  const location = useLocation();
+  const dataSourceId = new URLSearchParams(location.search).get(DATA_SOURCE_ID) || '';
   const detector = useSelector(
     (state: AppState) => state.ad.detectors[props.detectorId]
   );
 
   useEffect(() => {
-    dispatch(getDetector(props.detectorId, props.dataSourceId));
+    dispatch(getDetector(props.detectorId, dataSourceId));
   }, []);
 
   return (

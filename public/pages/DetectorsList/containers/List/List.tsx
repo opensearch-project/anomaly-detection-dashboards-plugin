@@ -68,7 +68,7 @@ import {
   filterAndSortDetectors,
   getDetectorsToDisplay,
 } from '../../../utils/helpers';
-import { staticColumn } from '../../utils/tableUtils';
+import { getColumns } from '../../utils/tableUtils';
 import { DETECTOR_ACTION } from '../../utils/constants';
 import { getTitleWithCount, Listener } from '../../../../utils/utils';
 import { ListActions } from '../../components/ListActions/ListActions';
@@ -268,7 +268,6 @@ export const DetectorList = (props: ListProps) => {
       curSelectedDetectors,
       state.page,
       state.queryParams.size,
-      state.selectedDataSourceId
     );
     setDetectorsToDisplay(curDetectorsToDisplay);
 
@@ -688,6 +687,8 @@ export const DetectorList = (props: ListProps) => {
     );
   }, [getSavedObjectsClient(), getNotifications(), props.setActionMenu]);
 
+  const columns = getColumns(state.selectedDataSourceId);
+
   return (
     <EuiPage>
       <EuiPageBody>
@@ -749,7 +750,7 @@ export const DetectorList = (props: ListProps) => {
               monitors list page.
             */
             itemId={getItemId}
-            columns={staticColumn}
+            columns={columns}
             onChange={handleTableChange}
             isSelectable={true}
             selection={selection}

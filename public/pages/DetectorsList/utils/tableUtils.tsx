@@ -51,128 +51,126 @@ export const renderState = (state: DETECTOR_STATE) => {
   );
 };
 
-export const staticColumn = [
-  {
-    field: 'name',
-    name: (
-      <EuiToolTip content="The name of the detector">
-        <span style={columnStyle}>Detector{''}</span>
-      </EuiToolTip>
-    ),
-    sortable: true,
-    truncateText: true,
-    textOnly: true,
-    align: 'left',
-    width: '15%',
-    render: (name: string, detector: Detector) => {
-      let href = `${PLUGIN_NAME}#/detectors/${detector.id}/results`;
-      if (detector.dataSourceId) {
-        href += `?dataSourceId=${detector.dataSourceId}`;
-      }
-      return (
-        <EuiLink href={href}>
-          {name}
-        </EuiLink>
-      );
-    },
-  },
-  {
-    field: 'indices',
-    name: (
-      <EuiToolTip content="The index or index pattern used for the detector">
-        <span style={columnStyle}>Indices{''}</span>
-      </EuiToolTip>
-    ),
-    sortable: true,
-    truncateText: true,
-    textOnly: true,
-    align: 'left',
-    width: '15%',
-    render: renderIndices,
-  },
-  {
-    field: 'curState',
-    name: (
-      <EuiToolTip content="The current state of the real-time detection job">
-        <span style={columnStyle}>Real-time state{''}</span>
-      </EuiToolTip>
-    ),
-    sortable: true,
-    dataType: 'string',
-    align: 'left',
-    width: '12%',
-    truncateText: false,
-    render: renderState,
-  },
-  {
-    field: 'task',
-    name: (
-      <EuiToolTip content="This column indicates historical analysis detection and will take you to view historical results">
-        <span style={columnStyle}>Historical analysis{''}</span>
-      </EuiToolTip>
-    ),
-    sortable: true,
-    truncateText: true,
-    textOnly: true,
-    align: 'left',
-    width: '15%',
-    render: (name: string, detector: Detector) => {
-      if (!isEmpty(detector.taskId)) {
-        let href = `${PLUGIN_NAME}#/detectors/${detector.id}/historical`;
-        if (detector.dataSourceId) {
-          href += `?dataSourceId=${detector.dataSourceId}`;
+export function getColumns(dataSourceId) {
+  return [
+    {
+      field: 'name',
+      name: (
+        <EuiToolTip content="The name of the detector">
+           <span style={columnStyle}>Detector{''}</span>
+        </EuiToolTip>
+      ),
+      sortable: true,
+      truncateText: true,
+      textOnly: true,
+      align: 'left',
+      width: '15%',
+      render: (name: string, detector: Detector) => {
+        let href = `${PLUGIN_NAME}#/detectors/${detector.id}/results`;
+        if (dataSourceId) {
+          href += `?dataSourceId=${dataSourceId}`;
         }
-        return (
-          <EuiLink href={href}>
-            View results
-          </EuiLink>
-        );
-      } else {
-        return (
-          <EuiText>-</EuiText>
-        );
-      }
+        return <EuiLink href={href}>{name}</EuiLink>;
+      },
     },
-  },
-  {
-    field: 'totalAnomalies',
-    name: (
-      <EuiToolTip content="Total real-time anomalies with a grade > 0 in last 24 hours">
-        <span style={columnStyle}>Anomalies last 24 hours{''}</span>
-      </EuiToolTip>
-    ),
-    sortable: true,
-    dataType: 'number',
-    align: 'right',
-    width: '16%',
-    truncateText: false,
-  },
-  {
-    field: 'lastActiveAnomaly',
-    name: (
-      <EuiToolTip content="Time of the last active real-time anomaly with a grade > 0">
-        <span style={columnStyle}>Last real-time occurrence{''}</span>
-      </EuiToolTip>
-    ),
-    sortable: true,
-    dataType: 'date',
-    truncateText: false,
-    align: 'left',
-    width: '16%',
-    render: renderTime,
-  },
-  {
-    field: 'enabledTime',
-    name: (
-      <EuiToolTip content="The time the real-time detector was last started">
-        <span style={columnStyle}>Last started{''}</span>
-      </EuiToolTip>
-    ),
-    sortable: true,
-    dataType: 'date',
-    truncateText: false,
-    align: 'left',
-    width: '16%',
-    render: renderTime,
-  },
-] as EuiBasicTableColumn<any>[];
+    {
+      field: 'indices',
+      name: (
+        <EuiToolTip content="The index or index pattern used for the detector">
+          <span style={columnStyle}>Indices{''}</span>
+        </EuiToolTip>
+      ),
+      sortable: true,
+      truncateText: true,
+      textOnly: true,
+      align: 'left',
+      width: '15%',
+      render: renderIndices,
+    },
+    {
+      field: 'curState',
+      name: (
+        <EuiToolTip content="The current state of the real-time detection job">
+          <span style={columnStyle}>Real-time state{''}</span>
+        </EuiToolTip>
+      ),
+      sortable: true,
+      dataType: 'string',
+      align: 'left',
+      width: '12%',
+      truncateText: false,
+      render: renderState,
+    },
+    {
+      field: 'task',
+      name: (
+        <EuiToolTip content="This column indicates historical analysis detection and will take you to view historical results">
+          <span style={columnStyle}>Historical analysis{''}</span>
+        </EuiToolTip>
+      ),
+      sortable: true,
+      truncateText: true,
+      textOnly: true,
+      align: 'left',
+      width: '15%',
+      render: (name: string, detector: Detector) => {
+        if (!isEmpty(detector.taskId)) {
+          let href = `${PLUGIN_NAME}#/detectors/${detector.id}/historical`;
+          if (dataSourceId) {
+            href += `?dataSourceId=${dataSourceId}`;
+          }
+          return (
+            <EuiLink href={href}>
+              View results
+            </EuiLink>
+          );
+        } else {
+          return (
+            <EuiText>-</EuiText>
+          );
+        }
+      },
+    },
+    {
+      field: 'totalAnomalies',
+      name: (
+        <EuiToolTip content="Total real-time anomalies with a grade > 0 in last 24 hours">
+          <span style={columnStyle}>Anomalies last 24 hours{''}</span>
+        </EuiToolTip>
+      ),
+      sortable: true,
+      dataType: 'number',
+      align: 'right',
+      width: '16%',
+      truncateText: false,
+    },
+    {
+      field: 'lastActiveAnomaly',
+      name: (
+        <EuiToolTip content="Time of the last active real-time anomaly with a grade > 0">
+          <span style={columnStyle}>Last real-time occurrence{''}</span>
+        </EuiToolTip>
+      ),
+      sortable: true,
+      dataType: 'date',
+      truncateText: false,
+      align: 'left',
+      width: '16%',
+      render: renderTime,
+    },
+    {
+      field: 'enabledTime',
+      name: (
+        <EuiToolTip content="The time the real-time detector was last started">
+          <span style={columnStyle}>Last started{''}</span>
+        </EuiToolTip>
+      ),
+      sortable: true,
+      dataType: 'date',
+      truncateText: false,
+      align: 'left',
+      width: '16%',
+      render: renderTime,
+    },
+  ]as EuiBasicTableColumn<any>[];
+}

@@ -65,7 +65,7 @@ import {
   TOP_CHILD_ENTITIES_TO_FETCH,
 } from '../utils/constants';
 import { MIN_IN_MILLI_SECS } from '../../../../server/utils/constants';
-import { MAX_ANOMALIES } from '../../../utils/constants';
+import { DATA_SOURCE_ID, MAX_ANOMALIES } from '../../../utils/constants';
 import {
   searchResults,
   getDetectorResults,
@@ -95,10 +95,10 @@ import {
 import { CoreStart } from '../../../../../../src/core/public';
 import { CoreServicesContext } from '../../../components/CoreServices/CoreServices';
 import { prettifyErrorMessage } from '../../../../server/utils/helpers';
+import { useLocation } from 'react-router-dom';
 
 interface AnomalyHistoryProps {
   detector: Detector;
-  dataSourceId: string;
   monitor: Monitor | undefined;
   isFeatureDataMissing?: boolean;
   isHistorical?: boolean;
@@ -127,7 +127,8 @@ export const AnomalyHistory = (props: AnomalyHistoryProps) => {
     props.isHistorical && props.detector?.detectionDateRange
       ? props.detector.detectionDateRange.endTime
       : moment().valueOf();
-  const dataSourceId = props.dataSourceId;
+  const location = useLocation();
+  const dataSourceId = new URLSearchParams(location.search).get(DATA_SOURCE_ID) || '';
   const [dateRange, setDateRange] = useState<DateRange>({
     startDate: initialStartDate,
     endDate: initialEndDate,
@@ -876,7 +877,6 @@ export const AnomalyHistory = (props: AnomalyHistoryProps) => {
         entityAnomalySummaries={entityAnomalySummaries}
         selectedCategoryFields={selectedCategoryFields}
         handleCategoryFieldsChange={handleCategoryFieldsChange}
-        dataSourceId={dataSourceId}
       >
         <div style={{ padding: '20px' }}>
           {isHCDetector
@@ -920,7 +920,6 @@ export const AnomalyHistory = (props: AnomalyHistoryProps) => {
                   isHCDetector={isHCDetector}
                   isHistorical={props.isHistorical}
                   selectedHeatmapCell={selectedHeatmapCell}
-                  dataSourceId={dataSourceId}
                 />,
                 <EuiSpacer size="m" />,
               ]

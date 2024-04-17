@@ -81,7 +81,7 @@ import {
 } from '../utils/constants';
 import { HeatmapCell } from './AnomalyHeatmapChart';
 import { ANOMALY_AGG, MIN_END_TIME, MAX_END_TIME } from '../../utils/constants';
-import { MAX_HISTORICAL_AGG_RESULTS } from '../../../utils/constants';
+import { DATA_SOURCE_ID, MAX_HISTORICAL_AGG_RESULTS } from '../../../utils/constants';
 import { searchResults } from '../../../redux/reducers/anomalyResults';
 import {
   DAY_IN_MILLI_SECS,
@@ -89,6 +89,7 @@ import {
   DETECTOR_STATE,
 } from '../../../../server/utils/constants';
 import { ENTITY_COLORS } from '../../DetectorResults/utils/constants';
+import { useLocation } from 'react-router-dom';
 
 interface AnomalyDetailsChartProps {
   onDateRangeChange(
@@ -113,12 +114,13 @@ interface AnomalyDetailsChartProps {
   selectedHeatmapCell?: HeatmapCell;
   onDatePickerRangeChange?(startDate: number, endDate: number): void;
   openOutOfRangeCallOut?: boolean;
-  dataSourceId?: string;
 }
 
 export const AnomalyDetailsChart = React.memo(
   (props: AnomalyDetailsChartProps) => {
     const dispatch = useDispatch();
+    const location = useLocation();
+    const dataSourceId = new URLSearchParams(location.search).get(DATA_SOURCE_ID) || '';
     const [showAlertsFlyout, setShowAlertsFlyout] = useState<boolean>(false);
     const [alertAnnotations, setAlertAnnotations] = useState<any[]>([]);
     const [isLoadingAlerts, setIsLoadingAlerts] = useState<boolean>(false);
@@ -175,7 +177,7 @@ export const AnomalyDetailsChart = React.memo(
         zoomRange.endDate,
         taskId
       );
-      dispatch(searchResults(anomalyDataRangeQuery, resultIndex, props.dataSourceId, true))
+      dispatch(searchResults(anomalyDataRangeQuery, resultIndex, dataSourceId, true))
         .then((response: any) => {
           // Only retrieve buckets that are in the anomaly results range. This is so
           // we don't show aggregate results for where there is no data at all
@@ -194,7 +196,7 @@ export const AnomalyDetailsChart = React.memo(
             taskId,
             selectedAggId
           );
-          dispatch(searchResults(historicalAggQuery, resultIndex, props.dataSourceId, true))
+          dispatch(searchResults(historicalAggQuery, resultIndex, dataSourceId, true))
             .then((response: any) => {
               const aggregatedAnomalies = parseHistoricalAggregatedAnomalies(
                 response,
@@ -230,7 +232,7 @@ export const AnomalyDetailsChart = React.memo(
           zoomRange.endDate,
           taskId
         );
-        dispatch(searchResults(anomalyDataRangeQuery, resultIndex, props.dataSourceId, true))
+        dispatch(searchResults(anomalyDataRangeQuery, resultIndex, dataSourceId, true))
           .then((response: any) => {
             const dataStartDate = get(
               response,

@@ -97,11 +97,7 @@ export const getDetectorsToDisplay = (
   detectors: DetectorListItem[],
   page: number,
   size: number,
-  dataSourceId: string
 ) => {
-  detectors.forEach((detector) => {
-    detector.dataSourceId = dataSourceId;
-  });
   return detectors.slice(size * page, page * size + size);
 };
 

@@ -28,10 +28,11 @@ import {
 import { get, isEmpty } from 'lodash';
 import React, { useEffect, Fragment, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { RouteComponentProps } from 'react-router';
+import { RouteComponentProps, useLocation } from 'react-router';
 import { AppState } from '../../../redux/reducers';
 import {
   BREADCRUMBS,
+  DATA_SOURCE_ID,
   FEATURE_DATA_POINTS_WINDOW,
   MISSING_FEATURE_DATA_SEVERITY,
 } from '../../../utils/constants';
@@ -67,11 +68,11 @@ import { SampleIndexDetailsCallout } from '../../Overview/components/SampleIndex
 import { CoreStart } from '../../../../../../src/core/public';
 import { CoreServicesContext } from '../../../components/CoreServices/CoreServices';
 import { DEFAULT_SHINGLE_SIZE } from '../../../utils/constants';
+import { getDataSourcePlugin } from '../../../../public/services';
+
 
 interface AnomalyResultsProps extends RouteComponentProps {
   detectorId: string;
-  dataSourceId: string;
-  dataSourceEnabled: boolean;
   onStartDetector(): void;
   onStopDetector(): void;
   onSwitchToConfiguration(): void;
@@ -82,10 +83,12 @@ export function AnomalyResults(props: AnomalyResultsProps) {
   const core = React.useContext(CoreServicesContext) as CoreStart;
   const dispatch = useDispatch();
   const detectorId = props.detectorId;
-  const dataSourceId = props.dataSourceId;
   const detector = useSelector(    
     (state: AppState) => state.ad.detectors[detectorId]
   );
+  const dataSourceEnabled = getDataSourcePlugin().dataSourceEnabled;
+  const location = useLocation();
+  const dataSourceId = new URLSearchParams(location.search).get(DATA_SOURCE_ID) || '';
 
   useEffect(() => {
     core.chrome.setBreadcrumbs([
@@ -93,13 +96,13 @@ export function AnomalyResults(props: AnomalyResultsProps) {
       BREADCRUMBS.DETECTORS,
       { text: detector ? detector.name : '' },
     ]);
-    if (props.dataSourceEnabled ? dataSourceId : true) {
+    if (dataSourceEnabled ? dataSourceId : true) {
       dispatch(getDetector(detectorId, dataSourceId));
     }
   }, []);
 
   const fetchDetector = async () => {
-    if (props.dataSourceEnabled ? dataSourceId : true) {
+    if (dataSourceEnabled ? dataSourceId : true) {
       dispatch(getDetector(detectorId, dataSourceId));
     }
   };
@@ -559,12 +562,10 @@ export function AnomalyResults(props: AnomalyResultsProps) {
                   ) : null}
                   <AnomalyResultsLiveChart 
                     detector={detector} 
-                    dataSourceId={dataSourceId}
                   />
                   <EuiSpacer size="l" />
                   <AnomalyHistory
                     detector={detector}
-                    dataSourceId={dataSourceId}
                     monitor={monitor}
                     isFeatureDataMissing={isDetectorMissingData}
                     isNotSample={true}

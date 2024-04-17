@@ -332,7 +332,6 @@ export function AnomalyDetectionOverview(props: AnomalyDetectionOverviewProps) {
                 sampleHttpResponses.detectorName,
                 sampleHttpResponses.legacyDetectorName
               )}
-              dataSourceId={MDSOverviewState.selectedDataSourceId}
             />
           </EuiFlexItem>
           <EuiFlexItem>
@@ -365,7 +364,6 @@ export function AnomalyDetectionOverview(props: AnomalyDetectionOverviewProps) {
                 sampleEcommerce.detectorName,
                 sampleEcommerce.legacyDetectorName
               )}
-              dataSourceId={MDSOverviewState.selectedDataSourceId}
             />
           </EuiFlexItem>
           <EuiFlexItem>
@@ -400,7 +398,6 @@ export function AnomalyDetectionOverview(props: AnomalyDetectionOverviewProps) {
                 sampleHostHealth.detectorName,
                 sampleHostHealth.legacyDetectorName
               )}
-              dataSourceId={MDSOverviewState.selectedDataSourceId}
             />
           </EuiFlexItem>
           <EuiSpacer size="m" />

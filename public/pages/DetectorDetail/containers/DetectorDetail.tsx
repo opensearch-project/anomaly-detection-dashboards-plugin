@@ -42,7 +42,7 @@ import {
 import { getIndices } from '../../../redux/reducers/opensearch';
 import { getErrorMessage, Listener } from '../../../utils/utils';
 import { darkModeEnabled } from '../../../utils/opensearchDashboardsUtils';
-import { BREADCRUMBS } from '../../../utils/constants';
+import { BREADCRUMBS, DATA_SOURCE_ID } from '../../../utils/constants';
 import { DetectorControls } from '../components/DetectorControls';
 import { ConfirmModal } from '../components/ConfirmModal/ConfirmModal';
 import { useFetchMonitorInfo } from '../hooks/useFetchMonitorInfo';
@@ -108,8 +108,7 @@ export const DetectorDetail = (props: DetectorDetailProps) => {
   const detectorId = get(props, 'match.params.detectorId', '') as string;
   const dataSourceEnabled = getDataSourcePlugin().dataSourceEnabled;
   const location = useLocation();
-  const queryParams = new URLSearchParams(location.search);
-  const dataSourceId = queryParams.get('dataSourceId') as string;
+  const dataSourceId = new URLSearchParams(location.search).get(DATA_SOURCE_ID) || '';
   
   const { detector, hasError, isLoadingDetector, errorMessage } =
     useFetchDetectorInfo(detectorId, dataSourceId);
@@ -162,7 +161,7 @@ export const DetectorDetail = (props: DetectorDetailProps) => {
   // Getting all visible indices. Will re-fetch if changes to the detector (e.g.,
   // detector starts, result index recreated or user switches tabs to re-fetch detector)
   useEffect(() => {
-    if (props.dataSourceEnabled ? dataSourceId : true) {
+    if (dataSourceEnabled ? dataSourceId : true) {
       const getInitialIndices = async () => {
         await dispatch(getIndices('', dataSourceId)).catch((error: any) => {
           console.error(error);
@@ -373,7 +372,7 @@ export const DetectorDetail = (props: DetectorDetailProps) => {
           }}
         >
 
-        {props.dataSourceEnabled && (
+        {dataSourceEnabled && (
           <DataSourceMenu
             setMenuMountPoint={props.setActionMenu}
             componentType={'DataSourceView'}
@@ -566,8 +565,6 @@ export const DetectorDetail = (props: DetectorDetailProps) => {
             <AnomalyResults
               {...resultsProps}
               detectorId={detectorId}
-              dataSourceId={dataSourceId}
-              dataSourceEnabled={props.dataSourceEnabled}
               onStartDetector={() => handleStartAdJob(detectorId)}
               onStopDetector={() => handleStopAdJob(detectorId)}
               onSwitchToConfiguration={handleSwitchToConfigurationTab}
@@ -582,7 +579,6 @@ export const DetectorDetail = (props: DetectorDetailProps) => {
             <HistoricalDetectorResults
               {...configProps}
               detectorId={detectorId}
-              dataSourceId={dataSourceId}
             />
           )}
         />
@@ -593,7 +589,6 @@ export const DetectorDetail = (props: DetectorDetailProps) => {
             <DetectorConfig
               {...configProps}
               detectorId={detectorId}
-              dataSourceId={dataSourceId}
               onEditFeatures={handleEditFeature}
               onEditDetector={handleEditDetector}
             />

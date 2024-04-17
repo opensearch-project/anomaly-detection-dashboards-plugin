@@ -23,7 +23,7 @@ import {
 } from '@elastic/eui';
 import { get, isEmpty } from 'lodash';
 import React, { useEffect, Fragment, useState } from 'react';
-import { RouteComponentProps } from 'react-router';
+import { RouteComponentProps, useLocation } from 'react-router';
 import { useSelector, useDispatch } from 'react-redux';
 import { darkModeEnabled } from '../../../utils/opensearchDashboardsUtils';
 import { AppState } from '../../../redux/reducers';
@@ -50,10 +50,10 @@ import {
 import { prettifyErrorMessage } from '../../../../server/utils/helpers';
 import { EmptyHistoricalDetectorResults } from '../components/EmptyHistoricalDetectorResults';
 import { HistoricalDetectorCallout } from '../components/HistoricalDetectorCallout';
+import { DATA_SOURCE_ID } from '../../../utils/constants';
 
 interface HistoricalDetectorResultsProps extends RouteComponentProps {
   detectorId: string;
-  dataSourceId: string;
 }
 
 export function HistoricalDetectorResults(
@@ -63,7 +63,8 @@ export function HistoricalDetectorResults(
   const isDark = darkModeEnabled();
   const dispatch = useDispatch();
   const detectorId: string = get(props, 'match.params.detectorId', '');
-  const dataSourceId = props.dataSourceId;
+  const location = useLocation();
+  const dataSourceId = new URLSearchParams(location.search).get(DATA_SOURCE_ID) || '';
 
   const adState = useSelector((state: AppState) => state.ad);
   const allDetectors = adState.detectors;
@@ -256,7 +257,6 @@ export function HistoricalDetectorResults(
                   <AnomalyHistory
                     key={taskId}
                     detector={detector}
-                    dataSourceId={dataSourceId}
                     monitor={undefined}
                     isFeatureDataMissing={false}
                     isHistorical={true}

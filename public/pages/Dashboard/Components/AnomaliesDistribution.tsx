@@ -33,15 +33,18 @@ import { get, isEmpty } from 'lodash';
 import { AD_DOC_FIELDS } from '../../../../server/utils/constants';
 import { ALL_CUSTOM_AD_RESULT_INDICES } from '../../utils/constants';
 import { searchResults } from '../../../redux/reducers/anomalyResults';
+import { useLocation } from 'react-router-dom';
+import { DATA_SOURCE_ID } from '../../../utils/constants';
 export interface AnomaliesDistributionChartProps {
   selectedDetectors: DetectorListItem[];
-  dataSourceId?: string;
 }
 
 export const AnomaliesDistributionChart = (
   props: AnomaliesDistributionChartProps
 ) => {
   const dispatch = useDispatch();
+  const location = useLocation();
+  const dataSourceId = new URLSearchParams(location.search).get(DATA_SOURCE_ID) || '';
 
   const [anomalyDistribution, setAnomalyDistribution] = useState(
     [] as object[]
@@ -67,7 +70,7 @@ export const AnomaliesDistributionChart = (
       await getAnomalyDistributionForDetectorsByTimeRange(
         searchResults,
         props.selectedDetectors,
-        props.dataSourceId,
+        dataSourceId,
         timeRange,
         dispatch,
         0,

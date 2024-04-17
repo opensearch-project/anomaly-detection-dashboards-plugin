@@ -313,14 +313,12 @@ export function DashboardOverview(props: OverviewProps) {
             </EuiFlexGroup>
             <EuiSpacer />
             <AnomaliesLiveChart 
-              selectedDetectors={currentDetectors}
-              dataSourceId={MDSOverviewState.selectedDataSourceId} />
+              selectedDetectors={currentDetectors} />
             <EuiSpacer />
             <EuiFlexGroup justifyContent="spaceBetween">
               <EuiFlexItem grow={6}>
                 <AnomaliesDistributionChart
                   selectedDetectors={currentDetectors}
-                  dataSourceId={MDSOverviewState.selectedDataSourceId}
                 />
               </EuiFlexItem>
               <EuiFlexItem grow={3}>
