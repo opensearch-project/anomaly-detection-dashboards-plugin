@@ -104,7 +104,7 @@ export function getClientBasedOnDataSource(
     return context.dataSource.opensearch.legacy.getClient(dataSourceId).callAPI;
   } else {
     if (client === undefined) {
-      throw new Error("Client cannot be undefined.");
+      throw new Error('Client cannot be undefined.');
     }
     // fall back to default local cluster
     return client.asScoped(request).callAsCurrentUser;

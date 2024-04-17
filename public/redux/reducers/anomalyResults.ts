@@ -134,7 +134,8 @@ export const searchResults = (
 
   return {
     type: SEARCH_ANOMALY_RESULTS,
-    request: (client: HttpSetup) => client.post(baseUrl, { body: JSON.stringify(requestBody) }),
+    request: (client: HttpSetup) =>
+      client.post(baseUrl, { body: JSON.stringify(requestBody) }),
   };
 };
 
@@ -149,7 +150,8 @@ export const getTopAnomalyResults = (
 
   return {
     type: GET_TOP_ANOMALY_RESULTS,
-    request: (client: HttpSetup) => client.post(url, { body: JSON.stringify(requestBody) }),
+    request: (client: HttpSetup) =>
+      client.post(url, { body: JSON.stringify(requestBody) }),
   };
 };
 

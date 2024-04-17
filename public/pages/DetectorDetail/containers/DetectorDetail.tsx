@@ -27,7 +27,13 @@ import {
 import { CoreStart, MountPoint } from '../../../../../../src/core/public';
 import { CoreServicesContext } from '../../../components/CoreServices/CoreServices';
 import { get, isEmpty } from 'lodash';
-import { RouteComponentProps, Switch, Route, Redirect, useLocation } from 'react-router-dom';
+import {
+  RouteComponentProps,
+  Switch,
+  Route,
+  Redirect,
+  useLocation,
+} from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { useFetchDetectorInfo } from '../../CreateDetectorSteps/hooks/useFetchDetectorInfo';
 import { useHideSideNavBar } from '../../main/hooks/useHideSideNavBar';
@@ -59,7 +65,12 @@ import { DETECTOR_STATE } from '../../../../server/utils/constants';
 import { CatIndex } from '../../../../server/models/types';
 import { containsIndex } from '../utils/helpers';
 import { DataSourceViewConfig } from '../../../../../../src/plugins/data_source_management/public';
-import { getDataSourceManagementPlugin, getDataSourcePlugin, getNotifications, getSavedObjectsClient } from '../../../services';
+import {
+  getDataSourceManagementPlugin,
+  getDataSourcePlugin,
+  getNotifications,
+  getSavedObjectsClient,
+} from '../../../services';
 
 export interface DetectorRouterProps {
   detectorId?: string;
@@ -106,13 +117,18 @@ export const DetectorDetail = (props: DetectorDetailProps) => {
   const core = React.useContext(CoreServicesContext) as CoreStart;
   const dispatch = useDispatch();
   const detectorId = get(props, 'match.params.detectorId', '') as string;
-  const dataSourceEnabled = getDataSourcePlugin().dataSourceEnabled;
+  const dataSourceEnabled = getDataSourcePlugin()?.dataSourceEnabled || false;
   const location = useLocation();
-  const dataSourceId = new URLSearchParams(location.search).get(DATA_SOURCE_ID) || '';
-  
+  const dataSourceId =
+    new URLSearchParams(location.search).get(DATA_SOURCE_ID) || '';
+
   const { detector, hasError, isLoadingDetector, errorMessage } =
     useFetchDetectorInfo(detectorId, dataSourceId);
-  const { monitor} = useFetchMonitorInfo(detectorId, dataSourceId, dataSourceEnabled);
+  const { monitor } = useFetchMonitorInfo(
+    detectorId,
+    dataSourceId,
+    dataSourceEnabled
+  );
   const visibleIndices = useSelector(
     (state: AppState) => state.opensearch.indices
   ) as CatIndex[];
@@ -207,7 +223,9 @@ export const DetectorDetail = (props: DetectorDetailProps) => {
       ...detectorDetailModel,
       selectedTab: DETECTOR_DETAIL_TABS.CONFIGURATIONS,
     });
-    props.history.push(`/detectors/${detectorId}/configurations?dataSourceId=${dataSourceId}`);
+    props.history.push(
+      `/detectors/${detectorId}/configurations?dataSourceId=${dataSourceId}`
+    );
   }, []);
 
   const handleSwitchToHistoricalTab = useCallback(() => {
@@ -215,7 +233,9 @@ export const DetectorDetail = (props: DetectorDetailProps) => {
       ...detectorDetailModel,
       selectedTab: DETECTOR_DETAIL_TABS.HISTORICAL,
     });
-    props.history.push(`/detectors/${detectorId}/historical?dataSourceId=${dataSourceId}`);
+    props.history.push(
+      `/detectors/${detectorId}/historical?dataSourceId=${dataSourceId}`
+    );
   }, []);
 
   const handleTabChange = (route: DETECTOR_DETAIL_TABS) => {
@@ -223,7 +243,9 @@ export const DetectorDetail = (props: DetectorDetailProps) => {
       ...detectorDetailModel,
       selectedTab: route,
     });
-    props.history.push(`/detectors/${detectorId}/${route}?dataSourceId=${dataSourceId}`);
+    props.history.push(
+      `/detectors/${detectorId}/${route}?dataSourceId=${dataSourceId}`
+    );
   };
 
   const hideMonitorCalloutModal = () => {
@@ -356,7 +378,23 @@ export const DetectorDetail = (props: DetectorDetailProps) => {
       ></EuiCallOut>
     ) : null;
 
-  const DataSourceMenu = getDataSourceManagementPlugin().ui.getDataSourceMenu<DataSourceViewConfig>();
+  let renderDataSourceComponent = null;
+  if (dataSourceEnabled) {
+    const DataSourceMenu =
+      getDataSourceManagementPlugin().ui.getDataSourceMenu<DataSourceViewConfig>();
+    renderDataSourceComponent = (
+      <DataSourceMenu
+        setMenuMountPoint={props.setActionMenu}
+        componentType={'DataSourceView'}
+        componentConfig={{
+          activeOption: [{ id: dataSourceId }],
+          fullWidth: false,
+          savedObjects: getSavedObjectsClient(),
+          notifications: getNotifications(),
+        }}
+      />
+    );
+  }
 
   return (
     <React.Fragment>
@@ -369,19 +407,7 @@ export const DetectorDetail = (props: DetectorDetailProps) => {
               : { ...lightStyles, flexGrow: 'unset' }),
           }}
         >
-
-        {dataSourceEnabled && (
-          <DataSourceMenu
-            setMenuMountPoint={props.setActionMenu}
-            componentType={'DataSourceView'}
-            componentConfig={{
-              activeOption: [{ id: dataSourceId}],
-              fullWidth: false,
-              savedObjects: getSavedObjectsClient(),
-              notifications: getNotifications(),
-            }}
-          />
-        )}
+          {dataSourceEnabled && renderDataSourceComponent}
           <EuiFlexGroup
             justifyContent="spaceBetween"
             style={{ padding: '10px' }}

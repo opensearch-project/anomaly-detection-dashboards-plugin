@@ -48,16 +48,34 @@ export function Main(props: MainProps) {
   const totalDetectors = adState.totalDetectors;
   const queryParams = getURLQueryParams(props.location);
   const dataSourceId = queryParams.dataSourceId ? queryParams.dataSourceId : '';
-  const existingParams = "from=0&size=20&search=&indices=&sortField=name&sortDirection=asc";  
-  const constructHrefWithDataSourceId = (basePath, existingParams, dataSourceId) => {
-    const fullUrl = `${window.location.origin}${basePath}?${existingParams}`;
-    const url = new URL(fullUrl);
-    url.searchParams.set('dataSourceId', dataSourceId); 
-    
-    return `#${url.pathname}${url.search}`;
+  const existingParams =
+    'from=0&size=20&search=&indices=&sortField=name&sortDirection=asc';
+
+  const constructHrefWithDataSourceId = (
+    basePath,
+    existingParams = '',
+    dataSourceId = ''
+  ) => {
+    const searchParams = new URLSearchParams(existingParams);
+
+    if (dataSourceId) {
+      searchParams.set('dataSourceId', dataSourceId);
+    }
+
+    return `#${basePath}?${searchParams.toString()}`;
   };
-  const dashboardHref = dataSourceId ? `#${APP_PATH.DASHBOARD}?dataSourceId=${dataSourceId}` : `#${APP_PATH.DASHBOARD}`;
-  const overviewHref = dataSourceId ? `#${APP_PATH.OVERVIEW}?dataSourceId=${dataSourceId}` : `#${APP_PATH.OVERVIEW}`;
+
+  // Usage examples:
+  const dashboardHref = constructHrefWithDataSourceId(
+    APP_PATH.DASHBOARD,
+    '',
+    dataSourceId
+  );
+  const overviewHref = constructHrefWithDataSourceId(
+    APP_PATH.OVERVIEW,
+    '',
+    dataSourceId
+  );
 
   const sideNav = [
     {
@@ -74,7 +92,11 @@ export function Main(props: MainProps) {
         {
           name: Navigation.Detectors,
           id: 2,
-          href: constructHrefWithDataSourceId(APP_PATH.LIST_DETECTORS, existingParams, dataSourceId),
+          href: constructHrefWithDataSourceId(
+            APP_PATH.LIST_DETECTORS,
+            existingParams,
+            dataSourceId
+          ),
           isSelected: props.location.pathname === APP_PATH.LIST_DETECTORS,
         },
       ],
@@ -93,11 +115,12 @@ export function Main(props: MainProps) {
               <Switch>
                 <Route
                   path={APP_PATH.DASHBOARD}
-                  render={(props: RouteComponentProps) => 
-                    <DashboardOverview 
+                  render={(props: RouteComponentProps) => (
+                    <DashboardOverview
                       setActionMenu={setHeaderActionMenu}
                       {...props}
-                    />}
+                    />
+                  )}
                 />
                 <Route
                   exact
@@ -133,9 +156,10 @@ export function Main(props: MainProps) {
                 <Route
                   path={APP_PATH.DETECTOR_DETAIL}
                   render={(props: RouteComponentProps) => (
-                    <DetectorDetail 
+                    <DetectorDetail
                       setActionMenu={setHeaderActionMenu}
-                      {...props} />
+                      {...props}
+                    />
                   )}
                 />
                 <Route
@@ -154,11 +178,11 @@ export function Main(props: MainProps) {
                     />
                   )}
                 />
-                <Route 
+                <Route
                   path="/"
-                  render={(props: RouteComponentProps) => 
+                  render={(props: RouteComponentProps) =>
                     totalDetectors > 0 ? (
-                      <DashboardOverview 
+                      <DashboardOverview
                         setActionMenu={setHeaderActionMenu}
                         {...props}
                       />

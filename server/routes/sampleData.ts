@@ -27,10 +27,14 @@ export function registerSampleDataRoutes(
   apiRouter: Router,
   sampleDataService: SampleDataService
 ) {
-  apiRouter.post('/create_sample_data/{type}',
-    sampleDataService.createSampleData);
-  apiRouter.post('/create_sample_data/{type}/{dataSourceId}',
-    sampleDataService.createSampleData);
+  apiRouter.post(
+    '/create_sample_data/{type}',
+    sampleDataService.createSampleData
+  );
+  apiRouter.post(
+    '/create_sample_data/{type}/{dataSourceId}',
+    sampleDataService.createSampleData
+  );
 }
 
 export default class SampleDataService {
@@ -81,7 +85,14 @@ export default class SampleDataService {
         }
       }
 
-      await loadSampleData(filePath, indexName, this.client, request, context, this.dataSourceEnabled);
+      await loadSampleData(
+        filePath,
+        indexName,
+        this.client,
+        request,
+        context,
+        this.dataSourceEnabled
+      );
 
       return opensearchDashboardsResponse.ok({ body: { ok: true } });
     } catch (err) {

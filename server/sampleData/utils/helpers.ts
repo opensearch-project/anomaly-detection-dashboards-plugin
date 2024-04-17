@@ -19,7 +19,10 @@ import {
 import fs from 'fs';
 import { createUnzip } from 'zlib';
 import { isEmpty } from 'lodash';
-import { getClientBasedOnDataSource, prettifyErrorMessage } from '../../utils/helpers';
+import {
+  getClientBasedOnDataSource,
+  prettifyErrorMessage,
+} from '../../utils/helpers';
 
 const BULK_INSERT_SIZE = 500;
 
@@ -31,7 +34,7 @@ export const loadSampleData = (
   context: RequestHandlerContext,
   dataSourceEnabled: boolean
 ) => {
-  const { dataSourceId = "" } = request.params as { dataSourceId?: string };
+  const { dataSourceId = '' } = request.params as { dataSourceId?: string };
 
   return new Promise((resolve, reject) => {
     let count: number = 0;
@@ -100,11 +103,12 @@ export const loadSampleData = (
     });
 
     const callWithRequest = getClientBasedOnDataSource(
-      context, 
-      dataSourceEnabled, 
-      request, 
+      context,
+      dataSourceEnabled,
+      request,
       dataSourceId,
-      client);
+      client
+    );
 
     const bulkInsert = async (docs: any[]) => {
       try {

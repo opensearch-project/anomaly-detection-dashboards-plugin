@@ -68,8 +68,6 @@ import { SampleIndexDetailsCallout } from '../../Overview/components/SampleIndex
 import { CoreStart } from '../../../../../../src/core/public';
 import { CoreServicesContext } from '../../../components/CoreServices/CoreServices';
 import { DEFAULT_SHINGLE_SIZE } from '../../../utils/constants';
-import { getDataSourcePlugin } from '../../../../public/services';
-
 
 interface AnomalyResultsProps extends RouteComponentProps {
   detectorId: string;
@@ -83,12 +81,12 @@ export function AnomalyResults(props: AnomalyResultsProps) {
   const core = React.useContext(CoreServicesContext) as CoreStart;
   const dispatch = useDispatch();
   const detectorId = props.detectorId;
-  const detector = useSelector(    
+  const detector = useSelector(
     (state: AppState) => state.ad.detectors[detectorId]
   );
-  const dataSourceEnabled = getDataSourcePlugin().dataSourceEnabled;
   const location = useLocation();
-  const dataSourceId = new URLSearchParams(location.search).get(DATA_SOURCE_ID) || '';
+  const dataSourceId =
+    new URLSearchParams(location.search).get(DATA_SOURCE_ID) || '';
 
   useEffect(() => {
     core.chrome.setBreadcrumbs([
@@ -253,7 +251,14 @@ export function AnomalyResults(props: AnomalyResultsProps) {
     try {
       const resultIndex = get(detector, 'resultIndex', '');
       const detectorResultResponse = await dispatch(
-        getDetectorResults(detectorId, dataSourceId, params, false, resultIndex, true)
+        getDetectorResults(
+          detectorId,
+          dataSourceId,
+          params,
+          false,
+          resultIndex,
+          true
+        )
       );
       const featuresData = get(
         detectorResultResponse,
@@ -556,9 +561,7 @@ export function AnomalyResults(props: AnomalyResultsProps) {
                       </EuiFlexItem>
                     </EuiFlexGroup>
                   ) : null}
-                  <AnomalyResultsLiveChart 
-                    detector={detector} 
-                  />
+                  <AnomalyResultsLiveChart detector={detector} />
                   <EuiSpacer size="l" />
                   <AnomalyHistory
                     detector={detector}

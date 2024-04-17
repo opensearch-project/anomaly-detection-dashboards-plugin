@@ -69,7 +69,8 @@ export const AnomalyResultsLiveChart = (
 ) => {
   const dispatch = useDispatch();
   const location = useLocation();
-  const dataSourceId = new URLSearchParams(location.search).get(DATA_SOURCE_ID) || '';
+  const dataSourceId =
+    new URLSearchParams(location.search).get(DATA_SOURCE_ID) || '';
 
   const [firstLoading, setFirstLoading] = useState<boolean>(true);
   const [isFullScreen, setIsFullScreen] = useState<boolean>(false);
@@ -134,7 +135,7 @@ export const AnomalyResultsLiveChart = (
           detectionInterval,
           intervals
         );
-        await dispatch(          
+        await dispatch(
           getDetectorLiveResults(
             detectorId,
             dataSourceId,

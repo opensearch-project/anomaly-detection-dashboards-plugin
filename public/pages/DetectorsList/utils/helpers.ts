@@ -21,8 +21,15 @@ import { DETECTOR_ACTION } from '../utils/constants';
 export const getURLQueryParams = (location: {
   search: string;
 }): GetDetectorsQueryParams => {
-  const { from, size, search, indices, sortField, sortDirection, dataSourceId } =
-    queryString.parse(location.search) as { [key: string]: string };
+  const {
+    from,
+    size,
+    search,
+    indices,
+    sortField,
+    sortDirection,
+    dataSourceId,
+  } = queryString.parse(location.search) as { [key: string]: string };
   return {
     // @ts-ignore
     from: isNaN(parseInt(from, 10))

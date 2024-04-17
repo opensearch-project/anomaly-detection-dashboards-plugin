@@ -68,7 +68,7 @@ export const filterAndSortDetectors = (
   selectedIndices: string[],
   selectedDetectorStates: DETECTOR_STATE[],
   sortField: string,
-  sortDirection: string,
+  sortDirection: string
 ) => {
   let filteredBySearch =
     search == ''
@@ -96,7 +96,7 @@ export const filterAndSortDetectors = (
 export const getDetectorsToDisplay = (
   detectors: DetectorListItem[],
   page: number,
-  size: number,
+  size: number
 ) => {
   return detectors.slice(size * page, page * size + size);
 };
@@ -125,8 +125,9 @@ export const getAllDetectorsQueryParamsWithDataSourceId = (
   dataSourceId: dataSourceId,
 });
 
-export const getSampleDetectorsQueryParamsWithDataSouceId = (dataSourceId: string) => (
-  {
+export const getSampleDetectorsQueryParamsWithDataSouceId = (
+  dataSourceId: string
+) => ({
   from: 0,
   search: 'sample',
   indices: '',

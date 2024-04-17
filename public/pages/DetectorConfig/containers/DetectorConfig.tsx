@@ -29,7 +29,8 @@ interface DetectorConfigProps extends RouteComponentProps {
 export function DetectorConfig(props: DetectorConfigProps) {
   const dispatch = useDispatch();
   const location = useLocation();
-  const dataSourceId = new URLSearchParams(location.search).get(DATA_SOURCE_ID) || '';
+  const dataSourceId =
+    new URLSearchParams(location.search).get(DATA_SOURCE_ID) || '';
   const detector = useSelector(
     (state: AppState) => state.ad.detectors[props.detectorId]
   );

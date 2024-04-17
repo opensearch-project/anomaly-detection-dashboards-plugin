@@ -44,7 +44,8 @@ export const AnomaliesDistributionChart = (
 ) => {
   const dispatch = useDispatch();
   const location = useLocation();
-  const dataSourceId = new URLSearchParams(location.search).get(DATA_SOURCE_ID) || '';
+  const dataSourceId =
+    new URLSearchParams(location.search).get(DATA_SOURCE_ID) || '';
 
   const [anomalyDistribution, setAnomalyDistribution] = useState(
     [] as object[]

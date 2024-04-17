@@ -57,7 +57,7 @@ const reducer = handleActions<Anomalies>(
 
 export const getDetectorLiveResults = (
   detectorId: string,
-  dataSourceId: string = '', 
+  dataSourceId: string = '',
   queryParams: DetectorResultsQueryParams,
   isHistorical: boolean,
   resultIndex: string,

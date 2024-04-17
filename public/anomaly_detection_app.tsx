@@ -18,10 +18,7 @@ import { Provider } from 'react-redux';
 import configureStore from './redux/configureStore';
 import { CoreServicesContext } from './components/CoreServices/CoreServices';
 
-export function renderApp(
-  coreStart: CoreStart,
-  params: AppMountParameters,
-) {
+export function renderApp(coreStart: CoreStart, params: AppMountParameters) {
   const http = coreStart.http;
   const store = configureStore(http);
 
