@@ -51,9 +51,14 @@ import {
   getLatestAnomalyResultsForDetectorsByTimeRange,
   getLatestAnomalyResultsByTimeRange,
 } from '../utils/utils';
-import { MAX_ANOMALIES, SPACE_STR } from '../../../utils/constants';
+import {
+  DATA_SOURCE_ID,
+  MAX_ANOMALIES,
+  SPACE_STR,
+} from '../../../utils/constants';
 import { ALL_CUSTOM_AD_RESULT_INDICES } from '../../utils/constants';
 import { searchResults } from '../../../redux/reducers/anomalyResults';
+import { useLocation } from 'react-router-dom';
 
 export interface AnomaliesLiveChartProps {
   selectedDetectors: DetectorListItem[];
@@ -68,6 +73,9 @@ const MAX_LIVE_DETECTORS = 10;
 
 export const AnomaliesLiveChart = (props: AnomaliesLiveChartProps) => {
   const dispatch = useDispatch();
+  const location = useLocation();
+  const dataSourceId =
+    new URLSearchParams(location.search).get(DATA_SOURCE_ID) || '';
 
   const [liveTimeRange, setLiveTimeRange] = useState<LiveTimeRangeState>({
     startDateTime: moment().subtract(31, 'minutes'),
@@ -102,7 +110,8 @@ export const AnomaliesLiveChart = (props: AnomaliesLiveChartProps) => {
         1,
         true,
         ALL_CUSTOM_AD_RESULT_INDICES,
-        false
+        false,
+        dataSourceId
       );
     } catch (err) {
       console.log(
@@ -126,7 +135,8 @@ export const AnomaliesLiveChart = (props: AnomaliesLiveChartProps) => {
         MAX_LIVE_DETECTORS,
         false,
         ALL_CUSTOM_AD_RESULT_INDICES,
-        false
+        false,
+        dataSourceId
       );
     setLiveAnomalyData(latestLiveAnomalyResult);
 

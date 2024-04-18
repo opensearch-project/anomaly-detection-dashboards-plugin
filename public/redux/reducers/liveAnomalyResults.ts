@@ -57,31 +57,26 @@ const reducer = handleActions<Anomalies>(
 
 export const getDetectorLiveResults = (
   detectorId: string,
+  dataSourceId: string = '',
   queryParams: DetectorResultsQueryParams,
   isHistorical: boolean,
   resultIndex: string,
   onlyQueryCustomResultIndex: boolean
-): APIAction =>
-  !resultIndex
-    ? {
-        type: DETECTOR_LIVE_RESULTS,
-        request: (client: HttpSetup) =>
-          client.get(
-            `..${AD_NODE_API.DETECTOR}/${detectorId}/results/${isHistorical}`,
-            {
-              query: queryParams,
-            }
-          ),
-      }
-    : {
-        type: DETECTOR_LIVE_RESULTS,
-        request: (client: HttpSetup) =>
-          client.get(
-            `..${AD_NODE_API.DETECTOR}/${detectorId}/results/${isHistorical}/${resultIndex}/${onlyQueryCustomResultIndex}`,
-            {
-              query: queryParams,
-            }
-          ),
-      };
+): APIAction => {
+  let url = `..${AD_NODE_API.DETECTOR}/${detectorId}/results/${isHistorical}`;
+
+  if (resultIndex) {
+    url += `/${resultIndex}/${onlyQueryCustomResultIndex}`;
+  }
+
+  if (dataSourceId) {
+    url += `/${dataSourceId}`;
+  }
+
+  return {
+    type: DETECTOR_LIVE_RESULTS,
+    request: (client: HttpSetup) => client.get(url, { query: queryParams }),
+  };
+};
 
 export default reducer;

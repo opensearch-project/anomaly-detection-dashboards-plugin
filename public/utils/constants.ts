@@ -98,3 +98,5 @@ export enum MISSING_FEATURE_DATA_SEVERITY {
 export const SPACE_STR = ' ';
 
 export const ANOMALY_DETECTION_ICON = 'anomalyDetection';
+
+export const DATA_SOURCE_ID = 'dataSourceId';

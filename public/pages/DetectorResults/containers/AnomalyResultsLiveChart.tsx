@@ -57,6 +57,8 @@ import { darkModeEnabled } from '../../../utils/opensearchDashboardsUtils';
 import { EuiIcon } from '@elastic/eui';
 import { formatAnomalyNumber } from '../../../../server/utils/helpers';
 import { getDetectorLiveResults } from '../../../redux/reducers/liveAnomalyResults';
+import { useLocation } from 'react-router-dom';
+import { DATA_SOURCE_ID } from '../../../utils/constants';
 
 interface AnomalyResultsLiveChartProps {
   detector: Detector;
@@ -66,6 +68,9 @@ export const AnomalyResultsLiveChart = (
   props: AnomalyResultsLiveChartProps
 ) => {
   const dispatch = useDispatch();
+  const location = useLocation();
+  const dataSourceId =
+    new URLSearchParams(location.search).get(DATA_SOURCE_ID) || '';
 
   const [firstLoading, setFirstLoading] = useState<boolean>(true);
   const [isFullScreen, setIsFullScreen] = useState<boolean>(false);
@@ -133,6 +138,7 @@ export const AnomalyResultsLiveChart = (
         await dispatch(
           getDetectorLiveResults(
             detectorId,
+            dataSourceId,
             queryParams,
             false,
             resultIndex,
@@ -161,6 +167,7 @@ export const AnomalyResultsLiveChart = (
         getLiveAnomalyResults(
           dispatch,
           props.detector.id,
+          dataSourceId,
           detectionInterval,
           LIVE_CHART_CONFIG.MONITORING_INTERVALS,
           resultIndex,
