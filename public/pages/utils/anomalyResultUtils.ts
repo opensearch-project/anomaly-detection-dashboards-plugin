@@ -96,6 +96,7 @@ export const getQueryParamsForLiveAnomalyResults = (
 export const getLiveAnomalyResults = (
   dispatch: Dispatch<any>,
   detectorId: string,
+  dataSourceId: string,
   detectionInterval: number,
   intervals: number,
   resultIndex: string,
@@ -108,6 +109,7 @@ export const getLiveAnomalyResults = (
   dispatch(
     getDetectorLiveResults(
       detectorId,
+      dataSourceId,
       queryParams,
       false,
       resultIndex,

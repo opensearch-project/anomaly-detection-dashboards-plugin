@@ -24,6 +24,7 @@ import {
   CUSTOM_AD_RESULT_INDEX_PREFIX,
 } from '../utils/constants';
 import {
+  getClientBasedOnDataSource,
   mapKeysDeep,
   toCamel,
   toFixedNumberForAnomaly,
@@ -59,42 +60,107 @@ type PutDetectorParams = {
 };
 
 export function registerADRoutes(apiRouter: Router, adService: AdService) {
+  // create detector
   apiRouter.post('/detectors', adService.putDetector);
+  apiRouter.post('/detectors/{dataSourceId}', adService.putDetector);
+
+  // put detector
   apiRouter.put('/detectors/{detectorId}', adService.putDetector);
+  apiRouter.put(
+    '/detectors/{detectorId}/{dataSourceId}',
+    adService.putDetector
+  );
+
   apiRouter.post('/detectors/_search', adService.searchDetector);
+
+  // post search anomaly results
   apiRouter.post('/detectors/results/_search/', adService.searchResults);
-  apiRouter.post('/detectors/results/_search', adService.searchResults);
+  apiRouter.post(
+    '/detectors/results/_search/{dataSourceId}',
+    adService.searchResults
+  );
   apiRouter.post(
     '/detectors/results/_search/{resultIndex}/{onlyQueryCustomResultIndex}',
     adService.searchResults
   );
-  apiRouter.get('/detectors/{detectorId}', adService.getDetector);
-  apiRouter.get('/detectors', adService.getDetectors);
+  apiRouter.post(
+    '/detectors/results/_search/{resultIndex}/{onlyQueryCustomResultIndex}/{dataSourceId}',
+    adService.searchResults
+  );
+
+  // list detectors
+  apiRouter.get('/detectors/_list', adService.getDetectors);
+  apiRouter.get('/detectors/_list/{dataSourceId}', adService.getDetectors);
+
   apiRouter.post('/detectors/preview', adService.previewDetector);
+
+  // get detector anomaly results
   apiRouter.get(
     '/detectors/{id}/results/{isHistorical}/{resultIndex}/{onlyQueryCustomResultIndex}',
+    adService.getAnomalyResults
+  );
+  apiRouter.get(
+    '/detectors/{id}/results/{isHistorical}/{resultIndex}/{onlyQueryCustomResultIndex}/{dataSourceId}',
     adService.getAnomalyResults
   );
   apiRouter.get(
     '/detectors/{id}/results/{isHistorical}',
     adService.getAnomalyResults
   );
+  apiRouter.get(
+    '/detectors/{id}/results/{isHistorical}/{dataSourceId}',
+    adService.getAnomalyResults
+  );
+
+  // delete detector
   apiRouter.delete('/detectors/{detectorId}', adService.deleteDetector);
+  apiRouter.delete(
+    '/detectors/{detectorId}/{dataSourceId}',
+    adService.deleteDetector
+  );
+
+  // start detector
   apiRouter.post('/detectors/{detectorId}/start', adService.startDetector);
+  apiRouter.post(
+    '/detectors/{detectorId}/start/{dataSourceId}',
+    adService.startDetector
+  );
+
+  // stop detector
   apiRouter.post(
     '/detectors/{detectorId}/stop/{isHistorical}',
     adService.stopDetector
   );
+  apiRouter.post(
+    '/detectors/{detectorId}/stop/{isHistorical}/{dataSourceId}',
+    adService.stopDetector
+  );
+
   apiRouter.get(
     '/detectors/{detectorId}/_profile',
     adService.getDetectorProfile
   );
+
+  // get detector
+  apiRouter.get('/detectors/{detectorId}', adService.getDetector);
+  apiRouter.get(
+    '/detectors/{detectorId}/{dataSourceId}',
+    adService.getDetector
+  );
+
   apiRouter.get('/detectors/{detectorName}/_match', adService.matchDetector);
   apiRouter.get('/detectors/_count', adService.getDetectorCount);
+
+  // post get top anomaly results
   apiRouter.post(
     '/detectors/{detectorId}/_topAnomalies/{isHistorical}',
     adService.getTopAnomalyResults
   );
+  apiRouter.post(
+    '/detectors/{detectorId}/_topAnomalies/{isHistorical}/{dataSourceId}',
+    adService.getTopAnomalyResults
+  );
+
   apiRouter.post(
     '/detectors/_validate/{validationType}',
     adService.validateDetector
@@ -103,9 +169,11 @@ export function registerADRoutes(apiRouter: Router, adService: AdService) {
 
 export default class AdService {
   private client: any;
+  dataSourceEnabled: boolean;
 
-  constructor(client: any) {
+  constructor(client: any, dataSourceEnabled: boolean) {
     this.client = client;
+    this.dataSourceEnabled = dataSourceEnabled;
   }
 
   deleteDetector = async (
@@ -115,11 +183,19 @@ export default class AdService {
   ): Promise<IOpenSearchDashboardsResponse<any>> => {
     try {
       const { detectorId } = request.params as { detectorId: string };
-      const response = await this.client
-        .asScoped(request)
-        .callAsCurrentUser('ad.deleteDetector', {
-          detectorId,
-        });
+      const { dataSourceId = '' } = request.params as { dataSourceId?: string };
+      const callWithRequest = getClientBasedOnDataSource(
+        context,
+        this.dataSourceEnabled,
+        request,
+        dataSourceId,
+        this.client
+      );
+
+      const response = await callWithRequest('ad.deleteDetector', {
+        detectorId,
+      });
+
       return opensearchDashboardsResponse.ok({
         body: {
           ok: true,
@@ -177,6 +253,8 @@ export default class AdService {
   ): Promise<IOpenSearchDashboardsResponse<any>> => {
     try {
       const { detectorId } = request.params as { detectorId: string };
+      const { dataSourceId = '' } = request.params as { dataSourceId?: string };
+
       //@ts-ignore
       const ifSeqNo = request.body.seqNo;
       //@ts-ignore
@@ -193,16 +271,20 @@ export default class AdService {
       };
       let response;
 
+      const callWithRequest = getClientBasedOnDataSource(
+        context,
+        this.dataSourceEnabled,
+        request,
+        dataSourceId,
+        this.client
+      );
+
       if (isNumber(ifSeqNo) && isNumber(ifPrimaryTerm)) {
-        response = await this.client
-          .asScoped(request)
-          .callAsCurrentUser('ad.updateDetector', params);
+        response = await callWithRequest('ad.updateDetector', params);
       } else {
-        response = await this.client
-          .asScoped(request)
-          .callAsCurrentUser('ad.createDetector', {
-            body: params.body,
-          });
+        response = await callWithRequest('ad.createDetector', {
+          body: params.body,
+        });
       }
       const resp = {
         ...response.anomaly_detector,
@@ -269,11 +351,18 @@ export default class AdService {
   ): Promise<IOpenSearchDashboardsResponse<any>> => {
     try {
       const { detectorId } = request.params as { detectorId: string };
-      const detectorResponse = await this.client
-        .asScoped(request)
-        .callAsCurrentUser('ad.getDetector', {
-          detectorId,
-        });
+      const { dataSourceId = '' } = request.params as { dataSourceId?: string };
+      const callWithRequest = getClientBasedOnDataSource(
+        context,
+        this.dataSourceEnabled,
+        request,
+        dataSourceId,
+        this.client
+      );
+
+      const detectorResponse = await callWithRequest('ad.getDetector', {
+        detectorId,
+      });
 
       // Populating static detector fields
       const staticFields = {
@@ -290,16 +379,21 @@ export default class AdService {
       let realtimeTasksResponse = {} as any;
       let historicalTasksResponse = {} as any;
       try {
-        realtimeTasksResponse = await this.client
-          .asScoped(request)
-          .callAsCurrentUser('ad.searchTasks', {
-            body: getLatestTaskForDetectorQuery(detectorId, true),
-          });
-        historicalTasksResponse = await this.client
-          .asScoped(request)
-          .callAsCurrentUser('ad.searchTasks', {
-            body: getLatestTaskForDetectorQuery(detectorId, false),
-          });
+        const callWithRequest = getClientBasedOnDataSource(
+          context,
+          this.dataSourceEnabled,
+          request,
+          dataSourceId,
+          this.client
+        );
+
+        realtimeTasksResponse = await callWithRequest('ad.searchTasks', {
+          body: getLatestTaskForDetectorQuery(detectorId, true),
+        });
+
+        historicalTasksResponse = await callWithRequest('ad.searchTasks', {
+          body: getLatestTaskForDetectorQuery(detectorId, false),
+        });
       } catch (err) {
         if (!isIndexNotFoundError(err)) {
           throw err;
@@ -364,6 +458,7 @@ export default class AdService {
   ): Promise<IOpenSearchDashboardsResponse<any>> => {
     try {
       const { detectorId } = request.params as { detectorId: string };
+      const { dataSourceId = '' } = request.params as { dataSourceId?: string };
       //@ts-ignore
       const startTime = request.body?.startTime;
       //@ts-ignore
@@ -382,9 +477,16 @@ export default class AdService {
         requestPath = 'ad.startHistoricalDetector';
       }
 
-      const response = await this.client
-        .asScoped(request)
-        .callAsCurrentUser(requestPath, requestParams);
+      const callWithRequest = getClientBasedOnDataSource(
+        context,
+        this.dataSourceEnabled,
+        request,
+        dataSourceId,
+        this.client
+      );
+
+      const response = await callWithRequest(requestPath, requestParams);
+
       return opensearchDashboardsResponse.ok({
         body: {
           ok: true,
@@ -412,16 +514,25 @@ export default class AdService {
         detectorId: string;
         isHistorical: any;
       };
+      const { dataSourceId = '' } = request.params as { dataSourceId?: string };
+
       isHistorical = JSON.parse(isHistorical) as boolean;
       const requestPath = isHistorical
         ? 'ad.stopHistoricalDetector'
         : 'ad.stopDetector';
 
-      const response = await this.client
-        .asScoped(request)
-        .callAsCurrentUser(requestPath, {
-          detectorId,
-        });
+      const callWithRequest = getClientBasedOnDataSource(
+        context,
+        this.dataSourceEnabled,
+        request,
+        dataSourceId,
+        this.client
+      );
+
+      const response = await callWithRequest(requestPath, {
+        detectorId,
+      });
+
       return opensearchDashboardsResponse.ok({
         body: {
           ok: true,
@@ -520,6 +631,8 @@ export default class AdService {
         resultIndex: string;
         onlyQueryCustomResultIndex: boolean;
       };
+      const { dataSourceId = '' } = request.params as { dataSourceId?: string };
+
       if (
         !resultIndex ||
         !resultIndex.startsWith(CUSTOM_AD_RESULT_INDEX_PREFIX)
@@ -532,18 +645,23 @@ export default class AdService {
         onlyQueryCustomResultIndex: onlyQueryCustomResultIndex,
       } as {};
       const requestBody = JSON.stringify(request.body);
+
+      const callWithRequest = getClientBasedOnDataSource(
+        context,
+        this.dataSourceEnabled,
+        request,
+        dataSourceId,
+        this.client
+      );
+
       const response = !resultIndex
-        ? await this.client
-            .asScoped(request)
-            .callAsCurrentUser('ad.searchResults', {
-              body: requestBody,
-            })
-        : await this.client
-            .asScoped(request)
-            .callAsCurrentUser('ad.searchResultsFromCustomResultIndex', {
-              ...requestParams,
-              body: requestBody,
-            });
+        ? await callWithRequest('ad.searchResults', {
+            body: requestBody,
+          })
+        : await callWithRequest('ad.searchResultsFromCustomResultIndex', {
+            ...requestParams,
+            body: requestBody,
+          });
       return opensearchDashboardsResponse.ok({
         body: {
           ok: true,
@@ -579,6 +697,7 @@ export default class AdService {
         indices = '',
         sortDirection = SORT_DIRECTION.DESC,
         sortField = 'name',
+        dataSourceId = '',
       } = request.query as GetDetectorsQueryParams;
       const mustQueries = [];
       if (search.trim()) {
@@ -621,9 +740,17 @@ export default class AdService {
           },
         },
       };
-      const response: any = await this.client
-        .asScoped(request)
-        .callAsCurrentUser('ad.searchDetector', { body: requestBody });
+
+      const callWithRequest = getClientBasedOnDataSource(
+        context,
+        this.dataSourceEnabled,
+        request,
+        dataSourceId,
+        this.client
+      );
+      const response = await callWithRequest('ad.searchDetector', {
+        body: requestBody,
+      });
 
       const totalDetectors = get(response, 'hits.total.value', 0);
 
@@ -655,9 +782,10 @@ export default class AdService {
         resultIndex: CUSTOM_AD_RESULT_INDEX_PREFIX + '*',
         onlyQueryCustomResultIndex: 'false',
       } as {};
-      const aggregationResult = await this.client
-        .asScoped(request)
-        .callAsCurrentUser('ad.searchResultsFromCustomResultIndex', {
+
+      const aggregationResult = await callWithRequest(
+        'ad.searchResultsFromCustomResultIndex',
+        {
           ...requestParams,
           body: getResultAggregationQuery(allDetectorIds, {
             from,
@@ -667,7 +795,8 @@ export default class AdService {
             search,
             indices,
           }),
-        });
+        }
+      );
       const aggsDetectors = get(
         aggregationResult,
         'aggregations.unique_detectors.buckets',
@@ -720,16 +849,12 @@ export default class AdService {
       let realtimeTasksResponse = {} as any;
       let historicalTasksResponse = {} as any;
       try {
-        realtimeTasksResponse = await this.client
-          .asScoped(request)
-          .callAsCurrentUser('ad.searchTasks', {
-            body: getLatestDetectorTasksQuery(true),
-          });
-        historicalTasksResponse = await this.client
-          .asScoped(request)
-          .callAsCurrentUser('ad.searchTasks', {
-            body: getLatestDetectorTasksQuery(false),
-          });
+        realtimeTasksResponse = await callWithRequest('ad.searchTasks', {
+          body: getLatestDetectorTasksQuery(true),
+        });
+        historicalTasksResponse = await callWithRequest('ad.searchTasks', {
+          body: getLatestDetectorTasksQuery(false),
+        });
       } catch (err) {
         if (!isIndexNotFoundError(err)) {
           throw err;
@@ -816,6 +941,8 @@ export default class AdService {
         resultIndex: string;
         onlyQueryCustomResultIndex: boolean;
       };
+    const { dataSourceId = '' } = request.params as { dataSourceId?: string };
+
     if (
       !resultIndex ||
       !resultIndex.startsWith(CUSTOM_AD_RESULT_INDEX_PREFIX)
@@ -946,18 +1073,23 @@ export default class AdService {
         resultIndex: resultIndex,
         onlyQueryCustomResultIndex: onlyQueryCustomResultIndex,
       } as {};
+
+      const callWithRequest = getClientBasedOnDataSource(
+        context,
+        this.dataSourceEnabled,
+        request,
+        dataSourceId,
+        this.client
+      );
+
       const response = !resultIndex
-        ? await this.client
-            .asScoped(request)
-            .callAsCurrentUser('ad.searchResults', {
-              body: requestBody,
-            })
-        : await this.client
-            .asScoped(request)
-            .callAsCurrentUser('ad.searchResultsFromCustomResultIndex', {
-              ...requestParams,
-              body: requestBody,
-            });
+        ? await callWithRequest('ad.searchResults', {
+            body: requestBody,
+          })
+        : await callWithRequest('ad.searchResultsFromCustomResultIndex', {
+            ...requestParams,
+            body: requestBody,
+          });
 
       const totalResults: number = get(response, 'hits.total.value', 0);
 
@@ -1046,17 +1178,25 @@ export default class AdService {
         detectorId: string;
         isHistorical: any;
       };
+      const { dataSourceId = '' } = request.params as { dataSourceId?: string };
+
       isHistorical = JSON.parse(isHistorical) as boolean;
       const requestPath = isHistorical
         ? 'ad.topHistoricalAnomalyResults'
         : 'ad.topAnomalyResults';
 
-      const response = await this.client
-        .asScoped(request)
-        .callAsCurrentUser(requestPath, {
-          detectorId: detectorId,
-          body: request.body,
-        });
+      const callWithRequest = getClientBasedOnDataSource(
+        context,
+        this.dataSourceEnabled,
+        request,
+        dataSourceId,
+        this.client
+      );
+
+      const response = await callWithRequest(requestPath, {
+        detectorId: detectorId,
+        body: request.body,
+      });
 
       return opensearchDashboardsResponse.ok({
         body: {
