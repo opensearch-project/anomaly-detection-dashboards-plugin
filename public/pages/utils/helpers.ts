@@ -8,8 +8,8 @@
  * Modifications Copyright OpenSearch Contributors. See
  * GitHub history for details.
  */
-
-import { CatIndex, IndexAlias } from '../../../server/models/types';
+import queryString from 'query-string';
+import { CatIndex, IndexAlias, MDSQueryParams } from '../../../server/models/types';
 import sortBy from 'lodash/sortBy';
 import { DetectorListItem } from '../../models/interfaces';
 import { SORT_DIRECTION } from '../../../server/utils/constants';
@@ -136,3 +136,11 @@ export const getSampleDetectorsQueryParamsWithDataSouceId = (
   sortField: 'name',
   dataSourceId: dataSourceId,
 });
+
+export const getDataSourceFromURL = (location: {
+  search: string;}): MDSQueryParams => {
+  const queryParams = queryString.parse(location.search);
+  const dataSourceId = queryParams.dataSourceId;
+  console.log(dataSourceId);
+  return {dataSourceId: typeof dataSourceId === 'string' ? dataSourceId : ''};
+};

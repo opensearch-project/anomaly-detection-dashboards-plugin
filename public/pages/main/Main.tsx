@@ -136,7 +136,9 @@ export function Main(props: MainProps) {
                   exact
                   path={APP_PATH.CREATE_DETECTOR}
                   render={(props: RouteComponentProps) => (
-                    <CreateDetectorSteps {...props} />
+                    <CreateDetectorSteps 
+                    setActionMenu={setHeaderActionMenu}
+                    {...props} />
                   )}
                 />
                 <Route

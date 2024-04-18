@@ -9,8 +9,8 @@
  * GitHub history for details.
  */
 
-import React, { Fragment, useEffect, useState } from 'react';
-import { RouteComponentProps } from 'react-router';
+import React, { Fragment, ReactElement, useEffect, useMemo, useState } from 'react';
+import { RouteComponentProps, useLocation } from 'react-router';
 import { useDispatch } from 'react-redux';
 import { Dispatch } from 'redux';
 import { FormikProps, Formik } from 'formik';
@@ -30,10 +30,10 @@ import {
 import { updateDetector, matchDetector } from '../../../redux/reducers/ad';
 import { useHideSideNavBar } from '../../main/hooks/useHideSideNavBar';
 import { useFetchDetectorInfo } from '../../CreateDetectorSteps/hooks/useFetchDetectorInfo';
-import { CoreStart } from '../../../../../../src/core/public';
+import { CoreStart, MountPoint } from '../../../../../../src/core/public';
 import { APIAction } from '../../../redux/middleware/types';
 import { CoreServicesContext } from '../../../components/CoreServices/CoreServices';
-import { BREADCRUMBS } from '../../../utils/constants';
+import { BREADCRUMBS, DATA_SOURCE_ID } from '../../../utils/constants';
 import { getErrorMessage, validateDetectorName } from '../../../utils/utils';
 import { NameAndDescription } from '../components/NameAndDescription';
 import { DataSource } from '../components/Datasource/DataSource';
@@ -50,9 +50,18 @@ import { Detector, FILTER_TYPES } from '../../../models/interfaces';
 import { prettifyErrorMessage } from '../../../../server/utils/helpers';
 import { DETECTOR_STATE } from '../../../../server/utils/constants';
 import { ModelConfigurationFormikValues } from 'public/pages/ConfigureModel/models/interfaces';
+import { getDataSourceManagementPlugin, getDataSourcePlugin, getNotifications, getSavedObjectsClient } from '../../../services';
+import { DataSourceSelectableConfig } from '../../../../../../src/plugins/data_source_management/public';
+import { MDSQueryParams } from '../../../../server/models/types';
+import { getDataSourceFromURL } from '../../../pages/utils/helpers';
 
 interface DefineDetectorRouterProps {
   detectorId?: string;
+}
+
+interface MDSCreateState {
+  queryParams: MDSQueryParams;
+  selectedDataSourceId: string;
 }
 
 interface DefineDetectorProps
@@ -62,15 +71,30 @@ interface DefineDetectorProps
   initialValues?: DetectorDefinitionFormikValues;
   setInitialValues?(initialValues: DetectorDefinitionFormikValues): void;
   setModelConfigValues?(initialValues: ModelConfigurationFormikValues): void;
+  setActionMenu: (menuMount: MountPoint | undefined) => void;
 }
 
 export const DefineDetector = (props: DefineDetectorProps) => {
+  const location = useLocation();
+  const neoQueryParams = getDataSourceFromURL(location);
+  const dataSourceId = neoQueryParams.dataSourceId;
+  console.log(dataSourceId);
+  const dataSourceEnabled = getDataSourcePlugin()?.dataSourceEnabled || false;
+
   const core = React.useContext(CoreServicesContext) as CoreStart;
   const dispatch = useDispatch<Dispatch<APIAction>>();
   useHideSideNavBar(true, false);
   const detectorId: string = get(props, 'match.params.detectorId', '');
-  const { detector, hasError } = useFetchDetectorInfo(detectorId);
+  const { detector, hasError } = useFetchDetectorInfo(detectorId, dataSourceId);
   const [newIndexSelected, setNewIndexSelected] = useState<boolean>(false);
+
+  const [MDSCreateState, setMDSCreateState] = useState<MDSCreateState>({
+    queryParams: neoQueryParams,
+    selectedDataSourceId: dataSourceId
+      ? dataSourceId
+      : '',
+  });
+
 
   // To handle backward compatibility, we need to pass some fields via
   // props to the subcomponents so they can render correctly
@@ -123,7 +147,7 @@ export const DefineDetector = (props: DefineDetectorProps) => {
       );
       props.history.push(`/detectors`);
     }
-  }, [props.isEdit]);
+  }, [props.isEdit, MDSCreateState]);
 
   const handleValidateName = async (detectorName: string) => {
     if (isEmpty(detectorName)) {
@@ -218,6 +242,43 @@ export const DefineDetector = (props: DefineDetectorProps) => {
     }
   };
 
+
+  const handleDataSourceChange = ([event]) => {
+    const dataSourceId = event?.id;
+    if (!dataSourceId) {
+      getNotifications().toasts.addDanger(
+        prettifyErrorMessage('Unable to set data source.')
+      );
+    } else {
+      setMDSCreateState({
+        queryParams: dataSourceId,
+        selectedDataSourceId: dataSourceId,
+      });
+    }
+  };
+
+  let renderDataSourceComponent: ReactElement | null = null;
+  if (dataSourceEnabled) {
+    const DataSourceMenu =
+      getDataSourceManagementPlugin().ui.getDataSourceMenu<DataSourceSelectableConfig>();
+    renderDataSourceComponent = useMemo(() => {
+      return (
+        <DataSourceMenu
+          setMenuMountPoint={props.setActionMenu}
+          componentType={'DataSourceSelectable'}
+          componentConfig={{
+            fullWidth: false,
+            activeOption: [{ id: MDSCreateState.selectedDataSourceId }],
+            savedObjects: getSavedObjectsClient(),
+            notifications: getNotifications(),
+            onSelectedDataSources: (dataSources) =>
+              handleDataSourceChange(dataSources),
+          }}
+        />
+      );
+    }, [getSavedObjectsClient(), getNotifications(), props.setActionMenu]);
+  }
+
   return (
     <Formik
       initialValues={
@@ -249,6 +310,7 @@ export const DefineDetector = (props: DefineDetectorProps) => {
                 </EuiPageHeaderSection>
               </EuiPageHeader>
               <Fragment>
+                {dataSourceEnabled && renderDataSourceComponent}
                 <NameAndDescription
                   onValidateDetectorName={handleValidateName}
                 />

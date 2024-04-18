@@ -22,7 +22,7 @@ import { getMappings } from '../../../redux/reducers/opensearch';
 // 2. Gets index mapping
 export const useFetchDetectorInfo = (
   detectorId: string,
-  dataSourceId: string
+  dataSourceId?: string
 ): {
   detector: Detector;
   hasError: boolean;
