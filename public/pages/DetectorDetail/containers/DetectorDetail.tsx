@@ -381,7 +381,7 @@ export const DetectorDetail = (props: DetectorDetailProps) => {
   let renderDataSourceComponent = null;
   if (dataSourceEnabled) {
     const DataSourceMenu =
-      getDataSourceManagementPlugin().ui.getDataSourceMenu<DataSourceViewConfig>();
+      getDataSourceManagementPlugin()?.ui.getDataSourceMenu<DataSourceViewConfig>();
     renderDataSourceComponent = (
       <DataSourceMenu
         setMenuMountPoint={props.setActionMenu}

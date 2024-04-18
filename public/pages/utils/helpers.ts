@@ -122,7 +122,7 @@ export const getAllDetectorsQueryParamsWithDataSourceId = (
   size: MAX_DETECTORS,
   sortDirection: SORT_DIRECTION.ASC,
   sortField: 'name',
-  dataSourceId: dataSourceId,
+  dataSourceId
 });
 
 export const getSampleDetectorsQueryParamsWithDataSouceId = (
@@ -134,7 +134,7 @@ export const getSampleDetectorsQueryParamsWithDataSouceId = (
   size: MAX_DETECTORS,
   sortDirection: SORT_DIRECTION.ASC,
   sortField: 'name',
-  dataSourceId: dataSourceId,
+  dataSourceId
 });
 
 export const getDataSourceFromURL = (location: {

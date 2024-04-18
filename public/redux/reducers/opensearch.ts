@@ -246,7 +246,7 @@ const reducer = handleActions<OpenSearchState>(
   initialState
 );
 
-export const getIndices = (searchKey = '', dataSourceId = '') => {
+export const getIndices = (searchKey = '', dataSourceId: string) => {
   const baseUrl = `..${AD_NODE_API._INDICES}`;
   const url = dataSourceId ? `${baseUrl}/${dataSourceId}` : baseUrl;
 
@@ -259,7 +259,7 @@ export const getIndices = (searchKey = '', dataSourceId = '') => {
 
 export const getAliases = (
   searchKey: string = '',
-  dataSourceId = ''
+  dataSourceId: string
 ): APIAction => {
   const baseUrl = `..${AD_NODE_API._ALIASES}`;
   const url = dataSourceId ? `${baseUrl}/${dataSourceId}` : baseUrl;
@@ -287,7 +287,7 @@ export const searchOpenSearch = (requestData: any): APIAction => ({
     }),
 });
 
-export const createIndex = (indexConfig: any, dataSourceId = ''): APIAction => {
+export const createIndex = (indexConfig: any, dataSourceId: string): APIAction => {
   const url = dataSourceId
     ? `${AD_NODE_API.CREATE_INDEX}/${dataSourceId}`
     : AD_NODE_API.CREATE_INDEX;
@@ -300,7 +300,7 @@ export const createIndex = (indexConfig: any, dataSourceId = ''): APIAction => {
   };
 };
 
-export const bulk = (body: any, dataSourceId = ''): APIAction => {
+export const bulk = (body: any, dataSourceId: string): APIAction => {
   const url = dataSourceId
     ? `${AD_NODE_API.BULK}/${dataSourceId}`
     : AD_NODE_API.BULK;
@@ -318,7 +318,7 @@ export const deleteIndex = (index: string): APIAction => ({
 });
 
 export const getPrioritizedIndices =
-  (searchKey: string, dataSourceId = ''): ThunkAction =>
+  (searchKey: string, dataSourceId: string): ThunkAction =>
   async (dispatch, getState) => {
     //Fetch Indices and Aliases with text provided
     await dispatch(getIndices(searchKey, dataSourceId));

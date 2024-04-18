@@ -52,9 +52,9 @@ export function Main(props: MainProps) {
     'from=0&size=20&search=&indices=&sortField=name&sortDirection=asc';
 
   const constructHrefWithDataSourceId = (
-    basePath,
-    existingParams = '',
-    dataSourceId = ''
+    basePath: string,
+    existingParams: string,
+    dataSourceId: string
   ) => {
     const searchParams = new URLSearchParams(existingParams);
 
@@ -65,28 +65,24 @@ export function Main(props: MainProps) {
     return `#${basePath}?${searchParams.toString()}`;
   };
 
-  // Usage examples:
-  const dashboardHref = constructHrefWithDataSourceId(
-    APP_PATH.DASHBOARD,
-    '',
-    dataSourceId
-  );
-  const overviewHref = constructHrefWithDataSourceId(
-    APP_PATH.OVERVIEW,
-    '',
-    dataSourceId
-  );
-
   const sideNav = [
     {
       name: Navigation.AnomalyDetection,
       id: 0,
-      href: overviewHref,
+      href:  constructHrefWithDataSourceId(
+        APP_PATH.OVERVIEW,
+        '',
+        dataSourceId
+      ),
       items: [
         {
           name: Navigation.Dashboard,
           id: 1,
-          href: dashboardHref,
+          href: constructHrefWithDataSourceId(
+            APP_PATH.DASHBOARD,
+            '',
+            dataSourceId
+          ),
           isSelected: props.location.pathname === APP_PATH.DASHBOARD,
         },
         {
