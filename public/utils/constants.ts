@@ -33,7 +33,6 @@ export const APP_PATH = {
   EDIT_DETECTOR: '/detectors/:detectorId/edit',
   EDIT_FEATURES: '/detectors/:detectorId/features/',
   DETECTOR_DETAIL: '/detectors/:detectorId/',
-  CREATE_DETECTOR_STEPS: '/create-detector-steps',
   OVERVIEW: '/overview',
 };
 

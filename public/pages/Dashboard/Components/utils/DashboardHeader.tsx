@@ -17,18 +17,25 @@ import {
   EuiPageHeader,
   EuiTitle,
 } from '@elastic/eui';
-import { PLUGIN_NAME, APP_PATH, DATA_SOURCE_ID } from '../../../../utils/constants';
+import {
+  PLUGIN_NAME,
+  APP_PATH,
+  DATA_SOURCE_ID,
+} from '../../../../utils/constants';
 import { useLocation } from 'react-router-dom';
+import { getDataSourceFromURL } from '../../../../pages/utils/helpers';
 export interface DashboardHeaderProps {
   hasDetectors: boolean;
 }
 
 export const DashboardHeader = (props: DashboardHeaderProps) => {
   const location = useLocation();
-  const dataSourceId = new URLSearchParams(location.search).get(DATA_SOURCE_ID) || '';
-
+  const neoQueryParams = getDataSourceFromURL(location);
+  const dataSourceId = neoQueryParams.dataSourceId;
   // Constructing the URL with conditional dataSourceId
-  const createDetectorUrl = `${PLUGIN_NAME}#${APP_PATH.CREATE_DETECTOR}${dataSourceId ? `?dataSourceId=${dataSourceId}` : ''}`;
+  const createDetectorUrl = `${PLUGIN_NAME}#${APP_PATH.CREATE_DETECTOR}${
+    dataSourceId ? `?dataSourceId=${dataSourceId}` : ''
+  }`;
 
   return (
     <EuiPageHeader>

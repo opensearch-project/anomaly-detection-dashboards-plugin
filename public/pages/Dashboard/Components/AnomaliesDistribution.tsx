@@ -34,7 +34,7 @@ import { AD_DOC_FIELDS } from '../../../../server/utils/constants';
 import { ALL_CUSTOM_AD_RESULT_INDICES } from '../../utils/constants';
 import { searchResults } from '../../../redux/reducers/anomalyResults';
 import { useLocation } from 'react-router-dom';
-import { DATA_SOURCE_ID } from '../../../utils/constants';
+import { getDataSourceFromURL } from '../../../pages/utils/helpers';
 export interface AnomaliesDistributionChartProps {
   selectedDetectors: DetectorListItem[];
 }
@@ -44,8 +44,8 @@ export const AnomaliesDistributionChart = (
 ) => {
   const dispatch = useDispatch();
   const location = useLocation();
-  const dataSourceId =
-    new URLSearchParams(location.search).get(DATA_SOURCE_ID) || '';
+  const neoQueryParams = getDataSourceFromURL(location);
+  const dataSourceId = neoQueryParams.dataSourceId;
 
   const [anomalyDistribution, setAnomalyDistribution] = useState(
     [] as object[]

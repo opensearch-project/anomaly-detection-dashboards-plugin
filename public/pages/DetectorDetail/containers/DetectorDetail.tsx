@@ -48,7 +48,7 @@ import {
 import { getIndices } from '../../../redux/reducers/opensearch';
 import { getErrorMessage, Listener } from '../../../utils/utils';
 import { darkModeEnabled } from '../../../utils/opensearchDashboardsUtils';
-import { BREADCRUMBS, DATA_SOURCE_ID } from '../../../utils/constants';
+import { BREADCRUMBS } from '../../../utils/constants';
 import { DetectorControls } from '../components/DetectorControls';
 import { ConfirmModal } from '../components/ConfirmModal/ConfirmModal';
 import { useFetchMonitorInfo } from '../hooks/useFetchMonitorInfo';
@@ -71,6 +71,7 @@ import {
   getNotifications,
   getSavedObjectsClient,
 } from '../../../services';
+import { getDataSourceFromURL } from '../../../pages/utils/helpers';
 
 export interface DetectorRouterProps {
   detectorId?: string;
@@ -119,8 +120,8 @@ export const DetectorDetail = (props: DetectorDetailProps) => {
   const detectorId = get(props, 'match.params.detectorId', '') as string;
   const dataSourceEnabled = getDataSourcePlugin()?.dataSourceEnabled || false;
   const location = useLocation();
-  const dataSourceId =
-    new URLSearchParams(location.search).get(DATA_SOURCE_ID) || '';
+  const neoQueryParams = getDataSourceFromURL(location);
+  const dataSourceId = neoQueryParams.dataSourceId;
 
   const { detector, hasError, isLoadingDetector, errorMessage } =
     useFetchDetectorInfo(detectorId, dataSourceId);

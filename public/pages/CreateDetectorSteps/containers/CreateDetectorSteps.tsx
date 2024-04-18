@@ -10,7 +10,7 @@
  */
 
 import React, { Fragment, useState, useEffect } from 'react';
-import { RouteComponentProps, useLocation } from 'react-router';
+import { RouteComponentProps } from 'react-router';
 import { EuiSteps, EuiFlexGroup, EuiFlexItem } from '@elastic/eui';
 import { useHideSideNavBar } from '../../main/hooks/useHideSideNavBar';
 import { INITIAL_DETECTOR_DEFINITION_VALUES } from '../../DefineDetector/utils/constants';
@@ -25,7 +25,6 @@ import { DetectorDefinitionFormikValues } from '../../DefineDetector/models/inte
 import { ModelConfigurationFormikValues } from '../../ConfigureModel/models/interfaces';
 import { DetectorJobsFormikValues } from '../../DetectorJobs/models/interfaces';
 import { CreateDetectorFormikValues } from '../models/interfaces';
-import { DATA_SOURCE_ID } from '../../../utils/constants';
 import { MountPoint } from '../../../../../../src/core/public';
 
 interface CreateDetectorStepsProps extends RouteComponentProps {
@@ -34,9 +33,6 @@ interface CreateDetectorStepsProps extends RouteComponentProps {
 
 export const CreateDetectorSteps = (props: CreateDetectorStepsProps) => {
   useHideSideNavBar(true, false);
-  const location = useLocation();
-  const dataSourceId =
-    new URLSearchParams(location.search).get(DATA_SOURCE_ID) || '';
 
   const [step1DefineDetectorStatus, setStep1DefineDetectorStatus] =
     useState<STEP_STATUS>(undefined);

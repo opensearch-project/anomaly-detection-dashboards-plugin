@@ -129,9 +129,7 @@ export function AnomalyDetectionOverview(props: AnomalyDetectionOverviewProps) {
       search: queryString.stringify(updatedParams),
     });
 
-    if (dataSourceEnabled ? MDSOverviewState.selectedDataSourceId : true) {
-      fetchData();
-    }
+    fetchData();
   }, [MDSOverviewState]);
 
   // fetch smaple detectors and sample indices
@@ -261,11 +259,11 @@ export function AnomalyDetectionOverview(props: AnomalyDetectionOverviewProps) {
     }, [getSavedObjectsClient, getNotifications, props.setActionMenu]);
   }
 
-  const createDetectorUrl = `${PLUGIN_NAME}#` + 
-    (dataSourceEnabled ? 
-      `${APP_PATH.CREATE_DETECTOR_STEPS}?dataSourceId=${MDSOverviewState.selectedDataSourceId}` :
-      `${APP_PATH.CREATE_DETECTOR_STEPS}`
-    );
+  const createDetectorUrl =
+    `${PLUGIN_NAME}#` +
+    (dataSourceEnabled
+      ? `${APP_PATH.CREATE_DETECTOR}?dataSourceId=${MDSOverviewState.selectedDataSourceId}`
+      : `${APP_PATH.CREATE_DETECTOR}`);
 
   return isLoadingSampleDetectors && isLoadingSampleIndices ? (
     <div>

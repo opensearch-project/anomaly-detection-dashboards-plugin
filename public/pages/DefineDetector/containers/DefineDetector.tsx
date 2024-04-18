@@ -9,7 +9,13 @@
  * GitHub history for details.
  */
 
-import React, { Fragment, ReactElement, useEffect, useMemo, useState } from 'react';
+import React, {
+  Fragment,
+  ReactElement,
+  useEffect,
+  useMemo,
+  useState,
+} from 'react';
 import { RouteComponentProps, useLocation } from 'react-router';
 import { useDispatch } from 'react-redux';
 import { Dispatch } from 'redux';
@@ -50,10 +56,19 @@ import { Detector, FILTER_TYPES } from '../../../models/interfaces';
 import { prettifyErrorMessage } from '../../../../server/utils/helpers';
 import { DETECTOR_STATE } from '../../../../server/utils/constants';
 import { ModelConfigurationFormikValues } from 'public/pages/ConfigureModel/models/interfaces';
-import { getDataSourceManagementPlugin, getDataSourcePlugin, getNotifications, getSavedObjectsClient } from '../../../services';
+import {
+  getDataSourceManagementPlugin,
+  getDataSourcePlugin,
+  getNotifications,
+  getSavedObjectsClient,
+} from '../../../services';
 import { DataSourceSelectableConfig } from '../../../../../../src/plugins/data_source_management/public';
 import { MDSQueryParams } from '../../../../server/models/types';
-import { getDataSourceFromURL } from '../../../pages/utils/helpers';
+import {
+  constructHrefWithDataSourceId,
+  getDataSourceFromURL,
+} from '../../../pages/utils/helpers';
+import queryString from 'querystring';
 
 interface DefineDetectorRouterProps {
   detectorId?: string;
@@ -78,7 +93,6 @@ export const DefineDetector = (props: DefineDetectorProps) => {
   const location = useLocation();
   const neoQueryParams = getDataSourceFromURL(location);
   const dataSourceId = neoQueryParams.dataSourceId;
-  console.log(dataSourceId);
   const dataSourceEnabled = getDataSourcePlugin()?.dataSourceEnabled || false;
 
   const core = React.useContext(CoreServicesContext) as CoreStart;
@@ -90,11 +104,8 @@ export const DefineDetector = (props: DefineDetectorProps) => {
 
   const [MDSCreateState, setMDSCreateState] = useState<MDSCreateState>({
     queryParams: neoQueryParams,
-    selectedDataSourceId: dataSourceId
-      ? dataSourceId
-      : '',
+    selectedDataSourceId: dataSourceId ? dataSourceId : '',
   });
-
 
   // To handle backward compatibility, we need to pass some fields via
   // props to the subcomponents so they can render correctly
@@ -141,6 +152,14 @@ export const DefineDetector = (props: DefineDetectorProps) => {
 
   // If no detector found with ID, redirect it to list
   useEffect(() => {
+    const { history, location } = props;
+    const updatedParams = {
+      dataSourceId: MDSCreateState.selectedDataSourceId,
+    };
+    history.replace({
+      ...location,
+      search: queryString.stringify(updatedParams),
+    });
     if (props.isEdit && hasError) {
       core.notifications.toasts.addDanger(
         'Unable to find the detector for editing'
@@ -158,7 +177,7 @@ export const DefineDetector = (props: DefineDetectorProps) => {
         return error;
       }
       //TODO::Avoid making call if value is same
-      const resp = await dispatch(matchDetector(detectorName));
+      const resp = await dispatch(matchDetector(detectorName, dataSourceId));
       const match = get(resp, 'response.match', false);
       if (!match) {
         return undefined;
@@ -241,7 +260,6 @@ export const DefineDetector = (props: DefineDetectorProps) => {
       props.setInitialValues(values);
     }
   };
-
 
   const handleDataSourceChange = ([event]) => {
     const dataSourceId = event?.id;
@@ -351,10 +369,20 @@ export const DefineDetector = (props: DefineDetectorProps) => {
                 onClick={() => {
                   if (props.isEdit) {
                     props.history.push(
-                      `/detectors/${detectorId}/configurations/`
+                      constructHrefWithDataSourceId(
+                        `/detectors/${detectorId}/configurations/`,
+                        MDSCreateState.selectedDataSourceId,
+                        false
+                      )
                     );
                   } else {
-                    props.history.push('/detectors');
+                    props.history.push(
+                      constructHrefWithDataSourceId(
+                        '/detectors',
+                        MDSCreateState.selectedDataSourceId,
+                        false
+                      )
+                    );
                   }
                 }}
               >

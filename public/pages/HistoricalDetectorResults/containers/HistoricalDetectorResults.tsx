@@ -50,7 +50,7 @@ import {
 import { prettifyErrorMessage } from '../../../../server/utils/helpers';
 import { EmptyHistoricalDetectorResults } from '../components/EmptyHistoricalDetectorResults';
 import { HistoricalDetectorCallout } from '../components/HistoricalDetectorCallout';
-import { DATA_SOURCE_ID } from '../../../utils/constants';
+import { getDataSourceFromURL } from '../../../pages/utils/helpers';
 
 interface HistoricalDetectorResultsProps extends RouteComponentProps {
   detectorId: string;
@@ -64,8 +64,8 @@ export function HistoricalDetectorResults(
   const dispatch = useDispatch();
   const detectorId: string = get(props, 'match.params.detectorId', '');
   const location = useLocation();
-  const dataSourceId =
-    new URLSearchParams(location.search).get(DATA_SOURCE_ID) || '';
+  const neoQueryParams = getDataSourceFromURL(location);
+  const dataSourceId = neoQueryParams.dataSourceId;
 
   const adState = useSelector((state: AppState) => state.ad);
   const allDetectors = adState.detectors;

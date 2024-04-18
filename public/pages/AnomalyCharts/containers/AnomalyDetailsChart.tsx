@@ -93,6 +93,7 @@ import {
 } from '../../../../server/utils/constants';
 import { ENTITY_COLORS } from '../../DetectorResults/utils/constants';
 import { useLocation } from 'react-router-dom';
+import { getDataSourceFromURL } from '../../../pages/utils/helpers';
 
 interface AnomalyDetailsChartProps {
   onDateRangeChange(
@@ -123,8 +124,8 @@ export const AnomalyDetailsChart = React.memo(
   (props: AnomalyDetailsChartProps) => {
     const dispatch = useDispatch();
     const location = useLocation();
-    const dataSourceId =
-      new URLSearchParams(location.search).get(DATA_SOURCE_ID) || '';
+    const neoQueryParams = getDataSourceFromURL(location);
+    const dataSourceId = neoQueryParams.dataSourceId;
     const [showAlertsFlyout, setShowAlertsFlyout] = useState<boolean>(false);
     const [alertAnnotations, setAlertAnnotations] = useState<any[]>([]);
     const [isLoadingAlerts, setIsLoadingAlerts] = useState<boolean>(false);

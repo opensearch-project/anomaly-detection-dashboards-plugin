@@ -51,14 +51,11 @@ import {
   getLatestAnomalyResultsForDetectorsByTimeRange,
   getLatestAnomalyResultsByTimeRange,
 } from '../utils/utils';
-import {
-  DATA_SOURCE_ID,
-  MAX_ANOMALIES,
-  SPACE_STR,
-} from '../../../utils/constants';
+import { MAX_ANOMALIES, SPACE_STR } from '../../../utils/constants';
 import { ALL_CUSTOM_AD_RESULT_INDICES } from '../../utils/constants';
 import { searchResults } from '../../../redux/reducers/anomalyResults';
 import { useLocation } from 'react-router-dom';
+import { getDataSourceFromURL } from '../../../pages/utils/helpers';
 
 export interface AnomaliesLiveChartProps {
   selectedDetectors: DetectorListItem[];
@@ -74,9 +71,8 @@ const MAX_LIVE_DETECTORS = 10;
 export const AnomaliesLiveChart = (props: AnomaliesLiveChartProps) => {
   const dispatch = useDispatch();
   const location = useLocation();
-  const dataSourceId =
-    new URLSearchParams(location.search).get(DATA_SOURCE_ID) || '';
-
+  const neoQueryParams = getDataSourceFromURL(location);
+  const dataSourceId = neoQueryParams.dataSourceId;
   const [liveTimeRange, setLiveTimeRange] = useState<LiveTimeRangeState>({
     startDateTime: moment().subtract(31, 'minutes'),
     endDateTime: moment(),

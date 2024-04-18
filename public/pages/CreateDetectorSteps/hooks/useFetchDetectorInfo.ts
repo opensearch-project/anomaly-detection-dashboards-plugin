@@ -47,7 +47,7 @@ export const useFetchDetectorInfo = (
         await dispatch(getDetector(detectorId, dataSourceId));
       }
       if (selectedIndices) {
-        await dispatch(getMappings(selectedIndices));
+        await dispatch(getMappings(selectedIndices, dataSourceId));
       }
     };
     if (detectorId) {

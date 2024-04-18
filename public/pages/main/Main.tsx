@@ -26,6 +26,7 @@ import { CoreServicesConsumer } from '../../components/CoreServices/CoreServices
 import { CoreStart, MountPoint } from '../../../../../src/core/public';
 import { AnomalyDetectionOverview } from '../Overview';
 import { getURLQueryParams } from '../DetectorsList/utils/helpers';
+import { constructHrefWithDataSourceId } from '../utils/helpers';
 
 enum Navigation {
   AnomalyDetection = 'Anomaly detection',
@@ -48,31 +49,15 @@ export function Main(props: MainProps) {
   const totalDetectors = adState.totalDetectors;
   const queryParams = getURLQueryParams(props.location);
   const dataSourceId = queryParams.dataSourceId ? queryParams.dataSourceId : '';
-  const existingParams =
-    'from=0&size=20&search=&indices=&sortField=name&sortDirection=asc';
-
-  const constructHrefWithDataSourceId = (
-    basePath: string,
-    existingParams: string,
-    dataSourceId: string
-  ) => {
-    const searchParams = new URLSearchParams(existingParams);
-
-    if (dataSourceId) {
-      searchParams.set('dataSourceId', dataSourceId);
-    }
-
-    return `#${basePath}?${searchParams.toString()}`;
-  };
 
   const sideNav = [
     {
       name: Navigation.AnomalyDetection,
       id: 0,
-      href:  constructHrefWithDataSourceId(
+      href: constructHrefWithDataSourceId(
         APP_PATH.OVERVIEW,
-        '',
-        dataSourceId
+        dataSourceId,
+        true
       ),
       items: [
         {
@@ -80,8 +65,8 @@ export function Main(props: MainProps) {
           id: 1,
           href: constructHrefWithDataSourceId(
             APP_PATH.DASHBOARD,
-            '',
-            dataSourceId
+            dataSourceId,
+            true
           ),
           isSelected: props.location.pathname === APP_PATH.DASHBOARD,
         },
@@ -90,8 +75,8 @@ export function Main(props: MainProps) {
           id: 2,
           href: constructHrefWithDataSourceId(
             APP_PATH.LIST_DETECTORS,
-            existingParams,
-            dataSourceId
+            dataSourceId,
+            true
           ),
           isSelected: props.location.pathname === APP_PATH.LIST_DETECTORS,
         },
@@ -132,9 +117,10 @@ export function Main(props: MainProps) {
                   exact
                   path={APP_PATH.CREATE_DETECTOR}
                   render={(props: RouteComponentProps) => (
-                    <CreateDetectorSteps 
-                    setActionMenu={setHeaderActionMenu}
-                    {...props} />
+                    <CreateDetectorSteps
+                      setActionMenu={setHeaderActionMenu}
+                      {...props}
+                    />
                   )}
                 />
                 <Route
@@ -158,13 +144,6 @@ export function Main(props: MainProps) {
                       setActionMenu={setHeaderActionMenu}
                       {...props}
                     />
-                  )}
-                />
-                <Route
-                  exact
-                  path={APP_PATH.CREATE_DETECTOR_STEPS}
-                  render={(props: RouteComponentProps) => (
-                    <CreateDetectorSteps {...props} />
                   )}
                 />
                 <Route

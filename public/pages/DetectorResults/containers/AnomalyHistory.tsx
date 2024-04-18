@@ -65,7 +65,7 @@ import {
   TOP_CHILD_ENTITIES_TO_FETCH,
 } from '../utils/constants';
 import { MIN_IN_MILLI_SECS } from '../../../../server/utils/constants';
-import { DATA_SOURCE_ID, MAX_ANOMALIES } from '../../../utils/constants';
+import { MAX_ANOMALIES } from '../../../utils/constants';
 import {
   searchResults,
   getDetectorResults,
@@ -96,6 +96,7 @@ import { CoreStart } from '../../../../../../src/core/public';
 import { CoreServicesContext } from '../../../components/CoreServices/CoreServices';
 import { prettifyErrorMessage } from '../../../../server/utils/helpers';
 import { useLocation } from 'react-router-dom';
+import { getDataSourceFromURL } from '../../../pages/utils/helpers';
 
 interface AnomalyHistoryProps {
   detector: Detector;
@@ -128,8 +129,8 @@ export const AnomalyHistory = (props: AnomalyHistoryProps) => {
       ? props.detector.detectionDateRange.endTime
       : moment().valueOf();
   const location = useLocation();
-  const dataSourceId =
-    new URLSearchParams(location.search).get(DATA_SOURCE_ID) || '';
+  const neoQueryParams = getDataSourceFromURL(location);
+  const dataSourceId = neoQueryParams.dataSourceId;
   const [dateRange, setDateRange] = useState<DateRange>({
     startDate: initialStartDate,
     endDate: initialEndDate,

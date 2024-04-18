@@ -32,7 +32,6 @@ import { RouteComponentProps, useLocation } from 'react-router';
 import { AppState } from '../../../redux/reducers';
 import {
   BREADCRUMBS,
-  DATA_SOURCE_ID,
   FEATURE_DATA_POINTS_WINDOW,
   MISSING_FEATURE_DATA_SEVERITY,
 } from '../../../utils/constants';
@@ -68,6 +67,7 @@ import { SampleIndexDetailsCallout } from '../../Overview/components/SampleIndex
 import { CoreStart } from '../../../../../../src/core/public';
 import { CoreServicesContext } from '../../../components/CoreServices/CoreServices';
 import { DEFAULT_SHINGLE_SIZE } from '../../../utils/constants';
+import { getDataSourceFromURL } from '../../../pages/utils/helpers';
 
 interface AnomalyResultsProps extends RouteComponentProps {
   detectorId: string;
@@ -85,8 +85,8 @@ export function AnomalyResults(props: AnomalyResultsProps) {
     (state: AppState) => state.ad.detectors[detectorId]
   );
   const location = useLocation();
-  const dataSourceId =
-    new URLSearchParams(location.search).get(DATA_SOURCE_ID) || '';
+  const neoQueryParams = getDataSourceFromURL(location);
+  const dataSourceId = neoQueryParams.dataSourceId;
 
   useEffect(() => {
     core.chrome.setBreadcrumbs([

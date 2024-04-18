@@ -693,11 +693,11 @@ export const DetectorList = (props: ListProps) => {
 
   const columns = getColumns(state.selectedDataSourceId);
 
-  const createDetectorUrl = `${PLUGIN_NAME}#` + 
-  (dataSourceEnabled ? 
-    `${APP_PATH.CREATE_DETECTOR}?dataSourceId=${state.selectedDataSourceId}` :
-    `${APP_PATH.CREATE_DETECTOR}`
-  );
+  const createDetectorUrl =
+    `${PLUGIN_NAME}#` +
+    (dataSourceEnabled
+      ? `${APP_PATH.CREATE_DETECTOR}?dataSourceId=${state.selectedDataSourceId}`
+      : `${APP_PATH.CREATE_DETECTOR}`);
 
   return (
     <EuiPage>

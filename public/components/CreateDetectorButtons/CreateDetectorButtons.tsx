@@ -11,27 +11,18 @@
 
 import { EuiFlexGroup, EuiFlexItem, EuiButton } from '@elastic/eui';
 import React from 'react';
-import { APP_PATH, DATA_SOURCE_ID, PLUGIN_NAME } from '../../utils/constants';
+import { APP_PATH, PLUGIN_NAME } from '../../utils/constants';
 import { useLocation } from 'react-router-dom';
-import { getDataSourcePlugin } from '../../services';
+import { constructHrefWithDataSourceId, getDataSourceFromURL } from '../../pages/utils/helpers';
 
 export const CreateDetectorButtons = () => {
   const location = useLocation();
-  const dataSourceId = new URLSearchParams(location.search).get(DATA_SOURCE_ID) || '';
-  const dataSourceEnabled = getDataSourcePlugin().dataSourceEnabled;
+  const neoQueryParams = getDataSourceFromURL(location);
+  const dataSourceId = neoQueryParams.dataSourceId;
 
-  // Constructing the URL with dataSourceEnabled flag and conditional dataSourceId
-  const createDetectorUrl = `${PLUGIN_NAME}#` + 
-    (dataSourceEnabled ? 
-      `${APP_PATH.CREATE_DETECTOR}${dataSourceId ? `?dataSourceId=${dataSourceId}` : ''}` :
-      `${APP_PATH.CREATE_DETECTOR}`
-    );
+  const createDetectorUrl = `${PLUGIN_NAME}#` + constructHrefWithDataSourceId(`${APP_PATH.CREATE_DETECTOR}`, dataSourceId, false);
 
-  const sampleDetectorUrl = `${PLUGIN_NAME}#` + 
-    (dataSourceEnabled ? 
-      `${APP_PATH.OVERVIEW}${dataSourceId ? `?dataSourceId=${dataSourceId}` : ''}` :
-      `${APP_PATH.OVERVIEW}`
-    );
+  const sampleDetectorUrl = `${PLUGIN_NAME}#` + constructHrefWithDataSourceId(`${APP_PATH.OVERVIEW}`, dataSourceId, false);
   
   return (
     <EuiFlexGroup direction="row" gutterSize="m" justifyContent="center">

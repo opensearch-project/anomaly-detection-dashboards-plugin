@@ -19,7 +19,8 @@ import { AppState } from '../../../redux/reducers';
 import { useSelector, useDispatch } from 'react-redux';
 import { getDetector } from '../../../redux/reducers/ad';
 import { EuiLoadingSpinner } from '@elastic/eui';
-import { DATA_SOURCE_ID } from '../../../utils/constants';
+import { getDataSourceFromURL } from '../../../pages/utils/helpers';
+
 interface DetectorConfigProps extends RouteComponentProps {
   detectorId: string;
   onEditFeatures(): void;
@@ -29,8 +30,8 @@ interface DetectorConfigProps extends RouteComponentProps {
 export function DetectorConfig(props: DetectorConfigProps) {
   const dispatch = useDispatch();
   const location = useLocation();
-  const dataSourceId =
-    new URLSearchParams(location.search).get(DATA_SOURCE_ID) || '';
+  const neoQueryParams = getDataSourceFromURL(location);
+  const dataSourceId = neoQueryParams.dataSourceId;
   const detector = useSelector(
     (state: AppState) => state.ad.detectors[props.detectorId]
   );

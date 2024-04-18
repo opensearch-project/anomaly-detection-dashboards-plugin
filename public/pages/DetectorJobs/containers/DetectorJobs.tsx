@@ -23,25 +23,41 @@ import {
 } from '@elastic/eui';
 import { FormikProps, Formik } from 'formik';
 import { isEmpty } from 'lodash';
-import React, { Fragment, useState, useEffect } from 'react';
+import React, { Fragment, useState, useEffect, ReactElement } from 'react';
 import { BREADCRUMBS } from '../../../utils/constants';
 import { useHideSideNavBar } from '../../main/hooks/useHideSideNavBar';
-import { CoreStart } from '../../../../../../src/core/public';
+import { CoreStart, MountPoint } from '../../../../../../src/core/public';
 import { CoreServicesContext } from '../../../components/CoreServices/CoreServices';
 import { DetectorJobsFormikValues } from '../models/interfaces';
 import { RealTimeJob } from '../components/RealTimeJob';
 import { HistoricalJob } from '../components/HistoricalJob';
 import { convertTimestampToNumber } from '../../../utils/utils';
-import { RouteComponentProps } from 'react-router-dom';
+import { RouteComponentProps, useLocation } from 'react-router-dom';
+import {
+  constructHrefWithDataSourceId,
+  getDataSourceFromURL,
+} from '../../../pages/utils/helpers';
+import {
+  getDataSourceManagementPlugin,
+  getDataSourcePlugin,
+  getNotifications,
+  getSavedObjectsClient,
+} from '../../../services';
+import { DataSourceViewConfig } from '../../../../../../src/plugins/data_source_management/public';
 
 interface DetectorJobsProps extends RouteComponentProps {
   setStep?(stepNumber: number): void;
   initialValues: DetectorJobsFormikValues;
   setInitialValues(initialValues: DetectorJobsFormikValues): void;
+  setActionMenu: (menuMount: MountPoint | undefined) => void;
 }
 
 export function DetectorJobs(props: DetectorJobsProps) {
   const core = React.useContext(CoreServicesContext) as CoreStart;
+  const location = useLocation();
+  const neoQueryParams = getDataSourceFromURL(location);
+  const dataSourceEnabled = getDataSourcePlugin()?.dataSourceEnabled || false;
+  const dataSourceId = neoQueryParams.dataSourceId;
   useHideSideNavBar(true, false);
 
   const [realTime, setRealTime] = useState<boolean>(
@@ -103,6 +119,24 @@ export function DetectorJobs(props: DetectorJobsProps) {
     props.setInitialValues(values);
   };
 
+  let renderDataSourceComponent: ReactElement | null = null;
+  if (dataSourceEnabled) {
+    const DataSourceMenu =
+      getDataSourceManagementPlugin()?.ui.getDataSourceMenu<DataSourceViewConfig>();
+    renderDataSourceComponent = (
+      <DataSourceMenu
+        setMenuMountPoint={props.setActionMenu}
+        componentType={'DataSourceView'}
+        componentConfig={{
+          activeOption: [{ id: dataSourceId }],
+          fullWidth: false,
+          savedObjects: getSavedObjectsClient(),
+          notifications: getNotifications(),
+        }}
+      />
+    );
+  }
+
   return (
     <Formik
       initialValues={props.initialValues}
@@ -111,6 +145,7 @@ export function DetectorJobs(props: DetectorJobsProps) {
     >
       {(formikProps) => (
         <Fragment>
+          {dataSourceEnabled && renderDataSourceComponent}
           <EuiPage
             style={{
               marginTop: '-24px',
@@ -145,7 +180,13 @@ export function DetectorJobs(props: DetectorJobsProps) {
             <EuiFlexItem grow={false}>
               <EuiButtonEmpty
                 onClick={() => {
-                  props.history.push('/detectors');
+                  props.history.push(
+                    constructHrefWithDataSourceId(
+                      '/detectors',
+                      dataSourceId,
+                      false
+                    )
+                  );
                 }}
               >
                 Cancel
