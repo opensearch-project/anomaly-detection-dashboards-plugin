@@ -31,13 +31,19 @@ export function registerSampleDataRoutes(
     '/create_sample_data/{type}',
     sampleDataService.createSampleData
   );
+  apiRouter.post(
+    '/create_sample_data/{type}/{dataSourceId}',
+    sampleDataService.createSampleData
+  );
 }
 
 export default class SampleDataService {
   private client: any;
+  dataSourceEnabled: boolean;
 
-  constructor(client: any) {
+  constructor(client: any, dataSourceEnabled: boolean) {
     this.client = client;
+    this.dataSourceEnabled = dataSourceEnabled;
   }
 
   // Get the zip file stored in server, unzip it, and bulk insert it
@@ -79,7 +85,14 @@ export default class SampleDataService {
         }
       }
 
-      await loadSampleData(filePath, indexName, this.client, request);
+      await loadSampleData(
+        filePath,
+        indexName,
+        this.client,
+        request,
+        context,
+        this.dataSourceEnabled
+      );
 
       return opensearchDashboardsResponse.ok({ body: { ok: true } });
     } catch (err) {

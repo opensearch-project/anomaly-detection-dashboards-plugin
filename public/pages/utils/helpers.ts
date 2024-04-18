@@ -13,7 +13,7 @@ import { CatIndex, IndexAlias } from '../../../server/models/types';
 import sortBy from 'lodash/sortBy';
 import { DetectorListItem } from '../../models/interfaces';
 import { SORT_DIRECTION } from '../../../server/utils/constants';
-import { ALL_INDICES, ALL_DETECTOR_STATES } from './constants';
+import { ALL_INDICES, ALL_DETECTOR_STATES, MAX_DETECTORS } from './constants';
 import { DETECTOR_STATE } from '../../../server/utils/constants';
 import { timeFormatter } from '@elastic/charts';
 
@@ -112,3 +112,27 @@ export const formatNumber = (data: any) => {
     return '';
   }
 };
+
+export const getAllDetectorsQueryParamsWithDataSourceId = (
+  dataSourceId: string
+) => ({
+  from: 0,
+  search: '',
+  indices: '',
+  size: MAX_DETECTORS,
+  sortDirection: SORT_DIRECTION.ASC,
+  sortField: 'name',
+  dataSourceId
+});
+
+export const getSampleDetectorsQueryParamsWithDataSouceId = (
+  dataSourceId: string
+) => ({
+  from: 0,
+  search: 'sample',
+  indices: '',
+  size: MAX_DETECTORS,
+  sortDirection: SORT_DIRECTION.ASC,
+  sortField: 'name',
+  dataSourceId
+});

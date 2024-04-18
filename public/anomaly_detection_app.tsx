@@ -29,13 +29,17 @@ export function renderApp(coreStart: CoreStart, params: AppMountParameters) {
   } else {
     require('@elastic/charts/dist/theme_only_light.css');
   }
+
   ReactDOM.render(
     <Provider store={store}>
       <Router>
         <Route
           render={(props) => (
             <CoreServicesContext.Provider value={coreStart}>
-              <Main {...props} />
+              <Main
+                setHeaderActionMenu={params.setHeaderActionMenu}
+                {...props}
+              />
             </CoreServicesContext.Provider>
           )}
         />
