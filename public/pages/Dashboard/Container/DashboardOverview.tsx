@@ -265,7 +265,7 @@ export function DashboardOverview(props: OverviewProps) {
   let renderDataSourceComponent = null;
   if (dataSourceEnabled) {
     const DataSourceMenu =
-      getDataSourceManagementPlugin().ui.getDataSourceMenu<DataSourceSelectableConfig>();
+      getDataSourceManagementPlugin()?.ui.getDataSourceMenu<DataSourceSelectableConfig>();
     renderDataSourceComponent = useMemo(() => {
       return (
         <DataSourceMenu
