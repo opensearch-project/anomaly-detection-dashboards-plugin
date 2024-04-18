@@ -51,7 +51,11 @@ import {
   getLatestAnomalyResultsForDetectorsByTimeRange,
   getLatestAnomalyResultsByTimeRange,
 } from '../utils/utils';
-import { MAX_ANOMALIES, SPACE_STR } from '../../../utils/constants';
+import {
+  DATA_SOURCE_ID,
+  MAX_ANOMALIES,
+  SPACE_STR,
+} from '../../../utils/constants';
 import { ALL_CUSTOM_AD_RESULT_INDICES } from '../../utils/constants';
 import { searchResults } from '../../../redux/reducers/anomalyResults';
 import { useLocation } from 'react-router-dom';

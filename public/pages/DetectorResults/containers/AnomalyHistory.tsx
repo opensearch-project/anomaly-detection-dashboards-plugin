@@ -65,7 +65,7 @@ import {
   TOP_CHILD_ENTITIES_TO_FETCH,
 } from '../utils/constants';
 import { MIN_IN_MILLI_SECS } from '../../../../server/utils/constants';
-import { MAX_ANOMALIES } from '../../../utils/constants';
+import { DATA_SOURCE_ID, MAX_ANOMALIES } from '../../../utils/constants';
 import {
   searchResults,
   getDetectorResults,

@@ -48,7 +48,7 @@ import {
 import { getIndices } from '../../../redux/reducers/opensearch';
 import { getErrorMessage, Listener } from '../../../utils/utils';
 import { darkModeEnabled } from '../../../utils/opensearchDashboardsUtils';
-import { BREADCRUMBS } from '../../../utils/constants';
+import { BREADCRUMBS, DATA_SOURCE_ID } from '../../../utils/constants';
 import { DetectorControls } from '../components/DetectorControls';
 import { ConfirmModal } from '../components/ConfirmModal/ConfirmModal';
 import { useFetchMonitorInfo } from '../hooks/useFetchMonitorInfo';
