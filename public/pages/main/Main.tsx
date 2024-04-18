@@ -52,9 +52,9 @@ export function Main(props: MainProps) {
     'from=0&size=20&search=&indices=&sortField=name&sortDirection=asc';
 
   const constructHrefWithDataSourceId = (
-    basePath,
-    existingParams = '',
-    dataSourceId = ''
+    basePath: string,
+    existingParams: string,
+    dataSourceId: string
   ) => {
     const searchParams = new URLSearchParams(existingParams);
 

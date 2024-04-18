@@ -443,7 +443,7 @@ export const getLatestAnomalyResultsByTimeRange = async (
   checkLastIndexOnly: boolean,
   resultIndex: string,
   onlyQueryCustomResultIndex: boolean,
-  dataSourceId = ''
+  dataSourceId: string
 ): Promise<object[]> => {
   let from = 0;
   let anomalyResults = [] as object[];
@@ -504,7 +504,7 @@ export const getLatestAnomalyResultsForDetectorsByTimeRange = async (
   checkLastIndexOnly: boolean,
   resultIndex: string,
   onlyQueryCustomResultIndex: boolean,
-  dataSourceId = ''
+  dataSourceId: string
 ): Promise<object[]> => {
   const detectorAndIdMap = buildDetectorAndIdMap(selectedDetectors);
   let from = 0;
@@ -615,7 +615,7 @@ export const getAnomalyDistributionForDetectorsByTimeRange = async (
     onlyQueryCustomResultIndex: boolean
   ) => APIAction,
   selectedDetectors: DetectorListItem[],
-  dataSourceId = '',
+  dataSourceId: string,
   timeRange: string,
   dispatch: Dispatch<any>,
   threshold: number,

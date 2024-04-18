@@ -371,7 +371,7 @@ const reducer = handleActions<Detectors>(
 
 export const createDetector = (
   requestBody: Detector,
-  dataSourceId = ''
+  dataSourceId: string
 ): APIAction => {
   const url = dataSourceId
     ? `..${AD_NODE_API.DETECTOR}/${dataSourceId}`
@@ -399,7 +399,7 @@ export const validateDetector = (
 
 export const getDetector = (
   detectorId: string,
-  dataSourceId = ''
+  dataSourceId: string
 ): APIAction => {
   const baseUrl = `..${AD_NODE_API.DETECTOR}`;
   const url = dataSourceId
@@ -449,7 +449,7 @@ export const updateDetector = (
 
 export const deleteDetector = (
   detectorId: string,
-  dataSourceId = ''
+  dataSourceId: string
 ): APIAction => {
   const baseUrl = `..${AD_NODE_API.DETECTOR}/${detectorId}`;
   const url = dataSourceId ? `${baseUrl}/${dataSourceId}` : baseUrl;
@@ -463,7 +463,7 @@ export const deleteDetector = (
 
 export const startDetector = (
   detectorId: string,
-  dataSourceId = ''
+  dataSourceId: string
 ): APIAction => {
   const baseUrl = `..${AD_NODE_API.DETECTOR}/${detectorId}/start`;
   const url = dataSourceId ? `${baseUrl}/${dataSourceId}` : baseUrl;
@@ -477,7 +477,7 @@ export const startDetector = (
 
 export const startHistoricalDetector = (
   detectorId: string,
-  dataSourceId = '',
+  dataSourceId: string,
   startTime: number,
   endTime: number
 ): APIAction => {
@@ -503,7 +503,7 @@ export const startHistoricalDetector = (
 
 export const stopDetector = (
   detectorId: string,
-  dataSourceId = ''
+  dataSourceId: string
 ): APIAction => {
   const baseUrl = `..${AD_NODE_API.DETECTOR}/${detectorId}/stop/${false}`;
   const url = dataSourceId ? `${baseUrl}/${dataSourceId}` : baseUrl;
@@ -517,7 +517,7 @@ export const stopDetector = (
 
 export const stopHistoricalDetector = (
   detectorId: string,
-  dataSourceId = ''
+  dataSourceId: string
 ): APIAction => {
   const baseUrl = `..${AD_NODE_API.DETECTOR}/${detectorId}`;
   const url = dataSourceId

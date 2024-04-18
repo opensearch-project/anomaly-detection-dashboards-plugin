@@ -19,7 +19,7 @@ import { searchMonitors } from '../../../redux/reducers/alerting';
 //A hook which gets AD monitor.
 export const useFetchMonitorInfo = (
   detectorId: string,
-  dataSourceId = '',
+  dataSourceId: string,
   dataSourceEnabled: boolean
 ): {
   monitor: Monitor | undefined;
