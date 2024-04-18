@@ -42,13 +42,13 @@ import {
 } from '../../../../server/models/types';
 import {
   getAllDetectorsQueryParamsWithDataSourceId,
+  getDataSourceFromURL,
   getVisibleOptions,
 } from '../../utils/helpers';
 import { BREADCRUMBS } from '../../../utils/constants';
 import { DETECTOR_STATE } from '../../../../server/utils/constants';
 import {
   getDetectorStateOptions,
-  getURLQueryParams,
 } from '../../DetectorsList/utils/helpers';
 import { DashboardHeader } from '../Components/utils/DashboardHeader';
 import { EmptyDashboard } from '../Components/EmptyDashboard/EmptyDashboard';
@@ -94,7 +94,7 @@ export function DashboardOverview(props: OverviewProps) {
   const [selectedDetectorsName, setSelectedDetectorsName] = useState(
     [] as string[]
   );
-  const queryParams = getURLQueryParams(props.location);
+  const queryParams = getDataSourceFromURL(props.location);
   const [MDSOverviewState, setMDSOverviewState] = useState<MDSOverviewState>({
     queryParams,
     selectedDataSourceId: queryParams.dataSourceId
