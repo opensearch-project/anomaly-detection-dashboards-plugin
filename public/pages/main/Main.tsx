@@ -127,14 +127,18 @@ export function Main(props: MainProps) {
                   exact
                   path={APP_PATH.EDIT_DETECTOR}
                   render={(props: RouteComponentProps) => (
-                    <DefineDetector {...props} isEdit={true} />
+                    <DefineDetector 
+                      setActionMenu={setHeaderActionMenu}  
+                      {...props} isEdit={true} />
                   )}
                 />
                 <Route
                   exact
                   path={APP_PATH.EDIT_FEATURES}
                   render={(props: RouteComponentProps) => (
-                    <ConfigureModel {...props} isEdit={true} />
+                    <ConfigureModel 
+                      setActionMenu={setHeaderActionMenu}
+                      {...props} isEdit={true} />
                   )}
                 />
                 <Route

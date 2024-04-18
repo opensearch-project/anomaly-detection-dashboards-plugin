@@ -94,7 +94,7 @@ export function ConfigureModel(props: ConfigureModelProps) {
 
   useHideSideNavBar(true, false);
   const detectorId = get(props, 'match.params.detectorId', '');
-  const { detector, hasError } = useFetchDetectorInfo(detectorId);
+  const { detector, hasError } = useFetchDetectorInfo(detectorId, dataSourceId);
   const indexDataTypes = useSelector(
     (state: AppState) => state.opensearch.dataTypes
   );
@@ -128,7 +128,7 @@ export function ConfigureModel(props: ConfigureModelProps) {
         BREADCRUMBS.DETECTORS,
         {
           text: detector && detector.name ? detector.name : '',
-          href: `#/detectors/${detectorId}`,
+          href: constructHrefWithDataSourceId(`#/detectors/${detectorId}`, dataSourceId, false)
         },
         BREADCRUMBS.EDIT_MODEL_CONFIGURATION,
       ]);

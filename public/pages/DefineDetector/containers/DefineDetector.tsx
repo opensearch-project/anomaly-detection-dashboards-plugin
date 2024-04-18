@@ -62,7 +62,7 @@ import {
   getNotifications,
   getSavedObjectsClient,
 } from '../../../services';
-import { DataSourceSelectableConfig } from '../../../../../../src/plugins/data_source_management/public';
+import { DataSourceSelectableConfig, DataSourceViewConfig } from '../../../../../../src/plugins/data_source_management/public';
 import { MDSQueryParams } from '../../../../server/models/types';
 import {
   constructHrefWithDataSourceId,
@@ -277,25 +277,44 @@ export const DefineDetector = (props: DefineDetectorProps) => {
 
   let renderDataSourceComponent: ReactElement | null = null;
   if (dataSourceEnabled) {
-    const DataSourceMenu =
-      getDataSourceManagementPlugin().ui.getDataSourceMenu<DataSourceSelectableConfig>();
-    renderDataSourceComponent = useMemo(() => {
-      return (
-        <DataSourceMenu
-          setMenuMountPoint={props.setActionMenu}
-          componentType={'DataSourceSelectable'}
-          componentConfig={{
-            fullWidth: false,
-            activeOption: [{ id: MDSCreateState.selectedDataSourceId }],
-            savedObjects: getSavedObjectsClient(),
-            notifications: getNotifications(),
-            onSelectedDataSources: (dataSources) =>
-              handleDataSourceChange(dataSources),
-          }}
-        />
-      );
-    }, [getSavedObjectsClient(), getNotifications(), props.setActionMenu]);
+    if (props.isEdit) {
+      const DataSourceMenu =
+      getDataSourceManagementPlugin()?.ui.getDataSourceMenu<DataSourceViewConfig>();
+    renderDataSourceComponent = (
+      <DataSourceMenu
+        setMenuMountPoint={props.setActionMenu}
+        componentType={'DataSourceView'}
+        componentConfig={{
+          activeOption: [{ id: dataSourceId }],
+          fullWidth: false,
+          savedObjects: getSavedObjectsClient(),
+          notifications: getNotifications(),
+        }}
+      />
+    );
+    } else {
+      const DataSourceMenu =
+        getDataSourceManagementPlugin().ui.getDataSourceMenu<DataSourceSelectableConfig>();
+      renderDataSourceComponent = useMemo(() => {
+        return (
+          <DataSourceMenu
+            setMenuMountPoint={props.setActionMenu}
+            componentType={'DataSourceSelectable'}
+            componentConfig={{
+              fullWidth: false,
+              activeOption: [{ id: MDSCreateState.selectedDataSourceId }],
+              savedObjects: getSavedObjectsClient(),
+              notifications: getNotifications(),
+              onSelectedDataSources: (dataSources) =>
+                handleDataSourceChange(dataSources),
+            }}
+          />
+        );
+      }, [getSavedObjectsClient(), getNotifications(), props.setActionMenu]);
+    }
   }
+
+
 
   return (
     <Formik
@@ -310,6 +329,7 @@ export const DefineDetector = (props: DefineDetectorProps) => {
     >
       {(formikProps) => (
         <React.Fragment>
+          {dataSourceEnabled && renderDataSourceComponent}
           <EuiPage
             style={{
               marginTop: '-24px',
@@ -328,7 +348,6 @@ export const DefineDetector = (props: DefineDetectorProps) => {
                 </EuiPageHeaderSection>
               </EuiPageHeader>
               <Fragment>
-                {dataSourceEnabled && renderDataSourceComponent}
                 <NameAndDescription
                   onValidateDetectorName={handleValidateName}
                 />
