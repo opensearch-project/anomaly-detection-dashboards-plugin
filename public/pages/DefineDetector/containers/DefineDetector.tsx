@@ -239,7 +239,7 @@ export const DefineDetector = (props: DefineDetectorProps) => {
     const preparedDetector = newIndexSelected
       ? clearModelConfiguration(detectorToUpdate)
       : detectorToUpdate;
-    dispatch(updateDetector(detectorId, preparedDetector))
+    dispatch(updateDetector(detectorId, preparedDetector, dataSourceId))
       .then((response: any) => {
         core.notifications.toasts.addSuccess(
           `Detector updated: ${response.response.name}`

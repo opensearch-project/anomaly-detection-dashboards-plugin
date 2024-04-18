@@ -197,7 +197,7 @@ export function ConfigureModel(props: ConfigureModelProps) {
   };
 
   const handleUpdateDetector = async (detectorToUpdate: Detector) => {
-    dispatch(updateDetector(detectorId, detectorToUpdate))
+    dispatch(updateDetector(detectorId, detectorToUpdate, dataSourceId))
       .then((response: any) => {
         core.notifications.toasts.addSuccess(
           `Detector updated: ${response.response.name}`

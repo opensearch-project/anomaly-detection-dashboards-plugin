@@ -441,15 +441,21 @@ export const searchDetector = (requestBody: any): APIAction => ({
 
 export const updateDetector = (
   detectorId: string,
-  requestBody: Detector
-): APIAction => ({
-  type: UPDATE_DETECTOR,
-  request: (client: HttpSetup) =>
-    client.put(`..${AD_NODE_API.DETECTOR}/${detectorId}`, {
-      body: JSON.stringify(requestBody),
-    }),
-  detectorId,
-});
+  requestBody: Detector,
+  dataSourceId: string
+): APIAction => {
+  const baseUrl = `..${AD_NODE_API.DETECTOR}/${detectorId}`;
+  const url = dataSourceId ? `${baseUrl}/${dataSourceId}` : baseUrl;
+
+  return {
+    type: UPDATE_DETECTOR,
+    request: (client: HttpSetup) =>
+      client.put(url, {
+        body: JSON.stringify(requestBody),
+      }),
+    detectorId,
+  };
+}
 
 export const deleteDetector = (
   detectorId: string,
