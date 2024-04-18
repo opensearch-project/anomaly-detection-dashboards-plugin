@@ -23,7 +23,7 @@ import {
 } from '@elastic/eui';
 import { get, isEmpty } from 'lodash';
 import React, { useEffect, Fragment, useState } from 'react';
-import { RouteComponentProps } from 'react-router';
+import { RouteComponentProps, useLocation } from 'react-router';
 import { useSelector, useDispatch } from 'react-redux';
 import { darkModeEnabled } from '../../../utils/opensearchDashboardsUtils';
 import { AppState } from '../../../redux/reducers';
@@ -50,6 +50,7 @@ import {
 import { prettifyErrorMessage } from '../../../../server/utils/helpers';
 import { EmptyHistoricalDetectorResults } from '../components/EmptyHistoricalDetectorResults';
 import { HistoricalDetectorCallout } from '../components/HistoricalDetectorCallout';
+import { DATA_SOURCE_ID } from '../../../utils/constants';
 
 interface HistoricalDetectorResultsProps extends RouteComponentProps {
   detectorId: string;
@@ -62,6 +63,9 @@ export function HistoricalDetectorResults(
   const isDark = darkModeEnabled();
   const dispatch = useDispatch();
   const detectorId: string = get(props, 'match.params.detectorId', '');
+  const location = useLocation();
+  const dataSourceId =
+    new URLSearchParams(location.search).get(DATA_SOURCE_ID) || '';
 
   const adState = useSelector((state: AppState) => state.ad);
   const allDetectors = adState.detectors;
@@ -81,7 +85,7 @@ export function HistoricalDetectorResults(
 
   const fetchDetector = async () => {
     try {
-      await dispatch(getDetector(detectorId));
+      await dispatch(getDetector(detectorId, dataSourceId));
     } catch {}
   };
 
@@ -113,7 +117,14 @@ export function HistoricalDetectorResults(
 
   const startHistoricalTask = async (startTime: number, endTime: number) => {
     try {
-      dispatch(startHistoricalDetector(props.detectorId, startTime, endTime))
+      dispatch(
+        startHistoricalDetector(
+          props.detectorId,
+          dataSourceId,
+          startTime,
+          endTime
+        )
+      )
         .then((response: any) => {
           setTaskId(get(response, 'response._id'));
           core.notifications.toasts.addSuccess(
@@ -141,9 +152,9 @@ export function HistoricalDetectorResults(
   const onStopDetector = async () => {
     try {
       setIsStoppingDetector(true);
-      await dispatch(stopHistoricalDetector(detectorId));
+      await dispatch(stopHistoricalDetector(detectorId, dataSourceId));
       await waitForMs(HISTORICAL_DETECTOR_STOP_THRESHOLD);
-      dispatch(getDetector(detectorId)).then((response: any) => {
+      dispatch(getDetector(detectorId, dataSourceId)).then((response: any) => {
         if (get(response, 'response.curState') !== DETECTOR_STATE.DISABLED) {
           throw 'please try again.';
         } else {

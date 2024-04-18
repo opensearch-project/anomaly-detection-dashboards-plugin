@@ -21,7 +21,8 @@ import { getMappings } from '../../../redux/reducers/opensearch';
 // 1. Get detector
 // 2. Gets index mapping
 export const useFetchDetectorInfo = (
-  detectorId: string
+  detectorId: string,
+  dataSourceId: string
 ): {
   detector: Detector;
   hasError: boolean;
@@ -43,7 +44,8 @@ export const useFetchDetectorInfo = (
   useEffect(() => {
     const fetchDetector = async () => {
       if (!detector) {
-        await dispatch(getDetector(detectorId));
+        // hardcoding the datasource id for now, will update it later when working on create page
+        await dispatch(getDetector(detectorId, dataSourceId));
       }
       if (selectedIndices) {
         await dispatch(getMappings(selectedIndices));
