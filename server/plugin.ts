@@ -67,6 +67,8 @@ export class AnomalyDetectionOpenSearchDashboardsPlugin
 
     const dataSourceEnabled = !!dataSource;
 
+    // when MDS is enabled, we leave the client as undefined for now
+    // it will be defined later with dataSourceId when we have request context
     let client: ILegacyClusterClient | undefined = undefined;
 
     if (!dataSourceEnabled) {
