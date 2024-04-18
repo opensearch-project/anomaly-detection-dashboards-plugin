@@ -20,10 +20,9 @@ import {
 import {
   PLUGIN_NAME,
   APP_PATH,
-  DATA_SOURCE_ID,
 } from '../../../../utils/constants';
 import { useLocation } from 'react-router-dom';
-import { getDataSourceFromURL } from '../../../../pages/utils/helpers';
+import { constructHrefWithDataSourceId, getDataSourceFromURL } from '../../../../pages/utils/helpers';
 export interface DashboardHeaderProps {
   hasDetectors: boolean;
 }
@@ -32,10 +31,7 @@ export const DashboardHeader = (props: DashboardHeaderProps) => {
   const location = useLocation();
   const neoQueryParams = getDataSourceFromURL(location);
   const dataSourceId = neoQueryParams.dataSourceId;
-  // Constructing the URL with conditional dataSourceId
-  const createDetectorUrl = `${PLUGIN_NAME}#${APP_PATH.CREATE_DETECTOR}${
-    dataSourceId ? `?dataSourceId=${dataSourceId}` : ''
-  }`;
+  const createDetectorUrl = `${PLUGIN_NAME}#` + constructHrefWithDataSourceId(APP_PATH.CREATE_DETECTOR, dataSourceId, false);
 
   return (
     <EuiPageHeader>
