@@ -332,7 +332,7 @@ export const AnomalyDetailsChart = React.memo(
         try {
           setIsLoadingAlerts(true);
           const result = await dispatch(
-            searchAlerts(monitorId, startDateTime, endDateTime)
+            searchAlerts(monitorId, startDateTime, endDateTime, dataSourceId)
           );
           setIsLoadingAlerts(false);
           setTotalAlerts(get(result, 'response.totalAlerts'));

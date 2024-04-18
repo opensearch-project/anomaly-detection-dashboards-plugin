@@ -92,7 +92,9 @@ export function registerADRoutes(apiRouter: Router, adService: AdService) {
   apiRouter.get('/detectors/_list', adService.getDetectors);
   apiRouter.get('/detectors/_list/{dataSourceId}', adService.getDetectors);
 
+  // preview detector
   apiRouter.post('/detectors/preview', adService.previewDetector);
+  apiRouter.post('/detectors/preview/{dataSourceId}', adService.previewDetector);
 
   // get detector anomaly results
   apiRouter.get(
@@ -229,12 +231,21 @@ export default class AdService {
     opensearchDashboardsResponse: OpenSearchDashboardsResponseFactory
   ): Promise<IOpenSearchDashboardsResponse<any>> => {
     try {
+      const { dataSourceId = '' } = request.params as { dataSourceId?: string };
+
       const requestBody = JSON.stringify(
         convertPreviewInputKeysToSnakeCase(request.body)
       );
-      const response = await this.client
-        .asScoped(request)
-        .callAsCurrentUser('ad.previewDetector', {
+
+      const callWithRequest = getClientBasedOnDataSource(
+        context,
+        this.dataSourceEnabled,
+        request,
+        dataSourceId,
+        this.client
+      );
+      const response = await callWithRequest(
+        'ad.previewDetector', {
           body: requestBody,
         });
       const transformedKeys = mapKeysDeep(response, toCamel);
