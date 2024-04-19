@@ -110,7 +110,7 @@ export type DetectorResultsQueryParams = {
 };
 
 export type MDSQueryParams = {
-  dataSourceId?: string;
+  dataSourceId: string;
 };
 
 export type Entity = {

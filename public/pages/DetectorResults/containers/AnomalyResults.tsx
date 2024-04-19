@@ -68,6 +68,7 @@ import { SampleIndexDetailsCallout } from '../../Overview/components/SampleIndex
 import { CoreStart } from '../../../../../../src/core/public';
 import { CoreServicesContext } from '../../../components/CoreServices/CoreServices';
 import { DEFAULT_SHINGLE_SIZE } from '../../../utils/constants';
+import { getDataSourceFromURL } from '../../../pages/utils/helpers';
 
 interface AnomalyResultsProps extends RouteComponentProps {
   detectorId: string;
@@ -85,8 +86,8 @@ export function AnomalyResults(props: AnomalyResultsProps) {
     (state: AppState) => state.ad.detectors[detectorId]
   );
   const location = useLocation();
-  const dataSourceId =
-    new URLSearchParams(location.search).get(DATA_SOURCE_ID) || '';
+  const MDSQueryParams = getDataSourceFromURL(location);
+  const dataSourceId = MDSQueryParams.dataSourceId;
 
   useEffect(() => {
     core.chrome.setBreadcrumbs([

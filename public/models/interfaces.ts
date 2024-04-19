@@ -14,6 +14,7 @@ import { DATA_TYPES } from '../utils/constants';
 import { DETECTOR_STATE } from '../../server/utils/constants';
 import { Duration } from 'moment';
 import moment from 'moment';
+import { MDSQueryParams } from '../../server/models/types';
 
 export type FieldInfo = {
   label: string;
@@ -325,4 +326,9 @@ export interface ValidationSettingResponse {
   issueType: string;
   message: string;
   validationType: string;
+}
+
+export interface MDSStates {
+  queryParams: MDSQueryParams;
+  selectedDataSourceId: string;
 }

@@ -18,9 +18,13 @@ import ContentPanel from '../../../../components/ContentPanel/ContentPanel';
 import { AppState } from '../../../../redux/reducers';
 import { getPrioritizedIndices } from '../../../../redux/reducers/opensearch';
 import { FormattedFormRow } from '../../../../components/FormattedFormRow/FormattedFormRow';
-import { sanitizeSearchText } from '../../../utils/helpers';
+import {
+  getDataSourceFromURL,
+  sanitizeSearchText,
+} from '../../../utils/helpers';
 import { getError, isInvalid, required } from '../../../../utils/utils';
 import { DetectorDefinitionFormikValues } from '../../models/interfaces';
+import { useLocation } from 'react-router-dom';
 
 interface TimestampProps {
   formikProps: FormikProps<DetectorDefinitionFormikValues>;
@@ -28,6 +32,9 @@ interface TimestampProps {
 
 export function Timestamp(props: TimestampProps) {
   const dispatch = useDispatch();
+  const location = useLocation();
+  const MDSQueryParams = getDataSourceFromURL(location);
+  const dataSourceId = MDSQueryParams.dataSourceId;
   const opensearchState = useSelector((state: AppState) => state.opensearch);
   const selectedIndex = get(props, 'formikProps.values.index.0.label', '');
   const isRemoteIndex = selectedIndex.includes(':');
@@ -37,7 +44,7 @@ export function Timestamp(props: TimestampProps) {
     if (searchValue !== queryText) {
       const sanitizedQuery = sanitizeSearchText(searchValue);
       setQueryText(sanitizedQuery);
-      await dispatch(getPrioritizedIndices(sanitizedQuery));
+      await dispatch(getPrioritizedIndices(sanitizedQuery, dataSourceId));
     }
   }, 300);
 

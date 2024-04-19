@@ -46,6 +46,8 @@ export function registerOpenSearchRoutes(
   apiRouter.get('/_aliases/{dataSourceId}', opensearchService.getAliases);
 
   apiRouter.get('/_mappings', opensearchService.getMapping);
+  apiRouter.get('/_mappings/{dataSourceId}', opensearchService.getMapping);
+
   apiRouter.post('/_search', opensearchService.executeSearch);
 
   apiRouter.put('/create_index', opensearchService.createIndex);
@@ -337,10 +339,19 @@ export default class OpenSearchService {
     opensearchDashboardsResponse: OpenSearchDashboardsResponseFactory
   ): Promise<IOpenSearchDashboardsResponse<any>> => {
     const { index } = request.query as { index: string };
+    const { dataSourceId = '' } = request.params as { dataSourceId?: string };
+
     try {
-      const response = await this.client
-        .asScoped(request)
-        .callAsCurrentUser('indices.getMapping', {
+      const callWithRequest = getClientBasedOnDataSource(
+        context,
+        this.dataSourceEnabled,
+        request,
+        dataSourceId,
+        this.client
+      );
+
+      const response = await callWithRequest(
+        'indices.getMapping', {
           index,
         });
       return opensearchDashboardsResponse.ok({

@@ -271,13 +271,17 @@ export const getAliases = (
   };
 };
 
-export const getMappings = (searchKey: string = ''): APIAction => ({
-  type: GET_MAPPINGS,
-  request: (client: HttpSetup) =>
-    client.get(`..${AD_NODE_API._MAPPINGS}`, {
-      query: { index: searchKey },
-    }),
-});
+export const getMappings = (searchKey: string = '', dataSourceId: string): APIAction => {
+  const url = dataSourceId ? `${AD_NODE_API._MAPPINGS}/${dataSourceId}` : AD_NODE_API._MAPPINGS;
+
+  return {
+    type: GET_MAPPINGS,
+    request: (client: HttpSetup) =>
+      client.get(`..${url}`, {
+        query: { index: searchKey },
+      }),
+  };
+};
 
 export const searchOpenSearch = (requestData: any): APIAction => ({
   type: SEARCH_OPENSEARCH,
