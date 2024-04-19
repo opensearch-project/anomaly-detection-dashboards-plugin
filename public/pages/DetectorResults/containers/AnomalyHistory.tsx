@@ -96,6 +96,7 @@ import { CoreStart } from '../../../../../../src/core/public';
 import { CoreServicesContext } from '../../../components/CoreServices/CoreServices';
 import { prettifyErrorMessage } from '../../../../server/utils/helpers';
 import { useLocation } from 'react-router-dom';
+import { getDataSourceFromURL } from '../../../pages/utils/helpers';
 
 interface AnomalyHistoryProps {
   detector: Detector;
@@ -128,8 +129,8 @@ export const AnomalyHistory = (props: AnomalyHistoryProps) => {
       ? props.detector.detectionDateRange.endTime
       : moment().valueOf();
   const location = useLocation();
-  const dataSourceId =
-    new URLSearchParams(location.search).get(DATA_SOURCE_ID) || '';
+  const MDSQueryParams = getDataSourceFromURL(location);
+  const dataSourceId = MDSQueryParams.dataSourceId;
   const [dateRange, setDateRange] = useState<DateRange>({
     startDate: initialStartDate,
     endDate: initialEndDate,

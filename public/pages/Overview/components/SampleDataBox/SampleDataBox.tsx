@@ -21,8 +21,9 @@ import {
   EuiCard,
   EuiHorizontalRule,
 } from '@elastic/eui';
-import { DATA_SOURCE_ID, PLUGIN_NAME } from '../../../../utils/constants';
+import { PLUGIN_NAME } from '../../../../utils/constants';
 import { useLocation } from 'react-router-dom';
+import { getDataSourceFromURL } from '../../../../pages/utils/helpers';
 
 interface SampleDataBoxProps {
   title: string;
@@ -39,8 +40,9 @@ interface SampleDataBoxProps {
 
 export const SampleDataBox = (props: SampleDataBoxProps) => {
   const location = useLocation();
-  const dataSourceId =
-    new URLSearchParams(location.search).get(DATA_SOURCE_ID) || '';
+  const MDSQueryParams = getDataSourceFromURL(location);
+  const dataSourceId = MDSQueryParams.dataSourceId;
+
   return (
     <div style={{ height: 'auto' }}>
       <EuiCard

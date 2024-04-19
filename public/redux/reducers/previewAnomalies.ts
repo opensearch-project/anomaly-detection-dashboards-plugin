@@ -59,12 +59,17 @@ const reducer = handleActions<PreviewAnomalies>(
   initialDetectorsState
 );
 
-export const previewDetector = (requestBody: any): APIAction => ({
-  type: PREVIEW_DETECTOR,
-  request: (client: HttpSetup) =>
-    client.post(`..${AD_NODE_API.DETECTOR}/preview`, {
-      body: JSON.stringify(requestBody),
-    }),
-});
+export const previewDetector = (requestBody: any, dataSourceId: string): APIAction => {
+  const baseUrl = `..${AD_NODE_API.DETECTOR}/preview`;
+  const url =  dataSourceId ? `${baseUrl}/${dataSourceId}` : baseUrl;
+
+  return {
+    type: PREVIEW_DETECTOR,
+    request: (client: HttpSetup) =>
+      client.post(url, {
+        body: JSON.stringify(requestBody),
+      }),
+  };
+}
 
 export default reducer;

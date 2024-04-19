@@ -52,13 +52,12 @@ import {
 } from '../../AnomalyCharts/utils/constants';
 import { LIVE_ANOMALY_CHART_THEME } from '../utils/constants';
 import { DETECTOR_STATE } from '../../../../server/utils/constants';
-import { dateFormatter } from '../../utils/helpers';
+import { dateFormatter, getDataSourceFromURL } from '../../utils/helpers';
 import { darkModeEnabled } from '../../../utils/opensearchDashboardsUtils';
 import { EuiIcon } from '@elastic/eui';
 import { formatAnomalyNumber } from '../../../../server/utils/helpers';
 import { getDetectorLiveResults } from '../../../redux/reducers/liveAnomalyResults';
 import { useLocation } from 'react-router-dom';
-import { DATA_SOURCE_ID } from '../../../utils/constants';
 
 interface AnomalyResultsLiveChartProps {
   detector: Detector;
@@ -69,8 +68,8 @@ export const AnomalyResultsLiveChart = (
 ) => {
   const dispatch = useDispatch();
   const location = useLocation();
-  const dataSourceId =
-    new URLSearchParams(location.search).get(DATA_SOURCE_ID) || '';
+  const MDSQueryParams = getDataSourceFromURL(location);
+  const dataSourceId = MDSQueryParams.dataSourceId;
 
   const [firstLoading, setFirstLoading] = useState<boolean>(true);
   const [isFullScreen, setIsFullScreen] = useState<boolean>(false);

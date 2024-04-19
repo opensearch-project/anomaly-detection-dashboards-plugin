@@ -24,7 +24,11 @@ import {
 } from '../../../../redux/reducers/opensearch';
 import { getError, isInvalid } from '../../../../utils/utils';
 import { IndexOption } from './IndexOption';
-import { getVisibleOptions, sanitizeSearchText } from '../../../utils/helpers';
+import {
+  getDataSourceFromURL,
+  getVisibleOptions,
+  sanitizeSearchText,
+} from '../../../utils/helpers';
 import { validateIndex } from '../../../utils/validate';
 import { DataFilterList } from '../DataFilterList/DataFilterList';
 import { FormattedFormRow } from '../../../../components/FormattedFormRow/FormattedFormRow';
@@ -32,6 +36,7 @@ import { DetectorDefinitionFormikValues } from '../../models/interfaces';
 import { ModelConfigurationFormikValues } from '../../../ConfigureModel/models/interfaces';
 import { INITIAL_MODEL_CONFIGURATION_VALUES } from '../../../ConfigureModel/utils/constants';
 import { FILTER_TYPES } from '../../../../models/interfaces';
+import { useLocation } from 'react-router-dom';
 
 interface DataSourceProps {
   formikProps: FormikProps<DetectorDefinitionFormikValues>;
@@ -45,6 +50,9 @@ interface DataSourceProps {
 
 export function DataSource(props: DataSourceProps) {
   const dispatch = useDispatch();
+  const location = useLocation();
+  const MDSQueryParams = getDataSourceFromURL(location);
+  const dataSourceId = MDSQueryParams.dataSourceId;
   const [indexName, setIndexName] = useState<string>(
     props.formikProps.values.index[0]?.label
   );
@@ -52,10 +60,10 @@ export function DataSource(props: DataSourceProps) {
   const opensearchState = useSelector((state: AppState) => state.opensearch);
   useEffect(() => {
     const getInitialIndices = async () => {
-      await dispatch(getIndices(queryText));
+      await dispatch(getIndices(queryText, dataSourceId));
     };
     getInitialIndices();
-  }, []);
+  }, [dataSourceId]);
 
   useEffect(() => {
     setIndexName(props.formikProps.values.index[0]?.label);
@@ -65,7 +73,7 @@ export function DataSource(props: DataSourceProps) {
     if (searchValue !== queryText) {
       const sanitizedQuery = sanitizeSearchText(searchValue);
       setQueryText(sanitizedQuery);
-      await dispatch(getPrioritizedIndices(sanitizedQuery));
+      await dispatch(getPrioritizedIndices(sanitizedQuery, dataSourceId));
     }
   }, 300);
 
@@ -73,7 +81,7 @@ export function DataSource(props: DataSourceProps) {
     const indexName = get(selectedOptions, '0.label', '');
     setIndexName(indexName);
     if (indexName !== '') {
-      dispatch(getMappings(indexName));
+      dispatch(getMappings(indexName, dataSourceId));
     }
     if (indexName !== props.origIndex) {
       if (props.setNewIndexSelected) {

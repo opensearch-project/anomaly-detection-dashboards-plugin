@@ -17,7 +17,7 @@ import queryString from 'querystring';
 import { useDispatch, useSelector } from 'react-redux';
 import { get, isEmpty, cloneDeep } from 'lodash';
 
-import { DetectorListItem } from '../../../models/interfaces';
+import { DetectorListItem, MDSStates } from '../../../models/interfaces';
 import { getIndices, getAliases } from '../../../redux/reducers/opensearch';
 import { getDetectorList } from '../../../redux/reducers/ad';
 import {
@@ -38,17 +38,16 @@ import { AppState } from '../../../redux/reducers';
 import {
   CatIndex,
   IndexAlias,
-  MDSQueryParams,
 } from '../../../../server/models/types';
 import {
   getAllDetectorsQueryParamsWithDataSourceId,
+  getDataSourceFromURL,
   getVisibleOptions,
 } from '../../utils/helpers';
 import { BREADCRUMBS } from '../../../utils/constants';
 import { DETECTOR_STATE } from '../../../../server/utils/constants';
 import {
   getDetectorStateOptions,
-  getURLQueryParams,
 } from '../../DetectorsList/utils/helpers';
 import { DashboardHeader } from '../Components/utils/DashboardHeader';
 import { EmptyDashboard } from '../Components/EmptyDashboard/EmptyDashboard';
@@ -71,11 +70,6 @@ interface OverviewProps extends RouteComponentProps {
   setActionMenu: (menuMount: MountPoint | undefined) => void;
 }
 
-interface MDSOverviewState {
-  queryParams: MDSQueryParams;
-  selectedDataSourceId: string;
-}
-
 export function DashboardOverview(props: OverviewProps) {
   const core = React.useContext(CoreServicesContext) as CoreStart;
   const dispatch = useDispatch();
@@ -94,8 +88,8 @@ export function DashboardOverview(props: OverviewProps) {
   const [selectedDetectorsName, setSelectedDetectorsName] = useState(
     [] as string[]
   );
-  const queryParams = getURLQueryParams(props.location);
-  const [MDSOverviewState, setMDSOverviewState] = useState<MDSOverviewState>({
+  const queryParams = getDataSourceFromURL(props.location);
+  const [MDSOverviewState, setMDSOverviewState] = useState<MDSStates>({
     queryParams,
     selectedDataSourceId: queryParams.dataSourceId
       ? queryParams.dataSourceId
