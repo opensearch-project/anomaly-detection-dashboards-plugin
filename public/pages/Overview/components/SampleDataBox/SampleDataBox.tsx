@@ -40,8 +40,8 @@ interface SampleDataBoxProps {
 
 export const SampleDataBox = (props: SampleDataBoxProps) => {
   const location = useLocation();
-  const neoQueryParams = getDataSourceFromURL(location);
-  const dataSourceId = neoQueryParams.dataSourceId;
+  const MDSQueryParams = getDataSourceFromURL(location);
+  const dataSourceId = MDSQueryParams.dataSourceId;
 
   return (
     <div style={{ height: 'auto' }}>

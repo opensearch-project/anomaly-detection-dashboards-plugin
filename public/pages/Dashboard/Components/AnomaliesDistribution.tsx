@@ -44,8 +44,8 @@ export const AnomaliesDistributionChart = (
 ) => {
   const dispatch = useDispatch();
   const location = useLocation();
-  const neoQueryParams = getDataSourceFromURL(location);
-  const dataSourceId = neoQueryParams.dataSourceId;
+  const MDSQueryParams = getDataSourceFromURL(location);
+  const dataSourceId = MDSQueryParams.dataSourceId;
 
   const [anomalyDistribution, setAnomalyDistribution] = useState(
     [] as object[]

@@ -62,18 +62,13 @@ import {
   getNotifications,
   getSavedObjectsClient,
 } from '../../../../public/services';
-import { MDSQueryParams } from 'server/models/types';
 import { RouteComponentProps } from 'react-router-dom';
 import queryString from 'querystring';
 import { getDataSourceFromURL, getSampleDetectorsQueryParamsWithDataSouceId } from '../../../../public/pages/utils/helpers';
+import { MDSStates } from '../../../models/interfaces';
 
 interface AnomalyDetectionOverviewProps extends RouteComponentProps {
   setActionMenu: (menuMount: MountPoint | undefined) => void;
-}
-
-interface MDSOverviewState {
-  queryParams: MDSQueryParams;
-  selectedDataSourceId: string;
 }
 
 export function AnomalyDetectionOverview(props: AnomalyDetectionOverviewProps) {
@@ -105,7 +100,7 @@ export function AnomalyDetectionOverview(props: AnomalyDetectionOverviewProps) {
     useState<boolean>(false);
 
   const queryParams = getDataSourceFromURL(props.location);
-  const [MDSOverviewState, setMDSOverviewState] = useState<MDSOverviewState>({
+  const [MDSOverviewState, setMDSOverviewState] = useState<MDSStates>({
     queryParams,
     selectedDataSourceId: queryParams.dataSourceId
       ? queryParams.dataSourceId

@@ -75,8 +75,8 @@ export function ReviewAndCreate(props: ReviewAndCreateProps) {
   const core = React.useContext(CoreServicesContext) as CoreStart;
   const dispatch = useDispatch();
   const location = useLocation();
-  const neoQueryParams = getDataSourceFromURL(location);
-  const dataSourceId = neoQueryParams.dataSourceId;
+  const MDSQueryParams = getDataSourceFromURL(location);
+  const dataSourceId = MDSQueryParams.dataSourceId;
   const dataSourceEnabled = getDataSourcePlugin()?.dataSourceEnabled || false;
   useHideSideNavBar(true, false);
 

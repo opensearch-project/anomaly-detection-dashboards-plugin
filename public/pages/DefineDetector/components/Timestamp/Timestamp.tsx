@@ -33,8 +33,8 @@ interface TimestampProps {
 export function Timestamp(props: TimestampProps) {
   const dispatch = useDispatch();
   const location = useLocation();
-  const neoQueryParams = getDataSourceFromURL(location);
-  const dataSourceId = neoQueryParams.dataSourceId;
+  const MDSQueryParams = getDataSourceFromURL(location);
+  const dataSourceId = MDSQueryParams.dataSourceId;
   const opensearchState = useSelector((state: AppState) => state.opensearch);
   const selectedIndex = get(props, 'formikProps.values.index.0.label', '');
   const isRemoteIndex = selectedIndex.includes(':');

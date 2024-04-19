@@ -55,9 +55,9 @@ interface DetectorJobsProps extends RouteComponentProps {
 export function DetectorJobs(props: DetectorJobsProps) {
   const core = React.useContext(CoreServicesContext) as CoreStart;
   const location = useLocation();
-  const neoQueryParams = getDataSourceFromURL(location);
+  const MDSQueryParams = getDataSourceFromURL(location);
   const dataSourceEnabled = getDataSourcePlugin()?.dataSourceEnabled || false;
-  const dataSourceId = neoQueryParams.dataSourceId;
+  const dataSourceId = MDSQueryParams.dataSourceId;
   useHideSideNavBar(true, false);
 
   const [realTime, setRealTime] = useState<boolean>(

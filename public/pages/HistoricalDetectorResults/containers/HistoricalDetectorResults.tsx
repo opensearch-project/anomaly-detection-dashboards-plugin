@@ -64,8 +64,8 @@ export function HistoricalDetectorResults(
   const dispatch = useDispatch();
   const detectorId: string = get(props, 'match.params.detectorId', '');
   const location = useLocation();
-  const neoQueryParams = getDataSourceFromURL(location);
-  const dataSourceId = neoQueryParams.dataSourceId;
+  const MDSQueryParams = getDataSourceFromURL(location);
+  const dataSourceId = MDSQueryParams.dataSourceId;
 
   const adState = useSelector((state: AppState) => state.ad);
   const allDetectors = adState.detectors;

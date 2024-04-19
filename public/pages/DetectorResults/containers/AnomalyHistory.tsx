@@ -129,8 +129,8 @@ export const AnomalyHistory = (props: AnomalyHistoryProps) => {
       ? props.detector.detectionDateRange.endTime
       : moment().valueOf();
   const location = useLocation();
-  const neoQueryParams = getDataSourceFromURL(location);
-  const dataSourceId = neoQueryParams.dataSourceId;
+  const MDSQueryParams = getDataSourceFromURL(location);
+  const dataSourceId = MDSQueryParams.dataSourceId;
   const [dateRange, setDateRange] = useState<DateRange>({
     startDate: initialStartDate,
     endDate: initialEndDate,

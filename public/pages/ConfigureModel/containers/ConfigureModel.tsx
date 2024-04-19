@@ -88,9 +88,9 @@ export function ConfigureModel(props: ConfigureModelProps) {
   const core = React.useContext(CoreServicesContext) as CoreStart;
   const dispatch = useDispatch();
   const location = useLocation();
-  const neoQueryParams = getDataSourceFromURL(location);
+  const MDSQueryParams = getDataSourceFromURL(location);
   const dataSourceEnabled = getDataSourcePlugin()?.dataSourceEnabled || false;
-  const dataSourceId = neoQueryParams.dataSourceId;
+  const dataSourceId = MDSQueryParams.dataSourceId;
 
   useHideSideNavBar(true, false);
   const detectorId = get(props, 'match.params.detectorId', '');

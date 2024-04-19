@@ -30,8 +30,8 @@ interface DetectorConfigProps extends RouteComponentProps {
 export function DetectorConfig(props: DetectorConfigProps) {
   const dispatch = useDispatch();
   const location = useLocation();
-  const neoQueryParams = getDataSourceFromURL(location);
-  const dataSourceId = neoQueryParams.dataSourceId;
+  const MDSQueryParams = getDataSourceFromURL(location);
+  const dataSourceId = MDSQueryParams.dataSourceId;
   const detector = useSelector(
     (state: AppState) => state.ad.detectors[props.detectorId]
   );

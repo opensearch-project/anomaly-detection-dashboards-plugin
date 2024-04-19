@@ -52,7 +52,7 @@ import {
   clearModelConfiguration,
 } from '../utils/helpers';
 import { DetectorDefinitionFormikValues } from '../models/interfaces';
-import { Detector, FILTER_TYPES } from '../../../models/interfaces';
+import { Detector, FILTER_TYPES, MDSStates } from '../../../models/interfaces';
 import { prettifyErrorMessage } from '../../../../server/utils/helpers';
 import { DETECTOR_STATE } from '../../../../server/utils/constants';
 import { ModelConfigurationFormikValues } from 'public/pages/ConfigureModel/models/interfaces';
@@ -63,7 +63,6 @@ import {
   getSavedObjectsClient,
 } from '../../../services';
 import { DataSourceSelectableConfig, DataSourceViewConfig } from '../../../../../../src/plugins/data_source_management/public';
-import { MDSQueryParams } from '../../../../server/models/types';
 import {
   constructHrefWithDataSourceId,
   getDataSourceFromURL,
@@ -72,11 +71,6 @@ import queryString from 'querystring';
 
 interface DefineDetectorRouterProps {
   detectorId?: string;
-}
-
-interface MDSCreateState {
-  queryParams: MDSQueryParams;
-  selectedDataSourceId: string;
 }
 
 interface DefineDetectorProps
@@ -91,8 +85,8 @@ interface DefineDetectorProps
 
 export const DefineDetector = (props: DefineDetectorProps) => {
   const location = useLocation();
-  const neoQueryParams = getDataSourceFromURL(location);
-  const dataSourceId = neoQueryParams.dataSourceId;
+  const MDSQueryParams = getDataSourceFromURL(location);
+  const dataSourceId = MDSQueryParams.dataSourceId;
   const dataSourceEnabled = getDataSourcePlugin()?.dataSourceEnabled || false;
 
   const core = React.useContext(CoreServicesContext) as CoreStart;
@@ -102,8 +96,8 @@ export const DefineDetector = (props: DefineDetectorProps) => {
   const { detector, hasError } = useFetchDetectorInfo(detectorId, dataSourceId);
   const [newIndexSelected, setNewIndexSelected] = useState<boolean>(false);
 
-  const [MDSCreateState, setMDSCreateState] = useState<MDSCreateState>({
-    queryParams: neoQueryParams,
+  const [MDSCreateState, setMDSCreateState] = useState<MDSStates>({
+    queryParams: MDSQueryParams,
     selectedDataSourceId: dataSourceId ? dataSourceId : '',
   });
 

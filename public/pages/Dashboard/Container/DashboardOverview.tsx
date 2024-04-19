@@ -17,7 +17,7 @@ import queryString from 'querystring';
 import { useDispatch, useSelector } from 'react-redux';
 import { get, isEmpty, cloneDeep } from 'lodash';
 
-import { DetectorListItem } from '../../../models/interfaces';
+import { DetectorListItem, MDSStates } from '../../../models/interfaces';
 import { getIndices, getAliases } from '../../../redux/reducers/opensearch';
 import { getDetectorList } from '../../../redux/reducers/ad';
 import {
@@ -38,7 +38,6 @@ import { AppState } from '../../../redux/reducers';
 import {
   CatIndex,
   IndexAlias,
-  MDSQueryParams,
 } from '../../../../server/models/types';
 import {
   getAllDetectorsQueryParamsWithDataSourceId,
@@ -71,11 +70,6 @@ interface OverviewProps extends RouteComponentProps {
   setActionMenu: (menuMount: MountPoint | undefined) => void;
 }
 
-interface MDSOverviewState {
-  queryParams: MDSQueryParams;
-  selectedDataSourceId: string;
-}
-
 export function DashboardOverview(props: OverviewProps) {
   const core = React.useContext(CoreServicesContext) as CoreStart;
   const dispatch = useDispatch();
@@ -95,7 +89,7 @@ export function DashboardOverview(props: OverviewProps) {
     [] as string[]
   );
   const queryParams = getDataSourceFromURL(props.location);
-  const [MDSOverviewState, setMDSOverviewState] = useState<MDSOverviewState>({
+  const [MDSOverviewState, setMDSOverviewState] = useState<MDSStates>({
     queryParams,
     selectedDataSourceId: queryParams.dataSourceId
       ? queryParams.dataSourceId

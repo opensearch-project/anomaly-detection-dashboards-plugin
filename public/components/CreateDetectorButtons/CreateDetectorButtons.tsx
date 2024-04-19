@@ -17,8 +17,8 @@ import { constructHrefWithDataSourceId, getDataSourceFromURL } from '../../pages
 
 export const CreateDetectorButtons = () => {
   const location = useLocation();
-  const neoQueryParams = getDataSourceFromURL(location);
-  const dataSourceId = neoQueryParams.dataSourceId;
+  const MDSQueryParams = getDataSourceFromURL(location);
+  const dataSourceId = MDSQueryParams.dataSourceId;
 
   const createDetectorUrl = `${PLUGIN_NAME}#` + constructHrefWithDataSourceId(`${APP_PATH.CREATE_DETECTOR}`, dataSourceId, false);
 

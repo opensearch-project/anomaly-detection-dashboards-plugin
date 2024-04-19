@@ -75,8 +75,8 @@ const MAX_LIVE_DETECTORS = 10;
 export const AnomaliesLiveChart = (props: AnomaliesLiveChartProps) => {
   const dispatch = useDispatch();
   const location = useLocation();
-  const neoQueryParams = getDataSourceFromURL(location);
-  const dataSourceId = neoQueryParams.dataSourceId;
+  const MDSQueryParams = getDataSourceFromURL(location);
+  const dataSourceId = MDSQueryParams.dataSourceId;
   const [liveTimeRange, setLiveTimeRange] = useState<LiveTimeRangeState>({
     startDateTime: moment().subtract(31, 'minutes'),
     endDateTime: moment(),

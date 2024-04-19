@@ -120,8 +120,8 @@ export const DetectorDetail = (props: DetectorDetailProps) => {
   const detectorId = get(props, 'match.params.detectorId', '') as string;
   const dataSourceEnabled = getDataSourcePlugin()?.dataSourceEnabled || false;
   const location = useLocation();
-  const neoQueryParams = getDataSourceFromURL(location);
-  const dataSourceId = neoQueryParams.dataSourceId;
+  const MDSQueryParams = getDataSourceFromURL(location);
+  const dataSourceId = MDSQueryParams.dataSourceId;
 
   const { detector, hasError, isLoadingDetector, errorMessage } =
     useFetchDetectorInfo(detectorId, dataSourceId);

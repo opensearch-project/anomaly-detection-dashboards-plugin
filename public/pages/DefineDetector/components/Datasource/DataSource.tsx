@@ -51,8 +51,8 @@ interface DataSourceProps {
 export function DataSource(props: DataSourceProps) {
   const dispatch = useDispatch();
   const location = useLocation();
-  const neoQueryParams = getDataSourceFromURL(location);
-  const dataSourceId = neoQueryParams.dataSourceId;
+  const MDSQueryParams = getDataSourceFromURL(location);
+  const dataSourceId = MDSQueryParams.dataSourceId;
   const [indexName, setIndexName] = useState<string>(
     props.formikProps.values.index[0]?.label
   );

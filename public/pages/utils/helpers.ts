@@ -16,7 +16,7 @@ import {
 } from '../../../server/models/types';
 import sortBy from 'lodash/sortBy';
 import { DetectorListItem } from '../../models/interfaces';
-import { SORT_DIRECTION } from '../../../server/utils/constants';
+import { DETECTORS_QUERY_PARAMS, SORT_DIRECTION } from '../../../server/utils/constants';
 import { ALL_INDICES, ALL_DETECTOR_STATES, MAX_DETECTORS } from './constants';
 import { DETECTOR_STATE } from '../../../server/utils/constants';
 import { timeFormatter } from '@elastic/charts';
@@ -160,12 +160,12 @@ export const constructHrefWithDataSourceId = (
 
   // Set up base parameters for '/detectors'
   if (basePath.startsWith('/detectors')) {
-    url.set('from', '0');
-    url.set('size', '20');
-    url.set('search', '');
-    url.set('indices', '');
-    url.set('sortField', 'name');
-    url.set('sortDirection', 'asc');
+    url.set(DETECTORS_QUERY_PARAMS.FROM, '0');
+    url.set(DETECTORS_QUERY_PARAMS.SIZE, '20');
+    url.set(DETECTORS_QUERY_PARAMS.SEARCH, '');
+    url.set(DETECTORS_QUERY_PARAMS.INDICES, '');
+    url.set(DETECTORS_QUERY_PARAMS.SORT_FIELD, DETECTORS_QUERY_PARAMS.NAME);
+    url.set(DETECTORS_QUERY_PARAMS.SORT_DIRECTION, SORT_DIRECTION.ASC);
   }
 
   if (dataSourceEnabled && dataSourceId) {
