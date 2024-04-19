@@ -71,6 +71,7 @@ import {
   getNotifications,
   getSavedObjectsClient,
 } from '../../../services';
+import { constructHrefWithDataSourceId, getDataSourceFromURL } from '../../../pages/utils/helpers';
 
 export interface DetectorRouterProps {
   detectorId?: string;
@@ -119,8 +120,8 @@ export const DetectorDetail = (props: DetectorDetailProps) => {
   const detectorId = get(props, 'match.params.detectorId', '') as string;
   const dataSourceEnabled = getDataSourcePlugin()?.dataSourceEnabled || false;
   const location = useLocation();
-  const dataSourceId =
-    new URLSearchParams(location.search).get(DATA_SOURCE_ID) || '';
+  const MDSQueryParams = getDataSourceFromURL(location);
+  const dataSourceId = MDSQueryParams.dataSourceId;
 
   const { detector, hasError, isLoadingDetector, errorMessage } =
     useFetchDetectorInfo(detectorId, dataSourceId);
@@ -196,7 +197,7 @@ export const DetectorDetail = (props: DetectorDetailProps) => {
           ? prettifyErrorMessage(errorMessage)
           : 'Unable to find the detector'
       );
-      props.history.push('/detectors');
+      props.history.push(constructHrefWithDataSourceId('/detectors', dataSourceId, false));
     }
   }, [hasError]);
 
@@ -223,8 +224,8 @@ export const DetectorDetail = (props: DetectorDetailProps) => {
       ...detectorDetailModel,
       selectedTab: DETECTOR_DETAIL_TABS.CONFIGURATIONS,
     });
-    props.history.push(
-      `/detectors/${detectorId}/configurations?dataSourceId=${dataSourceId}`
+    props.history.push(constructHrefWithDataSourceId(
+      `/detectors/${detectorId}/configurations`, dataSourceId, false)
     );
   }, []);
 
@@ -233,8 +234,8 @@ export const DetectorDetail = (props: DetectorDetailProps) => {
       ...detectorDetailModel,
       selectedTab: DETECTOR_DETAIL_TABS.HISTORICAL,
     });
-    props.history.push(
-      `/detectors/${detectorId}/historical?dataSourceId=${dataSourceId}`
+    props.history.push(constructHrefWithDataSourceId(
+      `/detectors/${detectorId}/historical`, dataSourceId, false)
     );
   }, []);
 
@@ -243,8 +244,8 @@ export const DetectorDetail = (props: DetectorDetailProps) => {
       ...detectorDetailModel,
       selectedTab: route,
     });
-    props.history.push(
-      `/detectors/${detectorId}/${route}?dataSourceId=${dataSourceId}`
+    props.history.push(constructHrefWithDataSourceId(
+      `/detectors/${detectorId}/${route}`, dataSourceId, false)
     );
   };
 
@@ -273,9 +274,9 @@ export const DetectorDetail = (props: DetectorDetailProps) => {
     const listener: Listener = {
       onSuccess: () => {
         if (detectorDetailModel.showStopDetectorModalFor === 'detector') {
-          props.history.push(`/detectors/${detectorId}/edit`);
+          props.history.push(constructHrefWithDataSourceId(`/detectors/${detectorId}/edit`, dataSourceId, false));
         } else {
-          props.history.push(`/detectors/${detectorId}/features`);
+          props.history.push(constructHrefWithDataSourceId(`/detectors/${detectorId}/features`, dataSourceId, false));
         }
         hideStopDetectorModal();
       },
@@ -333,7 +334,7 @@ export const DetectorDetail = (props: DetectorDetailProps) => {
       await dispatch(deleteDetector(detectorId, dataSourceId));
       core.notifications.toasts.addSuccess(`Successfully deleted the detector`);
       hideDeleteDetectorModal();
-      props.history.push('/detectors');
+      props.history.push(constructHrefWithDataSourceId('/detectors', dataSourceId, false));
     } catch (err) {
       core.notifications.toasts.addDanger(
         prettifyErrorMessage(
@@ -350,7 +351,7 @@ export const DetectorDetail = (props: DetectorDetailProps) => {
           ...detectorDetailModel,
           showStopDetectorModalFor: 'detector',
         })
-      : props.history.push(`/detectors/${detectorId}/edit`);
+      : props.history.push(constructHrefWithDataSourceId(`/detectors/${detectorId}/edit`, dataSourceId, false));
   };
 
   const handleEditFeature = () => {
@@ -359,7 +360,7 @@ export const DetectorDetail = (props: DetectorDetailProps) => {
           ...detectorDetailModel,
           showStopDetectorModalFor: 'features',
         })
-      : props.history.push(`/detectors/${detectorId}/features`);
+      : props.history.push(constructHrefWithDataSourceId(`/detectors/${detectorId}/features`, dataSourceId, false));
   };
 
   const lightStyles = {

@@ -107,17 +107,23 @@ export const searchMonitors = (dataSourceId: string): APIAction => {
 export const searchAlerts = (
   monitorId: string,
   startTime: number,
-  endTime: number
-): APIAction => ({
-  type: SEARCH_ALERTS,
-  request: (client: HttpSetup) =>
-    client.get(`..${ALERTING_NODE_API.ALERTS}`, {
-      query: {
-        monitorId: monitorId,
-        startTime: startTime,
-        endTime: endTime,
-      },
-    }),
-});
+  endTime: number,
+  dataSourceId: string
+): APIAction => {
+  const baseUrl = `..${ALERTING_NODE_API.ALERTS}`;
+  const url = dataSourceId ? `${baseUrl}/${dataSourceId}` : baseUrl;
+
+  return {
+    type: SEARCH_ALERTS,
+    request: (client: HttpSetup) =>
+      client.get(url, {
+        query: {
+          monitorId: monitorId,
+          startTime: startTime,
+          endTime: endTime,
+        },
+      }),
+  };
+}
 
 export default reducer;

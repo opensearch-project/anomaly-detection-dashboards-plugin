@@ -45,6 +45,7 @@ import {
 import { APP_PATH, PLUGIN_NAME } from '../../../../utils/constants';
 import { DETECTOR_STATE } from '../../../../../server/utils/constants';
 import {
+  constructHrefWithDataSourceId,
   getAllDetectorsQueryParamsWithDataSourceId,
   getVisibleOptions,
   sanitizeSearchText,
@@ -693,6 +694,8 @@ export const DetectorList = (props: ListProps) => {
 
   const columns = getColumns(state.selectedDataSourceId);
 
+  const createDetectorUrl =`${PLUGIN_NAME}#` + constructHrefWithDataSourceId(APP_PATH.CREATE_DETECTOR, state.selectedDataSourceId, false);
+
   return (
     <EuiPage>
       <EuiPageBody>
@@ -716,7 +719,7 @@ export const DetectorList = (props: ListProps) => {
             <EuiButton
               data-test-subj="createDetectorButton"
               fill
-              href={`${PLUGIN_NAME}#${APP_PATH.CREATE_DETECTOR}`}
+              href={createDetectorUrl}
             >
               Create detector
             </EuiButton>,

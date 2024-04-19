@@ -35,6 +35,7 @@ export function registerAlertingRoutes(
   );
 
   apiRouter.get('/monitors/alerts', alertingService.searchAlerts);
+  apiRouter.get('/monitors/alerts/{dataSourceId}', alertingService.searchAlerts);
 }
 
 export default class AlertingService {
@@ -143,9 +144,18 @@ export default class AlertingService {
         startTime?: number;
         endTime?: number;
       };
-      const response = await this.client
-        .asScoped(request)
-        .callAsCurrentUser('alerting.searchAlerts', {
+      const { dataSourceId = '' } = request.params as { dataSourceId?: string };
+
+      const callWithRequest = getClientBasedOnDataSource(
+        context,
+        this.dataSourceEnabled,
+        request,
+        dataSourceId,
+        this.client
+      );
+
+      const response = callWithRequest(
+        'alerting.searchAlerts', {
           monitorId: monitorId,
           startTime: startTime,
           endTime: endTime,

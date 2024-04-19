@@ -44,11 +44,10 @@ export const useFetchDetectorInfo = (
   useEffect(() => {
     const fetchDetector = async () => {
       if (!detector) {
-        // hardcoding the datasource id for now, will update it later when working on create page
         await dispatch(getDetector(detectorId, dataSourceId));
       }
       if (selectedIndices) {
-        await dispatch(getMappings(selectedIndices));
+        await dispatch(getMappings(selectedIndices, dataSourceId));
       }
     };
     if (detectorId) {

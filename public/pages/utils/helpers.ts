@@ -8,14 +8,19 @@
  * Modifications Copyright OpenSearch Contributors. See
  * GitHub history for details.
  */
-
-import { CatIndex, IndexAlias } from '../../../server/models/types';
+import queryString from 'query-string';
+import {
+  CatIndex,
+  IndexAlias,
+  MDSQueryParams,
+} from '../../../server/models/types';
 import sortBy from 'lodash/sortBy';
 import { DetectorListItem } from '../../models/interfaces';
-import { SORT_DIRECTION } from '../../../server/utils/constants';
-import { ALL_INDICES, ALL_DETECTOR_STATES, MAX_DETECTORS } from './constants';
+import { DETECTORS_QUERY_PARAMS, SORT_DIRECTION } from '../../../server/utils/constants';
+import { ALL_INDICES, ALL_DETECTOR_STATES, MAX_DETECTORS, DEFAULT_QUERY_PARAMS } from './constants';
 import { DETECTOR_STATE } from '../../../server/utils/constants';
 import { timeFormatter } from '@elastic/charts';
+import { getDataSourcePlugin } from '../../services';
 
 export function sanitizeSearchText(searchValue: string): string {
   if (!searchValue || searchValue == '*') {
@@ -122,7 +127,7 @@ export const getAllDetectorsQueryParamsWithDataSourceId = (
   size: MAX_DETECTORS,
   sortDirection: SORT_DIRECTION.ASC,
   sortField: 'name',
-  dataSourceId
+  dataSourceId,
 });
 
 export const getSampleDetectorsQueryParamsWithDataSouceId = (
@@ -134,5 +139,45 @@ export const getSampleDetectorsQueryParamsWithDataSouceId = (
   size: MAX_DETECTORS,
   sortDirection: SORT_DIRECTION.ASC,
   sortField: 'name',
-  dataSourceId
+  dataSourceId,
 });
+
+export const getDataSourceFromURL = (location: {
+  search: string;
+}): MDSQueryParams => {
+  const queryParams = queryString.parse(location.search);
+  const dataSourceId = queryParams.dataSourceId;
+  return { dataSourceId: typeof dataSourceId === 'string' ? dataSourceId : '' };
+};
+
+export const constructHrefWithDataSourceId = (
+  basePath: string,
+  dataSourceId: string,
+  withHash: Boolean
+): string => {
+  const dataSourceEnabled = getDataSourcePlugin()?.dataSourceEnabled || false;
+  const url = new URLSearchParams();
+
+  // Set up base parameters for '/detectors'
+  if (basePath.startsWith('/detectors')) {
+    url.set(DETECTORS_QUERY_PARAMS.FROM, DEFAULT_QUERY_PARAMS.from.toString());
+    url.set(DETECTORS_QUERY_PARAMS.SIZE, DEFAULT_QUERY_PARAMS.size.toString());
+    url.set(DETECTORS_QUERY_PARAMS.SEARCH, DEFAULT_QUERY_PARAMS.search);
+    url.set(DETECTORS_QUERY_PARAMS.INDICES, DEFAULT_QUERY_PARAMS.indices);
+    url.set(DETECTORS_QUERY_PARAMS.SORT_FIELD, DEFAULT_QUERY_PARAMS.sortField);
+    url.set(DETECTORS_QUERY_PARAMS.SORT_DIRECTION, SORT_DIRECTION.ASC);
+  }
+
+  if (dataSourceEnabled && dataSourceId) {
+    url.set('dataSourceId', dataSourceId);
+  }
+
+  // we share this helper function to construct the href with dataSourceId
+  // some places we need to return the url with hash, some places we don't need to
+  // so adding this flag to indicate if we want to return the url with hash
+  if (withHash) {
+    return `#${basePath}?${url.toString()}`;
+  }
+
+  return `${basePath}?${url.toString()}`;
+};
