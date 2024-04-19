@@ -17,7 +17,7 @@ import {
 import sortBy from 'lodash/sortBy';
 import { DetectorListItem } from '../../models/interfaces';
 import { DETECTORS_QUERY_PARAMS, SORT_DIRECTION } from '../../../server/utils/constants';
-import { ALL_INDICES, ALL_DETECTOR_STATES, MAX_DETECTORS } from './constants';
+import { ALL_INDICES, ALL_DETECTOR_STATES, MAX_DETECTORS, DEFAULT_QUERY_PARAMS } from './constants';
 import { DETECTOR_STATE } from '../../../server/utils/constants';
 import { timeFormatter } from '@elastic/charts';
 import { getDataSourcePlugin } from '../../services';
@@ -160,11 +160,11 @@ export const constructHrefWithDataSourceId = (
 
   // Set up base parameters for '/detectors'
   if (basePath.startsWith('/detectors')) {
-    url.set(DETECTORS_QUERY_PARAMS.FROM, '0');
-    url.set(DETECTORS_QUERY_PARAMS.SIZE, '20');
-    url.set(DETECTORS_QUERY_PARAMS.SEARCH, '');
-    url.set(DETECTORS_QUERY_PARAMS.INDICES, '');
-    url.set(DETECTORS_QUERY_PARAMS.SORT_FIELD, DETECTORS_QUERY_PARAMS.NAME);
+    url.set(DETECTORS_QUERY_PARAMS.FROM, DEFAULT_QUERY_PARAMS.from.toString());
+    url.set(DETECTORS_QUERY_PARAMS.SIZE, DEFAULT_QUERY_PARAMS.size.toString());
+    url.set(DETECTORS_QUERY_PARAMS.SEARCH, DEFAULT_QUERY_PARAMS.search);
+    url.set(DETECTORS_QUERY_PARAMS.INDICES, DEFAULT_QUERY_PARAMS.indices);
+    url.set(DETECTORS_QUERY_PARAMS.SORT_FIELD, DEFAULT_QUERY_PARAMS.sortField);
     url.set(DETECTORS_QUERY_PARAMS.SORT_DIRECTION, SORT_DIRECTION.ASC);
   }
 
