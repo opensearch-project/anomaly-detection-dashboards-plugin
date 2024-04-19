@@ -164,7 +164,7 @@ export const DefineDetector = (props: DefineDetectorProps) => {
       core.notifications.toasts.addDanger(
         'Unable to find the detector for editing'
       );
-      props.history.push(`/detectors`);
+      props.history.push(constructHrefWithDataSourceId(`/detectors`, dataSourceId, false));
     }
   }, [props.isEdit, MDSCreateState]);
 
@@ -244,7 +244,8 @@ export const DefineDetector = (props: DefineDetectorProps) => {
         core.notifications.toasts.addSuccess(
           `Detector updated: ${response.response.name}`
         );
-        props.history.push(`/detectors/${detectorId}/configurations/`);
+        props.history.push(constructHrefWithDataSourceId(
+          `/detectors/${detectorId}/configurations/`, dataSourceId, false));
       })
       .catch((err: any) => {
         core.notifications.toasts.addDanger(
