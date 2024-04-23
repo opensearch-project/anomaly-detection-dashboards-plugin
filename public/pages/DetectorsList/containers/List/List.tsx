@@ -109,7 +109,7 @@ interface ListState {
   queryParams: GetDetectorsQueryParams;
   selectedDetectorStates: DETECTOR_STATE[];
   selectedIndices: string[];
-  selectedDataSourceId: string;
+  selectedDataSourceId: string | undefined;
 }
 interface ConfirmModalState {
   isOpen: boolean;
@@ -208,7 +208,7 @@ export const DetectorList = (props: ListProps) => {
       : ALL_INDICES,
     selectedDataSourceId: queryParams.dataSourceId
       ? queryParams.dataSourceId
-      : '',
+      : undefined,
   });
 
   // Set breadcrumbs on page initialization
@@ -681,7 +681,9 @@ export const DetectorList = (props: ListProps) => {
           componentType={'DataSourceSelectable'}
           componentConfig={{
             fullWidth: false,
-            activeOption: [{ id: state.selectedDataSourceId }],
+            activeOption: state.selectedDataSourceId !== undefined 
+              ? [{ id: state.selectedDataSourceId }]
+              : undefined,
             savedObjects: getSavedObjectsClient(),
             notifications: getNotifications(),
             onSelectedDataSources: (dataSources) =>
