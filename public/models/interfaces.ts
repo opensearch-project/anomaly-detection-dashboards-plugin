@@ -330,5 +330,5 @@ export interface ValidationSettingResponse {
 
 export interface MDSStates {
   queryParams: MDSQueryParams;
-  selectedDataSourceId: string;
+  selectedDataSourceId: string | undefined;
 }

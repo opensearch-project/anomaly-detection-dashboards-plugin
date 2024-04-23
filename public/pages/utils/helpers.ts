@@ -119,7 +119,7 @@ export const formatNumber = (data: any) => {
 };
 
 export const getAllDetectorsQueryParamsWithDataSourceId = (
-  dataSourceId: string
+  dataSourceId: string = ''
 ) => ({
   from: 0,
   search: '',
@@ -131,7 +131,7 @@ export const getAllDetectorsQueryParamsWithDataSourceId = (
 });
 
 export const getSampleDetectorsQueryParamsWithDataSouceId = (
-  dataSourceId: string
+  dataSourceId: string = ''
 ) => ({
   from: 0,
   search: 'sample',
@@ -152,7 +152,7 @@ export const getDataSourceFromURL = (location: {
 
 export const constructHrefWithDataSourceId = (
   basePath: string,
-  dataSourceId: string,
+  dataSourceId: string = '',
   withHash: Boolean
 ): string => {
   const dataSourceEnabled = getDataSourcePlugin()?.dataSourceEnabled || false;

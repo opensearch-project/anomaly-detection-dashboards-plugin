@@ -104,7 +104,7 @@ export function AnomalyDetectionOverview(props: AnomalyDetectionOverviewProps) {
     queryParams,
     selectedDataSourceId: queryParams.dataSourceId
       ? queryParams.dataSourceId
-      : '',
+      : undefined,
   });
 
   // Set breadcrumbs on page initialization
@@ -242,7 +242,9 @@ export function AnomalyDetectionOverview(props: AnomalyDetectionOverviewProps) {
           componentType={'DataSourceSelectable'}
           componentConfig={{
             fullWidth: false,
-            activeOption: [{ id: MDSOverviewState.selectedDataSourceId }],
+            activeOption: MDSOverviewState.selectedDataSourceId !== undefined 
+              ? [{ id: MDSOverviewState.selectedDataSourceId }]
+              : undefined,
             savedObjects: getSavedObjectsClient(),
             notifications: getNotifications(),
             onSelectedDataSources: (dataSources) =>
