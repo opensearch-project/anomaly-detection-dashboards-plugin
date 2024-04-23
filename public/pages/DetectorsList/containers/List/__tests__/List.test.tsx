@@ -43,7 +43,9 @@ const renderWithRouter = (
             path="/detectors"
             render={(props: RouteComponentProps<ListRouterParams>) => (
               <CoreServicesContext.Provider value={coreServicesMock}>
-                <DetectorList {...props} />
+                <DetectorList 
+                  setActionMenu={jest.fn()}
+                  {...props}/>
               </CoreServicesContext.Provider>
             )}
           />
