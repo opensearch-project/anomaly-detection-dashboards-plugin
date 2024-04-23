@@ -98,7 +98,7 @@ export const DefineDetector = (props: DefineDetectorProps) => {
 
   const [MDSCreateState, setMDSCreateState] = useState<MDSStates>({
     queryParams: MDSQueryParams,
-    selectedDataSourceId: dataSourceId ? dataSourceId : '',
+    selectedDataSourceId: dataSourceId ? dataSourceId : undefined,
   });
 
   // To handle backward compatibility, we need to pass some fields via
@@ -297,7 +297,9 @@ export const DefineDetector = (props: DefineDetectorProps) => {
             componentType={'DataSourceSelectable'}
             componentConfig={{
               fullWidth: false,
-              activeOption: [{ id: MDSCreateState.selectedDataSourceId }],
+              activeOption: MDSCreateState.selectedDataSourceId !== undefined 
+                ? [{ id: MDSCreateState.selectedDataSourceId }]
+                : undefined,
               savedObjects: getSavedObjectsClient(),
               notifications: getNotifications(),
               onSelectedDataSources: (dataSources) =>
