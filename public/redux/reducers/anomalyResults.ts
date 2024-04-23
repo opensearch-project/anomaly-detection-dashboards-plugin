@@ -94,7 +94,7 @@ const reducer = handleActions<Anomalies>(
 
 export const getDetectorResults = (
   id: string,
-  dataSourceId: string,
+  dataSourceId: string = '',
   queryParams: any,
   isHistorical: boolean,
   resultIndex: string,
@@ -119,7 +119,7 @@ export const getDetectorResults = (
 export const searchResults = (
   requestBody: any,
   resultIndex: string,
-  dataSourceId: string,
+  dataSourceId: string = '',
   onlyQueryCustomResultIndex: boolean
 ): APIAction => {
   let baseUrl = `..${AD_NODE_API.DETECTOR}/results/_search`;

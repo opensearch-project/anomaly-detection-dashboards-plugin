@@ -93,7 +93,7 @@ export function DashboardOverview(props: OverviewProps) {
     queryParams,
     selectedDataSourceId: queryParams.dataSourceId
       ? queryParams.dataSourceId
-      : '',
+      : undefined,
   });
 
   const getDetectorOptions = (detectorsIdMap: {
@@ -267,7 +267,9 @@ export function DashboardOverview(props: OverviewProps) {
           componentType={'DataSourceSelectable'}
           componentConfig={{
             fullWidth: false,
-            activeOption: [{ id: MDSOverviewState.selectedDataSourceId }],
+            activeOption: MDSOverviewState.selectedDataSourceId !== undefined 
+              ? [{ id: MDSOverviewState.selectedDataSourceId }]
+              : undefined,
             savedObjects: getSavedObjectsClient(),
             notifications: getNotifications(),
             onSelectedDataSources: (dataSources) =>
