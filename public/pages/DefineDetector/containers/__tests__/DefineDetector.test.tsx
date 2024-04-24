@@ -27,6 +27,14 @@ import {
   testDetectorDefinitionValues,
 } from '../../utils/constants';
 
+jest.mock('../../../../services', () => ({
+  ...jest.requireActual('../../../../services'),
+
+  getDataSourcePlugin: () => {
+    return false;
+  }
+}));
+
 const renderWithRouterEmpty = (isEdit: boolean = false) => ({
   ...render(
     <Provider store={configureStore(httpClientMock)}>
@@ -36,6 +44,7 @@ const renderWithRouterEmpty = (isEdit: boolean = false) => ({
             render={(props: RouteComponentProps) => (
               <CoreServicesContext.Provider value={coreServicesMock}>
                 <DefineDetector
+                  setActionMenu={jest.fn()}
                   isEdit={isEdit}
                   initialValues={INITIAL_DETECTOR_DEFINITION_VALUES}
                   {...props}

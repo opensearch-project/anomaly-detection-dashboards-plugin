@@ -20,7 +20,7 @@ import { DETECTORS_QUERY_PARAMS, SORT_DIRECTION } from '../../../server/utils/co
 import { ALL_INDICES, ALL_DETECTOR_STATES, MAX_DETECTORS, DEFAULT_QUERY_PARAMS } from './constants';
 import { DETECTOR_STATE } from '../../../server/utils/constants';
 import { timeFormatter } from '@elastic/charts';
-import { getDataSourcePlugin } from '../../services';
+import { getDataSourceEnabled, getDataSourcePlugin } from '../../services';
 
 export function sanitizeSearchText(searchValue: string): string {
   if (!searchValue || searchValue == '*') {
@@ -155,7 +155,7 @@ export const constructHrefWithDataSourceId = (
   dataSourceId: string,
   withHash: Boolean
 ): string => {
-  const dataSourceEnabled = getDataSourcePlugin()?.dataSourceEnabled || false;
+  const dataSourceEnabled = getDataSourceEnabled().enabled;
   const url = new URLSearchParams();
 
   // Set up base parameters for '/detectors'

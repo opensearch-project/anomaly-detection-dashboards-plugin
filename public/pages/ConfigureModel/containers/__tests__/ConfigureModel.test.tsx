@@ -25,6 +25,14 @@ import { CoreServicesContext } from '../../../../components/CoreServices/CoreSer
 import { INITIAL_DETECTOR_DEFINITION_VALUES } from '../../../DefineDetector/utils/constants';
 import { INITIAL_MODEL_CONFIGURATION_VALUES } from '../../utils/constants';
 
+jest.mock('../../../../services', () => ({
+  ...jest.requireActual('../../../../services'),
+
+  getDataSourcePlugin: () => {
+    return false;
+  }
+}));
+
 const renderWithRouter = (isEdit: boolean = false) => ({
   ...render(
     <Provider store={configureStore(httpClientMock)}>
@@ -34,6 +42,7 @@ const renderWithRouter = (isEdit: boolean = false) => ({
             render={(props: RouteComponentProps) => (
               <CoreServicesContext.Provider value={coreServicesMock}>
                 <ConfigureModel
+                  setActionMenu={jest.fn()}
                   isEdit={isEdit}
                   detectorDefinitionValues={INITIAL_DETECTOR_DEFINITION_VALUES}
                   initialValues={INITIAL_MODEL_CONFIGURATION_VALUES}

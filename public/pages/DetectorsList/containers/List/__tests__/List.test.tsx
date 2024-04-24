@@ -31,6 +31,14 @@ import { DetectorList, ListRouterParams } from '../List';
 import { DETECTOR_STATE } from '../../../../../../server/utils/constants';
 import { CoreServicesContext } from '../../../../../components/CoreServices/CoreServices';
 
+jest.mock('../../../../../services', () => ({
+  ...jest.requireActual('../../../../../services'),
+
+  getDataSourcePlugin: () => {
+    return false;
+  }
+}));
+
 const renderWithRouter = (
   initialAdState: Detectors = initialDetectorsState
 ) => ({
