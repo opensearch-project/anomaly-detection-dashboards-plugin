@@ -21,6 +21,7 @@ import { getPathsPerDataType } from './mapper';
 import { CatIndex, IndexAlias } from '../../../server/models/types';
 import { AD_NODE_API } from '../../../utils/constants';
 import { get } from 'lodash';
+import { data } from 'jquery';
 
 const GET_INDICES = 'opensearch/GET_INDICES';
 const GET_ALIASES = 'opensearch/GET_ALIASES';
@@ -246,7 +247,7 @@ const reducer = handleActions<OpenSearchState>(
   initialState
 );
 
-export const getIndices = (searchKey = '', dataSourceId: string) => {
+export const getIndices = (searchKey = '', dataSourceId: string = '') => {
   const baseUrl = `..${AD_NODE_API._INDICES}`;
   const url = dataSourceId ? `${baseUrl}/${dataSourceId}` : baseUrl;
 
@@ -259,7 +260,7 @@ export const getIndices = (searchKey = '', dataSourceId: string) => {
 
 export const getAliases = (
   searchKey: string = '',
-  dataSourceId: string
+  dataSourceId: string = ''
 ): APIAction => {
   const baseUrl = `..${AD_NODE_API._ALIASES}`;
   const url = dataSourceId ? `${baseUrl}/${dataSourceId}` : baseUrl;
@@ -271,7 +272,7 @@ export const getAliases = (
   };
 };
 
-export const getMappings = (searchKey: string = '', dataSourceId: string): APIAction => {
+export const getMappings = (searchKey: string = '', dataSourceId: string = ''): APIAction => {
   const url = dataSourceId ? `${AD_NODE_API._MAPPINGS}/${dataSourceId}` : AD_NODE_API._MAPPINGS;
 
   return {
@@ -291,7 +292,7 @@ export const searchOpenSearch = (requestData: any): APIAction => ({
     }),
 });
 
-export const createIndex = (indexConfig: any, dataSourceId: string): APIAction => {
+export const createIndex = (indexConfig: any, dataSourceId: string = ''): APIAction => {
   const url = dataSourceId
     ? `${AD_NODE_API.CREATE_INDEX}/${dataSourceId}`
     : AD_NODE_API.CREATE_INDEX;
@@ -304,7 +305,7 @@ export const createIndex = (indexConfig: any, dataSourceId: string): APIAction =
   };
 };
 
-export const bulk = (body: any, dataSourceId: string): APIAction => {
+export const bulk = (body: any, dataSourceId: string = ''): APIAction => {
   const url = dataSourceId
     ? `${AD_NODE_API.BULK}/${dataSourceId}`
     : AD_NODE_API.BULK;
@@ -322,7 +323,7 @@ export const deleteIndex = (index: string): APIAction => ({
 });
 
 export const getPrioritizedIndices =
-  (searchKey: string, dataSourceId: string): ThunkAction =>
+  (searchKey: string, dataSourceId: string = ''): ThunkAction =>
   async (dispatch, getState) => {
     //Fetch Indices and Aliases with text provided
     await dispatch(getIndices(searchKey, dataSourceId));

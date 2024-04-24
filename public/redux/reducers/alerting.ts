@@ -94,7 +94,7 @@ const reducer = handleActions<Monitors>(
   initialDetectorsState
 );
 
-export const searchMonitors = (dataSourceId: string): APIAction => {
+export const searchMonitors = (dataSourceId: string = ''): APIAction => {
   const baseUrl = `..${ALERTING_NODE_API._SEARCH}`;
   const url = dataSourceId ? `${baseUrl}/${dataSourceId}` : baseUrl;
 
@@ -108,7 +108,7 @@ export const searchAlerts = (
   monitorId: string,
   startTime: number,
   endTime: number,
-  dataSourceId: string
+  dataSourceId: string = ''
 ): APIAction => {
   const baseUrl = `..${ALERTING_NODE_API.ALERTS}`;
   const url = dataSourceId ? `${baseUrl}/${dataSourceId}` : baseUrl;
