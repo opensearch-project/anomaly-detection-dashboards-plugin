@@ -82,7 +82,7 @@ jobs:
       - name: Bootstrap the plugin
         run: |
           cd OpenSearch-Dashboards/plugins/anomaly-detection-dashboards-plugin
-          yarn osd bootstrap
+          yarn osd bootstrap --single-version=loose
 
       - name: Run OpenSearch Dashboards server
         run: |
