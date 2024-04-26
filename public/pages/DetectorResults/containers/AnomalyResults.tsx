@@ -34,6 +34,7 @@ import {
   BREADCRUMBS,
   DATA_SOURCE_ID,
   FEATURE_DATA_POINTS_WINDOW,
+  MDS_BREADCRUMBS,
   MISSING_FEATURE_DATA_SEVERITY,
 } from '../../../utils/constants';
 import { DETECTOR_STATE } from '../../../../server/utils/constants';
@@ -69,6 +70,7 @@ import { CoreStart } from '../../../../../../src/core/public';
 import { CoreServicesContext } from '../../../components/CoreServices/CoreServices';
 import { DEFAULT_SHINGLE_SIZE } from '../../../utils/constants';
 import { getDataSourceFromURL } from '../../../pages/utils/helpers';
+import { getDataSourceEnabled } from '../../../services';
 
 interface AnomalyResultsProps extends RouteComponentProps {
   detectorId: string;
@@ -87,14 +89,23 @@ export function AnomalyResults(props: AnomalyResultsProps) {
   );
   const location = useLocation();
   const MDSQueryParams = getDataSourceFromURL(location);
+  const dataSourceEnabled = getDataSourceEnabled().enabled;
   const dataSourceId = MDSQueryParams.dataSourceId;
 
   useEffect(() => {
-    core.chrome.setBreadcrumbs([
-      BREADCRUMBS.ANOMALY_DETECTOR,
-      BREADCRUMBS.DETECTORS,
-      { text: detector ? detector.name : '' },
-    ]);
+    if (dataSourceEnabled) {
+      core.chrome.setBreadcrumbs([
+        MDS_BREADCRUMBS.ANOMALY_DETECTOR(dataSourceId),
+        MDS_BREADCRUMBS.DETECTORS(dataSourceId),
+        { text: detector ? detector.name : '' },
+      ]);
+    } else {
+      core.chrome.setBreadcrumbs([
+        BREADCRUMBS.ANOMALY_DETECTOR,
+        BREADCRUMBS.DETECTORS,
+        { text: detector ? detector.name : '' },
+      ]);
+    }
     dispatch(getDetector(detectorId, dataSourceId));
   }, []);
 

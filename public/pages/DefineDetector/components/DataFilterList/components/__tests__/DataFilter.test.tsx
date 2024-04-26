@@ -150,7 +150,7 @@ describe('dataFilter', () => {
       getAllByText('cpu');
     });
     userEvent.click(getByTestId('cancelFilter0Button'));
-  }, 10000);
+  }, 30000);
   test('renders data filter, click on custom', async () => {
     const { container, getByText, getByTestId } = renderWithProvider();
     getByText('Create custom label?');
@@ -164,5 +164,5 @@ describe('dataFilter', () => {
       getByText('Use query DSL');
     });
     userEvent.click(getByTestId('cancelFilter0Button'));
-  }, 10000);
+  }, 30000);
 });

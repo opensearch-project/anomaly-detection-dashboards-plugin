@@ -11,6 +11,17 @@ import { Provider } from 'react-redux';
 import { coreServicesMock } from '../../../../../test/mocks';
 import { CoreServicesContext } from '../../../../components/CoreServices/CoreServices';
 import { mockedStore } from '../../../../redux/utils/testUtils';
+import { createMemoryHistory } from 'history';
+import { Router } from 'react-router-dom';
+
+jest.mock('../../../../services', () => ({
+  ...jest.requireActual('../../../../services'),
+
+  getDataSourceEnabled: () => ({
+    enabled: false  
+  })
+}));
+
 const anomalyResponse = [
   {
     ok: true,
@@ -41,11 +52,26 @@ jest.mock('../../utils/utils', () => ({
   visualizeAnomalyResultForXYChart: jest.fn(),
 }));
 describe('<AnomaliesLiveChart /> spec', () => {
+  beforeAll(() => {
+    Object.defineProperty(window, 'location', {
+      value: {
+        href: 'http://test.com',
+        pathname: '/',
+        search: '',
+        hash: '',
+      },
+      writable: true
+    });
+  });
   test('AnomaliesLiveChart with Sample anomaly data', async () => {
+    const history = createMemoryHistory(); 
+
     const { container, getByTestId, getAllByText, getByText } = render(
       <Provider store={mockedStore()}>
         <CoreServicesContext.Provider value={coreServicesMock}>
-          <AnomaliesLiveChart {...SELECTED_DETECTORS} />
+          <Router history={history}>
+            <AnomaliesLiveChart {...SELECTED_DETECTORS} />
+          </Router>
         </CoreServicesContext.Provider>
       </Provider>
     );

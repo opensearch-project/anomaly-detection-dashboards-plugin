@@ -17,6 +17,10 @@ import { UiActionsStart } from '../../../src/plugins/ui_actions/public';
 import { SavedAugmentVisLoader } from '../../../src/plugins/vis_augmenter/public';
 import { DataSourcePluginSetup } from '../../../src/plugins/data_source/public';
 
+export interface DataSourceEnabled {
+  enabled: boolean;
+}
+
 export const [getSavedFeatureAnywhereLoader, setSavedFeatureAnywhereLoader] =
   createGetterSetter<SavedAugmentVisLoader>('savedFeatureAnywhereLoader');
 
@@ -47,8 +51,8 @@ export const [getSavedObjectsClient, setSavedObjectsClient] =
 export const [getDataSourceManagementPlugin, setDataSourceManagementPlugin] =
   createGetterSetter<DataSourceManagementPluginSetup>('DataSourceManagement');
 
-export const [getDataSourcePlugin, setDataSourcePlugin] =
-  createGetterSetter<DataSourcePluginSetup>('DataSource');
+export const [getDataSourceEnabled, setDataSourceEnabled] =
+  createGetterSetter<DataSourceEnabled>('DataSourceEnabled');
 
 // This is primarily used for mocking this module and each of its fns in tests.
 export default {

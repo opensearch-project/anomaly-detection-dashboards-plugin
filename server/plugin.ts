@@ -65,19 +65,19 @@ export class AnomalyDetectionOpenSearchDashboardsPlugin
     const globalConfig = await this.globalConfig$.pipe(first()).toPromise();
     const { customHeaders, ...rest } = globalConfig.opensearch;
 
-    const dataSourceEnabled = !!dataSource;
-
-    // when MDS is enabled, we leave the client as undefined for now
-    // it will be defined later with dataSourceId when we have request context
-    let client: ILegacyClusterClient | undefined = undefined;
-
-    if (!dataSourceEnabled) {
-      client = core.opensearch.legacy.createClient('anomaly_detection', {
+    // Create OpenSearch client w/ relevant plugins and headers
+    const client: ILegacyClusterClient = core.opensearch.legacy.createClient(
+      'anomaly_detection',
+      {
         plugins: [adPlugin, alertingPlugin],
         customHeaders: { ...customHeaders, ...DEFAULT_HEADERS },
         ...rest,
-      });
-    } else {
+      }
+    );
+
+    const dataSourceEnabled = !!dataSource;
+
+    if (dataSourceEnabled) {
       dataSource.registerCustomApiSchema(adPlugin);
       dataSource.registerCustomApiSchema(alertingPlugin);
     }

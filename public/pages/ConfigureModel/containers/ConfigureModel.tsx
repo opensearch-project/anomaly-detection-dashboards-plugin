@@ -32,7 +32,7 @@ import { RouteComponentProps, useLocation } from 'react-router-dom';
 import { AppState } from '../../../redux/reducers';
 import { getMappings } from '../../../redux/reducers/opensearch';
 import { useFetchDetectorInfo } from '../../CreateDetectorSteps/hooks/useFetchDetectorInfo';
-import { BREADCRUMBS, BASE_DOCS_LINK } from '../../../utils/constants';
+import { BREADCRUMBS, BASE_DOCS_LINK, MDS_BREADCRUMBS } from '../../../utils/constants';
 import { useHideSideNavBar } from '../../main/hooks/useHideSideNavBar';
 import { updateDetector } from '../../../redux/reducers/ad';
 import {
@@ -64,7 +64,7 @@ import {
 } from '../../../pages/utils/helpers';
 import {
   getDataSourceManagementPlugin,
-  getDataSourcePlugin,
+  getDataSourceEnabled,
   getNotifications,
   getSavedObjectsClient,
 } from '../../../services';
@@ -89,7 +89,7 @@ export function ConfigureModel(props: ConfigureModelProps) {
   const dispatch = useDispatch();
   const location = useLocation();
   const MDSQueryParams = getDataSourceFromURL(location);
-  const dataSourceEnabled = getDataSourcePlugin()?.dataSourceEnabled || false;
+  const dataSourceEnabled = getDataSourceEnabled().enabled;
   const dataSourceId = MDSQueryParams.dataSourceId;
 
   useHideSideNavBar(true, false);
@@ -122,30 +122,55 @@ export function ConfigureModel(props: ConfigureModelProps) {
   }, [detector]);
 
   useEffect(() => {
-    if (props.isEdit) {
-      core.chrome.setBreadcrumbs([
-        BREADCRUMBS.ANOMALY_DETECTOR,
-        BREADCRUMBS.DETECTORS,
-        {
-          text: detector && detector.name ? detector.name : '',
-          href: constructHrefWithDataSourceId(`#/detectors/${detectorId}`, dataSourceId, false)
-        },
-        BREADCRUMBS.EDIT_MODEL_CONFIGURATION,
-      ]);
+    if (dataSourceEnabled) {
+      if (props.isEdit) {
+        core.chrome.setBreadcrumbs([
+          MDS_BREADCRUMBS.ANOMALY_DETECTOR(dataSourceId),
+          MDS_BREADCRUMBS.DETECTORS(dataSourceId),
+          {
+            text: detector && detector.name ? detector.name : '',
+            href: constructHrefWithDataSourceId(`#/detectors/${detectorId}`, dataSourceId, false)
+          },
+          MDS_BREADCRUMBS.EDIT_MODEL_CONFIGURATION,
+        ]);
+      } else {
+        core.chrome.setBreadcrumbs([
+          MDS_BREADCRUMBS.ANOMALY_DETECTOR(dataSourceId),
+          MDS_BREADCRUMBS.DETECTORS(dataSourceId),
+          MDS_BREADCRUMBS.CREATE_DETECTOR,
+        ]);
+      }
     } else {
-      core.chrome.setBreadcrumbs([
-        BREADCRUMBS.ANOMALY_DETECTOR,
-        BREADCRUMBS.DETECTORS,
-        BREADCRUMBS.CREATE_DETECTOR,
-      ]);
+      if (props.isEdit) {
+        core.chrome.setBreadcrumbs([
+          BREADCRUMBS.ANOMALY_DETECTOR,
+          BREADCRUMBS.DETECTORS,
+          {
+            text: detector && detector.name ? detector.name : '',
+            href: `#/detectors/${detectorId}`,
+          },
+          BREADCRUMBS.EDIT_MODEL_CONFIGURATION,
+        ]);
+      } else {
+        core.chrome.setBreadcrumbs([
+          BREADCRUMBS.ANOMALY_DETECTOR,
+          BREADCRUMBS.DETECTORS,
+          BREADCRUMBS.CREATE_DETECTOR,
+        ]);
+      }
     }
   }, [detector]);
 
   useEffect(() => {
     if (hasError) {
-      props.history.push(
-        constructHrefWithDataSourceId('/detectors', dataSourceId, false)
-      );
+      if(dataSourceEnabled) {
+        props.history.push(
+          constructHrefWithDataSourceId('/detectors', dataSourceId, false)
+        );
+      }
+      else {
+        props.history.push('/detectors');
+      }
     }
   }, [hasError]);
 

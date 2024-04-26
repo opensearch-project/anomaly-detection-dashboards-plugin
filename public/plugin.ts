@@ -37,7 +37,7 @@ import {
   setQueryService,
   setSavedObjectsClient,
   setDataSourceManagementPlugin,
-  setDataSourcePlugin,
+  setDataSourceEnabled,
 } from './services';
 import { AnomalyDetectionOpenSearchDashboardsPluginStart } from 'public';
 import {
@@ -100,7 +100,9 @@ export class AnomalyDetectionOpenSearchDashboardsPlugin
 
     setDataSourceManagementPlugin(plugins.dataSourceManagement);
 
-    setDataSourcePlugin(plugins.dataSource);
+    const enabled = !!plugins.dataSource;
+
+    setDataSourceEnabled({ enabled });
 
     // Create context menu actions
     const actions = getActions();

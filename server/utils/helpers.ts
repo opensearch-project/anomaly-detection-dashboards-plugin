@@ -93,7 +93,7 @@ export function getClientBasedOnDataSource(
   dataSourceEnabled: boolean,
   request: OpenSearchDashboardsRequest,
   dataSourceId: string,
-  client: ILegacyClusterClient | undefined
+  client: ILegacyClusterClient
 ): (
   endpoint: string,
   clientParams?: Record<string, any>,
@@ -103,9 +103,6 @@ export function getClientBasedOnDataSource(
     // client for remote cluster
     return context.dataSource.opensearch.legacy.getClient(dataSourceId).callAPI;
   } else {
-    if (client === undefined) {
-      throw new Error('Client cannot be undefined.');
-    }
     // fall back to default local cluster
     return client.asScoped(request).callAsCurrentUser;
   }

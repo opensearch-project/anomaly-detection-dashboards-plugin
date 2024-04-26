@@ -24,6 +24,14 @@ import { httpClientMock, coreServicesMock } from '../../../../../test/mocks';
 import { CoreServicesContext } from '../../../../components/CoreServices/CoreServices';
 import { INITIAL_DETECTOR_JOB_VALUES } from '../../utils/constants';
 
+jest.mock('../../../../services', () => ({
+  ...jest.requireActual('../../../../services'),
+
+  getDataSourceEnabled: () => ({
+    enabled: false  
+  })
+}));
+
 const renderWithRouter = (isEdit: boolean = false) => ({
   ...render(
     <Provider store={configureStore(httpClientMock)}>

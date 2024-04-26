@@ -28,6 +28,7 @@ import {
   BREADCRUMBS,
   PLUGIN_NAME,
   BASE_DOCS_LINK,
+  MDS_BREADCRUMBS,
 } from '../../../utils/constants';
 import { SAMPLE_TYPE } from '../../../../server/utils/constants';
 import { GET_SAMPLE_INDICES_QUERY } from '../../utils/constants';
@@ -58,7 +59,7 @@ import { CreateWorkflowStepSeparator } from '../components/CreateWorkflowStepSep
 import { DataSourceSelectableConfig } from '../../../../../../src/plugins/data_source_management/public';
 import {
   getDataSourceManagementPlugin,
-  getDataSourcePlugin,
+  getDataSourceEnabled,
   getNotifications,
   getSavedObjectsClient,
 } from '../../../../public/services';
@@ -86,7 +87,7 @@ export function AnomalyDetectionOverview(props: AnomalyDetectionOverviewProps) {
   const allSampleDetectors = Object.values(
     useSelector((state: AppState) => state.ad.detectorList)
   );
-  const dataSourceEnabled = getDataSourcePlugin()?.dataSourceEnabled || false;
+  const dataSourceEnabled = getDataSourceEnabled().enabled;
   const [isLoadingHttpData, setIsLoadingHttpData] = useState<boolean>(false);
   const [isLoadingEcommerceData, setIsLoadingEcommerceData] =
     useState<boolean>(false);
@@ -109,7 +110,11 @@ export function AnomalyDetectionOverview(props: AnomalyDetectionOverviewProps) {
 
   // Set breadcrumbs on page initialization
   useEffect(() => {
-    core.chrome.setBreadcrumbs([BREADCRUMBS.ANOMALY_DETECTOR]);
+    if (dataSourceEnabled) {
+      core.chrome.setBreadcrumbs([MDS_BREADCRUMBS.ANOMALY_DETECTOR(MDSOverviewState.selectedDataSourceId)]);
+    } else {
+      core.chrome.setBreadcrumbs([BREADCRUMBS.ANOMALY_DETECTOR]);
+    }
   }, []);
 
   // Getting all initial sample detectors & indices
@@ -219,7 +224,7 @@ export function AnomalyDetectionOverview(props: AnomalyDetectionOverviewProps) {
   const handleDataSourceChange = ([event]) => {
     const dataSourceId = event?.id;
 
-    if (!dataSourceId) {
+    if (dataSourceEnabled && dataSourceId === undefined) {
       getNotifications().toasts.addDanger(
         prettifyErrorMessage('Unable to set data source.')
       );
