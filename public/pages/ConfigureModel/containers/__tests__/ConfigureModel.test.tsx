@@ -28,9 +28,9 @@ import { INITIAL_MODEL_CONFIGURATION_VALUES } from '../../utils/constants';
 jest.mock('../../../../services', () => ({
   ...jest.requireActual('../../../../services'),
 
-  getDataSourcePlugin: () => {
-    return false;
-  }
+  getDataSourceEnabled: () => ({
+    enabled: false  
+  })
 }));
 
 const renderWithRouter = (isEdit: boolean = false) => ({

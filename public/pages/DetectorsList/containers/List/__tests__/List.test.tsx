@@ -34,9 +34,9 @@ import { CoreServicesContext } from '../../../../../components/CoreServices/Core
 jest.mock('../../../../../services', () => ({
   ...jest.requireActual('../../../../../services'),
 
-  getDataSourcePlugin: () => {
-    return false;
-  }
+  getDataSourceEnabled: () => ({
+    enabled: false  
+  })
 }));
 
 const renderWithRouter = (

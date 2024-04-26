@@ -30,9 +30,9 @@ import {
 jest.mock('../../../../services', () => ({
   ...jest.requireActual('../../../../services'),
 
-  getDataSourcePlugin: () => {
-    return false;
-  }
+  getDataSourceEnabled: () => ({
+    enabled: false  
+  })
 }));
 
 const renderWithRouterEmpty = (isEdit: boolean = false) => ({
@@ -67,6 +67,7 @@ const renderWithRouterFull = (isEdit: boolean = false) => ({
             render={(props: RouteComponentProps) => (
               <CoreServicesContext.Provider value={coreServicesMock}>
                 <DefineDetector
+                  setActionMenu={jest.fn()}
                   isEdit={isEdit}
                   initialValues={testDetectorDefinitionValues}
                   {...props}

@@ -39,7 +39,7 @@ import { useFetchDetectorInfo } from '../../CreateDetectorSteps/hooks/useFetchDe
 import { CoreStart, MountPoint } from '../../../../../../src/core/public';
 import { APIAction } from '../../../redux/middleware/types';
 import { CoreServicesContext } from '../../../components/CoreServices/CoreServices';
-import { BREADCRUMBS, DATA_SOURCE_ID } from '../../../utils/constants';
+import { BREADCRUMBS, MDS_BREADCRUMBS } from '../../../utils/constants';
 import { getErrorMessage, validateDetectorName } from '../../../utils/utils';
 import { NameAndDescription } from '../components/NameAndDescription';
 import { DataSource } from '../components/Datasource/DataSource';
@@ -58,7 +58,7 @@ import { DETECTOR_STATE } from '../../../../server/utils/constants';
 import { ModelConfigurationFormikValues } from 'public/pages/ConfigureModel/models/interfaces';
 import {
   getDataSourceManagementPlugin,
-  getDataSourcePlugin,
+  getDataSourceEnabled,
   getNotifications,
   getSavedObjectsClient,
 } from '../../../services';
@@ -87,7 +87,7 @@ export const DefineDetector = (props: DefineDetectorProps) => {
   const location = useLocation();
   const MDSQueryParams = getDataSourceFromURL(location);
   const dataSourceId = MDSQueryParams.dataSourceId;
-  const dataSourceEnabled = getDataSourcePlugin()?.dataSourceEnabled || false;
+  const dataSourceEnabled = getDataSourceEnabled().enabled;
 
   const core = React.useContext(CoreServicesContext) as CoreStart;
   const dispatch = useDispatch<Dispatch<APIAction>>();
@@ -126,22 +126,41 @@ export const DefineDetector = (props: DefineDetectorProps) => {
 
   // Set breadcrumbs based on create / update
   useEffect(() => {
-    const createOrEditBreadcrumb = props.isEdit
-      ? BREADCRUMBS.EDIT_DETECTOR
-      : BREADCRUMBS.CREATE_DETECTOR;
-    let breadCrumbs = [
-      BREADCRUMBS.ANOMALY_DETECTOR,
-      BREADCRUMBS.DETECTORS,
-      createOrEditBreadcrumb,
-    ];
-    if (detector && detector.name) {
-      breadCrumbs.splice(2, 0, {
-        text: detector.name,
-        //@ts-ignore
-        href: `#/detectors/${detectorId}`,
-      });
+    if (dataSourceEnabled) {
+      const createOrEditBreadcrumb = props.isEdit
+        ? MDS_BREADCRUMBS.EDIT_DETECTOR
+        : MDS_BREADCRUMBS.CREATE_DETECTOR;
+      let breadCrumbs = [
+        MDS_BREADCRUMBS.ANOMALY_DETECTOR(dataSourceId),
+        MDS_BREADCRUMBS.DETECTORS(dataSourceId),
+        createOrEditBreadcrumb,
+      ];
+      if (detector && detector.name) {
+        breadCrumbs.splice(2, 0, {
+          text: detector.name,
+          //@ts-ignore
+          href: `#/detectors/${detectorId}/?dataSourceId=${dataSourceId}`,
+        });
+      }
+      core.chrome.setBreadcrumbs(breadCrumbs);
+    } else {
+      const createOrEditBreadcrumb = props.isEdit
+        ? BREADCRUMBS.EDIT_DETECTOR
+        : BREADCRUMBS.CREATE_DETECTOR;
+      let breadCrumbs = [
+        BREADCRUMBS.ANOMALY_DETECTOR,
+        BREADCRUMBS.DETECTORS,
+        createOrEditBreadcrumb,
+      ];
+      if (detector && detector.name) {
+        breadCrumbs.splice(2, 0, {
+          text: detector.name,
+          //@ts-ignore
+          href: `#/detectors/${detectorId}`,
+        });
+      }
+      core.chrome.setBreadcrumbs(breadCrumbs);
     }
-    core.chrome.setBreadcrumbs(breadCrumbs);
   });
 
   // If no detector found with ID, redirect it to list
@@ -258,7 +277,7 @@ export const DefineDetector = (props: DefineDetectorProps) => {
 
   const handleDataSourceChange = ([event]) => {
     const dataSourceId = event?.id;
-    if (!dataSourceId) {
+    if (dataSourceEnabled && dataSourceId === undefined) {
       getNotifications().toasts.addDanger(
         prettifyErrorMessage('Unable to set data source.')
       );

@@ -24,7 +24,7 @@ exports[`<AnomalyDetectionOverview /> spec No sample detectors created renders c
         <a
           class="euiButton euiButton--primary euiButton--fill"
           data-test-subj="add_detector"
-          href="anomaly-detection-dashboards#/create-detector-steps"
+          href="anomaly-detection-dashboards#/create-ad/"
           rel="noreferrer"
         >
           <span
@@ -757,7 +757,6 @@ exports[`<AnomalyDetectionOverview /> spec No sample detectors created renders c
       </div>
     </div>
   </div>
-   
 </div>
 `;
 
@@ -785,7 +784,7 @@ exports[`<AnomalyDetectionOverview /> spec Some detectors created renders compon
         <a
           class="euiButton euiButton--primary euiButton--fill"
           data-test-subj="add_detector"
-          href="anomaly-detection-dashboards#/create-detector-steps"
+          href="anomaly-detection-dashboards#/create-ad/"
           rel="noreferrer"
         >
           <span
@@ -1513,7 +1512,6 @@ exports[`<AnomalyDetectionOverview /> spec Some detectors created renders compon
       </div>
     </div>
   </div>
-   
 </div>
 `;
 
@@ -1541,7 +1539,7 @@ exports[`<AnomalyDetectionOverview /> spec Some detectors created renders compon
         <a
           class="euiButton euiButton--primary euiButton--fill"
           data-test-subj="add_detector"
-          href="anomaly-detection-dashboards#/create-detector-steps"
+          href="anomaly-detection-dashboards#/create-ad/"
           rel="noreferrer"
         >
           <span
@@ -2055,7 +2053,7 @@ exports[`<AnomalyDetectionOverview /> spec Some detectors created renders compon
                           <a
                             class="euiLink euiLink--primary"
                             data-test-subj="viewSampleDetectorLink"
-                            href="anomaly-detection-dashboards#/detectors/sample-detector-id"
+                            href="anomaly-detection-dashboards#/detectors/sample-detector-id/results?dataSourceId="
                             rel="noreferrer"
                           >
                             View detector and sample data
@@ -2290,6 +2288,5 @@ exports[`<AnomalyDetectionOverview /> spec Some detectors created renders compon
       </div>
     </div>
   </div>
-   
 </div>
 `;
