@@ -13,6 +13,7 @@ import {
   getFeatureMissingDataAnnotations,
   getFeatureDataPointsForDetector,
   parsePureAnomalies,
+  buildParamsForGetAnomalyResultsWithDateRange,
 } from '../anomalyResultUtils';
 import { getRandomDetector } from '../../../redux/reducers/__tests__/utils';
 import {
@@ -22,11 +23,16 @@ import {
   AnomalyData,
 } from '../../../models/interfaces';
 import { ANOMALY_RESULT_SUMMARY, PARSED_ANOMALIES } from './constants';
+import { MAX_ANOMALIES } from '../../../utils/constants';
+import { SORT_DIRECTION, AD_DOC_FIELDS } from '../../../../server/utils/constants';
 
 describe('anomalyResultUtils', () => {
   let randomDetector_20_min: Detector;
   let randomDetector_20_sec: Detector;
   let feature_id = 'deny_max';
+  const startTime = 1609459200000; // January 1, 2021
+  const endTime = 1609545600000;   // January 2, 2021
+
   beforeAll(() => {
     randomDetector_20_min = {
       ...getRandomDetector(true),
@@ -569,6 +575,57 @@ describe('anomalyResultUtils', () => {
         )
       ).toEqual([]);
     });
+    test('should correctly build parameters with default options', () => {
+      const expected = {
+          from: 0,
+          size: MAX_ANOMALIES,
+          sortDirection: SORT_DIRECTION.DESC,
+          sortField: AD_DOC_FIELDS.DATA_END_TIME,
+          startTime: startTime,
+          endTime: endTime,
+          fieldName: AD_DOC_FIELDS.DATA_END_TIME,
+          anomalyThreshold: -1,
+          entityList: undefined,  // Default as an empty array stringified
+      };
+
+      const result = buildParamsForGetAnomalyResultsWithDateRange(startTime, endTime);
+      expect(result).toEqual(expected);
+  });
+
+  test('should correctly handle `anomalyOnly` and non-empty `entityList`', () => {
+      const entities = [{ id: '1', name: 'Entity1' }, { id: '2', name: 'Entity2' }];
+      const expected = {
+          from: 0,
+          size: MAX_ANOMALIES,
+          sortDirection: SORT_DIRECTION.DESC,
+          sortField: AD_DOC_FIELDS.DATA_END_TIME,
+          startTime: startTime,
+          endTime: endTime,
+          fieldName: AD_DOC_FIELDS.DATA_END_TIME,
+          anomalyThreshold: 0, // because anomalyOnly is true
+          entityList: JSON.stringify(entities),
+      };
+
+      const result = buildParamsForGetAnomalyResultsWithDateRange(startTime, endTime, true, entities);
+      expect(result).toEqual(expected);
+  });
+
+  test('should handle undefined `entityList` as an empty array JSON string', () => {
+      const expected = {
+          from: 0,
+          size: MAX_ANOMALIES,
+          sortDirection: SORT_DIRECTION.DESC,
+          sortField: AD_DOC_FIELDS.DATA_END_TIME,
+          startTime: startTime,
+          endTime: endTime,
+          fieldName: AD_DOC_FIELDS.DATA_END_TIME,
+          anomalyThreshold: -1, // default as anomalyOnly is false
+          entityList: undefined,  // Default for undefined entityList
+      };
+
+      const result = buildParamsForGetAnomalyResultsWithDateRange(startTime, endTime, false, undefined);
+      expect(result).toEqual(expected);
+  });
   });
 
   describe('parsePureAnomalies()', () => {

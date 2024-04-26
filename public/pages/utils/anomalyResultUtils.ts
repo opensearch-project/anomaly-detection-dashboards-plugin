@@ -118,6 +118,38 @@ export const getLiveAnomalyResults = (
   );
 };
 
+/**
+ * Builds search query parameters for retrieving anomaly results within a specified date range.
+ *
+ * This function constructs a parameter object for querying an anomaly detection system, filtering results
+ * by a given start and end time. It supports filtering anomalies based on a threshold and can limit results to
+ * specific entities if provided.
+ *
+ * In the context of anomaly results, the startTime and endTime parameters are used to compare against the data_end_time.
+ * Using data_end_time instead of data_start_time is crucial because, within HC heatmap cells, the startTime and
+ * endTime are derived from each cell's start and end times, which are determined based on the plotTime—coinciding
+ * with the data_end_time. This alignment ensures that the temporal data within each heatmap cell accurately
+ * reflects the intervals intended for analysis.
+ *
+ * @param startTime - The epoch time (in milliseconds) marking the start of the date range for the query.
+ * @param endTime - The epoch time (in milliseconds) marking the end of the date range for the query.
+ * @param anomalyOnly - Optional. If true, the query will return only results where anomalies are detected
+ *                      (anomaly threshold is set to 0). If false or omitted, it will include all results
+ *                      (anomaly threshold is set to -1). Default is `false`.
+ * @param entityList - Optional. An array of entities to filter the results. If omitted, results are not filtered
+ *                     by entities. Default is `undefined`.
+ *
+ * @returns An object containing the necessary parameters for the anomaly results search query. This object includes:
+ *          - `from`: The starting index for fetching results (always set to 0).
+ *          - `size`: The maximum number of anomalies to return (`MAX_ANOMALIES`).
+ *          - `sortDirection`: The sorting order of results, set to descending (`SORT_DIRECTION.DESC`).
+ *          - `sortField`: The field used to sort the data, set to data end time (`AD_DOC_FIELDS.DATA_END_TIME`).
+ *          - `startTime`: Passed start time for the search range.
+ *          - `endTime`: Passed end time for the search range.
+ *          - `fieldName`: Field used to query the data, set to data end time (`AD_DOC_FIELDS.DATA_END_TIME`).
+ *          - `anomalyThreshold`: The minimum score threshold for anomalies, dependent on `anomalyOnly` parameter.
+ *          - `entityList`: A JSON string representing the list of entities to filter the results by.
+ */
 export const buildParamsForGetAnomalyResultsWithDateRange = (
   startTime: number,
   endTime: number,
@@ -128,10 +160,10 @@ export const buildParamsForGetAnomalyResultsWithDateRange = (
     from: 0,
     size: MAX_ANOMALIES,
     sortDirection: SORT_DIRECTION.DESC,
-    sortField: AD_DOC_FIELDS.DATA_START_TIME,
+    sortField: AD_DOC_FIELDS.DATA_END_TIME,
     startTime: startTime,
     endTime: endTime,
-    fieldName: AD_DOC_FIELDS.DATA_START_TIME,
+    fieldName: AD_DOC_FIELDS.DATA_END_TIME,
     anomalyThreshold: anomalyOnly ? 0 : -1,
     entityList: JSON.stringify(entityList),
   };

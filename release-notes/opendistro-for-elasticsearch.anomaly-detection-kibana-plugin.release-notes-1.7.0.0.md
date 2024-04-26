@@ -61,7 +61,7 @@ You can use the plugin with the same version of the [Open Distro for Elasticsear
 - Tune AD result charts [PR #102](https://github.com/opendistro-for-elasticsearch/anomaly-detection-kibana-plugin/pull/102)
 - Use annotation for live chart [PR #119](https://github.com/opendistro-for-elasticsearch/anomaly-detection-kibana-plugin/pull/119)
 - Set fixed height for anomalies live chart [PR #123](https://github.com/opendistro-for-elasticsearch/anomaly-detection-kibana-plugin/pull/123)
-- Use scientific notation when number less than 0.01 on live chart [PR #124](https://github.com/opendistro-for-elasticsearchanomaly-detection-kibana-plugin/pull/124)
+- Use scientific notation when number less than 0.01 on live chart [PR #124](https://github.com/opendistro-for-elasticsearch/anomaly-detection-kibana-plugin/pull/124)
 - Use bucket aggregation for anomaly distribution [PR #126](https://github.com/opendistro-for-elasticsearch/anomaly-detection-kibana-plugin/pull/126)
 
 ## Bug Fixes
