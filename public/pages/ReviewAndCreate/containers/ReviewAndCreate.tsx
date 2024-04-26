@@ -34,7 +34,7 @@ import React, { Fragment, ReactElement, useEffect, useState } from 'react';
 import { RouteComponentProps, useLocation } from 'react-router';
 import { useDispatch, useSelector } from 'react-redux';
 import { AppState } from '../../../redux/reducers';
-import { BREADCRUMBS, MAX_DETECTORS } from '../../../utils/constants';
+import { BREADCRUMBS, MAX_DETECTORS, MDS_BREADCRUMBS } from '../../../utils/constants';
 import { useHideSideNavBar } from '../../main/hooks/useHideSideNavBar';
 import { CoreStart, MountPoint } from '../../../../../../src/core/public';
 import { CoreServicesContext } from '../../../components/CoreServices/CoreServices';
@@ -59,7 +59,7 @@ import {
 } from '../../../pages/utils/helpers';
 import {
   getDataSourceManagementPlugin,
-  getDataSourcePlugin,
+  getDataSourceEnabled,
   getNotifications,
   getSavedObjectsClient,
 } from '../../../services';
@@ -77,7 +77,7 @@ export function ReviewAndCreate(props: ReviewAndCreateProps) {
   const location = useLocation();
   const MDSQueryParams = getDataSourceFromURL(location);
   const dataSourceId = MDSQueryParams.dataSourceId;
-  const dataSourceEnabled = getDataSourcePlugin()?.dataSourceEnabled || false;
+  const dataSourceEnabled = getDataSourceEnabled().enabled;
   useHideSideNavBar(true, false);
 
   // This variable indicates if validate API declared detector settings as valid for AD creation
@@ -177,11 +177,19 @@ export function ReviewAndCreate(props: ReviewAndCreateProps) {
   }, []);
 
   useEffect(() => {
-    core.chrome.setBreadcrumbs([
-      BREADCRUMBS.ANOMALY_DETECTOR,
-      BREADCRUMBS.DETECTORS,
-      BREADCRUMBS.CREATE_DETECTOR,
-    ]);
+    if (dataSourceEnabled) {
+      core.chrome.setBreadcrumbs([
+        MDS_BREADCRUMBS.ANOMALY_DETECTOR(dataSourceId),
+        MDS_BREADCRUMBS.DETECTORS(dataSourceId),
+        MDS_BREADCRUMBS.CREATE_DETECTOR,
+      ]);
+    } else {
+      core.chrome.setBreadcrumbs([
+        BREADCRUMBS.ANOMALY_DETECTOR,
+        BREADCRUMBS.DETECTORS,
+        BREADCRUMBS.CREATE_DETECTOR,
+      ]);
+    }
   }, []);
 
   const handleSubmit = async (

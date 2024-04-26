@@ -39,7 +39,7 @@ import {
 } from '../../../pages/utils/helpers';
 import {
   getDataSourceManagementPlugin,
-  getDataSourcePlugin,
+  getDataSourceEnabled,
   getNotifications,
   getSavedObjectsClient,
 } from '../../../services';
@@ -56,7 +56,7 @@ export function DetectorJobs(props: DetectorJobsProps) {
   const core = React.useContext(CoreServicesContext) as CoreStart;
   const location = useLocation();
   const MDSQueryParams = getDataSourceFromURL(location);
-  const dataSourceEnabled = getDataSourcePlugin()?.dataSourceEnabled || false;
+  const dataSourceEnabled = getDataSourceEnabled().enabled;
   const dataSourceId = MDSQueryParams.dataSourceId;
   useHideSideNavBar(true, false);
 
@@ -73,11 +73,19 @@ export function DetectorJobs(props: DetectorJobsProps) {
   }, []);
 
   useEffect(() => {
-    core.chrome.setBreadcrumbs([
-      BREADCRUMBS.ANOMALY_DETECTOR,
-      BREADCRUMBS.DETECTORS,
-      BREADCRUMBS.CREATE_DETECTOR,
-    ]);
+    if (dataSourceEnabled) {
+      core.chrome.setBreadcrumbs([
+        BREADCRUMBS.ANOMALY_DETECTOR,
+        BREADCRUMBS.DETECTORS,
+        BREADCRUMBS.CREATE_DETECTOR,
+      ]);
+    } else {
+      core.chrome.setBreadcrumbs([
+        BREADCRUMBS.ANOMALY_DETECTOR,
+        BREADCRUMBS.DETECTORS,
+        BREADCRUMBS.CREATE_DETECTOR,
+      ]);
+    }
   }, []);
 
   const handleFormValidation = async (

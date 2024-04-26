@@ -22,6 +22,18 @@ import {
 } from '../../../../pages/utils/__tests__/constants';
 import { INITIAL_ANOMALY_SUMMARY } from '../../utils/constants';
 import { getRandomDetector } from '../../../../redux/reducers/__tests__/utils';
+import { createMemoryHistory } from 'history';
+import { Router } from 'react-router-dom';
+
+jest.mock('../../../../services', () => ({
+  ...jest.requireActual('../../../../services'),
+
+  getDataSourceEnabled: () => ({
+    enabled: false  
+  })
+}));
+
+const history = createMemoryHistory(); 
 
 const renderAnomalyOccurenceChart = (
   isNotSample: boolean,
@@ -30,27 +42,41 @@ const renderAnomalyOccurenceChart = (
   ...render(
     <Provider store={mockedStore()}>
       <CoreServicesContext.Provider value={coreServicesMock}>
-        <AnomalyDetailsChart
-          onDateRangeChange={jest.fn()}
-          onZoomRangeChange={jest.fn()}
-          bucketizedAnomalies={false}
-          anomalySummary={INITIAL_ANOMALY_SUMMARY}
-          anomalies={FAKE_ANOMALY_DATA}
-          detector={getRandomDetector()}
-          dateRange={FAKE_DATE_RANGE}
-          isLoading={false}
-          showAlerts={isNotSample}
-          isNotSample={isNotSample}
-          isHCDetector={isHCDetector}
-          anomalyGradeSeriesName={'testAnomalyGradeSeriesName'}
-          confidenceSeriesName={'testConfidenceSeriesName'}
-        />
+        <Router history={history}>
+          <AnomalyDetailsChart
+            onDateRangeChange={jest.fn()}
+            onZoomRangeChange={jest.fn()}
+            bucketizedAnomalies={false}
+            anomalySummary={INITIAL_ANOMALY_SUMMARY}
+            anomalies={FAKE_ANOMALY_DATA}
+            detector={getRandomDetector()}
+            dateRange={FAKE_DATE_RANGE}
+            isLoading={false}
+            showAlerts={isNotSample}
+            isNotSample={isNotSample}
+            isHCDetector={isHCDetector}
+            anomalyGradeSeriesName={'testAnomalyGradeSeriesName'}
+            confidenceSeriesName={'testConfidenceSeriesName'}
+          />
+        </Router>
       </CoreServicesContext.Provider>
     </Provider>
   ),
 });
 
 describe('<AnomalyDetailsChart /> spec', () => {
+  beforeAll(() => {
+    Object.defineProperty(window, 'location', {
+      value: {
+        href: 'http://test.com',
+        pathname: '/',
+        search: '',
+        hash: '',
+      },
+      writable: true
+    });
+  });
+  
   test('renders the component in case of Sample Anomaly', () => {
     console.error = jest.fn();
     const { getByText } = renderAnomalyOccurenceChart(false, false);

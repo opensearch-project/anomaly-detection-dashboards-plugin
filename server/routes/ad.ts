@@ -74,7 +74,7 @@ export function registerADRoutes(apiRouter: Router, adService: AdService) {
   apiRouter.post('/detectors/_search', adService.searchDetector);
 
   // post search anomaly results
-  apiRouter.post('/detectors/results/_search/', adService.searchResults);
+  apiRouter.post('/detectors/results/_search', adService.searchResults);
   apiRouter.post(
     '/detectors/results/_search/{dataSourceId}',
     adService.searchResults

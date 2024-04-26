@@ -26,6 +26,15 @@ export const BREADCRUMBS = Object.freeze({
   EDIT_MODEL_CONFIGURATION: { text: 'Edit model configuration' },
 });
 
+export const MDS_BREADCRUMBS = Object.freeze({
+  ANOMALY_DETECTOR: (dataSourceId?: string) => ({ text: 'Anomaly detection', href: `#/?dataSourceId=${dataSourceId}` }),
+  DETECTORS: (dataSourceId?: string) => ({ text: 'Detectors', href: `#/detectors?dataSourceId=${dataSourceId}` }),
+  CREATE_DETECTOR: { text: 'Create detector' },
+  EDIT_DETECTOR: { text: 'Edit detector' },
+  DASHBOARD: (dataSourceId?: string) => ({ text: 'Dashboard', href: `#/dashboard?dataSourceId=${dataSourceId}` }),
+  EDIT_MODEL_CONFIGURATION: { text: 'Edit model configuration' },
+});
+
 export const APP_PATH = {
   DASHBOARD: '/dashboard',
   LIST_DETECTORS: '/detectors',
