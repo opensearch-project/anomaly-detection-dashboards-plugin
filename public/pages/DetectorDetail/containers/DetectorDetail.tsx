@@ -48,7 +48,7 @@ import {
 import { getIndices } from '../../../redux/reducers/opensearch';
 import { getErrorMessage, Listener } from '../../../utils/utils';
 import { darkModeEnabled } from '../../../utils/opensearchDashboardsUtils';
-import { BREADCRUMBS, DATA_SOURCE_ID } from '../../../utils/constants';
+import { BREADCRUMBS, MDS_BREADCRUMBS } from '../../../utils/constants';
 import { DetectorControls } from '../components/DetectorControls';
 import { ConfirmModal } from '../components/ConfirmModal/ConfirmModal';
 import { useFetchMonitorInfo } from '../hooks/useFetchMonitorInfo';
@@ -67,7 +67,7 @@ import { containsIndex } from '../utils/helpers';
 import { DataSourceViewConfig } from '../../../../../../src/plugins/data_source_management/public';
 import {
   getDataSourceManagementPlugin,
-  getDataSourcePlugin,
+  getDataSourceEnabled,
   getNotifications,
   getSavedObjectsClient,
 } from '../../../services';
@@ -118,7 +118,7 @@ export const DetectorDetail = (props: DetectorDetailProps) => {
   const core = React.useContext(CoreServicesContext) as CoreStart;
   const dispatch = useDispatch();
   const detectorId = get(props, 'match.params.detectorId', '') as string;
-  const dataSourceEnabled = getDataSourcePlugin()?.dataSourceEnabled || false;
+  const dataSourceEnabled = getDataSourceEnabled().enabled;
   const location = useLocation();
   const MDSQueryParams = getDataSourceFromURL(location);
   const dataSourceId = MDSQueryParams.dataSourceId;
@@ -203,11 +203,19 @@ export const DetectorDetail = (props: DetectorDetailProps) => {
 
   useEffect(() => {
     if (detector) {
-      core.chrome.setBreadcrumbs([
-        BREADCRUMBS.ANOMALY_DETECTOR,
-        BREADCRUMBS.DETECTORS,
-        { text: detector ? detector.name : '' },
-      ]);
+      if(dataSourceEnabled) {
+        core.chrome.setBreadcrumbs([
+          MDS_BREADCRUMBS.ANOMALY_DETECTOR(dataSourceId),
+          MDS_BREADCRUMBS.DETECTORS(dataSourceId),
+          { text: detector ? detector.name : '' },
+        ]);
+      } else {
+        core.chrome.setBreadcrumbs([
+          BREADCRUMBS.ANOMALY_DETECTOR,
+          BREADCRUMBS.DETECTORS,
+          { text: detector ? detector.name : '' },
+        ]);
+      }
     }
   }, [detector]);
 

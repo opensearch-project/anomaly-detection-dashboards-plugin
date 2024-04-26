@@ -18,17 +18,23 @@ import {
   Redirect,
   Route,
   Switch,
+  RouteComponentProps,
 } from 'react-router-dom';
 import { httpClientMock, coreServicesMock } from '../../../../../test/mocks';
 import configureStore from '../../../../redux/configureStore';
-import {
-  Detectors,
-  initialDetectorsState,
-} from '../../../../redux/reducers/ad';
 import { sampleHttpResponses } from '../../../Overview/utils/constants';
 import { CoreServicesContext } from '../../../../components/CoreServices/CoreServices';
 
-const renderWithRouter = (isLoadingDetectors: boolean = false) => ({
+jest.mock('../../../../services', () => ({
+  ...jest.requireActual('../../../../services'),
+
+  getDataSourceEnabled: () => ({
+    enabled: false  
+  })
+}));
+
+
+const renderWithRouter = () => ({
   ...render(
     <Provider store={configureStore(httpClientMock)}>
       <Router>
@@ -36,11 +42,11 @@ const renderWithRouter = (isLoadingDetectors: boolean = false) => ({
           <Route
             exact
             path="/overview"
-            render={() => (
+            render={(props: RouteComponentProps) => (
               <CoreServicesContext.Provider value={coreServicesMock}>
                 <AnomalyDetectionOverview
-                  isLoadingDetectors={isLoadingDetectors}
-                />{' '}
+                  setActionMenu={jest.fn()}
+                  {...props}/>
               </CoreServicesContext.Provider>
             )}
           />
@@ -52,6 +58,17 @@ const renderWithRouter = (isLoadingDetectors: boolean = false) => ({
 });
 
 describe('<AnomalyDetectionOverview /> spec', () => {
+  beforeAll(() => {
+    Object.defineProperty(window, 'location', {
+      value: {
+        href: 'http://test.com',
+        pathname: '/',
+        search: '',
+        hash: '',
+      },
+      writable: true
+    });
+  });
   jest.clearAllMocks();
   describe('No sample detectors created', () => {
     test('renders component', async () => {

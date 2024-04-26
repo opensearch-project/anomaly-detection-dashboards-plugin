@@ -42,7 +42,7 @@ import {
   getIndices,
   getPrioritizedIndices,
 } from '../../../../redux/reducers/opensearch';
-import { APP_PATH, PLUGIN_NAME } from '../../../../utils/constants';
+import { APP_PATH, MDS_BREADCRUMBS, PLUGIN_NAME } from '../../../../utils/constants';
 import { DETECTOR_STATE } from '../../../../../server/utils/constants';
 import {
   constructHrefWithDataSourceId,
@@ -87,7 +87,7 @@ import { CoreServicesContext } from '../../../../components/CoreServices/CoreSer
 import { DataSourceSelectableConfig } from '../../../../../../../src/plugins/data_source_management/public';
 import {
   getDataSourceManagementPlugin,
-  getDataSourcePlugin,
+  getDataSourceEnabled,
   getNotifications,
   getSavedObjectsClient,
 } from '../../../../services';
@@ -138,7 +138,7 @@ export const DetectorList = (props: ListProps) => {
     (state: AppState) => state.ad.requesting
   );
 
-  const dataSourceEnabled = getDataSourcePlugin()?.dataSourceEnabled || false;
+  const dataSourceEnabled = getDataSourceEnabled().enabled;
 
   const [selectedDetectors, setSelectedDetectors] = useState(
     [] as DetectorListItem[]
@@ -213,10 +213,17 @@ export const DetectorList = (props: ListProps) => {
 
   // Set breadcrumbs on page initialization
   useEffect(() => {
-    core.chrome.setBreadcrumbs([
-      BREADCRUMBS.ANOMALY_DETECTOR,
-      BREADCRUMBS.DETECTORS,
-    ]);
+    if (dataSourceEnabled) {
+      core.chrome.setBreadcrumbs([
+        BREADCRUMBS.ANOMALY_DETECTOR,
+        BREADCRUMBS.DETECTORS,
+      ]);
+    } else {
+      core.chrome.setBreadcrumbs([
+        MDS_BREADCRUMBS.ANOMALY_DETECTOR(state.selectedDataSourceId),
+        MDS_BREADCRUMBS.DETECTORS(state.selectedDataSourceId),
+      ]);
+    }
   }, []);
 
   // Getting all initial indices
@@ -583,7 +590,8 @@ export const DetectorList = (props: ListProps) => {
 
   const handleDataSourceChange = ([event]) => {
     const dataSourceId = event?.id;
-    if (!dataSourceId) {
+
+    if (dataSourceEnabled && dataSourceId === undefined) {
       getNotifications().toasts.addDanger(
         prettifyErrorMessage('Unable to set data source.')
       );

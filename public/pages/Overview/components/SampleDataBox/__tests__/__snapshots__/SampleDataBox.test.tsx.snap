@@ -98,7 +98,7 @@ exports[`<SampleDataBox /> spec Data is loaded renders component 1`] = `
               <a
                 class="euiLink euiLink--primary"
                 data-test-subj="viewSampleDetectorLink"
-                href="anomaly-detection-dashboards#/detectors/sample-detector-id"
+                href="anomaly-detection-dashboards#/detectors/sample-detector-id/results?dataSourceId="
                 rel="noreferrer"
               >
                 View detector and sample data

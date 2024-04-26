@@ -44,7 +44,7 @@ import {
   getDataSourceFromURL,
   getVisibleOptions,
 } from '../../utils/helpers';
-import { BREADCRUMBS } from '../../../utils/constants';
+import { BREADCRUMBS, MDS_BREADCRUMBS } from '../../../utils/constants';
 import { DETECTOR_STATE } from '../../../../server/utils/constants';
 import {
   getDetectorStateOptions,
@@ -60,7 +60,7 @@ import { CoreStart, MountPoint } from '../../../../../../src/core/public';
 import { DataSourceSelectableConfig } from '../../../../../../src/plugins/data_source_management/public';
 import {
   getDataSourceManagementPlugin,
-  getDataSourcePlugin,
+  getDataSourceEnabled,
   getNotifications,
   getSavedObjectsClient,
 } from '../../../services';
@@ -79,7 +79,7 @@ export function DashboardOverview(props: OverviewProps) {
   const errorGettingDetectors = adState.errorMessage;
   const isLoadingDetectors = adState.requesting;
 
-  const dataSourceEnabled = getDataSourcePlugin()?.dataSourceEnabled || false;
+  const dataSourceEnabled = getDataSourceEnabled().enabled;
 
   const [currentDetectors, setCurrentDetectors] = useState(
     Object.values(allDetectorList)
@@ -141,7 +141,7 @@ export function DashboardOverview(props: OverviewProps) {
 
   const handleDataSourceChange = ([event]) => {
     const dataSourceId = event?.id;
-    if (!dataSourceId) {
+    if (dataSourceEnabled && dataSourceId === undefined) {
       getNotifications().toasts.addDanger(
         prettifyErrorMessage('Unable to set data source.')
       );
@@ -238,10 +238,17 @@ export function DashboardOverview(props: OverviewProps) {
   }, [errorGettingDetectors]);
 
   useEffect(() => {
-    core.chrome.setBreadcrumbs([
-      BREADCRUMBS.ANOMALY_DETECTOR,
-      BREADCRUMBS.DASHBOARD,
-    ]);
+    if (dataSourceEnabled) {
+      core.chrome.setBreadcrumbs([
+        MDS_BREADCRUMBS.ANOMALY_DETECTOR(MDSOverviewState.selectedDataSourceId),
+        MDS_BREADCRUMBS.DASHBOARD(MDSOverviewState.selectedDataSourceId),
+      ]);
+    } else {
+      core.chrome.setBreadcrumbs([
+        BREADCRUMBS.ANOMALY_DETECTOR,
+        BREADCRUMBS.DASHBOARD,
+      ]);
+    }
   });
 
   useEffect(() => {
