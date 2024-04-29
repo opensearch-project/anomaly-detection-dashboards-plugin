@@ -54,6 +54,7 @@ export enum DETECTORS_QUERY_PARAMS {
   SORT_FIELD = 'sortField',
   SORT_DIRECTION = 'sortDirection',
   NAME = 'name',
+  DATASOURCEID = 'dataSourceId',
 }
 
 export enum AD_DOC_FIELDS {

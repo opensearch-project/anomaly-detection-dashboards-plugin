@@ -30,7 +30,7 @@ describe('helpers spec', () => {
         indices: '',
         sortField: 'name',
         sortDirection: SORT_DIRECTION.ASC,
-        dataSourceId: '',
+        dataSourceId: undefined,
       });
     });
     test('should  default values if missing from queryParams', () => {
@@ -43,7 +43,7 @@ describe('helpers spec', () => {
         indices: '',
         sortField: 'name',
         sortDirection: SORT_DIRECTION.ASC,
-        dataSourceId:'',
+        dataSourceId: undefined,
       });
     });
     test('should return queryParams from location', () => {
@@ -59,7 +59,7 @@ describe('helpers spec', () => {
         indices: 'someIndex',
         sortField: 'name',
         sortDirection: SORT_DIRECTION.DESC,
-        dataSourceId:'',
+        dataSourceId: undefined,
       });
     });
   });

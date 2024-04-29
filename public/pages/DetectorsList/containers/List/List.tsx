@@ -84,7 +84,7 @@ import {
 } from '../../../../../server/utils/helpers';
 import { CoreStart, MountPoint } from '../../../../../../../src/core/public';
 import { CoreServicesContext } from '../../../../components/CoreServices/CoreServices';
-import { DataSourceSelectableConfig } from '../../../../../../../src/plugins/data_source_management/public';
+import { DataSourceOption, DataSourceSelectableConfig } from '../../../../../../../src/plugins/data_source_management/public';
 import {
   getDataSourceManagementPlugin,
   getDataSourceEnabled,
@@ -206,25 +206,25 @@ export const DetectorList = (props: ListProps) => {
     selectedIndices: queryParams.indices
       ? queryParams.indices.split(',')
       : ALL_INDICES,
-    selectedDataSourceId: queryParams.dataSourceId
-      ? queryParams.dataSourceId
-      : undefined,
+    selectedDataSourceId: queryParams.dataSourceId === undefined 
+      ? undefined 
+      : queryParams.dataSourceId,
   });
 
   // Set breadcrumbs on page initialization
   useEffect(() => {
     if (dataSourceEnabled) {
       core.chrome.setBreadcrumbs([
-        BREADCRUMBS.ANOMALY_DETECTOR,
-        BREADCRUMBS.DETECTORS,
-      ]);
-    } else {
-      core.chrome.setBreadcrumbs([
         MDS_BREADCRUMBS.ANOMALY_DETECTOR(state.selectedDataSourceId),
         MDS_BREADCRUMBS.DETECTORS(state.selectedDataSourceId),
       ]);
+    } else {
+      core.chrome.setBreadcrumbs([
+        BREADCRUMBS.ANOMALY_DETECTOR,
+        BREADCRUMBS.DETECTORS,
+      ]);
     }
-  }, []);
+  }, [state.selectedDataSourceId]);
 
   // Getting all initial indices
   const [indexQuery, setIndexQuery] = useState('');
@@ -238,12 +238,21 @@ export const DetectorList = (props: ListProps) => {
   // Refresh data if user change any parameters / filter / sort
   useEffect(() => {
     const { history, location } = props;
-    const updatedParams = {
-      ...state.queryParams,
-      indices: state.selectedIndices.join(','),
+    let updatedParams = {
       from: state.page * state.queryParams.size,
-      dataSourceId: state.selectedDataSourceId,
-    };
+      size: state.queryParams.size,
+      search: state.queryParams.search,
+      indices: state.selectedIndices.join(','),
+      sortDirection: state.queryParams.sortDirection,
+      sortField: state.queryParams.sortField,
+    } as GetDetectorsQueryParams; 
+
+    if (dataSourceEnabled) {
+      updatedParams = {
+        ...updatedParams,
+        dataSourceId: state.selectedDataSourceId,
+      }
+    }
 
     history.replace({
       ...location,
@@ -588,8 +597,8 @@ export const DetectorList = (props: ListProps) => {
     });
   };
 
-  const handleDataSourceChange = ([event]) => {
-    const dataSourceId = event?.id;
+  const handleDataSourceChange = (dataSources: DataSourceOption[]) => {
+    const dataSourceId = dataSources[0].id;
 
     if (dataSourceEnabled && dataSourceId === undefined) {
       getNotifications().toasts.addDanger(

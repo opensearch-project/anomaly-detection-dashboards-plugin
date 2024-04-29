@@ -70,6 +70,7 @@ import { MDSStates } from '../../../models/interfaces';
 
 interface AnomalyDetectionOverviewProps extends RouteComponentProps {
   setActionMenu: (menuMount: MountPoint | undefined) => void;
+  landingDataSourceId: string | undefined;
 }
 
 export function AnomalyDetectionOverview(props: AnomalyDetectionOverviewProps) {
@@ -103,9 +104,9 @@ export function AnomalyDetectionOverview(props: AnomalyDetectionOverviewProps) {
   const queryParams = getDataSourceFromURL(props.location);
   const [MDSOverviewState, setMDSOverviewState] = useState<MDSStates>({
     queryParams,
-    selectedDataSourceId: queryParams.dataSourceId
-      ? queryParams.dataSourceId
-      : undefined,
+    selectedDataSourceId: queryParams.dataSourceId === undefined 
+      ? undefined 
+      : queryParams.dataSourceId,
   });
 
   // Set breadcrumbs on page initialization
@@ -120,14 +121,16 @@ export function AnomalyDetectionOverview(props: AnomalyDetectionOverviewProps) {
   // Getting all initial sample detectors & indices
   useEffect(() => {
     const { history, location } = props;
-    const updatedParams = {
-      dataSourceId: MDSOverviewState.selectedDataSourceId,
-    };
-    history.replace({
-      ...location,
-      search: queryString.stringify(updatedParams),
-    });
+    if (dataSourceEnabled && props.landingDataSourceId !== undefined) {
+      const updatedParams = {
+        dataSourceId: MDSOverviewState.selectedDataSourceId,
+      };
 
+      history.replace({
+        ...location,
+        search: queryString.stringify(updatedParams),
+      });
+    } 
     fetchData();
   }, [MDSOverviewState]);
 
@@ -247,9 +250,10 @@ export function AnomalyDetectionOverview(props: AnomalyDetectionOverviewProps) {
           componentType={'DataSourceSelectable'}
           componentConfig={{
             fullWidth: false,
-            activeOption: MDSOverviewState.selectedDataSourceId !== undefined 
-              ? [{ id: MDSOverviewState.selectedDataSourceId }]
-              : undefined,
+            activeOption: props.landingDataSourceId === undefined 
+              || MDSOverviewState.selectedDataSourceId === undefined
+                ? undefined
+                : [{ id: MDSOverviewState.selectedDataSourceId }],
             savedObjects: getSavedObjectsClient(),
             notifications: getNotifications(),
             onSelectedDataSources: (dataSources) =>

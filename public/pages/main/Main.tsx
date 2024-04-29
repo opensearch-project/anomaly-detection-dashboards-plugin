@@ -48,8 +48,8 @@ export function Main(props: MainProps) {
   const adState = useSelector((state: AppState) => state.ad);
   const totalDetectors = adState.totalDetectors;
   const queryParams = getURLQueryParams(props.location);
-  const dataSourceId = queryParams.dataSourceId ? queryParams.dataSourceId : '';
-
+  const dataSourceId = queryParams.dataSourceId === undefined ? undefined : queryParams.dataSourceId;
+  
   const sideNav = [
     {
       name: Navigation.AnomalyDetection,
@@ -99,6 +99,7 @@ export function Main(props: MainProps) {
                   render={(props: RouteComponentProps) => (
                     <DashboardOverview
                       setActionMenu={setHeaderActionMenu}
+                      landingDataSourceId={dataSourceId}
                       {...props}
                     />
                   )}
@@ -155,6 +156,7 @@ export function Main(props: MainProps) {
                   render={(props: RouteComponentProps) => (
                     <AnomalyDetectionOverview
                       setActionMenu={setHeaderActionMenu}
+                      landingDataSourceId={dataSourceId}
                       {...props}
                     />
                   )}
@@ -165,11 +167,13 @@ export function Main(props: MainProps) {
                     totalDetectors > 0 ? (
                       <DashboardOverview
                         setActionMenu={setHeaderActionMenu}
+                        landingDataSourceId={dataSourceId}
                         {...props}
                       />
                     ) : (
                       <AnomalyDetectionOverview
                         setActionMenu={setHeaderActionMenu}
+                        landingDataSourceId={dataSourceId}
                         {...props}
                       />
                     )
