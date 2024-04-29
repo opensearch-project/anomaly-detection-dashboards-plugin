@@ -47,9 +47,11 @@ export const getURLQueryParams = (location: {
       typeof sortDirection !== 'string'
         ? DEFAULT_QUERY_PARAMS.sortDirection
         : (sortDirection as SORT_DIRECTION),
-    dataSourceId: typeof dataSourceId !== 'string' ? '' : dataSourceId,
+    dataSourceId: dataSourceId === undefined ? undefined : dataSourceId,
   };
 };
+
+
 
 // For realtime detectors: cannot have 'Finished' state
 export const getDetectorStateOptions = () => {

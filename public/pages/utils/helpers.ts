@@ -165,10 +165,13 @@ export const constructHrefWithDataSourceId = (
     url.set(DETECTORS_QUERY_PARAMS.SEARCH, DEFAULT_QUERY_PARAMS.search);
     url.set(DETECTORS_QUERY_PARAMS.INDICES, DEFAULT_QUERY_PARAMS.indices);
     url.set(DETECTORS_QUERY_PARAMS.SORT_FIELD, DEFAULT_QUERY_PARAMS.sortField);
-    url.set(DETECTORS_QUERY_PARAMS.SORT_DIRECTION, SORT_DIRECTION.ASC);
+    url.set(DETECTORS_QUERY_PARAMS.SORT_DIRECTION, SORT_DIRECTION.ASC)
+    if (dataSourceEnabled) {
+      url.set(DETECTORS_QUERY_PARAMS.DATASOURCEID, '');
+    }
   }
 
-  if (dataSourceEnabled && dataSourceId) {
+  if (dataSourceEnabled && dataSourceId !== undefined) {
     url.set('dataSourceId', dataSourceId);
   }
 
