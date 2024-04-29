@@ -17,24 +17,21 @@ import {
   EuiFlexItem,
   EuiFlexGroup,
   EuiLink,
-  EuiIcon,
   EuiButton,
   EuiLoadingSpinner,
   EuiFlexGrid,
 } from '@elastic/eui';
-import React, { Fragment, useEffect, useState } from 'react';
+import React, { Fragment, useEffect, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import {
   APP_PATH,
   BREADCRUMBS,
   PLUGIN_NAME,
   BASE_DOCS_LINK,
+  MDS_BREADCRUMBS,
 } from '../../../utils/constants';
 import { SAMPLE_TYPE } from '../../../../server/utils/constants';
-import {
-  GET_SAMPLE_DETECTORS_QUERY_PARAMS,
-  GET_SAMPLE_INDICES_QUERY,
-} from '../../utils/constants';
+import { GET_SAMPLE_INDICES_QUERY } from '../../utils/constants';
 import { AppState } from '../../../redux/reducers';
 import { getDetectorList } from '../../../redux/reducers/ad';
 import { createSampleData } from '../../../redux/reducers/sampleData';
@@ -54,27 +51,44 @@ import {
 import { SampleDataBox } from '../components/SampleDataBox/SampleDataBox';
 import { SampleDetailsFlyout } from '../components/SampleDetailsFlyout/SampleDetailsFlyout';
 import { prettifyErrorMessage } from '../../../../server/utils/helpers';
-import { CoreStart } from '../../../../../../src/core/public';
+import { CoreStart, MountPoint } from '../../../../../../src/core/public';
 import { CoreServicesContext } from '../../../components/CoreServices/CoreServices';
 import ContentPanel from '../../../components/ContentPanel/ContentPanel';
 import { CreateWorkflowStepDetails } from '../components/CreateWorkflowStepDetails';
 import { CreateWorkflowStepSeparator } from '../components/CreateWorkflowStepSeparator';
+import { DataSourceSelectableConfig } from '../../../../../../src/plugins/data_source_management/public';
+import {
+  getDataSourceManagementPlugin,
+  getDataSourceEnabled,
+  getNotifications,
+  getSavedObjectsClient,
+} from '../../../../public/services';
+import { RouteComponentProps } from 'react-router-dom';
+import queryString from 'querystring';
+import { getDataSourceFromURL, getSampleDetectorsQueryParamsWithDataSouceId } from '../../../../public/pages/utils/helpers';
+import { MDSStates } from '../../../models/interfaces';
 
-interface AnomalyDetectionOverviewProps {
-  isLoadingDetectors: boolean;
+interface AnomalyDetectionOverviewProps extends RouteComponentProps {
+  setActionMenu: (menuMount: MountPoint | undefined) => void;
+  landingDataSourceId: string | undefined;
 }
 
 export function AnomalyDetectionOverview(props: AnomalyDetectionOverviewProps) {
   const core = React.useContext(CoreServicesContext) as CoreStart;
+  const isLoadingSampleDetectors = useSelector(
+    (state: AppState) => state.ad.requesting
+  );
+  const isLoadingSampleIndices = useSelector(
+    (state: AppState) => state.opensearch.requesting
+  );
   const dispatch = useDispatch();
   const visibleSampleIndices = useSelector(
     (state: AppState) => state.opensearch.indices
   );
-
   const allSampleDetectors = Object.values(
     useSelector((state: AppState) => state.ad.detectorList)
   );
-
+  const dataSourceEnabled = getDataSourceEnabled().enabled;
   const [isLoadingHttpData, setIsLoadingHttpData] = useState<boolean>(false);
   const [isLoadingEcommerceData, setIsLoadingEcommerceData] =
     useState<boolean>(false);
@@ -87,30 +101,59 @@ export function AnomalyDetectionOverview(props: AnomalyDetectionOverviewProps) {
   const [showHostHealthDetailsFlyout, setShowHostHealthDetailsFlyout] =
     useState<boolean>(false);
 
-  const getAllSampleDetectors = async () => {
-    await dispatch(getDetectorList(GET_SAMPLE_DETECTORS_QUERY_PARAMS)).catch(
-      (error: any) => {
-        console.error('Error getting all detectors: ', error);
-      }
-    );
-  };
-
-  const getAllSampleIndices = async () => {
-    await dispatch(getIndices(GET_SAMPLE_INDICES_QUERY)).catch((error: any) => {
-      console.error('Error getting all indices: ', error);
-    });
-  };
+  const queryParams = getDataSourceFromURL(props.location);
+  const [MDSOverviewState, setMDSOverviewState] = useState<MDSStates>({
+    queryParams,
+    selectedDataSourceId: queryParams.dataSourceId === undefined 
+      ? undefined 
+      : queryParams.dataSourceId,
+  });
 
   // Set breadcrumbs on page initialization
   useEffect(() => {
-    core.chrome.setBreadcrumbs([BREADCRUMBS.ANOMALY_DETECTOR]);
+    if (dataSourceEnabled) {
+      core.chrome.setBreadcrumbs([MDS_BREADCRUMBS.ANOMALY_DETECTOR(MDSOverviewState.selectedDataSourceId)]);
+    } else {
+      core.chrome.setBreadcrumbs([BREADCRUMBS.ANOMALY_DETECTOR]);
+    }
   }, []);
 
   // Getting all initial sample detectors & indices
   useEffect(() => {
-    getAllSampleDetectors();
-    getAllSampleIndices();
-  }, []);
+    const { history, location } = props;
+    if (dataSourceEnabled && props.landingDataSourceId !== undefined) {
+      const updatedParams = {
+        dataSourceId: MDSOverviewState.selectedDataSourceId,
+      };
+
+      history.replace({
+        ...location,
+        search: queryString.stringify(updatedParams),
+      });
+    } 
+    fetchData();
+  }, [MDSOverviewState]);
+
+  // fetch smaple detectors and sample indices
+  const fetchData = async () => {
+    await dispatch(
+      getDetectorList(
+        getSampleDetectorsQueryParamsWithDataSouceId(
+          MDSOverviewState.selectedDataSourceId
+        )
+      )
+    ).catch((error: any) => {
+      console.error('Error getting sample detectors: ', error);
+    });
+    await dispatch(
+      getIndices(
+        GET_SAMPLE_INDICES_QUERY,
+        MDSOverviewState.selectedDataSourceId
+      )
+    ).catch((error: any) => {
+      console.error('Error getting sample indices: ', error);
+    });
+  };
 
   // Create and populate sample index, create and start sample detector
   const handleLoadData = async (
@@ -125,7 +168,9 @@ export function AnomalyDetectionOverview(props: AnomalyDetectionOverviewProps) {
 
     // Create the index (if it doesn't exist yet)
     if (!containsSampleIndex(visibleSampleIndices, sampleType)) {
-      await dispatch(createIndex(indexConfig)).catch((error: any) => {
+      await dispatch(
+        createIndex(indexConfig, MDSOverviewState.selectedDataSourceId)
+      ).catch((error: any) => {
         errorDuringAction = true;
         errorMessage =
           'Error creating sample index. ' + prettifyErrorMessage(error);
@@ -135,7 +180,9 @@ export function AnomalyDetectionOverview(props: AnomalyDetectionOverviewProps) {
 
     // Get the sample data from the server and bulk insert
     if (!errorDuringAction) {
-      await dispatch(createSampleData(sampleType)).catch((error: any) => {
+      await dispatch(
+        createSampleData(sampleType, MDSOverviewState.selectedDataSourceId)
+      ).catch((error: any) => {
         errorDuringAction = true;
         errorMessage = prettifyErrorMessage(error.message);
         console.error('Error bulk inserting data: ', errorMessage);
@@ -144,11 +191,15 @@ export function AnomalyDetectionOverview(props: AnomalyDetectionOverviewProps) {
 
     // Create the detector
     if (!errorDuringAction) {
-      await dispatch(createDetector(detectorConfig))
+      await dispatch(
+        createDetector(detectorConfig, MDSOverviewState.selectedDataSourceId)
+      )
         .then(function (response: any) {
           const detectorId = response.response.id;
           // Start the detector
-          dispatch(startDetector(detectorId)).catch((error: any) => {
+          dispatch(
+            startDetector(detectorId, MDSOverviewState.selectedDataSourceId)
+          ).catch((error: any) => {
             errorDuringAction = true;
             errorMessage = prettifyErrorMessage(error.message);
             console.error('Error starting sample detector: ', errorMessage);
@@ -160,9 +211,7 @@ export function AnomalyDetectionOverview(props: AnomalyDetectionOverviewProps) {
           console.error('Error creating sample detector: ', errorMessage);
         });
     }
-
-    getAllSampleDetectors();
-    getAllSampleIndices();
+    fetchData();
     setLoadingState(false);
     if (!errorDuringAction) {
       core.notifications.toasts.addSuccess(
@@ -175,13 +224,60 @@ export function AnomalyDetectionOverview(props: AnomalyDetectionOverviewProps) {
     }
   };
 
-  return props.isLoadingDetectors ? (
+  const handleDataSourceChange = ([event]) => {
+    const dataSourceId = event?.id;
+
+    if (dataSourceEnabled && dataSourceId === undefined) {
+      getNotifications().toasts.addDanger(
+        prettifyErrorMessage('Unable to set data source.')
+      );
+    } else {
+      setMDSOverviewState({
+        queryParams: dataSourceId,
+        selectedDataSourceId: dataSourceId,
+      });
+    }
+  };
+
+  let renderDataSourceComponent = null;
+  if (dataSourceEnabled) {
+    const DataSourceMenu =
+      getDataSourceManagementPlugin()?.ui.getDataSourceMenu<DataSourceSelectableConfig>();
+    renderDataSourceComponent = useMemo(() => {
+      return (
+        <DataSourceMenu
+          setMenuMountPoint={props.setActionMenu}
+          componentType={'DataSourceSelectable'}
+          componentConfig={{
+            fullWidth: false,
+            activeOption: props.landingDataSourceId === undefined 
+              || MDSOverviewState.selectedDataSourceId === undefined
+                ? undefined
+                : [{ id: MDSOverviewState.selectedDataSourceId }],
+            savedObjects: getSavedObjectsClient(),
+            notifications: getNotifications(),
+            onSelectedDataSources: (dataSources) =>
+              handleDataSourceChange(dataSources),
+          }}
+        />
+      );
+    }, [getSavedObjectsClient, getNotifications, props.setActionMenu]);
+  }
+
+  const createDetectorUrl =
+    `${PLUGIN_NAME}#` +
+    (dataSourceEnabled
+      ? `${APP_PATH.CREATE_DETECTOR}?dataSourceId=${MDSOverviewState.selectedDataSourceId}`
+      : `${APP_PATH.CREATE_DETECTOR}`);
+
+  return isLoadingSampleDetectors && isLoadingSampleIndices ? (
     <div>
       <EuiLoadingSpinner size="xl" />
     </div>
   ) : (
     <Fragment>
       <EuiPageHeader>
+        {dataSourceEnabled && renderDataSourceComponent}
         <EuiFlexGroup justifyContent="spaceBetween">
           <EuiFlexItem grow={false}>
             <EuiTitle size="l" data-test-subj="overviewTitle">
@@ -191,7 +287,7 @@ export function AnomalyDetectionOverview(props: AnomalyDetectionOverviewProps) {
           <EuiFlexItem grow={false}>
             <EuiButton
               fill
-              href={`${PLUGIN_NAME}#${APP_PATH.CREATE_DETECTOR_STEPS}`}
+              href={createDetectorUrl}
               data-test-subj="add_detector"
             >
               Create detector

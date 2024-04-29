@@ -94,25 +94,36 @@ const reducer = handleActions<Monitors>(
   initialDetectorsState
 );
 
-export const searchMonitors = (): APIAction => ({
-  type: SEARCH_MONITORS,
-  request: (client: HttpSetup) => client.post(`..${ALERTING_NODE_API._SEARCH}`),
-});
+export const searchMonitors = (dataSourceId: string = ''): APIAction => {
+  const baseUrl = `..${ALERTING_NODE_API._SEARCH}`;
+  const url = dataSourceId ? `${baseUrl}/${dataSourceId}` : baseUrl;
+
+  return {
+    type: SEARCH_MONITORS,
+    request: (client: HttpSetup) => client.post(url),
+  };
+};
 
 export const searchAlerts = (
   monitorId: string,
   startTime: number,
-  endTime: number
-): APIAction => ({
-  type: SEARCH_ALERTS,
-  request: (client: HttpSetup) =>
-    client.get(`..${ALERTING_NODE_API.ALERTS}`, {
-      query: {
-        monitorId: monitorId,
-        startTime: startTime,
-        endTime: endTime,
-      },
-    }),
-});
+  endTime: number,
+  dataSourceId: string = ''
+): APIAction => {
+  const baseUrl = `..${ALERTING_NODE_API.ALERTS}`;
+  const url = dataSourceId ? `${baseUrl}/${dataSourceId}` : baseUrl;
+
+  return {
+    type: SEARCH_ALERTS,
+    request: (client: HttpSetup) =>
+      client.get(url, {
+        query: {
+          monitorId: monitorId,
+          startTime: startTime,
+          endTime: endTime,
+        },
+      }),
+  };
+}
 
 export default reducer;

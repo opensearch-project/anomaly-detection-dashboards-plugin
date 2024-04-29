@@ -9,14 +9,15 @@
  * GitHub history for details.
  */
 
-import React, { Fragment, useState, useEffect } from 'react';
+import React, { Fragment, useState, useEffect, useMemo } from 'react';
 import { AnomaliesLiveChart } from '../Components/AnomaliesLiveChart';
 import { AnomaliesDistributionChart } from '../Components/AnomaliesDistribution';
+import queryString from 'querystring';
 
 import { useDispatch, useSelector } from 'react-redux';
 import { get, isEmpty, cloneDeep } from 'lodash';
 
-import { DetectorListItem } from '../../../models/interfaces';
+import { DetectorListItem, MDSStates } from '../../../models/interfaces';
 import { getIndices, getAliases } from '../../../redux/reducers/opensearch';
 import { getDetectorList } from '../../../redux/reducers/ad';
 import {
@@ -29,17 +30,25 @@ import {
 } from '@elastic/eui';
 import { AnomalousDetectorsList } from '../Components/AnomalousDetectorsList';
 import {
-  GET_ALL_DETECTORS_QUERY_PARAMS,
   ALL_DETECTORS_MESSAGE,
   ALL_DETECTOR_STATES_MESSAGE,
   ALL_INDICES_MESSAGE,
 } from '../utils/constants';
 import { AppState } from '../../../redux/reducers';
-import { CatIndex, IndexAlias } from '../../../../server/models/types';
-import { getVisibleOptions } from '../../utils/helpers';
-import { BREADCRUMBS } from '../../../utils/constants';
+import {
+  CatIndex,
+  IndexAlias,
+} from '../../../../server/models/types';
+import {
+  getAllDetectorsQueryParamsWithDataSourceId,
+  getDataSourceFromURL,
+  getVisibleOptions,
+} from '../../utils/helpers';
+import { BREADCRUMBS, MDS_BREADCRUMBS } from '../../../utils/constants';
 import { DETECTOR_STATE } from '../../../../server/utils/constants';
-import { getDetectorStateOptions } from '../../DetectorsList/utils/helpers';
+import {
+  getDetectorStateOptions,
+} from '../../DetectorsList/utils/helpers';
 import { DashboardHeader } from '../Components/utils/DashboardHeader';
 import { EmptyDashboard } from '../Components/EmptyDashboard/EmptyDashboard';
 import {
@@ -47,9 +56,22 @@ import {
   NO_PERMISSIONS_KEY_WORD,
 } from '../../../../server/utils/helpers';
 import { CoreServicesContext } from '../../../components/CoreServices/CoreServices';
-import { CoreStart } from '../../../../../../src/core/public';
+import { CoreStart, MountPoint } from '../../../../../../src/core/public';
+import { DataSourceSelectableConfig } from '../../../../../../src/plugins/data_source_management/public';
+import {
+  getDataSourceManagementPlugin,
+  getDataSourceEnabled,
+  getNotifications,
+  getSavedObjectsClient,
+} from '../../../services';
+import { RouteComponentProps } from 'react-router-dom';
 
-export function DashboardOverview() {
+interface OverviewProps extends RouteComponentProps {
+  setActionMenu: (menuMount: MountPoint | undefined) => void;
+  landingDataSourceId: string | undefined;
+}
+
+export function DashboardOverview(props: OverviewProps) {
   const core = React.useContext(CoreServicesContext) as CoreStart;
   const dispatch = useDispatch();
   const adState = useSelector((state: AppState) => state.ad);
@@ -58,6 +80,8 @@ export function DashboardOverview() {
   const errorGettingDetectors = adState.errorMessage;
   const isLoadingDetectors = adState.requesting;
 
+  const dataSourceEnabled = getDataSourceEnabled().enabled;
+
   const [currentDetectors, setCurrentDetectors] = useState(
     Object.values(allDetectorList)
   );
@@ -65,6 +89,14 @@ export function DashboardOverview() {
   const [selectedDetectorsName, setSelectedDetectorsName] = useState(
     [] as string[]
   );
+  const queryParams = getDataSourceFromURL(props.location);
+  const [MDSOverviewState, setMDSOverviewState] = useState<MDSStates>({
+    queryParams,
+    selectedDataSourceId: queryParams.dataSourceId === undefined 
+      ? undefined 
+      : queryParams.dataSourceId,
+  });
+  
   const getDetectorOptions = (detectorsIdMap: {
     [key: string]: DetectorListItem;
   }) => {
@@ -106,6 +138,20 @@ export function DashboardOverview() {
     );
     setSelectedDetectorStates(selectedStates);
     setAllDetectorStatesSelected(isEmpty(selectedStates));
+  };
+
+  const handleDataSourceChange = ([event]) => {
+    const dataSourceId = event?.id;
+    if (dataSourceEnabled && dataSourceId === undefined) {
+      getNotifications().toasts.addDanger(
+        prettifyErrorMessage('Unable to set data source.')
+      );
+    } else {
+      setMDSOverviewState({
+        queryParams: dataSourceId,
+        selectedDataSourceId: dataSourceId,
+      });
+    }
   };
 
   const opensearchState = useSelector((state: AppState) => state.opensearch);
@@ -157,14 +203,30 @@ export function DashboardOverview() {
   };
 
   const intializeDetectors = async () => {
-    dispatch(getDetectorList(GET_ALL_DETECTORS_QUERY_PARAMS));
-    dispatch(getIndices(''));
-    dispatch(getAliases(''));
+    dispatch(
+      getDetectorList(
+        getAllDetectorsQueryParamsWithDataSourceId(
+          MDSOverviewState.selectedDataSourceId
+        )
+      )
+    );
+    dispatch(getIndices('', MDSOverviewState.selectedDataSourceId));
+    dispatch(getAliases('', MDSOverviewState.selectedDataSourceId));
   };
 
   useEffect(() => {
+    const { history, location } = props;
+    if (dataSourceEnabled) {
+      const updatedParams = {
+        dataSourceId: MDSOverviewState.selectedDataSourceId,
+      };
+      history.replace({
+        ...location,
+        search: queryString.stringify(updatedParams),
+      });
+    }
     intializeDetectors();
-  }, []);
+  }, [MDSOverviewState]);
 
   useEffect(() => {
     if (errorGettingDetectors) {
@@ -179,10 +241,17 @@ export function DashboardOverview() {
   }, [errorGettingDetectors]);
 
   useEffect(() => {
-    core.chrome.setBreadcrumbs([
-      BREADCRUMBS.ANOMALY_DETECTOR,
-      BREADCRUMBS.DASHBOARD,
-    ]);
+    if (dataSourceEnabled) {
+      core.chrome.setBreadcrumbs([
+        MDS_BREADCRUMBS.ANOMALY_DETECTOR(MDSOverviewState.selectedDataSourceId),
+        MDS_BREADCRUMBS.DASHBOARD(MDSOverviewState.selectedDataSourceId),
+      ]);
+    } else {
+      core.chrome.setBreadcrumbs([
+        BREADCRUMBS.ANOMALY_DETECTOR,
+        BREADCRUMBS.DASHBOARD,
+      ]);
+    }
   });
 
   useEffect(() => {
@@ -197,9 +266,35 @@ export function DashboardOverview() {
     );
   }, [selectedDetectorsName, selectedIndices, selectedDetectorStates]);
 
+  let renderDataSourceComponent = null;
+  if (dataSourceEnabled) {
+    const DataSourceMenu =
+      getDataSourceManagementPlugin()?.ui.getDataSourceMenu<DataSourceSelectableConfig>();
+    renderDataSourceComponent = useMemo(() => {
+      return (
+        <DataSourceMenu
+          setMenuMountPoint={props.setActionMenu}
+          componentType={'DataSourceSelectable'}
+          componentConfig={{
+            fullWidth: false,
+            activeOption: props.landingDataSourceId === undefined 
+              || MDSOverviewState.selectedDataSourceId === undefined
+                ? undefined
+                : [{ id: MDSOverviewState.selectedDataSourceId }],
+            savedObjects: getSavedObjectsClient(),
+            notifications: getNotifications(),
+            onSelectedDataSources: (dataSources) =>
+              handleDataSourceChange(dataSources),
+          }}
+        />
+      );
+    }, [getSavedObjectsClient(), getNotifications(), props.setActionMenu]);
+  }
+
   return (
     <div style={{ height: '1200px' }}>
       <Fragment>
+        {dataSourceEnabled && renderDataSourceComponent}
         <DashboardHeader hasDetectors={totalRealtimeDetectors > 0} />
         {isLoadingDetectors ? (
           <div>

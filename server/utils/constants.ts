@@ -46,6 +46,17 @@ export enum SORT_DIRECTION {
   DESC = 'desc',
 }
 
+export enum DETECTORS_QUERY_PARAMS {
+  FROM = 'from',
+  SIZE = 'size',
+  SEARCH = 'search',
+  INDICES = 'indices',
+  SORT_FIELD = 'sortField',
+  SORT_DIRECTION = 'sortDirection',
+  NAME = 'name',
+  DATASOURCEID = 'dataSourceId',
+}
+
 export enum AD_DOC_FIELDS {
   DATA_START_TIME = 'data_start_time',
   DATA_END_TIME = 'data_end_time',

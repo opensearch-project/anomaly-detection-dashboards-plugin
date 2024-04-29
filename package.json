@@ -25,13 +25,13 @@
   "devDependencies": {
     "@testing-library/user-event": "^12.1.6",
     "@types/react-plotly.js": "^2.6.0",
-    "@types/redux-mock-store": "^1.0.1",
+    "@types/redux-mock-store": "^1.0.6",
     "babel-polyfill": "^6.26.0",
     "eslint-plugin-no-unsanitized": "^3.0.2",
     "eslint-plugin-prefer-object-spread": "^1.2.1",
     "lint-staged": "^9.2.0",
     "moment": "^2.24.0",
-    "redux-mock-store": "^1.5.3",
+    "redux-mock-store": "^1.5.4",
     "start-server-and-test": "^1.11.7"
   },
   "dependencies": {

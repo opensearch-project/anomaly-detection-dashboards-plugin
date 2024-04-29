@@ -94,70 +94,65 @@ const reducer = handleActions<Anomalies>(
 
 export const getDetectorResults = (
   id: string,
+  dataSourceId: string = '',
   queryParams: any,
   isHistorical: boolean,
   resultIndex: string,
   onlyQueryCustomResultIndex: boolean
-): APIAction =>
-  !resultIndex
-    ? {
-        type: DETECTOR_RESULTS,
-        request: (client: HttpSetup) =>
-          client.get(
-            `..${AD_NODE_API.DETECTOR}/${id}/results/${isHistorical}`,
-            {
-              query: queryParams,
-            }
-          ),
-      }
-    : {
-        type: DETECTOR_RESULTS,
-        request: (client: HttpSetup) =>
-          client.get(
-            `..${AD_NODE_API.DETECTOR}/${id}/results/${isHistorical}/${resultIndex}/${onlyQueryCustomResultIndex}`,
-            {
-              query: queryParams,
-            }
-          ),
-      };
+): APIAction => {
+  let url = `..${AD_NODE_API.DETECTOR}/${id}/results/${isHistorical}`;
+
+  if (resultIndex) {
+    url += `/${resultIndex}/${onlyQueryCustomResultIndex}`;
+  }
+
+  if (dataSourceId) {
+    url += `/${dataSourceId}`;
+  }
+
+  return {
+    type: DETECTOR_RESULTS,
+    request: (client: HttpSetup) => client.get(url, { query: queryParams }),
+  };
+};
 
 export const searchResults = (
   requestBody: any,
   resultIndex: string,
+  dataSourceId: string = '',
   onlyQueryCustomResultIndex: boolean
-): APIAction =>
-  !resultIndex
-    ? {
-        type: SEARCH_ANOMALY_RESULTS,
-        request: (client: HttpSetup) =>
-          client.post(`..${AD_NODE_API.DETECTOR}/results/_search`, {
-            body: JSON.stringify(requestBody),
-          }),
-      }
-    : {
-        type: SEARCH_ANOMALY_RESULTS,
-        request: (client: HttpSetup) =>
-          client.post(
-            `..${AD_NODE_API.DETECTOR}/results/_search/${resultIndex}/${onlyQueryCustomResultIndex}`,
-            {
-              body: JSON.stringify(requestBody),
-            }
-          ),
-      };
+): APIAction => {
+  let baseUrl = `..${AD_NODE_API.DETECTOR}/results/_search`;
+
+  if (resultIndex) {
+    baseUrl += `/${resultIndex}/${onlyQueryCustomResultIndex}`;
+  }
+
+  if (dataSourceId) {
+    baseUrl += `/${dataSourceId}`;
+  }
+
+  return {
+    type: SEARCH_ANOMALY_RESULTS,
+    request: (client: HttpSetup) =>
+      client.post(baseUrl, { body: JSON.stringify(requestBody) }),
+  };
+};
 
 export const getTopAnomalyResults = (
   detectorId: string,
+  dataSourceId: string = '',
   isHistorical: boolean,
   requestBody: any
-): APIAction => ({
-  type: GET_TOP_ANOMALY_RESULTS,
-  request: (client: HttpSetup) =>
-    client.post(
-      `..${AD_NODE_API.DETECTOR}/${detectorId}/_topAnomalies/${isHistorical}`,
-      {
-        body: JSON.stringify(requestBody),
-      }
-    ),
-});
+): APIAction => {
+  const baseUrl = `..${AD_NODE_API.DETECTOR}/${detectorId}/_topAnomalies/${isHistorical}`;
+  const url = dataSourceId ? `${baseUrl}/${dataSourceId}` : baseUrl;
+
+  return {
+    type: GET_TOP_ANOMALY_RESULTS,
+    request: (client: HttpSetup) =>
+      client.post(url, { body: JSON.stringify(requestBody) }),
+  };
+};
 
 export default reducer;

@@ -22,6 +22,8 @@ import {
   EuiHorizontalRule,
 } from '@elastic/eui';
 import { PLUGIN_NAME } from '../../../../utils/constants';
+import { useLocation } from 'react-router-dom';
+import { getDataSourceFromURL } from '../../../../pages/utils/helpers';
 
 interface SampleDataBoxProps {
   title: string;
@@ -37,6 +39,10 @@ interface SampleDataBoxProps {
 }
 
 export const SampleDataBox = (props: SampleDataBoxProps) => {
+  const location = useLocation();
+  const MDSQueryParams = getDataSourceFromURL(location);
+  const dataSourceId = MDSQueryParams.dataSourceId;
+
   return (
     <div style={{ height: 'auto' }}>
       <EuiCard
@@ -114,7 +120,7 @@ export const SampleDataBox = (props: SampleDataBoxProps) => {
               {props.isDataLoaded ? (
                 <EuiLink
                   data-test-subj="viewSampleDetectorLink"
-                  href={`${PLUGIN_NAME}#/detectors/${props.detectorId}`}
+                  href={`${PLUGIN_NAME}#/detectors/${props.detectorId}/results?dataSourceId=${dataSourceId}`}
                 >
                   View detector and sample data
                 </EuiLink>

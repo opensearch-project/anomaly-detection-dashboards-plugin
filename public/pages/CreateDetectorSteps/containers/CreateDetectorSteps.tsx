@@ -25,8 +25,11 @@ import { DetectorDefinitionFormikValues } from '../../DefineDetector/models/inte
 import { ModelConfigurationFormikValues } from '../../ConfigureModel/models/interfaces';
 import { DetectorJobsFormikValues } from '../../DetectorJobs/models/interfaces';
 import { CreateDetectorFormikValues } from '../models/interfaces';
+import { MountPoint } from '../../../../../../src/core/public';
 
-interface CreateDetectorStepsProps extends RouteComponentProps {}
+interface CreateDetectorStepsProps extends RouteComponentProps {
+  setActionMenu: (menuMount: MountPoint | undefined) => void;
+}
 
 export const CreateDetectorSteps = (props: CreateDetectorStepsProps) => {
   useHideSideNavBar(true, false);
