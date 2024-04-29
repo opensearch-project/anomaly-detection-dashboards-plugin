@@ -10,7 +10,7 @@
  */
 
 import { EuiComboBox, EuiCallOut, EuiSpacer } from '@elastic/eui';
-import { Field, FieldProps, FormikProps } from 'formik';
+import { Field, FieldProps, FormikProps, useFormikContext } from 'formik';
 import { debounce, get } from 'lodash';
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
@@ -58,7 +58,13 @@ export function DataSource(props: DataSourceProps) {
   );
   const [queryText, setQueryText] = useState('');
   const opensearchState = useSelector((state: AppState) => state.opensearch);
+  const { setFieldValue } = useFormikContext();
+
   useEffect(() => {
+    setFieldValue('index', []);
+    setFieldValue('timeField', undefined);
+    setFieldValue('filters', []);
+
     const getInitialIndices = async () => {
       await dispatch(getIndices(queryText, dataSourceId));
     };
@@ -102,7 +108,7 @@ export function DataSource(props: DataSourceProps) {
   const visibleAliases = get(opensearchState, 'aliases', []) as IndexAlias[];
 
   return (
-    <ContentPanel title="Data Source" titleSize="s">
+    <ContentPanel title="Select Data" titleSize="s">
       {props.isEdit && isDifferentIndex() ? (
         <div>
           <EuiCallOut
