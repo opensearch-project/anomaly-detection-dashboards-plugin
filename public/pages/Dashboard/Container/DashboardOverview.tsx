@@ -68,6 +68,7 @@ import { RouteComponentProps } from 'react-router-dom';
 
 interface OverviewProps extends RouteComponentProps {
   setActionMenu: (menuMount: MountPoint | undefined) => void;
+  landingDataSourceId: string | undefined;
 }
 
 export function DashboardOverview(props: OverviewProps) {
@@ -91,11 +92,11 @@ export function DashboardOverview(props: OverviewProps) {
   const queryParams = getDataSourceFromURL(props.location);
   const [MDSOverviewState, setMDSOverviewState] = useState<MDSStates>({
     queryParams,
-    selectedDataSourceId: queryParams.dataSourceId
-      ? queryParams.dataSourceId
-      : undefined,
+    selectedDataSourceId: queryParams.dataSourceId === undefined 
+      ? undefined 
+      : queryParams.dataSourceId,
   });
-
+  
   const getDetectorOptions = (detectorsIdMap: {
     [key: string]: DetectorListItem;
   }) => {
@@ -215,13 +216,15 @@ export function DashboardOverview(props: OverviewProps) {
 
   useEffect(() => {
     const { history, location } = props;
-    const updatedParams = {
-      dataSourceId: MDSOverviewState.selectedDataSourceId,
-    };
-    history.replace({
-      ...location,
-      search: queryString.stringify(updatedParams),
-    });
+    if (dataSourceEnabled) {
+      const updatedParams = {
+        dataSourceId: MDSOverviewState.selectedDataSourceId,
+      };
+      history.replace({
+        ...location,
+        search: queryString.stringify(updatedParams),
+      });
+    }
     intializeDetectors();
   }, [MDSOverviewState]);
 
@@ -274,9 +277,10 @@ export function DashboardOverview(props: OverviewProps) {
           componentType={'DataSourceSelectable'}
           componentConfig={{
             fullWidth: false,
-            activeOption: MDSOverviewState.selectedDataSourceId !== undefined 
-              ? [{ id: MDSOverviewState.selectedDataSourceId }]
-              : undefined,
+            activeOption: props.landingDataSourceId === undefined 
+              || MDSOverviewState.selectedDataSourceId === undefined
+                ? undefined
+                : [{ id: MDSOverviewState.selectedDataSourceId }],
             savedObjects: getSavedObjectsClient(),
             notifications: getNotifications(),
             onSelectedDataSources: (dataSources) =>
