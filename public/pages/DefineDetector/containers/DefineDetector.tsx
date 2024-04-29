@@ -165,14 +165,16 @@ export const DefineDetector = (props: DefineDetectorProps) => {
 
   // If no detector found with ID, redirect it to list
   useEffect(() => {
-    const { history, location } = props;
-    const updatedParams = {
-      dataSourceId: MDSCreateState.selectedDataSourceId,
-    };
-    history.replace({
-      ...location,
-      search: queryString.stringify(updatedParams),
-    });
+    if (dataSourceEnabled) {
+      const { history, location } = props;
+      const updatedParams = {
+        dataSourceId: MDSCreateState.selectedDataSourceId,
+      };
+      history.replace({
+        ...location,
+        search: queryString.stringify(updatedParams),
+      });
+    }
     if (props.isEdit && hasError) {
       core.notifications.toasts.addDanger(
         'Unable to find the detector for editing'
