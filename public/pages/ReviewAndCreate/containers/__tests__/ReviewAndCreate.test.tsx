@@ -27,6 +27,14 @@ import { INITIAL_DETECTOR_JOB_VALUES } from '../../../DetectorJobs/utils/constan
 import { INITIAL_MODEL_CONFIGURATION_VALUES } from '../../../ConfigureModel/utils/constants';
 import { INITIAL_DETECTOR_DEFINITION_VALUES } from '../../../DefineDetector/utils/constants';
 
+jest.mock('../../../../services', () => ({
+  ...jest.requireActual('../../../../services'),
+
+  getDataSourceEnabled: () => ({
+    enabled: false  
+  })
+}));
+
 const renderWithRouter = (isEdit: boolean = false) => ({
   ...render(
     <Provider store={configureStore(httpClientMock)}>

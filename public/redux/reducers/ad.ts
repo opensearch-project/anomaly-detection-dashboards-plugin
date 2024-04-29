@@ -369,39 +369,69 @@ const reducer = handleActions<Detectors>(
   initialDetectorsState
 );
 
-export const createDetector = (requestBody: Detector): APIAction => ({
-  type: CREATE_DETECTOR,
-  request: (client: HttpSetup) =>
-    client.post(`..${AD_NODE_API.DETECTOR}`, {
-      body: JSON.stringify(requestBody),
-    }),
-});
+export const createDetector = (
+  requestBody: Detector,
+  dataSourceId: string = ''
+): APIAction => {
+  const url = dataSourceId
+    ? `..${AD_NODE_API.DETECTOR}/${dataSourceId}`
+    : `..${AD_NODE_API.DETECTOR}`;
+
+  return {
+    type: CREATE_DETECTOR,
+    request: (client: HttpSetup) =>
+      client.post(url, {
+        body: JSON.stringify(requestBody),
+      }),
+  };
+};
 
 export const validateDetector = (
   requestBody: Detector,
-  validationType: string
-): APIAction => ({
-  type: VALIDATE_DETECTOR,
-  request: (client: HttpSetup) =>
-    client.post(`..${AD_NODE_API.DETECTOR}/_validate/${validationType}`, {
-      body: JSON.stringify(requestBody),
-    }),
-});
+  validationType: string,
+  dataSourceId: string = ''
+): APIAction => {
+  const baseUrl = `..${AD_NODE_API.DETECTOR}/_validate/${validationType}`;
+  const url = dataSourceId ? `${baseUrl}/${dataSourceId}` : baseUrl;
 
-export const getDetector = (detectorId: string): APIAction => ({
-  type: GET_DETECTOR,
-  request: (client: HttpSetup) =>
-    client.get(`..${AD_NODE_API.DETECTOR}/${detectorId}`),
-  detectorId,
-});
+  return {
+    type: VALIDATE_DETECTOR,
+    request: (client: HttpSetup) =>
+      client.post(url, {
+        body: JSON.stringify(requestBody),
+      }),
+  };
+}
+
+export const getDetector = (
+  detectorId: string,
+  dataSourceId: string = ''
+): APIAction => {
+  const baseUrl = `..${AD_NODE_API.DETECTOR}/${detectorId}`;
+  const url = dataSourceId ? `${baseUrl}/${dataSourceId}` : baseUrl;
+
+  return {
+    type: GET_DETECTOR,
+    request: (client: HttpSetup) => client.get(url),
+    detectorId,
+  };
+};
 
 export const getDetectorList = (
   queryParams: GetDetectorsQueryParams
-): APIAction => ({
-  type: GET_DETECTOR_LIST,
-  request: (client: HttpSetup) =>
-    client.get(`..${AD_NODE_API.DETECTOR}`, { query: queryParams }),
-});
+): APIAction => {
+  const dataSourceId = queryParams.dataSourceId || '';
+
+  const baseUrl = `..${AD_NODE_API.DETECTOR}/_list`;
+  const url = dataSourceId
+    ? `${baseUrl}/${dataSourceId}`
+    : baseUrl;
+
+  return {
+    type: GET_DETECTOR_LIST,
+    request: (client: HttpSetup) => client.get(url, { query: queryParams }),
+  };
+};
 
 export const searchDetector = (requestBody: any): APIAction => ({
   type: SEARCH_DETECTOR,
@@ -413,61 +443,103 @@ export const searchDetector = (requestBody: any): APIAction => ({
 
 export const updateDetector = (
   detectorId: string,
-  requestBody: Detector
-): APIAction => ({
-  type: UPDATE_DETECTOR,
-  request: (client: HttpSetup) =>
-    client.put(`..${AD_NODE_API.DETECTOR}/${detectorId}`, {
-      body: JSON.stringify(requestBody),
-    }),
-  detectorId,
-});
+  requestBody: Detector,
+  dataSourceId: string = ''
+): APIAction => {
+  const baseUrl = `..${AD_NODE_API.DETECTOR}/${detectorId}`;
+  const url = dataSourceId ? `${baseUrl}/${dataSourceId}` : baseUrl;
 
-export const deleteDetector = (detectorId: string): APIAction => ({
-  type: DELETE_DETECTOR,
-  request: (client: HttpSetup) =>
-    client.delete(`..${AD_NODE_API.DETECTOR}/${detectorId}`),
-  detectorId,
-});
+  return {
+    type: UPDATE_DETECTOR,
+    request: (client: HttpSetup) =>
+      client.put(url, {
+        body: JSON.stringify(requestBody),
+      }),
+    detectorId,
+  };
+}
 
-export const startDetector = (detectorId: string): APIAction => ({
-  type: START_DETECTOR,
-  request: (client: HttpSetup) =>
-    client.post(`..${AD_NODE_API.DETECTOR}/${detectorId}/start`),
-  detectorId,
-});
+export const deleteDetector = (
+  detectorId: string,
+  dataSourceId: string = ''
+): APIAction => {
+  const baseUrl = `..${AD_NODE_API.DETECTOR}/${detectorId}`;
+  const url = dataSourceId ? `${baseUrl}/${dataSourceId}` : baseUrl;
+
+  return {
+    type: DELETE_DETECTOR,
+    request: (client: HttpSetup) => client.delete(url),
+    detectorId,
+  };
+};
+
+export const startDetector = (
+  detectorId: string,
+  dataSourceId: string = ''
+): APIAction => {
+  const baseUrl = `..${AD_NODE_API.DETECTOR}/${detectorId}/start`;
+  const url = dataSourceId ? `${baseUrl}/${dataSourceId}` : baseUrl;
+
+  return {
+    type: START_DETECTOR,
+    request: (client: HttpSetup) => client.post(url),
+    detectorId,
+  };
+};
 
 export const startHistoricalDetector = (
   detectorId: string,
+  dataSourceId: string = '',
   startTime: number,
   endTime: number
-): APIAction => ({
-  type: START_HISTORICAL_DETECTOR,
-  request: (client: HttpSetup) =>
-    client.post(`..${AD_NODE_API.DETECTOR}/${detectorId}/start`, {
-      body: JSON.stringify({
-        startTime: startTime,
-        endTime: endTime,
+): APIAction => {
+  const baseUrl = `..${AD_NODE_API.DETECTOR}/${detectorId}`;
+  const url = dataSourceId
+    ? `${baseUrl}/${dataSourceId}/start`
+    : `${baseUrl}/start`;
+
+  return {
+    type: START_HISTORICAL_DETECTOR,
+    request: (client: HttpSetup) =>
+      client.post(url, {
+        body: JSON.stringify({
+          startTime: startTime,
+          endTime: endTime,
+        }),
       }),
-    }),
-  detectorId,
-  startTime,
-  endTime,
-});
+    detectorId,
+    startTime,
+    endTime,
+  };
+};
 
-export const stopDetector = (detectorId: string): APIAction => ({
-  type: STOP_DETECTOR,
-  request: (client: HttpSetup) =>
-    client.post(`..${AD_NODE_API.DETECTOR}/${detectorId}/stop/${false}`),
-  detectorId,
-});
+export const stopDetector = (
+  detectorId: string,
+  dataSourceId: string = ''
+): APIAction => {
+  const baseUrl = `..${AD_NODE_API.DETECTOR}/${detectorId}/stop/${false}`;
+  const url = dataSourceId ? `${baseUrl}/${dataSourceId}` : baseUrl;
 
-export const stopHistoricalDetector = (detectorId: string): APIAction => ({
-  type: STOP_HISTORICAL_DETECTOR,
-  request: (client: HttpSetup) =>
-    client.post(`..${AD_NODE_API.DETECTOR}/${detectorId}/stop/${true}`),
-  detectorId,
-});
+  return {
+    type: STOP_DETECTOR,
+    request: (client: HttpSetup) => client.post(url),
+    detectorId,
+  };
+};
+
+export const stopHistoricalDetector = (
+  detectorId: string,
+  dataSourceId: string = ''
+): APIAction => {
+  const baseUrl = `..${AD_NODE_API.DETECTOR}/${detectorId}/stop/${true}`;
+  const url = dataSourceId ? `${baseUrl}/${dataSourceId}` : baseUrl;
+
+  return {
+    type: STOP_HISTORICAL_DETECTOR,
+    request: (client: HttpSetup) => client.post(url),
+    detectorId,
+  };
+};
 
 export const getDetectorProfile = (detectorId: string): APIAction => ({
   type: GET_DETECTOR_PROFILE,
@@ -476,16 +548,28 @@ export const getDetectorProfile = (detectorId: string): APIAction => ({
   detectorId,
 });
 
-export const matchDetector = (detectorName: string): APIAction => ({
-  type: MATCH_DETECTOR,
-  request: (client: HttpSetup) =>
-    client.get(`..${AD_NODE_API.DETECTOR}/${detectorName}/_match`),
-});
+export const matchDetector = (
+  detectorName: string, 
+  dataSourceId: string = ''
+): APIAction => {
+    const baseUrl = `..${AD_NODE_API.DETECTOR}/${detectorName}/_match`;
+    const url = dataSourceId ? `${baseUrl}/${dataSourceId}` : baseUrl;
 
-export const getDetectorCount = (): APIAction => ({
-  type: GET_DETECTOR_COUNT,
-  request: (client: HttpSetup) =>
-    client.get(`..${AD_NODE_API.DETECTOR}/_count`, {}),
-});
+  return {
+    type: MATCH_DETECTOR,
+    request: (client: HttpSetup) => client.get(url),
+  };
+};
+
+export const getDetectorCount = (dataSourceId: string = ''): APIAction => {
+  const url = dataSourceId ? 
+    `..${AD_NODE_API.DETECTOR}/_count/${dataSourceId}` : 
+    `..${AD_NODE_API.DETECTOR}/_count`;
+
+  return {
+    type: GET_DETECTOR_COUNT,
+    request: (client: HttpSetup) => client.get(url),
+  };
+};
 
 export default reducer;

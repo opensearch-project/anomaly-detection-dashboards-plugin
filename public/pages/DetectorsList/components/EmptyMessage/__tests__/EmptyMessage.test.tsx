@@ -11,16 +11,41 @@
 
 import React from 'react';
 import { render, fireEvent } from '@testing-library/react';
+import { Router } from 'react-router-dom';
+import { createMemoryHistory } from 'history';
 import { EmptyDetectorMessage } from '../EmptyMessage';
 
+jest.mock('../../../../../services', () => ({
+  ...jest.requireActual('../../../../../services'),
+
+  getDataSourceEnabled: () => ({
+    enabled: false  
+  })
+}));
+
 describe('<EmptyDetectorMessage /> spec', () => {
+  beforeAll(() => {
+    Object.defineProperty(window, 'location', {
+      value: {
+        href: 'http://test.com',
+        pathname: '/',
+        search: '',
+        hash: '',
+      },
+      writable: true
+    });
+  });
   describe('Empty results', () => {
     test('renders component with empty message', () => {
+      const history = createMemoryHistory(); 
+
       const { container, getByText } = render(
-        <EmptyDetectorMessage
-          isFilterApplied={false}
-          onResetFilters={jest.fn()}
-        />
+        <Router history={history}>
+          <EmptyDetectorMessage
+            isFilterApplied={false}
+            onResetFilters={jest.fn()}
+          />
+        </Router>
       );
       expect(container.firstChild).toMatchSnapshot();
       getByText('Create detector');

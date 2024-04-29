@@ -28,11 +28,13 @@ import {
 import { get, isEmpty } from 'lodash';
 import React, { useEffect, Fragment, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { RouteComponentProps } from 'react-router';
+import { RouteComponentProps, useLocation } from 'react-router';
 import { AppState } from '../../../redux/reducers';
 import {
   BREADCRUMBS,
+  DATA_SOURCE_ID,
   FEATURE_DATA_POINTS_WINDOW,
+  MDS_BREADCRUMBS,
   MISSING_FEATURE_DATA_SEVERITY,
 } from '../../../utils/constants';
 import { DETECTOR_STATE } from '../../../../server/utils/constants';
@@ -67,6 +69,8 @@ import { SampleIndexDetailsCallout } from '../../Overview/components/SampleIndex
 import { CoreStart } from '../../../../../../src/core/public';
 import { CoreServicesContext } from '../../../components/CoreServices/CoreServices';
 import { DEFAULT_SHINGLE_SIZE } from '../../../utils/constants';
+import { getDataSourceFromURL } from '../../../pages/utils/helpers';
+import { getDataSourceEnabled } from '../../../services';
 
 interface AnomalyResultsProps extends RouteComponentProps {
   detectorId: string;
@@ -83,18 +87,30 @@ export function AnomalyResults(props: AnomalyResultsProps) {
   const detector = useSelector(
     (state: AppState) => state.ad.detectors[detectorId]
   );
+  const location = useLocation();
+  const MDSQueryParams = getDataSourceFromURL(location);
+  const dataSourceEnabled = getDataSourceEnabled().enabled;
+  const dataSourceId = MDSQueryParams.dataSourceId;
 
   useEffect(() => {
-    core.chrome.setBreadcrumbs([
-      BREADCRUMBS.ANOMALY_DETECTOR,
-      BREADCRUMBS.DETECTORS,
-      { text: detector ? detector.name : '' },
-    ]);
-    dispatch(getDetector(detectorId));
+    if (dataSourceEnabled) {
+      core.chrome.setBreadcrumbs([
+        MDS_BREADCRUMBS.ANOMALY_DETECTOR(dataSourceId),
+        MDS_BREADCRUMBS.DETECTORS(dataSourceId),
+        { text: detector ? detector.name : '' },
+      ]);
+    } else {
+      core.chrome.setBreadcrumbs([
+        BREADCRUMBS.ANOMALY_DETECTOR,
+        BREADCRUMBS.DETECTORS,
+        { text: detector ? detector.name : '' },
+      ]);
+    }
+    dispatch(getDetector(detectorId, dataSourceId));
   }, []);
 
   const fetchDetector = async () => {
-    dispatch(getDetector(detectorId));
+    dispatch(getDetector(detectorId, dataSourceId));
   };
 
   useEffect(() => {
@@ -247,7 +263,14 @@ export function AnomalyResults(props: AnomalyResultsProps) {
     try {
       const resultIndex = get(detector, 'resultIndex', '');
       const detectorResultResponse = await dispatch(
-        getDetectorResults(detectorId, params, false, resultIndex, true)
+        getDetectorResults(
+          detectorId,
+          dataSourceId,
+          params,
+          false,
+          resultIndex,
+          true
+        )
       );
       const featuresData = get(
         detectorResultResponse,

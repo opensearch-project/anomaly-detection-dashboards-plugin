@@ -30,13 +30,13 @@ import {
 } from '../../../redux/reducers/ad';
 import { Formik, FormikHelpers } from 'formik';
 import { get, isEmpty } from 'lodash';
-import React, { Fragment, useEffect, useState } from 'react';
-import { RouteComponentProps } from 'react-router';
+import React, { Fragment, ReactElement, useEffect, useState } from 'react';
+import { RouteComponentProps, useLocation } from 'react-router';
 import { useDispatch, useSelector } from 'react-redux';
 import { AppState } from '../../../redux/reducers';
-import { BREADCRUMBS, MAX_DETECTORS } from '../../../utils/constants';
+import { BREADCRUMBS, MAX_DETECTORS, MDS_BREADCRUMBS } from '../../../utils/constants';
 import { useHideSideNavBar } from '../../main/hooks/useHideSideNavBar';
-import { CoreStart } from '../../../../../../src/core/public';
+import { CoreStart, MountPoint } from '../../../../../../src/core/public';
 import { CoreServicesContext } from '../../../components/CoreServices/CoreServices';
 import { CreateDetectorFormikValues } from '../../CreateDetectorSteps/models/interfaces';
 import { DetectorDefinitionFields } from '../components/DetectorDefinitionFields';
@@ -53,15 +53,31 @@ import {
   ValidationSettingResponse,
   VALIDATION_ISSUE_TYPES,
 } from '../../../models/interfaces';
+import {
+  constructHrefWithDataSourceId,
+  getDataSourceFromURL,
+} from '../../../pages/utils/helpers';
+import {
+  getDataSourceManagementPlugin,
+  getDataSourceEnabled,
+  getNotifications,
+  getSavedObjectsClient,
+} from '../../../services';
+import { DataSourceViewConfig } from '../../../../../../src/plugins/data_source_management/public';
 
 interface ReviewAndCreateProps extends RouteComponentProps {
   setStep(stepNumber: number): void;
   values: CreateDetectorFormikValues;
+  setActionMenu: (menuMount: MountPoint | undefined) => void;
 }
 
 export function ReviewAndCreate(props: ReviewAndCreateProps) {
   const core = React.useContext(CoreServicesContext) as CoreStart;
   const dispatch = useDispatch();
+  const location = useLocation();
+  const MDSQueryParams = getDataSourceFromURL(location);
+  const dataSourceId = MDSQueryParams.dataSourceId;
+  const dataSourceEnabled = getDataSourceEnabled().enabled;
   useHideSideNavBar(true, false);
 
   // This variable indicates if validate API declared detector settings as valid for AD creation
@@ -90,7 +106,9 @@ export function ReviewAndCreate(props: ReviewAndCreateProps) {
   // meaning validation has passed and succesful callout will display or validation has failed
   // and callouts displaying what the issue is will be displayed instead.
   useEffect(() => {
-    dispatch(validateDetector(formikToDetector(props.values), 'model'))
+    dispatch(
+      validateDetector(formikToDetector(props.values), 'model', dataSourceId)
+    )
       .then((resp: any) => {
         if (isEmpty(Object.keys(resp.response))) {
           setValidDetectorSettings(true);
@@ -159,11 +177,19 @@ export function ReviewAndCreate(props: ReviewAndCreateProps) {
   }, []);
 
   useEffect(() => {
-    core.chrome.setBreadcrumbs([
-      BREADCRUMBS.ANOMALY_DETECTOR,
-      BREADCRUMBS.DETECTORS,
-      BREADCRUMBS.CREATE_DETECTOR,
-    ]);
+    if (dataSourceEnabled) {
+      core.chrome.setBreadcrumbs([
+        MDS_BREADCRUMBS.ANOMALY_DETECTOR(dataSourceId),
+        MDS_BREADCRUMBS.DETECTORS(dataSourceId),
+        MDS_BREADCRUMBS.CREATE_DETECTOR,
+      ]);
+    } else {
+      core.chrome.setBreadcrumbs([
+        BREADCRUMBS.ANOMALY_DETECTOR,
+        BREADCRUMBS.DETECTORS,
+        BREADCRUMBS.CREATE_DETECTOR,
+      ]);
+    }
   }, []);
 
   const handleSubmit = async (
@@ -174,14 +200,14 @@ export function ReviewAndCreate(props: ReviewAndCreateProps) {
       setIsCreatingDetector(true);
       formikHelpers.setSubmitting(true);
       const detectorToCreate = formikToDetector(values);
-      dispatch(createDetector(detectorToCreate))
+      dispatch(createDetector(detectorToCreate, dataSourceId))
         .then((response: any) => {
           core.notifications.toasts.addSuccess(
             `Detector created: ${detectorToCreate.name}`
           );
           // Optionally start RT job
           if (get(props, 'values.realTime', true)) {
-            dispatch(startDetector(response.response.id))
+            dispatch(startDetector(response.response.id, dataSourceId))
               .then((response: any) => {
                 core.notifications.toasts.addSuccess(
                   `Successfully started the real-time detector`
@@ -209,7 +235,12 @@ export function ReviewAndCreate(props: ReviewAndCreateProps) {
             );
             dispatch(
               //@ts-ignore
-              startHistoricalDetector(response.response.id, startTime, endTime)
+              startHistoricalDetector(
+                response.response.id,
+                dataSourceId,
+                startTime,
+                endTime
+              )
             )
               .then((response: any) => {
                 core.notifications.toasts.addSuccess(
@@ -229,11 +260,15 @@ export function ReviewAndCreate(props: ReviewAndCreateProps) {
           }
 
           props.history.push(
-            `/detectors/${response.response.id}/configurations/`
+            constructHrefWithDataSourceId(
+              `/detectors/${response.response.id}/configurations/`,
+              dataSourceId,
+              false
+            )
           );
         })
         .catch((err: any) => {
-          dispatch(getDetectorCount()).then((response: any) => {
+          dispatch(getDetectorCount(dataSourceId)).then((response: any) => {
             const totalDetectors = get(response, 'response.count', 0);
             if (totalDetectors === MAX_DETECTORS) {
               core.notifications.toasts.addDanger(
@@ -262,6 +297,24 @@ export function ReviewAndCreate(props: ReviewAndCreateProps) {
   // Converting to detector for passing to the fields
   const detectorToCreate = formikToDetector(props.values);
 
+  let renderDataSourceComponent: ReactElement | null = null;
+  if (dataSourceEnabled) {
+    const DataSourceMenu =
+      getDataSourceManagementPlugin()?.ui.getDataSourceMenu<DataSourceViewConfig>();
+    renderDataSourceComponent = (
+      <DataSourceMenu
+        setMenuMountPoint={props.setActionMenu}
+        componentType={'DataSourceView'}
+        componentConfig={{
+          activeOption: [{ id: dataSourceId }],
+          fullWidth: false,
+          savedObjects: getSavedObjectsClient(),
+          notifications: getNotifications(),
+        }}
+      />
+    );
+  }
+
   return (
     <Formik
       initialValues={props.values}
@@ -270,6 +323,7 @@ export function ReviewAndCreate(props: ReviewAndCreateProps) {
     >
       {(formikProps) => (
         <Fragment>
+          {dataSourceEnabled && renderDataSourceComponent}
           <EuiPage
             style={{
               marginTop: '-24px',
@@ -320,7 +374,13 @@ export function ReviewAndCreate(props: ReviewAndCreateProps) {
             <EuiFlexItem grow={false}>
               <EuiButtonEmpty
                 onClick={() => {
-                  props.history.push('/detectors');
+                  props.history.push(
+                    constructHrefWithDataSourceId(
+                      '/detectors',
+                      dataSourceId,
+                      false
+                    )
+                  );
                 }}
               >
                 Cancel

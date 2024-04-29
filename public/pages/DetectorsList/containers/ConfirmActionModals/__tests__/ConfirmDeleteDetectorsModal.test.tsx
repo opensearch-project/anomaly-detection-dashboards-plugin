@@ -82,7 +82,7 @@ describe('<ConfirmDeleteDetectorsModal /> spec', () => {
       expect(defaultDeleteProps.onStopDetectors).not.toHaveBeenCalled();
       expect(defaultDeleteProps.onDeleteDetectors).not.toHaveBeenCalled();
       expect(defaultDeleteProps.onConfirm).not.toHaveBeenCalled();
-    }, 10000);
+    }, 5000);
     test('should have delete button enabled if delete typed', async () => {
       const { getByTestId, getByPlaceholderText } = render(
         <ConfirmDeleteDetectorsModal {...defaultDeleteProps} />
@@ -93,7 +93,7 @@ describe('<ConfirmDeleteDetectorsModal /> spec', () => {
       userEvent.click(getByTestId('confirmButton'));
       await waitFor(() => {});
       expect(defaultDeleteProps.onConfirm).toHaveBeenCalled();
-    }, 10000);
+    }, 5000);
     test('should not show callout if no detectors are running', async () => {
       const { queryByText } = render(
         <ConfirmDeleteDetectorsModal {...defaultDeleteProps} />

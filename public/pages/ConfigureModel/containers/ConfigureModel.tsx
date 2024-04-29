@@ -26,13 +26,13 @@ import {
 } from '@elastic/eui';
 import { FormikProps, Formik } from 'formik';
 import { get, isEmpty } from 'lodash';
-import React, { Fragment, useState, useEffect } from 'react';
+import React, { Fragment, useState, useEffect, ReactElement } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { RouteComponentProps } from 'react-router-dom';
+import { RouteComponentProps, useLocation } from 'react-router-dom';
 import { AppState } from '../../../redux/reducers';
 import { getMappings } from '../../../redux/reducers/opensearch';
 import { useFetchDetectorInfo } from '../../CreateDetectorSteps/hooks/useFetchDetectorInfo';
-import { BREADCRUMBS, BASE_DOCS_LINK } from '../../../utils/constants';
+import { BREADCRUMBS, BASE_DOCS_LINK, MDS_BREADCRUMBS } from '../../../utils/constants';
 import { useHideSideNavBar } from '../../main/hooks/useHideSideNavBar';
 import { updateDetector } from '../../../redux/reducers/ad';
 import {
@@ -49,7 +49,7 @@ import { Features } from '../components/Features';
 import { CategoryField } from '../components/CategoryField';
 import { AdvancedSettings } from '../components/AdvancedSettings';
 import { SampleAnomalies } from './SampleAnomalies';
-import { CoreStart } from '../../../../../../src/core/public';
+import { CoreStart, MountPoint } from '../../../../../../src/core/public';
 import { CoreServicesContext } from '../../../components/CoreServices/CoreServices';
 import { Detector } from '../../../models/interfaces';
 import { prettifyErrorMessage } from '../../../../server/utils/helpers';
@@ -58,6 +58,17 @@ import { ModelConfigurationFormikValues } from '../models/interfaces';
 import { CreateDetectorFormikValues } from '../../CreateDetectorSteps/models/interfaces';
 import { DETECTOR_STATE } from '../../../../server/utils/constants';
 import { getErrorMessage } from '../../../utils/utils';
+import {
+  constructHrefWithDataSourceId,
+  getDataSourceFromURL,
+} from '../../../pages/utils/helpers';
+import {
+  getDataSourceManagementPlugin,
+  getDataSourceEnabled,
+  getNotifications,
+  getSavedObjectsClient,
+} from '../../../services';
+import { DataSourceViewConfig } from '../../../../../../src/plugins/data_source_management/public';
 
 interface ConfigureModelRouterProps {
   detectorId?: string;
@@ -70,14 +81,20 @@ interface ConfigureModelProps
   initialValues?: ModelConfigurationFormikValues;
   setInitialValues?(initialValues: ModelConfigurationFormikValues): void;
   detectorDefinitionValues?: DetectorDefinitionFormikValues;
+  setActionMenu: (menuMount: MountPoint | undefined) => void;
 }
 
 export function ConfigureModel(props: ConfigureModelProps) {
   const core = React.useContext(CoreServicesContext) as CoreStart;
   const dispatch = useDispatch();
+  const location = useLocation();
+  const MDSQueryParams = getDataSourceFromURL(location);
+  const dataSourceEnabled = getDataSourceEnabled().enabled;
+  const dataSourceId = MDSQueryParams.dataSourceId;
+
   useHideSideNavBar(true, false);
   const detectorId = get(props, 'match.params.detectorId', '');
-  const { detector, hasError } = useFetchDetectorInfo(detectorId);
+  const { detector, hasError } = useFetchDetectorInfo(detectorId, dataSourceId);
   const indexDataTypes = useSelector(
     (state: AppState) => state.opensearch.dataTypes
   );
@@ -100,33 +117,60 @@ export function ConfigureModel(props: ConfigureModelProps) {
       setIsHCDetector(true);
     }
     if (detector?.indices) {
-      dispatch(getMappings(detector.indices[0]));
+      dispatch(getMappings(detector.indices[0], dataSourceId));
     }
   }, [detector]);
 
   useEffect(() => {
-    if (props.isEdit) {
-      core.chrome.setBreadcrumbs([
-        BREADCRUMBS.ANOMALY_DETECTOR,
-        BREADCRUMBS.DETECTORS,
-        {
-          text: detector && detector.name ? detector.name : '',
-          href: `#/detectors/${detectorId}`,
-        },
-        BREADCRUMBS.EDIT_MODEL_CONFIGURATION,
-      ]);
+    if (dataSourceEnabled) {
+      if (props.isEdit) {
+        core.chrome.setBreadcrumbs([
+          MDS_BREADCRUMBS.ANOMALY_DETECTOR(dataSourceId),
+          MDS_BREADCRUMBS.DETECTORS(dataSourceId),
+          {
+            text: detector && detector.name ? detector.name : '',
+            href: constructHrefWithDataSourceId(`#/detectors/${detectorId}`, dataSourceId, false)
+          },
+          MDS_BREADCRUMBS.EDIT_MODEL_CONFIGURATION,
+        ]);
+      } else {
+        core.chrome.setBreadcrumbs([
+          MDS_BREADCRUMBS.ANOMALY_DETECTOR(dataSourceId),
+          MDS_BREADCRUMBS.DETECTORS(dataSourceId),
+          MDS_BREADCRUMBS.CREATE_DETECTOR,
+        ]);
+      }
     } else {
-      core.chrome.setBreadcrumbs([
-        BREADCRUMBS.ANOMALY_DETECTOR,
-        BREADCRUMBS.DETECTORS,
-        BREADCRUMBS.CREATE_DETECTOR,
-      ]);
+      if (props.isEdit) {
+        core.chrome.setBreadcrumbs([
+          BREADCRUMBS.ANOMALY_DETECTOR,
+          BREADCRUMBS.DETECTORS,
+          {
+            text: detector && detector.name ? detector.name : '',
+            href: `#/detectors/${detectorId}`,
+          },
+          BREADCRUMBS.EDIT_MODEL_CONFIGURATION,
+        ]);
+      } else {
+        core.chrome.setBreadcrumbs([
+          BREADCRUMBS.ANOMALY_DETECTOR,
+          BREADCRUMBS.DETECTORS,
+          BREADCRUMBS.CREATE_DETECTOR,
+        ]);
+      }
     }
   }, [detector]);
 
   useEffect(() => {
     if (hasError) {
-      props.history.push('/detectors');
+      if(dataSourceEnabled) {
+        props.history.push(
+          constructHrefWithDataSourceId('/detectors', dataSourceId, false)
+        );
+      }
+      else {
+        props.history.push('/detectors');
+      }
     }
   }, [hasError]);
 
@@ -178,12 +222,18 @@ export function ConfigureModel(props: ConfigureModelProps) {
   };
 
   const handleUpdateDetector = async (detectorToUpdate: Detector) => {
-    dispatch(updateDetector(detectorId, detectorToUpdate))
+    dispatch(updateDetector(detectorId, detectorToUpdate, dataSourceId))
       .then((response: any) => {
         core.notifications.toasts.addSuccess(
           `Detector updated: ${response.response.name}`
         );
-        props.history.push(`/detectors/${detectorId}/configurations/`);
+        props.history.push(
+          constructHrefWithDataSourceId(
+            `/detectors/${detectorId}/configurations/`,
+            dataSourceId,
+            false
+          )
+        );
       })
       .catch((err: any) => {
         core.notifications.toasts.addDanger(
@@ -207,6 +257,24 @@ export function ConfigureModel(props: ConfigureModelProps) {
         ...props.initialValues,
       } as CreateDetectorFormikValues);
 
+  let renderDataSourceComponent: ReactElement | null = null;
+  if (dataSourceEnabled) {
+    const DataSourceMenu =
+      getDataSourceManagementPlugin()?.ui.getDataSourceMenu<DataSourceViewConfig>();
+    renderDataSourceComponent = (
+      <DataSourceMenu
+        setMenuMountPoint={props.setActionMenu}
+        componentType={'DataSourceView'}
+        componentConfig={{
+          activeOption: [{ id: dataSourceId }],
+          fullWidth: false,
+          savedObjects: getSavedObjectsClient(),
+          notifications: getNotifications(),
+        }}
+      />
+    );
+  }
+
   return (
     <Formik
       initialValues={
@@ -221,6 +289,7 @@ export function ConfigureModel(props: ConfigureModelProps) {
     >
       {(formikProps) => (
         <Fragment>
+          {dataSourceEnabled && renderDataSourceComponent}
           <EuiPage
             style={{
               marginTop: '-24px',
@@ -293,10 +362,20 @@ export function ConfigureModel(props: ConfigureModelProps) {
                 onClick={() => {
                   if (props.isEdit) {
                     props.history.push(
-                      `/detectors/${detectorId}/configurations/`
+                      constructHrefWithDataSourceId(
+                        `/detectors/${detectorId}/configurations/`,
+                        dataSourceId,
+                        false
+                      )
                     );
                   } else {
-                    props.history.push('/detectors');
+                    props.history.push(
+                      constructHrefWithDataSourceId(
+                        '/detectors',
+                        dataSourceId,
+                        false
+                      )
+                    );
                   }
                 }}
               >

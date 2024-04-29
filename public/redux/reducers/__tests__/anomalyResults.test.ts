@@ -20,6 +20,14 @@ import reducer, {
   initialDetectorsState,
 } from '../anomalyResults';
 
+jest.mock('../../../services', () => ({
+  ...jest.requireActual('../../../services'),
+
+  getDataSourceEnabled: () => ({
+    enabled: false  
+  })
+}));
+
 describe('anomaly results reducer actions', () => {
   let store: MockStore;
   beforeEach(() => {
@@ -45,6 +53,7 @@ describe('anomaly results reducer actions', () => {
       await store.dispatch(
         getDetectorResults(
           tempDetectorId,
+          '',
           queryParams,
           false,
           resultIndex,
@@ -87,7 +96,7 @@ describe('anomaly results reducer actions', () => {
       };
       try {
         await store.dispatch(
-          getDetectorResults(tempDetectorId, queryParams, false, '', false)
+          getDetectorResults(tempDetectorId, '', queryParams, false, '', false)
         );
       } catch (e) {
         const actions = store.getActions();

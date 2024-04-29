@@ -17,12 +17,22 @@ import {
   EuiPageHeader,
   EuiTitle,
 } from '@elastic/eui';
-import { PLUGIN_NAME, APP_PATH } from '../../../../utils/constants';
+import {
+  PLUGIN_NAME,
+  APP_PATH,
+} from '../../../../utils/constants';
+import { useLocation } from 'react-router-dom';
+import { constructHrefWithDataSourceId, getDataSourceFromURL } from '../../../../pages/utils/helpers';
 export interface DashboardHeaderProps {
   hasDetectors: boolean;
 }
 
 export const DashboardHeader = (props: DashboardHeaderProps) => {
+  const location = useLocation();
+  const MDSQueryParams = getDataSourceFromURL(location);
+  const dataSourceId = MDSQueryParams.dataSourceId;
+  const createDetectorUrl = `${PLUGIN_NAME}#` + constructHrefWithDataSourceId(APP_PATH.CREATE_DETECTOR, dataSourceId, false);
+
   return (
     <EuiPageHeader>
       <EuiFlexGroup justifyContent="spaceBetween">
@@ -35,7 +45,7 @@ export const DashboardHeader = (props: DashboardHeaderProps) => {
           <EuiFlexItem grow={false}>
             <EuiButton
               fill
-              href={`${PLUGIN_NAME}#${APP_PATH.CREATE_DETECTOR}`}
+              href={createDetectorUrl}
               data-test-subj="add_detector"
             >
               Create detector
