@@ -198,7 +198,7 @@ exports[`<DefineDetector /> Full creating detector definition renders the compon
             class="euiTitle euiTitle--small"
             data-test-subj="contentPanelTitle"
           >
-            Data Source
+            Select Data
           </h3>
           <div
             class="euiFlexGroup euiFlexGroup--gutterLarge euiFlexGroup--directionRow euiFlexGroup--responsive"
@@ -528,11 +528,11 @@ exports[`<DefineDetector /> Full creating detector definition renders the compon
                       data-test-subj="comboBoxInput"
                       tabindex="-1"
                     >
-                      <span
-                        class="euiComboBoxPill euiComboBoxPill--plainText"
+                      <p
+                        class="euiComboBoxPlaceholder"
                       >
-                        timestamp
-                      </span>
+                        Find timestamp
+                      </p>
                       <div
                         class="euiComboBox__input"
                         style="font-size: 14px; display: inline-block;"
@@ -1175,7 +1175,7 @@ exports[`<DefineDetector /> empty creating detector definition renders the compo
             class="euiTitle euiTitle--small"
             data-test-subj="contentPanelTitle"
           >
-            Data Source
+            Select Data
           </h3>
           <div
             class="euiFlexGroup euiFlexGroup--gutterLarge euiFlexGroup--directionRow euiFlexGroup--responsive"
@@ -2152,7 +2152,7 @@ exports[`<DefineDetector /> empty editing detector definition renders the compon
             class="euiTitle euiTitle--small"
             data-test-subj="contentPanelTitle"
           >
-            Data Source
+            Select Data
           </h3>
           <div
             class="euiFlexGroup euiFlexGroup--gutterLarge euiFlexGroup--directionRow euiFlexGroup--responsive"
