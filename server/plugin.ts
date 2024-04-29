@@ -35,6 +35,13 @@ import SampleDataService, {
   registerSampleDataRoutes,
 } from './routes/sampleData';
 import { DEFAULT_HEADERS } from './utils/constants';
+import { DataSourcePluginSetup } from '../../../src/plugins/data_source/server/types';
+import { DataSourceManagementPlugin } from '../../../src/plugins/data_source_management/public';
+
+export interface ADPluginSetupDependencies {
+  dataSourceManagement?: ReturnType<DataSourceManagementPlugin['setup']>;
+  dataSource?: DataSourcePluginSetup;
+}
 
 export class AnomalyDetectionOpenSearchDashboardsPlugin
   implements
@@ -50,7 +57,10 @@ export class AnomalyDetectionOpenSearchDashboardsPlugin
     this.logger = initializerContext.logger.get();
     this.globalConfig$ = initializerContext.config.legacy.globalConfig$;
   }
-  public async setup(core: CoreSetup) {
+  public async setup(
+    core: CoreSetup,
+    { dataSource }: ADPluginSetupDependencies
+  ) {
     // Get any custom/overridden headers
     const globalConfig = await this.globalConfig$.pipe(first()).toPromise();
     const { customHeaders, ...rest } = globalConfig.opensearch;
@@ -65,6 +75,13 @@ export class AnomalyDetectionOpenSearchDashboardsPlugin
       }
     );
 
+    const dataSourceEnabled = !!dataSource;
+
+    if (dataSourceEnabled) {
+      dataSource.registerCustomApiSchema(adPlugin);
+      dataSource.registerCustomApiSchema(alertingPlugin);
+    }
+
     // Create router
     const apiRouter: Router = createRouter(
       core.http.createRouter(),
@@ -72,10 +89,10 @@ export class AnomalyDetectionOpenSearchDashboardsPlugin
     );
 
     // Create services & register with OpenSearch client
-    const adService = new AdService(client);
-    const alertingService = new AlertingService(client);
-    const opensearchService = new OpenSearchService(client);
-    const sampleDataService = new SampleDataService(client);
+    const adService = new AdService(client, dataSourceEnabled);
+    const alertingService = new AlertingService(client, dataSourceEnabled);
+    const opensearchService = new OpenSearchService(client, dataSourceEnabled);
+    const sampleDataService = new SampleDataService(client, dataSourceEnabled);
 
     // Register server routes with the service
     registerADRoutes(apiRouter, adService);

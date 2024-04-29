@@ -89,6 +89,7 @@ export type GetDetectorsQueryParams = {
   indices?: string;
   sortDirection: SORT_DIRECTION;
   sortField: string;
+  dataSourceId?: string;
 };
 
 export type GetAdMonitorsQueryParams = {
@@ -106,6 +107,10 @@ export type DetectorResultsQueryParams = {
   sortDirection: SORT_DIRECTION;
   sortField: string;
   dateRangeFilter?: DateRangeFilter;
+};
+
+export type MDSQueryParams = {
+  dataSourceId: string;
 };
 
 export type Entity = {

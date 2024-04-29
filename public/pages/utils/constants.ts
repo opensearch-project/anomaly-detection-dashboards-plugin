@@ -53,6 +53,7 @@ export const DEFAULT_QUERY_PARAMS = {
   size: 20,
   sortDirection: SORT_DIRECTION.ASC,
   sortField: 'name',
+  dataSourceId: '',
 };
 
 export const GET_ALL_DETECTORS_QUERY_PARAMS = {

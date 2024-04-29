@@ -49,6 +49,8 @@ import { BASE_DOCS_LINK } from '../../../utils/constants';
 import { prettifyErrorMessage } from '../../../../server/utils/helpers';
 import { CoreStart } from '../../../../../../src/core/public';
 import { CoreServicesContext } from '../../../components/CoreServices/CoreServices';
+import { useLocation } from 'react-router-dom';
+import { getDataSourceFromURL } from '../../../pages/utils/helpers';
 
 interface SampleAnomaliesProps {
   detector: Detector;
@@ -62,6 +64,9 @@ interface SampleAnomaliesProps {
 export function SampleAnomalies(props: SampleAnomaliesProps) {
   const core = React.useContext(CoreServicesContext) as CoreStart;
   const dispatch = useDispatch();
+  const location = useLocation();
+  const MDSQueryParams = getDataSourceFromURL(location);
+  const dataSourceId = MDSQueryParams.dataSourceId;
   useHideSideNavBar(true, false);
 
   const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -150,6 +155,7 @@ export function SampleAnomalies(props: SampleAnomaliesProps) {
           periodStart: dateRange.startDate.valueOf(),
           periodEnd: dateRange.endDate.valueOf(),
           detector: detector,
+          dataSourceId: dataSourceId,
         })
       );
       setIsLoading(false);

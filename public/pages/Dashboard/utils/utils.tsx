@@ -433,6 +433,7 @@ export const getLatestAnomalyResultsByTimeRange = async (
   func: (
     request: any,
     resultIndex: string,
+    dataSourceId: string,
     onlyQueryCustomResultIndex: boolean
   ) => APIAction,
   timeRange: string,
@@ -441,7 +442,8 @@ export const getLatestAnomalyResultsByTimeRange = async (
   anomalySize: number,
   checkLastIndexOnly: boolean,
   resultIndex: string,
-  onlyQueryCustomResultIndex: boolean
+  onlyQueryCustomResultIndex: boolean,
+  dataSourceId: string
 ): Promise<object[]> => {
   let from = 0;
   let anomalyResults = [] as object[];
@@ -457,6 +459,7 @@ export const getLatestAnomalyResultsByTimeRange = async (
           checkLastIndexOnly
         ),
         resultIndex,
+        dataSourceId,
         onlyQueryCustomResultIndex
       )
     );
@@ -489,6 +492,7 @@ export const getLatestAnomalyResultsForDetectorsByTimeRange = async (
   func: (
     request: any,
     resultIndex: string,
+    dataSourceId: string,
     onlyQueryCustomResultIndex: boolean
   ) => APIAction,
   selectedDetectors: DetectorListItem[],
@@ -499,7 +503,8 @@ export const getLatestAnomalyResultsForDetectorsByTimeRange = async (
   detectorNum: number,
   checkLastIndexOnly: boolean,
   resultIndex: string,
-  onlyQueryCustomResultIndex: boolean
+  onlyQueryCustomResultIndex: boolean,
+  dataSourceId: string
 ): Promise<object[]> => {
   const detectorAndIdMap = buildDetectorAndIdMap(selectedDetectors);
   let from = 0;
@@ -516,6 +521,7 @@ export const getLatestAnomalyResultsForDetectorsByTimeRange = async (
           checkLastIndexOnly
         ),
         resultIndex,
+        dataSourceId,
         onlyQueryCustomResultIndex
       )
     );
@@ -605,9 +611,11 @@ export const getAnomalyDistributionForDetectorsByTimeRange = async (
   func: (
     request: any,
     resultIndex: string,
+    dataSourceId: string,
     onlyQueryCustomResultIndex: boolean
   ) => APIAction,
   selectedDetectors: DetectorListItem[],
+  dataSourceId: string,
   timeRange: string,
   dispatch: Dispatch<any>,
   threshold: number,
@@ -638,7 +646,7 @@ export const getAnomalyDistributionForDetectorsByTimeRange = async (
   const finalQuery = Object.assign({}, getResultQuery, anomaly_dist_aggs);
 
   const result = await dispatch(
-    func(finalQuery, resultIndex, onlyQueryCustomResultIndex)
+    func(finalQuery, resultIndex, dataSourceId, onlyQueryCustomResultIndex)
   );
 
   const detectorsAggResults = get(

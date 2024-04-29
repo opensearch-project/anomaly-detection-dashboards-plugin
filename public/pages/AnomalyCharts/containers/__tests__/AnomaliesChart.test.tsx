@@ -22,6 +22,8 @@ import {
   FAKE_ANOMALIES_RESULT,
   FAKE_DATE_RANGE,
 } from '../../../../pages/utils/__tests__/constants';
+import { Router } from 'react-router-dom';
+import { createMemoryHistory } from 'history';
 
 const DEFAULT_PROPS = {
   onDateRangeChange: jest.fn(),
@@ -47,17 +49,32 @@ const DEFAULT_PROPS = {
   entityAnomalySummaries: [],
 } as AnomaliesChartProps;
 
+const history = createMemoryHistory(); 
+
 const renderDataFilter = (chartProps: AnomaliesChartProps) => ({
   ...render(
     <Provider store={mockedStore()}>
       <CoreServicesContext.Provider value={coreServicesMock}>
-        <AnomaliesChart {...chartProps} />
+        <Router history={history}>
+          <AnomaliesChart {...chartProps} />
+        </Router>
       </CoreServicesContext.Provider>
     </Provider>
   ),
 });
 
 describe('<AnomaliesChart /> spec', () => {
+  beforeAll(() => {
+    Object.defineProperty(window, 'location', {
+      value: {
+        href: 'http://test.com',
+        pathname: '/',
+        search: '',
+        hash: '',
+      },
+      writable: true
+    });
+  });
   test('renders the component for sample / preview', () => {
     console.error = jest.fn();
     const { getByText, getAllByText } = renderDataFilter({

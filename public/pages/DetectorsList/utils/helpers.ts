@@ -21,8 +21,15 @@ import { DETECTOR_ACTION } from '../utils/constants';
 export const getURLQueryParams = (location: {
   search: string;
 }): GetDetectorsQueryParams => {
-  const { from, size, search, indices, sortField, sortDirection } =
-    queryString.parse(location.search) as { [key: string]: string };
+  const {
+    from,
+    size,
+    search,
+    indices,
+    sortField,
+    sortDirection,
+    dataSourceId,
+  } = queryString.parse(location.search) as { [key: string]: string };
   return {
     // @ts-ignore
     from: isNaN(parseInt(from, 10))
@@ -40,8 +47,11 @@ export const getURLQueryParams = (location: {
       typeof sortDirection !== 'string'
         ? DEFAULT_QUERY_PARAMS.sortDirection
         : (sortDirection as SORT_DIRECTION),
+    dataSourceId: dataSourceId === undefined ? undefined : dataSourceId,
   };
 };
+
+
 
 // For realtime detectors: cannot have 'Finished' state
 export const getDetectorStateOptions = () => {
