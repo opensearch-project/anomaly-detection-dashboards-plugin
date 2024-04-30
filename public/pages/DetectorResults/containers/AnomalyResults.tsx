@@ -255,6 +255,7 @@ export function AnomalyResults(props: AnomalyResultsProps) {
       endDate: adjustedCurrentTime.valueOf(),
     } as DateRange;
 
+    // build result search query params relative to data end time
     const params = buildParamsForGetAnomalyResultsWithDateRange(
       featureDataPointsRange.startDate,
       featureDataPointsRange.endDate
