@@ -9,7 +9,7 @@ Compatible with OpenSearch Dashboards 2.14.0
 ### Bug Fixes
 
 * Populate selected indices from query params on initial load ([#713](https://github.com/opensearch-project/anomaly-detection-dashboards-plugin/pull/713))
-* Clean selected field values when switching data source on create page ([#742](https://github.com/opensearch-project/anomaly-detection-dashboards-plugin/pull/742))
+* Build query parameters using data_end_time ([#741](https://github.com/opensearch-project/anomaly-detection-dashboards-plugin/pull/741))
 
 ### Infrastructure
 
