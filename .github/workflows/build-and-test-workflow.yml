@@ -88,6 +88,12 @@ jobs:
         run: |
           cd OpenSearch-Dashboards/plugins/anomaly-detection-dashboards-plugin
           yarn osd bootstrap --single-version=loose
+      - name: Set npm to use bash for shell
+        if: ${{ matrix.os == 'windows-latest' }}
+        run: |
+          # Sets Windows to use bash for npm shell so the script (e.g., environment variable resolution in package.json postbuild script)
+          # commands work as intended
+          npm config set script-shell "C:\\Program Files\\git\\bin\\bash.exe"
       - name: Build the plugin
         run: |
           cd OpenSearch-Dashboards/plugins/anomaly-detection-dashboards-plugin
