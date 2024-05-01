@@ -140,21 +140,16 @@ jobs:
       - name: Finding spec files and store to output
         id: finding-files
         run: |
-          echo "::set-output name=FILELIST::$(find cypress/integration/plugins/anomaly-detection-dashboards-plugin -name '*.js' -print)"
-        working-directory: opensearch-dashboards-functional-test
-  
-      - name: Print spec files from output
-        run: |
-          IFS="," read -a myarray <<< ${{ steps.finding-files.outputs.FILELIST }}
-          for i in "${myarray[@]}"; do
-            echo "${i}"
-          done
+          {
+            echo 'FILELIST<<EOF'
+            find cypress/integration/plugins/anomaly-detection-dashboards-plugin -name '*.js' -print 
+            echo EOF
+          } >> "$GITHUB_ENV"
         working-directory: opensearch-dashboards-functional-test
 
       - name: Run spec files from output
         run: |
-          IFS="," read -a myarray <<< ${{ steps.finding-files.outputs.FILELIST }}
-          for i in "${myarray[@]}"; do
+          for i in $FILELIST; do
             yarn cypress:run-without-security --browser electron --spec "${i}"
             sleep 60
           done
