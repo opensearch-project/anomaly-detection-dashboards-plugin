@@ -15,6 +15,8 @@ import {
   getAnomalySummary,
   convertAlerts,
   generateAlertAnnotations,
+  buildHeatmapPlotData,
+  ANOMALY_HEATMAP_COLORSCALE,
 } from '../anomalyChartUtils';
 import { httpClientMock, coreServicesMock } from '../../../../../test/mocks';
 import { MonitorAlert } from '../../../../models/interfaces';
@@ -158,3 +160,91 @@ describe('anomalyChartUtils function tests', () => {
     ]);
   });
 });
+
+
+describe('buildHeatmapPlotData', () => {
+  it('should build the heatmap plot data correctly', () => {
+    const x = ['05-13 06:58:52 2024'];
+    const y = ['Exception while fetching data\napp_2'];
+    const z = [0.1];
+    const anomalyOccurrences = [1];
+    const entityLists = [
+      [
+        { name: 'error', value: 'Exception while fetching data' },
+        { name: 'service', value: 'app_2' },
+      ],
+    ];
+    const cellTimeInterval = 10;
+
+    const expected = {
+      x: x,
+      y: y,
+      z: z,
+      colorscale: ANOMALY_HEATMAP_COLORSCALE,
+      zmin: 0,
+      zmax: 1,
+      type: 'heatmap',
+      showscale: false,
+      xgap: 2,
+      ygap: 2,
+      opacity: 1,
+      text: anomalyOccurrences,
+      customdata: entityLists,
+      hovertemplate:
+        '<b>Entities</b>: %{y}<br>' +
+        '<b>Time</b>: %{x}<br>' +
+        '<b>Max anomaly grade</b>: %{z}<br>' +
+        '<b>Anomaly occurrences</b>: %{text}' +
+        '<extra></extra>',
+      cellTimeInterval: cellTimeInterval,
+    };
+
+    const result = buildHeatmapPlotData(x, y, z, anomalyOccurrences, entityLists, cellTimeInterval);
+    expect(result).toEqual(expected);
+  });
+
+  it('should handle multiple entries correctly', () => {
+    const x = ['05-13 06:58:52 2024', '05-13 07:58:52 2024'];
+    const y = ['Exception while fetching data\napp_2', 'Network error\napp_3'];
+    const z = [0.1, 0.2];
+    const anomalyOccurrences = [1, 2];
+    const entityLists = [
+      [
+        { name: 'error', value: 'Exception while fetching data' },
+        { name: 'service', value: 'app_2' },
+      ],
+      [
+        { name: 'error', value: 'Network error' },
+        { name: 'service', value: 'app_3' },
+      ],
+    ];
+    const cellTimeInterval = 10;
+
+    const expected = {
+      x: x,
+      y: y,
+      z: z,
+      colorscale: ANOMALY_HEATMAP_COLORSCALE,
+      zmin: 0,
+      zmax: 1,
+      type: 'heatmap',
+      showscale: false,
+      xgap: 2,
+      ygap: 2,
+      opacity: 1,
+      text: anomalyOccurrences,
+      customdata: entityLists,
+      hovertemplate:
+        '<b>Entities</b>: %{y}<br>' +
+        '<b>Time</b>: %{x}<br>' +
+        '<b>Max anomaly grade</b>: %{z}<br>' +
+        '<b>Anomaly occurrences</b>: %{text}' +
+        '<extra></extra>',
+      cellTimeInterval: cellTimeInterval,
+    };
+
+    const result = buildHeatmapPlotData(x, y, z, anomalyOccurrences, entityLists, cellTimeInterval);
+    expect(result).toEqual(expected);
+  });
+});
+
