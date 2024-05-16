@@ -133,11 +133,33 @@ export const DetectorDetail = (props: DetectorDetailProps) => {
   const visibleIndices = useSelector(
     (state: AppState) => state.opensearch.indices
   ) as CatIndex[];
+  const isCatIndicesRequesting = useSelector(
+    (state: AppState) => state.opensearch.requesting
+  ) as boolean;
+
+  /*
+  Determine if the result index is missing based on several conditions:
+  - If the detector is still loading, the result index is not missing.
+  - If the result index retrieved from the detector is empty, it is not missing.
+  - If cat indices are being requested, the result index is not missing.
+  - If visible indices are empty, it is likely there is an issue retrieving existing indices.
+    To be safe, we'd rather not show the error message and consider the result index not missing.
+  - If the result index is not found in the visible indices, then it is missing.
+  */
   const isResultIndexMissing = isLoadingDetector
     ? false
     : isEmpty(get(detector, 'resultIndex', ''))
     ? false
+    : isCatIndicesRequesting
+    ? false
+    : isEmpty(visibleIndices)
+    ? false
     : !containsIndex(get(detector, 'resultIndex', ''), visibleIndices);
+
+  // debug message: prints visibleIndices if isResultIndexMissing is true
+  if (isResultIndexMissing) {
+    console.log(`isResultIndexMissing is true, visibleIndices: ${visibleIndices}, detector result index: ${get(detector, 'resultIndex', '')}`);
+  }
 
   // String to set in the modal if the realtime detector and/or historical analysis
   // are running when the user tries to edit the detector details or model config
@@ -179,10 +201,12 @@ export const DetectorDetail = (props: DetectorDetailProps) => {
   // detector starts, result index recreated or user switches tabs to re-fetch detector)
   useEffect(() => {
     const getInitialIndices = async () => {
-      await dispatch(getIndices('', dataSourceId)).catch((error: any) => {
+      try {
+        await dispatch(getIndices('', dataSourceId));
+      } catch (error) {
         console.error(error);
         core.notifications.toasts.addDanger('Error getting all indices');
-      });
+      }
     };
     // only need to check if indices exist after detector finishes loading
     if (!isLoadingDetector) {
@@ -464,6 +488,7 @@ export const DetectorDetail = (props: DetectorDetailProps) => {
               )}', but is not found in the cluster. The index will be recreated when you start a real-time or historical job.`}
               color="danger"
               iconType="alert"
+              data-test-subj="missingResultIndexCallOut"
             ></EuiCallOut>
           ) : null}
 
