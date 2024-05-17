@@ -310,7 +310,19 @@ export const getSampleAnomaliesHeatmapData = (
   return [resultPlotData];
 };
 
-const buildHeatmapPlotData = (
+
+/**
+ * Builds the data for a heatmap plot representing anomalies.
+ *
+ * @param {any[]} x - The x coordinate value for the cell representing time.
+ * @param {any[]} y - Array of newline-separated name-value pairs representing entities. This is used for the y-axis labels and displayed in the mouse hover tooltip.
+ * @param {any[]} z - Array representing the maximum anomaly grades.
+ * @param {any[]} anomalyOccurrences - Array representing the number of anomalies.
+ * @param {any[]} entityLists - JSON representation of name-value pairs. Note that the values may contain special characters such as commas and newlines. JSON is used here because it naturally handles special characters and nested structures.
+ * @param {number} cellTimeInterval - The interval covered by each heatmap cell.
+ * @returns {PlotData} - The data structure required for plotting the heatmap.
+ */
+export const buildHeatmapPlotData = (
   x: any[],
   y: any[],
   z: any[],
@@ -334,7 +346,7 @@ const buildHeatmapPlotData = (
     text: anomalyOccurrences,
     customdata: entityLists,
     hovertemplate:
-      '<b>Entities</b>: %{customdata}<br>' +
+      '<b>Entities</b>: %{y}<br>' +
       '<b>Time</b>: %{x}<br>' +
       '<b>Max anomaly grade</b>: %{z}<br>' +
       '<b>Anomaly occurrences</b>: %{text}' +

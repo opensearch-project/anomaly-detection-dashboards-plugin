@@ -1820,22 +1820,7 @@ export const convertToCategoryFieldAndEntityString = (
 export const convertHeatmapCellEntityStringToEntityList = (
   heatmapCellEntityString: string
 ) => {
-  let entityList = [] as Entity[];
-  const entitiesAsStringList = heatmapCellEntityString.split(
-    HEATMAP_CELL_ENTITY_DELIMITER
-  );
-  var i;
-  for (i = 0; i < entitiesAsStringList.length; i++) {
-    const entityAsString = entitiesAsStringList[i];
-    const entityAsFieldValuePair = entityAsString.split(
-      HEATMAP_CALL_ENTITY_KEY_VALUE_DELIMITER
-    );
-    entityList.push({
-      name: entityAsFieldValuePair[0],
-      value: entityAsFieldValuePair[1],
-    });
-  }
-  return entityList;
+  return JSON.parse(heatmapCellEntityString);
 };
 
 export const entityListsMatch = (
@@ -1895,10 +1880,7 @@ const appendEntityFilters = (requestBody: any, entityList: Entity[]) => {
 export const transformEntityListsForHeatmap = (entityLists: any[]) => {
   let transformedEntityLists = [] as any[];
   entityLists.forEach((entityList: Entity[]) => {
-    const listAsString = convertToCategoryFieldAndEntityString(
-      entityList,
-      ', '
-    );
+    const listAsString = JSON.stringify(entityList);
     let row = [];
     var i;
     for (i = 0; i < NUM_CELLS; i++) {
