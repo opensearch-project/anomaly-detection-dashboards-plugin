@@ -54,4 +54,7 @@ module.exports = {
     '^.+\\.svg$': '<rootDir>/test/mocks/transformMock.ts',
     '^.+\\.html$': '<rootDir>/test/mocks/transformMock.ts',
   },
+  setupFiles: [
+    "jest-canvas-mock"
+  ]
 };
