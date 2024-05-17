@@ -14,6 +14,8 @@ import {
   getFeatureDataPointsForDetector,
   parsePureAnomalies,
   buildParamsForGetAnomalyResultsWithDateRange,
+  transformEntityListsForHeatmap,
+  convertHeatmapCellEntityStringToEntityList,
 } from '../anomalyResultUtils';
 import { getRandomDetector } from '../../../redux/reducers/__tests__/utils';
 import {
@@ -25,6 +27,8 @@ import {
 import { ANOMALY_RESULT_SUMMARY, PARSED_ANOMALIES } from './constants';
 import { MAX_ANOMALIES } from '../../../utils/constants';
 import { SORT_DIRECTION, AD_DOC_FIELDS } from '../../../../server/utils/constants';
+import { Entity } from '../../../../server/models/interfaces';
+import { NUM_CELLS } from '../../AnomalyCharts/utils/anomalyChartUtils'
 
 describe('anomalyResultUtils', () => {
   let randomDetector_20_min: Detector;
@@ -634,6 +638,56 @@ describe('anomalyResultUtils', () => {
         ANOMALY_RESULT_SUMMARY
       );
       expect(parsedPureAnomalies).toStrictEqual(PARSED_ANOMALIES);
+    });
+  });
+
+  describe('transformEntityListsForHeatmap', () => {
+    it('should transform an empty entityLists array to an empty array', () => {
+      const entityLists: Entity[][] = [];
+      const result = transformEntityListsForHeatmap(entityLists);
+      expect(result).toEqual([]);
+      const convertedBack = convertHeatmapCellEntityStringToEntityList("[]");
+      expect([]).toEqual(convertedBack);
+    });
+
+    it('should transform a single entity list correctly', () => {
+      const entityLists: Entity[][] = [
+        [
+          { name: 'entity1', value: 'value1' },
+          { name: 'entity2', value: 'value2' },
+        ],
+      ];
+
+      const json = JSON.stringify(entityLists[0]);
+
+      const expected = [
+          new Array(NUM_CELLS).fill(json),
+      ];
+
+      const result = transformEntityListsForHeatmap(entityLists);
+      expect(result).toEqual(expected);
+      const convertedBack = convertHeatmapCellEntityStringToEntityList(json);
+      expect(entityLists[0]).toEqual(convertedBack);
+    });
+
+    it('should handle special characters in entity values', () => {
+      const entityLists: Entity[][] = [
+        [
+          { name: 'entity1', value: 'value1, with comma' },
+          { name: 'entity2', value: 'value2\nwith newline' },
+        ],
+      ];
+
+      const json = JSON.stringify(entityLists[0]);
+
+      const expected = [
+          new Array(NUM_CELLS).fill(json),
+      ];
+
+      const result = transformEntityListsForHeatmap(entityLists);
+      expect(result).toEqual(expected);
+      const convertedBack = convertHeatmapCellEntityStringToEntityList(json);
+      expect(entityLists[0]).toEqual(convertedBack);
     });
   });
 });
