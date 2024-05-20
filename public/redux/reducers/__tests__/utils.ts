@@ -10,7 +10,7 @@
  */
 
 import chance from 'chance';
-import { snakeCase } from 'lodash';
+import { isEmpty, snakeCase } from 'lodash';
 import {
   Detector,
   FeatureAttributes,
@@ -82,7 +82,10 @@ const getUIMetadata = (features: FeatureAttributes[]) => {
   } as UiMetaData;
 };
 
-export const getRandomDetector = (isCreate: boolean = true): Detector => {
+export const getRandomDetector = (
+  isCreate: boolean = true,
+  customResultIndex: string = ''
+): Detector => {
   const features = new Array(detectorFaker.natural({ min: 1, max: 5 }))
     .fill(null)
     .map(() => getRandomFeature(isCreate ? false : true));
@@ -116,6 +119,7 @@ export const getRandomDetector = (isCreate: boolean = true): Detector => {
     curState: DETECTOR_STATE.INIT,
     stateError: '',
     shingleSize: DEFAULT_SHINGLE_SIZE,
+    resultIndex: isEmpty(customResultIndex) ? undefined : customResultIndex
   };
 };
 
