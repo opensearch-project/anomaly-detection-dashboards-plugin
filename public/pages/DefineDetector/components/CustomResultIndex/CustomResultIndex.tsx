@@ -21,6 +21,7 @@ import {
   EuiFormRow,
   EuiCheckbox,
   EuiIcon,
+  EuiFieldNumber,
 } from '@elastic/eui';
 import { Field, FieldProps } from 'formik';
 import React, { useState } from 'react';
@@ -31,7 +32,9 @@ import {
   isInvalid,
   getError,
   validateCustomResultIndex,
+  validatePositiveInteger,
 } from '../../../../utils/utils';
+import { FormattedFormRow } from '../../../../components/FormattedFormRow/FormattedFormRow';
 
 interface CustomResultIndexProps {
   isEdit: boolean;
@@ -112,6 +115,114 @@ function CustomResultIndex(props: CustomResultIndexProps) {
                 </EuiFormRow>
               </EuiFlexItem>
             ) : null}
+
+            {enabled ? (
+              <Field name="maxIndexAge" validate={validatePositiveInteger}>
+              {({ field, form }: FieldProps) => (
+                    <EuiFlexItem style={{ maxWidth: '70%' }}>
+                      <FormattedFormRow
+                        fullWidth
+                        title="Max Index Age"
+                        hint={[
+                          `This setting would define a specific threshold for the age of an index. When this threshold is surpassed, a rollover will be triggered automatically.`,
+                        ]}
+                        isInvalid={isInvalid(field.name, form)}
+                        error={getError(field.name, form)}
+                      >
+                        <EuiFlexGroup gutterSize="s" alignItems="center">
+                          <EuiFlexItem grow={false}>
+                            <EuiFieldNumber
+                              name="maxCustomResultIndexAge"
+                              id="maxCustomResultIndexAge"
+                              placeholder="Max index age"
+                              data-test-subj="maxCustomResultIndexAge"
+                              min={1}
+                              {...field}
+                            />
+                          </EuiFlexItem>
+                          <EuiFlexItem>
+                            <EuiText>
+                              <p className="minutes">days</p>
+                            </EuiText>
+                          </EuiFlexItem>
+                        </EuiFlexGroup>
+                      </FormattedFormRow>
+                    </EuiFlexItem>
+              )}
+              </Field>
+            ) : null}
+
+            {enabled ? (
+               <Field name="maxIndexSize" validate={validatePositiveInteger}>
+                {({ field, form }: FieldProps) => (
+                  <EuiFlexItem style={{ maxWidth: '70%' }}>
+                    <FormattedFormRow
+                      fullWidth
+                      title="Max Index Size"
+                      hint={[
+                        `This setting would define a specific threshold for the size of an index. When this threshold is surpassed, a rollover will be triggered automatically.`,
+                      ]}
+                      isInvalid={isInvalid(field.name, form)}
+                      error={getError(field.name, form)}
+                    >
+                      <EuiFlexGroup gutterSize="s" alignItems="center">
+                        <EuiFlexItem grow={false}>
+                          <EuiFieldNumber
+                            name="maxCustomResultIndexSize"
+                            id="maxCustomResultIndexSize"
+                            placeholder="Max index size"
+                            data-test-subj="maxCustomResultIndexSize"
+                            min={1}
+                            {...field}
+                          />
+                        </EuiFlexItem>
+                        <EuiFlexItem>
+                          <EuiText>
+                            <p className="minutes">MB</p>
+                          </EuiText>
+                        </EuiFlexItem>
+                      </EuiFlexGroup>
+                    </FormattedFormRow>
+                  </EuiFlexItem>
+                )}
+              </Field>
+            ) : null} 
+
+            {enabled ? (
+              <Field name="indexExpiryThreshold" validate={validatePositiveInteger}>
+              {({ field, form }: FieldProps) => (
+                <EuiFlexItem style={{ maxWidth: '70%' }}>
+                  <FormattedFormRow
+                    fullWidth
+                    title="Index Expiry Threshold"
+                    hint={[
+                      `This setting would define the duration after which an index is considered expired and eligible for deletion.`,
+                    ]}
+                    isInvalid={isInvalid(field.name, form)}
+                    error={getError(field.name, form)}
+                  >
+                    <EuiFlexGroup gutterSize="s" alignItems="center">
+                      <EuiFlexItem grow={false}>
+                        <EuiFieldNumber
+                          name="maxIndexExpiryThreshold"
+                          id="maxIndexExpiryThreshold"
+                          placeholder="Expiry Threshold"
+                          data-test-subj="maxIndexExpiryThreshold"
+                          min={1}
+                          {...field}
+                        />
+                      </EuiFlexItem>
+                      <EuiFlexItem>
+                        <EuiText>
+                          <p className="minutes">days</p>
+                        </EuiText>
+                      </EuiFlexItem>
+                    </EuiFlexGroup>
+                  </FormattedFormRow>
+                </EuiFlexItem>
+              )}
+            </Field>
+          ) : null} 
           </EuiFlexGroup>
         )}
       </Field>
