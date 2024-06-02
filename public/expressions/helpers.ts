@@ -33,7 +33,8 @@ export const getAnomalies = async (
   detectorId: string,
   startTime: number,
   endTime: number,
-  resultIndex: string
+  resultIndex: string,
+  dataSourceId: string = '',
 ): Promise<AnomalyData[]> => {
   const anomalySummaryQuery = getAnomalySummaryQuery(
     startTime,
@@ -45,14 +46,14 @@ export const getAnomalies = async (
   let anomalySummaryResponse;
   if (resultIndex === '') {
     anomalySummaryResponse = await getClient().post(
-      `..${AD_NODE_API.DETECTOR}/results/_search`,
+      `..${AD_NODE_API.DETECTOR}/results/_search/${dataSourceId}`,
       {
         body: JSON.stringify(anomalySummaryQuery),
       }
     );
   } else {
     anomalySummaryResponse = await getClient().post(
-      `..${AD_NODE_API.DETECTOR}/results/_search/${resultIndex}/true`,
+      `..${AD_NODE_API.DETECTOR}/results/_search/${resultIndex}/true/${dataSourceId}`,
       {
         body: JSON.stringify(anomalySummaryQuery),
       }
@@ -62,11 +63,11 @@ export const getAnomalies = async (
   return parsePureAnomalies(anomalySummaryResponse);
 };
 
-export const getDetectorResponse = async (detectorId: string) => {
-  const resp = await getClient().get(`..${AD_NODE_API.DETECTOR}/${detectorId}`);
+export const getDetectorResponse = async (detectorId: string, dataSourceId: string = '') => {
+  const url = dataSourceId ? `..${AD_NODE_API.DETECTOR}/${detectorId}/${dataSourceId}` : `..${AD_NODE_API.DETECTOR}/${detectorId}`;
+  const resp = await getClient().get(url);
   return resp;
 };
-
 // This takes anomalies and returns them as vis layer of type PointInTimeEvents
 export const convertAnomaliesToPointInTimeEventsVisLayer = (
   anomalies: AnomalyData[],
