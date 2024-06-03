@@ -42,6 +42,7 @@ type Name = typeof OVERLAY_ANOMALIES;
 
 interface Arguments {
   detectorId: string;
+  dataSourceId: string;
 }
 
 export type OverlayAnomaliesExpressionFunctionDefinition =
@@ -78,11 +79,17 @@ export const overlayAnomaliesFunction =
         default: '""',
         help: '',
       },
+      dataSourceId: {
+        types: ['string'],
+        default: '""',
+        help: '',
+      },
     },
 
     async fn(input, args, context): Promise<ExprVisLayers> {
       // Parsing all of the args & input
       const detectorId = get(args, 'detectorId', '');
+      const dataSourceId = get(args, 'dataSourceId', '');
       const timeRange = get(
         context,
         'searchContext.timeRange',
@@ -103,7 +110,7 @@ export const overlayAnomaliesFunction =
         urlPath: `${PLUGIN_NAME}#/detectors/${detectorId}/results`, //details page for detector in AD plugin
       };
       try {
-        const detectorResponse = await getDetectorResponse(detectorId);
+        const detectorResponse = await getDetectorResponse(detectorId, dataSourceId);
         if (get(detectorResponse, 'error', '').includes(CANT_FIND_KEY_WORD)) {
           throw new Error('Anomaly Detector - ' + DETECTOR_HAS_BEEN_DELETED);
         } else if (

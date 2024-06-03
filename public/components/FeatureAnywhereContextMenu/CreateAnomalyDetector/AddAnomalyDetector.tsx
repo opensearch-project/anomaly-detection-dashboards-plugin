@@ -96,6 +96,7 @@ import {
   getUISettings,
   getUiActions,
   getQueryService,
+  getSavedObjectsClient,
 } from '../../../../public/services';
 import { prettifyErrorMessage } from '../../../../server/utils/helpers';
 import {
@@ -112,6 +113,12 @@ import { FLYOUT_MODES } from '../AnywhereParentFlyout/constants';
 import { DetectorListItem } from '../../../../public/models/interfaces';
 import { VisualizeEmbeddable } from '../../../../../../src/plugins/visualizations/public';
 
+interface References {
+  id: string;
+  name: string;
+  type: string;
+}
+
 function AddAnomalyDetector({
   embeddable,
   closeFlyout,
@@ -126,24 +133,42 @@ function AddAnomalyDetector({
     VisualizeEmbeddable | ErrorEmbeddable
   >();
 
-  useEffect(() => {
-    const getInitialIndices = async () => {
-      await dispatch(getIndices(queryText));
-    };
-    getInitialIndices();
-    dispatch(getMappings(embeddable.vis.data.aggs.indexPattern.title));
+  const indexPatternId = embeddable.vis.data.aggs.indexPattern.id;
+  const [dataSourceId, setDataSourceId] = useState<string | undefined>(undefined);
 
-    const createEmbeddable = async () => {
+  async function getDataSourceId() {
+    try {
+      const indexPattern = await getSavedObjectsClient().get('index-pattern', indexPatternId);
+      const refs = indexPattern.references as References[];
+      const foundDataSourceId = refs.find(ref => ref.type === 'data-source')?.id;
+      setDataSourceId(foundDataSourceId); 
+    } catch (error) {
+      console.error("Error fetching index pattern:", error);
+    }
+  }
+
+  // useEffect to dispatch actions once dataSourceId fetch is complete
+  useEffect(() => {
+    async function fetchData() {
+      await getDataSourceId();
+
+      const getIndicesDispatchCall = dispatch(getIndices(queryText, dataSourceId));
+      const getMappingDispatchCall =  dispatch(getMappings(embeddable.vis.data.aggs.indexPattern.title, dataSourceId));
+      await Promise.all([getIndicesDispatchCall, getMappingDispatchCall]);
+    }
+
+    async function createEmbeddable() {
       const visEmbeddable = await fetchVisEmbeddable(
         embeddable.vis.id,
         getEmbeddable(),
         getQueryService()
       );
       setGeneratedEmbeddable(visEmbeddable);
-    };
-
+    }
+    fetchData();
     createEmbeddable();
-  }, []);
+  }, [dataSourceId]); 
+
   const [isShowVis, setIsShowVis] = useState(false);
   const [accordionsOpen, setAccordionsOpen] = useState({ modelFeatures: true });
   const [detectorNameFromVis, setDetectorNameFromVis] = useState(
@@ -310,6 +335,7 @@ function AddAnomalyDetector({
       name: OVERLAY_ANOMALIES,
       args: {
         detectorId: detectorId,
+        dataSourceId: dataSourceId
       },
     } as VisLayerExpressionFn;
 
@@ -338,7 +364,7 @@ function AddAnomalyDetector({
     formikProps.setSubmitting(true);
     try {
       const detectorToCreate = formikToDetector(formikProps.values);
-      await dispatch(createDetector(detectorToCreate))
+      await dispatch(createDetector(detectorToCreate, dataSourceId))
         .then(async (response) => {
           dispatch(startDetector(response.response.id))
             .then((startDetectorResponse) => {})
@@ -410,7 +436,7 @@ function AddAnomalyDetector({
             });
         })
         .catch((err: any) => {
-          dispatch(getDetectorCount()).then((response: any) => {
+          dispatch(getDetectorCount(dataSourceId)).then((response: any) => {
             const totalDetectors = get(response, 'response.count', 0);
             if (totalDetectors === MAX_DETECTORS) {
               notifications.toasts.addDanger(
@@ -517,7 +543,7 @@ function AddAnomalyDetector({
       if (error) {
         return error;
       }
-      const resp = await dispatch(matchDetector(detectorName));
+      const resp = await dispatch(matchDetector(detectorName, dataSourceId));
       const match = get(resp, 'response.match', false);
       if (!match) {
         return undefined;
@@ -625,6 +651,7 @@ function AddAnomalyDetector({
                       embeddableVisId={embeddable.vis.id}
                       selectedDetector={selectedDetector}
                       setSelectedDetector={setSelectedDetector}
+                      dataSourceId={dataSourceId}
                     ></AssociateExisting>
                   )}
                   {mode === FLYOUT_MODES.create && (
