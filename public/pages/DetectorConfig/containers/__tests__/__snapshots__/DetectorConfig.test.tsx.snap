@@ -430,6 +430,108 @@ exports[`<DetectorConfig /> spec renders the component 1`] = `
                 </div>
               </div>
             </div>
+            <div
+              class="euiFlexItem"
+            >
+              <div
+                class="euiFormRow"
+                id="random_html_id-row"
+                style="width: 250px;"
+              >
+                <div
+                  class="euiFormRow__labelWrapper"
+                >
+                  <label
+                    class="euiFormLabel euiFormRow__label"
+                    for="random_html_id"
+                  >
+                    Custom result index min age
+                  </label>
+                </div>
+                <div
+                  class="euiFormRow__fieldWrapper"
+                >
+                  <div
+                    class="euiText euiText--medium"
+                    id="random_html_id"
+                  >
+                    <p
+                      class="enabled"
+                    >
+                      7
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div
+              class="euiFlexItem"
+            >
+              <div
+                class="euiFormRow"
+                id="random_html_id-row"
+                style="width: 250px;"
+              >
+                <div
+                  class="euiFormRow__labelWrapper"
+                >
+                  <label
+                    class="euiFormLabel euiFormRow__label"
+                    for="random_html_id"
+                  >
+                    Custom result index min size
+                  </label>
+                </div>
+                <div
+                  class="euiFormRow__fieldWrapper"
+                >
+                  <div
+                    class="euiText euiText--medium"
+                    id="random_html_id"
+                  >
+                    <p
+                      class="enabled"
+                    >
+                      51200
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div
+              class="euiFlexItem"
+            >
+              <div
+                class="euiFormRow"
+                id="random_html_id-row"
+                style="width: 250px;"
+              >
+                <div
+                  class="euiFormRow__labelWrapper"
+                >
+                  <label
+                    class="euiFormLabel euiFormRow__label"
+                    for="random_html_id"
+                  >
+                    Custom result index TTL
+                  </label>
+                </div>
+                <div
+                  class="euiFormRow__fieldWrapper"
+                >
+                  <div
+                    class="euiText euiText--medium"
+                    id="random_html_id"
+                  >
+                    <p
+                      class="enabled"
+                    >
+                      60
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -1599,6 +1701,108 @@ exports[`<DetectorConfig /> spec renders the component with 2 custom and 1 simpl
                       class="enabled"
                     >
                       -
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div
+              class="euiFlexItem"
+            >
+              <div
+                class="euiFormRow"
+                id="random_html_id-row"
+                style="width: 250px;"
+              >
+                <div
+                  class="euiFormRow__labelWrapper"
+                >
+                  <label
+                    class="euiFormLabel euiFormRow__label"
+                    for="random_html_id"
+                  >
+                    Custom result index min age
+                  </label>
+                </div>
+                <div
+                  class="euiFormRow__fieldWrapper"
+                >
+                  <div
+                    class="euiText euiText--medium"
+                    id="random_html_id"
+                  >
+                    <p
+                      class="enabled"
+                    >
+                      7
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div
+              class="euiFlexItem"
+            >
+              <div
+                class="euiFormRow"
+                id="random_html_id-row"
+                style="width: 250px;"
+              >
+                <div
+                  class="euiFormRow__labelWrapper"
+                >
+                  <label
+                    class="euiFormLabel euiFormRow__label"
+                    for="random_html_id"
+                  >
+                    Custom result index min size
+                  </label>
+                </div>
+                <div
+                  class="euiFormRow__fieldWrapper"
+                >
+                  <div
+                    class="euiText euiText--medium"
+                    id="random_html_id"
+                  >
+                    <p
+                      class="enabled"
+                    >
+                      51200
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div
+              class="euiFlexItem"
+            >
+              <div
+                class="euiFormRow"
+                id="random_html_id-row"
+                style="width: 250px;"
+              >
+                <div
+                  class="euiFormRow__labelWrapper"
+                >
+                  <label
+                    class="euiFormLabel euiFormRow__label"
+                    for="random_html_id"
+                  >
+                    Custom result index TTL
+                  </label>
+                </div>
+                <div
+                  class="euiFormRow__fieldWrapper"
+                >
+                  <div
+                    class="euiText euiText--medium"
+                    id="random_html_id"
+                  >
+                    <p
+                      class="enabled"
+                    >
+                      60
                     </p>
                   </div>
                 </div>

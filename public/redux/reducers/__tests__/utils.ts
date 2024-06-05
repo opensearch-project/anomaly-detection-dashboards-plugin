@@ -119,7 +119,10 @@ export const getRandomDetector = (
     curState: DETECTOR_STATE.INIT,
     stateError: '',
     shingleSize: DEFAULT_SHINGLE_SIZE,
-    resultIndex: isEmpty(customResultIndex) ? undefined : customResultIndex
+    resultIndex: isEmpty(customResultIndex) ? undefined : customResultIndex,
+    resultIndexMinAge: 7,
+    resultIndexMinSize: 51200,
+    resultIndexTtl: 60,
   };
 };
 

@@ -225,6 +225,9 @@ export const DefineDetector = (props: DefineDetectorProps) => {
       formikProps.setFieldTouched('timeField');
       formikProps.setFieldTouched('interval');
       formikProps.setFieldTouched('windowDelay');
+      formikProps.setFieldTouched('resultIndexMinAge');
+      formikProps.setFieldTouched('resultIndexMinSize');
+      formikProps.setFieldTouched('resultIndexTtl');
       formikProps.validateForm().then((errors) => {
         if (isEmpty(errors)) {
           if (props.isEdit) {
