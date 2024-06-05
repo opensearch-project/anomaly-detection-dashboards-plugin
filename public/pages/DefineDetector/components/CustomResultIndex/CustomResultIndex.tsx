@@ -115,7 +115,7 @@ function CustomResultIndex(props: CustomResultIndexProps) {
                 </EuiFormRow>
               </EuiFlexItem>
             ) : null}
-            </EuiFlexGroup>
+          </EuiFlexGroup>
         )}
       </Field>
 
