@@ -180,7 +180,7 @@ function CustomResultIndex(props: CustomResultIndexProps) {
                       id="resultIndexMinSize"
                       placeholder="Max index size"
                       data-test-subj="resultIndexMinSize"
-                      min={1}
+                      min={1000}
                       {...field}
                     />
                   </EuiFlexItem>

@@ -336,7 +336,7 @@ exports[`<AdditionalSettings /> spec renders the component in create mode (no ID
                   <p
                     class="enabled"
                   >
-                    -
+                    opensearch-ad-plugin-result-test
                   </p>
                 </div>
               </div>
@@ -370,7 +370,7 @@ exports[`<AdditionalSettings /> spec renders the component in create mode (no ID
                   <p
                     class="enabled"
                   >
-                    -
+                    7 Days
                   </p>
                 </div>
               </div>
@@ -404,7 +404,7 @@ exports[`<AdditionalSettings /> spec renders the component in create mode (no ID
                   <p
                     class="enabled"
                   >
-                    -
+                    51200 MB
                   </p>
                 </div>
               </div>
@@ -438,7 +438,7 @@ exports[`<AdditionalSettings /> spec renders the component in create mode (no ID
                   <p
                     class="enabled"
                   >
-                    -
+                    60 Days
                   </p>
                 </div>
               </div>
@@ -856,7 +856,7 @@ exports[`<AdditionalSettings /> spec renders the component in edit mode (with ID
                   <p
                     class="enabled"
                   >
-                    -
+                    opensearch-ad-plugin-result-test
                   </p>
                 </div>
               </div>
@@ -890,7 +890,7 @@ exports[`<AdditionalSettings /> spec renders the component in edit mode (with ID
                   <p
                     class="enabled"
                   >
-                    -
+                    7 Days
                   </p>
                 </div>
               </div>
@@ -924,7 +924,7 @@ exports[`<AdditionalSettings /> spec renders the component in edit mode (with ID
                   <p
                     class="enabled"
                   >
-                    -
+                    51200 MB
                   </p>
                 </div>
               </div>
@@ -958,7 +958,7 @@ exports[`<AdditionalSettings /> spec renders the component in edit mode (with ID
                   <p
                     class="enabled"
                   >
-                    -
+                    60 Days
                   </p>
                 </div>
               </div>

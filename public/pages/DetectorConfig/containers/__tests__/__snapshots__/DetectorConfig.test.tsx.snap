@@ -458,7 +458,7 @@ exports[`<DetectorConfig /> spec renders the component 1`] = `
                     <p
                       class="enabled"
                     >
-                      7
+                      7 Days
                     </p>
                   </div>
                 </div>
@@ -492,7 +492,7 @@ exports[`<DetectorConfig /> spec renders the component 1`] = `
                     <p
                       class="enabled"
                     >
-                      51200
+                      51200 MB
                     </p>
                   </div>
                 </div>
@@ -526,7 +526,7 @@ exports[`<DetectorConfig /> spec renders the component 1`] = `
                     <p
                       class="enabled"
                     >
-                      60
+                      60 Days
                     </p>
                   </div>
                 </div>
@@ -1734,7 +1734,7 @@ exports[`<DetectorConfig /> spec renders the component with 2 custom and 1 simpl
                     <p
                       class="enabled"
                     >
-                      7
+                      7 Days
                     </p>
                   </div>
                 </div>
@@ -1768,7 +1768,7 @@ exports[`<DetectorConfig /> spec renders the component with 2 custom and 1 simpl
                     <p
                       class="enabled"
                     >
-                      51200
+                      51200 MB
                     </p>
                   </div>
                 </div>
@@ -1802,7 +1802,7 @@ exports[`<DetectorConfig /> spec renders the component with 2 custom and 1 simpl
                     <p
                       class="enabled"
                     >
-                      60
+                      60 Days
                     </p>
                   </div>
                 </div>
