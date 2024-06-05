@@ -54,6 +54,10 @@ const testDetector = {
       },
     ],
   },
+  resultIndex: 'opensearch-ad-plugin-result-test',
+  resultIndexMinAge: 7,
+  resultIndexMinSize: 51200,
+  resultIndexTtl: 60,
 } as Detector;
 
 describe('<AdditionalSettings /> spec', () => {
@@ -80,6 +84,10 @@ describe('<AdditionalSettings /> spec', () => {
     getByText('test-description');
     getByText('test-timefield');
     getByText('1 Minutes');
+    getByText('opensearch-ad-plugin-result-test');
+    getByText('7 Days');
+    getByText('51200 MB');
+    getByText('60 Days');
     expect(queryByText('test-id')).toBeNull();
   });
   test('renders the component in edit mode (with ID)', () => {

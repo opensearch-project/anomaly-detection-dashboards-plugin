@@ -22,4 +22,7 @@ export interface DetectorDefinitionFormikValues {
   timeField: string;
   interval: number;
   windowDelay: number;
+  resultIndexMinAge?: number;
+  resultIndexMinSize?: number;
+  resultIndexTtl?:number;
 }

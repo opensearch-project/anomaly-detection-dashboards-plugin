@@ -187,6 +187,9 @@ export type Detector = {
   timeField: string;
   indices: string[];
   resultIndex?: string;
+  resultIndexMinAge?: number;
+  resultIndexMinSize?: number;
+  resultIndexTtl?: number;
   filterQuery: { [key: string]: any };
   featureAttributes: FeatureAttributes[];
   windowDelay: { period: Schedule };
