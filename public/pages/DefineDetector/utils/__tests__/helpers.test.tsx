@@ -40,6 +40,10 @@ describe('detectorDefinitionToFormik', () => {
       timeField: randomDetector.timeField,
       interval: randomDetector.detectionInterval.period.interval,
       windowDelay: randomDetector.windowDelay.period.interval,
+      resultIndex: randomDetector.resultIndex,
+      resultIndexMinAge: randomDetector.resultIndexMinAge,
+      resultIndexMinSize: randomDetector.resultIndexMinSize,
+      resultIndexTtl: randomDetector.resultIndexTtl,
     });
   });
   test('should return if detector does not have metadata', () => {
@@ -56,6 +60,10 @@ describe('detectorDefinitionToFormik', () => {
       timeField: randomDetector.timeField,
       interval: randomDetector.detectionInterval.period.interval,
       windowDelay: randomDetector.windowDelay.period.interval,
+      resultIndex: randomDetector.resultIndex,
+      resultIndexMinAge: randomDetector.resultIndexMinAge,
+      resultIndexMinSize: randomDetector.resultIndexMinSize,
+      resultIndexTtl: randomDetector.resultIndexTtl,
     });
   });
   test("upgrade old detector's filters to include filter type", () => {

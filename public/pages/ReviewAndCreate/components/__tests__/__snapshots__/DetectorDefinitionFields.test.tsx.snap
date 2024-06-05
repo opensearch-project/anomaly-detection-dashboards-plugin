@@ -336,7 +336,109 @@ exports[`<AdditionalSettings /> spec renders the component in create mode (no ID
                   <p
                     class="enabled"
                   >
-                    -
+                    opensearch-ad-plugin-result-test
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div
+            class="euiFlexItem"
+          >
+            <div
+              class="euiFormRow"
+              id="random_html_id-row"
+              style="width: 250px;"
+            >
+              <div
+                class="euiFormRow__labelWrapper"
+              >
+                <label
+                  class="euiFormLabel euiFormRow__label"
+                  for="random_html_id"
+                >
+                  Custom result index min age
+                </label>
+              </div>
+              <div
+                class="euiFormRow__fieldWrapper"
+              >
+                <div
+                  class="euiText euiText--medium"
+                  id="random_html_id"
+                >
+                  <p
+                    class="enabled"
+                  >
+                    7 Days
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div
+            class="euiFlexItem"
+          >
+            <div
+              class="euiFormRow"
+              id="random_html_id-row"
+              style="width: 250px;"
+            >
+              <div
+                class="euiFormRow__labelWrapper"
+              >
+                <label
+                  class="euiFormLabel euiFormRow__label"
+                  for="random_html_id"
+                >
+                  Custom result index min size
+                </label>
+              </div>
+              <div
+                class="euiFormRow__fieldWrapper"
+              >
+                <div
+                  class="euiText euiText--medium"
+                  id="random_html_id"
+                >
+                  <p
+                    class="enabled"
+                  >
+                    51200 MB
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div
+            class="euiFlexItem"
+          >
+            <div
+              class="euiFormRow"
+              id="random_html_id-row"
+              style="width: 250px;"
+            >
+              <div
+                class="euiFormRow__labelWrapper"
+              >
+                <label
+                  class="euiFormLabel euiFormRow__label"
+                  for="random_html_id"
+                >
+                  Custom result index TTL
+                </label>
+              </div>
+              <div
+                class="euiFormRow__fieldWrapper"
+              >
+                <div
+                  class="euiText euiText--medium"
+                  id="random_html_id"
+                >
+                  <p
+                    class="enabled"
+                  >
+                    60 Days
                   </p>
                 </div>
               </div>
@@ -754,7 +856,109 @@ exports[`<AdditionalSettings /> spec renders the component in edit mode (with ID
                   <p
                     class="enabled"
                   >
-                    -
+                    opensearch-ad-plugin-result-test
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div
+            class="euiFlexItem"
+          >
+            <div
+              class="euiFormRow"
+              id="random_html_id-row"
+              style="width: 250px;"
+            >
+              <div
+                class="euiFormRow__labelWrapper"
+              >
+                <label
+                  class="euiFormLabel euiFormRow__label"
+                  for="random_html_id"
+                >
+                  Custom result index min age
+                </label>
+              </div>
+              <div
+                class="euiFormRow__fieldWrapper"
+              >
+                <div
+                  class="euiText euiText--medium"
+                  id="random_html_id"
+                >
+                  <p
+                    class="enabled"
+                  >
+                    7 Days
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div
+            class="euiFlexItem"
+          >
+            <div
+              class="euiFormRow"
+              id="random_html_id-row"
+              style="width: 250px;"
+            >
+              <div
+                class="euiFormRow__labelWrapper"
+              >
+                <label
+                  class="euiFormLabel euiFormRow__label"
+                  for="random_html_id"
+                >
+                  Custom result index min size
+                </label>
+              </div>
+              <div
+                class="euiFormRow__fieldWrapper"
+              >
+                <div
+                  class="euiText euiText--medium"
+                  id="random_html_id"
+                >
+                  <p
+                    class="enabled"
+                  >
+                    51200 MB
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div
+            class="euiFlexItem"
+          >
+            <div
+              class="euiFormRow"
+              id="random_html_id-row"
+              style="width: 250px;"
+            >
+              <div
+                class="euiFormRow__labelWrapper"
+              >
+                <label
+                  class="euiFormLabel euiFormRow__label"
+                  for="random_html_id"
+                >
+                  Custom result index TTL
+                </label>
+              </div>
+              <div
+                class="euiFormRow__fieldWrapper"
+              >
+                <div
+                  class="euiText euiText--medium"
+                  id="random_html_id"
+                >
+                  <p
+                    class="enabled"
+                  >
+                    60 Days
                   </p>
                 </div>
               </div>
