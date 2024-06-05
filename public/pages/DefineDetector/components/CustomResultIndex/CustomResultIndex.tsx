@@ -21,6 +21,7 @@ import {
   EuiFormRow,
   EuiCheckbox,
   EuiIcon,
+  EuiFieldNumber,
 } from '@elastic/eui';
 import { Field, FieldProps } from 'formik';
 import React, { useState } from 'react';
@@ -31,7 +32,9 @@ import {
   isInvalid,
   getError,
   validateCustomResultIndex,
+  validatePositiveInteger,
 } from '../../../../utils/utils';
+import { FormattedFormRow } from '../../../../components/FormattedFormRow/FormattedFormRow';
 
 interface CustomResultIndexProps {
   isEdit: boolean;
@@ -86,7 +89,7 @@ function CustomResultIndex(props: CustomResultIndexProps) {
               <EuiFlexItem>
                 <EuiCallOut
                   data-test-subj="cannotEditResultIndexCallout"
-                  title="You can't change the custom result index after you create the detector. You can manage the result index with the Index Management plugin."
+                  title="You can't change the custom result index after creating the detector. You can manage the result index using the following three settings inside Anomaly Detection plugin or with the Index Management plugin."
                   color="warning"
                   iconType="alert"
                   size="s"
@@ -115,6 +118,121 @@ function CustomResultIndex(props: CustomResultIndexProps) {
           </EuiFlexGroup>
         )}
       </Field>
+
+      {enabled ? (<Field 
+        name="resultIndexMinAge" 
+        validate={enabled ? validatePositiveInteger : null}
+        >
+        {({ field, form }: FieldProps) => (
+          <EuiFlexGroup>
+            <EuiFlexItem style={{ maxWidth: '70%' }}>
+              <FormattedFormRow
+                fullWidth
+                title="Max Index Age"
+                hint={[
+                  `This setting would define a specific threshold for the age of an index. When this threshold is surpassed, a rollover will be triggered automatically.`,
+                ]}
+                isInvalid={isInvalid(field.name, form)}
+                error={getError(field.name, form)}
+              >
+                <EuiFlexGroup gutterSize="s" alignItems="center">
+                  <EuiFlexItem grow={false}>
+                    <EuiFieldNumber
+                      name="resultIndexMinAge"
+                      id="resultIndexMinAge"
+                      data-test-subj="resultIndexMinAge"
+                      min={1}
+                      {...field}
+                    />
+                  </EuiFlexItem>
+                  <EuiFlexItem>
+                    <EuiText>
+                      <p className="minutes">days</p>
+                    </EuiText>
+                  </EuiFlexItem>
+                </EuiFlexGroup>
+              </FormattedFormRow>
+            </EuiFlexItem>
+          </EuiFlexGroup>
+        )}
+      </Field>) : null}  
+
+      {enabled ? (<Field
+        name="resultIndexMinSize"
+        validate={enabled ? validatePositiveInteger : null}
+        >
+        {({ field, form }: FieldProps) => (
+          <EuiFlexGroup>
+            <EuiFlexItem style={{ maxWidth: '70%' }}>
+              <FormattedFormRow
+                fullWidth
+                title="Max Index Size"
+                hint={[
+                  `This setting would define a specific threshold for the size of an index. When this threshold is surpassed, a rollover will be triggered automatically.`,
+                ]}
+                isInvalid={isInvalid(field.name, form)}
+                error={getError(field.name, form)}
+              >
+                <EuiFlexGroup gutterSize="s" alignItems="center">
+                  <EuiFlexItem grow={false}>
+                    <EuiFieldNumber
+                      name="resultIndexMinSize"
+                      id="resultIndexMinSize"
+                      placeholder="Max index size"
+                      data-test-subj="resultIndexMinSize"
+                      min={1000}
+                      {...field}
+                    />
+                  </EuiFlexItem>
+                  <EuiFlexItem>
+                    <EuiText>
+                      <p className="minutes">MB</p>
+                    </EuiText>
+                  </EuiFlexItem>
+                </EuiFlexGroup>
+              </FormattedFormRow>
+            </EuiFlexItem>
+          </EuiFlexGroup>
+        )}
+      </Field>) : null}
+
+      {enabled ? (<Field
+        name="resultIndexTtl"
+        validate={enabled ? validatePositiveInteger : null}
+        >
+        {({ field, form }: FieldProps) => (
+          <EuiFlexGroup>
+            <EuiFlexItem style={{ maxWidth: '70%' }}>
+              <FormattedFormRow
+                fullWidth
+                title="Index TTL"
+                hint={[
+                  `This setting would define the duration after which an index is considered expired and eligible for deletion.`,
+                ]}
+                isInvalid={isInvalid(field.name, form)}
+                error={getError(field.name, form)}
+              >
+                <EuiFlexGroup gutterSize="s" alignItems="center">
+                  <EuiFlexItem grow={false}>
+                    <EuiFieldNumber
+                      name="resultIndexTtl"
+                      id="resultIndexTtl"
+                      data-test-subj="resultIndexTtl"
+                      min={1}
+                      {...field}
+                    />
+                  </EuiFlexItem>
+                  <EuiFlexItem>
+                    <EuiText>
+                      <p className="minutes">days</p>
+                    </EuiText>
+                  </EuiFlexItem>
+                </EuiFlexGroup>
+              </FormattedFormRow>
+            </EuiFlexItem>
+          </EuiFlexGroup>
+        )}
+      </Field>) : null}
     </ContentPanel>
   );
 }
