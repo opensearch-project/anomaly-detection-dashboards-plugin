@@ -272,4 +272,38 @@ describe('detector detail', () => {
     // Assert that the element is not in the document
     expect(element).toBeNull();
   });
+
+  test('the result index prefix is found in the visible indices', () => {
+    const detector = getRandomDetector(true, resultIndex);
+
+    // Set up the mock implementation for useFetchDetectorInfo
+    (useFetchDetectorInfo as jest.Mock).mockImplementation(() => ({
+      detector: detector,
+      hasError: false,
+      isLoadingDetector: false,
+      errorMessage: undefined,
+    }));
+
+    const initialState = {
+      opensearch: {
+        indices: [
+          { health: 'green', index: '.kibana_-962704462_v992471_1' },
+          { health: 'green', index: resultIndex + '-history-2024.06.05-1' },
+        ],
+        requesting: false,
+      },
+      ad: {
+        detectors: {},
+      },
+      alerting: {
+        monitors: {},
+      },
+    };
+
+    renderWithRouter(detectorId, initialState);
+    const element = screen.queryByTestId('missingResultIndexCallOut');
+
+    // Assert that the element is not in the document
+    expect(element).toBeNull();
+  });
 });

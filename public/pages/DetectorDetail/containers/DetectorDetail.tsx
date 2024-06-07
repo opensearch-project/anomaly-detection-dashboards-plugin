@@ -62,8 +62,8 @@ import {
   prettifyErrorMessage,
 } from '../../../../server/utils/helpers';
 import { DETECTOR_STATE } from '../../../../server/utils/constants';
-import { CatIndex } from '../../../../server/models/types';
-import { containsIndex } from '../utils/helpers';
+import { CatIndex, IndexAlias } from '../../../../server/models/types';
+import { containsIndex, containsAlias } from '../utils/helpers';
 import { DataSourceViewConfig } from '../../../../../../src/plugins/data_source_management/public';
 import {
   getDataSourceManagementPlugin,
@@ -136,6 +136,9 @@ export const DetectorDetail = (props: DetectorDetailProps) => {
   const isCatIndicesRequesting = useSelector(
     (state: AppState) => state.opensearch.requesting
   ) as boolean;
+  const visibleAliases = useSelector(
+    (state: AppState) => state.opensearch.aliases
+  ) as IndexAlias[];
 
   /*
   Determine if the result index is missing based on several conditions:
@@ -146,6 +149,7 @@ export const DetectorDetail = (props: DetectorDetailProps) => {
     To be safe, we'd rather not show the error message and consider the result index not missing.
   - If the result index is not found in the visible indices, then it is missing.
   */
+  const resultIndexOrAlias = get(detector, 'resultIndex', '')
   const isResultIndexMissing = isLoadingDetector
     ? false
     : isEmpty(get(detector, 'resultIndex', ''))
@@ -154,11 +158,11 @@ export const DetectorDetail = (props: DetectorDetailProps) => {
     ? false
     : isEmpty(visibleIndices)
     ? false
-    : !containsIndex(get(detector, 'resultIndex', ''), visibleIndices);
+    : !containsIndex(resultIndexOrAlias, visibleIndices) && !containsAlias(resultIndexOrAlias, visibleAliases);
 
   // debug message: prints visibleIndices if isResultIndexMissing is true
   if (isResultIndexMissing) {
-    console.log(`isResultIndexMissing is true, visibleIndices: ${visibleIndices}, detector result index: ${get(detector, 'resultIndex', '')}`);
+    console.log(`isResultIndexMissing is true, visibleIndices: ${visibleIndices}, visibleAliases: ${visibleAliases}, detector result index: ${resultIndexOrAlias}`);
   }
 
   // String to set in the modal if the realtime detector and/or historical analysis
