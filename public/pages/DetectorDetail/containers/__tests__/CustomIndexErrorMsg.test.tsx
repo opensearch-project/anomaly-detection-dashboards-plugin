@@ -209,7 +209,7 @@ describe('detector detail', () => {
     expect(element).toBeNull();
   });
 
-  test('the result index is not found in the visible indices', () => {
+  test('the result index is not found in the visible indices but alias is empty', () => {
     const detectorInfo = {
       detector: getRandomDetector(true, resultIndex),
       hasError: false,
@@ -236,7 +236,7 @@ describe('detector detail', () => {
     const element = screen.queryByTestId('missingResultIndexCallOut');
 
     // Assert that the element is in the document
-    expect(element).not.toBeNull();
+    expect(element).toBeNull();
   });
 
   test('the result index is found in the visible indices', () => {
@@ -273,8 +273,9 @@ describe('detector detail', () => {
     expect(element).toBeNull();
   });
 
-  test('the result index prefix is found in the visible indices', () => {
+  test('the result index prefix is found in the visible aliaes', () => {
     const detector = getRandomDetector(true, resultIndex);
+    const resultIndexFull = resultIndex + '-history-2024.06.05-1';
 
     // Set up the mock implementation for useFetchDetectorInfo
     (useFetchDetectorInfo as jest.Mock).mockImplementation(() => ({
@@ -288,7 +289,12 @@ describe('detector detail', () => {
       opensearch: {
         indices: [
           { health: 'green', index: '.kibana_-962704462_v992471_1' },
-          { health: 'green', index: resultIndex + '-history-2024.06.05-1' },
+          { health: 'green', index:  resultIndexFull},
+        ],
+        aliases : [
+          {index: '.opendistro-anomaly-results-history-2024.06.08-1', alias: '.opendistro-anomaly-results'},
+          {index: resultIndexFull, alias: resultIndex},
+          {index: '.kibana_1', alias: '.kibana'},
         ],
         requesting: false,
       },
@@ -305,5 +311,42 @@ describe('detector detail', () => {
 
     // Assert that the element is not in the document
     expect(element).toBeNull();
+  });
+
+  test('the result index prefix is not found in both visible aliaes and indices', () => {
+    const detector = getRandomDetector(true, resultIndex);
+
+    // Set up the mock implementation for useFetchDetectorInfo
+    (useFetchDetectorInfo as jest.Mock).mockImplementation(() => ({
+      detector: detector,
+      hasError: false,
+      isLoadingDetector: false,
+      errorMessage: undefined,
+    }));
+
+    const initialState = {
+      opensearch: {
+        indices: [
+          { health: 'green', index: '.kibana_-962704462_v992471_1' },
+        ],
+        aliases : [
+          {index: '.opendistro-anomaly-results-history-2024.06.08-1', alias: '.opendistro-anomaly-results'},
+          {index: '.kibana_1', alias: '.kibana'},
+        ],
+        requesting: false,
+      },
+      ad: {
+        detectors: {},
+      },
+      alerting: {
+        monitors: {},
+      },
+    };
+
+    renderWithRouter(detectorId, initialState);
+    const element = screen.queryByTestId('missingResultIndexCallOut');
+
+    // Assert that the element is not in the document
+    expect(element).not.toBeNull();
   });
 });
