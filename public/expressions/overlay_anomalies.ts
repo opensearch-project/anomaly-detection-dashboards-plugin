@@ -134,7 +134,8 @@ export const overlayAnomaliesFunction =
           detectorId,
           startTimeInMillis,
           endTimeInMillis,
-          resultIndex
+          resultIndex,
+          dataSourceId
         );
         const anomalyLayer = convertAnomaliesToPointInTimeEventsVisLayer(
           anomalies,
