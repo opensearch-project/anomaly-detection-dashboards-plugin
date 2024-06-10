@@ -211,7 +211,7 @@ export const DetectorDetail = (props: DetectorDetailProps) => {
         await dispatch(getAliases('', dataSourceId));
       } catch (error) {
         console.error(error);
-        core.notifications.toasts.addDanger('Error getting all indices');
+        core.notifications.toasts.addDanger('Error getting all indices or aliases');
       }
     };
     // only need to check if indices exist after detector finishes loading
