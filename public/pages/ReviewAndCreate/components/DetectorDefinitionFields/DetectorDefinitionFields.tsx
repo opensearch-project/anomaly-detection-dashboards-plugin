@@ -131,6 +131,10 @@ export const DetectorDefinitionFields = (
     }
   };
 
+  const minAge = get(props, 'detector.resultIndexMinAge', '-');
+  const minSize = get(props, 'detector.resultIndexMinSize', '-');
+  const ttl = get(props, 'detector.resultIndexTtl', '-');
+
   return (
     <ContentPanel
       title="Detector settings"
@@ -220,19 +224,19 @@ export const DetectorDefinitionFields = (
         <EuiFlexItem>
           <ConfigCell
             title="Custom result index min age"
-            description={get(props, 'detector.resultIndexMinAge', '-') + ' Days'}
+            description={minAge === '-' ? minAge : `${minAge} Days`}
           />
         </EuiFlexItem>
         <EuiFlexItem>
           <ConfigCell
             title="Custom result index min size"
-            description={get(props, 'detector.resultIndexMinSize', '-') + ' MB'}
+            description={minSize == '-' ? minSize : `${minSize} MB`}
           />
         </EuiFlexItem>
         <EuiFlexItem>
           <ConfigCell
             title="Custom result index TTL"
-            description={get(props, 'detector.resultIndexTtl', '-') + ' Days'}
+            description={ttl == '-' ? ttl : `${ttl} Days`}
           />
         </EuiFlexItem>
       </EuiFlexGrid>

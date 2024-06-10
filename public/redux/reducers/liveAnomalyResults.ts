@@ -66,6 +66,12 @@ export const getDetectorLiveResults = (
   let url = `..${AD_NODE_API.DETECTOR}/${detectorId}/results/${isHistorical}`;
 
   if (resultIndex) {
+    // search for custom index pattern instead of specific index/alias
+    // as a custom index will be rolled over and we don't want to lose
+    // history
+    if (!resultIndex.endsWith('*')) {
+      resultIndex += '*';
+    }
     url += `/${resultIndex}/${onlyQueryCustomResultIndex}`;
   }
 

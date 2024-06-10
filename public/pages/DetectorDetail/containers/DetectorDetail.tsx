@@ -45,7 +45,7 @@ import {
   getDetector,
   stopHistoricalDetector,
 } from '../../../redux/reducers/ad';
-import { getIndices } from '../../../redux/reducers/opensearch';
+import { getAliases, getIndices } from '../../../redux/reducers/opensearch';
 import { getErrorMessage, Listener } from '../../../utils/utils';
 import { darkModeEnabled } from '../../../utils/opensearchDashboardsUtils';
 import { BREADCRUMBS, MDS_BREADCRUMBS } from '../../../utils/constants';
@@ -62,8 +62,8 @@ import {
   prettifyErrorMessage,
 } from '../../../../server/utils/helpers';
 import { DETECTOR_STATE } from '../../../../server/utils/constants';
-import { CatIndex } from '../../../../server/models/types';
-import { containsIndex } from '../utils/helpers';
+import { CatIndex, IndexAlias } from '../../../../server/models/types';
+import { containsIndex, containsAlias } from '../utils/helpers';
 import { DataSourceViewConfig } from '../../../../../../src/plugins/data_source_management/public';
 import {
   getDataSourceManagementPlugin,
@@ -136,29 +136,34 @@ export const DetectorDetail = (props: DetectorDetailProps) => {
   const isCatIndicesRequesting = useSelector(
     (state: AppState) => state.opensearch.requesting
   ) as boolean;
+  const visibleAliases = useSelector(
+    (state: AppState) => state.opensearch.aliases
+  ) as IndexAlias[];
 
   /*
   Determine if the result index is missing based on several conditions:
   - If the detector is still loading, the result index is not missing.
   - If the result index retrieved from the detector is empty, it is not missing.
   - If cat indices are being requested, the result index is not missing.
-  - If visible indices are empty, it is likely there is an issue retrieving existing indices.
+  - If visible indices/aliaes are empty, it is likely there is an issue retrieving existing indices.
     To be safe, we'd rather not show the error message and consider the result index not missing.
   - If the result index is not found in the visible indices, then it is missing.
   */
+  const resultIndexOrAlias = get(detector, 'resultIndex', '')
   const isResultIndexMissing = isLoadingDetector
     ? false
     : isEmpty(get(detector, 'resultIndex', ''))
     ? false
     : isCatIndicesRequesting
     ? false
-    : isEmpty(visibleIndices)
+    : isEmpty(visibleIndices) || isEmpty(visibleAliases)
     ? false
-    : !containsIndex(get(detector, 'resultIndex', ''), visibleIndices);
+    : !containsIndex(resultIndexOrAlias, visibleIndices) && !containsAlias(resultIndexOrAlias, visibleAliases);
 
   // debug message: prints visibleIndices if isResultIndexMissing is true
   if (isResultIndexMissing) {
-    console.log(`isResultIndexMissing is true, visibleIndices: ${visibleIndices}, detector result index: ${get(detector, 'resultIndex', '')}`);
+    // The JSON.stringify method converts a JavaScript object or value to a JSON string. The optional null parameter is for the replacer function (not used here), and 2 specifies the indentation level for pretty-printing the JSON.
+    console.log(`isResultIndexMissing is true, visibleIndices: ${JSON.stringify(visibleIndices, null, 2)}, visibleAliases: ${JSON.stringify(visibleAliases, null, 2)}, detector result index: ${resultIndexOrAlias}`);
   }
 
   // String to set in the modal if the realtime detector and/or historical analysis
@@ -197,20 +202,21 @@ export const DetectorDetail = (props: DetectorDetailProps) => {
     scroll(0, 0);
   }, []);
 
-  // Getting all visible indices. Will re-fetch if changes to the detector (e.g.,
+  // Getting all visible indices & aliases. Will re-fetch if changes to the detector (e.g.,
   // detector starts, result index recreated or user switches tabs to re-fetch detector)
   useEffect(() => {
-    const getInitialIndices = async () => {
+    const getInitialIndicesAliases = async () => {
       try {
         await dispatch(getIndices('', dataSourceId));
+        await dispatch(getAliases('', dataSourceId));
       } catch (error) {
         console.error(error);
-        core.notifications.toasts.addDanger('Error getting all indices');
+        core.notifications.toasts.addDanger('Error getting all indices or aliases');
       }
     };
     // only need to check if indices exist after detector finishes loading
     if (!isLoadingDetector) {
-      getInitialIndices();
+      getInitialIndicesAliases();
     }
   }, [detector]);
 
