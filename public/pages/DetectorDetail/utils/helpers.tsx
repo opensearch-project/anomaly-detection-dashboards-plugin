@@ -17,7 +17,7 @@ import { DETECTOR_STATE } from '../../../../server/utils/constants';
 import { Detector } from '../../../models/interfaces';
 import { EuiHealth } from '@elastic/eui';
 import moment from 'moment';
-import { CatIndex } from '../../../../server/models/types';
+import { CatIndex, IndexAlias } from '../../../../server/models/types';
 
 export const getInitFailureMessageAndActionItem = (error: string): object => {
   const failureDetails = Object.values(DETECTOR_INIT_FAILURES);
@@ -142,6 +142,17 @@ export const getDetectorStateDetails = (
   );
 };
 
+/**
+ * Checks if any of the given indices contain the specified index.
+ *
+ * This function iterates through an array of `CatIndex` objects and checks if the `index` property of any
+ * `CatIndex` object equals to the specified `index` string. It returns `true` if such an `index` is found,
+ * otherwise it returns `false`.
+ *
+ * @param index - The string to check against the `index` properties of the `CatIndex` objects.
+ * @param indices - An array of `CatIndex` objects to search through.
+ * @returns A boolean value indicating whether any `CatIndex` object's `index` property equals to the specified prefix.
+ */
 export const containsIndex = (index: string, indices: CatIndex[]) => {
   let containsIndex = false;
   if (!isEmpty(indices)) {
@@ -152,4 +163,16 @@ export const containsIndex = (index: string, indices: CatIndex[]) => {
     });
   }
   return containsIndex;
+};
+
+export const containsAlias = (alias: string, aliases: IndexAlias[]) => {
+  let containsAlias = false;
+  if (!isEmpty(aliases)) {
+    aliases.forEach((catAlias: IndexAlias) => {
+      if (get(catAlias, 'alias', '') == alias) {
+        containsAlias = true;
+      }
+    });
+  }
+  return containsAlias;
 };

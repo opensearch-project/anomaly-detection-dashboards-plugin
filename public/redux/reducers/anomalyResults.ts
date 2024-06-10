@@ -103,6 +103,12 @@ export const getDetectorResults = (
   let url = `..${AD_NODE_API.DETECTOR}/${id}/results/${isHistorical}`;
 
   if (resultIndex) {
+    // search for custom index pattern instead of specific index/alias
+    // as a custom index will be rolled over and we don't want to lose
+    // history
+    if (!resultIndex.endsWith('*')) {
+      resultIndex += '*';
+    }
     url += `/${resultIndex}/${onlyQueryCustomResultIndex}`;
   }
 
@@ -125,6 +131,12 @@ export const searchResults = (
   let baseUrl = `..${AD_NODE_API.DETECTOR}/results/_search`;
 
   if (resultIndex) {
+    // search for custom index pattern instead of specific index/alias
+    // as a custom index will be rolled over and we don't want to lose
+    // history
+    if (!resultIndex.endsWith('*')) {
+        resultIndex += '*';
+    }
     baseUrl += `/${resultIndex}/${onlyQueryCustomResultIndex}`;
   }
 
