@@ -52,6 +52,9 @@ export const getAnomalies = async (
       }
     );
   } else {
+    if (!resultIndex.endsWith('*')) {
+      resultIndex += '*';
+    }
     anomalySummaryResponse = await getClient().post(
       `..${AD_NODE_API.DETECTOR}/results/_search/${resultIndex}/true/${dataSourceId}`,
       {
