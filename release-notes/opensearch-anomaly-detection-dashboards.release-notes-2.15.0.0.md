@@ -13,6 +13,7 @@ Compatible with OpenSearch Dashboards 2.15.0
 
 * Fix handling of special characters in categorical values ([#757](https://github.com/opensearch-project/anomaly-detection-dashboards-plugin/pull/757))
 * Fix Warning Message About Custom Result Index Despite Existing Indices ([#759](https://github.com/opensearch-project/anomaly-detection-dashboards-plugin/pull/759))
+* Fix index field not getting populated when editing a detector ([#783](https://github.com/opensearch-project/anomaly-detection-dashboards-plugin/pull/783))
 
 ### Maintenance
 
