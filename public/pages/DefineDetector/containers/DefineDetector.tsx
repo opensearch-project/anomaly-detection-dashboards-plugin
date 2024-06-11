@@ -392,6 +392,7 @@ export const DefineDetector = (props: DefineDetectorProps) => {
                 <CustomResultIndex
                   isEdit={props.isEdit}
                   resultIndex={get(formikProps, 'values.resultIndex')}
+                  formikProps={formikProps}
                 />
               </Fragment>
             </EuiPageBody>

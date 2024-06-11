@@ -424,7 +424,7 @@ exports[`<ReviewAndCreate /> spec renders the component, validation loading 1`] 
                     <p
                       class="enabled"
                     >
-                      -
+                      - Days
                     </p>
                   </div>
                 </div>
@@ -458,7 +458,7 @@ exports[`<ReviewAndCreate /> spec renders the component, validation loading 1`] 
                     <p
                       class="enabled"
                     >
-                      -
+                      - MB
                     </p>
                   </div>
                 </div>
@@ -492,7 +492,7 @@ exports[`<ReviewAndCreate /> spec renders the component, validation loading 1`] 
                     <p
                       class="enabled"
                     >
-                      -
+                      - Days
                     </p>
                   </div>
                 </div>
@@ -1518,7 +1518,7 @@ exports[`issue in detector validation issues in feature query 1`] = `
                       <p
                         class="enabled"
                       >
-                        -
+                        - Days
                       </p>
                     </div>
                   </div>
@@ -1552,7 +1552,7 @@ exports[`issue in detector validation issues in feature query 1`] = `
                       <p
                         class="enabled"
                       >
-                        -
+                        - MB
                       </p>
                     </div>
                   </div>
@@ -1586,7 +1586,7 @@ exports[`issue in detector validation issues in feature query 1`] = `
                       <p
                         class="enabled"
                       >
-                        -
+                        - Days
                       </p>
                     </div>
                   </div>
