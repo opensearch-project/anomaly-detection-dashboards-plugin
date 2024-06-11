@@ -34,6 +34,7 @@ import {
 import { getDetectorList } from '../../../../../redux/reducers/ad';
 import {
   getSavedFeatureAnywhereLoader,
+  getSavedObjectsClient,
   getUISettings,
 } from '../../../../../services';
 import {
@@ -53,7 +54,12 @@ interface AssociateExistingProps {
   embeddableVisId: string;
   selectedDetector: DetectorListItem | undefined;
   setSelectedDetector(detector: DetectorListItem | undefined): void;
-  dataSourceId: string | undefined;
+  indexPatternId: string;
+}
+interface References {
+  id: string;
+  name: string;
+  type: string;
 }
 
 export function AssociateExisting(
@@ -65,6 +71,18 @@ export function AssociateExisting(
   const isRequestingFromES = useSelector(
     (state: AppState) => state.ad.requesting
   );
+  const [dataSourceId, setDataSourceId] = useState<string | undefined>(undefined);
+
+  async function getDataSourceId() {
+    try {
+      const indexPattern = await getSavedObjectsClient().get('index-pattern', associateExistingProps.indexPatternId);
+      const refs = indexPattern.references as References[];
+      const foundDataSourceId = refs.find(ref => ref.type === 'data-source')?.id;
+      setDataSourceId(foundDataSourceId); 
+    } catch (error) {
+      console.error("Error fetching index pattern:", error);
+    }
+  }
   const uiSettings = getUISettings();
   const [isLoadingFinalDetectors, setIsLoadingFinalDetectors] =
     useState<boolean>(true);
@@ -145,11 +163,15 @@ export function AssociateExisting(
   };
 
   useEffect(() => {
-    getDetectors();
-  }, []);
+    async function fetchData() {
+      await getDataSourceId();
+      getDetectors();
+    }
+    fetchData();
+  }, [dataSourceId]);
 
   const getDetectors = async () => {
-    dispatch(getDetectorList(getAllDetectorsQueryParamsWithDataSourceId(associateExistingProps.dataSourceId)));
+    dispatch(getDetectorList(getAllDetectorsQueryParamsWithDataSourceId(dataSourceId)));
   };
 
   const selectedOptions = useMemo(() => {
