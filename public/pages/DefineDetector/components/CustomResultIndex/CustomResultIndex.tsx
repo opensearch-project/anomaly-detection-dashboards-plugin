@@ -23,8 +23,8 @@ import {
   EuiIcon,
   EuiFieldNumber,
 } from '@elastic/eui';
-import { Field, FieldProps } from 'formik';
-import React, { useState } from 'react';
+import { Field, FieldProps, FormikProps, useFormikContext } from 'formik';
+import React, { useEffect, useState } from 'react';
 import ContentPanel from '../../../../components/ContentPanel/ContentPanel';
 import { CUSTOM_AD_RESULT_INDEX_PREFIX } from '../../../../../server/utils/constants';
 import { BASE_DOCS_LINK } from '../../../../utils/constants';
@@ -32,18 +32,39 @@ import {
   isInvalid,
   getError,
   validateCustomResultIndex,
-  validatePositiveInteger,
+  validateEmptyOrPositiveInteger,
 } from '../../../../utils/utils';
 import { FormattedFormRow } from '../../../../components/FormattedFormRow/FormattedFormRow';
+import { DetectorDefinitionFormikValues } from '../../models/interfaces';
+import { get } from 'lodash';
 
 interface CustomResultIndexProps {
   isEdit: boolean;
   useDefaultResultIndex?: boolean;
   resultIndex?: string;
+  formikProps: FormikProps<DetectorDefinitionFormikValues>;
 }
 
 function CustomResultIndex(props: CustomResultIndexProps) {
   const [enabled, setEnabled] = useState<boolean>(!!props.resultIndex);
+  const [customResultIndexConditionsEnabled, setCustomResultIndexConditionsEnabled] = useState<boolean>(true);
+  const customResultIndexMinAge = get(props.formikProps, 'values.resultIndexMinAge');
+  const customResultIndexMinSize = get(props.formikProps, 'values.resultIndexMinSize');
+  const customResultIndexTTL = get(props.formikProps, 'values.resultIndexTtl');
+  const { setFieldValue } = useFormikContext();
+
+  useEffect(() => {
+    if (props.isEdit) {
+      if (customResultIndexMinAge === undefined && customResultIndexMinSize === undefined && customResultIndexTTL === undefined) {
+        setCustomResultIndexConditionsEnabled(false);
+      }
+    } 
+    if (!customResultIndexConditionsEnabled) {
+      setFieldValue('resultIndexMinAge', '');
+      setFieldValue('resultIndexMinSize', '');
+      setFieldValue('resultIndexTtl', '');
+    }
+  },[customResultIndexConditionsEnabled])
 
   return (
     <ContentPanel
@@ -89,7 +110,7 @@ function CustomResultIndex(props: CustomResultIndexProps) {
               <EuiFlexItem>
                 <EuiCallOut
                   data-test-subj="cannotEditResultIndexCallout"
-                  title="You can't change the custom result index after creating the detector. You can manage the result index using the following three settings."
+                  title="You can't change the custom result index after creating the detector. You can manage the result index using the following three settings inside Anomaly Detection plugin or with the Index Management plugin."
                   color="warning"
                   iconType="alert"
                   size="s"
@@ -115,20 +136,37 @@ function CustomResultIndex(props: CustomResultIndexProps) {
                 </EuiFormRow>
               </EuiFlexItem>
             ) : null}
+
+            {enabled ? (
+              <EuiFlexItem>
+                <EuiCheckbox
+                  id={'resultIndexConditionCheckbox'}
+                  label="Enable custom result index lifecycle management"
+                  checked={customResultIndexConditionsEnabled}
+                  onChange={() => {
+                    setCustomResultIndexConditionsEnabled(!customResultIndexConditionsEnabled);
+                  }}
+                />
+              </EuiFlexItem>
+            ) : null}
           </EuiFlexGroup>
         )}
       </Field>
 
-      {enabled ? (<Field 
+      { (enabled && customResultIndexConditionsEnabled) ? (<Field 
         name="resultIndexMinAge" 
-        validate={enabled ? validatePositiveInteger : null}
+        validate={(enabled && customResultIndexConditionsEnabled) ? validateEmptyOrPositiveInteger : null}
         >
         {({ field, form }: FieldProps) => (
           <EuiFlexGroup>
             <EuiFlexItem style={{ maxWidth: '70%' }}>
               <FormattedFormRow
                 fullWidth
-                title="Max Index Age"
+                formattedTitle={
+                  <p>
+                    Min Index Age <span className="optional">- optional</span>
+                  </p>
+                }
                 hint={[
                   `This setting would define a specific threshold for the age of an index. When this threshold is surpassed, a rollover will be triggered automatically.`,
                 ]}
@@ -141,6 +179,7 @@ function CustomResultIndex(props: CustomResultIndexProps) {
                       name="resultIndexMinAge"
                       id="resultIndexMinAge"
                       data-test-subj="resultIndexMinAge"
+                      placeholder="Min index age"
                       min={1}
                       {...field}
                     />
@@ -157,16 +196,20 @@ function CustomResultIndex(props: CustomResultIndexProps) {
         )}
       </Field>) : null}  
 
-      {enabled ? (<Field
+      {(enabled && customResultIndexConditionsEnabled) ? (<Field
         name="resultIndexMinSize"
-        validate={enabled ? validatePositiveInteger : null}
+        validate={(enabled && customResultIndexConditionsEnabled) ? validateEmptyOrPositiveInteger : null}
         >
         {({ field, form }: FieldProps) => (
           <EuiFlexGroup>
             <EuiFlexItem style={{ maxWidth: '70%' }}>
               <FormattedFormRow
                 fullWidth
-                title="Max Index Size"
+                formattedTitle={
+                  <p>
+                    Min Index Size <span className="optional">- optional</span>
+                  </p>
+                }
                 hint={[
                   `This setting would define a specific threshold for the size of an index. When this threshold is surpassed, a rollover will be triggered automatically.`,
                 ]}
@@ -178,7 +221,7 @@ function CustomResultIndex(props: CustomResultIndexProps) {
                     <EuiFieldNumber
                       name="resultIndexMinSize"
                       id="resultIndexMinSize"
-                      placeholder="Max index size"
+                      placeholder="Min index size"
                       data-test-subj="resultIndexMinSize"
                       min={1000}
                       {...field}
@@ -196,16 +239,20 @@ function CustomResultIndex(props: CustomResultIndexProps) {
         )}
       </Field>) : null}
 
-      {enabled ? (<Field
+      {(enabled && customResultIndexConditionsEnabled) ? (<Field
         name="resultIndexTtl"
-        validate={enabled ? validatePositiveInteger : null}
+        validate={(enabled && customResultIndexConditionsEnabled) ? validateEmptyOrPositiveInteger : null}
         >
         {({ field, form }: FieldProps) => (
           <EuiFlexGroup>
             <EuiFlexItem style={{ maxWidth: '70%' }}>
               <FormattedFormRow
                 fullWidth
-                title="Index TTL"
+                formattedTitle={
+                  <p>
+                    Index TTL <span className="optional">- optional</span>
+                  </p>
+                }
                 hint={[
                   `This setting would define the duration after which an index is considered expired and eligible for deletion.`,
                 ]}
@@ -218,6 +265,7 @@ function CustomResultIndex(props: CustomResultIndexProps) {
                       name="resultIndexTtl"
                       id="resultIndexTtl"
                       data-test-subj="resultIndexTtl"
+                      placeholder="Index TTL"
                       min={1}
                       {...field}
                     />
