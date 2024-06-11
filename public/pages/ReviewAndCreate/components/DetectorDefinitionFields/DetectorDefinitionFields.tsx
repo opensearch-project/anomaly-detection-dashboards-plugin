@@ -132,11 +132,11 @@ export const DetectorDefinitionFields = (
   };
 
   const minAgeValue = get(props, 'detector.resultIndexMinAge', undefined);
-  const minAge = (minAgeValue === undefined) ? '- Days' : minAgeValue + " Days";
+  const minAge = (minAgeValue === undefined) ? '-' : minAgeValue + " Days";
   const minSizeValue = get(props, 'detector.resultIndexMinSize', undefined);
-  const minSize = (minSizeValue === undefined) ? '- MB' : minSizeValue + " MB";
+  const minSize = (minSizeValue === undefined) ? '-' : minSizeValue + " MB";
   const ttlValue = get(props, 'detector.resultIndexTtl', undefined);
-  const ttl = (ttlValue === undefined) ? '- Days' : ttlValue + " Days";
+  const ttl = (ttlValue === undefined) ? '-' : ttlValue + " Days";
 
 
   return (
