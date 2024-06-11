@@ -110,6 +110,11 @@ export const validatePositiveInteger = (value: any) => {
     return 'Must be a positive integer';
 };
 
+export const validateEmptyOrPositiveInteger = (value: any) => {
+  if (Number.isInteger(value) && value < 1)
+    return 'Must be a positive integer';
+};
+
 export const validateNonNegativeInteger = (value: any) => {
   if (!Number.isInteger(value) || value < 0)
     return 'Must be a non-negative integer';
