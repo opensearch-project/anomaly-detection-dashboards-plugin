@@ -61,12 +61,11 @@ export function DataSource(props: DataSourceProps) {
   const { setFieldValue } = useFormikContext();
 
   useEffect(() => {
-    setFieldValue('index', []);
-    setFieldValue('timeField', undefined);
-    setFieldValue('filters', []);
-
     const getInitialIndices = async () => {
       await dispatch(getIndices(queryText, dataSourceId));
+      setFieldValue('index', props.formikProps.values.index);
+      setFieldValue('timeField', props.formikProps.values.timeField);
+      setFieldValue('filters', props.formikProps.values.filters);
     };
     getInitialIndices();
   }, [dataSourceId]);
