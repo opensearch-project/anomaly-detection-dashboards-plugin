@@ -366,7 +366,7 @@ function AddAnomalyDetector({
       const detectorToCreate = formikToDetector(formikProps.values);
       await dispatch(createDetector(detectorToCreate, dataSourceId))
         .then(async (response) => {
-          dispatch(startDetector(response.response.id))
+          dispatch(startDetector(response.response.id, dataSourceId))
             .then((startDetectorResponse) => {})
             .catch((err: any) => {
               notifications.toasts.addDanger(

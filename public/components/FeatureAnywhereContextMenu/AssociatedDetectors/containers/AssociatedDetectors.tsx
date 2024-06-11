@@ -26,6 +26,7 @@ import {
   getSavedFeatureAnywhereLoader,
   getNotifications,
   getUISettings,
+  getSavedObjectsClient,
 } from '../../../../services';
 import {
   GET_ALL_DETECTORS_QUERY_PARAMS,
@@ -47,6 +48,7 @@ import {
 } from '../../../../../../../src/plugins/vis_augmenter/public';
 import { ASSOCIATED_DETECTOR_ACTION } from '../utils/constants';
 import { PLUGIN_AUGMENTATION_MAX_OBJECTS_SETTING } from '../../../../../public/expressions/constants';
+import { getAllDetectorsQueryParamsWithDataSourceId } from '../../../../../public/pages/utils/helpers';
 
 interface ConfirmModalState {
   isOpen: boolean;
@@ -54,6 +56,12 @@ interface ConfirmModalState {
   isListLoading: boolean;
   isRequestingToClose: boolean;
   affectedDetector: DetectorListItem;
+}
+
+interface References {
+  id: string;
+  name: string;
+  type: string;
 }
 
 function AssociatedDetectors({ embeddable, closeFlyout, setMode }) {
@@ -69,6 +77,20 @@ function AssociatedDetectors({ embeddable, closeFlyout, setMode }) {
     (state: AppState) => state.ad.errorMessage
   );
   const embeddableTitle = embeddable.getTitle();
+  const indexPatternId = embeddable.vis.data.aggs.indexPattern.id;
+  const [dataSourceId, setDataSourceId] = useState<string | undefined>(undefined);
+
+  async function getDataSourceId() {
+    try {
+      const indexPattern = await getSavedObjectsClient().get('index-pattern', indexPatternId);
+      const refs = indexPattern.references as References[];
+      const foundDataSourceId = refs.find(ref => ref.type === 'data-source')?.id;
+      setDataSourceId(foundDataSourceId); 
+    } catch (error) {
+      console.error("Error fetching index pattern:", error);
+    }
+  }
+
   const [selectedDetectors, setSelectedDetectors] = useState(
     [] as DetectorListItem[]
   );
@@ -135,8 +157,12 @@ function AssociatedDetectors({ embeddable, closeFlyout, setMode }) {
   }, [confirmModalState.isRequestingToClose, isLoading]);
 
   useEffect(() => {
-    getDetectors();
-  }, []);
+    async function fetchData() {
+      await getDataSourceId();
+      getDetectors();
+    }
+    fetchData();
+  }, [dataSourceId]);
 
   // Handles all changes in the assoicated detectors such as unlinking or new detectors associated
   useEffect(() => {
@@ -175,9 +201,9 @@ function AssociatedDetectors({ embeddable, closeFlyout, setMode }) {
   ) => {
     // Map all detector IDs for all the found augmented vis objects
     const savedAugmentDetectorsSet = new Set(
-      savedAugmentForThisVisualization.map((savedObject) =>
-        get(savedObject, 'pluginResource.id', '')
-      )
+      savedAugmentForThisVisualization
+        .map(savedObject => get(savedObject, 'pluginResource.id', ''))
+        .filter(id => id !== '')
     );
 
     // filter out any detectors that aren't on the set of detectors IDs from the augmented vis objects.
@@ -240,7 +266,11 @@ function AssociatedDetectors({ embeddable, closeFlyout, setMode }) {
   };
 
   const getDetectors = async () => {
-    dispatch(getDetectorList(GET_ALL_DETECTORS_QUERY_PARAMS));
+    dispatch(
+      getDetectorList(
+        getAllDetectorsQueryParamsWithDataSourceId(dataSourceId)
+      )
+    );  
   };
 
   const handleUnlinkDetectorAction = (detector: DetectorListItem) => {
