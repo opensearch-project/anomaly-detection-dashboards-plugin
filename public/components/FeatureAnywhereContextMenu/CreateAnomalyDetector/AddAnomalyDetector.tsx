@@ -651,7 +651,7 @@ function AddAnomalyDetector({
                       embeddableVisId={embeddable.vis.id}
                       selectedDetector={selectedDetector}
                       setSelectedDetector={setSelectedDetector}
-                      dataSourceId={dataSourceId}
+                      indexPatternId={indexPatternId}
                     ></AssociateExisting>
                   )}
                   {mode === FLYOUT_MODES.create && (
