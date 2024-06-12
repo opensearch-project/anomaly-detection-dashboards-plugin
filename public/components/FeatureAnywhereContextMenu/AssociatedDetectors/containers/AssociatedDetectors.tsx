@@ -77,7 +77,7 @@ function AssociatedDetectors({ embeddable, closeFlyout, setMode }) {
     (state: AppState) => state.ad.errorMessage
   );
   const embeddableTitle = embeddable.getTitle();
-  const indexPatternId = embeddable.vis.data.aggs.indexPattern.id;
+  const indexPatternId = embeddable.vis.data.aggs != null ? embeddable.vis.data.aggs.indexPattern.id : "";
   const [dataSourceId, setDataSourceId] = useState<string | undefined>(undefined);
 
   async function getDataSourceId() {
