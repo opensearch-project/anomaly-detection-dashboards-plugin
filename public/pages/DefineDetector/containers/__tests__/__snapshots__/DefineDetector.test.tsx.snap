@@ -528,11 +528,11 @@ exports[`<DefineDetector /> Full creating detector definition renders the compon
                       data-test-subj="comboBoxInput"
                       tabindex="-1"
                     >
-                      <p
-                        class="euiComboBoxPlaceholder"
+                      <span
+                        class="euiComboBoxPill euiComboBoxPill--plainText"
                       >
-                        Find timestamp
-                      </p>
+                        timestamp
+                      </span>
                       <div
                         class="euiComboBox__input"
                         style="font-size: 14px; display: inline-block;"
