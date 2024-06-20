@@ -52,9 +52,15 @@ export function Timestamp(props: TimestampProps) {
     get(opensearchState, 'dataTypes.date', []) as string[]
   );
 
-  const timeStampFieldOptions = isEmpty(dateFields)
+  const dateNanoFields = Array.from(
+    get(opensearchState, 'dataTypes.date_nanos', []) as string[]
+  );
+
+  const allDateFields = dateFields.concat(dateNanoFields);
+
+  const timeStampFieldOptions = isEmpty(allDateFields)
     ? []
-    : dateFields.map((dateField) => ({ label: dateField }));
+    : allDateFields.map((dateField) => ({ label: dateField }));
 
   return (
     <ContentPanel
