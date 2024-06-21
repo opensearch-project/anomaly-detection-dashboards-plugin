@@ -5,7 +5,10 @@
   "configPath": [
     "anomaly_detection_dashboards"
   ],
-  "optionalPlugins": ["dataSource","dataSourceManagement"],
+  "optionalPlugins": [
+    "dataSource",
+    "dataSourceManagement"
+  ],
   "requiredPlugins": [
     "opensearchDashboardsUtils",
     "expressions",
