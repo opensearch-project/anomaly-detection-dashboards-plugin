@@ -8,7 +8,7 @@ import {
   EuiText,
   EuiOverlayMask,
   EuiSmallButton,
-  EuiButtonEmpty,
+  EuiSmallButtonEmpty,
   EuiModal,
   EuiModalHeader,
   EuiModalFooter,
@@ -51,12 +51,12 @@ export const ConfirmUnlinkDetectorModal = (
         </EuiModalBody>
         <EuiModalFooter>
           {isLoading ? null : (
-            <EuiButtonEmpty
+            <EuiSmallButtonEmpty
               data-test-subj="cancelUnlinkButton"
               onClick={props.onHide}
             >
               Cancel
-            </EuiButtonEmpty>
+            </EuiSmallButtonEmpty>
           )}
           <EuiSmallButton
             data-test-subj="confirmUnlinkButton"

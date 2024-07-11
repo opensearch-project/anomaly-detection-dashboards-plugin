@@ -14,6 +14,7 @@ import {
   EuiFlexItem,
   EuiSmallButton,
   EuiBadge,
+  EuiSmallButtonEmpty,
   EuiButtonEmpty,
   EuiPopover,
   EuiPopoverTitle,
@@ -252,7 +253,7 @@ export const DataFilter = (props: DataFilterProps) => {
               </EuiText>
             </EuiFlexItem>
             <EuiFlexItem grow={false}>
-              <EuiButtonEmpty
+              <EuiSmallButtonEmpty
                 data-test-subj="filterTypeButton"
                 onClick={() => {
                   filterType === FILTER_TYPES.SIMPLE
@@ -263,7 +264,7 @@ export const DataFilter = (props: DataFilterProps) => {
                 {filterType === FILTER_TYPES.SIMPLE
                   ? 'Use query DSL'
                   : 'Use visual editor'}
-              </EuiButtonEmpty>
+              </EuiSmallButtonEmpty>
             </EuiFlexItem>
           </EuiFlexGroup>
         </EuiPopoverTitle>
@@ -319,7 +320,7 @@ export const DataFilter = (props: DataFilterProps) => {
             gutterSize="s"
           >
             <EuiFlexItem grow={false}>
-              <EuiButtonEmpty
+              <EuiSmallButtonEmpty
                 id="cancelSaveFilterButton"
                 data-test-subj={`cancelFilter${props.index}Button`}
                 onClick={() => {
@@ -328,7 +329,7 @@ export const DataFilter = (props: DataFilterProps) => {
                 }}
               >
                 Cancel
-              </EuiButtonEmpty>
+              </EuiSmallButtonEmpty>
             </EuiFlexItem>
             <EuiFlexItem grow={false}>
               <EuiSmallButton

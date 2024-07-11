@@ -16,7 +16,7 @@ import {
   EuiText,
   EuiFieldText,
   EuiSmallButton,
-  EuiButtonEmpty,
+  EuiSmallButtonEmpty,
   EuiFlexGroup,
   EuiModal,
   EuiModalHeader,
@@ -141,12 +141,12 @@ export const ConfirmDeleteDetectorsModal = (
         </EuiFlexGroup>
         <EuiModalFooter>
           {isLoading ? null : (
-            <EuiButtonEmpty
+            <EuiSmallButtonEmpty
               data-test-subj="cancelButton"
               onClick={props.onHide}
             >
               Cancel
-            </EuiButtonEmpty>
+            </EuiSmallButtonEmpty>
           )}
           <EuiSmallButton
             data-test-subj="confirmButton"

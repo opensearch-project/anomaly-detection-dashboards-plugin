@@ -16,7 +16,7 @@ import {
   EuiModalHeader,
   EuiModalHeaderTitle,
   EuiModalBody,
-  EuiButtonEmpty,
+  EuiSmallButtonEmpty,
   EuiSmallButton,
   EuiSuperDatePicker,
 } from '@elastic/eui';
@@ -73,9 +73,9 @@ export const HistoricalRangeModal = (props: HistoricalRangeModalProps) => {
       </EuiModalBody>
 
       <EuiModalFooter>
-        <EuiButtonEmpty data-test-subj="cancelButton" onClick={props.onClose}>
+        <EuiSmallButtonEmpty data-test-subj="cancelButton" onClick={props.onClose}>
           Cancel
-        </EuiButtonEmpty>
+        </EuiSmallButtonEmpty>
 
         <EuiSmallButton
           data-test-subj="confirmButton"

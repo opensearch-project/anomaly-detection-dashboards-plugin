@@ -18,7 +18,7 @@ import {
   EuiPage,
   EuiSmallButton,
   EuiTitle,
-  EuiButtonEmpty,
+  EuiSmallButtonEmpty,
   EuiSpacer,
 } from '@elastic/eui';
 import { FormikProps, Formik } from 'formik';
@@ -186,7 +186,7 @@ export function DetectorJobs(props: DetectorJobsProps) {
             style={{ marginRight: '12px' }}
           >
             <EuiFlexItem grow={false}>
-              <EuiButtonEmpty
+              <EuiSmallButtonEmpty
                 onClick={() => {
                   props.history.push(
                     constructHrefWithDataSourceId(
@@ -198,7 +198,7 @@ export function DetectorJobs(props: DetectorJobsProps) {
                 }}
               >
                 Cancel
-              </EuiButtonEmpty>
+              </EuiSmallButtonEmpty>
             </EuiFlexItem>
             <EuiFlexItem grow={false}>
               <EuiSmallButton

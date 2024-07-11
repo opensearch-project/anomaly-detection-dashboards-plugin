@@ -18,7 +18,7 @@ import {
   EuiPage,
   EuiSmallButton,
   EuiTitle,
-  EuiButtonEmpty,
+  EuiSmallButtonEmpty,
   EuiSpacer,
 } from '@elastic/eui';
 import {
@@ -372,7 +372,7 @@ export function ReviewAndCreate(props: ReviewAndCreateProps) {
             style={{ marginRight: '12px' }}
           >
             <EuiFlexItem grow={false}>
-              <EuiButtonEmpty
+              <EuiSmallButtonEmpty
                 onClick={() => {
                   props.history.push(
                     constructHrefWithDataSourceId(
@@ -384,7 +384,7 @@ export function ReviewAndCreate(props: ReviewAndCreateProps) {
                 }}
               >
                 Cancel
-              </EuiButtonEmpty>
+              </EuiSmallButtonEmpty>
             </EuiFlexItem>
             <EuiFlexItem grow={false}>
               <EuiSmallButton
