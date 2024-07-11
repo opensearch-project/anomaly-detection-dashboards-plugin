@@ -16,7 +16,7 @@ import {
   EuiLink,
   EuiIcon,
   EuiCompressedFormRow,
-  EuiComboBox,
+  EuiCompressedComboBox,
   EuiCompressedCheckbox,
   EuiTitle,
   EuiCallOut,
@@ -144,7 +144,7 @@ export function CategoryField(props: CategoryFieldProps) {
                   error={getError(field.name, form)}
                   helpText={`You can only apply the categorical fields to the 'ip' and 'keyword' OpenSearch data types.`}
                 >
-                  <EuiComboBox
+                  <EuiCompressedComboBox
                     data-test-subj="categoryFieldComboBox"
                     id="categoryField"
                     placeholder="Select your categorical fields"

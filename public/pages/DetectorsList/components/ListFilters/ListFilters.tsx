@@ -10,7 +10,7 @@
  */
 
 import {
-  EuiComboBox,
+  EuiCompressedComboBox,
   EuiComboBoxOptionProps,
   EuiCompressedFieldSearch,
   EuiFlexGroup,
@@ -46,7 +46,7 @@ export const ListFilters = (props: ListFiltersProps) => (
       />
     </EuiFlexItem>
     <EuiFlexItem>
-      <EuiComboBox
+      <EuiCompressedComboBox
         id="selectedDetectorStates"
         data-test-subj="detectorStateFilter"
         placeholder="All detector states"
@@ -63,7 +63,7 @@ export const ListFilters = (props: ListFiltersProps) => (
       />
     </EuiFlexItem>
     <EuiFlexItem>
-      <EuiComboBox
+      <EuiCompressedComboBox
         id="selectedIndices"
         data-test-subj="indicesFilter"
         placeholder="All indices"

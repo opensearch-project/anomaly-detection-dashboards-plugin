@@ -9,7 +9,7 @@ import {
   EuiSpacer,
   EuiIcon,
   EuiText,
-  EuiComboBox,
+  EuiCompressedComboBox,
   EuiLoadingSpinner,
   EuiLink,
   EuiFlexGroup,
@@ -78,7 +78,7 @@ export function AssociateExisting(
       const indexPattern = await getSavedObjectsClient().get('index-pattern', associateExistingProps.indexPatternId);
       const refs = indexPattern.references as References[];
       const foundDataSourceId = refs.find(ref => ref.type === 'data-source')?.id;
-      setDataSourceId(foundDataSourceId); 
+      setDataSourceId(foundDataSourceId);
     } catch (error) {
       console.error("Error fetching index pattern:", error);
     }
@@ -228,7 +228,7 @@ export function AssociateExisting(
         Eligible detectors don't include high-cardinality detectors.
       </EuiText>
       {existingDetectorsAvailableToAssociate ? (
-        <EuiComboBox
+        <EuiCompressedComboBox
           isLoading={isLoading}
           id="associate-existing__select"
           options={options}

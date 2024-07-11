@@ -10,7 +10,7 @@
  */
 
 import {
-  EuiComboBox,
+  EuiCompressedComboBox,
   EuiFlexGroup,
   EuiFlexItem,
   EuiCompressedFormRow,
@@ -101,7 +101,7 @@ export const SimpleFilter = (props: SimpleFilterProps) => {
                   isInvalid={isInvalid(field.name, form)}
                   error={getError(field.name, form)}
                 >
-                  <EuiComboBox
+                  <EuiCompressedComboBox
                     id={`filters.${props.index}.fieldInfo`}
                     singleSelection={{ asPlainText: true }}
                     placeholder="Choose a field"
