@@ -14,7 +14,7 @@ import {
   EuiFlexGroup,
   EuiFlexItem,
   EuiCompressedFormRow,
-  EuiSelect,
+  EuiCompressedSelect,
 } from '@elastic/eui';
 import { Field, FieldProps } from 'formik';
 import React, { useState } from 'react';
@@ -156,7 +156,7 @@ export const SimpleFilter = (props: SimpleFilterProps) => {
                   isInvalid={isInvalid(field.name, form)}
                   error={getError(field.name, form)}
                 >
-                  <EuiSelect
+                  <EuiCompressedSelect
                     id={`filters.${props.index}.operator`}
                     placeholder="Choose an operator"
                     {...field}

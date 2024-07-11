@@ -15,7 +15,7 @@ import {
   EuiFlexGroup,
   EuiFlexItem,
   EuiCompressedFormRow,
-  EuiSelect,
+  EuiCompressedSelect,
 } from '@elastic/eui';
 import { Field, FieldProps } from 'formik';
 import React from 'react';
@@ -118,7 +118,7 @@ function FilterValue(props: FilterValueProps) {
             isInvalid={isInvalid(field.name, form)}
             error={getError(field.name, form)}
           >
-            <EuiSelect
+            <EuiCompressedSelect
               {...field}
               options={WHERE_BOOLEAN_FILTERS}
               isInvalid={isInvalid(field.name, form)}

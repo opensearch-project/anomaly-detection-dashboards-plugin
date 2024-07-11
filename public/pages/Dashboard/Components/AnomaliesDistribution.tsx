@@ -17,7 +17,7 @@ import {
 } from '../utils/utils';
 import ContentPanel from '../../../components/ContentPanel/ContentPanel';
 import {
-  EuiSelect,
+  EuiCompressedSelect,
   EuiFlexGroup,
   EuiFlexItem,
   EuiLoadingChart,
@@ -128,10 +128,10 @@ export const AnomaliesDistributionChart = (
       titleDataTestSubj="dashboardSunburstChartHeader"
       title="Anomalies by index and detector"
       titleSize="s"
-      subTitle={`The inner circle shows anomaly distribution by index. 
+      subTitle={`The inner circle shows anomaly distribution by index.
       The outer circle shows distribution by detector.`}
       actions={
-        <EuiSelect
+        <EuiCompressedSelect
           style={{ width: 150 }}
           id="timeRangeSelect"
           options={TIME_RANGE_OPTIONS}
