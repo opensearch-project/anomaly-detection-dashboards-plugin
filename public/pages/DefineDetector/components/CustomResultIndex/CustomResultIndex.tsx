@@ -18,7 +18,7 @@ import {
   EuiFieldText,
   EuiCallOut,
   EuiSpacer,
-  EuiFormRow,
+  EuiCompressedFormRow,
   EuiCheckbox,
   EuiIcon,
   EuiFieldNumber,
@@ -58,7 +58,7 @@ function CustomResultIndex(props: CustomResultIndexProps) {
       if (customResultIndexMinAge === undefined && customResultIndexMinSize === undefined && customResultIndexTTL === undefined) {
         setCustomResultIndexConditionsEnabled(false);
       }
-    } 
+    }
     if (!customResultIndexConditionsEnabled) {
       setFieldValue('resultIndexMinAge', '');
       setFieldValue('resultIndexMinSize', '');
@@ -130,7 +130,7 @@ function CustomResultIndex(props: CustomResultIndexProps) {
 
             {enabled ? (
               <EuiFlexItem>
-                <EuiFormRow
+                <EuiCompressedFormRow
                   label="Field"
                   isInvalid={isInvalid(field.name, form)}
                   error={getError(field.name, form)}
@@ -143,7 +143,7 @@ function CustomResultIndex(props: CustomResultIndexProps) {
                     disabled={props.isEdit}
                     {...field}
                   />
-                </EuiFormRow>
+                </EuiCompressedFormRow>
               </EuiFlexItem>
             ) : null}
           </EuiFlexGroup>
@@ -185,9 +185,9 @@ function CustomResultIndex(props: CustomResultIndexProps) {
           ) : null}
         </EuiFlexItem>
       </EuiFlexGroup>
-      
-      { (enabled && customResultIndexConditionsEnabled) ? (<Field 
-        name="resultIndexMinAge" 
+
+      { (enabled && customResultIndexConditionsEnabled) ? (<Field
+        name="resultIndexMinAge"
         validate={(enabled && customResultIndexConditionsEnabled) ? validateEmptyOrPositiveInteger : null}
         >
         {({ field, form }: FieldProps) => (
@@ -227,7 +227,7 @@ function CustomResultIndex(props: CustomResultIndexProps) {
             </EuiFlexItem>
           </EuiFlexGroup>
         )}
-      </Field>) : null}  
+      </Field>) : null}
 
       {(enabled && customResultIndexConditionsEnabled) ? (<Field
         name="resultIndexMinSize"

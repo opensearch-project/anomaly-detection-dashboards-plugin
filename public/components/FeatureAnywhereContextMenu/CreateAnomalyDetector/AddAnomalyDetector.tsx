@@ -16,7 +16,7 @@ import {
   EuiIcon,
   EuiText,
   EuiSwitch,
-  EuiFormRow,
+  EuiCompressedFormRow,
   EuiFieldText,
   EuiCheckbox,
   EuiFlexItem,
@@ -884,7 +884,7 @@ function AddAnomalyDetector({
 
                                 {enabled ? (
                                   <EuiFlexItem>
-                                    <EuiFormRow
+                                    <EuiCompressedFormRow
                                       label="Field"
                                       isInvalid={isInvalid(field.name, form)}
                                       helpText={`Custom result index name must contain less than 255 characters including the prefix "opensearch-ad-plugin-result-". Valid characters are a-z, 0-9, -(hyphen) and _(underscore).`}
@@ -895,7 +895,7 @@ function AddAnomalyDetector({
                                         prepend={CUSTOM_AD_RESULT_INDEX_PREFIX}
                                         {...field}
                                       />
-                                    </EuiFormRow>
+                                    </EuiCompressedFormRow>
                                   </EuiFlexItem>
                                 ) : null}
                               </EuiFlexGroup>

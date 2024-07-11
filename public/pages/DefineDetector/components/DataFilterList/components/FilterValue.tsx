@@ -14,7 +14,7 @@ import {
   EuiFieldText,
   EuiFlexGroup,
   EuiFlexItem,
-  EuiFormRow,
+  EuiCompressedFormRow,
   EuiSelect,
 } from '@elastic/eui';
 import { Field, FieldProps } from 'formik';
@@ -49,7 +49,7 @@ function FilterValue(props: FilterValueProps) {
               }
             >
               {({ field, form }: FieldProps) => (
-                <EuiFormRow
+                <EuiCompressedFormRow
                   label="From"
                   isInvalid={isInvalid(field.name, form)}
                   error={getError(field.name, form)}
@@ -58,7 +58,7 @@ function FilterValue(props: FilterValueProps) {
                     {...field}
                     isInvalid={isInvalid(field.name, form)}
                   />
-                </EuiFormRow>
+                </EuiCompressedFormRow>
               )}
             </Field>
           </EuiFlexItem>
@@ -73,7 +73,7 @@ function FilterValue(props: FilterValueProps) {
               }
             >
               {({ field, form }: FieldProps) => (
-                <EuiFormRow
+                <EuiCompressedFormRow
                   label="To"
                   isInvalid={isInvalid(field.name, form)}
                   error={getError(field.name, form)}
@@ -85,7 +85,7 @@ function FilterValue(props: FilterValueProps) {
                       form.setFieldTouched(`filters.${props.index}.fieldValue`);
                     }}
                   />
-                </EuiFormRow>
+                </EuiCompressedFormRow>
               )}
             </Field>
           </EuiFlexItem>
@@ -95,7 +95,7 @@ function FilterValue(props: FilterValueProps) {
       return (
         <Field name={`filters.${props.index}.fieldValue`} validate={required}>
           {({ field, form }: FieldProps) => (
-            <EuiFormRow
+            <EuiCompressedFormRow
               label="Value"
               isInvalid={isInvalid(field.name, form)}
               error={getError(field.name, form)}
@@ -104,7 +104,7 @@ function FilterValue(props: FilterValueProps) {
                 {...field}
                 isInvalid={isInvalid(field.name, form)}
               />
-            </EuiFormRow>
+            </EuiCompressedFormRow>
           )}
         </Field>
       );
@@ -113,7 +113,7 @@ function FilterValue(props: FilterValueProps) {
     return (
       <Field name={`filters.${props.index}.fieldValue`} validate={required}>
         {({ field, form }: FieldProps) => (
-          <EuiFormRow
+          <EuiCompressedFormRow
             label="Value"
             isInvalid={isInvalid(field.name, form)}
             error={getError(field.name, form)}
@@ -123,7 +123,7 @@ function FilterValue(props: FilterValueProps) {
               options={WHERE_BOOLEAN_FILTERS}
               isInvalid={isInvalid(field.name, form)}
             />
-          </EuiFormRow>
+          </EuiCompressedFormRow>
         )}
       </Field>
     );
@@ -131,9 +131,9 @@ function FilterValue(props: FilterValueProps) {
     return (
       <Field name={`filters.${props.index}.fieldValue`} validate={required}>
         {({ field, form }: FieldProps) => (
-          <EuiFormRow label="Value">
+          <EuiCompressedFormRow label="Value">
             <EuiFieldText {...field} isInvalid={isInvalid(field.name, form)} />
-          </EuiFormRow>
+          </EuiCompressedFormRow>
         )}
       </Field>
     );

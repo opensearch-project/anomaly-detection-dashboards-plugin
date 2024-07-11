@@ -13,7 +13,7 @@ import {
   EuiComboBox,
   EuiFlexGroup,
   EuiFlexItem,
-  EuiFormRow,
+  EuiCompressedFormRow,
   EuiSelect,
 } from '@elastic/eui';
 import { Field, FieldProps } from 'formik';
@@ -96,7 +96,7 @@ export const SimpleFilter = (props: SimpleFilterProps) => {
               validateOnChange={true}
             >
               {({ field, form }: FieldProps) => (
-                <EuiFormRow
+                <EuiCompressedFormRow
                   label="Field"
                   isInvalid={isInvalid(field.name, form)}
                   error={getError(field.name, form)}
@@ -144,14 +144,14 @@ export const SimpleFilter = (props: SimpleFilterProps) => {
                     onSearchChange={handleSearchFieldChange}
                     isInvalid={isInvalid(field.name, form)}
                   />
-                </EuiFormRow>
+                </EuiCompressedFormRow>
               )}
             </Field>
           </EuiFlexItem>
           <EuiFlexItem>
             <Field name={`filters.${props.index}.operator`}>
               {({ field, form }: FieldProps) => (
-                <EuiFormRow
+                <EuiCompressedFormRow
                   label="Operator"
                   isInvalid={isInvalid(field.name, form)}
                   error={getError(field.name, form)}
@@ -192,7 +192,7 @@ export const SimpleFilter = (props: SimpleFilterProps) => {
                       );
                     }}
                   />
-                </EuiFormRow>
+                </EuiCompressedFormRow>
               )}
             </Field>
           </EuiFlexItem>
