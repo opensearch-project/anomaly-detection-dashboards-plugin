@@ -17,7 +17,7 @@ import {
   EuiIcon,
   EuiCompressedFormRow,
   EuiComboBox,
-  EuiCheckbox,
+  EuiCompressedCheckbox,
   EuiTitle,
   EuiCallOut,
   EuiSpacer,
@@ -108,7 +108,7 @@ export function CategoryField(props: CategoryFieldProps) {
         {({ field, form }: FieldProps) => (
           <EuiFlexGroup direction="column">
             <EuiFlexItem>
-              <EuiCheckbox
+              <EuiCompressedCheckbox
                 id={'categoryFieldCheckbox'}
                 label="Enable categorical fields"
                 checked={enabled}
