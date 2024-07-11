@@ -9,7 +9,7 @@
  * GitHub history for details.
  */
 
-import { EuiCompressedFieldText, EuiTextArea } from '@elastic/eui';
+import { EuiCompressedFieldText, EuiCompressedTextArea } from '@elastic/eui';
 import { Field, FieldProps } from 'formik';
 import React from 'react';
 import ContentPanel from '../../../../components/ContentPanel/ContentPanel';
@@ -56,7 +56,7 @@ function NameAndDescription(props: NameAndDescriptionProps) {
             isInvalid={isInvalid(field.name, form)}
             error={getError(field.name, form)}
           >
-            <EuiTextArea
+            <EuiCompressedTextArea
               data-test-subj="detectorDescriptionTextInput"
               name="detectorDescription"
               id="detectorDescription"
