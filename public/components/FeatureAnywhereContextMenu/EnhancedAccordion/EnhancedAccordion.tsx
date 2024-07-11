@@ -6,7 +6,7 @@ import React from 'react';
 import {
   EuiTitle,
   EuiSpacer,
-  EuiButtonIcon,
+  EuiSmallButtonIcon,
   EuiButtonEmpty,
   EuiAccordion,
   EuiPanel,
@@ -27,7 +27,7 @@ const EnhancedAccordion = ({
 }) => (
   <div className="euiPanel euiPanel--borderRadiusMedium euiPanel--plain euiPanel--hasShadow euiPanel--hasBorder euiPanel--flexGrowZero euiSplitPanel euiSplitPanel--row euiCheckableCard">
     <div className="euiPanel euiPanel--paddingMedium euiPanel--borderRadiusNone euiPanel--subdued euiPanel--noShadow euiPanel--noBorder euiPanel--flexGrowZero euiSplitPanel__inner">
-      <EuiButtonIcon
+      <EuiSmallButtonIcon
         color="text"
         iconType="arrowRight"
         aria-label="Expand"
