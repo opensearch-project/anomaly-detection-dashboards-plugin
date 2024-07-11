@@ -15,7 +15,7 @@ import {
   EuiSpacer,
   EuiIcon,
   EuiText,
-  EuiSwitch,
+  EuiCompressedSwitch,
   EuiCompressedFormRow,
   EuiCompressedFieldText,
   EuiCompressedCheckbox,
@@ -311,7 +311,7 @@ function AddAnomalyDetector({
               {title}
             </h4>
           </EuiTitle>
-          <EuiSwitch
+          <EuiCompressedSwitch
             label="Show visualization"
             checked={isShowVis}
             onChange={() => setIsShowVis(!isShowVis)}
