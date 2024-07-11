@@ -15,7 +15,7 @@ import {
   EuiIcon,
   EuiFlexItem,
   EuiFlexGroup,
-  EuiCheckbox,
+  EuiCompressedCheckbox,
   EuiSuperDatePicker,
 } from '@elastic/eui';
 import { Field, FieldProps, FormikProps } from 'formik';
@@ -63,7 +63,7 @@ export function HistoricalJob(props: HistoricalJobProps) {
         {({ field, form }: FieldProps) => (
           <EuiFlexGroup direction="column">
             <EuiFlexItem>
-              <EuiCheckbox
+              <EuiCompressedCheckbox
                 id={'historicalCheckbox'}
                 label="Run historical analysis detection"
                 checked={enabled}

@@ -18,7 +18,7 @@ import {
   EuiSwitch,
   EuiCompressedFormRow,
   EuiCompressedFieldText,
-  EuiCheckbox,
+  EuiCompressedCheckbox,
   EuiFlexItem,
   EuiFlexGroup,
   EuiCompressedFieldNumber,
@@ -857,7 +857,7 @@ function AddAnomalyDetector({
                             {({ field, form }: FieldProps) => (
                               <EuiFlexGroup direction="column">
                                 <EuiFlexItem>
-                                  <EuiCheckbox
+                                  <EuiCompressedCheckbox
                                     id={'resultIndexCheckbox'}
                                     label="Enable custom result index"
                                     checked={enabled}

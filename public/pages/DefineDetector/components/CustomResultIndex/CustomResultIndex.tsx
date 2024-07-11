@@ -19,7 +19,7 @@ import {
   EuiCallOut,
   EuiSpacer,
   EuiCompressedFormRow,
-  EuiCheckbox,
+  EuiCompressedCheckbox,
   EuiIcon,
   EuiCompressedFieldNumber,
 } from '@elastic/eui';
@@ -92,7 +92,7 @@ function CustomResultIndex(props: CustomResultIndexProps) {
         {({ field, form }: FieldProps) => (
           <EuiFlexGroup direction="column">
             <EuiFlexItem>
-              <EuiCheckbox
+              <EuiCompressedCheckbox
                 id={'resultIndexCheckbox'}
                 label="Enable custom result index"
                 checked={enabled}
@@ -139,7 +139,7 @@ function CustomResultIndex(props: CustomResultIndexProps) {
 
             {enabled ? (
               <EuiFlexItem>
-                <EuiCheckbox
+                <EuiCompressedCheckbox
                   id={'resultIndexConditionCheckbox'}
                   label="Enable custom result index lifecycle management"
                   checked={customResultIndexConditionsEnabled}

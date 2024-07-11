@@ -19,7 +19,7 @@ import {
   EuiTitle,
   EuiButton,
   EuiCompressedFieldText,
-  EuiCheckbox,
+  EuiCompressedCheckbox,
   EuiButtonIcon,
 } from '@elastic/eui';
 import './styles.scss';
@@ -181,7 +181,7 @@ export const FeatureAccordion = (props: FeatureAccordionProps) => {
             isInvalid={isInvalid(field.name, form)}
             error={getError(field.name, form)}
           >
-            <EuiCheckbox
+            <EuiCompressedCheckbox
               id={`featureList.${props.index}.featureEnabled`}
               label="Enable feature"
               checked={field.value ? field.value : props.feature.featureEnabled}
