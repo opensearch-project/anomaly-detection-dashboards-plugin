@@ -9,7 +9,7 @@
  * GitHub history for details.
  */
 
-import { EuiComboBox, EuiCallOut, EuiSpacer } from '@elastic/eui';
+import { EuiCompressedComboBox, EuiCallOut, EuiSpacer } from '@elastic/eui';
 import { Field, FieldProps, FormikProps, useFormikContext } from 'formik';
 import { debounce, get } from 'lodash';
 import React, { useEffect, useState } from 'react';
@@ -129,7 +129,7 @@ export function DataSource(props: DataSourceProps) {
               error={getError(field.name, form)}
               helpText="You can use a wildcard (*) in your index pattern."
             >
-              <EuiComboBox
+              <EuiCompressedComboBox
                 data-test-subj="indicesFilter"
                 id="index"
                 placeholder="Find indices"

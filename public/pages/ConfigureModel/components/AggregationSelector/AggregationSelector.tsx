@@ -12,7 +12,7 @@
 import React, { Fragment } from 'react';
 import { useSelector } from 'react-redux';
 import { get } from 'lodash';
-import { EuiCompressedFormRow, EuiCompressedSelect, EuiComboBox } from '@elastic/eui';
+import { EuiCompressedFormRow, EuiCompressedSelect, EuiCompressedComboBox } from '@elastic/eui';
 import { getAllFields } from '../../../../redux/selectors/opensearch';
 import {
   getNumberFieldOptions,
@@ -86,7 +86,7 @@ export const AggregationSelector = (props: AggregationSelectorProps) => {
             isInvalid={isInvalid(field.name, form)}
             error={getError(field.name, form)}
           >
-            <EuiComboBox
+            <EuiCompressedComboBox
               data-test-subj={`featureFieldTextInput-${props.index}`}
               placeholder="Select field"
               singleSelection={{ asPlainText: true }}
