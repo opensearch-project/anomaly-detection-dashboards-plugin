@@ -9,7 +9,7 @@
  * GitHub history for details.
  */
 
-import { EuiFieldText, EuiTextArea } from '@elastic/eui';
+import { EuiCompressedFieldText, EuiTextArea } from '@elastic/eui';
 import { Field, FieldProps } from 'formik';
 import React from 'react';
 import ContentPanel from '../../../../components/ContentPanel/ContentPanel';
@@ -33,7 +33,7 @@ function NameAndDescription(props: NameAndDescriptionProps) {
             helpText={`Detector name must contain 1-64 characters. Valid characters are
                 a-z, A-Z, 0-9, -(hyphen), _(underscore) and .(period).`}
           >
-            <EuiFieldText
+            <EuiCompressedFieldText
               data-test-subj="detectorNameTextInput"
               name="detectorName"
               id="detectorName"

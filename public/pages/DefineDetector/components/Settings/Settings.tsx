@@ -11,7 +11,7 @@
 
 import ContentPanel from '../../../../components/ContentPanel/ContentPanel';
 import {
-  EuiFieldNumber,
+  EuiCompressedFieldNumber,
   EuiFlexGroup,
   EuiFlexItem,
   EuiText,
@@ -46,7 +46,7 @@ export const Settings = () => {
               >
                 <EuiFlexGroup gutterSize="s" alignItems="center">
                   <EuiFlexItem grow={false}>
-                    <EuiFieldNumber
+                    <EuiCompressedFieldNumber
                       name="detectionInterval"
                       id="detectionInterval"
                       placeholder="Detector interval"
@@ -79,7 +79,7 @@ export const Settings = () => {
           >
             <EuiFlexGroup gutterSize="s" alignItems="center">
               <EuiFlexItem grow={false}>
-                <EuiFieldNumber
+                <EuiCompressedFieldNumber
                   name="windowDelay"
                   id="windowDelay"
                   placeholder="Window delay"

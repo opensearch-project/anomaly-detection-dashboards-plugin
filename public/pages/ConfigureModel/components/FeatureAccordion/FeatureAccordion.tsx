@@ -18,7 +18,7 @@ import {
   EuiFlexItem,
   EuiTitle,
   EuiButton,
-  EuiFieldText,
+  EuiCompressedFieldText,
   EuiCheckbox,
   EuiButtonIcon,
 } from '@elastic/eui';
@@ -160,7 +160,7 @@ export const FeatureAccordion = (props: FeatureAccordionProps) => {
             isInvalid={isInvalid(field.name, form)}
             error={getError(field.name, form)}
           >
-            <EuiFieldText
+            <EuiCompressedFieldText
               data-test-subj={`featureNameTextInput-${props.index}`}
               name={`featureList.${props.index}.featureName`}
               placeholder="Enter feature name"

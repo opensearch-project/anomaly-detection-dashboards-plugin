@@ -20,7 +20,7 @@ import {
   EuiPopoverTitle,
   EuiText,
   EuiSwitch,
-  EuiFieldText,
+  EuiCompressedFieldText,
   EuiSpacer,
 } from '@elastic/eui';
 import React, { useState, useEffect } from 'react';
@@ -300,7 +300,7 @@ export const DataFilter = (props: DataFilterProps) => {
             {isCustomLabel ? (
               <EuiFlexItem>
                 <FormattedFormRow title="Custom label">
-                  <EuiFieldText
+                  <EuiCompressedFieldText
                     name="customLabel"
                     id="customLabel"
                     placeholder="Enter a value"

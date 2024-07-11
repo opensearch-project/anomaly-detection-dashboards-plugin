@@ -17,11 +17,11 @@ import {
   EuiText,
   EuiSwitch,
   EuiCompressedFormRow,
-  EuiFieldText,
+  EuiCompressedFieldText,
   EuiCheckbox,
   EuiFlexItem,
   EuiFlexGroup,
-  EuiFieldNumber,
+  EuiCompressedFieldNumber,
   EuiCallOut,
   EuiSmallButtonEmpty,
   EuiPanel,
@@ -684,7 +684,7 @@ function AddAnomalyDetector({
                               isInvalid={isInvalid(field.name, form)}
                               error={getError(field.name, form)}
                             >
-                              <EuiFieldText
+                              <EuiCompressedFieldText
                                 data-test-subj="detectorNameTextInputFlyout"
                                 isInvalid={isInvalid(field.name, form)}
                                 {...field}
@@ -713,7 +713,7 @@ function AddAnomalyDetector({
                                     alignItems="center"
                                   >
                                     <EuiFlexItem grow={false}>
-                                      <EuiFieldNumber
+                                      <EuiCompressedFieldNumber
                                         id="detectionInterval"
                                         placeholder="Detector interval"
                                         data-test-subj="detectionInterval"
@@ -750,7 +750,7 @@ function AddAnomalyDetector({
                             >
                               <EuiFlexGroup gutterSize="s" alignItems="center">
                                 <EuiFlexItem grow={false}>
-                                  <EuiFieldNumber
+                                  <EuiCompressedFieldNumber
                                     id="windowDelay"
                                     placeholder="Window delay"
                                     data-test-subj="windowDelay"
@@ -829,7 +829,7 @@ function AddAnomalyDetector({
                                   alignItems="center"
                                 >
                                   <EuiFlexItem grow={false}>
-                                    <EuiFieldNumber
+                                    <EuiCompressedFieldNumber
                                       id="shingleSize"
                                       placeholder="Shingle size"
                                       data-test-subj="shingleSize"
@@ -889,7 +889,7 @@ function AddAnomalyDetector({
                                       isInvalid={isInvalid(field.name, form)}
                                       helpText={`Custom result index name must contain less than 255 characters including the prefix "opensearch-ad-plugin-result-". Valid characters are a-z, 0-9, -(hyphen) and _(underscore).`}
                                     >
-                                      <EuiFieldText
+                                      <EuiCompressedFieldText
                                         id="resultIndex"
                                         placeholder="Enter result index name"
                                         prepend={CUSTOM_AD_RESULT_INDEX_PREFIX}

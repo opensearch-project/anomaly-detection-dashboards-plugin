@@ -20,7 +20,7 @@ import {
   EuiCallOut,
   EuiSpacer,
   EuiText,
-  EuiFieldText,
+  EuiCompressedFieldText,
   EuiLoadingSpinner,
   EuiSmallButton,
 } from '@elastic/eui';
@@ -538,7 +538,7 @@ export const DetectorDetail = (props: DetectorDetailProps) => {
                   </EuiText>
                 </EuiFlexItem>
                 <EuiFlexItem grow={true}>
-                  <EuiFieldText
+                  <EuiCompressedFieldText
                     data-test-subj="typeDeleteField"
                     fullWidth={true}
                     placeholder="delete"
