@@ -23,7 +23,7 @@ import {
   EuiFlexGroup,
   EuiFieldNumber,
   EuiCallOut,
-  EuiButtonEmpty,
+  EuiSmallButtonEmpty,
   EuiPanel,
 } from '@elastic/eui';
 import './styles.scss';
@@ -1000,7 +1000,7 @@ function AddAnomalyDetector({
             <EuiFlyoutFooter>
               <EuiFlexGroup justifyContent="spaceBetween">
                 <EuiFlexItem grow={false}>
-                  <EuiButtonEmpty onClick={closeFlyout}>Cancel</EuiButtonEmpty>
+                  <EuiSmallButtonEmpty onClick={closeFlyout}>Cancel</EuiSmallButtonEmpty>
                 </EuiFlexItem>
                 <EuiFlexItem grow={false}>
                   {mode === FLYOUT_MODES.existing ? (

@@ -20,7 +20,7 @@ import {
   EuiModalBody,
   EuiSpacer,
   EuiText,
-  EuiButtonEmpty,
+  EuiSmallButtonEmpty,
   EuiSmallButton,
   ButtonColor,
 } from '@elastic/eui';
@@ -63,9 +63,9 @@ export const ConfirmModal = (props: ConfirmModalProps) => {
       </EuiModalBody>
 
       <EuiModalFooter>
-        <EuiButtonEmpty data-test-subj="cancelButton" onClick={props.onCancel}>
+        <EuiSmallButtonEmpty data-test-subj="cancelButton" onClick={props.onCancel}>
           Cancel
-        </EuiButtonEmpty>
+        </EuiSmallButtonEmpty>
 
         <EuiSmallButton
           data-test-subj="confirmButton"

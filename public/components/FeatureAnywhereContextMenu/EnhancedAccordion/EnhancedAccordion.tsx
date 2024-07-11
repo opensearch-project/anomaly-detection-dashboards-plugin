@@ -7,7 +7,7 @@ import {
   EuiTitle,
   EuiSpacer,
   EuiSmallButtonIcon,
-  EuiButtonEmpty,
+  EuiSmallButtonEmpty,
   EuiAccordion,
   EuiPanel,
 } from '@elastic/eui';
@@ -76,10 +76,10 @@ const EnhancedAccordion = ({
         </EuiAccordion>
       )}
       {isButton && (
-        <EuiButtonEmpty
+        <EuiSmallButtonEmpty
           iconType={iconType}
           className="enhanced-accordion__button"
-        ></EuiButtonEmpty>
+        ></EuiSmallButtonEmpty>
       )}
     </div>
   </div>

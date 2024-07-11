@@ -18,7 +18,7 @@ import {
   EuiPage,
   EuiSmallButton,
   EuiTitle,
-  EuiButtonEmpty,
+  EuiSmallButtonEmpty,
   EuiSpacer,
   EuiText,
   EuiLink,
@@ -360,7 +360,7 @@ export function ConfigureModel(props: ConfigureModelProps) {
             style={{ marginRight: '12px' }}
           >
             <EuiFlexItem grow={false}>
-              <EuiButtonEmpty
+              <EuiSmallButtonEmpty
                 onClick={() => {
                   if (props.isEdit) {
                     props.history.push(
@@ -382,7 +382,7 @@ export function ConfigureModel(props: ConfigureModelProps) {
                 }}
               >
                 Cancel
-              </EuiButtonEmpty>
+              </EuiSmallButtonEmpty>
             </EuiFlexItem>
             {props.isEdit ? null : (
               <EuiFlexItem grow={false}>

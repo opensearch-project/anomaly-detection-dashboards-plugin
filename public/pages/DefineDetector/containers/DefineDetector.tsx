@@ -26,7 +26,7 @@ import {
   EuiFlexGroup,
   EuiFlexItem,
   EuiSmallButton,
-  EuiButtonEmpty,
+  EuiSmallButtonEmpty,
   EuiPage,
   EuiPageBody,
   EuiPageHeader,
@@ -409,7 +409,7 @@ export const DefineDetector = (props: DefineDetectorProps) => {
             style={{ marginRight: '12px' }}
           >
             <EuiFlexItem grow={false}>
-              <EuiButtonEmpty
+              <EuiSmallButtonEmpty
                 onClick={() => {
                   if (props.isEdit) {
                     props.history.push(
@@ -431,7 +431,7 @@ export const DefineDetector = (props: DefineDetectorProps) => {
                 }}
               >
                 Cancel
-              </EuiButtonEmpty>
+              </EuiSmallButtonEmpty>
             </EuiFlexItem>
             <EuiFlexItem grow={false}>
               {props.isEdit ? (
