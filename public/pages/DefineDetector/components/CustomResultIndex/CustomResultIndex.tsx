@@ -15,13 +15,13 @@ import {
   EuiText,
   EuiLink,
   EuiTitle,
-  EuiFieldText,
+  EuiCompressedFieldText,
   EuiCallOut,
   EuiSpacer,
   EuiCompressedFormRow,
   EuiCheckbox,
   EuiIcon,
-  EuiFieldNumber,
+  EuiCompressedFieldNumber,
 } from '@elastic/eui';
 import { Field, FieldProps, FormikProps, useFormikContext } from 'formik';
 import React, { useEffect, useState } from 'react';
@@ -126,7 +126,7 @@ function CustomResultIndex(props: CustomResultIndexProps) {
                   error={getError(field.name, form)}
                   helpText={`Custom result index name must contain less than 255 characters including the prefix "opensearch-ad-plugin-result-". Valid characters are a-z, 0-9, -(hyphen) and _(underscore).`}
                 >
-                  <EuiFieldText
+                  <EuiCompressedFieldText
                     id="resultIndex"
                     placeholder="Enter result index name"
                     prepend={props.isEdit ? '' : CUSTOM_AD_RESULT_INDEX_PREFIX}
@@ -175,7 +175,7 @@ function CustomResultIndex(props: CustomResultIndexProps) {
               >
                 <EuiFlexGroup gutterSize="s" alignItems="center">
                   <EuiFlexItem grow={false}>
-                    <EuiFieldNumber
+                    <EuiCompressedFieldNumber
                       name="resultIndexMinAge"
                       id="resultIndexMinAge"
                       data-test-subj="resultIndexMinAge"
@@ -218,7 +218,7 @@ function CustomResultIndex(props: CustomResultIndexProps) {
               >
                 <EuiFlexGroup gutterSize="s" alignItems="center">
                   <EuiFlexItem grow={false}>
-                    <EuiFieldNumber
+                    <EuiCompressedFieldNumber
                       name="resultIndexMinSize"
                       id="resultIndexMinSize"
                       placeholder="Min index size"
@@ -261,7 +261,7 @@ function CustomResultIndex(props: CustomResultIndexProps) {
               >
                 <EuiFlexGroup gutterSize="s" alignItems="center">
                   <EuiFlexItem grow={false}>
-                    <EuiFieldNumber
+                    <EuiCompressedFieldNumber
                       name="resultIndexTtl"
                       id="resultIndexTtl"
                       data-test-subj="resultIndexTtl"

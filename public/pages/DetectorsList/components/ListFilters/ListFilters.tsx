@@ -12,7 +12,7 @@
 import {
   EuiComboBox,
   EuiComboBoxOptionProps,
-  EuiFieldSearch,
+  EuiCompressedFieldSearch,
   EuiFlexGroup,
   EuiFlexItem,
   EuiPagination,
@@ -37,7 +37,7 @@ interface ListFiltersProps {
 export const ListFilters = (props: ListFiltersProps) => (
   <EuiFlexGroup gutterSize="s">
     <EuiFlexItem grow={false} style={{ width: '40%' }}>
-      <EuiFieldSearch
+      <EuiCompressedFieldSearch
         fullWidth={true}
         value={props.search}
         placeholder="Search"

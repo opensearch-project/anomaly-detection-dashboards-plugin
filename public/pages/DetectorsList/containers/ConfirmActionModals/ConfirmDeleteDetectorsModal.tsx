@@ -14,7 +14,7 @@ import {
   EuiOverlayMask,
   EuiCallOut,
   EuiText,
-  EuiFieldText,
+  EuiCompressedFieldText,
   EuiSmallButton,
   EuiSmallButtonEmpty,
   EuiFlexGroup,
@@ -126,7 +126,7 @@ export const ConfirmDeleteDetectorsModal = (
             </p>
           </EuiText>
           <EuiSpacer size="s" />
-          <EuiFieldText
+          <EuiCompressedFieldText
             data-test-subj="typeDeleteField"
             fullWidth={true}
             placeholder="delete"

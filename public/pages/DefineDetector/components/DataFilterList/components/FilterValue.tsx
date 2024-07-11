@@ -10,8 +10,8 @@
  */
 
 import {
-  EuiFieldNumber,
-  EuiFieldText,
+  EuiCompressedFieldNumber,
+  EuiCompressedFieldText,
   EuiFlexGroup,
   EuiFlexItem,
   EuiCompressedFormRow,
@@ -54,7 +54,7 @@ function FilterValue(props: FilterValueProps) {
                   isInvalid={isInvalid(field.name, form)}
                   error={getError(field.name, form)}
                 >
-                  <EuiFieldNumber
+                  <EuiCompressedFieldNumber
                     {...field}
                     isInvalid={isInvalid(field.name, form)}
                   />
@@ -78,7 +78,7 @@ function FilterValue(props: FilterValueProps) {
                   isInvalid={isInvalid(field.name, form)}
                   error={getError(field.name, form)}
                 >
-                  <EuiFieldNumber
+                  <EuiCompressedFieldNumber
                     {...field}
                     isInvalid={isInvalid(field.name, form)}
                     onBlur={() => {
@@ -100,7 +100,7 @@ function FilterValue(props: FilterValueProps) {
               isInvalid={isInvalid(field.name, form)}
               error={getError(field.name, form)}
             >
-              <EuiFieldNumber
+              <EuiCompressedFieldNumber
                 {...field}
                 isInvalid={isInvalid(field.name, form)}
               />
@@ -132,7 +132,7 @@ function FilterValue(props: FilterValueProps) {
       <Field name={`filters.${props.index}.fieldValue`} validate={required}>
         {({ field, form }: FieldProps) => (
           <EuiCompressedFormRow label="Value">
-            <EuiFieldText {...field} isInvalid={isInvalid(field.name, form)} />
+            <EuiCompressedFieldText {...field} isInvalid={isInvalid(field.name, form)} />
           </EuiCompressedFormRow>
         )}
       </Field>
