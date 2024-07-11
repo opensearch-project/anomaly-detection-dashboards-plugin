@@ -19,7 +19,7 @@ import {
   EuiPopover,
   EuiPopoverTitle,
   EuiText,
-  EuiSwitch,
+  EuiCompressedSwitch,
   EuiCompressedFieldText,
   EuiSpacer,
 } from '@elastic/eui';
@@ -287,7 +287,7 @@ export const DataFilter = (props: DataFilterProps) => {
         <EuiFlexGroup direction="column" style={{ margin: '0px' }}>
           <EuiFlexGroup direction="column">
             <EuiFlexItem>
-              <EuiSwitch
+              <EuiCompressedSwitch
                 data-test-subj={'switchForCustomLabel'}
                 label={<EuiText>Create custom label?</EuiText>}
                 checked={isCustomLabel}
