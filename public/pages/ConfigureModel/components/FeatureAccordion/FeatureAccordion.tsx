@@ -12,7 +12,7 @@
 import React, { Fragment, useState } from 'react';
 import {
   EuiCompressedFormRow,
-  EuiSelect,
+  EuiCompressedSelect,
   EuiAccordion,
   EuiFlexGroup,
   EuiFlexItem,
@@ -203,7 +203,7 @@ export const FeatureAccordion = (props: FeatureAccordionProps) => {
               isInvalid={isInvalid(field.name, form)}
               error={getError(field.name, form)}
             >
-              <EuiSelect
+              <EuiCompressedSelect
                 {...field}
                 options={FEATURE_TYPE_OPTIONS}
                 value={

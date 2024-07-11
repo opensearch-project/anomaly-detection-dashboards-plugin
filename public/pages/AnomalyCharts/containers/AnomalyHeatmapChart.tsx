@@ -20,7 +20,7 @@ import {
   EuiLoadingChart,
   EuiText,
   EuiComboBox,
-  EuiSuperSelect,
+  EuiCompressedSuperSelect,
   EuiIconTip,
   EuiCallOut,
 } from '@elastic/eui';
@@ -521,7 +521,7 @@ export const AnomalyHeatmapChart = React.memo(
                       />
                     </EuiFlexItem>
                     <EuiFlexItem style={{ minWidth: 150 }}>
-                      <EuiSuperSelect
+                      <EuiCompressedSuperSelect
                         options={SORT_BY_FIELD_OPTIONS}
                         valueOfSelected={sortByFieldValue}
                         onChange={(value) => handleSortByFieldChange(value)}
