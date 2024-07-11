@@ -11,7 +11,7 @@
 
 import React, { useState } from 'react';
 import {
-  EuiButton,
+  EuiSmallButton,
   EuiContextMenuItem,
   EuiContextMenuPanel,
   EuiFlexGroup,
@@ -36,14 +36,14 @@ export const DetectorControls = (props: DetectorControls) => {
         <EuiPopover
           id="actionsPopover"
           button={
-            <EuiButton
+            <EuiSmallButton
               iconType="arrowDown"
               iconSide="right"
               data-test-subj="actionsButton"
               onClick={() => setIsOpen(!isOpen)}
             >
               Actions
-            </EuiButton>
+            </EuiSmallButton>
           }
           panelPaddingSize="none"
           anchorPosition="downLeft"

@@ -10,7 +10,7 @@
  */
 
 import ContentPanel from '../../../../components/ContentPanel/ContentPanel';
-import { EuiFlexGrid, EuiFlexItem, EuiButton, EuiText } from '@elastic/eui';
+import { EuiFlexGrid, EuiFlexItem, EuiSmallButton, EuiText } from '@elastic/eui';
 import React from 'react';
 import moment from 'moment';
 import { get } from 'lodash';
@@ -45,12 +45,12 @@ export const DetectorScheduleFields = (props: DetectorScheduleFieldsProps) => {
       titleSize="s"
       panelStyles={{ margin: '0px' }}
       actions={[
-        <EuiButton
+        <EuiSmallButton
           data-test-subj="editScheduleButton"
           onClick={props.onEditDetectorSchedule}
         >
           Edit
-        </EuiButton>,
+        </EuiSmallButton>,
       ]}
     >
       <EuiFlexGrid columns={4} gutterSize="l" style={{ border: 'none' }}>

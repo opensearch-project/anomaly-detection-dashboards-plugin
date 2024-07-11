@@ -21,7 +21,7 @@ import {
   EuiSpacer,
   EuiText,
   EuiButtonEmpty,
-  EuiButton,
+  EuiSmallButton,
   ButtonColor,
 } from '@elastic/eui';
 
@@ -67,7 +67,7 @@ export const ConfirmModal = (props: ConfirmModalProps) => {
           Cancel
         </EuiButtonEmpty>
 
-        <EuiButton
+        <EuiSmallButton
           data-test-subj="confirmButton"
           color={props.confirmButtonColor}
           fill
@@ -76,7 +76,7 @@ export const ConfirmModal = (props: ConfirmModalProps) => {
           isLoading={!!props.confirmButtonIsLoading}
         >
           {props.confirmButtonText}
-        </EuiButton>
+        </EuiSmallButton>
       </EuiModalFooter>
     </EuiModal>
   );

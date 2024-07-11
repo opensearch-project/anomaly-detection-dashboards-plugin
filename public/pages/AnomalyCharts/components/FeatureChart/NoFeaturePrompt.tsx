@@ -16,7 +16,7 @@ import {
   EuiText,
   EuiFlexItem,
   EuiFlexGroup,
-  EuiButton,
+  EuiSmallButton,
 } from '@elastic/eui';
 
 import ContentPanel from '../../../../components/ContentPanel/ContentPanel';
@@ -42,12 +42,12 @@ export const NoFeaturePrompt = (props: NoFeaturePromptProps) => {
                 </EuiText>
               }
               actions={[
-                <EuiButton
+                <EuiSmallButton
                   data-test-subj="createButton"
                   href={`#/detectors/${props.detectorId}/features`}
                 >
                   Add feature
-                </EuiButton>,
+                </EuiSmallButton>,
               ]}
             />
           </EuiFlexItem>

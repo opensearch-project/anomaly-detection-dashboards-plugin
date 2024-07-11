@@ -12,7 +12,7 @@
 import {
   EuiFlexGroup,
   EuiFlexItem,
-  EuiButton,
+  EuiSmallButton,
   EuiBadge,
   EuiButtonEmpty,
   EuiPopover,
@@ -331,7 +331,7 @@ export const DataFilter = (props: DataFilterProps) => {
               </EuiButtonEmpty>
             </EuiFlexItem>
             <EuiFlexItem grow={false}>
-              <EuiButton
+              <EuiSmallButton
                 id="saveFilterButton"
                 fill={true}
                 data-test-subj={`saveFilter${props.index}Button`}
@@ -349,7 +349,7 @@ export const DataFilter = (props: DataFilterProps) => {
                 }}
               >
                 Save
-              </EuiButton>
+              </EuiSmallButton>
             </EuiFlexItem>
           </EuiFlexGroup>
         </EuiFlexGroup>

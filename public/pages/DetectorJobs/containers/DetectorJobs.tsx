@@ -16,7 +16,7 @@ import {
   EuiFlexItem,
   EuiFlexGroup,
   EuiPage,
-  EuiButton,
+  EuiSmallButton,
   EuiTitle,
   EuiButtonEmpty,
   EuiSpacer,
@@ -203,7 +203,7 @@ export function DetectorJobs(props: DetectorJobsProps) {
               </EuiButtonEmpty>
             </EuiFlexItem>
             <EuiFlexItem grow={false}>
-              <EuiButton
+              <EuiSmallButton
                 iconSide="left"
                 iconType="arrowLeft"
                 fill={false}
@@ -221,10 +221,10 @@ export function DetectorJobs(props: DetectorJobsProps) {
                 }}
               >
                 Previous
-              </EuiButton>
+              </EuiSmallButton>
             </EuiFlexItem>
             <EuiFlexItem grow={false}>
-              <EuiButton
+              <EuiSmallButton
                 type="submit"
                 iconSide="right"
                 iconType="arrowRight"
@@ -237,7 +237,7 @@ export function DetectorJobs(props: DetectorJobsProps) {
                 }}
               >
                 Next
-              </EuiButton>
+              </EuiSmallButton>
             </EuiFlexItem>
           </EuiFlexGroup>
         </Fragment>

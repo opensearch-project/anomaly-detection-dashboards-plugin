@@ -13,7 +13,7 @@ import React, { useState } from 'react';
 import {
   EuiText,
   EuiOverlayMask,
-  EuiButton,
+  EuiSmallButton,
   EuiButtonEmpty,
   EuiModal,
   EuiModalHeader,
@@ -67,7 +67,7 @@ export const ConfirmStartDetectorsModal = (
               Cancel
             </EuiButtonEmpty>
           )}
-          <EuiButton
+          <EuiSmallButton
             data-test-subj="confirmButton"
             color="primary"
             fill
@@ -79,7 +79,7 @@ export const ConfirmStartDetectorsModal = (
             }}
           >
             {'Start detectors'}
-          </EuiButton>
+          </EuiSmallButton>
         </EuiModalFooter>
       </EuiModal>
     </EuiOverlayMask>

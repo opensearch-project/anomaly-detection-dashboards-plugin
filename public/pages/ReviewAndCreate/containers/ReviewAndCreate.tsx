@@ -16,7 +16,7 @@ import {
   EuiFlexItem,
   EuiFlexGroup,
   EuiPage,
-  EuiButton,
+  EuiSmallButton,
   EuiTitle,
   EuiButtonEmpty,
   EuiSpacer,
@@ -389,7 +389,7 @@ export function ReviewAndCreate(props: ReviewAndCreateProps) {
               </EuiButtonEmpty>
             </EuiFlexItem>
             <EuiFlexItem grow={false}>
-              <EuiButton
+              <EuiSmallButton
                 iconSide="left"
                 iconType="arrowLeft"
                 fill={false}
@@ -399,10 +399,10 @@ export function ReviewAndCreate(props: ReviewAndCreateProps) {
                 }}
               >
                 Previous
-              </EuiButton>
+              </EuiSmallButton>
             </EuiFlexItem>
             <EuiFlexItem grow={false}>
-              <EuiButton
+              <EuiSmallButton
                 type="submit"
                 fill={true}
                 data-test-subj="createDetectorButton"
@@ -411,7 +411,7 @@ export function ReviewAndCreate(props: ReviewAndCreateProps) {
                 onClick={formikProps.handleSubmit}
               >
                 Create detector
-              </EuiButton>
+              </EuiSmallButton>
             </EuiFlexItem>
           </EuiFlexGroup>
         </Fragment>

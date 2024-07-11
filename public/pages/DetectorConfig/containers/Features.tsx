@@ -15,7 +15,7 @@ import {
   EuiText,
   EuiLink,
   EuiIcon,
-  EuiButton,
+  EuiSmallButton,
   EuiEmptyPrompt,
   EuiSpacer,
 } from '@elastic/eui';
@@ -194,12 +194,12 @@ export const Features = (props: FeaturesProps) => {
       titleDataTestSubj="modelConfigurationHeader"
       titleSize="s"
       actions={[
-        <EuiButton
+        <EuiSmallButton
           data-test-subj="editModelConfigurationButton"
           onClick={props.onEditFeatures}
         >
           Edit
-        </EuiButton>,
+        </EuiSmallButton>,
       ]}
     >
       {featureNum == 0 ? (
@@ -218,13 +218,13 @@ export const Features = (props: FeaturesProps) => {
             </EuiText>
           }
           actions={[
-            <EuiButton
+            <EuiSmallButton
               data-test-subj="createButton"
               href={`${PLUGIN_NAME}#/detectors/${props.detectorId}/features`}
               fill
             >
               Configure model
-            </EuiButton>,
+            </EuiSmallButton>,
           ]}
         />
       ) : (
