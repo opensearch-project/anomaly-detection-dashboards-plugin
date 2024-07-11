@@ -15,7 +15,7 @@ import {
   EuiText,
   EuiLink,
   EuiIcon,
-  EuiFormRow,
+  EuiCompressedFormRow,
   EuiComboBox,
   EuiCheckbox,
   EuiTitle,
@@ -138,7 +138,7 @@ export function CategoryField(props: CategoryFieldProps) {
             ) : null}
             {enabled && !noCategoryFields ? (
               <EuiFlexItem>
-                <EuiFormRow
+                <EuiCompressedFormRow
                   label="Field"
                   isInvalid={isInvalid(field.name, form)}
                   error={getError(field.name, form)}
@@ -175,7 +175,7 @@ export function CategoryField(props: CategoryFieldProps) {
                     isClearable={true}
                     isDisabled={props.isEdit}
                   />
-                </EuiFormRow>
+                </EuiCompressedFormRow>
               </EuiFlexItem>
             ) : null}
           </EuiFlexGroup>
