@@ -14,7 +14,7 @@ import {
   EuiText,
   EuiOverlayMask,
   EuiCallOut,
-  EuiButton,
+  EuiSmallButton,
   EuiButtonEmpty,
   EuiModal,
   EuiModalHeader,
@@ -90,7 +90,7 @@ export const ConfirmStopDetectorsModal = (
               Cancel
             </EuiButtonEmpty>
           )}
-          <EuiButton
+          <EuiSmallButton
             data-test-subj="confirmButton"
             color="primary"
             fill
@@ -102,7 +102,7 @@ export const ConfirmStopDetectorsModal = (
             }}
           >
             {'Stop detectors'}
-          </EuiButton>
+          </EuiSmallButton>
         </EuiModalFooter>
       </EuiModal>
     </EuiOverlayMask>

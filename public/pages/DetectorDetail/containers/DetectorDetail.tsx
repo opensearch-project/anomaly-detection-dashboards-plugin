@@ -22,7 +22,7 @@ import {
   EuiText,
   EuiFieldText,
   EuiLoadingSpinner,
-  EuiButton,
+  EuiSmallButton,
 } from '@elastic/eui';
 import { CoreStart, MountPoint } from '../../../../../../src/core/public';
 import { CoreServicesContext } from '../../../components/CoreServices/CoreServices';

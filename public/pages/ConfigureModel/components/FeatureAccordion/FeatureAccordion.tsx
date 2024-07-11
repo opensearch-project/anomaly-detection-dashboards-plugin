@@ -17,7 +17,7 @@ import {
   EuiFlexGroup,
   EuiFlexItem,
   EuiTitle,
-  EuiButton,
+  EuiSmallButton,
   EuiFieldText,
   EuiCheckbox,
   EuiButtonIcon,

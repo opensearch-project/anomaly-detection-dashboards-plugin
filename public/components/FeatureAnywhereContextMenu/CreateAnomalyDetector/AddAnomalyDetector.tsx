@@ -9,7 +9,7 @@ import {
   EuiFlyoutBody,
   EuiFlyoutFooter,
   EuiTitle,
-  EuiButton,
+  EuiSmallButton,
   EuiFormFieldset,
   EuiCheckableCard,
   EuiSpacer,
@@ -141,7 +141,7 @@ function AddAnomalyDetector({
       const indexPattern = await getSavedObjectsClient().get('index-pattern', indexPatternId);
       const refs = indexPattern.references as References[];
       const foundDataSourceId = refs.find(ref => ref.type === 'data-source')?.id;
-      setDataSourceId(foundDataSourceId); 
+      setDataSourceId(foundDataSourceId);
     } catch (error) {
       console.error("Error fetching index pattern:", error);
     }
@@ -167,7 +167,7 @@ function AddAnomalyDetector({
     }
     fetchData();
     createEmbeddable();
-  }, [dataSourceId]); 
+  }, [dataSourceId]);
 
   const [isShowVis, setIsShowVis] = useState(false);
   const [accordionsOpen, setAccordionsOpen] = useState({ modelFeatures: true });
@@ -478,9 +478,9 @@ function AddAnomalyDetector({
             </EuiFlexItem>
             <EuiFlexItem grow={false}>
               <div>
-                <EuiButton onClick={() => openAlerting(detectorId)}>
+                <EuiSmallButton onClick={() => openAlerting(detectorId)}>
                   Set up alerts
-                </EuiButton>
+                </EuiSmallButton>
               </div>
             </EuiFlexItem>
           </EuiFlexGroup>
@@ -960,7 +960,7 @@ function AddAnomalyDetector({
 
                                 <EuiSpacer size="m" />
                                 <EuiPanel paddingSize="none">
-                                  <EuiButton
+                                  <EuiSmallButton
                                     className="featureButton"
                                     data-test-subj="addFeature"
                                     isDisabled={
@@ -972,7 +972,7 @@ function AddAnomalyDetector({
                                     }}
                                   >
                                     Add another feature
-                                  </EuiButton>
+                                  </EuiSmallButton>
                                 </EuiPanel>
                                 <EuiSpacer size="s" />
                                 <EuiText className="content-panel-subTitle">
@@ -1004,16 +1004,16 @@ function AddAnomalyDetector({
                 </EuiFlexItem>
                 <EuiFlexItem grow={false}>
                   {mode === FLYOUT_MODES.existing ? (
-                    <EuiButton
+                    <EuiSmallButton
                       fill={true}
                       data-test-subj="adAnywhereAssociateDetectorButton"
                       isLoading={formikProps.isSubmitting}
                       onClick={() => handleAssociate(selectedDetector)}
                     >
                       Associate detector
-                    </EuiButton>
+                    </EuiSmallButton>
                   ) : (
-                    <EuiButton
+                    <EuiSmallButton
                       fill={true}
                       disabled={associationLimitReached}
                       data-test-subj="adAnywhereCreateDetectorButton"
@@ -1023,7 +1023,7 @@ function AddAnomalyDetector({
                       }}
                     >
                       Create detector
-                    </EuiButton>
+                    </EuiSmallButton>
                   )}
                 </EuiFlexItem>
               </EuiFlexGroup>

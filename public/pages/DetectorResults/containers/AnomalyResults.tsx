@@ -16,7 +16,7 @@ import {
   EuiPageBody,
   EuiSpacer,
   EuiCallOut,
-  EuiButton,
+  EuiSmallButton,
   EuiProgress,
   EuiFlexGroup,
   EuiFlexItem,
@@ -504,7 +504,7 @@ export function AnomalyResults(props: AnomalyResultsProps) {
                           <EuiSpacer size="l" />
                         </div>
                       ) : null}
-                      <EuiButton
+                      <EuiSmallButton
                         onClick={props.onSwitchToConfiguration}
                         color={
                           featureMissingSeverity ===
@@ -521,15 +521,15 @@ export function AnomalyResults(props: AnomalyResultsProps) {
                         style={{ marginRight: '8px' }}
                       >
                         View detector configuration
-                      </EuiButton>
+                      </EuiSmallButton>
                       {isDetectorUpdated || isDetectorFailed ? (
-                        <EuiButton
+                        <EuiSmallButton
                           color={isDetectorFailed ? 'danger' : 'warning'}
                           onClick={props.onStartDetector}
                           style={{ marginLeft: '8px' }}
                         >
                           Restart detector
-                        </EuiButton>
+                        </EuiSmallButton>
                       ) : null}
                     </EuiCallOut>
                   ) : null}
@@ -558,7 +558,7 @@ export function AnomalyResults(props: AnomalyResultsProps) {
                       </EuiFlexItem>
 
                       <EuiFlexItem grow={false}>
-                        <EuiButton
+                        <EuiSmallButton
                           data-test-subj="stopAndStartDetectorButton"
                           onClick={
                             detector?.enabled
@@ -570,7 +570,7 @@ export function AnomalyResults(props: AnomalyResultsProps) {
                           {detector?.enabled
                             ? 'Stop detector'
                             : 'Start detector'}
-                        </EuiButton>
+                        </EuiSmallButton>
                       </EuiFlexItem>
                     </EuiFlexGroup>
                   ) : null}

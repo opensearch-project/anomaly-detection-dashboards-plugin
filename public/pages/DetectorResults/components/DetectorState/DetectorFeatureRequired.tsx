@@ -10,7 +10,7 @@
  */
 
 import React from 'react';
-import { EuiButton, EuiEmptyPrompt } from '@elastic/eui';
+import { EuiSmallButton, EuiEmptyPrompt } from '@elastic/eui';
 import { Fragment } from 'react';
 import { Detector } from '../../../../models/interfaces';
 
@@ -36,14 +36,14 @@ export const DetectorFeatureRequired = (
         </Fragment>
       }
       actions={[
-        <EuiButton
+        <EuiSmallButton
           color="primary"
           fill
           onClick={props.onSwitchToConfiguration}
           style={{ width: '250px' }}
         >
           View detector configuration
-        </EuiButton>,
+        </EuiSmallButton>,
       ]}
     />
   );

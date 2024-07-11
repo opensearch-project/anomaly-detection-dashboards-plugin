@@ -15,7 +15,7 @@ import {
   EuiCallOut,
   EuiText,
   EuiFieldText,
-  EuiButton,
+  EuiSmallButton,
   EuiButtonEmpty,
   EuiFlexGroup,
   EuiModal,
@@ -148,7 +148,7 @@ export const ConfirmDeleteDetectorsModal = (
               Cancel
             </EuiButtonEmpty>
           )}
-          <EuiButton
+          <EuiSmallButton
             data-test-subj="confirmButton"
             color="danger"
             disabled={!deleteTyped}
@@ -172,7 +172,7 @@ export const ConfirmDeleteDetectorsModal = (
             }}
           >
             {'Delete detectors'}
-          </EuiButton>
+          </EuiSmallButton>
         </EuiModalFooter>
       </EuiModal>
     </EuiOverlayMask>

@@ -13,7 +13,7 @@ import {
   EuiEmptyPrompt,
   EuiLink,
   EuiIcon,
-  EuiButton,
+  EuiSmallButton,
   EuiOverlayMask,
 } from '@elastic/eui';
 import React, { Fragment, useState } from 'react';
@@ -61,7 +61,7 @@ export const EmptyHistoricalDetectorResults = (
         </Fragment>
       }
       actions={
-        <EuiButton
+        <EuiSmallButton
           data-test-subj="runHistoricalAnalysisButton"
           fill={true}
           onClick={() => {
@@ -69,7 +69,7 @@ export const EmptyHistoricalDetectorResults = (
           }}
         >
           Run historical analysis
-        </EuiButton>
+        </EuiSmallButton>
       }
     />
   );

@@ -17,7 +17,7 @@ import {
   EuiModalHeaderTitle,
   EuiModalBody,
   EuiButtonEmpty,
-  EuiButton,
+  EuiSmallButton,
   EuiSuperDatePicker,
 } from '@elastic/eui';
 import { get } from 'lodash';
@@ -77,7 +77,7 @@ export const HistoricalRangeModal = (props: HistoricalRangeModalProps) => {
           Cancel
         </EuiButtonEmpty>
 
-        <EuiButton
+        <EuiSmallButton
           data-test-subj="confirmButton"
           fill
           onClick={() => {
@@ -89,7 +89,7 @@ export const HistoricalRangeModal = (props: HistoricalRangeModalProps) => {
           }}
         >
           Run historical analysis
-        </EuiButton>
+        </EuiSmallButton>
       </EuiModalFooter>
     </EuiModal>
   );
