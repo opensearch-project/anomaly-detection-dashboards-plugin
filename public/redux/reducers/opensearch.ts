@@ -45,6 +45,7 @@ export interface DataTypes {
   half_float?: string[];
   boolean?: string[];
   date?: string[];
+  date_nanos?: string[];
   keyword?: string[];
   text?: string[];
   integer_range?: string[];
