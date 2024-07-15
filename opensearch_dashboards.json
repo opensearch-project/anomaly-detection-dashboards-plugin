@@ -21,6 +21,6 @@
   ],
   "server": true,
   "ui": true,
-  "supportedOSDataSourceVersions": ">=2.15.0",
+  "supportedOSDataSourceVersions": ">=2.9.0",
   "requiredOSDataSourcePlugins": ["opensearch-anomaly-detection"]
 }
