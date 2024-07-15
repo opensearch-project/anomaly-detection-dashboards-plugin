@@ -48,6 +48,7 @@ import {
   constructHrefWithDataSourceId,
   getAllDetectorsQueryParamsWithDataSourceId,
   getVisibleOptions,
+  isDataSourceCompatible,
   sanitizeSearchText,
 } from '../../../utils/helpers';
 import { EmptyDetectorMessage } from '../../components/EmptyMessage/EmptyMessage';
@@ -705,6 +706,7 @@ export const DetectorList = (props: ListProps) => {
             notifications: getNotifications(),
             onSelectedDataSources: (dataSources) =>
               handleDataSourceChange(dataSources),
+            dataSourceFilter: isDataSourceCompatible,
           }}
         />
       );

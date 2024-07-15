@@ -61,6 +61,7 @@ import { getErrorMessage } from '../../../utils/utils';
 import {
   constructHrefWithDataSourceId,
   getDataSourceFromURL,
+  isDataSourceCompatible,
 } from '../../../pages/utils/helpers';
 import {
   getDataSourceManagementPlugin,
@@ -270,6 +271,7 @@ export function ConfigureModel(props: ConfigureModelProps) {
           fullWidth: false,
           savedObjects: getSavedObjectsClient(),
           notifications: getNotifications(),
+          dataSourceFilter: isDataSourceCompatible,
         }}
       />
     );
