@@ -71,7 +71,7 @@ import {
   getNotifications,
   getSavedObjectsClient,
 } from '../../../services';
-import { constructHrefWithDataSourceId, getDataSourceFromURL } from '../../../pages/utils/helpers';
+import { constructHrefWithDataSourceId, getDataSourceFromURL, isDataSourceCompatible } from '../../../pages/utils/helpers';
 
 export interface DetectorRouterProps {
   detectorId?: string;
@@ -430,6 +430,7 @@ export const DetectorDetail = (props: DetectorDetailProps) => {
           fullWidth: false,
           savedObjects: getSavedObjectsClient(),
           notifications: getNotifications(),
+          dataSourceFilter: isDataSourceCompatible,
         }}
       />
     );
