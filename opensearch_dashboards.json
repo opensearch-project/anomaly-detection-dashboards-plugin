@@ -20,5 +20,7 @@
     "opensearchDashboardsUtils"
   ],
   "server": true,
-  "ui": true
+  "ui": true,
+  "supportedOSDataSourceVersions": ">=2.9.0",
+  "requiredOSDataSourcePlugins": ["opensearch-anomaly-detection"]
 }

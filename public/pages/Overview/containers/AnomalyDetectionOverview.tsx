@@ -65,7 +65,7 @@ import {
 } from '../../../../public/services';
 import { RouteComponentProps } from 'react-router-dom';
 import queryString from 'querystring';
-import { getDataSourceFromURL, getSampleDetectorsQueryParamsWithDataSouceId } from '../../../../public/pages/utils/helpers';
+import { getDataSourceFromURL, getSampleDetectorsQueryParamsWithDataSouceId, isDataSourceCompatible } from '../../../../public/pages/utils/helpers';
 import { MDSStates } from '../../../models/interfaces';
 
 interface AnomalyDetectionOverviewProps extends RouteComponentProps {
@@ -258,6 +258,7 @@ export function AnomalyDetectionOverview(props: AnomalyDetectionOverviewProps) {
             notifications: getNotifications(),
             onSelectedDataSources: (dataSources) =>
               handleDataSourceChange(dataSources),
+            dataSourceFilter: isDataSourceCompatible,
           }}
         />
       );
