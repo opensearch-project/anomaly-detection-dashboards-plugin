@@ -66,6 +66,7 @@ import { DataSourceSelectableConfig, DataSourceViewConfig } from '../../../../..
 import {
   constructHrefWithDataSourceId,
   getDataSourceFromURL,
+  isDataSourceCompatible,
 } from '../../../pages/utils/helpers';
 import queryString from 'querystring';
 
@@ -308,6 +309,7 @@ export const DefineDetector = (props: DefineDetectorProps) => {
           fullWidth: false,
           savedObjects: getSavedObjectsClient(),
           notifications: getNotifications(),
+          dataSourceFilter: isDataSourceCompatible,
         }}
       />
     );
@@ -328,6 +330,7 @@ export const DefineDetector = (props: DefineDetectorProps) => {
               notifications: getNotifications(),
               onSelectedDataSources: (dataSources) =>
                 handleDataSourceChange(dataSources),
+              dataSourceFilter: isDataSourceCompatible,
             }}
           />
         );

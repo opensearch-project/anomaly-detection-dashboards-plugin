@@ -43,6 +43,7 @@ import {
   getAllDetectorsQueryParamsWithDataSourceId,
   getDataSourceFromURL,
   getVisibleOptions,
+  isDataSourceCompatible,
 } from '../../utils/helpers';
 import { BREADCRUMBS, MDS_BREADCRUMBS } from '../../../utils/constants';
 import { DETECTOR_STATE } from '../../../../server/utils/constants';
@@ -285,6 +286,7 @@ export function DashboardOverview(props: OverviewProps) {
             notifications: getNotifications(),
             onSelectedDataSources: (dataSources) =>
               handleDataSourceChange(dataSources),
+            dataSourceFilter: isDataSourceCompatible,
           }}
         />
       );

@@ -21,6 +21,10 @@ import { ALL_INDICES, ALL_DETECTOR_STATES, MAX_DETECTORS, DEFAULT_QUERY_PARAMS }
 import { DETECTOR_STATE } from '../../../server/utils/constants';
 import { timeFormatter } from '@elastic/charts';
 import { getDataSourceEnabled, getDataSourcePlugin } from '../../services';
+import { DataSourceAttributes } from '../../../../../src/plugins/data_source/common/data_sources';
+import { SavedObject } from '../../../../../src/core/public';
+import * as pluginManifest from "../../../opensearch_dashboards.json";
+import semver from "semver";
 
 export function sanitizeSearchText(searchValue: string): string {
   if (!searchValue || searchValue == '*') {
@@ -183,4 +187,27 @@ export const constructHrefWithDataSourceId = (
   }
 
   return `${basePath}?${url.toString()}`;
+};
+
+export const isDataSourceCompatible = (dataSource: SavedObject<DataSourceAttributes>) => {
+  if (
+    'requiredOSDataSourcePlugins' in pluginManifest &&
+    !pluginManifest.requiredOSDataSourcePlugins.every((plugin) =>
+      dataSource.attributes.installedPlugins?.includes(plugin)
+    )
+  ) {
+    return false;
+  }
+
+  // filter out data sources which is NOT in the support range of plugin
+  if (
+    'supportedOSDataSourceVersions' in pluginManifest &&
+    !semver.satisfies(
+      dataSource.attributes.dataSourceVersion,
+      pluginManifest.supportedOSDataSourceVersions
+    )
+  ) {
+    return false;
+  }
+  return true;
 };

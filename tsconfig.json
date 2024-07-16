@@ -31,6 +31,8 @@
     "allowSyntheticDefaultImports": true,
     // Emits __importStar and __importDefault helpers for runtime babel ecosystem compatibility.
     "esModuleInterop": true,
+    // Allow importing JSON files as modules.
+    "resolveJsonModule": true,
     // Resolve modules in the same way as Node.js. Aka make `require` works the
     // same in TypeScript as it does in Node.js.
     "moduleResolution": "node",
