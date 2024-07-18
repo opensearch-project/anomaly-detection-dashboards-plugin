@@ -117,7 +117,7 @@ export class AnomalyDetectionOpenSearchDashboardsPlugin
     if (core.chrome.navGroup.getNavGroupEnabled()) {
       core.application.register({
         id: OVERVIEW_PAGE_NAV_ID,
-        title: 'Get Started',
+        title: 'Get started',
         order: 8040,
         category: DEFAULT_APP_CATEGORIES.detect,
         workspaceAvailability: WorkspaceAvailability.outsideWorkspace,

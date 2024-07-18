@@ -281,7 +281,7 @@ export function AnomalyDetectionOverview(props: AnomalyDetectionOverviewProps) {
         <EuiFlexGroup justifyContent="spaceBetween">
           <EuiFlexItem grow={false}>
             <EuiTitle size="l" data-test-subj="overviewTitle">
-              <h1>Get Started</h1>
+              <h1>Get started</h1>
             </EuiTitle>
           </EuiFlexItem>
           <EuiFlexItem grow={false}>
