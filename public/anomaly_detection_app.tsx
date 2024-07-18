@@ -18,7 +18,7 @@ import { Provider } from 'react-redux';
 import configureStore from './redux/configureStore';
 import { CoreServicesContext } from './components/CoreServices/CoreServices';
 
-export function renderApp(coreStart: CoreStart, params: AppMountParameters) {
+export function renderApp(coreStart: CoreStart, params: AppMountParameters, landingPage: string | undefined, hideInAppSideNavBar: boolean) {
   const http = coreStart.http;
   const store = configureStore(http);
 
@@ -38,6 +38,8 @@ export function renderApp(coreStart: CoreStart, params: AppMountParameters) {
             <CoreServicesContext.Provider value={coreStart}>
               <Main
                 setHeaderActionMenu={params.setHeaderActionMenu}
+                landingPage={landingPage}
+                hideInAppSideNavBar={hideInAppSideNavBar}
                 {...props}
               />
             </CoreServicesContext.Provider>
