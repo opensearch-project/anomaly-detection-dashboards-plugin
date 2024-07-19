@@ -78,7 +78,7 @@ describe('<AnomalyDetectionOverview /> spec', () => {
       });
       const { container, getByText, queryByText } = renderWithRouter();
       expect(container).toMatchSnapshot();
-      getByText('Anomaly detection');
+      getByText('Get started');
       getByText('Monitor HTTP responses');
       getByText('Monitor eCommerce orders');
       getByText('Monitor host health');
@@ -109,7 +109,7 @@ describe('<AnomalyDetectionOverview /> spec', () => {
       const { container, getByText, getAllByText } = renderWithRouter();
       await waitFor(() => {});
       expect(container).toMatchSnapshot();
-      getByText('Anomaly detection');
+      getByText('Get started');
       getByText('Monitor HTTP responses');
       getByText('Monitor eCommerce orders');
       getByText('Monitor host health');
@@ -136,7 +136,7 @@ describe('<AnomalyDetectionOverview /> spec', () => {
       const { container, getByText, queryByText } = renderWithRouter();
       await waitFor(() => {});
       expect(container).toMatchSnapshot();
-      getByText('Anomaly detection');
+      getByText('Get started');
       getByText('Monitor HTTP responses');
       getByText('Monitor eCommerce orders');
       getByText('Monitor host health');

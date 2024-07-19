@@ -15,7 +15,7 @@ exports[`<AnomalyDetectionOverview /> spec No sample detectors created renders c
           class="euiTitle euiTitle--large"
           data-test-subj="overviewTitle"
         >
-          Anomaly detection
+          Get started
         </h1>
       </div>
       <div
@@ -775,7 +775,7 @@ exports[`<AnomalyDetectionOverview /> spec Some detectors created renders compon
           class="euiTitle euiTitle--large"
           data-test-subj="overviewTitle"
         >
-          Anomaly detection
+          Get started
         </h1>
       </div>
       <div
@@ -1530,7 +1530,7 @@ exports[`<AnomalyDetectionOverview /> spec Some detectors created renders compon
           class="euiTitle euiTitle--large"
           data-test-subj="overviewTitle"
         >
-          Anomaly detection
+          Get started
         </h1>
       </div>
       <div

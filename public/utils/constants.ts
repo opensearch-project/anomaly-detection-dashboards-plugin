@@ -108,3 +108,9 @@ export const SPACE_STR = ' ';
 export const ANOMALY_DETECTION_ICON = 'anomalyDetection';
 
 export const DATA_SOURCE_ID = 'dataSourceId';
+
+export const OVERVIEW_PAGE_NAV_ID = `anomaly_detection_dashboard-overview`;
+
+export const DASHBOARD_PAGE_NAV_ID = `anomaly_detection_dashboard-dashboard`;
+
+export const DETECTORS_PAGE_NAV_ID = `anomaly_detection_dashboard-detectors`;
