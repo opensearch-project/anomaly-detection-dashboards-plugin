@@ -9,7 +9,7 @@
  * GitHub history for details.
  */
 
-import { Switch, Route, RouteComponentProps } from 'react-router-dom';
+import { Switch, Route, RouteComponentProps, Redirect } from 'react-router-dom';
 import React from 'react';
 import { AppState } from '../../redux/reducers';
 import { DetectorList } from '../DetectorsList';
@@ -36,14 +36,16 @@ enum Navigation {
 
 interface MainProps extends RouteComponentProps {
   setHeaderActionMenu: (menuMount: MountPoint | undefined) => void;
+  landingPage: string | undefined;
+  hideInAppSideNavBar: boolean;
 }
 
 export function Main(props: MainProps) {
-  const { setHeaderActionMenu } = props;
+  const { setHeaderActionMenu, landingPage, hideInAppSideNavBar} = props;
 
   const hideSideNavBar = useSelector(
     (state: AppState) => state.adApp.hideSideNavBar
-  );
+  ) || hideInAppSideNavBar;
 
   const adState = useSelector((state: AppState) => state.ad);
   const totalDetectors = adState.totalDetectors;
@@ -164,7 +166,9 @@ export function Main(props: MainProps) {
                 <Route
                   path="/"
                   render={(props: RouteComponentProps) =>
-                    totalDetectors > 0 ? (
+                    landingPage ? (
+                      <Redirect from="/" to={landingPage} />
+                    ) : totalDetectors > 0 ? (
                       <DashboardOverview
                         setActionMenu={setHeaderActionMenu}
                         landingDataSourceId={dataSourceId}
