@@ -102,14 +102,6 @@ export class AnomalyDetectionOpenSearchDashboardsPlugin
       {
         id: PLUGIN_NAME,
         category: DEFAULT_APP_CATEGORIES.detect,
-        showInAllNavGroup: true
-      }
-    ])
-    core.chrome.navGroup.addNavLinksToGroup(DEFAULT_NAV_GROUPS['security-analytics'],[
-      {
-        id: PLUGIN_NAME,
-        category: DEFAULT_APP_CATEGORIES.detect,
-        showInAllNavGroup: true
       }
     ])
 
@@ -162,22 +154,6 @@ export class AnomalyDetectionOpenSearchDashboardsPlugin
     // link the sub applications to the parent application
     core.chrome.navGroup.addNavLinksToGroup(
       DEFAULT_NAV_GROUPS.observability,
-      [{
-          id: OVERVIEW_PAGE_NAV_ID,
-          parentNavLinkId: PLUGIN_NAME
-      },
-      {
-        id: DASHBOARD_PAGE_NAV_ID,
-        parentNavLinkId: PLUGIN_NAME
-      },
-      {
-        id: DETECTORS_PAGE_NAV_ID,
-        parentNavLinkId: PLUGIN_NAME
-      }]
-    );
-
-    core.chrome.navGroup.addNavLinksToGroup(
-      DEFAULT_NAV_GROUPS['security-analytics'],
       [{
           id: OVERVIEW_PAGE_NAV_ID,
           parentNavLinkId: PLUGIN_NAME
