@@ -16,7 +16,7 @@ import {
   EuiFlexItem,
   EuiFlexGroup,
   EuiCompressedCheckbox,
-  EuiSuperDatePicker,
+  EuiCompressedSuperDatePicker,
 } from '@elastic/eui';
 import { Field, FieldProps, FormikProps } from 'formik';
 import { get } from 'lodash';
@@ -86,7 +86,7 @@ export function HistoricalJob(props: HistoricalJobProps) {
                   isInvalid={isInvalid(field.name, form)}
                   error={getError(field.name, form)}
                 >
-                  <EuiSuperDatePicker
+                  <EuiCompressedSuperDatePicker
                     //isLoading={props.isLoading}
                     start={convertTimestampToString(form.values.startTime)}
                     end={convertTimestampToString(form.values.endTime)}
