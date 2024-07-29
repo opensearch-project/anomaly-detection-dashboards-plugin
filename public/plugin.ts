@@ -112,7 +112,6 @@ export class AnomalyDetectionOpenSearchDashboardsPlugin
         title: 'Get started',
         order: 8040,
         category: DEFAULT_APP_CATEGORIES.detect,
-        workspaceAvailability: WorkspaceAvailability.outsideWorkspace,
         mount: async (params: AppMountParameters) => {
           const { renderApp } = await import('./anomaly_detection_app');
           const [coreStart] = await core.getStartServices();
@@ -127,7 +126,6 @@ export class AnomalyDetectionOpenSearchDashboardsPlugin
         title: 'Dashboard',
         order: 8040,
         category: DEFAULT_APP_CATEGORIES.detect,
-        workspaceAvailability: WorkspaceAvailability.outsideWorkspace,
         mount: async (params: AppMountParameters) => {
           const { renderApp } = await import('./anomaly_detection_app');
           const [coreStart] = await core.getStartServices();
@@ -142,7 +140,6 @@ export class AnomalyDetectionOpenSearchDashboardsPlugin
         title: 'Detectors',
         order: 8040,
         category: DEFAULT_APP_CATEGORIES.detect,
-        workspaceAvailability: WorkspaceAvailability.outsideWorkspace,
         mount: async (params: AppMountParameters) => {
           const { renderApp } = await import('./anomaly_detection_app');
           const [coreStart] = await core.getStartServices();
