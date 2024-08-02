@@ -468,7 +468,7 @@ exports[`<DetectorConfig /> spec renders the component 1`] = `
               class="euiFlexItem"
             >
               <div
-                class="euiFormRow"
+                class="euiFormRow euiFormRow--compressed"
                 id="random_html_id-row"
                 style="width: 250px;"
               >
@@ -1778,7 +1778,7 @@ exports[`<DetectorConfig /> spec renders the component with 2 custom and 1 simpl
               class="euiFlexItem"
             >
               <div
-                class="euiFormRow"
+                class="euiFormRow euiFormRow--compressed"
                 id="random_html_id-row"
                 style="width: 250px;"
               >

@@ -434,7 +434,7 @@ exports[`<ReviewAndCreate /> spec renders the component, validation loading 1`] 
               class="euiFlexItem"
             >
               <div
-                class="euiFormRow"
+                class="euiFormRow euiFormRow--compressed"
                 id="random_html_id-row"
                 style="width: 250px;"
               >
@@ -1562,7 +1562,7 @@ exports[`issue in detector validation issues in feature query 1`] = `
                 class="euiFlexItem"
               >
                 <div
-                  class="euiFormRow"
+                  class="euiFormRow euiFormRow--compressed"
                   id="random_html_id-row"
                   style="width: 250px;"
                 >

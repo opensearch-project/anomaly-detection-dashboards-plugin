@@ -380,7 +380,7 @@ exports[`<AdditionalSettings /> spec renders the component in create mode (no ID
             class="euiFlexItem"
           >
             <div
-              class="euiFormRow"
+              class="euiFormRow euiFormRow--compressed"
               id="random_html_id-row"
               style="width: 250px;"
             >
@@ -934,7 +934,7 @@ exports[`<AdditionalSettings /> spec renders the component in edit mode (with ID
             class="euiFlexItem"
           >
             <div
-              class="euiFormRow"
+              class="euiFormRow euiFormRow--compressed"
               id="random_html_id-row"
               style="width: 250px;"
             >

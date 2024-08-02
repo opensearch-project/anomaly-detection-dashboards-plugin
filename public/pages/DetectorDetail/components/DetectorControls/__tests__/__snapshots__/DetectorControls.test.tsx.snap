@@ -16,7 +16,7 @@ exports[`<DetectorControls /> spec Detector Controls renders detector controls w
           class="euiPopover__anchor"
         >
           <button
-          class="euiButton euiButton--primary euiButton--small"
+            class="euiButton euiButton--primary euiButton--small"
             data-test-subj="actionsButton"
             type="button"
           >
