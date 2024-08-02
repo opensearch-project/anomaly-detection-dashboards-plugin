@@ -55,7 +55,7 @@ exports[`<Settings /> spec renders the component 1`] = `
             style="max-width: 70%;"
           >
             <div
-              class="euiFormRow euiFormRow--fullWidth"
+              class="euiFormRow euiFormRow--fullWidth euiFormRow--compressed"
               hint="Define how often the detector collects data to generate anomalies. The shorter the interval is, the more real time the detector results will be, and the more computing resources the detector will need."
               hintlink="https://opensearch.org/docs/monitoring-plugins/ad"
               id="random_html_id-row"
@@ -125,13 +125,13 @@ exports[`<Settings /> spec renders the component 1`] = `
                     class="euiFlexItem euiFlexItem--flexGrowZero"
                   >
                     <div
-                      class="euiFormControlLayout"
+                      class="euiFormControlLayout euiFormControlLayout--compressed"
                     >
                       <div
                         class="euiFormControlLayout__childrenWrapper"
                       >
                         <input
-                          class="euiFieldNumber"
+                          class="euiFieldNumber euiFieldNumber--compressed"
                           data-test-subj="detectionInterval"
                           id="detectionInterval"
                           min="1"
@@ -162,7 +162,7 @@ exports[`<Settings /> spec renders the component 1`] = `
           </div>
         </div>
         <div
-          class="euiFormRow euiFormRow--fullWidth"
+          class="euiFormRow euiFormRow--fullWidth euiFormRow--compressed"
           hint="Specify a window of delay for a detector to fetch data, if you need to account for extra processing time."
           hintlink="https://opensearch.org/docs/monitoring-plugins/ad"
           id="random_html_id-row"
@@ -233,13 +233,13 @@ exports[`<Settings /> spec renders the component 1`] = `
                 class="euiFlexItem euiFlexItem--flexGrowZero"
               >
                 <div
-                  class="euiFormControlLayout"
+                  class="euiFormControlLayout euiFormControlLayout--compressed"
                 >
                   <div
                     class="euiFormControlLayout__childrenWrapper"
                   >
                     <input
-                      class="euiFieldNumber"
+                      class="euiFieldNumber euiFieldNumber--compressed"
                       data-test-subj="windowDelay"
                       id="windowDelay"
                       name="windowDelay"

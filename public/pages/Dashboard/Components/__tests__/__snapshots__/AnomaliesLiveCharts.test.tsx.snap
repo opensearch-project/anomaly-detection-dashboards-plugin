@@ -51,9 +51,9 @@ exports[`<AnomaliesLiveChart /> spec AnomaliesLiveChart with Sample anomaly data
             class="euiFlexItem content-panel-subTitle"
             style="line-height: normal; max-width: 75%;"
           >
-            Live anomaly results across detectors for the last 30 minutes.  
-                'The results refresh every 1 minute. 
-                'For each detector, if an anomaly occurrence is detected at the end of the detector interval, 
+            Live anomaly results across detectors for the last 30 minutes.
+                'The results refresh every 1 minute.
+                'For each detector, if an anomaly occurrence is detected at the end of the detector interval,
                 'you will see a bar representing its anomaly grade.
           </div>
         </div>
@@ -69,7 +69,7 @@ exports[`<AnomaliesLiveChart /> spec AnomaliesLiveChart with Sample anomaly data
           >
             <button
               aria-label="View full screen"
-              class="euiButton euiButton--primary"
+              class="euiButton euiButton--primary euiButton--small"
               data-test-subj="dashboardFullScreenButton"
               type="button"
             >
