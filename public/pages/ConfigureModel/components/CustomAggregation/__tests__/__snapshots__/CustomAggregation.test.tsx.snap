@@ -3,7 +3,7 @@
 exports[`<CustomAggregation /> spec renders the component 1`] = `
 <div>
   <div
-    class="euiFormRow euiFormRow--fullWidth"
+    class="euiFormRow euiFormRow--fullWidth euiFormRow--compressed"
     id="random_html_id-row"
   >
     <div

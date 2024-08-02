@@ -69,7 +69,7 @@ exports[`<DefineDetector /> Full creating detector definition renders the compon
           style="padding: 10px 0px;"
         >
           <div
-            class="euiFormRow"
+            class="euiFormRow euiFormRow--compressed"
             hint="Specify a unique and descriptive name that is easy to recognize."
             id="random_html_id-row"
             title="Name"
@@ -102,14 +102,14 @@ exports[`<DefineDetector /> Full creating detector definition renders the compon
               class="euiFormRow__fieldWrapper"
             >
               <div
-                class="euiFormControlLayout"
+                class="euiFormControlLayout euiFormControlLayout--compressed"
               >
                 <div
                   class="euiFormControlLayout__childrenWrapper"
                 >
                   <input
                     aria-describedby="random_html_id-help-0"
-                    class="euiFieldText"
+                    class="euiFieldText euiFieldText--compressed"
                     data-test-subj="detectorNameTextInput"
                     id="random_html_id"
                     name="name"
@@ -129,7 +129,7 @@ exports[`<DefineDetector /> Full creating detector definition renders the compon
             </div>
           </div>
           <div
-            class="euiFormRow"
+            class="euiFormRow euiFormRow--compressed"
             hint="Describe the purpose of the detector."
             id="random_html_id-row"
           >
@@ -166,7 +166,7 @@ exports[`<DefineDetector /> Full creating detector definition renders the compon
               class="euiFormRow__fieldWrapper"
             >
               <textarea
-                class="euiTextArea euiTextArea--resizeVertical"
+                class="euiTextArea euiTextArea--resizeVertical euiTextArea--compressed"
                 data-test-subj="detectorDescriptionTextInput"
                 id="random_html_id"
                 name="description"
@@ -229,7 +229,7 @@ exports[`<DefineDetector /> Full creating detector definition renders the compon
           style="padding: 10px 0px;"
         >
           <div
-            class="euiFormRow"
+            class="euiFormRow euiFormRow--compressed"
             hint="Choose an index or index pattern as the data source."
             id="random_html_id-row"
             title="Index"
@@ -265,18 +265,18 @@ exports[`<DefineDetector /> Full creating detector definition renders the compon
                 aria-describedby="random_html_id-help-0"
                 aria-expanded="false"
                 aria-haspopup="listbox"
-                class="euiComboBox"
+                class="euiComboBox euiComboBox--compressed"
                 data-test-subj="indicesFilter"
                 role="combobox"
               >
                 <div
-                  class="euiFormControlLayout"
+                  class="euiFormControlLayout euiFormControlLayout--compressed"
                 >
                   <div
                     class="euiFormControlLayout__childrenWrapper"
                   >
                     <div
-                      class="euiComboBox__inputWrap euiComboBox__inputWrap--noWrap euiComboBox__inputWrap-isLoading"
+                      class="euiComboBox__inputWrap euiComboBox__inputWrap--compressed euiComboBox__inputWrap--noWrap euiComboBox__inputWrap-isLoading"
                       data-test-subj="comboBoxInput"
                       tabindex="-1"
                     >
@@ -316,7 +316,7 @@ exports[`<DefineDetector /> Full creating detector definition renders the compon
                       >
                         <svg
                           aria-hidden="true"
-                          class="euiIcon euiIcon--medium euiIcon-isLoading euiFormControlLayoutCustomIcon__icon"
+                          class="euiIcon euiIcon--small euiIcon-isLoading euiFormControlLayoutCustomIcon__icon"
                           focusable="false"
                           height="16"
                           role="img"
@@ -342,7 +342,7 @@ exports[`<DefineDetector /> Full creating detector definition renders the compon
             </div>
           </div>
           <div
-            class="euiFormRow euiFormRow--fullWidth"
+            class="euiFormRow euiFormRow--fullWidth euiFormRow--compressed"
             hint="Choose a subset of your data source to focus your data stream and reduce noisy data."
             id="random_html_id-row"
           >
@@ -478,7 +478,7 @@ exports[`<DefineDetector /> Full creating detector definition renders the compon
           style="padding: 10px 0px;"
         >
           <div
-            class="euiFormRow"
+            class="euiFormRow euiFormRow--compressed"
             hint="Choose the time field you want to use for time filter."
             id="random_html_id-row"
             title="Timestamp field"
@@ -513,18 +513,18 @@ exports[`<DefineDetector /> Full creating detector definition renders the compon
               <div
                 aria-expanded="false"
                 aria-haspopup="listbox"
-                class="euiComboBox"
+                class="euiComboBox euiComboBox--compressed"
                 data-test-subj="timestampFilter"
                 role="combobox"
               >
                 <div
-                  class="euiFormControlLayout"
+                  class="euiFormControlLayout euiFormControlLayout--compressed"
                 >
                   <div
                     class="euiFormControlLayout__childrenWrapper"
                   >
                     <div
-                      class="euiComboBox__inputWrap euiComboBox__inputWrap--noWrap"
+                      class="euiComboBox__inputWrap euiComboBox__inputWrap--compressed euiComboBox__inputWrap--noWrap"
                       data-test-subj="comboBoxInput"
                       tabindex="-1"
                     >
@@ -561,7 +561,7 @@ exports[`<DefineDetector /> Full creating detector definition renders the compon
                       >
                         <svg
                           aria-hidden="true"
-                          class="euiIcon euiIcon--medium euiIcon-isLoading euiFormControlLayoutCustomIcon__icon"
+                          class="euiIcon euiIcon--small euiIcon-isLoading euiFormControlLayoutCustomIcon__icon"
                           focusable="false"
                           height="16"
                           role="img"
@@ -639,7 +639,7 @@ exports[`<DefineDetector /> Full creating detector definition renders the compon
               style="max-width: 70%;"
             >
               <div
-                class="euiFormRow euiFormRow--fullWidth"
+                class="euiFormRow euiFormRow--fullWidth euiFormRow--compressed"
                 hint="Define how often the detector collects data to generate anomalies. The shorter the interval is, the more real time the detector results will be, and the more computing resources the detector will need."
                 hintlink="https://opensearch.org/docs/monitoring-plugins/ad"
                 id="random_html_id-row"
@@ -709,13 +709,13 @@ exports[`<DefineDetector /> Full creating detector definition renders the compon
                       class="euiFlexItem euiFlexItem--flexGrowZero"
                     >
                       <div
-                        class="euiFormControlLayout"
+                        class="euiFormControlLayout euiFormControlLayout--compressed"
                       >
                         <div
                           class="euiFormControlLayout__childrenWrapper"
                         >
                           <input
-                            class="euiFieldNumber"
+                            class="euiFieldNumber euiFieldNumber--compressed"
                             data-test-subj="detectionInterval"
                             id="detectionInterval"
                             min="1"
@@ -746,7 +746,7 @@ exports[`<DefineDetector /> Full creating detector definition renders the compon
             </div>
           </div>
           <div
-            class="euiFormRow euiFormRow--fullWidth"
+            class="euiFormRow euiFormRow--fullWidth euiFormRow--compressed"
             hint="Specify a window of delay for a detector to fetch data, if you need to account for extra processing time."
             hintlink="https://opensearch.org/docs/monitoring-plugins/ad"
             id="random_html_id-row"
@@ -817,13 +817,13 @@ exports[`<DefineDetector /> Full creating detector definition renders the compon
                   class="euiFlexItem euiFlexItem--flexGrowZero"
                 >
                   <div
-                    class="euiFormControlLayout"
+                    class="euiFormControlLayout euiFormControlLayout--compressed"
                   >
                     <div
                       class="euiFormControlLayout__childrenWrapper"
                     >
                       <input
-                        class="euiFieldNumber"
+                        class="euiFieldNumber euiFieldNumber--compressed"
                         data-test-subj="windowDelay"
                         id="windowDelay"
                         name="windowDelay"
@@ -953,7 +953,7 @@ exports[`<DefineDetector /> Full creating detector definition renders the compon
               class="euiFlexItem"
             >
               <div
-                class="euiCheckbox"
+                class="euiCheckbox euiCheckbox--compressed"
               >
                 <input
                   class="euiCheckbox__input"
@@ -1058,7 +1058,7 @@ exports[`<DefineDetector /> empty creating detector definition renders the compo
           style="padding: 10px 0px;"
         >
           <div
-            class="euiFormRow"
+            class="euiFormRow euiFormRow--compressed"
             hint="Specify a unique and descriptive name that is easy to recognize."
             id="random_html_id-row"
             title="Name"
@@ -1091,14 +1091,14 @@ exports[`<DefineDetector /> empty creating detector definition renders the compo
               class="euiFormRow__fieldWrapper"
             >
               <div
-                class="euiFormControlLayout"
+                class="euiFormControlLayout euiFormControlLayout--compressed"
               >
                 <div
                   class="euiFormControlLayout__childrenWrapper"
                 >
                   <input
                     aria-describedby="random_html_id-help-0"
-                    class="euiFieldText"
+                    class="euiFieldText euiFieldText--compressed"
                     data-test-subj="detectorNameTextInput"
                     id="random_html_id"
                     name="name"
@@ -1118,7 +1118,7 @@ exports[`<DefineDetector /> empty creating detector definition renders the compo
             </div>
           </div>
           <div
-            class="euiFormRow"
+            class="euiFormRow euiFormRow--compressed"
             hint="Describe the purpose of the detector."
             id="random_html_id-row"
           >
@@ -1155,7 +1155,7 @@ exports[`<DefineDetector /> empty creating detector definition renders the compo
               class="euiFormRow__fieldWrapper"
             >
               <textarea
-                class="euiTextArea euiTextArea--resizeVertical"
+                class="euiTextArea euiTextArea--resizeVertical euiTextArea--compressed"
                 data-test-subj="detectorDescriptionTextInput"
                 id="random_html_id"
                 name="description"
@@ -1216,7 +1216,7 @@ exports[`<DefineDetector /> empty creating detector definition renders the compo
           style="padding: 10px 0px;"
         >
           <div
-            class="euiFormRow"
+            class="euiFormRow euiFormRow--compressed"
             hint="Choose an index or index pattern as the data source."
             id="random_html_id-row"
             title="Index"
@@ -1252,18 +1252,18 @@ exports[`<DefineDetector /> empty creating detector definition renders the compo
                 aria-describedby="random_html_id-help-0"
                 aria-expanded="false"
                 aria-haspopup="listbox"
-                class="euiComboBox"
+                class="euiComboBox euiComboBox--compressed"
                 data-test-subj="indicesFilter"
                 role="combobox"
               >
                 <div
-                  class="euiFormControlLayout"
+                  class="euiFormControlLayout euiFormControlLayout--compressed"
                 >
                   <div
                     class="euiFormControlLayout__childrenWrapper"
                   >
                     <div
-                      class="euiComboBox__inputWrap euiComboBox__inputWrap--noWrap euiComboBox__inputWrap-isLoading"
+                      class="euiComboBox__inputWrap euiComboBox__inputWrap--compressed euiComboBox__inputWrap--noWrap euiComboBox__inputWrap-isLoading"
                       data-test-subj="comboBoxInput"
                       tabindex="-1"
                     >
@@ -1303,7 +1303,7 @@ exports[`<DefineDetector /> empty creating detector definition renders the compo
                       >
                         <svg
                           aria-hidden="true"
-                          class="euiIcon euiIcon--medium euiFormControlLayoutCustomIcon__icon"
+                          class="euiIcon euiIcon--small euiFormControlLayoutCustomIcon__icon"
                           focusable="false"
                           height="16"
                           role="img"
@@ -1330,7 +1330,7 @@ exports[`<DefineDetector /> empty creating detector definition renders the compo
             </div>
           </div>
           <div
-            class="euiFormRow euiFormRow--fullWidth"
+            class="euiFormRow euiFormRow--fullWidth euiFormRow--compressed"
             hint="Choose a subset of your data source to focus your data stream and reduce noisy data."
             id="random_html_id-row"
           >
@@ -1467,7 +1467,7 @@ exports[`<DefineDetector /> empty creating detector definition renders the compo
           style="padding: 10px 0px;"
         >
           <div
-            class="euiFormRow"
+            class="euiFormRow euiFormRow--compressed"
             hint="Choose the time field you want to use for time filter."
             id="random_html_id-row"
             title="Timestamp field"
@@ -1502,18 +1502,18 @@ exports[`<DefineDetector /> empty creating detector definition renders the compo
               <div
                 aria-expanded="false"
                 aria-haspopup="listbox"
-                class="euiComboBox"
+                class="euiComboBox euiComboBox--compressed"
                 data-test-subj="timestampFilter"
                 role="combobox"
               >
                 <div
-                  class="euiFormControlLayout"
+                  class="euiFormControlLayout euiFormControlLayout--compressed"
                 >
                   <div
                     class="euiFormControlLayout__childrenWrapper"
                   >
                     <div
-                      class="euiComboBox__inputWrap euiComboBox__inputWrap--noWrap"
+                      class="euiComboBox__inputWrap euiComboBox__inputWrap--compressed euiComboBox__inputWrap--noWrap"
                       data-test-subj="comboBoxInput"
                       tabindex="-1"
                     >
@@ -1550,7 +1550,7 @@ exports[`<DefineDetector /> empty creating detector definition renders the compo
                       >
                         <svg
                           aria-hidden="true"
-                          class="euiIcon euiIcon--medium euiFormControlLayoutCustomIcon__icon"
+                          class="euiIcon euiIcon--small euiFormControlLayoutCustomIcon__icon"
                           focusable="false"
                           height="16"
                           role="img"
@@ -1629,7 +1629,7 @@ exports[`<DefineDetector /> empty creating detector definition renders the compo
               style="max-width: 70%;"
             >
               <div
-                class="euiFormRow euiFormRow--fullWidth"
+                class="euiFormRow euiFormRow--fullWidth euiFormRow--compressed"
                 hint="Define how often the detector collects data to generate anomalies. The shorter the interval is, the more real time the detector results will be, and the more computing resources the detector will need."
                 hintlink="https://opensearch.org/docs/monitoring-plugins/ad"
                 id="random_html_id-row"
@@ -1698,13 +1698,13 @@ exports[`<DefineDetector /> empty creating detector definition renders the compo
                       class="euiFlexItem euiFlexItem--flexGrowZero"
                     >
                       <div
-                        class="euiFormControlLayout"
+                        class="euiFormControlLayout euiFormControlLayout--compressed"
                       >
                         <div
                           class="euiFormControlLayout__childrenWrapper"
                         >
                           <input
-                            class="euiFieldNumber"
+                            class="euiFieldNumber euiFieldNumber--compressed"
                             data-test-subj="detectionInterval"
                             id="detectionInterval"
                             min="1"
@@ -1735,7 +1735,7 @@ exports[`<DefineDetector /> empty creating detector definition renders the compo
             </div>
           </div>
           <div
-            class="euiFormRow euiFormRow--fullWidth"
+            class="euiFormRow euiFormRow--fullWidth euiFormRow--compressed"
             hint="Specify a window of delay for a detector to fetch data, if you need to account for extra processing time."
             hintlink="https://opensearch.org/docs/monitoring-plugins/ad"
             id="random_html_id-row"
@@ -1805,13 +1805,13 @@ exports[`<DefineDetector /> empty creating detector definition renders the compo
                   class="euiFlexItem euiFlexItem--flexGrowZero"
                 >
                   <div
-                    class="euiFormControlLayout"
+                    class="euiFormControlLayout euiFormControlLayout--compressed"
                   >
                     <div
                       class="euiFormControlLayout__childrenWrapper"
                     >
                       <input
-                        class="euiFieldNumber"
+                        class="euiFieldNumber euiFieldNumber--compressed"
                         data-test-subj="windowDelay"
                         id="windowDelay"
                         name="windowDelay"
@@ -1940,7 +1940,7 @@ exports[`<DefineDetector /> empty creating detector definition renders the compo
               class="euiFlexItem"
             >
               <div
-                class="euiCheckbox"
+                class="euiCheckbox euiCheckbox--compressed"
               >
                 <input
                   class="euiCheckbox__input"
@@ -2045,7 +2045,7 @@ exports[`<DefineDetector /> empty editing detector definition renders the compon
           style="padding: 10px 0px;"
         >
           <div
-            class="euiFormRow"
+            class="euiFormRow euiFormRow--compressed"
             hint="Specify a unique and descriptive name that is easy to recognize."
             id="random_html_id-row"
             title="Name"
@@ -2078,14 +2078,14 @@ exports[`<DefineDetector /> empty editing detector definition renders the compon
               class="euiFormRow__fieldWrapper"
             >
               <div
-                class="euiFormControlLayout"
+                class="euiFormControlLayout euiFormControlLayout--compressed"
               >
                 <div
                   class="euiFormControlLayout__childrenWrapper"
                 >
                   <input
                     aria-describedby="random_html_id-help-0"
-                    class="euiFieldText"
+                    class="euiFieldText euiFieldText--compressed"
                     data-test-subj="detectorNameTextInput"
                     id="random_html_id"
                     name="name"
@@ -2105,7 +2105,7 @@ exports[`<DefineDetector /> empty editing detector definition renders the compon
             </div>
           </div>
           <div
-            class="euiFormRow"
+            class="euiFormRow euiFormRow--compressed"
             hint="Describe the purpose of the detector."
             id="random_html_id-row"
           >
@@ -2142,7 +2142,7 @@ exports[`<DefineDetector /> empty editing detector definition renders the compon
               class="euiFormRow__fieldWrapper"
             >
               <textarea
-                class="euiTextArea euiTextArea--resizeVertical"
+                class="euiTextArea euiTextArea--resizeVertical euiTextArea--compressed"
                 data-test-subj="detectorDescriptionTextInput"
                 id="random_html_id"
                 name="description"
@@ -2235,7 +2235,7 @@ exports[`<DefineDetector /> empty editing detector definition renders the compon
             />
           </div>
           <div
-            class="euiFormRow"
+            class="euiFormRow euiFormRow--compressed"
             hint="Choose an index or index pattern as the data source."
             id="random_html_id-row"
             title="Index"
@@ -2271,18 +2271,18 @@ exports[`<DefineDetector /> empty editing detector definition renders the compon
                 aria-describedby="random_html_id-help-0"
                 aria-expanded="false"
                 aria-haspopup="listbox"
-                class="euiComboBox"
+                class="euiComboBox euiComboBox--compressed"
                 data-test-subj="indicesFilter"
                 role="combobox"
               >
                 <div
-                  class="euiFormControlLayout"
+                  class="euiFormControlLayout euiFormControlLayout--compressed"
                 >
                   <div
                     class="euiFormControlLayout__childrenWrapper"
                   >
                     <div
-                      class="euiComboBox__inputWrap euiComboBox__inputWrap--noWrap euiComboBox__inputWrap-isLoading"
+                      class="euiComboBox__inputWrap euiComboBox__inputWrap--compressed euiComboBox__inputWrap--noWrap euiComboBox__inputWrap-isLoading"
                       data-test-subj="comboBoxInput"
                       tabindex="-1"
                     >
@@ -2322,7 +2322,7 @@ exports[`<DefineDetector /> empty editing detector definition renders the compon
                       >
                         <svg
                           aria-hidden="true"
-                          class="euiIcon euiIcon--medium euiFormControlLayoutCustomIcon__icon"
+                          class="euiIcon euiIcon--small euiFormControlLayoutCustomIcon__icon"
                           focusable="false"
                           height="16"
                           role="img"
@@ -2349,7 +2349,7 @@ exports[`<DefineDetector /> empty editing detector definition renders the compon
             </div>
           </div>
           <div
-            class="euiFormRow euiFormRow--fullWidth"
+            class="euiFormRow euiFormRow--fullWidth euiFormRow--compressed"
             hint="Choose a subset of your data source to focus your data stream and reduce noisy data."
             id="random_html_id-row"
           >
@@ -2486,7 +2486,7 @@ exports[`<DefineDetector /> empty editing detector definition renders the compon
           style="padding: 10px 0px;"
         >
           <div
-            class="euiFormRow"
+            class="euiFormRow euiFormRow--compressed"
             hint="Choose the time field you want to use for time filter."
             id="random_html_id-row"
             title="Timestamp field"
@@ -2521,18 +2521,18 @@ exports[`<DefineDetector /> empty editing detector definition renders the compon
               <div
                 aria-expanded="false"
                 aria-haspopup="listbox"
-                class="euiComboBox"
+                class="euiComboBox euiComboBox--compressed"
                 data-test-subj="timestampFilter"
                 role="combobox"
               >
                 <div
-                  class="euiFormControlLayout"
+                  class="euiFormControlLayout euiFormControlLayout--compressed"
                 >
                   <div
                     class="euiFormControlLayout__childrenWrapper"
                   >
                     <div
-                      class="euiComboBox__inputWrap euiComboBox__inputWrap--noWrap"
+                      class="euiComboBox__inputWrap euiComboBox__inputWrap--compressed euiComboBox__inputWrap--noWrap"
                       data-test-subj="comboBoxInput"
                       tabindex="-1"
                     >
@@ -2569,7 +2569,7 @@ exports[`<DefineDetector /> empty editing detector definition renders the compon
                       >
                         <svg
                           aria-hidden="true"
-                          class="euiIcon euiIcon--medium euiFormControlLayoutCustomIcon__icon"
+                          class="euiIcon euiIcon--small euiFormControlLayoutCustomIcon__icon"
                           focusable="false"
                           height="16"
                           role="img"
@@ -2648,7 +2648,7 @@ exports[`<DefineDetector /> empty editing detector definition renders the compon
               style="max-width: 70%;"
             >
               <div
-                class="euiFormRow euiFormRow--fullWidth"
+                class="euiFormRow euiFormRow--fullWidth euiFormRow--compressed"
                 hint="Define how often the detector collects data to generate anomalies. The shorter the interval is, the more real time the detector results will be, and the more computing resources the detector will need."
                 hintlink="https://opensearch.org/docs/monitoring-plugins/ad"
                 id="random_html_id-row"
@@ -2717,13 +2717,13 @@ exports[`<DefineDetector /> empty editing detector definition renders the compon
                       class="euiFlexItem euiFlexItem--flexGrowZero"
                     >
                       <div
-                        class="euiFormControlLayout"
+                        class="euiFormControlLayout euiFormControlLayout--compressed"
                       >
                         <div
                           class="euiFormControlLayout__childrenWrapper"
                         >
                           <input
-                            class="euiFieldNumber"
+                            class="euiFieldNumber euiFieldNumber--compressed"
                             data-test-subj="detectionInterval"
                             id="detectionInterval"
                             min="1"
@@ -2754,7 +2754,7 @@ exports[`<DefineDetector /> empty editing detector definition renders the compon
             </div>
           </div>
           <div
-            class="euiFormRow euiFormRow--fullWidth"
+            class="euiFormRow euiFormRow--fullWidth euiFormRow--compressed"
             hint="Specify a window of delay for a detector to fetch data, if you need to account for extra processing time."
             hintlink="https://opensearch.org/docs/monitoring-plugins/ad"
             id="random_html_id-row"
@@ -2824,13 +2824,13 @@ exports[`<DefineDetector /> empty editing detector definition renders the compon
                   class="euiFlexItem euiFlexItem--flexGrowZero"
                 >
                   <div
-                    class="euiFormControlLayout"
+                    class="euiFormControlLayout euiFormControlLayout--compressed"
                   >
                     <div
                       class="euiFormControlLayout__childrenWrapper"
                     >
                       <input
-                        class="euiFieldNumber"
+                        class="euiFieldNumber euiFieldNumber--compressed"
                         data-test-subj="windowDelay"
                         id="windowDelay"
                         name="windowDelay"
@@ -2959,7 +2959,7 @@ exports[`<DefineDetector /> empty editing detector definition renders the compon
               class="euiFlexItem"
             >
               <div
-                class="euiCheckbox"
+                class="euiCheckbox euiCheckbox--compressed"
               >
                 <input
                   class="euiCheckbox__input"

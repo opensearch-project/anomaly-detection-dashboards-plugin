@@ -37,7 +37,7 @@ exports[`ModelConfigurationFields renders the component in create mode (no ID) 1
           class="euiFlexItem"
         >
           <button
-            class="euiButton euiButton--primary"
+            class="euiButton euiButton--primary euiButton--small"
             type="button"
           >
             <span

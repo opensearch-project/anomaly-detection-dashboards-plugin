@@ -47,7 +47,7 @@ exports[`<DetectorConfig /> spec renders the component 1`] = `
               class="euiFlexItem"
             >
               <button
-                class="euiButton euiButton--primary"
+                class="euiButton euiButton--primary euiButton--small"
                 data-test-subj="editDetectorSettingsButton"
                 type="button"
               >
@@ -83,7 +83,7 @@ exports[`<DetectorConfig /> spec renders the component 1`] = `
               data-test-subj="detectorNameCell"
             >
               <div
-                class="euiFormRow"
+                class="euiFormRow euiFormRow--compressed"
                 id="random_html_id-row"
                 style="width: 250px;"
               >
@@ -118,7 +118,7 @@ exports[`<DetectorConfig /> spec renders the component 1`] = `
               data-test-subj="indexNameCell"
             >
               <div
-                class="euiFormRow"
+                class="euiFormRow euiFormRow--compressed"
                 id="random_html_id-row"
                 style="width: 250px;"
               >
@@ -152,7 +152,7 @@ exports[`<DetectorConfig /> spec renders the component 1`] = `
               class="euiFlexItem"
             >
               <div
-                class="euiFormRow"
+                class="euiFormRow euiFormRow--compressed"
                 id="random_html_id-row"
                 style="width: 250px;"
               >
@@ -195,7 +195,7 @@ exports[`<DetectorConfig /> spec renders the component 1`] = `
               class="euiFlexItem"
             >
               <div
-                class="euiFormRow"
+                class="euiFormRow euiFormRow--compressed"
                 id="random_html_id-row"
                 style="width: 250px;"
               >
@@ -230,7 +230,7 @@ exports[`<DetectorConfig /> spec renders the component 1`] = `
               data-test-subj="detectorIdCell"
             >
               <div
-                class="euiFormRow"
+                class="euiFormRow euiFormRow--compressed"
                 id="random_html_id-row"
                 style="width: 250px;"
               >
@@ -263,7 +263,7 @@ exports[`<DetectorConfig /> spec renders the component 1`] = `
               data-test-subj="detectorDescriptionCell"
             >
               <div
-                class="euiFormRow"
+                class="euiFormRow euiFormRow--compressed"
                 id="random_html_id-row"
                 style="width: 250px;"
               >
@@ -298,7 +298,7 @@ exports[`<DetectorConfig /> spec renders the component 1`] = `
               data-test-subj="timestampNameCell"
             >
               <div
-                class="euiFormRow"
+                class="euiFormRow euiFormRow--compressed"
                 id="random_html_id-row"
                 style="width: 250px;"
               >
@@ -332,7 +332,7 @@ exports[`<DetectorConfig /> spec renders the component 1`] = `
               class="euiFlexItem"
             >
               <div
-                class="euiFormRow"
+                class="euiFormRow euiFormRow--compressed"
                 id="random_html_id-row"
                 style="width: 250px;"
               >
@@ -366,7 +366,7 @@ exports[`<DetectorConfig /> spec renders the component 1`] = `
               class="euiFlexItem"
             >
               <div
-                class="euiFormRow"
+                class="euiFormRow euiFormRow--compressed"
                 id="random_html_id-row"
                 style="width: 250px;"
               >
@@ -400,7 +400,7 @@ exports[`<DetectorConfig /> spec renders the component 1`] = `
               class="euiFlexItem"
             >
               <div
-                class="euiFormRow"
+                class="euiFormRow euiFormRow--compressed"
                 id="random_html_id-row"
                 style="width: 250px;"
               >
@@ -434,7 +434,7 @@ exports[`<DetectorConfig /> spec renders the component 1`] = `
               class="euiFlexItem"
             >
               <div
-                class="euiFormRow"
+                class="euiFormRow euiFormRow--compressed"
                 id="random_html_id-row"
                 style="width: 250px;"
               >
@@ -502,7 +502,7 @@ exports[`<DetectorConfig /> spec renders the component 1`] = `
               class="euiFlexItem"
             >
               <div
-                class="euiFormRow"
+                class="euiFormRow euiFormRow--compressed"
                 id="random_html_id-row"
                 style="width: 250px;"
               >
@@ -536,7 +536,7 @@ exports[`<DetectorConfig /> spec renders the component 1`] = `
               class="euiFlexItem"
             >
               <div
-                class="euiFormRow"
+                class="euiFormRow euiFormRow--compressed"
                 id="random_html_id-row"
                 style="width: 250px;"
               >
@@ -609,7 +609,7 @@ exports[`<DetectorConfig /> spec renders the component 1`] = `
               class="euiFlexItem"
             >
               <button
-                class="euiButton euiButton--primary"
+                class="euiButton euiButton--primary euiButton--small"
                 data-test-subj="editModelConfigurationButton"
                 type="button"
               >
@@ -1202,7 +1202,7 @@ exports[`<DetectorConfig /> spec renders the component 1`] = `
               class="euiFlexItem"
             >
               <div
-                class="euiFormRow"
+                class="euiFormRow euiFormRow--compressed"
                 id="random_html_id-row"
                 style="width: 250px;"
               >
@@ -1271,7 +1271,7 @@ exports[`<DetectorConfig /> spec renders the component 1`] = `
               class="euiFlexItem"
             >
               <div
-                class="euiFormRow"
+                class="euiFormRow euiFormRow--compressed"
                 id="random_html_id-row"
               >
                 <div
@@ -1355,7 +1355,7 @@ exports[`<DetectorConfig /> spec renders the component with 2 custom and 1 simpl
               class="euiFlexItem"
             >
               <button
-                class="euiButton euiButton--primary"
+                class="euiButton euiButton--primary euiButton--small"
                 data-test-subj="editDetectorSettingsButton"
                 type="button"
               >
@@ -1391,7 +1391,7 @@ exports[`<DetectorConfig /> spec renders the component with 2 custom and 1 simpl
               data-test-subj="detectorNameCell"
             >
               <div
-                class="euiFormRow"
+                class="euiFormRow euiFormRow--compressed"
                 id="random_html_id-row"
                 style="width: 250px;"
               >
@@ -1426,7 +1426,7 @@ exports[`<DetectorConfig /> spec renders the component with 2 custom and 1 simpl
               data-test-subj="indexNameCell"
             >
               <div
-                class="euiFormRow"
+                class="euiFormRow euiFormRow--compressed"
                 id="random_html_id-row"
                 style="width: 250px;"
               >
@@ -1460,7 +1460,7 @@ exports[`<DetectorConfig /> spec renders the component with 2 custom and 1 simpl
               class="euiFlexItem"
             >
               <div
-                class="euiFormRow"
+                class="euiFormRow euiFormRow--compressed"
                 id="random_html_id-row"
                 style="width: 250px;"
               >
@@ -1503,7 +1503,7 @@ exports[`<DetectorConfig /> spec renders the component with 2 custom and 1 simpl
               class="euiFlexItem"
             >
               <div
-                class="euiFormRow"
+                class="euiFormRow euiFormRow--compressed"
                 id="random_html_id-row"
                 style="width: 250px;"
               >
@@ -1538,7 +1538,7 @@ exports[`<DetectorConfig /> spec renders the component with 2 custom and 1 simpl
               data-test-subj="detectorIdCell"
             >
               <div
-                class="euiFormRow"
+                class="euiFormRow euiFormRow--compressed"
                 id="random_html_id-row"
                 style="width: 250px;"
               >
@@ -1573,7 +1573,7 @@ exports[`<DetectorConfig /> spec renders the component with 2 custom and 1 simpl
               data-test-subj="detectorDescriptionCell"
             >
               <div
-                class="euiFormRow"
+                class="euiFormRow euiFormRow--compressed"
                 id="random_html_id-row"
                 style="width: 250px;"
               >
@@ -1608,7 +1608,7 @@ exports[`<DetectorConfig /> spec renders the component with 2 custom and 1 simpl
               data-test-subj="timestampNameCell"
             >
               <div
-                class="euiFormRow"
+                class="euiFormRow euiFormRow--compressed"
                 id="random_html_id-row"
                 style="width: 250px;"
               >
@@ -1642,7 +1642,7 @@ exports[`<DetectorConfig /> spec renders the component with 2 custom and 1 simpl
               class="euiFlexItem"
             >
               <div
-                class="euiFormRow"
+                class="euiFormRow euiFormRow--compressed"
                 id="random_html_id-row"
                 style="width: 250px;"
               >
@@ -1676,7 +1676,7 @@ exports[`<DetectorConfig /> spec renders the component with 2 custom and 1 simpl
               class="euiFlexItem"
             >
               <div
-                class="euiFormRow"
+                class="euiFormRow euiFormRow--compressed"
                 id="random_html_id-row"
                 style="width: 250px;"
               >
@@ -1710,7 +1710,7 @@ exports[`<DetectorConfig /> spec renders the component with 2 custom and 1 simpl
               class="euiFlexItem"
             >
               <div
-                class="euiFormRow"
+                class="euiFormRow euiFormRow--compressed"
                 id="random_html_id-row"
                 style="width: 250px;"
               >
@@ -1744,7 +1744,7 @@ exports[`<DetectorConfig /> spec renders the component with 2 custom and 1 simpl
               class="euiFlexItem"
             >
               <div
-                class="euiFormRow"
+                class="euiFormRow euiFormRow--compressed"
                 id="random_html_id-row"
                 style="width: 250px;"
               >
@@ -1812,7 +1812,7 @@ exports[`<DetectorConfig /> spec renders the component with 2 custom and 1 simpl
               class="euiFlexItem"
             >
               <div
-                class="euiFormRow"
+                class="euiFormRow euiFormRow--compressed"
                 id="random_html_id-row"
                 style="width: 250px;"
               >
@@ -1846,7 +1846,7 @@ exports[`<DetectorConfig /> spec renders the component with 2 custom and 1 simpl
               class="euiFlexItem"
             >
               <div
-                class="euiFormRow"
+                class="euiFormRow euiFormRow--compressed"
                 id="random_html_id-row"
                 style="width: 250px;"
               >
@@ -1919,7 +1919,7 @@ exports[`<DetectorConfig /> spec renders the component with 2 custom and 1 simpl
               class="euiFlexItem"
             >
               <button
-                class="euiButton euiButton--primary"
+                class="euiButton euiButton--primary euiButton--small"
                 data-test-subj="editModelConfigurationButton"
                 type="button"
               >
@@ -2584,7 +2584,7 @@ exports[`<DetectorConfig /> spec renders the component with 2 custom and 1 simpl
               class="euiFlexItem"
             >
               <div
-                class="euiFormRow"
+                class="euiFormRow euiFormRow--compressed"
                 id="random_html_id-row"
                 style="width: 250px;"
               >
@@ -2655,7 +2655,7 @@ exports[`<DetectorConfig /> spec renders the component with 2 custom and 1 simpl
               class="euiFlexItem"
             >
               <div
-                class="euiFormRow"
+                class="euiFormRow euiFormRow--compressed"
                 id="random_html_id-row"
               >
                 <div
