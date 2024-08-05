@@ -229,6 +229,7 @@ export const DefineDetector = (props: DefineDetectorProps) => {
       formikProps.setFieldTouched('resultIndexMinAge');
       formikProps.setFieldTouched('resultIndexMinSize');
       formikProps.setFieldTouched('resultIndexTtl');
+      formikProps.setFieldTouched('flattenCustomResultIndex');
       formikProps.validateForm().then((errors) => {
         if (isEmpty(errors)) {
           if (props.isEdit) {
