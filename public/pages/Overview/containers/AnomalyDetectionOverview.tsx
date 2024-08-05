@@ -121,7 +121,7 @@ export function AnomalyDetectionOverview(props: AnomalyDetectionOverviewProps) {
   // Getting all initial sample detectors & indices
   useEffect(() => {
     const { history, location } = props;
-    if (dataSourceEnabled && props.landingDataSourceId !== undefined) {
+    if (dataSourceEnabled) {
       const updatedParams = {
         dataSourceId: MDSOverviewState.selectedDataSourceId,
       };
