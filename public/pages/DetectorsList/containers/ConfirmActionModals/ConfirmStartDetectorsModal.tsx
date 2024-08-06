@@ -13,8 +13,8 @@ import React, { useState } from 'react';
 import {
   EuiText,
   EuiOverlayMask,
-  EuiButton,
-  EuiButtonEmpty,
+  EuiSmallButton,
+  EuiSmallButtonEmpty,
   EuiModal,
   EuiModalHeader,
   EuiModalFooter,
@@ -60,14 +60,14 @@ export const ConfirmStartDetectorsModal = (
         </EuiModalBody>
         <EuiModalFooter>
           {isLoading ? null : (
-            <EuiButtonEmpty
+            <EuiSmallButtonEmpty
               data-test-subj="cancelButton"
               onClick={props.onHide}
             >
               Cancel
-            </EuiButtonEmpty>
+            </EuiSmallButtonEmpty>
           )}
-          <EuiButton
+          <EuiSmallButton
             data-test-subj="confirmButton"
             color="primary"
             fill
@@ -79,7 +79,7 @@ export const ConfirmStartDetectorsModal = (
             }}
           >
             {'Start detectors'}
-          </EuiButton>
+          </EuiSmallButton>
         </EuiModalFooter>
       </EuiModal>
     </EuiOverlayMask>

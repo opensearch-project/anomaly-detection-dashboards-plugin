@@ -6,8 +6,8 @@ import React from 'react';
 import {
   EuiTitle,
   EuiSpacer,
-  EuiButtonIcon,
-  EuiButtonEmpty,
+  EuiSmallButtonIcon,
+  EuiSmallButtonEmpty,
   EuiAccordion,
   EuiPanel,
 } from '@elastic/eui';
@@ -27,7 +27,7 @@ const EnhancedAccordion = ({
 }) => (
   <div className="euiPanel euiPanel--borderRadiusMedium euiPanel--plain euiPanel--hasShadow euiPanel--hasBorder euiPanel--flexGrowZero euiSplitPanel euiSplitPanel--row euiCheckableCard">
     <div className="euiPanel euiPanel--paddingMedium euiPanel--borderRadiusNone euiPanel--subdued euiPanel--noShadow euiPanel--noBorder euiPanel--flexGrowZero euiSplitPanel__inner">
-      <EuiButtonIcon
+      <EuiSmallButtonIcon
         color="text"
         iconType="arrowRight"
         aria-label="Expand"
@@ -76,10 +76,10 @@ const EnhancedAccordion = ({
         </EuiAccordion>
       )}
       {isButton && (
-        <EuiButtonEmpty
+        <EuiSmallButtonEmpty
           iconType={iconType}
           className="enhanced-accordion__button"
-        ></EuiButtonEmpty>
+        ></EuiSmallButtonEmpty>
       )}
     </div>
   </div>

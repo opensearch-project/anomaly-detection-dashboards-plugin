@@ -19,8 +19,8 @@ import {
   EuiFlexGroup,
   EuiLoadingChart,
   EuiText,
-  EuiComboBox,
-  EuiSuperSelect,
+  EuiCompressedComboBox,
+  EuiCompressedSuperSelect,
   EuiIconTip,
   EuiCallOut,
 } from '@elastic/eui';
@@ -487,7 +487,7 @@ export const AnomalyHeatmapChart = React.memo(
                      */}
                     {props.isNotSample ? (
                       <EuiFlexItem style={{ minWidth: 300 }}>
-                        <EuiComboBox
+                        <EuiCompressedComboBox
                           placeholder="Select categorical fields"
                           options={getCategoryFieldOptions(
                             get(props, 'categoryField', [])
@@ -511,7 +511,7 @@ export const AnomalyHeatmapChart = React.memo(
                       </EuiFlexItem>
                     )}
                     <EuiFlexItem style={{ minWidth: 300 }}>
-                      <EuiComboBox
+                      <EuiCompressedComboBox
                         placeholder="Select options"
                         options={entityViewOptions}
                         selectedOptions={currentViewOptions}
@@ -521,7 +521,7 @@ export const AnomalyHeatmapChart = React.memo(
                       />
                     </EuiFlexItem>
                     <EuiFlexItem style={{ minWidth: 150 }}>
-                      <EuiSuperSelect
+                      <EuiCompressedSuperSelect
                         options={SORT_BY_FIELD_OPTIONS}
                         valueOfSelected={sortByFieldValue}
                         onChange={(value) => handleSortByFieldChange(value)}

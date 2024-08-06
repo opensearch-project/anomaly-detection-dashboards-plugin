@@ -16,9 +16,9 @@ import {
   EuiFlexItem,
   EuiFlexGroup,
   EuiPage,
-  EuiButton,
+  EuiSmallButton,
   EuiTitle,
-  EuiButtonEmpty,
+  EuiSmallButtonEmpty,
   EuiSpacer,
   EuiText,
   EuiLink,
@@ -360,7 +360,7 @@ export function ConfigureModel(props: ConfigureModelProps) {
             style={{ marginRight: '12px' }}
           >
             <EuiFlexItem grow={false}>
-              <EuiButtonEmpty
+              <EuiSmallButtonEmpty
                 onClick={() => {
                   if (props.isEdit) {
                     props.history.push(
@@ -382,11 +382,11 @@ export function ConfigureModel(props: ConfigureModelProps) {
                 }}
               >
                 Cancel
-              </EuiButtonEmpty>
+              </EuiSmallButtonEmpty>
             </EuiFlexItem>
             {props.isEdit ? null : (
               <EuiFlexItem grow={false}>
-                <EuiButton
+                <EuiSmallButton
                   iconSide="left"
                   iconType="arrowLeft"
                   fill={false}
@@ -402,12 +402,12 @@ export function ConfigureModel(props: ConfigureModelProps) {
                   }}
                 >
                   Previous
-                </EuiButton>
+                </EuiSmallButton>
               </EuiFlexItem>
             )}
             <EuiFlexItem grow={false}>
               {props.isEdit ? (
-                <EuiButton
+                <EuiSmallButton
                   type="submit"
                   fill={true}
                   data-test-subj="updateDetectorButton"
@@ -417,9 +417,9 @@ export function ConfigureModel(props: ConfigureModelProps) {
                   }}
                 >
                   Save changes
-                </EuiButton>
+                </EuiSmallButton>
               ) : (
-                <EuiButton
+                <EuiSmallButton
                   type="submit"
                   iconSide="right"
                   iconType="arrowRight"
@@ -432,7 +432,7 @@ export function ConfigureModel(props: ConfigureModelProps) {
                   }}
                 >
                   Next
-                </EuiButton>
+                </EuiSmallButton>
               )}
             </EuiFlexItem>
           </EuiFlexGroup>

@@ -89,17 +89,17 @@ exports[`<AnomalyHeatmapChart /> spec AnomalyHeatmapChart with Sample anomaly da
                 <div
                   aria-expanded="false"
                   aria-haspopup="listbox"
-                  class="euiComboBox"
+                  class="euiComboBox euiComboBox--compressed"
                   role="combobox"
                 >
                   <div
-                    class="euiFormControlLayout"
+                    class="euiFormControlLayout euiFormControlLayout--compressed"
                   >
                     <div
                       class="euiFormControlLayout__childrenWrapper"
                     >
                       <div
-                        class="euiComboBox__inputWrap euiComboBox__inputWrap-isClearable"
+                        class="euiComboBox__inputWrap euiComboBox__inputWrap--compressed euiComboBox__inputWrap-isClearable"
                         data-test-subj="comboBoxInput"
                         tabindex="-1"
                       >
@@ -161,7 +161,7 @@ exports[`<AnomalyHeatmapChart /> spec AnomalyHeatmapChart with Sample anomaly da
                       >
                         <button
                           aria-label="Clear input"
-                          class="euiFormControlLayoutClearButton"
+                          class="euiFormControlLayoutClearButton euiFormControlLayoutClearButton--small"
                           data-test-subj="comboBoxClearButton"
                           type="button"
                         >
@@ -188,7 +188,7 @@ exports[`<AnomalyHeatmapChart /> spec AnomalyHeatmapChart with Sample anomaly da
                         >
                           <svg
                             aria-hidden="true"
-                            class="euiIcon euiIcon--medium euiIcon-isLoading euiFormControlLayoutCustomIcon__icon"
+                            class="euiIcon euiIcon--small euiIcon-isLoading euiFormControlLayoutCustomIcon__icon"
                             focusable="false"
                             height="16"
                             role="img"
@@ -222,7 +222,7 @@ exports[`<AnomalyHeatmapChart /> spec AnomalyHeatmapChart with Sample anomaly da
                         value="severity"
                       />
                       <div
-                        class="euiFormControlLayout"
+                        class="euiFormControlLayout euiFormControlLayout--compressed"
                       >
                         <div
                           class="euiFormControlLayout__childrenWrapper"
@@ -236,7 +236,7 @@ exports[`<AnomalyHeatmapChart /> spec AnomalyHeatmapChart with Sample anomaly da
                           <button
                             aria-haspopup="true"
                             aria-labelledby="undefined random_html_id"
-                            class="euiSuperSelectControl"
+                            class="euiSuperSelectControl euiSuperSelectControl--compressed"
                             type="button"
                           >
                             By severity
@@ -249,7 +249,7 @@ exports[`<AnomalyHeatmapChart /> spec AnomalyHeatmapChart with Sample anomaly da
                             >
                               <svg
                                 aria-hidden="true"
-                                class="euiIcon euiIcon--medium euiIcon-isLoading euiFormControlLayoutCustomIcon__icon"
+                                class="euiIcon euiIcon--small euiIcon-isLoading euiFormControlLayoutCustomIcon__icon"
                                 focusable="false"
                                 height="16"
                                 role="img"
@@ -512,17 +512,17 @@ exports[`<AnomalyHeatmapChart /> spec AnomalyHeatmapChart with anomaly summaries
                 <div
                   aria-expanded="false"
                   aria-haspopup="listbox"
-                  class="euiComboBox"
+                  class="euiComboBox euiComboBox--compressed"
                   role="combobox"
                 >
                   <div
-                    class="euiFormControlLayout"
+                    class="euiFormControlLayout euiFormControlLayout--compressed"
                   >
                     <div
                       class="euiFormControlLayout__childrenWrapper"
                     >
                       <div
-                        class="euiComboBox__inputWrap euiComboBox__inputWrap-isClearable"
+                        class="euiComboBox__inputWrap euiComboBox__inputWrap--compressed euiComboBox__inputWrap-isClearable"
                         data-test-subj="comboBoxInput"
                         tabindex="-1"
                       >
@@ -558,7 +558,7 @@ exports[`<AnomalyHeatmapChart /> spec AnomalyHeatmapChart with anomaly summaries
                         >
                           <svg
                             aria-hidden="true"
-                            class="euiIcon euiIcon--medium euiFormControlLayoutCustomIcon__icon"
+                            class="euiIcon euiIcon--small euiFormControlLayoutCustomIcon__icon"
                             focusable="false"
                             height="16"
                             role="img"
@@ -584,17 +584,17 @@ exports[`<AnomalyHeatmapChart /> spec AnomalyHeatmapChart with anomaly summaries
                 <div
                   aria-expanded="false"
                   aria-haspopup="listbox"
-                  class="euiComboBox"
+                  class="euiComboBox euiComboBox--compressed"
                   role="combobox"
                 >
                   <div
-                    class="euiFormControlLayout"
+                    class="euiFormControlLayout euiFormControlLayout--compressed"
                   >
                     <div
                       class="euiFormControlLayout__childrenWrapper"
                     >
                       <div
-                        class="euiComboBox__inputWrap euiComboBox__inputWrap-isClearable"
+                        class="euiComboBox__inputWrap euiComboBox__inputWrap--compressed euiComboBox__inputWrap-isClearable"
                         data-test-subj="comboBoxInput"
                         tabindex="-1"
                       >
@@ -656,7 +656,7 @@ exports[`<AnomalyHeatmapChart /> spec AnomalyHeatmapChart with anomaly summaries
                       >
                         <button
                           aria-label="Clear input"
-                          class="euiFormControlLayoutClearButton"
+                          class="euiFormControlLayoutClearButton euiFormControlLayoutClearButton--small"
                           data-test-subj="comboBoxClearButton"
                           type="button"
                         >
@@ -683,7 +683,7 @@ exports[`<AnomalyHeatmapChart /> spec AnomalyHeatmapChart with anomaly summaries
                         >
                           <svg
                             aria-hidden="true"
-                            class="euiIcon euiIcon--medium euiFormControlLayoutCustomIcon__icon"
+                            class="euiIcon euiIcon--small euiFormControlLayoutCustomIcon__icon"
                             focusable="false"
                             height="16"
                             role="img"
@@ -718,7 +718,7 @@ exports[`<AnomalyHeatmapChart /> spec AnomalyHeatmapChart with anomaly summaries
                         value="severity"
                       />
                       <div
-                        class="euiFormControlLayout"
+                        class="euiFormControlLayout euiFormControlLayout--compressed"
                       >
                         <div
                           class="euiFormControlLayout__childrenWrapper"
@@ -732,7 +732,7 @@ exports[`<AnomalyHeatmapChart /> spec AnomalyHeatmapChart with anomaly summaries
                           <button
                             aria-haspopup="true"
                             aria-labelledby="undefined random_html_id"
-                            class="euiSuperSelectControl"
+                            class="euiSuperSelectControl euiSuperSelectControl--compressed"
                             type="button"
                           >
                             By severity
@@ -745,7 +745,7 @@ exports[`<AnomalyHeatmapChart /> spec AnomalyHeatmapChart with anomaly summaries
                             >
                               <svg
                                 aria-hidden="true"
-                                class="euiIcon euiIcon--medium euiFormControlLayoutCustomIcon__icon"
+                                class="euiIcon euiIcon--small euiFormControlLayoutCustomIcon__icon"
                                 focusable="false"
                                 height="16"
                                 role="img"
@@ -1009,17 +1009,17 @@ exports[`<AnomalyHeatmapChart /> spec AnomalyHeatmapChart with multiple category
                 <div
                   aria-expanded="false"
                   aria-haspopup="listbox"
-                  class="euiComboBox"
+                  class="euiComboBox euiComboBox--compressed"
                   role="combobox"
                 >
                   <div
-                    class="euiFormControlLayout"
+                    class="euiFormControlLayout euiFormControlLayout--compressed"
                   >
                     <div
                       class="euiFormControlLayout__childrenWrapper"
                     >
                       <div
-                        class="euiComboBox__inputWrap euiComboBox__inputWrap-isClearable"
+                        class="euiComboBox__inputWrap euiComboBox__inputWrap--compressed euiComboBox__inputWrap-isClearable"
                         data-test-subj="comboBoxInput"
                         tabindex="-1"
                       >
@@ -1116,7 +1116,7 @@ exports[`<AnomalyHeatmapChart /> spec AnomalyHeatmapChart with multiple category
                       >
                         <button
                           aria-label="Clear input"
-                          class="euiFormControlLayoutClearButton"
+                          class="euiFormControlLayoutClearButton euiFormControlLayoutClearButton--small"
                           data-test-subj="comboBoxClearButton"
                           type="button"
                         >
@@ -1143,7 +1143,7 @@ exports[`<AnomalyHeatmapChart /> spec AnomalyHeatmapChart with multiple category
                         >
                           <svg
                             aria-hidden="true"
-                            class="euiIcon euiIcon--medium euiFormControlLayoutCustomIcon__icon"
+                            class="euiIcon euiIcon--small euiFormControlLayoutCustomIcon__icon"
                             focusable="false"
                             height="16"
                             role="img"
@@ -1169,17 +1169,17 @@ exports[`<AnomalyHeatmapChart /> spec AnomalyHeatmapChart with multiple category
                 <div
                   aria-expanded="false"
                   aria-haspopup="listbox"
-                  class="euiComboBox"
+                  class="euiComboBox euiComboBox--compressed"
                   role="combobox"
                 >
                   <div
-                    class="euiFormControlLayout"
+                    class="euiFormControlLayout euiFormControlLayout--compressed"
                   >
                     <div
                       class="euiFormControlLayout__childrenWrapper"
                     >
                       <div
-                        class="euiComboBox__inputWrap euiComboBox__inputWrap-isClearable"
+                        class="euiComboBox__inputWrap euiComboBox__inputWrap--compressed euiComboBox__inputWrap-isClearable"
                         data-test-subj="comboBoxInput"
                         tabindex="-1"
                       >
@@ -1241,7 +1241,7 @@ exports[`<AnomalyHeatmapChart /> spec AnomalyHeatmapChart with multiple category
                       >
                         <button
                           aria-label="Clear input"
-                          class="euiFormControlLayoutClearButton"
+                          class="euiFormControlLayoutClearButton euiFormControlLayoutClearButton--small"
                           data-test-subj="comboBoxClearButton"
                           type="button"
                         >
@@ -1268,7 +1268,7 @@ exports[`<AnomalyHeatmapChart /> spec AnomalyHeatmapChart with multiple category
                         >
                           <svg
                             aria-hidden="true"
-                            class="euiIcon euiIcon--medium euiFormControlLayoutCustomIcon__icon"
+                            class="euiIcon euiIcon--small euiFormControlLayoutCustomIcon__icon"
                             focusable="false"
                             height="16"
                             role="img"
@@ -1303,7 +1303,7 @@ exports[`<AnomalyHeatmapChart /> spec AnomalyHeatmapChart with multiple category
                         value="severity"
                       />
                       <div
-                        class="euiFormControlLayout"
+                        class="euiFormControlLayout euiFormControlLayout--compressed"
                       >
                         <div
                           class="euiFormControlLayout__childrenWrapper"
@@ -1317,7 +1317,7 @@ exports[`<AnomalyHeatmapChart /> spec AnomalyHeatmapChart with multiple category
                           <button
                             aria-haspopup="true"
                             aria-labelledby="undefined random_html_id"
-                            class="euiSuperSelectControl"
+                            class="euiSuperSelectControl euiSuperSelectControl--compressed"
                             type="button"
                           >
                             By severity
@@ -1330,7 +1330,7 @@ exports[`<AnomalyHeatmapChart /> spec AnomalyHeatmapChart with multiple category
                             >
                               <svg
                                 aria-hidden="true"
-                                class="euiIcon euiIcon--medium euiFormControlLayoutCustomIcon__icon"
+                                class="euiIcon euiIcon--small euiFormControlLayoutCustomIcon__icon"
                                 focusable="false"
                                 height="16"
                                 role="img"
@@ -1594,17 +1594,17 @@ exports[`<AnomalyHeatmapChart /> spec AnomalyHeatmapChart with one category fiel
                 <div
                   aria-expanded="false"
                   aria-haspopup="listbox"
-                  class="euiComboBox"
+                  class="euiComboBox euiComboBox--compressed"
                   role="combobox"
                 >
                   <div
-                    class="euiFormControlLayout"
+                    class="euiFormControlLayout euiFormControlLayout--compressed"
                   >
                     <div
                       class="euiFormControlLayout__childrenWrapper"
                     >
                       <div
-                        class="euiComboBox__inputWrap euiComboBox__inputWrap-isClearable"
+                        class="euiComboBox__inputWrap euiComboBox__inputWrap--compressed euiComboBox__inputWrap-isClearable"
                         data-test-subj="comboBoxInput"
                         tabindex="-1"
                       >
@@ -1665,7 +1665,7 @@ exports[`<AnomalyHeatmapChart /> spec AnomalyHeatmapChart with one category fiel
                       >
                         <button
                           aria-label="Clear input"
-                          class="euiFormControlLayoutClearButton"
+                          class="euiFormControlLayoutClearButton euiFormControlLayoutClearButton--small"
                           data-test-subj="comboBoxClearButton"
                           type="button"
                         >
@@ -1692,7 +1692,7 @@ exports[`<AnomalyHeatmapChart /> spec AnomalyHeatmapChart with one category fiel
                         >
                           <svg
                             aria-hidden="true"
-                            class="euiIcon euiIcon--medium euiFormControlLayoutCustomIcon__icon"
+                            class="euiIcon euiIcon--small euiFormControlLayoutCustomIcon__icon"
                             focusable="false"
                             height="16"
                             role="img"
@@ -1718,17 +1718,17 @@ exports[`<AnomalyHeatmapChart /> spec AnomalyHeatmapChart with one category fiel
                 <div
                   aria-expanded="false"
                   aria-haspopup="listbox"
-                  class="euiComboBox"
+                  class="euiComboBox euiComboBox--compressed"
                   role="combobox"
                 >
                   <div
-                    class="euiFormControlLayout"
+                    class="euiFormControlLayout euiFormControlLayout--compressed"
                   >
                     <div
                       class="euiFormControlLayout__childrenWrapper"
                     >
                       <div
-                        class="euiComboBox__inputWrap euiComboBox__inputWrap-isClearable"
+                        class="euiComboBox__inputWrap euiComboBox__inputWrap--compressed euiComboBox__inputWrap-isClearable"
                         data-test-subj="comboBoxInput"
                         tabindex="-1"
                       >
@@ -1790,7 +1790,7 @@ exports[`<AnomalyHeatmapChart /> spec AnomalyHeatmapChart with one category fiel
                       >
                         <button
                           aria-label="Clear input"
-                          class="euiFormControlLayoutClearButton"
+                          class="euiFormControlLayoutClearButton euiFormControlLayoutClearButton--small"
                           data-test-subj="comboBoxClearButton"
                           type="button"
                         >
@@ -1817,7 +1817,7 @@ exports[`<AnomalyHeatmapChart /> spec AnomalyHeatmapChart with one category fiel
                         >
                           <svg
                             aria-hidden="true"
-                            class="euiIcon euiIcon--medium euiFormControlLayoutCustomIcon__icon"
+                            class="euiIcon euiIcon--small euiFormControlLayoutCustomIcon__icon"
                             focusable="false"
                             height="16"
                             role="img"
@@ -1852,7 +1852,7 @@ exports[`<AnomalyHeatmapChart /> spec AnomalyHeatmapChart with one category fiel
                         value="severity"
                       />
                       <div
-                        class="euiFormControlLayout"
+                        class="euiFormControlLayout euiFormControlLayout--compressed"
                       >
                         <div
                           class="euiFormControlLayout__childrenWrapper"
@@ -1866,7 +1866,7 @@ exports[`<AnomalyHeatmapChart /> spec AnomalyHeatmapChart with one category fiel
                           <button
                             aria-haspopup="true"
                             aria-labelledby="undefined random_html_id"
-                            class="euiSuperSelectControl"
+                            class="euiSuperSelectControl euiSuperSelectControl--compressed"
                             type="button"
                           >
                             By severity
@@ -1879,7 +1879,7 @@ exports[`<AnomalyHeatmapChart /> spec AnomalyHeatmapChart with one category fiel
                             >
                               <svg
                                 aria-hidden="true"
-                                class="euiIcon euiIcon--medium euiFormControlLayoutCustomIcon__icon"
+                                class="euiIcon euiIcon--small euiFormControlLayoutCustomIcon__icon"
                                 focusable="false"
                                 height="16"
                                 role="img"

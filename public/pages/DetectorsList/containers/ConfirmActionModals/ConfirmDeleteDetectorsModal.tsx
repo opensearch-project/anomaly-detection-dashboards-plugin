@@ -14,9 +14,9 @@ import {
   EuiOverlayMask,
   EuiCallOut,
   EuiText,
-  EuiFieldText,
-  EuiButton,
-  EuiButtonEmpty,
+  EuiCompressedFieldText,
+  EuiSmallButton,
+  EuiSmallButtonEmpty,
   EuiFlexGroup,
   EuiModal,
   EuiModalHeader,
@@ -126,7 +126,7 @@ export const ConfirmDeleteDetectorsModal = (
             </p>
           </EuiText>
           <EuiSpacer size="s" />
-          <EuiFieldText
+          <EuiCompressedFieldText
             data-test-subj="typeDeleteField"
             fullWidth={true}
             placeholder="delete"
@@ -141,14 +141,14 @@ export const ConfirmDeleteDetectorsModal = (
         </EuiFlexGroup>
         <EuiModalFooter>
           {isLoading ? null : (
-            <EuiButtonEmpty
+            <EuiSmallButtonEmpty
               data-test-subj="cancelButton"
               onClick={props.onHide}
             >
               Cancel
-            </EuiButtonEmpty>
+            </EuiSmallButtonEmpty>
           )}
-          <EuiButton
+          <EuiSmallButton
             data-test-subj="confirmButton"
             color="danger"
             disabled={!deleteTyped}
@@ -172,7 +172,7 @@ export const ConfirmDeleteDetectorsModal = (
             }}
           >
             {'Delete detectors'}
-          </EuiButton>
+          </EuiSmallButton>
         </EuiModalFooter>
       </EuiModal>
     </EuiOverlayMask>

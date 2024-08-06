@@ -15,7 +15,7 @@ import {
   EuiFlexItem,
   EuiLoadingChart,
   EuiSpacer,
-  EuiSuperDatePicker,
+  EuiCompressedSuperDatePicker,
   EuiTitle,
 } from '@elastic/eui';
 import { get, orderBy } from 'lodash';
@@ -157,7 +157,7 @@ export const AnomaliesChart = React.memo((props: AnomaliesChartProps) => {
   };
 
   const datePicker = () => (
-    <EuiSuperDatePicker
+    <EuiCompressedSuperDatePicker
       isLoading={props.isLoading}
       start={datePickerRange.start}
       end={datePickerRange.end}

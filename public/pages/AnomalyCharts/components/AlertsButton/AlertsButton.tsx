@@ -9,7 +9,7 @@
  * GitHub history for details.
  */
 
-import { EuiButton, EuiButtonProps } from '@elastic/eui';
+import { EuiSmallButton, EuiButtonProps } from '@elastic/eui';
 import React, { Fragment } from 'react';
 import {
   getAlertingCreateMonitorLink,
@@ -30,14 +30,14 @@ export const AlertsButton = (props: AlertsButtonProps) => {
   return (
     <Fragment>
       {props.monitor ? (
-        <EuiButton
+        <EuiSmallButton
           href={`${getAlertingMonitorListLink()}/${props.monitor.id}`}
           {...props}
         >
           Edit alert settings
-        </EuiButton>
+        </EuiSmallButton>
       ) : (
-        <EuiButton
+        <EuiSmallButton
           href={`${getAlertingCreateMonitorLink(
             props.detectorId,
             props.detectorName,
@@ -48,7 +48,7 @@ export const AlertsButton = (props: AlertsButtonProps) => {
           {...props}
         >
           Set up alerts
-        </EuiButton>
+        </EuiSmallButton>
       )}
     </Fragment>
   );

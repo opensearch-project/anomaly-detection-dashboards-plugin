@@ -10,9 +10,9 @@
  */
 
 import {
-  EuiComboBox,
+  EuiCompressedComboBox,
   EuiComboBoxOptionProps,
-  EuiFieldSearch,
+  EuiCompressedFieldSearch,
   EuiFlexGroup,
   EuiFlexItem,
   EuiPagination,
@@ -37,7 +37,7 @@ interface ListFiltersProps {
 export const ListFilters = (props: ListFiltersProps) => (
   <EuiFlexGroup gutterSize="s">
     <EuiFlexItem grow={false} style={{ width: '40%' }}>
-      <EuiFieldSearch
+      <EuiCompressedFieldSearch
         fullWidth={true}
         value={props.search}
         placeholder="Search"
@@ -46,7 +46,7 @@ export const ListFilters = (props: ListFiltersProps) => (
       />
     </EuiFlexItem>
     <EuiFlexItem>
-      <EuiComboBox
+      <EuiCompressedComboBox
         id="selectedDetectorStates"
         data-test-subj="detectorStateFilter"
         placeholder="All detector states"
@@ -63,7 +63,7 @@ export const ListFilters = (props: ListFiltersProps) => (
       />
     </EuiFlexItem>
     <EuiFlexItem>
-      <EuiComboBox
+      <EuiCompressedComboBox
         id="selectedIndices"
         data-test-subj="indicesFilter"
         placeholder="All indices"

@@ -25,8 +25,8 @@ import {
   EuiSpacer,
   EuiFlexGroup,
   EuiFlexItem,
-  EuiButton,
-  EuiButtonEmpty,
+  EuiSmallButton,
+  EuiSmallButtonEmpty,
   EuiPage,
   EuiPageBody,
   EuiPageHeader,
@@ -323,7 +323,7 @@ export const DefineDetector = (props: DefineDetectorProps) => {
             componentType={'DataSourceSelectable'}
             componentConfig={{
               fullWidth: false,
-              activeOption: MDSCreateState.selectedDataSourceId !== undefined 
+              activeOption: MDSCreateState.selectedDataSourceId !== undefined
                 ? [{ id: MDSCreateState.selectedDataSourceId }]
                 : undefined,
               savedObjects: getSavedObjectsClient(),
@@ -409,7 +409,7 @@ export const DefineDetector = (props: DefineDetectorProps) => {
             style={{ marginRight: '12px' }}
           >
             <EuiFlexItem grow={false}>
-              <EuiButtonEmpty
+              <EuiSmallButtonEmpty
                 onClick={() => {
                   if (props.isEdit) {
                     props.history.push(
@@ -431,11 +431,11 @@ export const DefineDetector = (props: DefineDetectorProps) => {
                 }}
               >
                 Cancel
-              </EuiButtonEmpty>
+              </EuiSmallButtonEmpty>
             </EuiFlexItem>
             <EuiFlexItem grow={false}>
               {props.isEdit ? (
-                <EuiButton
+                <EuiSmallButton
                   type="submit"
                   fill={true}
                   data-test-subj="updateDetectorButton"
@@ -445,9 +445,9 @@ export const DefineDetector = (props: DefineDetectorProps) => {
                   }}
                 >
                   Save changes
-                </EuiButton>
+                </EuiSmallButton>
               ) : (
-                <EuiButton
+                <EuiSmallButton
                   type="submit"
                   iconSide="right"
                   iconType="arrowRight"
@@ -460,7 +460,7 @@ export const DefineDetector = (props: DefineDetectorProps) => {
                   }}
                 >
                   Next
-                </EuiButton>
+                </EuiSmallButton>
               )}
             </EuiFlexItem>
           </EuiFlexGroup>

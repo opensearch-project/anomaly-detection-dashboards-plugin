@@ -12,7 +12,7 @@
 import {
   EuiFlexGroup,
   EuiFlexItem,
-  EuiFormRow,
+  EuiCompressedFormRow,
   EuiCodeEditor,
 } from '@elastic/eui';
 import { Field, FieldProps } from 'formik';
@@ -44,7 +44,7 @@ export const CustomFilter = (props: CustomFilterProps) => {
               validate={validateFilterQuery}
             >
               {({ field, form }: FieldProps) => (
-                <EuiFormRow
+                <EuiCompressedFormRow
                   fullWidth
                   label="OpenSearch query DSL"
                   isInvalid={isInvalid(field.name, form)}
@@ -66,7 +66,7 @@ export const CustomFilter = (props: CustomFilterProps) => {
                     }}
                     value={field.value}
                   />
-                </EuiFormRow>
+                </EuiCompressedFormRow>
               )}
             </Field>
           </EuiFlexItem>

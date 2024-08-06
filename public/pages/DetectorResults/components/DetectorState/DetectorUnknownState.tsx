@@ -10,7 +10,7 @@
  */
 
 import React from 'react';
-import { EuiButton, EuiEmptyPrompt, EuiIcon } from '@elastic/eui';
+import { EuiSmallButton, EuiEmptyPrompt, EuiIcon } from '@elastic/eui';
 import { Fragment } from 'react';
 import { DETECTOR_INIT_FAILURES } from '../../../DetectorDetail/utils/constants';
 
@@ -36,17 +36,17 @@ export const DetectorUnknownState = (props: DetectorUnknownStateProps) => {
         </Fragment>
       }
       actions={[
-        <EuiButton
+        <EuiSmallButton
           color="primary"
           fill
           onClick={props.onSwitchToConfiguration}
           style={{ width: '250px' }}
         >
           View detector configuration
-        </EuiButton>,
-        <EuiButton onClick={props.onStartDetector} style={{ width: '200px' }}>
+        </EuiSmallButton>,
+        <EuiSmallButton onClick={props.onStartDetector} style={{ width: '200px' }}>
           Restart detector
-        </EuiButton>,
+        </EuiSmallButton>,
       ]}
     />
   );

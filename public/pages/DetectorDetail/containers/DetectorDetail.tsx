@@ -20,9 +20,9 @@ import {
   EuiCallOut,
   EuiSpacer,
   EuiText,
-  EuiFieldText,
+  EuiCompressedFieldText,
   EuiLoadingSpinner,
-  EuiButton,
+  EuiSmallButton,
 } from '@elastic/eui';
 import { CoreStart, MountPoint } from '../../../../../../src/core/public';
 import { CoreServicesContext } from '../../../components/CoreServices/CoreServices';
@@ -539,7 +539,7 @@ export const DetectorDetail = (props: DetectorDetailProps) => {
                   </EuiText>
                 </EuiFlexItem>
                 <EuiFlexItem grow={true}>
-                  <EuiFieldText
+                  <EuiCompressedFieldText
                     data-test-subj="typeDeleteField"
                     fullWidth={true}
                     placeholder="delete"

@@ -11,15 +11,15 @@
 
 import React, { Fragment, useState } from 'react';
 import {
-  EuiFormRow,
-  EuiSelect,
+  EuiCompressedFormRow,
+  EuiCompressedSelect,
   EuiAccordion,
   EuiFlexGroup,
   EuiFlexItem,
   EuiTitle,
   EuiButton,
-  EuiFieldText,
-  EuiCheckbox,
+  EuiCompressedFieldText,
+  EuiCompressedCheckbox,
   EuiButtonIcon,
 } from '@elastic/eui';
 import './styles.scss';
@@ -154,20 +154,20 @@ export const FeatureAccordion = (props: FeatureAccordionProps) => {
         validate={validateFeatureName}
       >
         {({ field, form }: FieldProps) => (
-          <EuiFormRow
+          <EuiCompressedFormRow
             label="Feature name"
             helpText="Enter a descriptive name. The name must be unique within this detector. Feature name must contain 1-64 characters. Valid characters are a-z, A-Z, 0-9, -(hyphen) and _(underscore)."
             isInvalid={isInvalid(field.name, form)}
             error={getError(field.name, form)}
           >
-            <EuiFieldText
+            <EuiCompressedFieldText
               data-test-subj={`featureNameTextInput-${props.index}`}
               name={`featureList.${props.index}.featureName`}
               placeholder="Enter feature name"
               value={field.value ? field.value : props.feature.featureName}
               {...field}
             />
-          </EuiFormRow>
+          </EuiCompressedFormRow>
         )}
       </Field>
 
@@ -176,18 +176,18 @@ export const FeatureAccordion = (props: FeatureAccordionProps) => {
         name={`featureList.${props.index}.featureEnabled`}
       >
         {({ field, form }: FieldProps) => (
-          <EuiFormRow
+          <EuiCompressedFormRow
             label="Feature state"
             isInvalid={isInvalid(field.name, form)}
             error={getError(field.name, form)}
           >
-            <EuiCheckbox
+            <EuiCompressedCheckbox
               id={`featureList.${props.index}.featureEnabled`}
               label="Enable feature"
               checked={field.value ? field.value : props.feature.featureEnabled}
               {...field}
             />
-          </EuiFormRow>
+          </EuiCompressedFormRow>
         )}
       </Field>
 
@@ -198,12 +198,12 @@ export const FeatureAccordion = (props: FeatureAccordionProps) => {
       >
         {({ field, form }: FieldProps) => (
           <Fragment>
-            <EuiFormRow
+            <EuiCompressedFormRow
               label="Find anomalies based on"
               isInvalid={isInvalid(field.name, form)}
               error={getError(field.name, form)}
             >
-              <EuiSelect
+              <EuiCompressedSelect
                 {...field}
                 options={FEATURE_TYPE_OPTIONS}
                 value={
@@ -227,7 +227,7 @@ export const FeatureAccordion = (props: FeatureAccordionProps) => {
                   }
                 }}
               />
-            </EuiFormRow>
+            </EuiCompressedFormRow>
             {field.value === FEATURE_TYPE.SIMPLE ? (
               <AggregationSelector index={props.index} />
             ) : (

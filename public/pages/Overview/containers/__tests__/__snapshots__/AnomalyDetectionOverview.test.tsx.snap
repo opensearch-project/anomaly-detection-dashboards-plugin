@@ -22,7 +22,7 @@ exports[`<AnomalyDetectionOverview /> spec No sample detectors created renders c
         class="euiFlexItem euiFlexItem--flexGrowZero"
       >
         <a
-          class="euiButton euiButton--primary euiButton--fill"
+          class="euiButton euiButton--primary euiButton--small euiButton--fill"
           data-test-subj="add_detector"
           href="anomaly-detection-dashboards#/create-ad/"
           rel="noreferrer"
@@ -520,7 +520,7 @@ exports[`<AnomalyDetectionOverview /> spec No sample detectors created renders c
                           class="euiFlexItem euiFlexItem--flexGrowZero"
                         >
                           <button
-                            class="euiButton euiButton--primary"
+                            class="euiButton euiButton--primary euiButton--small"
                             data-test-subj="createHttpSampleDetectorButton"
                             style="width: 300px;"
                             type="button"
@@ -622,7 +622,7 @@ exports[`<AnomalyDetectionOverview /> spec No sample detectors created renders c
                           class="euiFlexItem euiFlexItem--flexGrowZero"
                         >
                           <button
-                            class="euiButton euiButton--primary"
+                            class="euiButton euiButton--primary euiButton--small"
                             data-test-subj="createECommerceSampleDetectorButton"
                             style="width: 300px;"
                             type="button"
@@ -724,7 +724,7 @@ exports[`<AnomalyDetectionOverview /> spec No sample detectors created renders c
                           class="euiFlexItem euiFlexItem--flexGrowZero"
                         >
                           <button
-                            class="euiButton euiButton--primary"
+                            class="euiButton euiButton--primary euiButton--small"
                             data-test-subj="createHostHealthSampleDetectorButton"
                             style="width: 300px;"
                             type="button"
@@ -782,7 +782,7 @@ exports[`<AnomalyDetectionOverview /> spec Some detectors created renders compon
         class="euiFlexItem euiFlexItem--flexGrowZero"
       >
         <a
-          class="euiButton euiButton--primary euiButton--fill"
+          class="euiButton euiButton--primary euiButton--small euiButton--fill"
           data-test-subj="add_detector"
           href="anomaly-detection-dashboards#/create-ad/"
           rel="noreferrer"
@@ -1275,7 +1275,7 @@ exports[`<AnomalyDetectionOverview /> spec Some detectors created renders compon
                           class="euiFlexItem euiFlexItem--flexGrowZero"
                         >
                           <button
-                            class="euiButton euiButton--primary"
+                            class="euiButton euiButton--primary euiButton--small"
                             data-test-subj="createHttpSampleDetectorButton"
                             style="width: 300px;"
                             type="button"
@@ -1377,7 +1377,7 @@ exports[`<AnomalyDetectionOverview /> spec Some detectors created renders compon
                           class="euiFlexItem euiFlexItem--flexGrowZero"
                         >
                           <button
-                            class="euiButton euiButton--primary"
+                            class="euiButton euiButton--primary euiButton--small"
                             data-test-subj="createECommerceSampleDetectorButton"
                             style="width: 300px;"
                             type="button"
@@ -1479,7 +1479,7 @@ exports[`<AnomalyDetectionOverview /> spec Some detectors created renders compon
                           class="euiFlexItem euiFlexItem--flexGrowZero"
                         >
                           <button
-                            class="euiButton euiButton--primary"
+                            class="euiButton euiButton--primary euiButton--small"
                             data-test-subj="createHostHealthSampleDetectorButton"
                             style="width: 300px;"
                             type="button"
@@ -1537,7 +1537,7 @@ exports[`<AnomalyDetectionOverview /> spec Some detectors created renders compon
         class="euiFlexItem euiFlexItem--flexGrowZero"
       >
         <a
-          class="euiButton euiButton--primary euiButton--fill"
+          class="euiButton euiButton--primary euiButton--small euiButton--fill"
           data-test-subj="add_detector"
           href="anomaly-detection-dashboards#/create-ad/"
           rel="noreferrer"
@@ -2030,7 +2030,7 @@ exports[`<AnomalyDetectionOverview /> spec Some detectors created renders compon
                           class="euiFlexItem euiFlexItem--flexGrowZero"
                         >
                           <button
-                            class="euiButton euiButton--primary euiButton-isDisabled"
+                            class="euiButton euiButton--primary euiButton--small euiButton-isDisabled"
                             data-test-subj="createHttpSampleDetectorButton"
                             disabled=""
                             style="width: 300px;"
@@ -2153,7 +2153,7 @@ exports[`<AnomalyDetectionOverview /> spec Some detectors created renders compon
                           class="euiFlexItem euiFlexItem--flexGrowZero"
                         >
                           <button
-                            class="euiButton euiButton--primary"
+                            class="euiButton euiButton--primary euiButton--small"
                             data-test-subj="createECommerceSampleDetectorButton"
                             style="width: 300px;"
                             type="button"
@@ -2255,7 +2255,7 @@ exports[`<AnomalyDetectionOverview /> spec Some detectors created renders compon
                           class="euiFlexItem euiFlexItem--flexGrowZero"
                         >
                           <button
-                            class="euiButton euiButton--primary"
+                            class="euiButton euiButton--primary euiButton--small"
                             data-test-subj="createHostHealthSampleDetectorButton"
                             style="width: 300px;"
                             type="button"

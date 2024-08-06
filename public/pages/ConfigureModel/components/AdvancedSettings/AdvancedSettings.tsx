@@ -15,7 +15,7 @@ import {
   EuiText,
   EuiLink,
   EuiTitle,
-  EuiFieldNumber,
+  EuiCompressedFieldNumber,
   EuiSpacer,
 } from '@elastic/eui';
 import { Field, FieldProps } from 'formik';
@@ -77,7 +77,7 @@ export function AdvancedSettings(props: AdvancedSettingsProps) {
             >
               <EuiFlexGroup gutterSize="s" alignItems="center">
                 <EuiFlexItem grow={false}>
-                  <EuiFieldNumber
+                  <EuiCompressedFieldNumber
                     id="shingleSize"
                     placeholder="Shingle size"
                     data-test-subj="shingleSize"

@@ -15,9 +15,9 @@ import {
   EuiText,
   EuiLink,
   EuiIcon,
-  EuiFormRow,
-  EuiComboBox,
-  EuiCheckbox,
+  EuiCompressedFormRow,
+  EuiCompressedComboBox,
+  EuiCompressedCheckbox,
   EuiTitle,
   EuiCallOut,
   EuiSpacer,
@@ -108,7 +108,7 @@ export function CategoryField(props: CategoryFieldProps) {
         {({ field, form }: FieldProps) => (
           <EuiFlexGroup direction="column">
             <EuiFlexItem>
-              <EuiCheckbox
+              <EuiCompressedCheckbox
                 id={'categoryFieldCheckbox'}
                 label="Enable categorical fields"
                 checked={enabled}
@@ -138,13 +138,13 @@ export function CategoryField(props: CategoryFieldProps) {
             ) : null}
             {enabled && !noCategoryFields ? (
               <EuiFlexItem>
-                <EuiFormRow
+                <EuiCompressedFormRow
                   label="Field"
                   isInvalid={isInvalid(field.name, form)}
                   error={getError(field.name, form)}
                   helpText={`You can only apply the categorical fields to the 'ip' and 'keyword' OpenSearch data types.`}
                 >
-                  <EuiComboBox
+                  <EuiCompressedComboBox
                     data-test-subj="categoryFieldComboBox"
                     id="categoryField"
                     placeholder="Select your categorical fields"
@@ -175,7 +175,7 @@ export function CategoryField(props: CategoryFieldProps) {
                     isClearable={true}
                     isDisabled={props.isEdit}
                   />
-                </EuiFormRow>
+                </EuiCompressedFormRow>
               </EuiFlexItem>
             ) : null}
           </EuiFlexGroup>

@@ -3,7 +3,7 @@
 exports[`<AggregationSelector /> spec Empty results renders component with aggregation types and defaults to empty 1`] = `
 <div>
   <div
-    class="euiFormRow"
+    class="euiFormRow euiFormRow--compressed"
     id="random_html_id-row"
   >
     <div
@@ -21,14 +21,14 @@ exports[`<AggregationSelector /> spec Empty results renders component with aggre
       class="euiFormRow__fieldWrapper"
     >
       <div
-        class="euiFormControlLayout"
+        class="euiFormControlLayout euiFormControlLayout--compressed"
       >
         <div
           class="euiFormControlLayout__childrenWrapper"
         >
           <select
             aria-describedby="random_html_id-help-0"
-            class="euiSelect"
+            class="euiSelect euiSelect--compressed"
             data-test-subj="aggregationType"
             id="random_html_id"
             name="featureList.undefined.aggregationBy"
@@ -67,7 +67,7 @@ exports[`<AggregationSelector /> spec Empty results renders component with aggre
             >
               <svg
                 aria-hidden="true"
-                class="euiIcon euiIcon--medium euiIcon-isLoading euiFormControlLayoutCustomIcon__icon"
+                class="euiIcon euiIcon--small euiIcon-isLoading euiFormControlLayoutCustomIcon__icon"
                 focusable="false"
                 height="16"
                 role="img"
@@ -92,7 +92,7 @@ exports[`<AggregationSelector /> spec Empty results renders component with aggre
     </div>
   </div>
   <div
-    class="euiFormRow"
+    class="euiFormRow euiFormRow--compressed"
     id="random_html_id-row"
   >
     <div
@@ -112,19 +112,19 @@ exports[`<AggregationSelector /> spec Empty results renders component with aggre
       <div
         aria-expanded="false"
         aria-haspopup="listbox"
-        class="euiComboBox"
+        class="euiComboBox euiComboBox--compressed"
         data-test-subj="featureFieldTextInput-undefined"
         name="featureList.undefined.aggregationOf"
         role="combobox"
       >
         <div
-          class="euiFormControlLayout"
+          class="euiFormControlLayout euiFormControlLayout--compressed"
         >
           <div
             class="euiFormControlLayout__childrenWrapper"
           >
             <div
-              class="euiComboBox__inputWrap euiComboBox__inputWrap--noWrap euiComboBox__inputWrap-isClearable"
+              class="euiComboBox__inputWrap euiComboBox__inputWrap--compressed euiComboBox__inputWrap--noWrap euiComboBox__inputWrap-isClearable"
               data-test-subj="comboBoxInput"
               tabindex="-1"
             >
@@ -161,7 +161,7 @@ exports[`<AggregationSelector /> spec Empty results renders component with aggre
               >
                 <svg
                   aria-hidden="true"
-                  class="euiIcon euiIcon--medium euiIcon-isLoading euiFormControlLayoutCustomIcon__icon"
+                  class="euiIcon euiIcon--small euiIcon-isLoading euiFormControlLayoutCustomIcon__icon"
                   focusable="false"
                   height="16"
                   role="img"

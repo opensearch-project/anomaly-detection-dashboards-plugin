@@ -11,7 +11,7 @@
 
 import React from 'react';
 import {
-  EuiButton,
+  EuiSmallButton,
   EuiFlexGroup,
   EuiFlexItem,
   EuiPageHeader,
@@ -43,13 +43,13 @@ export const DashboardHeader = (props: DashboardHeaderProps) => {
         </EuiFlexItem>
         {props.hasDetectors ? (
           <EuiFlexItem grow={false}>
-            <EuiButton
+            <EuiSmallButton
               fill
               href={createDetectorUrl}
               data-test-subj="add_detector"
             >
               Create detector
-            </EuiButton>
+            </EuiSmallButton>
           </EuiFlexItem>
         ) : null}
       </EuiFlexGroup>

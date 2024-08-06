@@ -17,7 +17,7 @@ import {
   EuiText,
   EuiFlexGroup,
   EuiFlexItem,
-  EuiComboBox,
+  EuiCompressedComboBox,
 } from '@elastic/eui';
 import {
   DateRange,
@@ -798,7 +798,7 @@ export const getMultiCategoryFilters = (
               </EuiFlexItem>
               <EuiFlexItem style={{ minWidth: 300 }} grow={false}>
                 <div>
-                  <EuiComboBox
+                  <EuiCompressedComboBox
                     placeholder="Select categorical fields"
                     options={childEntityOptions[childCategoryField]}
                     selectedOptions={selectedChildEntities[childCategoryField]}

@@ -3,7 +3,7 @@
 exports[`<AlertsButton /> spec Alerts Button renders component with monitor 1`] = `
 <div>
   <a
-    class="euiButton euiButton--primary"
+    class="euiButton euiButton--primary euiButton--small"
     detectorid="test-detector-id"
     detectorinterval="1"
     detectorname="test-detector-name"
@@ -28,7 +28,7 @@ exports[`<AlertsButton /> spec Alerts Button renders component with monitor 1`] 
 exports[`<AlertsButton /> spec Alerts Button renders component without monitor 1`] = `
 <div>
   <button
-    class="euiButton euiButton--primary"
+    class="euiButton euiButton--primary euiButton--small"
     detectorid="test-detector-id"
     detectorinterval="1"
     detectorname="test-detector-name"

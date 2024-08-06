@@ -102,7 +102,7 @@ exports[`<CategoryField /> spec renders the component when disabled 1`] = `
               class="euiFlexItem"
             >
               <div
-                class="euiCheckbox"
+                class="euiCheckbox euiCheckbox--compressed"
               >
                 <input
                   class="euiCheckbox__input"
@@ -229,7 +229,7 @@ exports[`<CategoryField /> spec renders the component when enabled 1`] = `
               class="euiFlexItem"
             >
               <div
-                class="euiCheckbox"
+                class="euiCheckbox euiCheckbox--compressed"
               >
                 <input
                   checked=""
@@ -284,7 +284,7 @@ exports[`<CategoryField /> spec renders the component when enabled 1`] = `
               class="euiFlexItem"
             >
               <div
-                class="euiFormRow"
+                class="euiFormRow euiFormRow--compressed"
                 id="random_html_id-row"
               >
                 <div
@@ -305,18 +305,18 @@ exports[`<CategoryField /> spec renders the component when enabled 1`] = `
                     aria-describedby="random_html_id-help-0"
                     aria-expanded="false"
                     aria-haspopup="listbox"
-                    class="euiComboBox"
+                    class="euiComboBox euiComboBox--compressed"
                     data-test-subj="categoryFieldComboBox"
                     role="combobox"
                   >
                     <div
-                      class="euiFormControlLayout"
+                      class="euiFormControlLayout euiFormControlLayout--compressed"
                     >
                       <div
                         class="euiFormControlLayout__childrenWrapper"
                       >
                         <div
-                          class="euiComboBox__inputWrap euiComboBox__inputWrap-isClearable"
+                          class="euiComboBox__inputWrap euiComboBox__inputWrap--compressed euiComboBox__inputWrap-isClearable"
                           data-test-subj="comboBoxInput"
                           tabindex="-1"
                         >
@@ -353,7 +353,7 @@ exports[`<CategoryField /> spec renders the component when enabled 1`] = `
                           >
                             <svg
                               aria-hidden="true"
-                              class="euiIcon euiIcon--medium euiIcon-isLoading euiFormControlLayoutCustomIcon__icon"
+                              class="euiIcon euiIcon--small euiIcon-isLoading euiFormControlLayoutCustomIcon__icon"
                               focusable="false"
                               height="16"
                               role="img"

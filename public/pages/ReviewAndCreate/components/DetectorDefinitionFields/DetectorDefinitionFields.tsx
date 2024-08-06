@@ -13,7 +13,7 @@ import ContentPanel from '../../../../components/ContentPanel/ContentPanel';
 import {
   EuiFlexGrid,
   EuiFlexItem,
-  EuiButton,
+  EuiSmallButton,
   EuiCallOut,
   EuiLoadingSpinner,
   EuiFlexGroup,
@@ -146,12 +146,12 @@ export const DetectorDefinitionFields = (
       titleSize="s"
       panelStyles={{ margin: '0px' }}
       actions={[
-        <EuiButton
+        <EuiSmallButton
           data-test-subj="editDetectorSettingsButton"
           onClick={props.onEditDetectorDefinition}
         >
           Edit
-        </EuiButton>,
+        </EuiSmallButton>,
       ]}
     >
       {props.isCreate ? getValidationCallout() : null}

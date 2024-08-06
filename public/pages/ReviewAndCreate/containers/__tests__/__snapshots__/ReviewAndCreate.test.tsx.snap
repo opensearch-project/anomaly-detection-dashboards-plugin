@@ -58,7 +58,7 @@ exports[`<ReviewAndCreate /> spec renders the component, validation loading 1`] 
               class="euiFlexItem"
             >
               <button
-                class="euiButton euiButton--primary"
+                class="euiButton euiButton--primary euiButton--small"
                 data-test-subj="editDetectorSettingsButton"
                 type="button"
               >
@@ -124,7 +124,7 @@ exports[`<ReviewAndCreate /> spec renders the component, validation loading 1`] 
               data-test-subj="detectorNameCell"
             >
               <div
-                class="euiFormRow"
+                class="euiFormRow euiFormRow--compressed"
                 id="random_html_id-row"
                 style="width: 250px;"
               >
@@ -157,7 +157,7 @@ exports[`<ReviewAndCreate /> spec renders the component, validation loading 1`] 
               data-test-subj="indexNameCell"
             >
               <div
-                class="euiFormRow"
+                class="euiFormRow euiFormRow--compressed"
                 id="random_html_id-row"
                 style="width: 250px;"
               >
@@ -189,7 +189,7 @@ exports[`<ReviewAndCreate /> spec renders the component, validation loading 1`] 
               class="euiFlexItem"
             >
               <div
-                class="euiFormRow"
+                class="euiFormRow euiFormRow--compressed"
                 id="random_html_id-row"
                 style="width: 250px;"
               >
@@ -232,7 +232,7 @@ exports[`<ReviewAndCreate /> spec renders the component, validation loading 1`] 
               class="euiFlexItem"
             >
               <div
-                class="euiFormRow"
+                class="euiFormRow euiFormRow--compressed"
                 id="random_html_id-row"
                 style="width: 250px;"
               >
@@ -267,7 +267,7 @@ exports[`<ReviewAndCreate /> spec renders the component, validation loading 1`] 
               data-test-subj="detectorDescriptionCell"
             >
               <div
-                class="euiFormRow"
+                class="euiFormRow euiFormRow--compressed"
                 id="random_html_id-row"
                 style="width: 250px;"
               >
@@ -300,7 +300,7 @@ exports[`<ReviewAndCreate /> spec renders the component, validation loading 1`] 
               data-test-subj="timestampNameCell"
             >
               <div
-                class="euiFormRow"
+                class="euiFormRow euiFormRow--compressed"
                 id="random_html_id-row"
                 style="width: 250px;"
               >
@@ -332,7 +332,7 @@ exports[`<ReviewAndCreate /> spec renders the component, validation loading 1`] 
               class="euiFlexItem"
             >
               <div
-                class="euiFormRow"
+                class="euiFormRow euiFormRow--compressed"
                 id="random_html_id-row"
                 style="width: 250px;"
               >
@@ -366,7 +366,7 @@ exports[`<ReviewAndCreate /> spec renders the component, validation loading 1`] 
               class="euiFlexItem"
             >
               <div
-                class="euiFormRow"
+                class="euiFormRow euiFormRow--compressed"
                 id="random_html_id-row"
                 style="width: 250px;"
               >
@@ -400,7 +400,7 @@ exports[`<ReviewAndCreate /> spec renders the component, validation loading 1`] 
               class="euiFlexItem"
             >
               <div
-                class="euiFormRow"
+                class="euiFormRow euiFormRow--compressed"
                 id="random_html_id-row"
                 style="width: 250px;"
               >
@@ -434,7 +434,7 @@ exports[`<ReviewAndCreate /> spec renders the component, validation loading 1`] 
               class="euiFlexItem"
             >
               <div
-                class="euiFormRow"
+                class="euiFormRow euiFormRow--compressed"
                 id="random_html_id-row"
                 style="width: 250px;"
               >
@@ -468,7 +468,7 @@ exports[`<ReviewAndCreate /> spec renders the component, validation loading 1`] 
               class="euiFlexItem"
             >
               <div
-                class="euiFormRow"
+                class="euiFormRow euiFormRow--compressed"
                 id="random_html_id-row"
                 style="width: 250px;"
               >
@@ -541,7 +541,7 @@ exports[`<ReviewAndCreate /> spec renders the component, validation loading 1`] 
               class="euiFlexItem"
             >
               <button
-                class="euiButton euiButton--primary"
+                class="euiButton euiButton--primary euiButton--small"
                 type="button"
               >
                 <span
@@ -987,7 +987,7 @@ exports[`<ReviewAndCreate /> spec renders the component, validation loading 1`] 
               class="euiFlexItem"
             >
               <button
-                class="euiButton euiButton--primary"
+                class="euiButton euiButton--primary euiButton--small"
                 data-test-subj="editScheduleButton"
                 type="button"
               >
@@ -1022,7 +1022,7 @@ exports[`<ReviewAndCreate /> spec renders the component, validation loading 1`] 
               class="euiFlexItem"
             >
               <div
-                class="euiFormRow"
+                class="euiFormRow euiFormRow--compressed"
                 id="random_html_id-row"
                 style="width: 250px;"
               >
@@ -1056,7 +1056,7 @@ exports[`<ReviewAndCreate /> spec renders the component, validation loading 1`] 
               class="euiFlexItem"
             >
               <div
-                class="euiFormRow"
+                class="euiFormRow euiFormRow--compressed"
                 id="random_html_id-row"
                 style="width: 250px;"
               >
@@ -1153,7 +1153,7 @@ exports[`issue in detector validation issues in feature query 1`] = `
                 class="euiFlexItem"
               >
                 <button
-                  class="euiButton euiButton--primary"
+                  class="euiButton euiButton--primary euiButton--small"
                   data-test-subj="editDetectorSettingsButton"
                   type="button"
                 >
@@ -1218,7 +1218,7 @@ exports[`issue in detector validation issues in feature query 1`] = `
                 data-test-subj="detectorNameCell"
               >
                 <div
-                  class="euiFormRow"
+                  class="euiFormRow euiFormRow--compressed"
                   id="random_html_id-row"
                   style="width: 250px;"
                 >
@@ -1251,7 +1251,7 @@ exports[`issue in detector validation issues in feature query 1`] = `
                 data-test-subj="indexNameCell"
               >
                 <div
-                  class="euiFormRow"
+                  class="euiFormRow euiFormRow--compressed"
                   id="random_html_id-row"
                   style="width: 250px;"
                 >
@@ -1283,7 +1283,7 @@ exports[`issue in detector validation issues in feature query 1`] = `
                 class="euiFlexItem"
               >
                 <div
-                  class="euiFormRow"
+                  class="euiFormRow euiFormRow--compressed"
                   id="random_html_id-row"
                   style="width: 250px;"
                 >
@@ -1326,7 +1326,7 @@ exports[`issue in detector validation issues in feature query 1`] = `
                 class="euiFlexItem"
               >
                 <div
-                  class="euiFormRow"
+                  class="euiFormRow euiFormRow--compressed"
                   id="random_html_id-row"
                   style="width: 250px;"
                 >
@@ -1361,7 +1361,7 @@ exports[`issue in detector validation issues in feature query 1`] = `
                 data-test-subj="detectorDescriptionCell"
               >
                 <div
-                  class="euiFormRow"
+                  class="euiFormRow euiFormRow--compressed"
                   id="random_html_id-row"
                   style="width: 250px;"
                 >
@@ -1394,7 +1394,7 @@ exports[`issue in detector validation issues in feature query 1`] = `
                 data-test-subj="timestampNameCell"
               >
                 <div
-                  class="euiFormRow"
+                  class="euiFormRow euiFormRow--compressed"
                   id="random_html_id-row"
                   style="width: 250px;"
                 >
@@ -1426,7 +1426,7 @@ exports[`issue in detector validation issues in feature query 1`] = `
                 class="euiFlexItem"
               >
                 <div
-                  class="euiFormRow"
+                  class="euiFormRow euiFormRow--compressed"
                   id="random_html_id-row"
                   style="width: 250px;"
                 >
@@ -1460,7 +1460,7 @@ exports[`issue in detector validation issues in feature query 1`] = `
                 class="euiFlexItem"
               >
                 <div
-                  class="euiFormRow"
+                  class="euiFormRow euiFormRow--compressed"
                   id="random_html_id-row"
                   style="width: 250px;"
                 >
@@ -1494,7 +1494,7 @@ exports[`issue in detector validation issues in feature query 1`] = `
                 class="euiFlexItem"
               >
                 <div
-                  class="euiFormRow"
+                  class="euiFormRow euiFormRow--compressed"
                   id="random_html_id-row"
                   style="width: 250px;"
                 >
@@ -1528,7 +1528,7 @@ exports[`issue in detector validation issues in feature query 1`] = `
                 class="euiFlexItem"
               >
                 <div
-                  class="euiFormRow"
+                  class="euiFormRow euiFormRow--compressed"
                   id="random_html_id-row"
                   style="width: 250px;"
                 >
@@ -1562,7 +1562,7 @@ exports[`issue in detector validation issues in feature query 1`] = `
                 class="euiFlexItem"
               >
                 <div
-                  class="euiFormRow"
+                  class="euiFormRow euiFormRow--compressed"
                   id="random_html_id-row"
                   style="width: 250px;"
                 >
@@ -1635,7 +1635,7 @@ exports[`issue in detector validation issues in feature query 1`] = `
                 class="euiFlexItem"
               >
                 <button
-                  class="euiButton euiButton--primary"
+                  class="euiButton euiButton--primary euiButton--small"
                   type="button"
                 >
                   <span
@@ -2094,7 +2094,7 @@ exports[`issue in detector validation issues in feature query 1`] = `
                 class="euiFlexItem"
               >
                 <button
-                  class="euiButton euiButton--primary"
+                  class="euiButton euiButton--primary euiButton--small"
                   data-test-subj="editScheduleButton"
                   type="button"
                 >
@@ -2129,7 +2129,7 @@ exports[`issue in detector validation issues in feature query 1`] = `
                 class="euiFlexItem"
               >
                 <div
-                  class="euiFormRow"
+                  class="euiFormRow euiFormRow--compressed"
                   id="random_html_id-row"
                   style="width: 250px;"
                 >
@@ -2163,7 +2163,7 @@ exports[`issue in detector validation issues in feature query 1`] = `
                 class="euiFlexItem"
               >
                 <div
-                  class="euiFormRow"
+                  class="euiFormRow euiFormRow--compressed"
                   id="random_html_id-row"
                   style="width: 250px;"
                 >
@@ -2207,7 +2207,7 @@ exports[`issue in detector validation issues in feature query 1`] = `
       class="euiFlexItem euiFlexItem--flexGrowZero"
     >
       <button
-        class="euiButtonEmpty euiButtonEmpty--primary"
+        class="euiButtonEmpty euiButtonEmpty--primary euiButtonEmpty--small"
         type="button"
       >
         <span
@@ -2225,7 +2225,7 @@ exports[`issue in detector validation issues in feature query 1`] = `
       class="euiFlexItem euiFlexItem--flexGrowZero"
     >
       <button
-        class="euiButton euiButton--primary"
+        class="euiButton euiButton--primary euiButton--small"
         data-test-subj="reviewAndCreatePreviousButton"
         type="button"
       >
@@ -2259,7 +2259,7 @@ exports[`issue in detector validation issues in feature query 1`] = `
       class="euiFlexItem euiFlexItem--flexGrowZero"
     >
       <button
-        class="euiButton euiButton--primary euiButton--fill"
+        class="euiButton euiButton--primary euiButton--small euiButton--fill"
         data-test-subj="createDetectorButton"
         type="submit"
       >

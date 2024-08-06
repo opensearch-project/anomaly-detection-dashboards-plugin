@@ -87,7 +87,7 @@ exports[`<RealTimeJob /> spec renders the component 1`] = `
           class="euiFlexItem"
         >
           <div
-            class="euiCheckbox"
+            class="euiCheckbox euiCheckbox--compressed"
           >
             <input
               class="euiCheckbox__input"
