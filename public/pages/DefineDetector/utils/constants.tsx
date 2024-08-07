@@ -46,5 +46,6 @@ export const INITIAL_DETECTOR_DEFINITION_VALUES: DetectorDefinitionFormikValues 
     resultIndex: undefined,
     resultIndexMinAge: 7,
     resultIndexMinSize: 51200,
-    resultIndexTtl: 60
+    resultIndexTtl: 60,
+    flattenCustomResultIndex: false,
   };

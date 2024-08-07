@@ -72,6 +72,10 @@ export function formikToDetector(values: CreateDetectorFormikValues): Detector {
       resultIndex && resultIndex.trim().length > 0
         ? values.resultIndexTtl
         : undefined,
+    flattenCustomResultIndex:
+      resultIndex && resultIndex.trim().length > 0
+        ? values.flattenCustomResultIndex
+        : undefined,
     imputationOption: formikToImputationOption(values.imputationOption),
     rules: formikToRules(values.suppressionRules),
   } as Detector;

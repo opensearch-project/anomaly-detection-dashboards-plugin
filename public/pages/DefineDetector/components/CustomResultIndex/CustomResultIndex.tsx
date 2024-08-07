@@ -48,6 +48,7 @@ interface CustomResultIndexProps {
 function CustomResultIndex(props: CustomResultIndexProps) {
   const [enabled, setEnabled] = useState<boolean>(!!props.resultIndex);
   const [customResultIndexConditionsEnabled, setCustomResultIndexConditionsEnabled] = useState<boolean>(true);
+  const [isDisabled, setIsDisabled] = useState(false);
   const customResultIndexMinAge = get(props.formikProps, 'values.resultIndexMinAge');
   const customResultIndexMinSize = get(props.formikProps, 'values.resultIndexMinSize');
   const customResultIndexTTL = get(props.formikProps, 'values.resultIndexTtl');
@@ -65,6 +66,24 @@ function CustomResultIndex(props: CustomResultIndexProps) {
       setFieldValue('resultIndexTtl', '');
     }
   },[customResultIndexConditionsEnabled])
+
+  useEffect(() => {
+    if (props.isEdit && !get(props.formikProps, 'values.flattenCustomResultIndex')) {
+      setIsDisabled(true);
+    } else {
+      setIsDisabled(false);
+    }
+  }, [props.isEdit]);
+
+  const hintTextStyle = {
+    color: '#69707d',
+    fontSize: '12px',
+    lineHeight: '16px',
+    fontWeight: 'normal',
+    fontFamily: 'Helvetica, sans-serif',
+    textAlign: 'left',
+    width: '400px',
+};
 
   return (
     <ContentPanel
@@ -136,25 +155,49 @@ function CustomResultIndex(props: CustomResultIndexProps) {
                 </EuiCompressedFormRow>
               </EuiFlexItem>
             ) : null}
-
-            {enabled ? (
-              <EuiFlexItem>
-                <EuiCompressedCheckbox
-                  id={'resultIndexConditionCheckbox'}
-                  label="Enable custom result index lifecycle management"
-                  checked={customResultIndexConditionsEnabled}
-                  onChange={() => {
-                    setCustomResultIndexConditionsEnabled(!customResultIndexConditionsEnabled);
-                  }}
-                />
-              </EuiFlexItem>
-            ) : null}
           </EuiFlexGroup>
         )}
       </Field>
 
-      { (enabled && customResultIndexConditionsEnabled) ? (<Field 
-        name="resultIndexMinAge" 
+      <EuiFlexGroup direction="column">
+        <EuiFlexItem>
+          { enabled ? (
+            <Field
+              name="flattenCustomResultIndex">
+            {({ field, form }: FieldProps) => (
+              <EuiFlexGroup>
+                <EuiFlexItem>
+                  <EuiCompressedCheckbox
+                    id={'flattenCustomResultIndex'}
+                    label="Enable flattened custom result index"
+                    checked={field.value ? field.value : get(props.formikProps, 'values.flattenCustomResultIndex')}
+                    disabled={isDisabled}
+                    {...field}
+                  />
+                  <p style={hintTextStyle}>Flattening the custom result index will make it easier to query them on the dashboard. It also allows you to perform term aggregations on categorical fields.</p>
+                </EuiFlexItem>
+              </EuiFlexGroup>
+            )}
+          </Field>) : null}
+        </EuiFlexItem>
+        <EuiFlexItem>
+          {enabled ? (
+            <EuiFlexItem>
+              <EuiCompressedCheckbox
+                id={'resultIndexConditionCheckbox'}
+                label="Enable custom result index lifecycle management"
+                checked={customResultIndexConditionsEnabled}
+                onChange={() => {
+                  setCustomResultIndexConditionsEnabled(!customResultIndexConditionsEnabled);
+                }}
+              />
+            </EuiFlexItem>
+          ) : null}
+        </EuiFlexItem>
+      </EuiFlexGroup>
+
+      { (enabled && customResultIndexConditionsEnabled) ? (<Field
+        name="resultIndexMinAge"
         validate={(enabled && customResultIndexConditionsEnabled) ? validateEmptyOrPositiveInteger : null}
         >
         {({ field, form }: FieldProps) => (
