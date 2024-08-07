@@ -44,6 +44,7 @@ describe('detectorDefinitionToFormik', () => {
       resultIndexMinAge: randomDetector.resultIndexMinAge,
       resultIndexMinSize: randomDetector.resultIndexMinSize,
       resultIndexTtl: randomDetector.resultIndexTtl,
+      flattenCustomResultIndex: randomDetector.flattenCustomResultIndex,
     });
   });
   test('should return if detector does not have metadata', () => {
@@ -64,6 +65,7 @@ describe('detectorDefinitionToFormik', () => {
       resultIndexMinAge: randomDetector.resultIndexMinAge,
       resultIndexMinSize: randomDetector.resultIndexMinSize,
       resultIndexTtl: randomDetector.resultIndexTtl,
+      flattenCustomResultIndex: randomDetector.flattenCustomResultIndex,
     });
   });
   test("upgrade old detector's filters to include filter type", () => {
