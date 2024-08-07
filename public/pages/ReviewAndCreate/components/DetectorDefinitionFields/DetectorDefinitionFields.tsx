@@ -137,7 +137,8 @@ export const DetectorDefinitionFields = (
   const minSize = (minSizeValue === undefined) ? '-' : minSizeValue + " MB";
   const ttlValue = get(props, 'detector.resultIndexTtl', undefined);
   const ttl = (ttlValue === undefined) ? '-' : ttlValue + " Days";
-
+  const flattenCustomResultIndex = get(props, 'detector.flattenCustomResultIndex', undefined);
+  const flatten = (flattenCustomResultIndex === undefined) ? '-' : flattenCustomResultIndex ? 'Yes' : 'No';
 
   return (
     <ContentPanel
@@ -223,6 +224,12 @@ export const DetectorDefinitionFields = (
           <ConfigCell
             title="Custom result index"
             description={get(props, 'detector.resultIndex', '-')}
+          />
+        </EuiFlexItem>
+        <EuiFlexItem>
+          <ConfigCell
+            title="Flatten custom result index"
+            description={flatten}
           />
         </EuiFlexItem>
         <EuiFlexItem>

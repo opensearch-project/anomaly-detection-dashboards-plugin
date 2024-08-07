@@ -62,6 +62,7 @@ export function formikToDetector(values: CreateDetectorFormikValues): Detector {
     resultIndexMinAge: resultIndex && resultIndex.trim().length > 0 ? values.resultIndexMinAge : undefined,
     resultIndexMinSize: resultIndex && resultIndex.trim().length > 0 ? values.resultIndexMinSize : undefined,
     resultIndexTtl: resultIndex && resultIndex.trim().length > 0 ? values.resultIndexTtl : undefined,
+    flattenCustomResultIndex: resultIndex && resultIndex.trim().length > 0 ? values.flattenCustomResultIndex : undefined,
   } as Detector;
 
   // Optionally add detection date range

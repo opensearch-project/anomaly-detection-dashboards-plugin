@@ -25,4 +25,5 @@ export interface DetectorDefinitionFormikValues {
   resultIndexMinAge?: number | string;
   resultIndexMinSize?: number | string;
   resultIndexTtl?:number | string;
+  flattenCustomResultIndex?: boolean;
 }
