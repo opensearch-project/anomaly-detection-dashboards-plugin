@@ -411,6 +411,40 @@ exports[`<ReviewAndCreate /> spec renders the component, validation loading 1`] 
                     class="euiFormLabel euiFormRow__label"
                     for="random_html_id"
                   >
+                    Flatten custom result index
+                  </label>
+                </div>
+                <div
+                  class="euiFormRow__fieldWrapper"
+                >
+                  <div
+                    class="euiText euiText--medium"
+                    id="random_html_id"
+                  >
+                    <p
+                      class="enabled"
+                    >
+                      -
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div
+              class="euiFlexItem"
+            >
+              <div
+                class="euiFormRow"
+                id="random_html_id-row"
+                style="width: 250px;"
+              >
+                <div
+                  class="euiFormRow__labelWrapper"
+                >
+                  <label
+                    class="euiFormLabel euiFormRow__label"
+                    for="random_html_id"
+                  >
                     Custom result index min age
                   </label>
                 </div>
@@ -1472,6 +1506,40 @@ exports[`issue in detector validation issues in feature query 1`] = `
                       for="random_html_id"
                     >
                       Custom result index
+                    </label>
+                  </div>
+                  <div
+                    class="euiFormRow__fieldWrapper"
+                  >
+                    <div
+                      class="euiText euiText--medium"
+                      id="random_html_id"
+                    >
+                      <p
+                        class="enabled"
+                      >
+                        -
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div
+                class="euiFlexItem"
+              >
+                <div
+                  class="euiFormRow"
+                  id="random_html_id-row"
+                  style="width: 250px;"
+                >
+                  <div
+                    class="euiFormRow__labelWrapper"
+                  >
+                    <label
+                      class="euiFormLabel euiFormRow__label"
+                      for="random_html_id"
+                    >
+                      Flatten custom result index
                     </label>
                   </div>
                   <div

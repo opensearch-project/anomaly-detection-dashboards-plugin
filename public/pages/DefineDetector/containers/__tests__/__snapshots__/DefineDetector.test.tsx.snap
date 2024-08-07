@@ -972,6 +972,16 @@ exports[`<DefineDetector /> Full creating detector definition renders the compon
               </div>
             </div>
           </div>
+          <div
+            class="euiFlexGroup euiFlexGroup--gutterLarge euiFlexGroup--directionColumn euiFlexGroup--responsive"
+          >
+            <div
+              class="euiFlexItem"
+            />
+            <div
+              class="euiFlexItem"
+            />
+          </div>
         </div>
       </div>
     </div>
@@ -1948,6 +1958,16 @@ exports[`<DefineDetector /> empty creating detector definition renders the compo
                 </label>
               </div>
             </div>
+          </div>
+          <div
+            class="euiFlexGroup euiFlexGroup--gutterLarge euiFlexGroup--directionColumn euiFlexGroup--responsive"
+          >
+            <div
+              class="euiFlexItem"
+            />
+            <div
+              class="euiFlexItem"
+            />
           </div>
         </div>
       </div>
@@ -2958,6 +2978,16 @@ exports[`<DefineDetector /> empty editing detector definition renders the compon
                 </label>
               </div>
             </div>
+          </div>
+          <div
+            class="euiFlexGroup euiFlexGroup--gutterLarge euiFlexGroup--directionColumn euiFlexGroup--responsive"
+          >
+            <div
+              class="euiFlexItem"
+            />
+            <div
+              class="euiFlexItem"
+            />
           </div>
         </div>
       </div>
