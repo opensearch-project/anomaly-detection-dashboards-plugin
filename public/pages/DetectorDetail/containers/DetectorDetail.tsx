@@ -501,7 +501,7 @@ export const DetectorDetail = (props: DetectorDetailProps) => {
 
           <EuiFlexGroup>
             <EuiFlexItem>
-              <EuiTabs>
+              <EuiTabs size="s">
                 {tabs.map((tab) => (
                   <EuiTab
                     onClick={() => {
@@ -530,7 +530,7 @@ export const DetectorDetail = (props: DetectorDetailProps) => {
             description={
               <EuiFlexGroup direction="column">
                 <EuiFlexItem>
-                  <EuiText>
+                  <EuiText size="s">
                     <p>
                       Detector and feature configuration will be permanently
                       removed. This action is irreversible. To confirm deletion,
