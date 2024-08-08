@@ -15,7 +15,6 @@ import {
   EuiTab,
   EuiFlexGroup,
   EuiFlexItem,
-  EuiTitle,
   EuiOverlayMask,
   EuiCallOut,
   EuiSpacer,

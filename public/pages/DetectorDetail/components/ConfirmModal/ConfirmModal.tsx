@@ -42,7 +42,11 @@ export const ConfirmModal = (props: ConfirmModalProps) => {
   return (
     <EuiModal onClose={props.onClose}>
       <EuiModalHeader>
-        <EuiModalHeaderTitle>{props.title}&nbsp;</EuiModalHeaderTitle>
+        <EuiModalHeaderTitle>
+          <EuiText size="s">
+            <h2>{props.title}&nbsp;</h2>
+          </EuiText>
+        </EuiModalHeaderTitle>
       </EuiModalHeader>
       <EuiModalBody>
         <EuiFlexGroup direction="column">

@@ -39,7 +39,13 @@ export const ConfirmUnlinkDetectorModal = (
         maxWidth={450}
       >
         <EuiModalHeader>
-          <EuiModalHeaderTitle>{'Remove association?'}</EuiModalHeaderTitle>
+          <EuiModalHeaderTitle>
+            <EuiText size="s">
+              <h2>
+                {'Remove association?'}
+              </h2>
+            </EuiText>
+          </EuiModalHeaderTitle>
         </EuiModalHeader>
         <EuiModalBody>
           <EuiText size="s">

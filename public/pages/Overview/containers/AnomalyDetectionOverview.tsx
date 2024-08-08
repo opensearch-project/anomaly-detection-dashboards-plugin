@@ -12,7 +12,6 @@
 import {
   EuiSpacer,
   EuiPageHeader,
-  EuiTitle,
   EuiText,
   EuiFlexItem,
   EuiFlexGroup,
@@ -331,9 +330,9 @@ export function AnomalyDetectionOverview(props: AnomalyDetectionOverviewProps) {
       <EuiPageHeader>
         <EuiFlexGroup justifyContent="spaceBetween">
           <EuiFlexItem grow={false}>
-            <EuiTitle size="l" data-test-subj="overviewTitle">
+            <EuiText size="s" data-test-subj="overviewTitle">
               <h1>Get started</h1>
-            </EuiTitle>
+            </EuiText>
           </EuiFlexItem>
           <EuiFlexItem grow={false}>
             <EuiSmallButton

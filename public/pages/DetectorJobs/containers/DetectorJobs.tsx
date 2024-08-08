@@ -17,7 +17,7 @@ import {
   EuiFlexGroup,
   EuiPage,
   EuiSmallButton,
-  EuiTitle,
+  EuiText,
   EuiSmallButtonEmpty,
   EuiSpacer,
 } from '@elastic/eui';
@@ -162,9 +162,9 @@ export function DetectorJobs(props: DetectorJobsProps) {
             <EuiPageBody>
               <EuiPageHeader>
                 <EuiPageHeaderSection>
-                  <EuiTitle size="l" data-test-subj="detectorJobsTitle">
+                  <EuiText size="s" data-test-subj="detectorJobsTitle">
                     <h1>Set up detector jobs </h1>
-                  </EuiTitle>
+                  </EuiText>
                 </EuiPageHeaderSection>
               </EuiPageHeader>
               <RealTimeJob

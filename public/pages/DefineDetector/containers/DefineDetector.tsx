@@ -31,7 +31,7 @@ import {
   EuiPageBody,
   EuiPageHeader,
   EuiPageHeaderSection,
-  EuiTitle,
+  EuiText,
 } from '@elastic/eui';
 import { updateDetector, matchDetector } from '../../../redux/reducers/ad';
 import { useHideSideNavBar } from '../../main/hooks/useHideSideNavBar';
@@ -362,13 +362,13 @@ export const DefineDetector = (props: DefineDetectorProps) => {
             <EuiPageBody>
               <EuiPageHeader>
                 <EuiPageHeaderSection>
-                  <EuiTitle size="l" data-test-subj="defineOrEditDetectorTitle">
+                  <EuiText size="s" data-test-subj="defineOrEditDetectorTitle">
                     <h1>
                       {props.isEdit
                         ? 'Edit detector settings'
                         : 'Define detector'}{' '}
                     </h1>
-                  </EuiTitle>
+                  </EuiText>
                 </EuiPageHeaderSection>
               </EuiPageHeader>
               <Fragment>

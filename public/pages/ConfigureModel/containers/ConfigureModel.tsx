@@ -17,7 +17,6 @@ import {
   EuiFlexGroup,
   EuiPage,
   EuiSmallButton,
-  EuiTitle,
   EuiSmallButtonEmpty,
   EuiSpacer,
   EuiText,
@@ -298,8 +297,8 @@ export function ConfigureModel(props: ConfigureModelProps) {
             <EuiPageBody>
               <EuiPageHeader>
                 <EuiPageHeaderSection>
-                  <EuiTitle
-                    size="l"
+                  <EuiText
+                    size="s"
                     data-test-subj="configureOrEditModelConfigurationTitle"
                   >
                     <h1>
@@ -307,7 +306,7 @@ export function ConfigureModel(props: ConfigureModelProps) {
                         ? 'Edit model configuration'
                         : 'Configure model'}{' '}
                     </h1>
-                  </EuiTitle>
+                  </EuiText>
                   <Fragment>
                     <EuiSpacer size="s" />
                     <EuiText size="s">
