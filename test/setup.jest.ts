@@ -25,6 +25,9 @@ jest.mock('@elastic/eui/lib/services/accessibility/html_id_generator', () => ({
   },
 }));
 
+// address issue: https://github.com/opensearch-project/anomaly-detection-dashboards-plugin/issues/832
+jest.mock('@osd/monaco', () => ({}));
+
 //for mocking window.scroll(0,0)
 const noop = () => {};
 Object.defineProperty(window, 'scroll', { value: noop, writable: true });
