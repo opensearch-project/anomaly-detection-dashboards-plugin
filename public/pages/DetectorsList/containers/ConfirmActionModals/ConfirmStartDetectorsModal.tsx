@@ -48,7 +48,7 @@ export const ConfirmStartDetectorsModal = (
           </EuiModalHeaderTitle>
         </EuiModalHeader>
         <EuiModalBody>
-          <EuiText>The following detectors will begin initializing.</EuiText>
+          <EuiText size="s">The following detectors will begin initializing.</EuiText>
           <EuiSpacer size="s" />
           <div>
             {isLoading ? (
