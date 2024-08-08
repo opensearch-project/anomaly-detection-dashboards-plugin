@@ -12,7 +12,6 @@
 import {
   EuiSpacer,
   EuiPageHeader,
-  EuiTitle,
   EuiText,
   EuiFlexItem,
   EuiFlexGroup,
@@ -104,8 +103,8 @@ export function AnomalyDetectionOverview(props: AnomalyDetectionOverviewProps) {
   const queryParams = getDataSourceFromURL(props.location);
   const [MDSOverviewState, setMDSOverviewState] = useState<MDSStates>({
     queryParams,
-    selectedDataSourceId: queryParams.dataSourceId === undefined 
-      ? undefined 
+    selectedDataSourceId: queryParams.dataSourceId === undefined
+      ? undefined
       : queryParams.dataSourceId,
   });
 
@@ -130,7 +129,7 @@ export function AnomalyDetectionOverview(props: AnomalyDetectionOverviewProps) {
         ...location,
         search: queryString.stringify(updatedParams),
       });
-    } 
+    }
     fetchData();
   }, [MDSOverviewState]);
 
@@ -250,7 +249,7 @@ export function AnomalyDetectionOverview(props: AnomalyDetectionOverviewProps) {
           componentType={'DataSourceSelectable'}
           componentConfig={{
             fullWidth: false,
-            activeOption: props.landingDataSourceId === undefined 
+            activeOption: props.landingDataSourceId === undefined
               || MDSOverviewState.selectedDataSourceId === undefined
                 ? undefined
                 : [{ id: MDSOverviewState.selectedDataSourceId }],
@@ -281,9 +280,9 @@ export function AnomalyDetectionOverview(props: AnomalyDetectionOverviewProps) {
         {dataSourceEnabled && renderDataSourceComponent}
         <EuiFlexGroup justifyContent="spaceBetween">
           <EuiFlexItem grow={false}>
-            <EuiTitle size="l" data-test-subj="overviewTitle">
+            <EuiText size="s" data-test-subj="overviewTitle">
               <h1>Get started</h1>
-            </EuiTitle>
+            </EuiText>
           </EuiFlexItem>
           <EuiFlexItem grow={false}>
             <EuiButton

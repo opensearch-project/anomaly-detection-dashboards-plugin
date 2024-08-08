@@ -15,7 +15,6 @@ import {
   EuiTab,
   EuiFlexGroup,
   EuiFlexItem,
-  EuiTitle,
   EuiOverlayMask,
   EuiCallOut,
   EuiSpacer,
@@ -453,9 +452,9 @@ export const DetectorDetail = (props: DetectorDetailProps) => {
             style={{ padding: '10px' }}
           >
             <EuiFlexItem grow={false}>
-              <EuiTitle size="l" data-test-subj="detectorNameHeader">
+              <EuiText size="s" data-test-subj="detectorNameHeader">
                 {<h1>{detector && detector.name} </h1>}
-              </EuiTitle>
+              </EuiText>
             </EuiFlexItem>
 
             <EuiFlexItem grow={false}>

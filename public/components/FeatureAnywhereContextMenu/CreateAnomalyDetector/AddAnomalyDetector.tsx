@@ -586,9 +586,9 @@ function AddAnomalyDetector({
         {(formikProps) => (
           <>
             <EuiFlyoutHeader hasBorder>
-              <EuiTitle>
+              <EuiText size="s">
                 <h2 id="add-anomaly-detector__title">Add anomaly detector</h2>
-              </EuiTitle>
+              </EuiText>
             </EuiFlyoutHeader>
             <EuiFlyoutBody>
               {associationLimitReached ? (

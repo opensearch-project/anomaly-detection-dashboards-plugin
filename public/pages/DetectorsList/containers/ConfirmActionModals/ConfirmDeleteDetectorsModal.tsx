@@ -75,7 +75,11 @@ export const ConfirmDeleteDetectorsModal = (
       <EuiModal data-test-subj="deleteDetectorsModal" onClose={props.onHide}>
         <EuiModalHeader>
           <EuiModalHeaderTitle>
-            {'Are you sure you want to delete the selected detectors?'}&nbsp;
+            <EuiText size="s">
+              <h2>
+                {'Are you sure you want to delete the selected detectors?'}&nbsp;
+              </h2>
+            </EuiText>
           </EuiModalHeaderTitle>
         </EuiModalHeader>
         <EuiModalBody>

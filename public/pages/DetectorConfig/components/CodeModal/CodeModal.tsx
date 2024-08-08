@@ -18,6 +18,7 @@ import {
   EuiModalHeaderTitle,
   EuiOverlayMask,
   EuiCodeBlock,
+  EuiText,
 } from '@elastic/eui';
 
 interface CodeModalProps {
@@ -43,7 +44,9 @@ export class CodeModal extends Component<CodeModalProps, {}> {
             <EuiModalHeader>
               <EuiModalHeaderTitle>
                 <div>
-                  <p>{this.props.title}</p>
+                  <EuiText size="s">
+                    <h2>{this.props.title}</h2>
+                  </EuiText>
                   {this.props.subtitle ? (
                     <p className="modelSubtitle">{this.props.subtitle}</p>
                   ) : (
