@@ -71,7 +71,7 @@ export const ConfirmStopDetectorsModal = (
               <EuiSpacer size="s" />
             </div>
           ) : null}
-          <EuiText>The following detectors will be stopped.</EuiText>
+          <EuiText size="s">The following detectors will be stopped.</EuiText>
           <EuiSpacer size="s" />
           <div>
             {isLoading ? (

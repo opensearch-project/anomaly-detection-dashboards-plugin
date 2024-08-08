@@ -465,7 +465,7 @@ function AddAnomalyDetector({
 
   const getEverythingSuccessfulButton = (detectorId, shingleSize) => {
     return (
-      <EuiText>
+      <EuiText size="s">
         <p>
           Attempting to initialize the detector with historical data. This
           initializing process takes approximately 1 minute if you have data in
@@ -669,7 +669,7 @@ function AddAnomalyDetector({
                         isOpen={accordionsOpen.detectorDetails}
                         onToggle={() => onAccordionToggle('detectorDetails')}
                         subTitle={
-                          <EuiText size="m">
+                          <EuiText size="s">
                             <p>
                               Detector interval: {intervalValue} minute(s);
                               Window delay: {delayValue} minute(s)

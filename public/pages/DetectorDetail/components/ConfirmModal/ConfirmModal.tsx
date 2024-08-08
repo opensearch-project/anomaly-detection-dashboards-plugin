@@ -51,7 +51,7 @@ export const ConfirmModal = (props: ConfirmModalProps) => {
           ) : null}
           <EuiFlexItem grow={false}>
             {typeof props.description === 'string' ? (
-              <EuiText>
+              <EuiText size="s">
                 <p>{props.description}</p>
               </EuiText>
             ) : (

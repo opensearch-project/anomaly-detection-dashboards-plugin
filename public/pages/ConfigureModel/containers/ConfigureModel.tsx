@@ -310,7 +310,7 @@ export function ConfigureModel(props: ConfigureModelProps) {
                   </EuiTitle>
                   <Fragment>
                     <EuiSpacer size="s" />
-                    <EuiText>
+                    <EuiText size="s">
                       Set the index fields that you want to find anomalies for
                       by defining the model features. You can also set other
                       model parameters such as category field and shingle size

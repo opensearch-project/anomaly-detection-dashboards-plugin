@@ -205,7 +205,7 @@ export function SampleAnomalies(props: SampleAnomaliesProps) {
       >
         <EuiFlexGroup>
           <EuiFlexItem>
-            <EuiText>
+            <EuiText size="s">
               {firstPreview
                 ? 'You can preview how your anomalies may look like from sample feature output and adjust the feature settings as needed.'
                 : 'Use the sample data as a reference to fine tune settings. To see the latest preview with your adjustments, click "Refresh preview". Once you are done with your edits, save your changes and run the detector to see real time anomalies for the new data set.'}{' '}

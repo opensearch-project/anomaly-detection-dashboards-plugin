@@ -255,6 +255,7 @@ export const AnomaliesLiveChart = (props: AnomaliesLiveChartProps) => {
         </EuiFlexGroup>
       ) : !hasLatestAnomalyResult ? (
         <EuiText
+          size="s"
           style={{
             color: '#666666',
             paddingTop: '12px',

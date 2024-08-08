@@ -334,7 +334,7 @@ export function AnomalyResults(props: AnomalyResultsProps) {
                 marginBottom: '8px',
               }}
             />
-            <EuiText>
+            <EuiText size="s">
               <p>
                 Attempting to initialize the detector with historical data. This
                 initializing process takes approximately 1 minute if you have

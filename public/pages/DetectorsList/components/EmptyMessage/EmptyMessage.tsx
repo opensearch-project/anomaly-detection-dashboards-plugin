@@ -30,7 +30,7 @@ export const EmptyDetectorMessage = (props: EmptyDetectorProps) => (
     data-test-subj="emptyDetectorListMessage"
     style={{ maxWidth: '45em' }}
     body={
-      <EuiText>
+      <EuiText size="s">
         <p>{props.isFilterApplied ? FILTER_TEXT : EMPTY_TEXT}</p>
       </EuiText>
     }

@@ -346,7 +346,7 @@ export function AnomalyDetectionOverview(props: AnomalyDetectionOverviewProps) {
           </EuiFlexItem>
         </EuiFlexGroup>
       </EuiPageHeader>
-      <EuiText>
+      <EuiText size="s">
         The anomaly detection plugin automatically detects anomalies in your
         data in near real-time using the Random Cut Forest (RCF) algorithm.{' '}
         <EuiLink href={`${BASE_DOCS_LINK}/ad`} target="_blank">
@@ -394,7 +394,7 @@ export function AnomalyDetectionOverview(props: AnomalyDetectionOverviewProps) {
       <ContentPanel
         title="Start with a sample detector to learn about anomaly detection"
         subTitle={
-          <EuiText style={{ marginTop: '5px' }}>
+          <EuiText size="s" style={{ marginTop: '5px' }}>
             New to anomaly detection? Get a better understanding of how it works
             by creating a detector with one of the sample datasets.
           </EuiText>

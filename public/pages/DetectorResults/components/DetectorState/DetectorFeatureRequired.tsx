@@ -10,7 +10,7 @@
  */
 
 import React from 'react';
-import { EuiSmallButton, EuiEmptyPrompt } from '@elastic/eui';
+import { EuiSmallButton, EuiEmptyPrompt, EuiText } from '@elastic/eui';
 import { Fragment } from 'react';
 import { Detector } from '../../../../models/interfaces';
 
@@ -28,11 +28,13 @@ export const DetectorFeatureRequired = (
       title={<h2>Features are required to run a detector</h2>}
       body={
         <Fragment>
-          <p>
-            Specify index fields that you want to find anomalies for by defining
-            features. Once you define the features, you can preview your
-            anomalies from a sample feature output.
-          </p>
+          <EuiText size="s">
+            <p>
+              Specify index fields that you want to find anomalies for by defining
+              features. Once you define the features, you can preview your
+              anomalies from a sample feature output.
+            </p>
+          </EuiText>
         </Fragment>
       }
       actions={[
