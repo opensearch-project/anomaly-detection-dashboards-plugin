@@ -231,7 +231,6 @@ export function SampleAnomalies(props: SampleAnomaliesProps) {
                   getSampleAnomalies();
                 }
               }}
-              fill={!firstPreview}
               isLoading={isLoading}
             >
               {firstPreview ? 'Preview anomalies' : 'Refresh preview'}
