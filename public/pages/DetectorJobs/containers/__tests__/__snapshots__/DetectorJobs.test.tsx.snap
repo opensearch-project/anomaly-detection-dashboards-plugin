@@ -14,12 +14,14 @@ exports[`<DetectorJobs /> spec configuring detector jobs renders the component 1
       <div
         class="euiPageHeaderSection"
       >
-        <h1
-          class="euiTitle euiTitle--large"
+        <div
+          class="euiText euiText--small"
           data-test-subj="detectorJobsTitle"
         >
-          Set up detector jobs 
-        </h1>
+          <h1>
+            Set up detector jobs 
+          </h1>
+        </div>
       </div>
     </header>
     <div
