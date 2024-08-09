@@ -19,7 +19,8 @@ import {
   EuiTitle,
   EuiLink,
   EuiCard,
-  EuiHorizontalRule, EuiText,
+  EuiHorizontalRule,
+  EuiText,
 } from '@elastic/eui';
 import { PLUGIN_NAME } from '../../../../utils/constants';
 import { useLocation } from 'react-router-dom';

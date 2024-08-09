@@ -103,8 +103,8 @@ export function AnomalyDetectionOverview(props: AnomalyDetectionOverviewProps) {
   const queryParams = getDataSourceFromURL(props.location);
   const [MDSOverviewState, setMDSOverviewState] = useState<MDSStates>({
     queryParams,
-    selectedDataSourceId: queryParams.dataSourceId === undefined
-      ? undefined
+    selectedDataSourceId: queryParams.dataSourceId === undefined 
+      ? undefined 
       : queryParams.dataSourceId,
   });
 
@@ -129,7 +129,7 @@ export function AnomalyDetectionOverview(props: AnomalyDetectionOverviewProps) {
         ...location,
         search: queryString.stringify(updatedParams),
       });
-    }
+    } 
     fetchData();
   }, [MDSOverviewState]);
 
@@ -249,7 +249,7 @@ export function AnomalyDetectionOverview(props: AnomalyDetectionOverviewProps) {
           componentType={'DataSourceSelectable'}
           componentConfig={{
             fullWidth: false,
-            activeOption: props.landingDataSourceId === undefined
+            activeOption: props.landingDataSourceId === undefined 
               || MDSOverviewState.selectedDataSourceId === undefined
                 ? undefined
                 : [{ id: MDSOverviewState.selectedDataSourceId }],

@@ -59,7 +59,7 @@ export const ListActions = (props: ListActionsProps) => {
               onClick={props.onStartDetectors}
               size="s"
             >
-              Start real-time
+              Start real-time detectors
             </EuiContextMenuItem>
 
             <EuiContextMenuItem
