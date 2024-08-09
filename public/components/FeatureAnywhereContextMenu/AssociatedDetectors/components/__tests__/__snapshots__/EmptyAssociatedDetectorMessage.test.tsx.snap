@@ -22,7 +22,7 @@ exports[`ConfirmUnlinkDetectorModal spec renders the component with filter appli
         class="euiText euiText--medium"
       >
         <div
-          class="euiText euiText--medium"
+          class="euiText euiText--small"
         >
           <p>
             There are no detectors matching your search
@@ -56,7 +56,7 @@ exports[`ConfirmUnlinkDetectorModal spec renders the component with filter appli
         class="euiText euiText--medium"
       >
         <div
-          class="euiText euiText--medium"
+          class="euiText euiText--small"
         >
           <p>
             There are no anomaly detectors associated with test-title visualization.

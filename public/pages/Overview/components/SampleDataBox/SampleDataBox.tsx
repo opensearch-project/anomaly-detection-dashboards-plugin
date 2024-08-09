@@ -20,6 +20,7 @@ import {
   EuiLink,
   EuiCard,
   EuiHorizontalRule,
+  EuiText,
 } from '@elastic/eui';
 import { PLUGIN_NAME } from '../../../../utils/constants';
 import { useLocation } from 'react-router-dom';
@@ -76,15 +77,17 @@ export const SampleDataBox = (props: SampleDataBoxProps) => {
         <EuiFlexGroup direction="column" gutterSize="l">
           <EuiHorizontalRule size="full" margin="s"></EuiHorizontalRule>
           <EuiFlexItem grow={false} style={{ height: '70px' }}>
-            <p
-              style={{
-                textAlign: 'left',
-                lineHeight: 1.4,
-                maxHeight: 4.2,
-              }}
-            >
-              {props.description}
-            </p>
+            <EuiText size="s">
+              <p
+                style={{
+                  textAlign: 'left',
+                  lineHeight: 1.4,
+                  maxHeight: 4.2,
+                }}
+              >
+                {props.description}
+              </p>
+            </EuiText>
           </EuiFlexItem>
           <EuiFlexGroup
             style={{
@@ -118,12 +121,14 @@ export const SampleDataBox = (props: SampleDataBoxProps) => {
             </EuiFlexItem>
             <EuiFlexItem grow={false}>
               {props.isDataLoaded ? (
-                <EuiLink
-                  data-test-subj="viewSampleDetectorLink"
-                  href={`${PLUGIN_NAME}#/detectors/${props.detectorId}/results?dataSourceId=${dataSourceId}`}
-                >
-                  View detector and sample data
-                </EuiLink>
+                <EuiText size="s">
+                  <EuiLink
+                    data-test-subj="viewSampleDetectorLink"
+                    href={`${PLUGIN_NAME}#/detectors/${props.detectorId}/results?dataSourceId=${dataSourceId}`}
+                  >
+                    View detector and sample data
+                  </EuiLink>
+                </EuiText>
               ) : null}
             </EuiFlexItem>
           </EuiFlexGroup>

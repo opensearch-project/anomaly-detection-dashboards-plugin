@@ -948,7 +948,7 @@ export const AnomalyHistory = (props: AnomalyHistoryProps) => {
                 <EuiSpacer size="m" />,
               ]
             : null}
-          <EuiTabs>{renderTabs()}</EuiTabs>
+          <EuiTabs size="s">{renderTabs()}</EuiTabs>
 
           {isLoading || isLoadingAnomalyResults ? (
             <EuiFlexGroup

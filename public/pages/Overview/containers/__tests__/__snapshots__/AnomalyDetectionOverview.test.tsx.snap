@@ -11,12 +11,14 @@ exports[`<AnomalyDetectionOverview /> spec No sample detectors created renders c
       <div
         class="euiFlexItem euiFlexItem--flexGrowZero"
       >
-        <h1
-          class="euiTitle euiTitle--large"
+        <div
+          class="euiText euiText--small"
           data-test-subj="overviewTitle"
         >
-          Get started
-        </h1>
+          <h1>
+            Get started
+          </h1>
+        </div>
       </div>
       <div
         class="euiFlexItem euiFlexItem--flexGrowZero"
@@ -41,7 +43,7 @@ exports[`<AnomalyDetectionOverview /> spec No sample detectors created renders c
     </div>
   </header>
   <div
-    class="euiText euiText--medium"
+    class="euiText euiText--small"
   >
     The anomaly detection plugin automatically detects anomalies in your data in near real-time using the Random Cut Forest (RCF) algorithm.
      
@@ -414,7 +416,7 @@ exports[`<AnomalyDetectionOverview /> spec No sample detectors created renders c
             style="line-height: normal; max-width: 75%;"
           >
             <div
-              class="euiText euiText--medium"
+              class="euiText euiText--small"
               style="margin-top: 5px;"
             >
               New to anomaly detection? Get a better understanding of how it works by creating a detector with one of the sample datasets.
@@ -506,11 +508,15 @@ exports[`<AnomalyDetectionOverview /> spec No sample detectors created renders c
                         class="euiFlexItem euiFlexItem--flexGrowZero"
                         style="height: 70px;"
                       >
-                        <p
-                          style="text-align: left; line-height: 1.4; max-height: 4.2px;"
+                        <div
+                          class="euiText euiText--small"
                         >
-                          Detect high numbers of error response codes in an index containing HTTP response data.
-                        </p>
+                          <p
+                            style="text-align: left; line-height: 1.4; max-height: 4.2px;"
+                          >
+                            Detect high numbers of error response codes in an index containing HTTP response data.
+                          </p>
+                        </div>
                       </div>
                       <div
                         class="euiFlexGroup euiFlexGroup--gutterLarge euiFlexGroup--alignItemsCenter euiFlexGroup--directionColumn euiFlexGroup--responsive"
@@ -608,11 +614,15 @@ exports[`<AnomalyDetectionOverview /> spec No sample detectors created renders c
                         class="euiFlexItem euiFlexItem--flexGrowZero"
                         style="height: 70px;"
                       >
-                        <p
-                          style="text-align: left; line-height: 1.4; max-height: 4.2px;"
+                        <div
+                          class="euiText euiText--small"
                         >
-                          Detect any unusual increase or decrease of orders in an index containing online order data.
-                        </p>
+                          <p
+                            style="text-align: left; line-height: 1.4; max-height: 4.2px;"
+                          >
+                            Detect any unusual increase or decrease of orders in an index containing online order data.
+                          </p>
+                        </div>
                       </div>
                       <div
                         class="euiFlexGroup euiFlexGroup--gutterLarge euiFlexGroup--alignItemsCenter euiFlexGroup--directionColumn euiFlexGroup--responsive"
@@ -710,11 +720,15 @@ exports[`<AnomalyDetectionOverview /> spec No sample detectors created renders c
                         class="euiFlexItem euiFlexItem--flexGrowZero"
                         style="height: 70px;"
                       >
-                        <p
-                          style="text-align: left; line-height: 1.4; max-height: 4.2px;"
+                        <div
+                          class="euiText euiText--small"
                         >
-                          Detect increases in CPU and memory utilization in an index containing various health metrics from a host.
-                        </p>
+                          <p
+                            style="text-align: left; line-height: 1.4; max-height: 4.2px;"
+                          >
+                            Detect increases in CPU and memory utilization in an index containing various health metrics from a host.
+                          </p>
+                        </div>
                       </div>
                       <div
                         class="euiFlexGroup euiFlexGroup--gutterLarge euiFlexGroup--alignItemsCenter euiFlexGroup--directionColumn euiFlexGroup--responsive"
@@ -771,12 +785,14 @@ exports[`<AnomalyDetectionOverview /> spec Some detectors created renders compon
       <div
         class="euiFlexItem euiFlexItem--flexGrowZero"
       >
-        <h1
-          class="euiTitle euiTitle--large"
+        <div
+          class="euiText euiText--small"
           data-test-subj="overviewTitle"
         >
-          Get started
-        </h1>
+          <h1>
+            Get started
+          </h1>
+        </div>
       </div>
       <div
         class="euiFlexItem euiFlexItem--flexGrowZero"
@@ -801,7 +817,7 @@ exports[`<AnomalyDetectionOverview /> spec Some detectors created renders compon
     </div>
   </header>
   <div
-    class="euiText euiText--medium"
+    class="euiText euiText--small"
   >
     The anomaly detection plugin automatically detects anomalies in your data in near real-time using the Random Cut Forest (RCF) algorithm.
      
@@ -1169,7 +1185,7 @@ exports[`<AnomalyDetectionOverview /> spec Some detectors created renders compon
             style="line-height: normal; max-width: 75%;"
           >
             <div
-              class="euiText euiText--medium"
+              class="euiText euiText--small"
               style="margin-top: 5px;"
             >
               New to anomaly detection? Get a better understanding of how it works by creating a detector with one of the sample datasets.
@@ -1261,11 +1277,15 @@ exports[`<AnomalyDetectionOverview /> spec Some detectors created renders compon
                         class="euiFlexItem euiFlexItem--flexGrowZero"
                         style="height: 70px;"
                       >
-                        <p
-                          style="text-align: left; line-height: 1.4; max-height: 4.2px;"
+                        <div
+                          class="euiText euiText--small"
                         >
-                          Detect high numbers of error response codes in an index containing HTTP response data.
-                        </p>
+                          <p
+                            style="text-align: left; line-height: 1.4; max-height: 4.2px;"
+                          >
+                            Detect high numbers of error response codes in an index containing HTTP response data.
+                          </p>
+                        </div>
                       </div>
                       <div
                         class="euiFlexGroup euiFlexGroup--gutterLarge euiFlexGroup--alignItemsCenter euiFlexGroup--directionColumn euiFlexGroup--responsive"
@@ -1363,11 +1383,15 @@ exports[`<AnomalyDetectionOverview /> spec Some detectors created renders compon
                         class="euiFlexItem euiFlexItem--flexGrowZero"
                         style="height: 70px;"
                       >
-                        <p
-                          style="text-align: left; line-height: 1.4; max-height: 4.2px;"
+                        <div
+                          class="euiText euiText--small"
                         >
-                          Detect any unusual increase or decrease of orders in an index containing online order data.
-                        </p>
+                          <p
+                            style="text-align: left; line-height: 1.4; max-height: 4.2px;"
+                          >
+                            Detect any unusual increase or decrease of orders in an index containing online order data.
+                          </p>
+                        </div>
                       </div>
                       <div
                         class="euiFlexGroup euiFlexGroup--gutterLarge euiFlexGroup--alignItemsCenter euiFlexGroup--directionColumn euiFlexGroup--responsive"
@@ -1465,11 +1489,15 @@ exports[`<AnomalyDetectionOverview /> spec Some detectors created renders compon
                         class="euiFlexItem euiFlexItem--flexGrowZero"
                         style="height: 70px;"
                       >
-                        <p
-                          style="text-align: left; line-height: 1.4; max-height: 4.2px;"
+                        <div
+                          class="euiText euiText--small"
                         >
-                          Detect increases in CPU and memory utilization in an index containing various health metrics from a host.
-                        </p>
+                          <p
+                            style="text-align: left; line-height: 1.4; max-height: 4.2px;"
+                          >
+                            Detect increases in CPU and memory utilization in an index containing various health metrics from a host.
+                          </p>
+                        </div>
                       </div>
                       <div
                         class="euiFlexGroup euiFlexGroup--gutterLarge euiFlexGroup--alignItemsCenter euiFlexGroup--directionColumn euiFlexGroup--responsive"
@@ -1526,12 +1554,14 @@ exports[`<AnomalyDetectionOverview /> spec Some detectors created renders compon
       <div
         class="euiFlexItem euiFlexItem--flexGrowZero"
       >
-        <h1
-          class="euiTitle euiTitle--large"
+        <div
+          class="euiText euiText--small"
           data-test-subj="overviewTitle"
         >
-          Get started
-        </h1>
+          <h1>
+            Get started
+          </h1>
+        </div>
       </div>
       <div
         class="euiFlexItem euiFlexItem--flexGrowZero"
@@ -1556,7 +1586,7 @@ exports[`<AnomalyDetectionOverview /> spec Some detectors created renders compon
     </div>
   </header>
   <div
-    class="euiText euiText--medium"
+    class="euiText euiText--small"
   >
     The anomaly detection plugin automatically detects anomalies in your data in near real-time using the Random Cut Forest (RCF) algorithm.
      
@@ -1924,7 +1954,7 @@ exports[`<AnomalyDetectionOverview /> spec Some detectors created renders compon
             style="line-height: normal; max-width: 75%;"
           >
             <div
-              class="euiText euiText--medium"
+              class="euiText euiText--small"
               style="margin-top: 5px;"
             >
               New to anomaly detection? Get a better understanding of how it works by creating a detector with one of the sample datasets.
@@ -2016,11 +2046,15 @@ exports[`<AnomalyDetectionOverview /> spec Some detectors created renders compon
                         class="euiFlexItem euiFlexItem--flexGrowZero"
                         style="height: 70px;"
                       >
-                        <p
-                          style="text-align: left; line-height: 1.4; max-height: 4.2px;"
+                        <div
+                          class="euiText euiText--small"
                         >
-                          Detect high numbers of error response codes in an index containing HTTP response data.
-                        </p>
+                          <p
+                            style="text-align: left; line-height: 1.4; max-height: 4.2px;"
+                          >
+                            Detect high numbers of error response codes in an index containing HTTP response data.
+                          </p>
+                        </div>
                       </div>
                       <div
                         class="euiFlexGroup euiFlexGroup--gutterLarge euiFlexGroup--alignItemsCenter euiFlexGroup--directionColumn euiFlexGroup--responsive"
@@ -2050,14 +2084,18 @@ exports[`<AnomalyDetectionOverview /> spec Some detectors created renders compon
                         <div
                           class="euiFlexItem euiFlexItem--flexGrowZero"
                         >
-                          <a
-                            class="euiLink euiLink--primary"
-                            data-test-subj="viewSampleDetectorLink"
-                            href="anomaly-detection-dashboards#/detectors/sample-detector-id/results?dataSourceId="
-                            rel="noreferrer"
+                          <div
+                            class="euiText euiText--small"
                           >
-                            View detector and sample data
-                          </a>
+                            <a
+                              class="euiLink euiLink--primary"
+                              data-test-subj="viewSampleDetectorLink"
+                              href="anomaly-detection-dashboards#/detectors/sample-detector-id/results?dataSourceId="
+                              rel="noreferrer"
+                            >
+                              View detector and sample data
+                            </a>
+                          </div>
                         </div>
                       </div>
                     </div>
@@ -2139,11 +2177,15 @@ exports[`<AnomalyDetectionOverview /> spec Some detectors created renders compon
                         class="euiFlexItem euiFlexItem--flexGrowZero"
                         style="height: 70px;"
                       >
-                        <p
-                          style="text-align: left; line-height: 1.4; max-height: 4.2px;"
+                        <div
+                          class="euiText euiText--small"
                         >
-                          Detect any unusual increase or decrease of orders in an index containing online order data.
-                        </p>
+                          <p
+                            style="text-align: left; line-height: 1.4; max-height: 4.2px;"
+                          >
+                            Detect any unusual increase or decrease of orders in an index containing online order data.
+                          </p>
+                        </div>
                       </div>
                       <div
                         class="euiFlexGroup euiFlexGroup--gutterLarge euiFlexGroup--alignItemsCenter euiFlexGroup--directionColumn euiFlexGroup--responsive"
@@ -2241,11 +2283,15 @@ exports[`<AnomalyDetectionOverview /> spec Some detectors created renders compon
                         class="euiFlexItem euiFlexItem--flexGrowZero"
                         style="height: 70px;"
                       >
-                        <p
-                          style="text-align: left; line-height: 1.4; max-height: 4.2px;"
+                        <div
+                          class="euiText euiText--small"
                         >
-                          Detect increases in CPU and memory utilization in an index containing various health metrics from a host.
-                        </p>
+                          <p
+                            style="text-align: left; line-height: 1.4; max-height: 4.2px;"
+                          >
+                            Detect increases in CPU and memory utilization in an index containing various health metrics from a host.
+                          </p>
+                        </div>
                       </div>
                       <div
                         class="euiFlexGroup euiFlexGroup--gutterLarge euiFlexGroup--alignItemsCenter euiFlexGroup--directionColumn euiFlexGroup--responsive"

@@ -14,18 +14,20 @@ exports[`<ConfigureModel /> spec creating model configuration renders the compon
       <div
         class="euiPageHeaderSection"
       >
-        <h1
-          class="euiTitle euiTitle--large"
+        <div
+          class="euiText euiText--small"
           data-test-subj="configureOrEditModelConfigurationTitle"
         >
-          Configure model
-           
-        </h1>
+          <h1>
+            Configure model
+             
+          </h1>
+        </div>
         <div
           class="euiSpacer euiSpacer--s"
         />
         <div
-          class="euiText euiText--medium"
+          class="euiText euiText--small"
         >
           Set the index fields that you want to find anomalies for by defining the model features. You can also set other model parameters such as category field and shingle size for more granular views. After you set the model features and other optional parameters, you can preview your anomalies from a sample feature output.
            
@@ -910,7 +912,7 @@ exports[`<ConfigureModel /> spec creating model configuration renders the compon
                     class="euiFlexItem"
                   >
                     <div
-                      class="euiText euiText--medium"
+                      class="euiText euiText--small"
                     >
                       You can preview how your anomalies may look like from sample feature output and adjust the feature settings as needed.
                        
@@ -995,18 +997,20 @@ exports[`<ConfigureModel /> spec editing model configuration renders the compone
       <div
         class="euiPageHeaderSection"
       >
-        <h1
-          class="euiTitle euiTitle--large"
+        <div
+          class="euiText euiText--small"
           data-test-subj="configureOrEditModelConfigurationTitle"
         >
-          Edit model configuration
-           
-        </h1>
+          <h1>
+            Edit model configuration
+             
+          </h1>
+        </div>
         <div
           class="euiSpacer euiSpacer--s"
         />
         <div
-          class="euiText euiText--medium"
+          class="euiText euiText--small"
         >
           Set the index fields that you want to find anomalies for by defining the model features. You can also set other model parameters such as category field and shingle size for more granular views. After you set the model features and other optional parameters, you can preview your anomalies from a sample feature output.
            

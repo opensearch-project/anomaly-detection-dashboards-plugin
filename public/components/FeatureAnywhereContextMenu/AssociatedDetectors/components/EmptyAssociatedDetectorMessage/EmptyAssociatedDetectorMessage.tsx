@@ -20,7 +20,7 @@ export const EmptyAssociatedDetectorMessage = (props: EmptyDetectorProps) => (
     data-test-subj="emptyAssociatedDetectorFlyoutMessage"
     style={{ maxWidth: '45em' }}
     body={
-      <EuiText>
+      <EuiText size="s">
         <p>
           {props.isFilterApplied
             ? FILTER_TEXT

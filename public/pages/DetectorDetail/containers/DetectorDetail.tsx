@@ -15,7 +15,6 @@ import {
   EuiTab,
   EuiFlexGroup,
   EuiFlexItem,
-  EuiTitle,
   EuiOverlayMask,
   EuiCallOut,
   EuiSpacer,
@@ -453,9 +452,9 @@ export const DetectorDetail = (props: DetectorDetailProps) => {
             style={{ padding: '10px' }}
           >
             <EuiFlexItem grow={false}>
-              <EuiTitle size="l" data-test-subj="detectorNameHeader">
+              <EuiText size="s" data-test-subj="detectorNameHeader">
                 {<h1>{detector && detector.name} </h1>}
-              </EuiTitle>
+              </EuiText>
             </EuiFlexItem>
 
             <EuiFlexItem grow={false}>
@@ -501,7 +500,7 @@ export const DetectorDetail = (props: DetectorDetailProps) => {
 
           <EuiFlexGroup>
             <EuiFlexItem>
-              <EuiTabs>
+              <EuiTabs size="s">
                 {tabs.map((tab) => (
                   <EuiTab
                     onClick={() => {
@@ -530,7 +529,7 @@ export const DetectorDetail = (props: DetectorDetailProps) => {
             description={
               <EuiFlexGroup direction="column">
                 <EuiFlexItem>
-                  <EuiText>
+                  <EuiText size="s">
                     <p>
                       Detector and feature configuration will be permanently
                       removed. This action is irreversible. To confirm deletion,

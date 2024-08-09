@@ -42,7 +42,11 @@ export const ConfirmModal = (props: ConfirmModalProps) => {
   return (
     <EuiModal onClose={props.onClose}>
       <EuiModalHeader>
-        <EuiModalHeaderTitle>{props.title}&nbsp;</EuiModalHeaderTitle>
+        <EuiModalHeaderTitle>
+          <EuiText size="s">
+            <h2>{props.title}&nbsp;</h2>
+          </EuiText>
+        </EuiModalHeaderTitle>
       </EuiModalHeader>
       <EuiModalBody>
         <EuiFlexGroup direction="column">
@@ -51,7 +55,7 @@ export const ConfirmModal = (props: ConfirmModalProps) => {
           ) : null}
           <EuiFlexItem grow={false}>
             {typeof props.description === 'string' ? (
-              <EuiText>
+              <EuiText size="s">
                 <p>{props.description}</p>
               </EuiText>
             ) : (

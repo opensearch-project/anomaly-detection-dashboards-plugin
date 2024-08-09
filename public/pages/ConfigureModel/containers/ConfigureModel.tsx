@@ -17,7 +17,6 @@ import {
   EuiFlexGroup,
   EuiPage,
   EuiButton,
-  EuiTitle,
   EuiButtonEmpty,
   EuiSpacer,
   EuiText,
@@ -300,8 +299,8 @@ export function ConfigureModel(props: ConfigureModelProps) {
             <EuiPageBody>
               <EuiPageHeader>
                 <EuiPageHeaderSection>
-                  <EuiTitle
-                    size="l"
+                  <EuiText
+                    size="s"
                     data-test-subj="configureOrEditModelConfigurationTitle"
                   >
                     <h1>
@@ -309,10 +308,10 @@ export function ConfigureModel(props: ConfigureModelProps) {
                         ? 'Edit model configuration'
                         : 'Configure model'}{' '}
                     </h1>
-                  </EuiTitle>
+                  </EuiText>
                   <Fragment>
                     <EuiSpacer size="s" />
-                    <EuiText>
+                    <EuiText size="s">
                       Set the index fields that you want to find anomalies for
                       by defining the model features. You can also set other
                       model parameters such as category field and shingle size

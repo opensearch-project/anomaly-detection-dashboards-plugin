@@ -396,7 +396,7 @@ export const AnomalyResultsLiveChart = (
             </EuiFlexItem>
           </EuiFlexGroup>
         ) : (
-          <EuiText>
+          <EuiText size="s">
             {'Not available when the detector ' +
               `${
                 props.detector.curState === DETECTOR_STATE.INIT_FAILURE ||

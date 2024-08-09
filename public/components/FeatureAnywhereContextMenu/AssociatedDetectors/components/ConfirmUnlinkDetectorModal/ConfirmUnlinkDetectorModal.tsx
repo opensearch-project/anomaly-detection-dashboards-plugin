@@ -39,10 +39,16 @@ export const ConfirmUnlinkDetectorModal = (
         maxWidth={450}
       >
         <EuiModalHeader>
-          <EuiModalHeaderTitle>{'Remove association?'}</EuiModalHeaderTitle>
+          <EuiModalHeaderTitle>
+            <EuiText size="s">
+              <h2>
+                {'Remove association?'}
+              </h2>
+            </EuiText>
+          </EuiModalHeaderTitle>
         </EuiModalHeader>
         <EuiModalBody>
-          <EuiText>
+          <EuiText size="s">
             Removing association unlinks {props.detector.name} detector from the
             visualization but does not delete it. The detector association can
             be restored.

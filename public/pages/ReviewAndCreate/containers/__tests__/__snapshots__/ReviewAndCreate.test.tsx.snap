@@ -14,12 +14,14 @@ exports[`<ReviewAndCreate /> spec renders the component, validation loading 1`] 
       <div
         class="euiPageHeaderSection"
       >
-        <h1
-          class="euiTitle euiTitle--large"
+        <div
+          class="euiText euiText--small"
           data-test-subj="reviewAndCreateTitle"
         >
-          Review and create 
-        </h1>
+          <h1>
+            Review and create 
+          </h1>
+        </div>
       </div>
     </header>
     <div
@@ -1143,12 +1145,14 @@ exports[`issue in detector validation issues in feature query 1`] = `
         <div
           class="euiPageHeaderSection"
         >
-          <h1
-            class="euiTitle euiTitle--large"
+          <div
+            class="euiText euiText--small"
             data-test-subj="reviewAndCreateTitle"
           >
-            Review and create 
-          </h1>
+            <h1>
+              Review and create 
+            </h1>
+          </div>
         </div>
       </header>
       <div

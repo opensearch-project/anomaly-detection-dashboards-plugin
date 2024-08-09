@@ -17,9 +17,9 @@ import {
   EuiFlexGroup,
   EuiPage,
   EuiButton,
-  EuiTitle,
   EuiButtonEmpty,
   EuiSpacer,
+  EuiText,
 } from '@elastic/eui';
 import {
   createDetector,
@@ -334,9 +334,9 @@ export function ReviewAndCreate(props: ReviewAndCreateProps) {
             <EuiPageBody>
               <EuiPageHeader>
                 <EuiPageHeaderSection>
-                  <EuiTitle size="l" data-test-subj="reviewAndCreateTitle">
+                  <EuiText size="s" data-test-subj="reviewAndCreateTitle">
                     <h1>Review and create </h1>
-                  </EuiTitle>
+                  </EuiText>
                 </EuiPageHeaderSection>
               </EuiPageHeader>
               <DetectorDefinitionFields

@@ -15,6 +15,7 @@ import {
   EuiFlexItem,
   EuiFlexGroup,
   EuiCallOut,
+  EuiText,
 } from '@elastic/eui';
 import { get, isEmpty } from 'lodash';
 import '../styles.scss';
@@ -334,11 +335,11 @@ function AssociatedDetectors({ embeddable, closeFlyout, setMode }) {
         onClose={closeFlyout}
       >
         <EuiFlyoutHeader hasBorder>
-          <EuiTitle>
+          <EuiText size="s">
             <h2 id="associated-detectors__title">
               Associated anomaly detectors
             </h2>
-          </EuiTitle>
+          </EuiText>
         </EuiFlyoutHeader>
         {associationLimitReached ? (
           <EuiCallOut
