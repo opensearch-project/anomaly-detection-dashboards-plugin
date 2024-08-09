@@ -86,7 +86,7 @@ function AssociatedDetectors({ embeddable, closeFlyout, setMode }) {
       const indexPattern = await getSavedObjectsClient().get('index-pattern', indexPatternId);
       const refs = indexPattern.references as References[];
       const foundDataSourceId = refs.find(ref => ref.type === 'data-source')?.id;
-      setDataSourceId(foundDataSourceId);
+      setDataSourceId(foundDataSourceId); 
     } catch (error) {
       console.error("Error fetching index pattern:", error);
     }
@@ -271,7 +271,7 @@ function AssociatedDetectors({ embeddable, closeFlyout, setMode }) {
       getDetectorList(
         getAllDetectorsQueryParamsWithDataSourceId(dataSourceId)
       )
-    );
+    );  
   };
 
   const handleUnlinkDetectorAction = (detector: DetectorListItem) => {

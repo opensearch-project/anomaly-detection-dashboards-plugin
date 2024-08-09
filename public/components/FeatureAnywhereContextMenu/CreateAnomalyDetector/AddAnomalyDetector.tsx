@@ -141,7 +141,7 @@ function AddAnomalyDetector({
       const indexPattern = await getSavedObjectsClient().get('index-pattern', indexPatternId);
       const refs = indexPattern.references as References[];
       const foundDataSourceId = refs.find(ref => ref.type === 'data-source')?.id;
-      setDataSourceId(foundDataSourceId);
+      setDataSourceId(foundDataSourceId); 
     } catch (error) {
       console.error("Error fetching index pattern:", error);
     }
@@ -167,7 +167,7 @@ function AddAnomalyDetector({
     }
     fetchData();
     createEmbeddable();
-  }, [dataSourceId]);
+  }, [dataSourceId]); 
 
   const [isShowVis, setIsShowVis] = useState(false);
   const [accordionsOpen, setAccordionsOpen] = useState({ modelFeatures: true });

@@ -323,7 +323,7 @@ export const DefineDetector = (props: DefineDetectorProps) => {
             componentType={'DataSourceSelectable'}
             componentConfig={{
               fullWidth: false,
-              activeOption: MDSCreateState.selectedDataSourceId !== undefined
+              activeOption: MDSCreateState.selectedDataSourceId !== undefined 
                 ? [{ id: MDSCreateState.selectedDataSourceId }]
                 : undefined,
               savedObjects: getSavedObjectsClient(),
