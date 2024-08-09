@@ -13,7 +13,7 @@ exports[`<EmptyDetectorMessage /> spec Empty results renders component with empt
       class="euiText euiText--medium"
     >
       <div
-        class="euiText euiText--medium"
+        class="euiText euiText--small"
       >
         <p>
           A detector is an individual anomaly detection task. You can create multiple detectors, and all the detectors can run simultaneously, with each analyzing data from different sources. Create an anomaly detector to get started.
@@ -86,7 +86,7 @@ exports[`<EmptyDetectorMessage /> spec Filters results message renders component
       class="euiText euiText--medium"
     >
       <div
-        class="euiText euiText--medium"
+        class="euiText euiText--small"
       >
         <p>
           There are no detectors matching your applied filters. Reset your filters to view all detectors.

@@ -14,13 +14,15 @@ exports[`<DefineDetector /> Full creating detector definition renders the compon
       <div
         class="euiPageHeaderSection"
       >
-        <h1
-          class="euiTitle euiTitle--large"
+        <div
+          class="euiText euiText--small"
           data-test-subj="defineOrEditDetectorTitle"
         >
-          Define detector
-           
-        </h1>
+          <h1>
+            Define detector
+             
+          </h1>
+        </div>
       </div>
     </header>
     <div
@@ -1003,13 +1005,15 @@ exports[`<DefineDetector /> empty creating detector definition renders the compo
       <div
         class="euiPageHeaderSection"
       >
-        <h1
-          class="euiTitle euiTitle--large"
+        <div
+          class="euiText euiText--small"
           data-test-subj="defineOrEditDetectorTitle"
         >
-          Define detector
-           
-        </h1>
+          <h1>
+            Define detector
+             
+          </h1>
+        </div>
       </div>
     </header>
     <div
@@ -1990,13 +1994,15 @@ exports[`<DefineDetector /> empty editing detector definition renders the compon
       <div
         class="euiPageHeaderSection"
       >
-        <h1
-          class="euiTitle euiTitle--large"
+        <div
+          class="euiText euiText--small"
           data-test-subj="defineOrEditDetectorTitle"
         >
-          Edit detector settings
-           
-        </h1>
+          <h1>
+            Edit detector settings
+             
+          </h1>
+        </div>
       </div>
     </header>
     <div
