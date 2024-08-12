@@ -36,7 +36,6 @@ import { RouteComponentProps, useLocation } from 'react-router-dom';
 import {
   constructHrefWithDataSourceId,
   getDataSourceFromURL,
-  isDataSourceCompatible,
 } from '../../../pages/utils/helpers';
 import {
   getDataSourceManagementPlugin,
@@ -141,7 +140,6 @@ export function DetectorJobs(props: DetectorJobsProps) {
           fullWidth: false,
           savedObjects: getSavedObjectsClient(),
           notifications: getNotifications(),
-          dataSourceFilter: isDataSourceCompatible,
         }}
       />
     );
