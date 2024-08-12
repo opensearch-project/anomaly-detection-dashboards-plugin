@@ -56,7 +56,6 @@ import {
 import {
   constructHrefWithDataSourceId,
   getDataSourceFromURL,
-  isDataSourceCompatible,
 } from '../../../pages/utils/helpers';
 import {
   getDataSourceManagementPlugin,
@@ -311,7 +310,6 @@ export function ReviewAndCreate(props: ReviewAndCreateProps) {
           fullWidth: false,
           savedObjects: getSavedObjectsClient(),
           notifications: getNotifications(),
-          dataSourceFilter: isDataSourceCompatible,
         }}
       />
     );

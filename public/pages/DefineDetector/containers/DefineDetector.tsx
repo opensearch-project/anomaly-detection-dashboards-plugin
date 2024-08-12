@@ -310,7 +310,6 @@ export const DefineDetector = (props: DefineDetectorProps) => {
           fullWidth: false,
           savedObjects: getSavedObjectsClient(),
           notifications: getNotifications(),
-          dataSourceFilter: isDataSourceCompatible,
         }}
       />
     );
