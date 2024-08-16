@@ -19,6 +19,8 @@ import {
   EuiPopover,
 } from '@elastic/eui';
 import { Detector } from '../../../../models/interfaces';
+import { getApplication, getNavigationUI, getUISettings } from '../../../../services';
+import { USE_NEW_HOME_PAGE } from '../../../../utils/constants';
 
 interface DetectorControls {
   onEditDetector(): void;
@@ -30,7 +32,11 @@ interface DetectorControls {
 }
 export const DetectorControls = (props: DetectorControls) => {
   const [isOpen, setIsOpen] = useState(false);
-  return (
+  const useUpdatedUX = getUISettings().get(USE_NEW_HOME_PAGE);
+  const { HeaderControl } = getNavigationUI();
+  const { setAppRightControls } = getApplication();
+
+  const ActionsPopover = (
     <EuiFlexGroup justifyContent="spaceBetween" alignItems="center">
       <EuiFlexItem grow={false}>
         <EuiPopover
@@ -79,5 +85,23 @@ export const DetectorControls = (props: DetectorControls) => {
         </EuiPopover>
       </EuiFlexItem>
     </EuiFlexGroup>
+  );
+  const renderActionsPopover = () => {
+    return useUpdatedUX ? (
+      <HeaderControl
+        setMountPoint={setAppRightControls}
+        controls={[
+          {
+            renderComponent: ActionsPopover
+          }
+        ]}
+      />
+    ) : (
+      ActionsPopover
+    );
+  };
+
+  return (
+    renderActionsPopover()
   );
 };

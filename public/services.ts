@@ -15,7 +15,7 @@ import { EmbeddableStart } from '../../../src/plugins/embeddable/public';
 import { createGetterSetter } from '../../../src/plugins/opensearch_dashboards_utils/public';
 import { UiActionsStart } from '../../../src/plugins/ui_actions/public';
 import { SavedAugmentVisLoader } from '../../../src/plugins/vis_augmenter/public';
-import { DataSourcePluginSetup } from '../../../src/plugins/data_source/public';
+import { NavigationPublicPluginStart } from '../../../src/plugins/navigation/public';
 
 export interface DataSourceEnabled {
   enabled: boolean;
@@ -53,6 +53,12 @@ export const [getDataSourceManagementPlugin, setDataSourceManagementPlugin] =
 
 export const [getDataSourceEnabled, setDataSourceEnabled] =
   createGetterSetter<DataSourceEnabled>('DataSourceEnabled');
+
+export const [getNavigationUI, setNavigationUI] = 
+  createGetterSetter<NavigationPublicPluginStart['ui']>('navigation');
+
+export const [getApplication, setApplication] = 
+  createGetterSetter<CoreStart['application']>('application');
 
 // This is primarily used for mocking this module and each of its fns in tests.
 export default {

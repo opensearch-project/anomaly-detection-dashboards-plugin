@@ -48,7 +48,7 @@ import {
 import { getAliases, getIndices } from '../../../redux/reducers/opensearch';
 import { getErrorMessage, Listener } from '../../../utils/utils';
 import { darkModeEnabled } from '../../../utils/opensearchDashboardsUtils';
-import { BREADCRUMBS, MDS_BREADCRUMBS } from '../../../utils/constants';
+import { BREADCRUMBS, MDS_BREADCRUMBS, USE_NEW_HOME_PAGE } from '../../../utils/constants';
 import { DetectorControls } from '../components/DetectorControls';
 import { ConfirmModal } from '../components/ConfirmModal/ConfirmModal';
 import { useFetchMonitorInfo } from '../hooks/useFetchMonitorInfo';
@@ -70,6 +70,7 @@ import {
   getDataSourceEnabled,
   getNotifications,
   getSavedObjectsClient,
+  getUISettings,
 } from '../../../services';
 import { constructHrefWithDataSourceId, getDataSourceFromURL } from '../../../pages/utils/helpers';
 
@@ -194,6 +195,8 @@ export const DetectorDetail = (props: DetectorDetailProps) => {
       showMonitorCalloutModal: false,
       deleteTyped: false,
     });
+
+  const useUpdatedUX = getUISettings().get(USE_NEW_HOME_PAGE);
 
   useHideSideNavBar(true, false);
 
@@ -435,6 +438,20 @@ export const DetectorDetail = (props: DetectorDetailProps) => {
     );
   }
 
+  const renderPageHeader = () => {
+    if (useUpdatedUX) {
+      return null;
+    } else {
+      return (
+        <EuiFlexItem grow={false}>
+          <EuiTitle size="l" data-test-subj="detectorNameHeader">
+            <h1>{detector && detector.name}</h1>
+          </EuiTitle>
+        </EuiFlexItem>
+      );
+    }
+  };
+  
   return (
     <React.Fragment>
       {!isEmpty(detector) && !hasError ? (
@@ -451,12 +468,7 @@ export const DetectorDetail = (props: DetectorDetailProps) => {
             justifyContent="spaceBetween"
             style={{ padding: '10px' }}
           >
-            <EuiFlexItem grow={false}>
-              <EuiTitle size="l" data-test-subj="detectorNameHeader">
-                {<h1>{detector && detector.name} </h1>}
-              </EuiTitle>
-            </EuiFlexItem>
-
+            {renderPageHeader()}
             <EuiFlexItem grow={false}>
               <DetectorControls
                 onEditDetector={handleEditDetector}

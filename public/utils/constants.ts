@@ -24,6 +24,8 @@ export const BREADCRUMBS = Object.freeze({
   EDIT_DETECTOR: { text: 'Edit detector' },
   DASHBOARD: { text: 'Dashboard', href: '#/dashboard' },
   EDIT_MODEL_CONFIGURATION: { text: 'Edit model configuration' },
+  TITLE_GET_STARTED: { text: 'Get started'},
+  TITLE_REAL_TIME_DASHBOARD: { text: 'Real-time dashboard'},
 });
 
 export const MDS_BREADCRUMBS = Object.freeze({
@@ -114,3 +116,5 @@ export const OVERVIEW_PAGE_NAV_ID = `anomaly_detection_dashboard-overview`;
 export const DASHBOARD_PAGE_NAV_ID = `anomaly_detection_dashboard-dashboard`;
 
 export const DETECTORS_PAGE_NAV_ID = `anomaly_detection_dashboard-detectors`;
+
+export const USE_NEW_HOME_PAGE = 'home:useNewHomePage';

@@ -45,7 +45,7 @@ import {
   getVisibleOptions,
   isDataSourceCompatible,
 } from '../../utils/helpers';
-import { BREADCRUMBS, MDS_BREADCRUMBS } from '../../../utils/constants';
+import { BREADCRUMBS, MDS_BREADCRUMBS, USE_NEW_HOME_PAGE } from '../../../utils/constants';
 import { DETECTOR_STATE } from '../../../../server/utils/constants';
 import {
   getDetectorStateOptions,
@@ -64,6 +64,7 @@ import {
   getDataSourceEnabled,
   getNotifications,
   getSavedObjectsClient,
+  getUISettings,
 } from '../../../services';
 import { RouteComponentProps } from 'react-router-dom';
 
@@ -163,6 +164,8 @@ export function DashboardOverview(props: OverviewProps) {
   const visibleIndices = get(opensearchState, 'indices', []) as CatIndex[];
   const visibleAliases = get(opensearchState, 'aliases', []) as IndexAlias[];
 
+  const useUpdatedUX = getUISettings().get(USE_NEW_HOME_PAGE);
+
   const handleIndicesFilterChange = (
     options: EuiComboBoxOptionProps[]
   ): void => {
@@ -242,16 +245,32 @@ export function DashboardOverview(props: OverviewProps) {
   }, [errorGettingDetectors]);
 
   useEffect(() => {
-    if (dataSourceEnabled) {
-      core.chrome.setBreadcrumbs([
-        MDS_BREADCRUMBS.ANOMALY_DETECTOR(MDSOverviewState.selectedDataSourceId),
-        MDS_BREADCRUMBS.DASHBOARD(MDSOverviewState.selectedDataSourceId),
-      ]);
+    if (useUpdatedUX) {
+      if (dataSourceEnabled) {
+        core.chrome.setBreadcrumbs([
+          MDS_BREADCRUMBS.ANOMALY_DETECTOR(MDSOverviewState.selectedDataSourceId),
+          MDS_BREADCRUMBS.DASHBOARD(MDSOverviewState.selectedDataSourceId),
+          BREADCRUMBS.TITLE_REAL_TIME_DASHBOARD,
+        ]);
+      } else {
+        core.chrome.setBreadcrumbs([
+          BREADCRUMBS.ANOMALY_DETECTOR,
+          BREADCRUMBS.DASHBOARD,
+          BREADCRUMBS.TITLE_REAL_TIME_DASHBOARD,
+        ]);
+      }
     } else {
-      core.chrome.setBreadcrumbs([
-        BREADCRUMBS.ANOMALY_DETECTOR,
-        BREADCRUMBS.DASHBOARD,
-      ]);
+      if (dataSourceEnabled) {
+        core.chrome.setBreadcrumbs([
+          MDS_BREADCRUMBS.ANOMALY_DETECTOR(MDSOverviewState.selectedDataSourceId),
+          MDS_BREADCRUMBS.DASHBOARD(MDSOverviewState.selectedDataSourceId),
+        ]);
+      } else {
+        core.chrome.setBreadcrumbs([
+          BREADCRUMBS.ANOMALY_DETECTOR,
+          BREADCRUMBS.DASHBOARD,
+        ]);
+      }
     }
   });
 
