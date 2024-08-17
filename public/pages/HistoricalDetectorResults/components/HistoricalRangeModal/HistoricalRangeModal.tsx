@@ -16,9 +16,9 @@ import {
   EuiModalHeader,
   EuiModalHeaderTitle,
   EuiModalBody,
-  EuiButtonEmpty,
-  EuiButton,
-  EuiSuperDatePicker,
+  EuiSmallButtonEmpty,
+  EuiSmallButton,
+  EuiCompressedSuperDatePicker,
 } from '@elastic/eui';
 import { get } from 'lodash';
 import { Detector } from '../../../../models/interfaces';
@@ -58,7 +58,7 @@ export const HistoricalRangeModal = (props: HistoricalRangeModalProps) => {
       </EuiModalHeader>
       <EuiModalBody>
         <FormattedFormRow title="Select a date range">
-          <EuiSuperDatePicker
+          <EuiCompressedSuperDatePicker
             isPaused={true}
             showUpdateButton={false}
             commonlyUsedRanges={HISTORICAL_DATE_RANGE_COMMON_OPTIONS}
@@ -73,11 +73,11 @@ export const HistoricalRangeModal = (props: HistoricalRangeModalProps) => {
       </EuiModalBody>
 
       <EuiModalFooter>
-        <EuiButtonEmpty data-test-subj="cancelButton" onClick={props.onClose}>
+        <EuiSmallButtonEmpty data-test-subj="cancelButton" onClick={props.onClose}>
           Cancel
-        </EuiButtonEmpty>
+        </EuiSmallButtonEmpty>
 
-        <EuiButton
+        <EuiSmallButton
           data-test-subj="confirmButton"
           fill
           onClick={() => {
@@ -89,7 +89,7 @@ export const HistoricalRangeModal = (props: HistoricalRangeModalProps) => {
           }}
         >
           Run historical analysis
-        </EuiButton>
+        </EuiSmallButton>
       </EuiModalFooter>
     </EuiModal>
   );

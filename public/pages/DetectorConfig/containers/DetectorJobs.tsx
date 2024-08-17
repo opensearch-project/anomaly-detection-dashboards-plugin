@@ -10,7 +10,7 @@
  */
 
 import ContentPanel from '../../../components/ContentPanel/ContentPanel';
-import { EuiFlexGrid, EuiFlexItem, EuiFormRow, EuiText } from '@elastic/eui';
+import { EuiFlexGrid, EuiFlexItem, EuiCompressedFormRow, EuiText } from '@elastic/eui';
 import React from 'react';
 import { get, isEmpty } from 'lodash';
 import { ConfigCell } from '../../../components/ConfigCell';
@@ -52,7 +52,7 @@ export const DetectorJobs = (props: DetectorJobsProps) => {
           />
         </EuiFlexItem>
         <EuiFlexItem>
-          <EuiFormRow label="Historical analysis detector">
+          <EuiCompressedFormRow label="Historical analysis detector">
             <EuiText>
               <p className="enabledLongerWidth">
                 {historicalEnabled
@@ -60,7 +60,7 @@ export const DetectorJobs = (props: DetectorJobsProps) => {
                   : 'Disabled'}
               </p>
             </EuiText>
-          </EuiFormRow>
+          </EuiCompressedFormRow>
         </EuiFlexItem>
       </EuiFlexGrid>
     </ContentPanel>

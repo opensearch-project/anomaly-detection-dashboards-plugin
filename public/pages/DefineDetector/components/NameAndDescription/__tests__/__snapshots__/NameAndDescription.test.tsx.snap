@@ -48,7 +48,7 @@ exports[`<NameAndDescription /> spec renders the component 1`] = `
         style="padding: 10px 0px;"
       >
         <div
-          class="euiFormRow"
+          class="euiFormRow euiFormRow--compressed"
           hint="Specify a unique and descriptive name that is easy to recognize."
           id="random_html_id-row"
           title="Name"
@@ -81,14 +81,14 @@ exports[`<NameAndDescription /> spec renders the component 1`] = `
             class="euiFormRow__fieldWrapper"
           >
             <div
-              class="euiFormControlLayout"
+              class="euiFormControlLayout euiFormControlLayout--compressed"
             >
               <div
                 class="euiFormControlLayout__childrenWrapper"
               >
                 <input
                   aria-describedby="random_html_id-help-0"
-                  class="euiFieldText"
+                  class="euiFieldText euiFieldText--compressed"
                   data-test-subj="detectorNameTextInput"
                   id="random_html_id"
                   name="name"
@@ -108,7 +108,7 @@ exports[`<NameAndDescription /> spec renders the component 1`] = `
           </div>
         </div>
         <div
-          class="euiFormRow"
+          class="euiFormRow euiFormRow--compressed"
           hint="Describe the purpose of the detector."
           id="random_html_id-row"
         >
@@ -145,7 +145,7 @@ exports[`<NameAndDescription /> spec renders the component 1`] = `
             class="euiFormRow__fieldWrapper"
           >
             <textarea
-              class="euiTextArea euiTextArea--resizeVertical"
+              class="euiTextArea euiTextArea--resizeVertical euiTextArea--compressed"
               data-test-subj="detectorDescriptionTextInput"
               id="random_html_id"
               name="description"
