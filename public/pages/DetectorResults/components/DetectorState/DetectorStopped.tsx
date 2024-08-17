@@ -10,7 +10,7 @@
  */
 
 import React from 'react';
-import { EuiButton, EuiEmptyPrompt } from '@elastic/eui';
+import { EuiSmallButton, EuiEmptyPrompt } from '@elastic/eui';
 import { Fragment } from 'react';
 
 export interface DetectorStoppedProps {
@@ -28,13 +28,13 @@ export const DetectorStopped = (props: DetectorStoppedProps) => {
         </Fragment>
       }
       actions={[
-        <EuiButton
+        <EuiSmallButton
           fill
           onClick={props.onStartDetector}
           style={{ width: '200px' }}
         >
           Start detector
-        </EuiButton>,
+        </EuiSmallButton>,
       ]}
     />
   );

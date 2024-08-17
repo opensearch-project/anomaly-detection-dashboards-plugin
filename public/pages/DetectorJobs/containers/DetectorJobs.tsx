@@ -16,9 +16,9 @@ import {
   EuiFlexItem,
   EuiFlexGroup,
   EuiPage,
-  EuiButton,
+  EuiSmallButton,
   EuiTitle,
-  EuiButtonEmpty,
+  EuiSmallButtonEmpty,
   EuiSpacer,
 } from '@elastic/eui';
 import { FormikProps, Formik } from 'formik';
@@ -186,7 +186,7 @@ export function DetectorJobs(props: DetectorJobsProps) {
             style={{ marginRight: '12px' }}
           >
             <EuiFlexItem grow={false}>
-              <EuiButtonEmpty
+              <EuiSmallButtonEmpty
                 onClick={() => {
                   props.history.push(
                     constructHrefWithDataSourceId(
@@ -198,10 +198,10 @@ export function DetectorJobs(props: DetectorJobsProps) {
                 }}
               >
                 Cancel
-              </EuiButtonEmpty>
+              </EuiSmallButtonEmpty>
             </EuiFlexItem>
             <EuiFlexItem grow={false}>
-              <EuiButton
+              <EuiSmallButton
                 iconSide="left"
                 iconType="arrowLeft"
                 fill={false}
@@ -219,10 +219,10 @@ export function DetectorJobs(props: DetectorJobsProps) {
                 }}
               >
                 Previous
-              </EuiButton>
+              </EuiSmallButton>
             </EuiFlexItem>
             <EuiFlexItem grow={false}>
-              <EuiButton
+              <EuiSmallButton
                 type="submit"
                 iconSide="right"
                 iconType="arrowRight"
@@ -235,7 +235,7 @@ export function DetectorJobs(props: DetectorJobsProps) {
                 }}
               >
                 Next
-              </EuiButton>
+              </EuiSmallButton>
             </EuiFlexItem>
           </EuiFlexGroup>
         </Fragment>

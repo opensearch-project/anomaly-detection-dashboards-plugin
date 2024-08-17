@@ -10,11 +10,11 @@
  */
 
 import {
-  EuiComboBox,
+  EuiCompressedComboBox,
   EuiFlexGroup,
   EuiFlexItem,
-  EuiFormRow,
-  EuiSelect,
+  EuiCompressedFormRow,
+  EuiCompressedSelect,
 } from '@elastic/eui';
 import { Field, FieldProps } from 'formik';
 import React, { useState } from 'react';
@@ -96,12 +96,12 @@ export const SimpleFilter = (props: SimpleFilterProps) => {
               validateOnChange={true}
             >
               {({ field, form }: FieldProps) => (
-                <EuiFormRow
+                <EuiCompressedFormRow
                   label="Field"
                   isInvalid={isInvalid(field.name, form)}
                   error={getError(field.name, form)}
                 >
-                  <EuiComboBox
+                  <EuiCompressedComboBox
                     id={`filters.${props.index}.fieldInfo`}
                     singleSelection={{ asPlainText: true }}
                     placeholder="Choose a field"
@@ -144,19 +144,19 @@ export const SimpleFilter = (props: SimpleFilterProps) => {
                     onSearchChange={handleSearchFieldChange}
                     isInvalid={isInvalid(field.name, form)}
                   />
-                </EuiFormRow>
+                </EuiCompressedFormRow>
               )}
             </Field>
           </EuiFlexItem>
           <EuiFlexItem>
             <Field name={`filters.${props.index}.operator`}>
               {({ field, form }: FieldProps) => (
-                <EuiFormRow
+                <EuiCompressedFormRow
                   label="Operator"
                   isInvalid={isInvalid(field.name, form)}
                   error={getError(field.name, form)}
                 >
-                  <EuiSelect
+                  <EuiCompressedSelect
                     id={`filters.${props.index}.operator`}
                     placeholder="Choose an operator"
                     {...field}
@@ -192,7 +192,7 @@ export const SimpleFilter = (props: SimpleFilterProps) => {
                       );
                     }}
                   />
-                </EuiFormRow>
+                </EuiCompressedFormRow>
               )}
             </Field>
           </EuiFlexItem>

@@ -9,7 +9,7 @@
  * GitHub history for details.
  */
 
-import { EuiFlexGroup, EuiFlexItem, EuiButton } from '@elastic/eui';
+import { EuiFlexGroup, EuiFlexItem, EuiSmallButton } from '@elastic/eui';
 import React from 'react';
 import { APP_PATH, PLUGIN_NAME } from '../../utils/constants';
 import { useLocation } from 'react-router-dom';
@@ -23,27 +23,27 @@ export const CreateDetectorButtons = () => {
   const createDetectorUrl = `${PLUGIN_NAME}#` + constructHrefWithDataSourceId(`${APP_PATH.CREATE_DETECTOR}`, dataSourceId, false);
 
   const sampleDetectorUrl = `${PLUGIN_NAME}#` + constructHrefWithDataSourceId(`${APP_PATH.OVERVIEW}`, dataSourceId, false);
-  
+
   return (
     <EuiFlexGroup direction="row" gutterSize="m" justifyContent="center">
       <EuiFlexItem grow={false}>
-        <EuiButton
+        <EuiSmallButton
           style={{ width: '200px' }}
           href={sampleDetectorUrl}
           data-test-subj="sampleDetectorButton"
         >
           Try a sample detector
-        </EuiButton>
+        </EuiSmallButton>
       </EuiFlexItem>
       <EuiFlexItem grow={false}>
-        <EuiButton
+        <EuiSmallButton
           style={{ width: '200px' }}
           fill
           href={createDetectorUrl}
           data-test-subj="createDetectorButton"
         >
           Create detector
-        </EuiButton>
+        </EuiSmallButton>
       </EuiFlexItem>
     </EuiFlexGroup>
   );

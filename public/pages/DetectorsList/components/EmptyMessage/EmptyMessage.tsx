@@ -9,7 +9,7 @@
  * GitHub history for details.
  */
 
-import { EuiButton, EuiEmptyPrompt, EuiText } from '@elastic/eui';
+import { EuiSmallButton, EuiEmptyPrompt, EuiText } from '@elastic/eui';
 import React from 'react';
 import { CreateDetectorButtons } from '../../../../components/CreateDetectorButtons/CreateDetectorButtons';
 
@@ -36,13 +36,13 @@ export const EmptyDetectorMessage = (props: EmptyDetectorProps) => (
     }
     actions={
       props.isFilterApplied ? (
-        <EuiButton
+        <EuiSmallButton
           fill
           onClick={props.onResetFilters}
           data-test-subj="resetListFilters"
         >
           Reset filters
-        </EuiButton>
+        </EuiSmallButton>
       ) : (
         <CreateDetectorButtons />
       )

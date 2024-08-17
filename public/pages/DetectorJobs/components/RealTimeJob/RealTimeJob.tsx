@@ -14,7 +14,7 @@ import {
   EuiLink,
   EuiIcon,
   EuiFlexItem,
-  EuiCheckbox,
+  EuiCompressedCheckbox,
 } from '@elastic/eui';
 import { Field, FieldProps, FormikProps } from 'formik';
 import { get } from 'lodash';
@@ -55,7 +55,7 @@ export function RealTimeJob(props: RealTimeJobProps) {
       <Field name="realTime" validate={() => {}}>
         {({ field, form }: FieldProps) => (
           <EuiFlexItem>
-            <EuiCheckbox
+            <EuiCompressedCheckbox
               id={'realTimeCheckbox'}
               label="Start real-time detector automatically (recommended)"
               checked={enabled}

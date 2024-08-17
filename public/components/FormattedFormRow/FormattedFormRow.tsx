@@ -10,7 +10,7 @@
  */
 
 import React, { ReactElement, ReactNode } from 'react';
-import { EuiFormRow, EuiText, EuiLink, EuiIcon } from '@elastic/eui';
+import { EuiCompressedFormRow, EuiText, EuiLink, EuiIcon } from '@elastic/eui';
 
 type FormattedFormRowProps = {
   title?: string;
@@ -46,7 +46,7 @@ export const FormattedFormRow = (props: FormattedFormRowProps) => {
   const { formattedTitle, ...euiFormRowProps } = props;
 
   return (
-    <EuiFormRow
+    <EuiCompressedFormRow
       label={
         <div style={{ lineHeight: '8px' }}>
           {formattedTitle ? formattedTitle : <p>{props.title}</p>}
@@ -57,6 +57,6 @@ export const FormattedFormRow = (props: FormattedFormRowProps) => {
       {...euiFormRowProps}
     >
       {props.children}
-    </EuiFormRow>
+    </EuiCompressedFormRow>
   );
 };

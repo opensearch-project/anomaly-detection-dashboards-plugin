@@ -16,7 +16,7 @@ import {
   EuiText,
   EuiFlexItem,
   EuiProgress,
-  EuiButton,
+  EuiSmallButton,
   EuiSpacer,
 } from '@elastic/eui';
 import React from 'react';
@@ -121,9 +121,9 @@ export const HistoricalDetectorCallout = (
               ) : null}
               <EuiSpacer size="s" />
               <EuiFlexItem grow={false} style={{ marginLeft: '22px' }}>
-                <EuiButton fill={false} onClick={() => props.onStopDetector()}>
+                <EuiSmallButton fill={false} onClick={() => props.onStopDetector()}>
                   Stop historical analysis
-                </EuiButton>
+                </EuiSmallButton>
               </EuiFlexItem>
             </div>
           }
