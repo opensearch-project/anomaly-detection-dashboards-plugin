@@ -5,7 +5,10 @@
   "configPath": [
     "anomaly_detection_dashboards"
   ],
-  "optionalPlugins": ["dataSource","dataSourceManagement"],
+  "optionalPlugins": [
+    "dataSource",
+    "dataSourceManagement"
+  ],
   "requiredPlugins": [
     "opensearchDashboardsUtils",
     "expressions",
@@ -23,5 +26,7 @@
   "server": true,
   "ui": true,
   "supportedOSDataSourceVersions": ">=2.9.0",
-  "requiredOSDataSourcePlugins": ["opensearch-anomaly-detection"]
+  "requiredOSDataSourcePlugins": [
+    "opensearch-anomaly-detection"
+  ]
 }
