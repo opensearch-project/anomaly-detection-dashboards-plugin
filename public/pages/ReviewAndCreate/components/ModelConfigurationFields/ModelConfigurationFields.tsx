@@ -13,7 +13,7 @@ import React, { useState } from 'react';
 import {
   EuiBasicTable,
   EuiLink,
-  EuiButton,
+  EuiSmallButton,
   EuiSpacer,
   EuiCallOut,
   EuiLoadingSpinner,
@@ -282,7 +282,7 @@ export const ModelConfigurationFields = (
             size="s"
             style={{ marginBottom: '10px' }}
           >
-            {/* Callout can either display feature subissue which related to a specific 
+            {/* Callout can either display feature subissue which related to a specific
             feature issue or display a feature_attribute issue that is general like
             more then x anomaly feature or dulicate feature names */}
             {props.validationFeatureResponse.hasOwnProperty('sub_issues') ? (
@@ -307,7 +307,7 @@ export const ModelConfigurationFields = (
       title="Model configuration"
       titleSize="s"
       actions={[
-        <EuiButton onClick={props.onEditModelConfiguration}>Edit</EuiButton>,
+        <EuiSmallButton onClick={props.onEditModelConfiguration}>Edit</EuiSmallButton>,
       ]}
     >
       {getValidationCallout()}

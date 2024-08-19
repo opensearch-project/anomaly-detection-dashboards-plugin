@@ -21,7 +21,7 @@ import {
   LineAnnotation,
   AnnotationDomainType,
 } from '@elastic/charts';
-import { EuiText, EuiLink, EuiButton, EuiIcon } from '@elastic/eui';
+import { EuiText, EuiLink, EuiSmallButton, EuiIcon } from '@elastic/eui';
 import React, { useState, Fragment } from 'react';
 import ContentPanel from '../../../../components/ContentPanel/ContentPanel';
 import { useDelayedLoader } from '../../../../hooks/useDelayedLoader';
@@ -166,7 +166,7 @@ export const FeatureChart = (props: FeatureChartProps) => {
       subTitle={featureDescription()}
       actions={
         props.edit ? (
-          <EuiButton onClick={props.onEdit}>Edit feature</EuiButton>
+          <EuiSmallButton onClick={props.onEdit}>Edit feature</EuiSmallButton>
         ) : null
       }
     >

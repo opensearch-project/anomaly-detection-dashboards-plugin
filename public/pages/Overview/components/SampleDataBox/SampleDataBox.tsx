@@ -13,7 +13,7 @@ import React from 'react';
 import { get } from 'lodash';
 import ContentPanel from '../../../../components/ContentPanel/ContentPanel';
 import {
-  EuiButton,
+  EuiSmallButton,
   EuiFlexGroup,
   EuiFlexItem,
   EuiTitle,
@@ -96,7 +96,7 @@ export const SampleDataBox = (props: SampleDataBoxProps) => {
             alignItems="center"
           >
             <EuiFlexItem grow={false}>
-              <EuiButton
+              <EuiSmallButton
                 style={{ width: '300px' }}
                 data-test-subj={get(
                   props,
@@ -114,7 +114,7 @@ export const SampleDataBox = (props: SampleDataBoxProps) => {
                   : props.isDataLoaded
                   ? 'Detector created'
                   : props.loadDataButtonDescription}
-              </EuiButton>
+              </EuiSmallButton>
             </EuiFlexItem>
             <EuiFlexItem grow={false}>
               {props.isDataLoaded ? (

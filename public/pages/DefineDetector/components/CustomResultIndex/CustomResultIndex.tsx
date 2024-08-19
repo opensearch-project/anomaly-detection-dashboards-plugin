@@ -15,13 +15,13 @@ import {
   EuiText,
   EuiLink,
   EuiTitle,
-  EuiFieldText,
+  EuiCompressedFieldText,
   EuiCallOut,
   EuiSpacer,
-  EuiFormRow,
-  EuiCheckbox,
+  EuiCompressedFormRow,
+  EuiCompressedCheckbox,
   EuiIcon,
-  EuiFieldNumber,
+  EuiCompressedFieldNumber,
 } from '@elastic/eui';
 import { Field, FieldProps, FormikProps, useFormikContext } from 'formik';
 import React, { useEffect, useState } from 'react';
@@ -58,7 +58,7 @@ function CustomResultIndex(props: CustomResultIndexProps) {
       if (customResultIndexMinAge === undefined && customResultIndexMinSize === undefined && customResultIndexTTL === undefined) {
         setCustomResultIndexConditionsEnabled(false);
       }
-    } 
+    }
     if (!customResultIndexConditionsEnabled) {
       setFieldValue('resultIndexMinAge', '');
       setFieldValue('resultIndexMinSize', '');
@@ -102,7 +102,7 @@ function CustomResultIndex(props: CustomResultIndexProps) {
         {({ field, form }: FieldProps) => (
           <EuiFlexGroup direction="column">
             <EuiFlexItem>
-              <EuiCheckbox
+              <EuiCompressedCheckbox
                 id={'resultIndexCheckbox'}
                 label="Enable custom result index"
                 checked={enabled}
@@ -130,20 +130,20 @@ function CustomResultIndex(props: CustomResultIndexProps) {
 
             {enabled ? (
               <EuiFlexItem>
-                <EuiFormRow
+                <EuiCompressedFormRow
                   label="Field"
                   isInvalid={isInvalid(field.name, form)}
                   error={getError(field.name, form)}
                   helpText={`Custom result index name must contain less than 255 characters including the prefix "opensearch-ad-plugin-result-". Valid characters are a-z, 0-9, -(hyphen) and _(underscore).`}
                 >
-                  <EuiFieldText
+                  <EuiCompressedFieldText
                     id="resultIndex"
                     placeholder="Enter result index name"
                     prepend={props.isEdit ? '' : CUSTOM_AD_RESULT_INDEX_PREFIX}
                     disabled={props.isEdit}
                     {...field}
                   />
-                </EuiFormRow>
+                </EuiCompressedFormRow>
               </EuiFlexItem>
             ) : null}
           </EuiFlexGroup>
@@ -158,7 +158,7 @@ function CustomResultIndex(props: CustomResultIndexProps) {
             {({ field, form }: FieldProps) => (
               <EuiFlexGroup>
                 <EuiFlexItem>
-                  <EuiCheckbox
+                  <EuiCompressedCheckbox
                     id={'flattenCustomResultIndex'}
                     label="Enable flattened custom result index"
                     checked={field.value ? field.value : get(props.formikProps, 'values.flattenCustomResultIndex')}
@@ -173,7 +173,7 @@ function CustomResultIndex(props: CustomResultIndexProps) {
         <EuiFlexItem>
           {enabled ? (
             <EuiFlexItem>
-              <EuiCheckbox
+              <EuiCompressedCheckbox
                 id={'resultIndexConditionCheckbox'}
                 label="Enable custom result index lifecycle management"
                 checked={customResultIndexConditionsEnabled}
@@ -185,9 +185,9 @@ function CustomResultIndex(props: CustomResultIndexProps) {
           ) : null}
         </EuiFlexItem>
       </EuiFlexGroup>
-      
-      { (enabled && customResultIndexConditionsEnabled) ? (<Field 
-        name="resultIndexMinAge" 
+
+      { (enabled && customResultIndexConditionsEnabled) ? (<Field
+        name="resultIndexMinAge"
         validate={(enabled && customResultIndexConditionsEnabled) ? validateEmptyOrPositiveInteger : null}
         >
         {({ field, form }: FieldProps) => (
@@ -208,7 +208,7 @@ function CustomResultIndex(props: CustomResultIndexProps) {
               >
                 <EuiFlexGroup gutterSize="s" alignItems="center">
                   <EuiFlexItem grow={false}>
-                    <EuiFieldNumber
+                    <EuiCompressedFieldNumber
                       name="resultIndexMinAge"
                       id="resultIndexMinAge"
                       data-test-subj="resultIndexMinAge"
@@ -227,7 +227,7 @@ function CustomResultIndex(props: CustomResultIndexProps) {
             </EuiFlexItem>
           </EuiFlexGroup>
         )}
-      </Field>) : null}  
+      </Field>) : null}
 
       {(enabled && customResultIndexConditionsEnabled) ? (<Field
         name="resultIndexMinSize"
@@ -251,7 +251,7 @@ function CustomResultIndex(props: CustomResultIndexProps) {
               >
                 <EuiFlexGroup gutterSize="s" alignItems="center">
                   <EuiFlexItem grow={false}>
-                    <EuiFieldNumber
+                    <EuiCompressedFieldNumber
                       name="resultIndexMinSize"
                       id="resultIndexMinSize"
                       placeholder="Min index size"
@@ -294,7 +294,7 @@ function CustomResultIndex(props: CustomResultIndexProps) {
               >
                 <EuiFlexGroup gutterSize="s" alignItems="center">
                   <EuiFlexItem grow={false}>
-                    <EuiFieldNumber
+                    <EuiCompressedFieldNumber
                       name="resultIndexTtl"
                       id="resultIndexTtl"
                       data-test-subj="resultIndexTtl"

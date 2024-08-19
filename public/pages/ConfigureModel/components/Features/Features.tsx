@@ -15,7 +15,7 @@ import {
   EuiText,
   EuiFlexItem,
   EuiFlexGroup,
-  EuiButton,
+  EuiSmallButton,
   EuiLink,
   EuiIcon,
 } from '@elastic/eui';
@@ -90,7 +90,7 @@ export function Features(props: FeaturesProps) {
                   style={{ padding: '12px 0px' }}
                 >
                   <EuiFlexItem grow={false}>
-                    <EuiButton
+                    <EuiSmallButton
                       data-test-subj="addFeature"
                       isDisabled={values.featureList.length >= MAX_FEATURE_NUM}
                       onClick={() => {
@@ -98,7 +98,7 @@ export function Features(props: FeaturesProps) {
                       }}
                     >
                       Add another feature
-                    </EuiButton>
+                    </EuiSmallButton>
                     <EuiText className="content-panel-subTitle">
                       <p>
                         You can add up to{' '}

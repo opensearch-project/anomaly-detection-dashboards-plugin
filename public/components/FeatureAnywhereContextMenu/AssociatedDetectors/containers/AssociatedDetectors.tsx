@@ -10,7 +10,7 @@ import {
   EuiSpacer,
   EuiInMemoryTable,
   EuiFlyoutBody,
-  EuiButton,
+  EuiSmallButton,
   EuiFlyout,
   EuiFlexItem,
   EuiFlexGroup,
@@ -85,7 +85,7 @@ function AssociatedDetectors({ embeddable, closeFlyout, setMode }) {
       const indexPattern = await getSavedObjectsClient().get('index-pattern', indexPatternId);
       const refs = indexPattern.references as References[];
       const foundDataSourceId = refs.find(ref => ref.type === 'data-source')?.id;
-      setDataSourceId(foundDataSourceId); 
+      setDataSourceId(foundDataSourceId);
     } catch (error) {
       console.error("Error fetching index pattern:", error);
     }
@@ -270,7 +270,7 @@ function AssociatedDetectors({ embeddable, closeFlyout, setMode }) {
       getDetectorList(
         getAllDetectorsQueryParamsWithDataSourceId(dataSourceId)
       )
-    );  
+    );
   };
 
   const handleUnlinkDetectorAction = (detector: DetectorListItem) => {
@@ -371,7 +371,7 @@ function AssociatedDetectors({ embeddable, closeFlyout, setMode }) {
             </EuiFlexItem>
             <EuiFlexItem grow={false}>
               <div>
-                <EuiButton
+                <EuiSmallButton
                   data-test-subj="associateDetectorButton"
                   fill
                   disabled={associationLimitReached}
@@ -381,7 +381,7 @@ function AssociatedDetectors({ embeddable, closeFlyout, setMode }) {
                   }}
                 >
                   Associate a detector
-                </EuiButton>
+                </EuiSmallButton>
               </div>
             </EuiFlexItem>
           </EuiFlexGroup>

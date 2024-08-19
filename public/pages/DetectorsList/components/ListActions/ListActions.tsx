@@ -11,7 +11,7 @@
 
 import React, { useState } from 'react';
 import {
-  EuiButton,
+  EuiSmallButton,
   EuiContextMenuItem,
   EuiContextMenuPanel,
   EuiFlexGroup,
@@ -36,7 +36,7 @@ export const ListActions = (props: ListActionsProps) => {
         <EuiPopover
           id="actionsPopover"
           button={
-            <EuiButton
+            <EuiSmallButton
               data-test-subj="listActionsButton"
               disabled={props.isActionsDisabled}
               iconType="arrowDown"
@@ -44,7 +44,7 @@ export const ListActions = (props: ListActionsProps) => {
               onClick={() => setIsOpen(!isOpen)}
             >
               Actions
-            </EuiButton>
+            </EuiSmallButton>
           }
           panelPaddingSize="none"
           anchorPosition="downLeft"

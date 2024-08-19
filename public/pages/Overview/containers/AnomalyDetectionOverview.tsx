@@ -17,7 +17,7 @@ import {
   EuiFlexItem,
   EuiFlexGroup,
   EuiLink,
-  EuiButton,
+  EuiSmallButton,
   EuiLoadingSpinner,
   EuiFlexGrid,
 } from '@elastic/eui';
@@ -104,8 +104,8 @@ export function AnomalyDetectionOverview(props: AnomalyDetectionOverviewProps) {
   const queryParams = getDataSourceFromURL(props.location);
   const [MDSOverviewState, setMDSOverviewState] = useState<MDSStates>({
     queryParams,
-    selectedDataSourceId: queryParams.dataSourceId === undefined 
-      ? undefined 
+    selectedDataSourceId: queryParams.dataSourceId === undefined
+      ? undefined
       : queryParams.dataSourceId,
   });
 
@@ -130,7 +130,7 @@ export function AnomalyDetectionOverview(props: AnomalyDetectionOverviewProps) {
         ...location,
         search: queryString.stringify(updatedParams),
       });
-    } 
+    }
     fetchData();
   }, [MDSOverviewState]);
 
@@ -250,7 +250,7 @@ export function AnomalyDetectionOverview(props: AnomalyDetectionOverviewProps) {
           componentType={'DataSourceSelectable'}
           componentConfig={{
             fullWidth: false,
-            activeOption: props.landingDataSourceId === undefined 
+            activeOption: props.landingDataSourceId === undefined
               || MDSOverviewState.selectedDataSourceId === undefined
                 ? undefined
                 : [{ id: MDSOverviewState.selectedDataSourceId }],
@@ -286,13 +286,13 @@ export function AnomalyDetectionOverview(props: AnomalyDetectionOverviewProps) {
             </EuiTitle>
           </EuiFlexItem>
           <EuiFlexItem grow={false}>
-            <EuiButton
+            <EuiSmallButton
               fill
               href={createDetectorUrl}
               data-test-subj="add_detector"
             >
               Create detector
-            </EuiButton>
+            </EuiSmallButton>
           </EuiFlexItem>
         </EuiFlexGroup>
       </EuiPageHeader>

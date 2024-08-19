@@ -232,7 +232,7 @@ exports[`<ConfigureModel /> spec creating model configuration renders the compon
                     class="euiAccordion__padding--l"
                   >
                     <div
-                      class="euiFormRow"
+                      class="euiFormRow euiFormRow--compressed"
                       id="random_html_id-row"
                     >
                       <div
@@ -250,14 +250,14 @@ exports[`<ConfigureModel /> spec creating model configuration renders the compon
                         class="euiFormRow__fieldWrapper"
                       >
                         <div
-                          class="euiFormControlLayout"
+                          class="euiFormControlLayout euiFormControlLayout--compressed"
                         >
                           <div
                             class="euiFormControlLayout__childrenWrapper"
                           >
                             <input
                               aria-describedby="random_html_id-help-0"
-                              class="euiFieldText"
+                              class="euiFieldText euiFieldText--compressed"
                               data-test-subj="featureNameTextInput-0"
                               id="random_html_id"
                               name="featureList.0.featureName"
@@ -276,7 +276,7 @@ exports[`<ConfigureModel /> spec creating model configuration renders the compon
                       </div>
                     </div>
                     <div
-                      class="euiFormRow"
+                      class="euiFormRow euiFormRow--compressed"
                       id="random_html_id-row"
                     >
                       <div
@@ -294,7 +294,7 @@ exports[`<ConfigureModel /> spec creating model configuration renders the compon
                         class="euiFormRow__fieldWrapper"
                       >
                         <div
-                          class="euiCheckbox"
+                          class="euiCheckbox euiCheckbox--compressed"
                         >
                           <input
                             checked=""
@@ -317,7 +317,7 @@ exports[`<ConfigureModel /> spec creating model configuration renders the compon
                       </div>
                     </div>
                     <div
-                      class="euiFormRow"
+                      class="euiFormRow euiFormRow--compressed"
                       id="random_html_id-row"
                     >
                       <div
@@ -335,13 +335,13 @@ exports[`<ConfigureModel /> spec creating model configuration renders the compon
                         class="euiFormRow__fieldWrapper"
                       >
                         <div
-                          class="euiFormControlLayout"
+                          class="euiFormControlLayout euiFormControlLayout--compressed"
                         >
                           <div
                             class="euiFormControlLayout__childrenWrapper"
                           >
                             <select
-                              class="euiSelect"
+                              class="euiSelect euiSelect--compressed"
                               id="random_html_id"
                               name="featureList.0.featureType"
                             >
@@ -364,7 +364,7 @@ exports[`<ConfigureModel /> spec creating model configuration renders the compon
                               >
                                 <svg
                                   aria-hidden="true"
-                                  class="euiIcon euiIcon--medium euiIcon-isLoading euiFormControlLayoutCustomIcon__icon"
+                                  class="euiIcon euiIcon--small euiIcon-isLoading euiFormControlLayoutCustomIcon__icon"
                                   focusable="false"
                                   height="16"
                                   role="img"
@@ -383,7 +383,7 @@ exports[`<ConfigureModel /> spec creating model configuration renders the compon
                       </div>
                     </div>
                     <div
-                      class="euiFormRow"
+                      class="euiFormRow euiFormRow--compressed"
                       id="random_html_id-row"
                     >
                       <div
@@ -401,14 +401,14 @@ exports[`<ConfigureModel /> spec creating model configuration renders the compon
                         class="euiFormRow__fieldWrapper"
                       >
                         <div
-                          class="euiFormControlLayout"
+                          class="euiFormControlLayout euiFormControlLayout--compressed"
                         >
                           <div
                             class="euiFormControlLayout__childrenWrapper"
                           >
                             <select
                               aria-describedby="random_html_id-help-0"
-                              class="euiSelect"
+                              class="euiSelect euiSelect--compressed"
                               data-test-subj="aggregationType"
                               id="random_html_id"
                               name="featureList.0.aggregationBy"
@@ -447,7 +447,7 @@ exports[`<ConfigureModel /> spec creating model configuration renders the compon
                               >
                                 <svg
                                   aria-hidden="true"
-                                  class="euiIcon euiIcon--medium euiIcon-isLoading euiFormControlLayoutCustomIcon__icon"
+                                  class="euiIcon euiIcon--small euiIcon-isLoading euiFormControlLayoutCustomIcon__icon"
                                   focusable="false"
                                   height="16"
                                   role="img"
@@ -472,7 +472,7 @@ exports[`<ConfigureModel /> spec creating model configuration renders the compon
                       </div>
                     </div>
                     <div
-                      class="euiFormRow"
+                      class="euiFormRow euiFormRow--compressed"
                       id="random_html_id-row"
                     >
                       <div
@@ -492,19 +492,19 @@ exports[`<ConfigureModel /> spec creating model configuration renders the compon
                         <div
                           aria-expanded="false"
                           aria-haspopup="listbox"
-                          class="euiComboBox"
+                          class="euiComboBox euiComboBox--compressed"
                           data-test-subj="featureFieldTextInput-0"
                           name="featureList.0.aggregationOf"
                           role="combobox"
                         >
                           <div
-                            class="euiFormControlLayout"
+                            class="euiFormControlLayout euiFormControlLayout--compressed"
                           >
                             <div
                               class="euiFormControlLayout__childrenWrapper"
                             >
                               <div
-                                class="euiComboBox__inputWrap euiComboBox__inputWrap--noWrap euiComboBox__inputWrap-isClearable"
+                                class="euiComboBox__inputWrap euiComboBox__inputWrap--compressed euiComboBox__inputWrap--noWrap euiComboBox__inputWrap-isClearable"
                                 data-test-subj="comboBoxInput"
                                 tabindex="-1"
                               >
@@ -541,7 +541,7 @@ exports[`<ConfigureModel /> spec creating model configuration renders the compon
                                 >
                                   <svg
                                     aria-hidden="true"
-                                    class="euiIcon euiIcon--medium euiIcon-isLoading euiFormControlLayoutCustomIcon__icon"
+                                    class="euiIcon euiIcon--small euiIcon-isLoading euiFormControlLayoutCustomIcon__icon"
                                     focusable="false"
                                     height="16"
                                     role="img"
@@ -572,7 +572,7 @@ exports[`<ConfigureModel /> spec creating model configuration renders the compon
                 class="euiFlexItem euiFlexItem--flexGrowZero"
               >
                 <button
-                  class="euiButton euiButton--primary"
+                  class="euiButton euiButton--primary euiButton--small"
                   data-test-subj="addFeature"
                   type="button"
                 >
@@ -734,7 +734,7 @@ exports[`<ConfigureModel /> spec creating model configuration renders the compon
               class="euiFlexItem"
             >
               <div
-                class="euiCheckbox"
+                class="euiCheckbox euiCheckbox--compressed"
               >
                 <input
                   class="euiCheckbox__input"
@@ -952,7 +952,7 @@ exports[`<ConfigureModel /> spec creating model configuration renders the compon
                     class="euiFlexItem euiFlexItem--flexGrowZero"
                   >
                     <button
-                      class="euiButton euiButton--primary"
+                      class="euiButton euiButton--primary euiButton--small"
                       data-test-subj="previewDetector"
                       type="button"
                     >
@@ -1212,7 +1212,7 @@ exports[`<ConfigureModel /> spec editing model configuration renders the compone
                     class="euiAccordion__padding--l"
                   >
                     <div
-                      class="euiFormRow"
+                      class="euiFormRow euiFormRow--compressed"
                       id="random_html_id-row"
                     >
                       <div
@@ -1230,14 +1230,14 @@ exports[`<ConfigureModel /> spec editing model configuration renders the compone
                         class="euiFormRow__fieldWrapper"
                       >
                         <div
-                          class="euiFormControlLayout"
+                          class="euiFormControlLayout euiFormControlLayout--compressed"
                         >
                           <div
                             class="euiFormControlLayout__childrenWrapper"
                           >
                             <input
                               aria-describedby="random_html_id-help-0"
-                              class="euiFieldText"
+                              class="euiFieldText euiFieldText--compressed"
                               data-test-subj="featureNameTextInput-0"
                               id="random_html_id"
                               name="featureList.0.featureName"
@@ -1256,7 +1256,7 @@ exports[`<ConfigureModel /> spec editing model configuration renders the compone
                       </div>
                     </div>
                     <div
-                      class="euiFormRow"
+                      class="euiFormRow euiFormRow--compressed"
                       id="random_html_id-row"
                     >
                       <div
@@ -1274,7 +1274,7 @@ exports[`<ConfigureModel /> spec editing model configuration renders the compone
                         class="euiFormRow__fieldWrapper"
                       >
                         <div
-                          class="euiCheckbox"
+                          class="euiCheckbox euiCheckbox--compressed"
                         >
                           <input
                             checked=""
@@ -1297,7 +1297,7 @@ exports[`<ConfigureModel /> spec editing model configuration renders the compone
                       </div>
                     </div>
                     <div
-                      class="euiFormRow"
+                      class="euiFormRow euiFormRow--compressed"
                       id="random_html_id-row"
                     >
                       <div
@@ -1315,13 +1315,13 @@ exports[`<ConfigureModel /> spec editing model configuration renders the compone
                         class="euiFormRow__fieldWrapper"
                       >
                         <div
-                          class="euiFormControlLayout"
+                          class="euiFormControlLayout euiFormControlLayout--compressed"
                         >
                           <div
                             class="euiFormControlLayout__childrenWrapper"
                           >
                             <select
-                              class="euiSelect"
+                              class="euiSelect euiSelect--compressed"
                               id="random_html_id"
                               name="featureList.0.featureType"
                             >
@@ -1344,7 +1344,7 @@ exports[`<ConfigureModel /> spec editing model configuration renders the compone
                               >
                                 <svg
                                   aria-hidden="true"
-                                  class="euiIcon euiIcon--medium euiFormControlLayoutCustomIcon__icon"
+                                  class="euiIcon euiIcon--small euiFormControlLayoutCustomIcon__icon"
                                   focusable="false"
                                   height="16"
                                   role="img"
@@ -1364,7 +1364,7 @@ exports[`<ConfigureModel /> spec editing model configuration renders the compone
                       </div>
                     </div>
                     <div
-                      class="euiFormRow"
+                      class="euiFormRow euiFormRow--compressed"
                       id="random_html_id-row"
                     >
                       <div
@@ -1382,14 +1382,14 @@ exports[`<ConfigureModel /> spec editing model configuration renders the compone
                         class="euiFormRow__fieldWrapper"
                       >
                         <div
-                          class="euiFormControlLayout"
+                          class="euiFormControlLayout euiFormControlLayout--compressed"
                         >
                           <div
                             class="euiFormControlLayout__childrenWrapper"
                           >
                             <select
                               aria-describedby="random_html_id-help-0"
-                              class="euiSelect"
+                              class="euiSelect euiSelect--compressed"
                               data-test-subj="aggregationType"
                               id="random_html_id"
                               name="featureList.0.aggregationBy"
@@ -1428,7 +1428,7 @@ exports[`<ConfigureModel /> spec editing model configuration renders the compone
                               >
                                 <svg
                                   aria-hidden="true"
-                                  class="euiIcon euiIcon--medium euiFormControlLayoutCustomIcon__icon"
+                                  class="euiIcon euiIcon--small euiFormControlLayoutCustomIcon__icon"
                                   focusable="false"
                                   height="16"
                                   role="img"
@@ -1454,7 +1454,7 @@ exports[`<ConfigureModel /> spec editing model configuration renders the compone
                       </div>
                     </div>
                     <div
-                      class="euiFormRow"
+                      class="euiFormRow euiFormRow--compressed"
                       id="random_html_id-row"
                     >
                       <div
@@ -1474,19 +1474,19 @@ exports[`<ConfigureModel /> spec editing model configuration renders the compone
                         <div
                           aria-expanded="false"
                           aria-haspopup="listbox"
-                          class="euiComboBox"
+                          class="euiComboBox euiComboBox--compressed"
                           data-test-subj="featureFieldTextInput-0"
                           name="featureList.0.aggregationOf"
                           role="combobox"
                         >
                           <div
-                            class="euiFormControlLayout"
+                            class="euiFormControlLayout euiFormControlLayout--compressed"
                           >
                             <div
                               class="euiFormControlLayout__childrenWrapper"
                             >
                               <div
-                                class="euiComboBox__inputWrap euiComboBox__inputWrap--noWrap euiComboBox__inputWrap-isClearable"
+                                class="euiComboBox__inputWrap euiComboBox__inputWrap--compressed euiComboBox__inputWrap--noWrap euiComboBox__inputWrap-isClearable"
                                 data-test-subj="comboBoxInput"
                                 tabindex="-1"
                               >
@@ -1523,7 +1523,7 @@ exports[`<ConfigureModel /> spec editing model configuration renders the compone
                                 >
                                   <svg
                                     aria-hidden="true"
-                                    class="euiIcon euiIcon--medium euiFormControlLayoutCustomIcon__icon"
+                                    class="euiIcon euiIcon--small euiFormControlLayoutCustomIcon__icon"
                                     focusable="false"
                                     height="16"
                                     role="img"
@@ -1555,7 +1555,7 @@ exports[`<ConfigureModel /> spec editing model configuration renders the compone
                 class="euiFlexItem euiFlexItem--flexGrowZero"
               >
                 <button
-                  class="euiButton euiButton--primary"
+                  class="euiButton euiButton--primary euiButton--small"
                   data-test-subj="addFeature"
                   type="button"
                 >
@@ -1748,7 +1748,7 @@ exports[`<ConfigureModel /> spec editing model configuration renders the compone
               class="euiFlexItem"
             >
               <div
-                class="euiCheckbox"
+                class="euiCheckbox euiCheckbox--compressed"
               >
                 <input
                   class="euiCheckbox__input"
