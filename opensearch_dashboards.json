@@ -20,7 +20,8 @@
     "opensearchDashboardsReact",
     "savedObjects",
     "visAugmenter",
-    "opensearchDashboardsUtils"
+    "opensearchDashboardsUtils",
+    "navigation"
   ],
   "server": true,
   "ui": true,
