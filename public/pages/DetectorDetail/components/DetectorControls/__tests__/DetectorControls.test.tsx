@@ -14,6 +14,28 @@ import { render } from '@testing-library/react';
 import { DetectorControls } from '../DetectorControls';
 import { UNITS } from '../../../../../models/interfaces';
 
+jest.mock('../../../../../services', () => {
+  const originalModule = jest.requireActual('../../../../../services');
+
+  return {
+    ...originalModule,
+    getUISettings: () => ({
+      get: (flag) => {
+        if (flag === 'home:useNewHomePage') {
+          return false; 
+        }
+        return originalModule.getUISettings().get(flag);
+      }
+    }),
+    getNavigationUI: () => ({
+      HeaderControl: null 
+    }),
+    getApplication: () => ({
+      setAppRightControls: null, 
+    })
+  };
+});
+
 describe('<DetectorControls /> spec', () => {
   const detector = {
     primaryTerm: 1,

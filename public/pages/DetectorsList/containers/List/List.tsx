@@ -42,7 +42,7 @@ import {
   getIndices,
   getPrioritizedIndices,
 } from '../../../../redux/reducers/opensearch';
-import { APP_PATH, MDS_BREADCRUMBS, PLUGIN_NAME } from '../../../../utils/constants';
+import { APP_PATH, MDS_BREADCRUMBS, PLUGIN_NAME, USE_NEW_HOME_PAGE } from '../../../../utils/constants';
 import { DETECTOR_STATE } from '../../../../../server/utils/constants';
 import {
   constructHrefWithDataSourceId,
@@ -91,7 +91,11 @@ import {
   getDataSourceEnabled,
   getNotifications,
   getSavedObjectsClient,
+  getUISettings,
+  getNavigationUI,
+  getApplication,
 } from '../../../../services';
+import { TopNavControlButtonData } from '../../../../../../../src/plugins/navigation/public';
 
 export interface ListRouterParams {
   from: string;
@@ -717,10 +721,36 @@ export const DetectorList = (props: ListProps) => {
 
   const createDetectorUrl =`${PLUGIN_NAME}#` + constructHrefWithDataSourceId(APP_PATH.CREATE_DETECTOR, state.selectedDataSourceId, false);
 
+  const useUpdatedUX = getUISettings().get(USE_NEW_HOME_PAGE);
+  const { HeaderControl } = getNavigationUI();
+  const { setAppRightControls } = getApplication();
+
+  const renderCreateButton = () => {
+    return useUpdatedUX ? (
+      <HeaderControl
+          setMountPoint={setAppRightControls}
+          controls={[
+            {
+              id: 'Create detector',
+              label: 'Create detector',
+              iconType: 'plus',
+              fill: true,
+              href: createDetectorUrl,
+              testId: 'createDetectorButton',
+              controlType: 'button',
+            } as TopNavControlButtonData,
+          ]}
+        />
+    ) : (
+      null
+    )
+  };
+
   return (
     <EuiPage>
       <EuiPageBody>
         {dataSourceEnabled && renderDataSourceComponent}
+        {renderCreateButton()}
         <ContentPanel
           title={
             isLoading
@@ -737,13 +767,13 @@ export const DetectorList = (props: ListProps) => {
               isStartDisabled={listActionsState.isStartDisabled}
               isStopDisabled={listActionsState.isStopDisabled}
             />,
-            <EuiSmallButton
+            !useUpdatedUX && (<EuiSmallButton
               data-test-subj="createDetectorButton"
               fill
               href={createDetectorUrl}
             >
               Create detector
-            </EuiSmallButton>,
+            </EuiSmallButton>),
           ]}
         >
           {confirmModal}

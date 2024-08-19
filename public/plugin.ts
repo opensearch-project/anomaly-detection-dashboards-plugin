@@ -41,6 +41,8 @@ import {
   setSavedObjectsClient,
   setDataSourceManagementPlugin,
   setDataSourceEnabled,
+  setNavigationUI,
+  setApplication
 } from './services';
 import { AnomalyDetectionOpenSearchDashboardsPluginStart } from 'public';
 import {
@@ -51,6 +53,7 @@ import { UiActionsStart } from '../../../src/plugins/ui_actions/public';
 import { DataPublicPluginStart } from '../../../src/plugins/data/public';
 import { DataSourceManagementPluginSetup } from '../../../src/plugins/data_source_management/public';
 import { DataSourcePluginSetup } from '../../../src/plugins/data_source/public';
+import { NavigationPublicPluginStart } from '../../../src/plugins/navigation/public';
 
 declare module '../../../src/plugins/ui_actions/public' {
   export interface ActionContextMapping {
@@ -73,6 +76,7 @@ export interface AnomalyDetectionStartDeps {
   visAugmenter: VisAugmenterStart;
   uiActions: UiActionsStart;
   data: DataPublicPluginStart;
+  navigation: NavigationPublicPluginStart;
 }
 
 export class AnomalyDetectionOpenSearchDashboardsPlugin
@@ -192,7 +196,7 @@ export class AnomalyDetectionOpenSearchDashboardsPlugin
 
   public start(
     core: CoreStart,
-    { embeddable, visAugmenter, uiActions, data }: AnomalyDetectionStartDeps
+    { embeddable, visAugmenter, uiActions, data, navigation }: AnomalyDetectionStartDeps
   ): AnomalyDetectionOpenSearchDashboardsPluginStart {
     setUISettings(core.uiSettings);
     setEmbeddable(embeddable);
@@ -202,6 +206,8 @@ export class AnomalyDetectionOpenSearchDashboardsPlugin
     setUiActions(uiActions);
     setQueryService(data.query);
     setSavedObjectsClient(core.savedObjects.client);
+    setNavigationUI(navigation.ui);
+    setApplication(core.application);
     return {};
   }
 }

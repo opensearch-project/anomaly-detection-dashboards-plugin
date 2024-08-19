@@ -25,13 +25,31 @@ import configureStore from '../../../../redux/configureStore';
 import { sampleHttpResponses } from '../../../Overview/utils/constants';
 import { CoreServicesContext } from '../../../../components/CoreServices/CoreServices';
 
-jest.mock('../../../../services', () => ({
-  ...jest.requireActual('../../../../services'),
+jest.mock('../../../../services', () => {
+  const originalModule = jest.requireActual('../../../../services');
 
-  getDataSourceEnabled: () => ({
-    enabled: false  
-  })
-}));
+  return {
+    ...originalModule,
+    getDataSourceEnabled: () => ({
+      enabled: false  
+    }),
+    getUISettings: () => ({
+      get: (flag) => {
+        if (flag === 'home:useNewHomePage') {
+          return false; 
+        }
+        return originalModule.getUISettings().get(flag);
+      }
+    }),
+    getNavigationUI: () => ({
+      HeaderControl: null 
+    }),
+    getApplication: () => ({
+      setAppRightControls: null, 
+      setAppDescriptionControls: null 
+    })
+  };
+});
 
 
 const renderWithRouter = () => ({
