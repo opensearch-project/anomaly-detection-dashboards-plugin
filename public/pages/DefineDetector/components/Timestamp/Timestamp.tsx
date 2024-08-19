@@ -9,7 +9,7 @@
  * GitHub history for details.
  */
 
-import { EuiComboBox, EuiCallOut, EuiSpacer } from '@elastic/eui';
+import { EuiCompressedComboBox, EuiCallOut, EuiSpacer } from '@elastic/eui';
 import { Field, FieldProps, FormikProps } from 'formik';
 import { debounce, get, isEmpty } from 'lodash';
 import React, { useState } from 'react';
@@ -87,7 +87,7 @@ export function Timestamp(props: TimestampProps) {
             isInvalid={isInvalid(field.name, form)}
             error={getError(field.name, form)}
           >
-            <EuiComboBox
+            <EuiCompressedComboBox
               data-test-subj="timestampFilter"
               id="timeField"
               placeholder="Find timestamp"

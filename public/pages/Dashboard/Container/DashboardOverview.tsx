@@ -23,7 +23,7 @@ import { getDetectorList } from '../../../redux/reducers/ad';
 import {
   EuiFlexGroup,
   EuiFlexItem,
-  EuiComboBox,
+  EuiCompressedComboBox,
   EuiComboBoxOptionProps,
   EuiLoadingSpinner,
   EuiSpacer,
@@ -94,11 +94,11 @@ export function DashboardOverview(props: OverviewProps) {
   const queryParams = getDataSourceFromURL(props.location);
   const [MDSOverviewState, setMDSOverviewState] = useState<MDSStates>({
     queryParams,
-    selectedDataSourceId: queryParams.dataSourceId === undefined 
-      ? undefined 
+    selectedDataSourceId: queryParams.dataSourceId === undefined
+      ? undefined
       : queryParams.dataSourceId,
   });
-  
+
   const getDetectorOptions = (detectorsIdMap: {
     [key: string]: DetectorListItem;
   }) => {
@@ -297,7 +297,7 @@ export function DashboardOverview(props: OverviewProps) {
           componentType={'DataSourceSelectable'}
           componentConfig={{
             fullWidth: false,
-            activeOption: props.landingDataSourceId === undefined 
+            activeOption: props.landingDataSourceId === undefined
               || MDSOverviewState.selectedDataSourceId === undefined
                 ? undefined
                 : [{ id: MDSOverviewState.selectedDataSourceId }],
@@ -327,7 +327,7 @@ export function DashboardOverview(props: OverviewProps) {
           <Fragment>
             <EuiFlexGroup justifyContent="flexStart" gutterSize="s">
               <EuiFlexItem>
-                <EuiComboBox
+                <EuiCompressedComboBox
                   id="detectorFilter"
                   data-test-subj="detectorFilter"
                   placeholder={ALL_DETECTORS_MESSAGE}
@@ -339,7 +339,7 @@ export function DashboardOverview(props: OverviewProps) {
                 />
               </EuiFlexItem>
               <EuiFlexItem>
-                <EuiComboBox
+                <EuiCompressedComboBox
                   id="detectorStateFilter"
                   data-test-subj="detectorStateFilter"
                   placeholder={ALL_DETECTOR_STATES_MESSAGE}
@@ -351,7 +351,7 @@ export function DashboardOverview(props: OverviewProps) {
                 />
               </EuiFlexItem>
               <EuiFlexItem>
-                <EuiComboBox
+                <EuiCompressedComboBox
                   id="indicesFilter"
                   data-test-subj="indicesFilter"
                   placeholder={ALL_INDICES_MESSAGE}

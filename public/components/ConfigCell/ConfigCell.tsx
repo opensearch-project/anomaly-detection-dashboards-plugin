@@ -9,11 +9,11 @@
  * GitHub history for details.
  */
 
-import { EuiText, EuiFormRow, EuiFormRowProps } from '@elastic/eui';
+import { EuiText, EuiCompressedFormRow, EuiFormRowProps } from '@elastic/eui';
 import React from 'react';
 
 export const FixedWidthRow = (props: EuiFormRowProps) => (
-  <EuiFormRow {...props} style={{ width: '250px' }} />
+  <EuiCompressedFormRow {...props} style={{ width: '250px' }} />
 );
 
 interface ConfigCellProps {

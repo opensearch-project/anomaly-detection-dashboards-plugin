@@ -10,7 +10,7 @@
  */
 
 import React from 'react';
-import { EuiFormRow, EuiCodeEditor } from '@elastic/eui';
+import { EuiCompressedFormRow, EuiCodeEditor } from '@elastic/eui';
 import { Field, FieldProps } from 'formik';
 import { isInvalid, getError } from '../../../../utils/utils';
 
@@ -35,7 +35,7 @@ export const CustomAggregation = (props: CustomAggregationProps) => {
       validate={validateQuery}
     >
       {({ field, form }: FieldProps) => (
-        <EuiFormRow
+        <EuiCompressedFormRow
           fullWidth
           label="Expression"
           helpText="Custom expression uses the OpenSearch query DSL."
@@ -68,7 +68,7 @@ export const CustomAggregation = (props: CustomAggregationProps) => {
             onBlur={field.onBlur}
             value={field.value}
           />
-        </EuiFormRow>
+        </EuiCompressedFormRow>
       )}
     </Field>
   );

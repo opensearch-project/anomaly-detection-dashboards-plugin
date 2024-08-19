@@ -10,7 +10,7 @@
  */
 
 import {
-  EuiButton,
+  EuiSmallButton,
   EuiCallOut,
   EuiFlexGroup,
   EuiFlexItem,
@@ -217,7 +217,7 @@ export function SampleAnomalies(props: SampleAnomaliesProps) {
         </EuiFlexGroup>
         <EuiFlexGroup>
           <EuiFlexItem grow={false}>
-            <EuiButton
+            <EuiSmallButton
               type="button"
               data-test-subj="previewDetector"
               onClick={() => {
@@ -235,7 +235,7 @@ export function SampleAnomalies(props: SampleAnomaliesProps) {
               isLoading={isLoading}
             >
               {firstPreview ? 'Preview anomalies' : 'Refresh preview'}
-            </EuiButton>
+            </EuiSmallButton>
           </EuiFlexItem>
         </EuiFlexGroup>
       </EuiCallOut>

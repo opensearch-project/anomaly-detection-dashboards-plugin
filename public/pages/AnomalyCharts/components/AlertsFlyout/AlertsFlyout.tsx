@@ -10,7 +10,7 @@
  */
 
 import {
-  EuiButton,
+  EuiSmallButton,
   EuiFlexGroup,
   EuiFlexItem,
   EuiFlyout,
@@ -102,13 +102,13 @@ export const AlertsFlyout = (props: AlertsFlyoutProps) => {
       <EuiFlyoutFooter>
         <EuiFlexGroup alignItems="center" justifyContent="flexEnd">
           <EuiFlexItem grow={true}>
-            <EuiButton
+            <EuiSmallButton
               href={`${BASE_DOCS_LINK}/alerting`}
               target="_blank"
               data-test-subj="setUpAlerts"
             >
               Explore Alerting <EuiIcon size="s" type="popout" />
-            </EuiButton>
+            </EuiSmallButton>
           </EuiFlexItem>
           <EuiFlexItem grow={true}>
             <AlertsButton

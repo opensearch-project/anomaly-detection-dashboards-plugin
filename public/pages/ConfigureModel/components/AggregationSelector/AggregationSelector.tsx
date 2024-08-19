@@ -12,7 +12,7 @@
 import React, { Fragment } from 'react';
 import { useSelector } from 'react-redux';
 import { get } from 'lodash';
-import { EuiFormRow, EuiSelect, EuiComboBox } from '@elastic/eui';
+import { EuiCompressedFormRow, EuiCompressedSelect, EuiCompressedComboBox } from '@elastic/eui';
 import { getAllFields } from '../../../../redux/selectors/opensearch';
 import {
   getNumberFieldOptions,
@@ -41,13 +41,13 @@ export const AggregationSelector = (props: AggregationSelectorProps) => {
         validate={requiredSelectField}
       >
         {({ field, form }: FieldProps) => (
-          <EuiFormRow
+          <EuiCompressedFormRow
             label="Aggregation method"
             helpText="The aggregation method determines what constitutes an anomaly. For example, if you choose min(), the detector focuses on finding anomalies based on the minimum values of your feature."
             isInvalid={isInvalid(field.name, form)}
             error={getError(field.name, form)}
           >
-            <EuiSelect
+            <EuiCompressedSelect
               id={`featureList.${props.index}.aggregationBy`}
               {...field}
               name={`featureList.${props.index}.aggregationBy`}
@@ -71,7 +71,7 @@ export const AggregationSelector = (props: AggregationSelectorProps) => {
               }}
               data-test-subj="aggregationType"
             />
-          </EuiFormRow>
+          </EuiCompressedFormRow>
         )}
       </Field>
 
@@ -81,12 +81,12 @@ export const AggregationSelector = (props: AggregationSelectorProps) => {
         validate={requiredNonEmptyFieldSelected}
       >
         {({ field, form }: FieldProps) => (
-          <EuiFormRow
+          <EuiCompressedFormRow
             label="Field"
             isInvalid={isInvalid(field.name, form)}
             error={getError(field.name, form)}
           >
-            <EuiComboBox
+            <EuiCompressedComboBox
               data-test-subj={`featureFieldTextInput-${props.index}`}
               placeholder="Select field"
               singleSelection={{ asPlainText: true }}
@@ -121,7 +121,7 @@ export const AggregationSelector = (props: AggregationSelectorProps) => {
                 );
               }}
             />
-          </EuiFormRow>
+          </EuiCompressedFormRow>
         )}
       </Field>
     </Fragment>

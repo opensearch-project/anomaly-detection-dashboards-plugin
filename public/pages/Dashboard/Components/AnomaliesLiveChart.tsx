@@ -18,7 +18,7 @@ import {
 } from '../../../../server/utils/constants';
 import {
   EuiBadge,
-  EuiButton,
+  EuiSmallButton,
   EuiCallOut,
   EuiFlexGroup,
   EuiFlexItem,
@@ -215,14 +215,14 @@ export const AnomaliesLiveChart = (props: AnomaliesLiveChartProps) => {
   const annotations = [timeNowAnnotation];
 
   const fullScreenButton = () => (
-    <EuiButton
+    <EuiSmallButton
       onClick={() => setIsFullScreen((isFullScreen) => !isFullScreen)}
       iconType={isFullScreen ? 'exit' : 'fullScreen'}
       aria-label="View full screen"
       data-test-subj="dashboardFullScreenButton"
     >
       {isFullScreen ? 'Exit full screen' : 'View full screen'}
-    </EuiButton>
+    </EuiSmallButton>
   );
 
   return (
@@ -237,9 +237,9 @@ export const AnomaliesLiveChart = (props: AnomaliesLiveChartProps) => {
           </h3>
         </EuiTitle>
       }
-      subTitle={`Live anomaly results across detectors for the last 30 minutes.  
-                'The results refresh every 1 minute. 
-                'For each detector, if an anomaly occurrence is detected at the end of the detector interval, 
+      subTitle={`Live anomaly results across detectors for the last 30 minutes.
+                'The results refresh every 1 minute.
+                'For each detector, if an anomaly occurrence is detected at the end of the detector interval,
                 'you will see a bar representing its anomaly grade.`}
       actions={[fullScreenButton()]}
       contentPanelClassName={isFullScreen ? 'full-screen' : undefined}
