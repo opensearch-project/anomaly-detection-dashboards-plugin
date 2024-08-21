@@ -21,7 +21,6 @@ import {
   EuiText,
   EuiCompressedFieldText,
   EuiLoadingSpinner,
-  EuiSmallButton,
 } from '@elastic/eui';
 import { CoreStart, MountPoint } from '../../../../../../src/core/public';
 import { CoreServicesContext } from '../../../components/CoreServices/CoreServices';
@@ -443,9 +442,9 @@ export const DetectorDetail = (props: DetectorDetailProps) => {
     } else {
       return (
         <EuiFlexItem grow={false}>
-          <EuiTitle size="l" data-test-subj="detectorNameHeader">
+          <EuiText size="s" data-test-subj="detectorNameHeader">
             <h1>{detector && detector.name}</h1>
-          </EuiTitle>
+          </EuiText>
         </EuiFlexItem>
       );
     }
