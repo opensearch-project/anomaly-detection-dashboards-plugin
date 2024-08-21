@@ -57,7 +57,11 @@ export const ConfirmStopDetectorsModal = (
       <EuiModal data-test-subj="stopDetectorsModal" onClose={props.onHide}>
         <EuiModalHeader>
           <EuiModalHeaderTitle>
-            {'Are you sure you want to stop the selected detectors?'}&nbsp;
+            <EuiText size="s">
+              <h2>
+                {'Are you sure you want to stop the selected detectors?'}&nbsp;
+              </h2>
+            </EuiText>
           </EuiModalHeaderTitle>
         </EuiModalHeader>
         <EuiModalBody>
@@ -71,7 +75,7 @@ export const ConfirmStopDetectorsModal = (
               <EuiSpacer size="s" />
             </div>
           ) : null}
-          <EuiText>The following detectors will be stopped.</EuiText>
+          <EuiText size="s">The following detectors will be stopped.</EuiText>
           <EuiSpacer size="s" />
           <div>
             {isLoading ? (

@@ -44,11 +44,15 @@ export const ConfirmStartDetectorsModal = (
       <EuiModal data-test-subj="startDetectorsModal" onClose={props.onHide}>
         <EuiModalHeader>
           <EuiModalHeaderTitle>
-            {'Are you sure you want to start the selected detectors?'}&nbsp;
+            <EuiText size="s">
+              <h2>
+                {'Are you sure you want to start the selected detectors?'}&nbsp;
+              </h2>
+            </EuiText>
           </EuiModalHeaderTitle>
         </EuiModalHeader>
         <EuiModalBody>
-          <EuiText>The following detectors will begin initializing.</EuiText>
+          <EuiText size="s">The following detectors will begin initializing.</EuiText>
           <EuiSpacer size="s" />
           <div>
             {isLoading ? (

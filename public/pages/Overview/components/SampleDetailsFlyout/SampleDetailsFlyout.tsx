@@ -68,9 +68,9 @@ export const SampleDetailsFlyout = (props: SampleDetailsFlyoutProps) => {
       aria-labelledby="flyoutTitle"
     >
       <EuiFlyoutHeader hasBorder>
-        <EuiTitle size="m">
+        <EuiText size="s">
           <h2 id="flyoutTitle">{props.title}</h2>
-        </EuiTitle>
+        </EuiText>
       </EuiFlyoutHeader>
       <EuiFlyoutBody>
         <EuiAccordion

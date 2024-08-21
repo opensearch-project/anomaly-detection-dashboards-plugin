@@ -19,6 +19,7 @@ import {
   EuiSmallButtonEmpty,
   EuiSmallButton,
   EuiCompressedSuperDatePicker,
+  EuiText,
 } from '@elastic/eui';
 import { get } from 'lodash';
 import { Detector } from '../../../../models/interfaces';
@@ -51,9 +52,13 @@ export const HistoricalRangeModal = (props: HistoricalRangeModalProps) => {
     <EuiModal onClose={props.onClose}>
       <EuiModalHeader>
         <EuiModalHeaderTitle data-test-subj="historicalAnalysisModalHeader">
-          {props.isEdit
-            ? 'Modify historical analysis'
-            : 'Set up historical analysis'}
+          <EuiText size="s">
+            <h2>
+              {props.isEdit
+                ? 'Modify historical analysis'
+                : 'Set up historical analysis'}
+            </h2>
+          </EuiText>
         </EuiModalHeaderTitle>
       </EuiModalHeader>
       <EuiModalBody>
