@@ -15,6 +15,7 @@ import {
   EuiFlexItem,
   EuiFlexGroup,
   EuiCallOut,
+  EuiText,
 } from '@elastic/eui';
 import { get, isEmpty } from 'lodash';
 import '../styles.scss';
@@ -85,7 +86,7 @@ function AssociatedDetectors({ embeddable, closeFlyout, setMode }) {
       const indexPattern = await getSavedObjectsClient().get('index-pattern', indexPatternId);
       const refs = indexPattern.references as References[];
       const foundDataSourceId = refs.find(ref => ref.type === 'data-source')?.id;
-      setDataSourceId(foundDataSourceId);
+      setDataSourceId(foundDataSourceId); 
     } catch (error) {
       console.error("Error fetching index pattern:", error);
     }
@@ -270,7 +271,7 @@ function AssociatedDetectors({ embeddable, closeFlyout, setMode }) {
       getDetectorList(
         getAllDetectorsQueryParamsWithDataSourceId(dataSourceId)
       )
-    );
+    );  
   };
 
   const handleUnlinkDetectorAction = (detector: DetectorListItem) => {
@@ -334,11 +335,11 @@ function AssociatedDetectors({ embeddable, closeFlyout, setMode }) {
         onClose={closeFlyout}
       >
         <EuiFlyoutHeader hasBorder>
-          <EuiTitle>
+          <EuiText size="s">
             <h2 id="associated-detectors__title">
               Associated anomaly detectors
             </h2>
-          </EuiTitle>
+          </EuiText>
         </EuiFlyoutHeader>
         {associationLimitReached ? (
           <EuiCallOut

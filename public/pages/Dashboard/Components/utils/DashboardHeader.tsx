@@ -15,7 +15,7 @@ import {
   EuiFlexGroup,
   EuiFlexItem,
   EuiPageHeader,
-  EuiTitle,
+  EuiText,
 } from '@elastic/eui';
 import {
   PLUGIN_NAME,
@@ -59,9 +59,9 @@ export const DashboardHeader = (props: DashboardHeaderProps) => {
     <EuiPageHeader>
       <EuiFlexGroup justifyContent="spaceBetween">
         <EuiFlexItem grow={false}>
-          <EuiTitle size="l">
+          <EuiText size="s">
             <h1>Real-time dashboard</h1>
-          </EuiTitle>
+          </EuiText>
         </EuiFlexItem>
         {props.hasDetectors ? (
           <EuiFlexItem grow={false}>

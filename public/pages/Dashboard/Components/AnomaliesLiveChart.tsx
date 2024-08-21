@@ -237,9 +237,9 @@ export const AnomaliesLiveChart = (props: AnomaliesLiveChartProps) => {
           </h3>
         </EuiTitle>
       }
-      subTitle={`Live anomaly results across detectors for the last 30 minutes.
-                'The results refresh every 1 minute.
-                'For each detector, if an anomaly occurrence is detected at the end of the detector interval,
+      subTitle={`Live anomaly results across detectors for the last 30 minutes. 
+                'The results refresh every 1 minute. 
+                'For each detector, if an anomaly occurrence is detected at the end of the detector interval, 
                 'you will see a bar representing its anomaly grade.`}
       actions={[fullScreenButton()]}
       contentPanelClassName={isFullScreen ? 'full-screen' : undefined}
@@ -255,6 +255,7 @@ export const AnomaliesLiveChart = (props: AnomaliesLiveChartProps) => {
         </EuiFlexGroup>
       ) : !hasLatestAnomalyResult ? (
         <EuiText
+          size="s"
           style={{
             color: '#666666',
             paddingTop: '12px',
