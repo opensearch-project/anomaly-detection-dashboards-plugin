@@ -61,11 +61,15 @@ exports[`<SampleDataBox /> spec Data is loaded renders component 1`] = `
             class="euiFlexItem euiFlexItem--flexGrowZero"
             style="height: 70px;"
           >
-            <p
-              style="text-align: left; line-height: 1.4; max-height: 4.2px;"
+            <div
+              class="euiText euiText--small"
             >
-              Sample description
-            </p>
+              <p
+                style="text-align: left; line-height: 1.4; max-height: 4.2px;"
+              >
+                Sample description
+              </p>
+            </div>
           </div>
           <div
             class="euiFlexGroup euiFlexGroup--gutterLarge euiFlexGroup--alignItemsCenter euiFlexGroup--directionColumn euiFlexGroup--responsive"
@@ -95,14 +99,18 @@ exports[`<SampleDataBox /> spec Data is loaded renders component 1`] = `
             <div
               class="euiFlexItem euiFlexItem--flexGrowZero"
             >
-              <a
-                class="euiLink euiLink--primary"
-                data-test-subj="viewSampleDetectorLink"
-                href="anomaly-detection-dashboards#/detectors/sample-detector-id/results?dataSourceId="
-                rel="noreferrer"
+              <div
+                class="euiText euiText--small"
               >
-                View detector and sample data
-              </a>
+                <a
+                  class="euiLink euiLink--primary"
+                  data-test-subj="viewSampleDetectorLink"
+                  href="anomaly-detection-dashboards#/detectors/sample-detector-id/results?dataSourceId="
+                  rel="noreferrer"
+                >
+                  View detector and sample data
+                </a>
+              </div>
             </div>
           </div>
         </div>
@@ -184,11 +192,15 @@ exports[`<SampleDataBox /> spec Data is loading renders component 1`] = `
             class="euiFlexItem euiFlexItem--flexGrowZero"
             style="height: 70px;"
           >
-            <p
-              style="text-align: left; line-height: 1.4; max-height: 4.2px;"
+            <div
+              class="euiText euiText--small"
             >
-              Sample description
-            </p>
+              <p
+                style="text-align: left; line-height: 1.4; max-height: 4.2px;"
+              >
+                Sample description
+              </p>
+            </div>
           </div>
           <div
             class="euiFlexGroup euiFlexGroup--gutterLarge euiFlexGroup--alignItemsCenter euiFlexGroup--directionColumn euiFlexGroup--responsive"
@@ -289,11 +301,15 @@ exports[`<SampleDataBox /> spec Data not loaded renders component 1`] = `
             class="euiFlexItem euiFlexItem--flexGrowZero"
             style="height: 70px;"
           >
-            <p
-              style="text-align: left; line-height: 1.4; max-height: 4.2px;"
+            <div
+              class="euiText euiText--small"
             >
-              Sample description
-            </p>
+              <p
+                style="text-align: left; line-height: 1.4; max-height: 4.2px;"
+              >
+                Sample description
+              </p>
+            </div>
           </div>
           <div
             class="euiFlexGroup euiFlexGroup--gutterLarge euiFlexGroup--alignItemsCenter euiFlexGroup--directionColumn euiFlexGroup--responsive"

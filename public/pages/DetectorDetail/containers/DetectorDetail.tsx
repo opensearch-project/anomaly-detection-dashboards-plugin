@@ -15,14 +15,12 @@ import {
   EuiTab,
   EuiFlexGroup,
   EuiFlexItem,
-  EuiTitle,
   EuiOverlayMask,
   EuiCallOut,
   EuiSpacer,
   EuiText,
   EuiCompressedFieldText,
   EuiLoadingSpinner,
-  EuiSmallButton,
 } from '@elastic/eui';
 import { CoreStart, MountPoint } from '../../../../../../src/core/public';
 import { CoreServicesContext } from '../../../components/CoreServices/CoreServices';
@@ -444,9 +442,9 @@ export const DetectorDetail = (props: DetectorDetailProps) => {
     } else {
       return (
         <EuiFlexItem grow={false}>
-          <EuiTitle size="l" data-test-subj="detectorNameHeader">
+          <EuiText size="s" data-test-subj="detectorNameHeader">
             <h1>{detector && detector.name}</h1>
-          </EuiTitle>
+          </EuiText>
         </EuiFlexItem>
       );
     }
@@ -512,7 +510,7 @@ export const DetectorDetail = (props: DetectorDetailProps) => {
 
           <EuiFlexGroup>
             <EuiFlexItem>
-              <EuiTabs>
+              <EuiTabs size="s">
                 {tabs.map((tab) => (
                   <EuiTab
                     onClick={() => {
@@ -541,7 +539,7 @@ export const DetectorDetail = (props: DetectorDetailProps) => {
             description={
               <EuiFlexGroup direction="column">
                 <EuiFlexItem>
-                  <EuiText>
+                  <EuiText size="s">
                     <p>
                       Detector and feature configuration will be permanently
                       removed. This action is irreversible. To confirm deletion,

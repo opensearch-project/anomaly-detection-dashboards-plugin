@@ -141,7 +141,7 @@ function AddAnomalyDetector({
       const indexPattern = await getSavedObjectsClient().get('index-pattern', indexPatternId);
       const refs = indexPattern.references as References[];
       const foundDataSourceId = refs.find(ref => ref.type === 'data-source')?.id;
-      setDataSourceId(foundDataSourceId);
+      setDataSourceId(foundDataSourceId); 
     } catch (error) {
       console.error("Error fetching index pattern:", error);
     }
@@ -167,7 +167,7 @@ function AddAnomalyDetector({
     }
     fetchData();
     createEmbeddable();
-  }, [dataSourceId]);
+  }, [dataSourceId]); 
 
   const [isShowVis, setIsShowVis] = useState(false);
   const [accordionsOpen, setAccordionsOpen] = useState({ modelFeatures: true });
@@ -465,7 +465,7 @@ function AddAnomalyDetector({
 
   const getEverythingSuccessfulButton = (detectorId, shingleSize) => {
     return (
-      <EuiText>
+      <EuiText size="s">
         <p>
           Attempting to initialize the detector with historical data. This
           initializing process takes approximately 1 minute if you have data in
@@ -586,9 +586,9 @@ function AddAnomalyDetector({
         {(formikProps) => (
           <>
             <EuiFlyoutHeader hasBorder>
-              <EuiTitle>
+              <EuiText size="s">
                 <h2 id="add-anomaly-detector__title">Add anomaly detector</h2>
-              </EuiTitle>
+              </EuiText>
             </EuiFlyoutHeader>
             <EuiFlyoutBody>
               {associationLimitReached ? (
@@ -669,7 +669,7 @@ function AddAnomalyDetector({
                         isOpen={accordionsOpen.detectorDetails}
                         onToggle={() => onAccordionToggle('detectorDetails')}
                         subTitle={
-                          <EuiText size="m">
+                          <EuiText size="s">
                             <p>
                               Detector interval: {intervalValue} minute(s);
                               Window delay: {delayValue} minute(s)

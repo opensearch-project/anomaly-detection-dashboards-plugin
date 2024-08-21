@@ -10,7 +10,7 @@
  */
 
 import React from 'react';
-import { EuiSmallButton, EuiEmptyPrompt } from '@elastic/eui';
+import { EuiSmallButton, EuiEmptyPrompt, EuiText } from '@elastic/eui';
 import { Fragment } from 'react';
 
 export interface DetectorStoppedProps {
@@ -24,7 +24,9 @@ export const DetectorStopped = (props: DetectorStoppedProps) => {
       title={<h2>The detector is stopped</h2>}
       body={
         <Fragment>
-          <p>Start the detector to see anomalies.</p>
+          <EuiText size="s">
+            <p>Start the detector to see anomalies.</p>
+          </EuiText>
         </Fragment>
       }
       actions={[
