@@ -15,6 +15,7 @@ import { DETECTOR_STATE } from '../../server/utils/constants';
 import { Duration } from 'moment';
 import moment from 'moment';
 import { MDSQueryParams } from '../../server/models/types';
+import { ImputationOption } from './types';
 
 export type FieldInfo = {
   label: string;
@@ -210,6 +211,7 @@ export type Detector = {
   taskState?: DETECTOR_STATE;
   taskProgress?: number;
   taskError?: string;
+  imputationOption?: ImputationOption;
 };
 
 export type DetectorListItem = {
