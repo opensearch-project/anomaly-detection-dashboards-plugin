@@ -61,6 +61,7 @@
     "semver": "^7.5.3",
     "pretty-format": "^26.4.2",
     "@adobe/css-tools": "^4.3.2",
-    "browserify-sign": "^4.2.2"
+    "browserify-sign": "^4.2.2",
+    "braces": "^3.0.3"
   }
 }
