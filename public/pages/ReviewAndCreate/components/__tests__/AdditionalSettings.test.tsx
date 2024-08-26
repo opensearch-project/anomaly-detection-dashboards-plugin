@@ -21,7 +21,7 @@ describe('<AdditionalSettings /> spec', () => {
       <Formik initialValues={{ detectorName: '' }} onSubmit={jest.fn()}>
         {() => (
           <div>
-            <AdditionalSettings categoryField={[]} shingleSize={8} />
+            <AdditionalSettings categoryField={[]} shingleSize={8} imputationMethod="Ignore" customValues={[]}/>
           </div>
         )}
       </Formik>
@@ -31,6 +31,7 @@ describe('<AdditionalSettings /> spec', () => {
     getAllByText('Shingle size');
     getByText('-');
     getByText('8');
+    getByText("Ignore");
   });
   test('renders the component with high cardinality enabled', () => {
     const { container, getByText, getAllByText } = render(
@@ -40,6 +41,8 @@ describe('<AdditionalSettings /> spec', () => {
             <AdditionalSettings
               categoryField={['test_field']}
               shingleSize={8}
+              imputationMethod="Custom"
+              customValues={["denyMax:5", "denySum:10"]}
             />
           </div>
         )}
@@ -50,5 +53,9 @@ describe('<AdditionalSettings /> spec', () => {
     getAllByText('Shingle size');
     getByText('test_field');
     getByText('8');
+    getByText("Custom");
+    // Check for the custom values
+    getByText('denyMax:5');
+    getByText('denySum:10');
   });
 });

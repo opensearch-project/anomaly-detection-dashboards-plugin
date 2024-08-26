@@ -155,6 +155,40 @@ exports[`ModelConfigurationFields renders the component in create mode (no ID) 1
                       </span>
                     </span>
                   </th>
+                  <th
+                    class="euiTableHeaderCell"
+                    data-test-subj="tableHeaderCell_imputationMethod_2"
+                    role="columnheader"
+                    scope="col"
+                  >
+                    <span
+                      class="euiTableCellContent"
+                    >
+                      <span
+                        class="euiTableCellContent__text"
+                        title="Imputation method"
+                      >
+                        Imputation method
+                      </span>
+                    </span>
+                  </th>
+                  <th
+                    class="euiTableHeaderCell"
+                    data-test-subj="tableHeaderCell_customValues_3"
+                    role="columnheader"
+                    scope="col"
+                  >
+                    <span
+                      class="euiTableCellContent"
+                    >
+                      <span
+                        class="euiTableCellContent__text"
+                        title="Custom values"
+                      >
+                        Custom values
+                      </span>
+                    </span>
+                  </th>
                 </tr>
               </thead>
               <tbody>
@@ -195,6 +229,40 @@ exports[`ModelConfigurationFields renders the component in create mode (no ID) 1
                       >
                         8
                       </span>
+                    </div>
+                  </td>
+                  <td
+                    class="euiTableRowCell"
+                  >
+                    <div
+                      class="euiTableRowCell__mobileHeader euiTableRowCell--hideForDesktop"
+                    >
+                      Imputation method
+                    </div>
+                    <div
+                      class="euiTableCellContent"
+                    >
+                      <span
+                        class="euiTableCellContent__text"
+                      >
+                        set_to_zero
+                      </span>
+                    </div>
+                  </td>
+                  <td
+                    class="euiTableRowCell"
+                  >
+                    <div
+                      class="euiTableRowCell__mobileHeader euiTableRowCell--hideForDesktop"
+                    >
+                      Custom values
+                    </div>
+                    <div
+                      class="euiTableCellContent euiTableCellContent--overflowingContent"
+                    >
+                      <div
+                        class=""
+                      />
                     </div>
                   </td>
                 </tr>

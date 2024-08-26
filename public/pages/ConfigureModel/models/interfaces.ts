@@ -18,6 +18,7 @@ export interface ModelConfigurationFormikValues {
   categoryFieldEnabled: boolean;
   categoryField: string[];
   shingleSize: number;
+  imputationOption?: ImputationFormikValues;
 }
 
 export interface FeaturesFormikValues {
@@ -29,4 +30,14 @@ export interface FeaturesFormikValues {
   aggregationBy?: string;
   aggregationOf?: AggregationOption[];
   newFeature?: boolean;
+}
+
+export interface ImputationFormikValues {
+  imputationMethod?: string;
+  custom_value?: CustomValueFormikValues[];
+}
+
+export interface CustomValueFormikValues {
+  featureName: string;
+  data: number;
 }
