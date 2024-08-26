@@ -30,7 +30,11 @@ import ContentPanel from '../../../components/ContentPanel/ContentPanel';
 import { CodeModal } from '../components/CodeModal/CodeModal';
 import { getTitleWithCount } from '../../../utils/utils';
 import { AdditionalSettings } from '../components/AdditionalSettings/AdditionalSettings';
-import { getShingleSizeFromObject } from '../../ConfigureModel/utils/helpers';
+import {
+  getShingleSizeFromObject,
+  imputationMethodToFormik,
+  getCustomValueStrArray,
+} from '../../ConfigureModel/utils/helpers';
 
 interface FeaturesProps {
   detectorId: string;
@@ -187,6 +191,7 @@ export const Features = (props: FeaturesProps) => {
 
   const previewText = `After you set the model features and other optional parameters, you can
                          preview your anomalies from a sample feature output.`;
+  const imputationMethodStr = imputationMethodToFormik(props.detector);
 
   return (
     <ContentPanel
@@ -246,6 +251,11 @@ export const Features = (props: FeaturesProps) => {
           <AdditionalSettings
             shingleSize={shingleSize}
             categoryField={get(props.detector, 'categoryField', [])}
+            imputationMethod={imputationMethodStr}
+            customValues={getCustomValueStrArray(
+              imputationMethodStr,
+              props.detector
+            )}
           />
         </div>
       )}

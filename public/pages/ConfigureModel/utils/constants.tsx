@@ -22,6 +22,7 @@ export const INITIAL_MODEL_CONFIGURATION_VALUES: ModelConfigurationFormikValues 
     categoryFieldEnabled: false,
     categoryField: [],
     shingleSize: DEFAULT_SHINGLE_SIZE,
+    imputationOption: undefined
   };
 
 export const INITIAL_FEATURE_VALUES: FeaturesFormikValues = {
@@ -67,3 +68,11 @@ export const FEATURE_FIELDS = [
   'aggregationBy',
   'aggregationQuery',
 ];
+
+// an enum for the sparse data handling options
+export enum SparseDataOptionValue {
+  IGNORE = 'ignore',
+  PREVIOUS_VALUE = 'previous_value',
+  SET_TO_ZERO = 'set_to_zero',
+  CUSTOM_VALUE = 'custom_value',
+}

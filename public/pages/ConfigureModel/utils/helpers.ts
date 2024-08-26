@@ -21,12 +21,21 @@ import { DataTypes } from '../../../redux/reducers/opensearch';
 import {
   ModelConfigurationFormikValues,
   FeaturesFormikValues,
+  CustomValueFormikValues,
+  ImputationFormikValues,
 } from '../../ConfigureModel/models/interfaces';
 import { INITIAL_MODEL_CONFIGURATION_VALUES } from '../../ConfigureModel/utils/constants';
 import {
   featuresToUIMetadata,
   formikToFeatureAttributes,
 } from '../../ReviewAndCreate/utils/helpers';
+import {
+  ImputationMethod,
+  ImputationOption,
+} from '../../../models/types';
+import {
+  SparseDataOptionValue
+} from './constants'
 
 export const getFieldOptions = (
   allFields: { [key: string]: string[] },
@@ -120,6 +129,7 @@ export const validateFeatures = (values: any) => {
       };
     }
   });
+
   return hasError ? { featureList: featureErrors } : undefined;
 };
 
@@ -203,6 +213,11 @@ export const getCategoryFields = (dataTypes: DataTypes) => {
   return keywordFields.concat(ipFields);
 };
 
+export const focusOnImputationOption = () => {
+  const component = document.getElementById('imputationOption');
+  component?.focus();
+};
+
 export const getShingleSizeFromObject = (obj: object) => {
   return get(obj, 'shingleSize', DEFAULT_SHINGLE_SIZE);
 };
@@ -227,12 +242,33 @@ export function modelConfigurationToFormik(
   if (isEmpty(detector)) {
     return initialValues;
   }
+
+  var imputationMethod = imputationMethodToFormik(detector);
+
+  var defaultFillArray: CustomValueFormikValues[] = [];
+
+  if (SparseDataOptionValue.CUSTOM_VALUE === imputationMethod) {
+    const defaultFill = get(detector, 'imputationOption.defaultFill', null) as Array<{ featureName: string; data: number }> | null;
+    defaultFillArray = defaultFill
+    ? defaultFill.map(({ featureName, data }) => ({
+        featureName,
+        data,
+      }))
+    : [];
+  }
+
+  const imputationFormikValues: ImputationFormikValues = {
+    imputationMethod: imputationMethod,
+    custom_value: SparseDataOptionValue.CUSTOM_VALUE === imputationMethod ? defaultFillArray : undefined,
+  };
+
   return {
     ...initialValues,
     featureList: featuresToFormik(detector),
     categoryFieldEnabled: !isEmpty(get(detector, 'categoryField', [])),
     categoryField: get(detector, 'categoryField', []),
     shingleSize: get(detector, 'shingleSize', DEFAULT_SHINGLE_SIZE),
+    imputationOption: imputationFormikValues,
   };
 }
 
@@ -280,6 +316,7 @@ export function formikToModelConfiguration(
     categoryField: !isEmpty(values?.categoryField)
       ? values.categoryField
       : undefined,
+    imputationOption: formikToImputationOption(values.imputationOption),
   } as Detector;
 
   return detectorBody;
@@ -326,4 +363,65 @@ export function formikToSimpleAggregation(value: FeaturesFormikValues) {
   } else {
     return {};
   }
+}
+
+export function formikToImputationOption(imputationFormikValues?: ImputationFormikValues): ImputationOption | undefined {
+  // Map the formik method to the imputation method; return undefined if method is not recognized.
+  const method = formikToImputationMethod(imputationFormikValues?.imputationMethod);
+  if (!method) return undefined;
+
+  // Convert custom_value array to defaultFill if the method is FIXED_VALUES.
+  const defaultFill = method === ImputationMethod.FIXED_VALUES
+    ? imputationFormikValues?.custom_value?.map(({ featureName, data }) => ({
+        featureName,
+        data,
+      }))
+    : undefined;
+
+  // Construct and return the ImputationOption object.
+  return { method, defaultFill };
+}
+
+export function imputationMethodToFormik(
+  detector: Detector
+): string {
+  var imputationMethod = get(detector, 'imputationOption.method', undefined) as ImputationMethod;
+
+  switch (imputationMethod) {
+    case ImputationMethod.FIXED_VALUES:
+      return SparseDataOptionValue.CUSTOM_VALUE;
+    case ImputationMethod.PREVIOUS:
+      return SparseDataOptionValue.PREVIOUS_VALUE;
+    case ImputationMethod.ZERO:
+      return SparseDataOptionValue.SET_TO_ZERO;
+    default:
+      break;
+  }
+
+  return SparseDataOptionValue.IGNORE;
+}
+
+export function formikToImputationMethod(
+  formikValue: string | undefined
+): ImputationMethod | undefined {
+  switch (formikValue) {
+    case SparseDataOptionValue.CUSTOM_VALUE:
+      return ImputationMethod.FIXED_VALUES;
+    case SparseDataOptionValue.PREVIOUS_VALUE:
+      return ImputationMethod.PREVIOUS;
+    case SparseDataOptionValue.SET_TO_ZERO:
+      return ImputationMethod.ZERO;
+    default:
+      return undefined;
+  }
+}
+
+export const getCustomValueStrArray = (imputationMethodStr : string, detector: Detector): string[] => {
+  if (SparseDataOptionValue.CUSTOM_VALUE === imputationMethodStr) {
+    const defaultFill : Array<{ featureName: string; data: number }> = get(detector, 'imputationOption.defaultFill', []);
+
+    return defaultFill
+      .map(({ featureName, data }) => `${featureName}: ${data}`);
+  }
+  return []
 }
