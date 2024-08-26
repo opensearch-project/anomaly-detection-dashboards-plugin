@@ -182,7 +182,6 @@ export function ConfigureModel(props: ConfigureModelProps) {
 
     // Initialize an array to hold individual error messages
     const customValueErrors: string[] = [];
-    console.log(`hello5: ${JSON.stringify(imputationOption)}`);
 
     // Validate imputationOption when method is CUSTOM_VALUE
     if (imputationOption && imputationOption.imputationMethod === SparseDataOptionValue.CUSTOM_VALUE) {
@@ -254,7 +253,6 @@ export function ConfigureModel(props: ConfigureModelProps) {
             props.setStep(3);
           }
         } else {
-          console.log(`hello4 ${JSON.stringify(errors)}`);
           const customValueError = get(errors, 'custom_value')
           if (customValueError) {
             core.notifications.toasts.addDanger(
