@@ -31,7 +31,11 @@ import ContentPanel from '../../../../components/ContentPanel/ContentPanel';
 import { CodeModal } from '../../../../components/CodeModal/CodeModal';
 import { AdditionalSettings } from '../AdditionalSettings/AdditionalSettings';
 import { getTitleWithCount } from '../../../../utils/utils';
-import { getShingleSizeFromObject } from '../../../ConfigureModel/utils/helpers';
+import {
+  getShingleSizeFromObject,
+  imputationMethodToFormik,
+  getCustomValueStrArray,
+ } from '../../../ConfigureModel/utils/helpers';
 import { SORT_DIRECTION } from '../../../../../server/utils/constants';
 
 interface ModelConfigurationFieldsProps {
@@ -101,6 +105,7 @@ export const ModelConfigurationFields = (
   };
   const featureAttributes = get(props.detector, 'featureAttributes', []);
   const shingleSize = getShingleSizeFromObject(props.detector);
+  const imputationMethodStr = imputationMethodToFormik(props.detector);
 
   const sorting = {
     sort: {
@@ -302,6 +307,7 @@ export const ModelConfigurationFields = (
     }
   };
   const featureNum = Object.keys(featureAttributes).length;
+
   return (
     <ContentPanel
       title="Model configuration"
@@ -316,6 +322,8 @@ export const ModelConfigurationFields = (
         <AdditionalSettings
           shingleSize={shingleSize}
           categoryField={get(props, 'detector.categoryField', [])}
+          imputationMethod={imputationMethodStr}
+          customValues={getCustomValueStrArray(imputationMethodStr, props.detector)}
         />
         <EuiSpacer />
         <ContentPanel

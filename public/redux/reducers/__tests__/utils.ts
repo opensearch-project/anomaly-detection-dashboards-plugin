@@ -10,7 +10,7 @@
  */
 
 import chance from 'chance';
-import { isEmpty, snakeCase } from 'lodash';
+import { isEmpty, snakeCase, random } from 'lodash';
 import {
   Detector,
   FeatureAttributes,
@@ -23,6 +23,9 @@ import {
 import moment from 'moment';
 import { DETECTOR_STATE } from '../../../../server/utils/constants';
 import { DEFAULT_SHINGLE_SIZE } from '../../../utils/constants';
+import {
+  ImputationMethod, ImputationOption,
+} from '../../../models/types';
 
 const detectorFaker = new chance('seed');
 
@@ -124,6 +127,7 @@ export const getRandomDetector = (
     resultIndexMinSize: 51200,
     resultIndexTtl: 60,
     flattenCustomResultIndex: true,
+    imputationOption: randomImputationOption(features)
   };
 };
 
@@ -201,4 +205,45 @@ export const getRandomMonitor = (
     triggers: [], //We don't need triggger for AD testing
     lastUpdateTime: moment(1586823218000).subtract(1, 'days').valueOf(),
   };
+};
+
+export const randomFixedValue = (features: FeatureAttributes[]): Array<{ featureName: string; data: number }> => {
+  const randomValues: Array<{ featureName: string; data: number }> = [];
+
+  if (!features) {
+    return randomValues;
+  }
+
+  features.forEach((feature) => {
+    if (feature.featureEnabled) {
+      const randomValue = Math.random() * 100; // generate a random value, e.g., between 0 and 100
+      randomValues.push({ featureName: feature.featureName, data: randomValue });
+    }
+  });
+
+  return randomValues;
+};
+
+
+export const randomImputationOption = (features: FeatureAttributes[]): ImputationOption | undefined => {
+  const randomFixedValueMap = randomFixedValue(features);
+
+  const options: ImputationOption[] = [];
+
+  if (Object.keys(randomFixedValueMap).length !== 0) {
+    options.push({
+      method: ImputationMethod.FIXED_VALUES,
+      defaultFill: randomFixedValueMap,
+    });
+  }
+
+  options.push({ method: ImputationMethod.ZERO });
+  options.push({ method: ImputationMethod.PREVIOUS });
+
+  // Select a random option. random in lodash is inclusive of both min and max
+  const randomIndex = random(0, options.length);
+  if (options.length == randomIndex) {
+    return undefined;
+  }
+  return options[randomIndex];
 };

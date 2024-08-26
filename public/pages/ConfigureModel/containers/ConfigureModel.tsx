@@ -39,8 +39,8 @@ import {
   focusOnFirstWrongFeature,
   getCategoryFields,
   focusOnCategoryField,
-  getShingleSizeFromObject,
   modelConfigurationToFormik,
+  focusOnImputationOption,
 } from '../utils/helpers';
 import { formikToDetector } from '../../ReviewAndCreate/utils/helpers';
 import { formikToModelConfiguration } from '../utils/helpers';
@@ -53,7 +53,7 @@ import { CoreServicesContext } from '../../../components/CoreServices/CoreServic
 import { Detector } from '../../../models/interfaces';
 import { prettifyErrorMessage } from '../../../../server/utils/helpers';
 import { DetectorDefinitionFormikValues } from '../../DefineDetector/models/interfaces';
-import { ModelConfigurationFormikValues } from '../models/interfaces';
+import { ModelConfigurationFormikValues, FeaturesFormikValues } from '../models/interfaces';
 import { CreateDetectorFormikValues } from '../../CreateDetectorSteps/models/interfaces';
 import { DETECTOR_STATE } from '../../../../server/utils/constants';
 import { getErrorMessage } from '../../../utils/utils';
@@ -68,6 +68,7 @@ import {
   getSavedObjectsClient,
 } from '../../../services';
 import { DataSourceViewConfig } from '../../../../../../src/plugins/data_source_management/public';
+import { SparseDataOptionValue } from '../utils/constants';
 
 interface ConfigureModelRouterProps {
   detectorId?: string;
@@ -173,6 +174,49 @@ export function ConfigureModel(props: ConfigureModelProps) {
     }
   }, [hasError]);
 
+  const validateImputationOption = (
+    formikValues: ModelConfigurationFormikValues,
+    errors: any
+  ) => {
+    const imputationOption = get(formikValues, 'imputationOption', null);
+
+    // Initialize an array to hold individual error messages
+    const customValueErrors: string[] = [];
+
+    // Validate imputationOption when method is CUSTOM_VALUE
+    if (imputationOption && imputationOption.imputationMethod === SparseDataOptionValue.CUSTOM_VALUE) {
+      const enabledFeatures = formikValues.featureList.filter(
+        (feature: FeaturesFormikValues) => feature.featureEnabled
+      );
+
+      // Validate that the number of custom values matches the number of enabled features
+      if ((imputationOption.custom_value || []).length !== enabledFeatures.length) {
+        customValueErrors.push(
+          `The number of custom values (${(imputationOption.custom_value || []).length}) does not match the number of enabled features (${enabledFeatures.length}).`
+        );
+      }
+
+      // Validate that each enabled feature has a corresponding custom value
+      const missingFeatures = enabledFeatures
+        .map((feature: FeaturesFormikValues) => feature.featureName)
+        .filter(
+          (name: string | undefined) =>
+            !imputationOption.custom_value?.some((cv) => cv.featureName === name)
+        );
+
+      if (missingFeatures.length > 0) {
+        customValueErrors.push(
+          `The following enabled features are missing in custom values: ${missingFeatures.join(', ')}.`
+        );
+      }
+
+      // If there are any custom value errors, join them into a single string with proper formatting
+      if (customValueErrors.length > 0) {
+        errors.custom_value = customValueErrors.join(' ');
+      }
+    }
+  };
+
   const handleFormValidation = async (
     formikProps: FormikProps<ModelConfigurationFormikValues>
   ) => {
@@ -185,7 +229,12 @@ export function ConfigureModel(props: ConfigureModelProps) {
       formikProps.setFieldTouched('featureList');
       formikProps.setFieldTouched('categoryField', isHCDetector);
       formikProps.setFieldTouched('shingleSize');
+      formikProps.setFieldTouched('imputationOption');
+
       formikProps.validateForm().then((errors) => {
+        // Call the extracted validation method
+        validateImputationOption(formikProps.values, errors);
+
         if (isEmpty(errors)) {
           if (props.isEdit) {
             // TODO: possibly add logic to also start RT and/or historical from here. Need to think
@@ -204,11 +253,22 @@ export function ConfigureModel(props: ConfigureModelProps) {
             props.setStep(3);
           }
         } else {
+          const customValueError = get(errors, 'custom_value')
+          if (customValueError) {
+            core.notifications.toasts.addDanger(
+              customValueError
+            );
+            focusOnImputationOption();
+            return;
+          }
+
           // TODO: can add focus to all components or possibly customize error message too
           if (get(errors, 'featureList')) {
             focusOnFirstWrongFeature(errors, formikProps.setFieldTouched);
           } else if (get(errors, 'categoryField')) {
             focusOnCategoryField();
+          } else {
+            console.log(`unexpected error ${JSON.stringify(errors)}`);
           }
 
           core.notifications.toasts.addDanger(

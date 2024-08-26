@@ -19,6 +19,7 @@ import { DATA_TYPES } from '../../../../utils/constants';
 import { getRandomFeature } from '../../../../redux/reducers/__tests__/utils';
 import { CoreServicesContext } from '../../../../components/CoreServices/CoreServices';
 import { coreServicesMock } from '../../../../../test/mocks';
+import { ImputationMethod } from '../../../../models/types';
 
 const detectorFaker = new chance('seed');
 const features = new Array(detectorFaker.natural({ min: 1, max: 5 }))
@@ -59,6 +60,7 @@ const testDetector = {
     ],
   },
   featureAttributes: features,
+  imputationOption: { method: ImputationMethod.ZERO}
 } as Detector;
 
 describe('ModelConfigurationFields', () => {
@@ -81,6 +83,7 @@ describe('ModelConfigurationFields', () => {
     userEvent.click(getByTestId('viewFeature-0'));
     await waitFor(() => {
       queryByText('max');
+      queryByText('Zero');
     });
   });
 });

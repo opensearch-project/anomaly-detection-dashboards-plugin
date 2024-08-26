@@ -27,15 +27,18 @@ import {
   FEATURE_TYPE,
   UiFeature,
   FeatureAttributes,
+  OPERATORS_MAP,
 } from '../../../../models/interfaces';
-import { getRandomDetector } from '../../../../redux/reducers/__tests__/utils';
+import {
+  getRandomDetector,
+  randomFixedValue,
+} from '../../../../redux/reducers/__tests__/utils';
 import { coreServicesMock } from '../../../../../test/mocks';
 import { toStringConfigCell } from '../../../ReviewAndCreate/utils/helpers';
 import { DATA_TYPES } from '../../../../utils/constants';
-import { OPERATORS_MAP } from '../../../../models/interfaces';
-import { displayText } from '../../../DefineDetector/components/DataFilterList/utils/helpers';
 import { mockedStore, initialState } from '../../../../redux/utils/testUtils';
 import { CoreServicesContext } from '../../../../components/CoreServices/CoreServices';
+import { ImputationMethod } from '../../../../models/types';
 
 const renderWithRouter = (detector: Detector) => ({
   ...render(
@@ -139,6 +142,7 @@ describe('<DetectorConfig /> spec', () => {
   test('renders the component', () => {
     const randomDetector = {
       ...getRandomDetector(false),
+      imputationOption: { method: ImputationMethod.PREVIOUS },
     };
     const { container } = renderWithRouter(randomDetector);
     expect(container.firstChild).toMatchSnapshot();
@@ -306,24 +310,40 @@ describe('<DetectorConfig /> spec', () => {
   });
 
   test('renders the component with 2 custom and 1 simple features', () => {
+    const features = [
+      {
+        featureName: 'value',
+        featureEnabled: true,
+        aggregationQuery: featureQuery1,
+      },
+      {
+        featureName: 'value2',
+        featureEnabled: true,
+        aggregationQuery: featureQuery2,
+      },
+      {
+        featureName: 'value',
+        featureEnabled: false,
+      },
+    ] as FeatureAttributes[];
+
+    const randomFixedValueMap: Array<{ featureName: string; data: number }> =
+      [];
+
+    features.forEach((feature) => {
+      if (feature.featureEnabled) {
+        randomFixedValueMap.push({ featureName: feature.featureName, data: 3 });
+      }
+    });
+
+    const imputationOption = {
+      method: ImputationMethod.FIXED_VALUES,
+      defaultFill: randomFixedValueMap,
+    };
+
     const randomDetector = {
       ...getRandomDetector(true),
-      featureAttributes: [
-        {
-          featureName: 'value',
-          featureEnabled: true,
-          aggregationQuery: featureQuery1,
-        },
-        {
-          featureName: 'value2',
-          featureEnabled: true,
-          aggregationQuery: featureQuery2,
-        },
-        {
-          featureName: 'value',
-          featureEnabled: false,
-        },
-      ] as FeatureAttributes[],
+      featureAttributes: features,
       uiMetadata: {
         filterType: FILTER_TYPES.SIMPLE,
         filters: [],
@@ -341,6 +361,7 @@ describe('<DetectorConfig /> spec', () => {
           } as UiFeature,
         },
       } as UiMetaData,
+      imputationOption: imputationOption,
     };
     const { container } = renderWithRouter(randomDetector);
     expect(container.firstChild).toMatchSnapshot();
