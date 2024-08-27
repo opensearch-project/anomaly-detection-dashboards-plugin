@@ -279,7 +279,7 @@ export const getMappings = (searchKey: string = '', dataSourceId: string = ''): 
   return {
     type: GET_MAPPINGS,
     request: (client: HttpSetup) =>
-      client.get(`..${url}`, {
+      client.get(`${url}`, {
         query: { index: searchKey },
       }),
   };

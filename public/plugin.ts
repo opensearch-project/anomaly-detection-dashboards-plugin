@@ -54,6 +54,8 @@ import { DataPublicPluginStart } from '../../../src/plugins/data/public';
 import { DataSourceManagementPluginSetup } from '../../../src/plugins/data_source_management/public';
 import { DataSourcePluginSetup } from '../../../src/plugins/data_source/public';
 import { NavigationPublicPluginStart } from '../../../src/plugins/navigation/public';
+import { getDiscoverAction } from './utils/discoverAction';
+import { DataExplorerPluginSetup } from '../../../src/plugins/data_explorer/public';
 
 declare module '../../../src/plugins/ui_actions/public' {
   export interface ActionContextMapping {
@@ -68,6 +70,7 @@ export interface AnomalyDetectionSetupDeps {
   visAugmenter: VisAugmenterSetup;
   dataSourceManagement: DataSourceManagementPluginSetup;
   dataSource: DataSourcePluginSetup;
+  dataExplorer: DataExplorerPluginSetup;
 }
 
 export interface AnomalyDetectionStartDeps {
@@ -102,7 +105,7 @@ export class AnomalyDetectionOpenSearchDashboardsPlugin
     });
 
     // register applications with category and use case information
-    core.chrome.navGroup.addNavLinksToGroup(DEFAULT_NAV_GROUPS.observability,[
+    core.chrome.navGroup.addNavLinksToGroup(DEFAULT_NAV_GROUPS.observability, [
       {
         id: PLUGIN_NAME,
         category: DEFAULT_APP_CATEGORIES.detect,
@@ -121,7 +124,7 @@ export class AnomalyDetectionOpenSearchDashboardsPlugin
           const [coreStart] = await core.getStartServices();
           return renderApp(coreStart, params, APP_PATH.OVERVIEW, hideInAppSideNavBar);
         },
-      }); 
+      });
     }
 
     if (core.chrome.navGroup.getNavGroupEnabled()) {
@@ -135,7 +138,7 @@ export class AnomalyDetectionOpenSearchDashboardsPlugin
           const [coreStart] = await core.getStartServices();
           return renderApp(coreStart, params, APP_PATH.DASHBOARD, hideInAppSideNavBar);
         },
-      }); 
+      });
     }
 
     if (core.chrome.navGroup.getNavGroupEnabled()) {
@@ -149,15 +152,15 @@ export class AnomalyDetectionOpenSearchDashboardsPlugin
           const [coreStart] = await core.getStartServices();
           return renderApp(coreStart, params, APP_PATH.LIST_DETECTORS, hideInAppSideNavBar);
         },
-      }); 
+      });
     }
 
     // link the sub applications to the parent application
     core.chrome.navGroup.addNavLinksToGroup(
       DEFAULT_NAV_GROUPS.observability,
       [{
-          id: OVERVIEW_PAGE_NAV_ID,
-          parentNavLinkId: PLUGIN_NAME
+        id: OVERVIEW_PAGE_NAV_ID,
+        parentNavLinkId: PLUGIN_NAME
       },
       {
         id: DASHBOARD_PAGE_NAV_ID,
@@ -188,6 +191,10 @@ export class AnomalyDetectionOpenSearchDashboardsPlugin
     actions.forEach((action) => {
       plugins.uiActions.addTriggerAction(CONTEXT_MENU_TRIGGER, action);
     });
+
+    // Add action to Discover
+    const discoverAction = getDiscoverAction();
+    plugins.dataExplorer.registerDiscoverAction(discoverAction);
 
     // registers the expression function used to render anomalies on an Augmented Visualization
     plugins.expressions.registerFunction(overlayAnomaliesFunction);

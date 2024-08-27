@@ -132,3 +132,5 @@ export const HISTORICAL_TASK_TYPES = [
 ];
 
 export const CUSTOM_AD_RESULT_INDEX_PREFIX = 'opensearch-ad-plugin-result-';
+
+export const GENERATE_ANOMALY_DETECTOR_CONFIG_ID = 'generate_anomaly_detector';
