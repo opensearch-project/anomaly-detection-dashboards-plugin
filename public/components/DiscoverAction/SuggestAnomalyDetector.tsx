@@ -378,12 +378,16 @@ function GenerateAnomalyDetector({
             >
                 {(formikProps) => (
                     <>
-                        <EuiFlyoutHeader hasBorder>
-                            <EuiTitle>
+                        <EuiFlyoutHeader>
+                            <EuiTitle size='s'>
                                 <h2 id="add-anomaly-detector__title">
                                     Suggest anomaly detector
                                 </h2>
                             </EuiTitle>
+                            <EuiSpacer size="m" />
+                            <EuiText size='xs'>
+                                Create an anomaly detector based on the parameters(model features and categorical field) suggested by OpenSearch Assistant.
+                            </EuiText>
                         </EuiFlyoutHeader>
                         <EuiFlyoutBody>
                             <div className="create-new">
