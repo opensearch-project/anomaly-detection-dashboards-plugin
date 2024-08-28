@@ -485,6 +485,504 @@ exports[`<AdditionalSettings /> spec renders the component in create mode (no ID
 </div>
 `;
 
+exports[`<AdditionalSettings /> spec renders the component in create mode (no ID) multi-index 1`] = `
+<div>
+  <div
+    class="euiPanel euiPanel--paddingMedium euiPanel--borderRadiusMedium euiPanel--plain euiPanel--hasShadow"
+    style="padding: 20px;"
+  >
+    <div
+      class="euiFlexGroup euiFlexGroup--gutterLarge euiFlexGroup--alignItemsCenter euiFlexGroup--justifyContentSpaceBetween euiFlexGroup--directionRow euiFlexGroup--responsive"
+      style="padding: 0px;"
+    >
+      <div
+        class="euiFlexItem"
+      >
+        <h3
+          class="euiTitle euiTitle--small"
+          data-test-subj="detectorSettingsHeader"
+        >
+          Detector settings
+        </h3>
+        <div
+          class="euiFlexGroup euiFlexGroup--gutterLarge euiFlexGroup--directionRow euiFlexGroup--responsive"
+        >
+          <div
+            class="euiFlexItem content-panel-subTitle"
+            style="line-height: normal; max-width: 75%;"
+          />
+        </div>
+      </div>
+      <div
+        class="euiFlexItem euiFlexItem--flexGrowZero"
+      >
+        <div
+          class="euiFlexGroup euiFlexGroup--gutterMedium euiFlexGroup--alignItemsCenter euiFlexGroup--justifyContentSpaceBetween euiFlexGroup--directionRow euiFlexGroup--responsive"
+        >
+          <div
+            class="euiFlexItem"
+          >
+            <button
+              class="euiButton euiButton--primary euiButton--small"
+              data-test-subj="editDetectorSettingsButton"
+              type="button"
+            >
+              <span
+                class="euiButtonContent euiButton__content"
+              >
+                <span
+                  class="euiButton__text"
+                >
+                  Edit
+                </span>
+              </span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div
+      class="euiSpacer euiSpacer--s"
+    />
+    <div>
+      <hr
+        class="euiHorizontalRule euiHorizontalRule--full euiHorizontalRule--marginSmall"
+      />
+      <div
+        style="padding: 10px 0px;"
+      >
+        <div
+          class="euiFlexGrid euiFlexGrid--gutterLarge euiFlexGrid--wrap euiFlexGrid--responsive"
+        >
+          <div
+            class="euiFlexItem"
+            data-test-subj="detectorNameCell"
+          >
+            <div
+              class="euiFormRow euiFormRow--compressed"
+              id="random_html_id-row"
+              style="width: 250px;"
+            >
+              <div
+                class="euiFormRow__labelWrapper"
+              >
+                <label
+                  class="euiFormLabel euiFormRow__label"
+                  for="random_html_id"
+                >
+                  Name
+                </label>
+              </div>
+              <div
+                class="euiFormRow__fieldWrapper"
+              >
+                <div
+                  class="euiText euiText--medium"
+                  id="random_html_id"
+                >
+                  <p
+                    class="enabled"
+                  >
+                    test-detector
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div
+            class="euiFlexItem"
+            data-test-subj="indexNameCell"
+          >
+            <div
+              class="euiFormRow euiFormRow--compressed"
+              id="random_html_id-row"
+              style="width: 250px;"
+            >
+              <div
+                class="euiFormRow__labelWrapper"
+              >
+                <label
+                  class="euiFormLabel euiFormRow__label"
+                  for="random_html_id"
+                >
+                  Data source index
+                </label>
+              </div>
+              <div
+                class="euiFormRow__fieldWrapper"
+              >
+                <div
+                  class="euiText euiText--medium"
+                  id="random_html_id"
+                >
+                  <p
+                    class="enabled"
+                  >
+                    <p
+                      data-test-subj="indexNameCellViewAllLink"
+                    >
+                      test-index
+                      ... 
+                      <button
+                        class="euiLink euiLink--primary"
+                        style="font-size: 12px;"
+                        type="button"
+                      >
+                        View all 
+                        3
+                      </button>
+                    </p>
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div
+            class="euiFlexItem"
+          >
+            <div
+              class="euiFormRow euiFormRow--compressed"
+              id="random_html_id-row"
+              style="width: 250px;"
+            >
+              <div
+                class="euiFormRow__labelWrapper"
+              >
+                <label
+                  class="euiFormLabel euiFormRow__label"
+                  for="random_html_id"
+                >
+                  Data filter
+                </label>
+              </div>
+              <div
+                class="euiFormRow__fieldWrapper"
+              >
+                <ol>
+                  <li
+                    class="enabled"
+                  >
+                    test-filter-field is null
+                  </li>
+                </ol>
+              </div>
+            </div>
+          </div>
+          <div
+            class="euiFlexItem"
+          >
+            <div
+              class="euiFormRow euiFormRow--compressed"
+              id="random_html_id-row"
+              style="width: 250px;"
+            >
+              <div
+                class="euiFormRow__labelWrapper"
+              >
+                <label
+                  class="euiFormLabel euiFormRow__label"
+                  for="random_html_id"
+                >
+                  Detector interval
+                </label>
+              </div>
+              <div
+                class="euiFormRow__fieldWrapper"
+              >
+                <div
+                  class="euiText euiText--medium"
+                  id="random_html_id"
+                >
+                  <p
+                    class="enabled"
+                  >
+                    10 Minutes
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div
+            class="euiFlexItem"
+            data-test-subj="detectorDescriptionCell"
+          >
+            <div
+              class="euiFormRow euiFormRow--compressed"
+              id="random_html_id-row"
+              style="width: 250px;"
+            >
+              <div
+                class="euiFormRow__labelWrapper"
+              >
+                <label
+                  class="euiFormLabel euiFormRow__label"
+                  for="random_html_id"
+                >
+                  Description
+                </label>
+              </div>
+              <div
+                class="euiFormRow__fieldWrapper"
+              >
+                <div
+                  class="euiText euiText--medium"
+                  id="random_html_id"
+                >
+                  <p
+                    class="enabled"
+                  >
+                    test-description
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div
+            class="euiFlexItem"
+            data-test-subj="timestampNameCell"
+          >
+            <div
+              class="euiFormRow euiFormRow--compressed"
+              id="random_html_id-row"
+              style="width: 250px;"
+            >
+              <div
+                class="euiFormRow__labelWrapper"
+              >
+                <label
+                  class="euiFormLabel euiFormRow__label"
+                  for="random_html_id"
+                >
+                  Timestamp
+                </label>
+              </div>
+              <div
+                class="euiFormRow__fieldWrapper"
+              >
+                <div
+                  class="euiText euiText--medium"
+                  id="random_html_id"
+                >
+                  <p
+                    class="enabled"
+                  >
+                    test-timefield
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div
+            class="euiFlexItem"
+          >
+            <div
+              class="euiFormRow euiFormRow--compressed"
+              id="random_html_id-row"
+              style="width: 250px;"
+            >
+              <div
+                class="euiFormRow__labelWrapper"
+              >
+                <label
+                  class="euiFormLabel euiFormRow__label"
+                  for="random_html_id"
+                >
+                  Window delay
+                </label>
+              </div>
+              <div
+                class="euiFormRow__fieldWrapper"
+              >
+                <div
+                  class="euiText euiText--medium"
+                  id="random_html_id"
+                >
+                  <p
+                    class="enabled"
+                  >
+                    1 Minutes
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div
+            class="euiFlexItem"
+          >
+            <div
+              class="euiFormRow euiFormRow--compressed"
+              id="random_html_id-row"
+              style="width: 250px;"
+            >
+              <div
+                class="euiFormRow__labelWrapper"
+              >
+                <label
+                  class="euiFormLabel euiFormRow__label"
+                  for="random_html_id"
+                >
+                  Custom result index
+                </label>
+              </div>
+              <div
+                class="euiFormRow__fieldWrapper"
+              >
+                <div
+                  class="euiText euiText--medium"
+                  id="random_html_id"
+                >
+                  <p
+                    class="enabled"
+                  >
+                    opensearch-ad-plugin-result-test
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div
+            class="euiFlexItem"
+          >
+            <div
+              class="euiFormRow euiFormRow--compressed"
+              id="random_html_id-row"
+              style="width: 250px;"
+            >
+              <div
+                class="euiFormRow__labelWrapper"
+              >
+                <label
+                  class="euiFormLabel euiFormRow__label"
+                  for="random_html_id"
+                >
+                  Flatten custom result index
+                </label>
+              </div>
+              <div
+                class="euiFormRow__fieldWrapper"
+              >
+                <div
+                  class="euiText euiText--medium"
+                  id="random_html_id"
+                >
+                  <p
+                    class="enabled"
+                  >
+                    Yes
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div
+            class="euiFlexItem"
+          >
+            <div
+              class="euiFormRow euiFormRow--compressed"
+              id="random_html_id-row"
+              style="width: 250px;"
+            >
+              <div
+                class="euiFormRow__labelWrapper"
+              >
+                <label
+                  class="euiFormLabel euiFormRow__label"
+                  for="random_html_id"
+                >
+                  Custom result index min age
+                </label>
+              </div>
+              <div
+                class="euiFormRow__fieldWrapper"
+              >
+                <div
+                  class="euiText euiText--medium"
+                  id="random_html_id"
+                >
+                  <p
+                    class="enabled"
+                  >
+                    7 Days
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div
+            class="euiFlexItem"
+          >
+            <div
+              class="euiFormRow euiFormRow--compressed"
+              id="random_html_id-row"
+              style="width: 250px;"
+            >
+              <div
+                class="euiFormRow__labelWrapper"
+              >
+                <label
+                  class="euiFormLabel euiFormRow__label"
+                  for="random_html_id"
+                >
+                  Custom result index min size
+                </label>
+              </div>
+              <div
+                class="euiFormRow__fieldWrapper"
+              >
+                <div
+                  class="euiText euiText--medium"
+                  id="random_html_id"
+                >
+                  <p
+                    class="enabled"
+                  >
+                    51200 MB
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div
+            class="euiFlexItem"
+          >
+            <div
+              class="euiFormRow euiFormRow--compressed"
+              id="random_html_id-row"
+              style="width: 250px;"
+            >
+              <div
+                class="euiFormRow__labelWrapper"
+              >
+                <label
+                  class="euiFormLabel euiFormRow__label"
+                  for="random_html_id"
+                >
+                  Custom result index TTL
+                </label>
+              </div>
+              <div
+                class="euiFormRow__fieldWrapper"
+              >
+                <div
+                  class="euiText euiText--medium"
+                  id="random_html_id"
+                >
+                  <p
+                    class="enabled"
+                  >
+                    60 Days
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
 exports[`<AdditionalSettings /> spec renders the component in edit mode (with ID) 1`] = `
 <div>
   <div
