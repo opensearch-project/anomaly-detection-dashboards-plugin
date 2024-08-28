@@ -5,7 +5,7 @@
 
 import React from 'react'
 import { ANOMALY_DETECTION_ICON } from "./constants";
-import GenerateAnomalyDetector from "../components/DiscoverAction/GenerateAnomalyDetector";
+import GenerateAnomalyDetector from "../components/DiscoverAction/SuggestAnomalyDetector";
 import { getClient, getOverlays } from '../../public/services';
 import { toMountPoint } from "../../../../src/plugins/opensearch_dashboards_react/public";
 import { Provider } from "react-redux";
@@ -31,7 +31,7 @@ export const getDiscoverAction = (): DiscoverAction => {
 
     return {
         order: 0,
-        name: 'Generate anomaly detector',
+        name: 'Suggest anomaly detector',
         iconType: ANOMALY_DETECTION_ICON,
         onClick: onClick,
     }

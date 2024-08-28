@@ -113,6 +113,7 @@ export const FeatureAccordion = (props: FeatureAccordionProps) => {
     if (props.displayMode === 'flyout') {
       return (
         <EuiButtonIcon
+          aria-label='trash'
           size="s"
           onClick={onClick}
           disabled={false}

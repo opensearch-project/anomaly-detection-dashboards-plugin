@@ -14,7 +14,7 @@ import {
   IOpenSearchDashboardsResponse,
 } from '../../../../src/core/server';
 import { getClientBasedOnDataSource } from '../utils/helpers';
-import { GENERATE_ANOMALY_DETECTOR_CONFIG_ID } from '../utils/constants';
+import { SUGGEST_ANOMALY_DETECTOR_CONFIG_ID } from '../utils/constants';
 
 export function registerAssistantRoutes(
   apiRouter: Router,
@@ -52,7 +52,7 @@ export default class AssistantService {
       );
 
       const getAgentResponse = await callWithRequest('ml.getAgent', {
-        id: GENERATE_ANOMALY_DETECTOR_CONFIG_ID,
+        id: SUGGEST_ANOMALY_DETECTOR_CONFIG_ID,
       });
 
       if (

@@ -38,7 +38,7 @@ import {
     getDetectorCount,
     matchDetector,
     startDetector,
-} from '../../../public/redux/reducers/ad';
+} from '../../redux/reducers/ad';
 import {
     getError,
     getErrorMessage,
@@ -47,7 +47,7 @@ import {
     validateDetectorName,
     validateNonNegativeInteger,
     validatePositiveInteger,
-} from '../../../public/utils/utils';
+} from '../../utils/utils';
 import {
     CUSTOM_AD_RESULT_INDEX_PREFIX,
     MAX_DETECTORS,
@@ -56,21 +56,21 @@ import {
     focusOnFirstWrongFeature,
     initialFeatureValue,
     validateFeatures,
-} from '../../../public/pages/ConfigureModel/utils/helpers';
-import { formikToDetector } from '../../../public/pages/ReviewAndCreate/utils/helpers';
-import { FormattedFormRow } from '../../../public/components/FormattedFormRow/FormattedFormRow';
-import { FeatureAccordion } from '../../../public/pages/ConfigureModel/components/FeatureAccordion';
-import { AD_DOCS_LINK, DEFAULT_SHINGLE_SIZE, MAX_FEATURE_NUM, PLUGIN_NAME } from '../../../public/utils/constants';
+} from '../../pages/ConfigureModel/utils/helpers';
+import { formikToDetector } from '../../pages/ReviewAndCreate/utils/helpers';
+import { FormattedFormRow } from '../FormattedFormRow/FormattedFormRow';
+import { FeatureAccordion } from '../../pages/ConfigureModel/components/FeatureAccordion';
+import { AD_DOCS_LINK, DEFAULT_SHINGLE_SIZE, MAX_FEATURE_NUM, PLUGIN_NAME } from '../../utils/constants';
 import { getNotifications } from '../../services';
 import { prettifyErrorMessage } from '../../../server/utils/helpers';
 import EnhancedAccordion from '../FeatureAnywhereContextMenu/EnhancedAccordion';
 import MinimalAccordion from '../FeatureAnywhereContextMenu/MinimalAccordion';
-import { DataFilterList } from '../../../public/pages/DefineDetector/components/DataFilterList/DataFilterList';
-import { generateParameters } from '../../../public/redux/reducers/assistant';
-import { FEATURE_TYPE } from '../../../public/models/interfaces';
-import { FeaturesFormikValues } from '../../../public/pages/ConfigureModel/models/interfaces';
+import { DataFilterList } from '../../pages/DefineDetector/components/DataFilterList/DataFilterList';
+import { generateParameters } from '../../redux/reducers/assistant';
+import { FEATURE_TYPE } from '../../models/interfaces';
+import { FeaturesFormikValues } from '../../pages/ConfigureModel/models/interfaces';
 import { DiscoverActionContext } from '../../../../../src/plugins/data_explorer/public/types';
-import { getMappings } from '../../../public/redux/reducers/opensearch';
+import { getMappings } from '../../redux/reducers/opensearch';
 import { mountReactNode } from '../../../../../src/core/public/utils';
 
 export interface GeneratedParameters {
@@ -137,12 +137,12 @@ function GenerateAnomalyDetector({
             );
             const rawGeneratedParameters = get(result, 'generatedParameters');
             if (!rawGeneratedParameters) {
-                throw new Error('Cannot get generated parameters');
+                throw new Error('Cannot get generated parameters!');
             }
 
             const generatedParameters = formatGeneratedParameters(rawGeneratedParameters);
             if (generatedParameters.features.length == 0) {
-                throw new Error('Generated parameters have empty model features');
+                throw new Error('Generated parameters have empty model features!');
             }
 
             initialDetectorValue.featureList = generatedParameters.features;
@@ -166,7 +166,7 @@ function GenerateAnomalyDetector({
         const rawAggregationMethods = rawGeneratedParameters['aggregationMethod'];
         const rawDataFields = rawGeneratedParameters['dateFields'];
         if (!rawAggregationFields || !rawAggregationMethods || !rawDataFields) {
-            throw new Error('Cannot find aggregation field,  aggregation method or data fields!');
+            throw new Error('Cannot find aggregation field, aggregation method or data fields!');
         }
         const aggregationFields =
             rawAggregationFields.split(',');
@@ -175,13 +175,13 @@ function GenerateAnomalyDetector({
         const dateFields = rawDataFields.split(',');
 
         if (aggregationFields.length != aggregationMethods.length) {
-            throw new Error('The number of aggregation fields and the number of aggregation methods are different');
+            throw new Error('The number of aggregation fields and the number of aggregation methods are different!');
         }
 
         const featureList = aggregationFields.map((field: string, index: number) => {
             const method = aggregationMethods[index];
             if (!field || !method) {
-                throw new Error('The generated aggregation field or aggregation method is empty');
+                throw new Error('The generated aggregation field or aggregation method is empty!');
             }
             const aggregationOption = {
                 label: field,
@@ -381,7 +381,7 @@ function GenerateAnomalyDetector({
                         <EuiFlyoutHeader hasBorder>
                             <EuiTitle>
                                 <h2 id="add-anomaly-detector__title">
-                                    Generate anomaly detector
+                                    Suggest anomaly detector
                                 </h2>
                             </EuiTitle>
                         </EuiFlyoutHeader>
@@ -786,6 +786,7 @@ function GenerateAnomalyDetector({
                                                                 feature={feature}
                                                                 handleChange={formikProps.handleChange}
                                                                 displayMode="flyout"
+                                                                key={index}
                                                             />
                                                         )
                                                     )}
@@ -801,6 +802,7 @@ function GenerateAnomalyDetector({
                                                             onClick={() => {
                                                                 push(initialFeatureValue());
                                                             }}
+                                                            disabled={isLoading}
                                                         >
                                                             Add another feature
                                                         </EuiButton>
@@ -832,7 +834,7 @@ function GenerateAnomalyDetector({
                                 <EuiFlexItem grow={false}>
                                     <EuiButton
                                         fill={true}
-                                        data-test-subj="adAnywhereCreateDetectorButton"
+                                        data-test-subj="GenerateAnomalyDetectorCreateButton"
                                         isLoading={isLoading}
                                         onClick={() => {
                                             handleValidationAndSubmit(formikProps);
