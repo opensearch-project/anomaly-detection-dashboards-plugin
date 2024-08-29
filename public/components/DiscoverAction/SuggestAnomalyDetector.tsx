@@ -72,6 +72,7 @@ import { FeaturesFormikValues } from '../../pages/ConfigureModel/models/interfac
 import { DiscoverActionContext } from '../../../../../src/plugins/data_explorer/public/types';
 import { getMappings } from '../../redux/reducers/opensearch';
 import { mountReactNode } from '../../../../../src/core/public/utils';
+import { formikToDetectorName } from '../FeatureAnywhereContextMenu/CreateAnomalyDetector/helpers';
 
 export interface GeneratedParameters {
     categoryField: string;
@@ -126,7 +127,7 @@ function GenerateAnomalyDetector({
     const [delayValue, setDelayValue] = useState(1);
     const [enabled, setEnabled] = useState<boolean>(false);
     const [detectorName, setDetectorName] = useState(
-        indexPatternName.replace('*', '-') + '_anomaly_detector'
+        formikToDetectorName(indexPatternName)
     );
 
     // let LLM to generate parameters for creating anomaly detector
