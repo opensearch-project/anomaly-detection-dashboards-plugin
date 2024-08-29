@@ -127,7 +127,7 @@ function GenerateAnomalyDetector({
     const [delayValue, setDelayValue] = useState(1);
     const [enabled, setEnabled] = useState<boolean>(false);
     const [detectorName, setDetectorName] = useState(
-        formikToDetectorName(indexPatternName)
+        formikToDetectorName(indexPatternName.substring(0, 40))
     );
 
     // let LLM to generate parameters for creating anomaly detector
