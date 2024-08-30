@@ -175,7 +175,7 @@ export function DataSource(props: DataSourceProps) {
     }
   }, 300);
 
-  const handleIndexNameChange = (selectedOptions: any) => {
+  const handleIndexNameChange = (selectedOptions: any, oldOptions: { label: string }[] = props.formikProps.values.index) => {
     const indexNames = selectedOptions;
     setIndexNames(indexNames);
     if (indexNames.length > 0) {
@@ -184,7 +184,7 @@ export function DataSource(props: DataSourceProps) {
       );
       dispatch(getMappings(indices, dataSourceId));
     }
-    if (isSelectedOptionIndexRemoved()) {
+    if (isSelectedOptionIndexRemoved(selectedOptions, oldOptions)) {
       if (props.setNewIndexSelected) {
         props.setNewIndexSelected(true);
       }
@@ -199,10 +199,12 @@ export function DataSource(props: DataSourceProps) {
     newSelectedOptions: { label: string }[] = indexNames,
     oldSelectedOptions: { label: string }[] = props.formikProps.values.index
   ) => {
+      if (_.isEmpty(oldSelectedOptions) && _.isEmpty(newSelectedOptions)) {
+        return false;
+      }
     const newSelectedOptionsSet = new Set(newSelectedOptions);
     const indexRemoved: boolean =
-      !(newSelectedOptions && oldSelectedOptions) ||
-      oldSelectedOptions.some((value) => !newSelectedOptionsSet.has(value));
+    oldSelectedOptions.some((value) => !newSelectedOptionsSet.has(value));
     return indexRemoved;
   };
 
@@ -316,7 +318,7 @@ export function DataSource(props: DataSourceProps) {
                       INITIAL_MODEL_CONFIGURATION_VALUES
                     );
                   }
-                  handleIndexNameChange(options);
+                  handleIndexNameChange(options, field.value);
                 }}
                 selectedOptions={field.value}
                 isClearable={false}

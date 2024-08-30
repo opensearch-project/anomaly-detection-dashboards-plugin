@@ -427,10 +427,8 @@ export default class OpenSearchService {
           path:
             remoteIndices.toString() + '/_field_caps?fields=*&include_unmapped',
         });
-        console.log("fieldCapsResponse: "  + JSON.stringify(fieldCapsResponse))
         remoteMappings = convertFieldCapsToMappingStructure(fieldCapsResponse);
       }
-      console.log("remoteMappings: " + JSON.stringify(remoteMappings))
       Object.assign(mappings, remoteMappings);
 
       return opensearchDashboardsResponse.ok({
