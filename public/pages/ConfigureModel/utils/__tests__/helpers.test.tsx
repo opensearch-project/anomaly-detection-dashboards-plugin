@@ -13,7 +13,7 @@ import { getRandomDetector } from '../../../../redux/reducers/__tests__/utils';
 import { prepareDetector } from '../../utils/helpers';
 import { FEATURE_TYPE } from '../../../../models/interfaces';
 import { FeaturesFormikValues } from '../../models/interfaces';
-import { modelConfigurationToFormik } from '../helpers';
+import { modelConfigurationToFormik, rulesToFormik } from '../helpers';
 import { SparseDataOptionValue } from '../constants';
 import { ImputationMethod } from '../../../../models/types';
 
@@ -125,6 +125,23 @@ describe('featuresToFormik', () => {
       expect(adFormikValues.imputationOption?.imputationMethod).toEqual(
         SparseDataOptionValue.IGNORE
       );
+    }
+  });
+  test('should return correct rules', () => {
+    const randomDetector = getRandomDetector(); // Generate a random detector object for testing
+    const adFormikValues = modelConfigurationToFormik(randomDetector); // Convert detector to Formik values
+
+    const rules = randomDetector.rules; // Get the rules from the detector
+
+    if (rules) {
+      // If rules exist, convert them to formik format using rulesToFormik
+      const expectedFormikRules = rulesToFormik(rules); // Convert rules to Formik-compatible format
+
+      // Compare the converted rules with the suppressionRules in Formik values
+      expect(adFormikValues.suppressionRules).toEqual(expectedFormikRules);
+    } else {
+      // If no rules exist, suppressionRules should be undefined
+      expect(adFormikValues.suppressionRules).toEqual([]);
     }
   });
 });
