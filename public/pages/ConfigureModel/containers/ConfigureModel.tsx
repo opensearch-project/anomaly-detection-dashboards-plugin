@@ -21,7 +21,6 @@ import {
   EuiSpacer,
   EuiText,
   EuiLink,
-  EuiIcon,
 } from '@elastic/eui';
 import { FormikProps, Formik } from 'formik';
 import { get, isEmpty } from 'lodash';
@@ -41,6 +40,7 @@ import {
   focusOnCategoryField,
   modelConfigurationToFormik,
   focusOnImputationOption,
+  focusOnSuppressionRules,
 } from '../utils/helpers';
 import { formikToDetector } from '../../ReviewAndCreate/utils/helpers';
 import { formikToModelConfiguration } from '../utils/helpers';
@@ -53,7 +53,11 @@ import { CoreServicesContext } from '../../../components/CoreServices/CoreServic
 import { Detector } from '../../../models/interfaces';
 import { prettifyErrorMessage } from '../../../../server/utils/helpers';
 import { DetectorDefinitionFormikValues } from '../../DefineDetector/models/interfaces';
-import { ModelConfigurationFormikValues, FeaturesFormikValues } from '../models/interfaces';
+import {
+  ModelConfigurationFormikValues,
+  FeaturesFormikValues,
+  RuleFormikValues
+} from '../models/interfaces';
 import { CreateDetectorFormikValues } from '../../CreateDetectorSteps/models/interfaces';
 import { DETECTOR_STATE } from '../../../../server/utils/constants';
 import { getErrorMessage } from '../../../utils/utils';
@@ -217,6 +221,35 @@ export function ConfigureModel(props: ConfigureModelProps) {
     }
   };
 
+  const validateRules = (
+    formikValues: ModelConfigurationFormikValues,
+    errors: any
+  ) => {
+    const rules = formikValues.suppressionRules || [];
+
+  // Initialize an array to hold individual error messages
+  const featureNameErrors: string[] = [];
+
+  // List of enabled features
+  const enabledFeatures = formikValues.featureList
+    .filter((feature: FeaturesFormikValues) => feature.featureEnabled)
+    .map((feature: FeaturesFormikValues) => feature.featureName);
+
+  // Validate that each featureName in suppressionRules exists in enabledFeatures
+  rules.forEach((rule: RuleFormikValues) => {
+    if (!enabledFeatures.includes(rule.featureName)) {
+      featureNameErrors.push(
+        `Feature "${rule.featureName}" in suppression rules does not exist or is not enabled in the feature list.`
+      );
+    }
+  });
+
+      // If there are any custom value errors, join them into a single string with proper formatting
+      if (featureNameErrors.length > 0) {
+        errors.suppressionRules = featureNameErrors.join(' ');
+      }
+  };
+
   const handleFormValidation = async (
     formikProps: FormikProps<ModelConfigurationFormikValues>
   ) => {
@@ -230,10 +263,12 @@ export function ConfigureModel(props: ConfigureModelProps) {
       formikProps.setFieldTouched('categoryField', isHCDetector);
       formikProps.setFieldTouched('shingleSize');
       formikProps.setFieldTouched('imputationOption');
+      formikProps.setFieldTouched('suppressionRules');
 
       formikProps.validateForm().then((errors) => {
         // Call the extracted validation method
         validateImputationOption(formikProps.values, errors);
+        validateRules(formikProps.values, errors);
 
         if (isEmpty(errors)) {
           if (props.isEdit) {
@@ -259,6 +294,15 @@ export function ConfigureModel(props: ConfigureModelProps) {
               customValueError
             );
             focusOnImputationOption();
+            return;
+          }
+
+          const ruleValueError = get(errors, 'suppressionRules')
+          if (ruleValueError) {
+            core.notifications.toasts.addDanger(
+              ruleValueError
+            );
+            focusOnSuppressionRules();
             return;
           }
 

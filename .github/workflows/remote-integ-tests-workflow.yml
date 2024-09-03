@@ -149,10 +149,7 @@ jobs:
 
       - name: Run spec files from output
         run: |
-          for i in $FILELIST; do
-            yarn cypress:run-without-security --browser electron --spec "${i}"
-            sleep 60
-          done
+          env CYPRESS_NO_COMMAND_LOG=1 yarn cypress:run-without-security --browser chromium --spec 'cypress/integration/plugins/anomaly-detection-dashboards-plugin/*'
         working-directory: opensearch-dashboards-functional-test
 
       - name: Capture failure screenshots

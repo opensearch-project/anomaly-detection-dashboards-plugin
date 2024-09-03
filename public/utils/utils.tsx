@@ -110,6 +110,21 @@ export const validatePositiveInteger = (value: any) => {
     return 'Must be a positive integer';
 };
 
+// Validation function for positive decimal numbers
+export function validatePositiveDecimal(value: any) {
+  // Allow empty, NaN, or non-number values without showing an error
+  if (value === '' || value === null || isNaN(value) || typeof value !== 'number') {
+    return undefined; // No error for empty, NaN, or non-number values
+  }
+
+  // Validate that the value is a positive number greater than zero
+  if (value <= 0) {
+    return 'Must be a positive number greater than zero';
+  }
+
+  return undefined; // No error if the value is valid
+}
+
 export const validateEmptyOrPositiveInteger = (value: any) => {
   if (Number.isInteger(value) && value < 1)
     return 'Must be a positive integer';

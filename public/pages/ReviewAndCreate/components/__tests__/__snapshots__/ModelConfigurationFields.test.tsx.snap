@@ -94,180 +94,281 @@ exports[`ModelConfigurationFields renders the component in create mode (no ID) 1
       </div>
       <div>
         <div
-          class="euiBasicTable header-single-value-euiBasicTable"
+          class="euiPanel euiPanel--paddingMedium euiPanel--borderRadiusMedium euiPanel--plain euiPanel--hasShadow"
+          style="padding: 20px;"
         >
-          <div>
+          <div
+            class="euiFlexGroup euiFlexGroup--gutterLarge euiFlexGroup--alignItemsCenter euiFlexGroup--justifyContentSpaceBetween euiFlexGroup--directionRow euiFlexGroup--responsive"
+            style="padding: 0px;"
+          >
             <div
-              class="euiTableHeaderMobile"
+              class="euiFlexItem"
             >
+              <h3
+                class="euiTitle euiTitle--small"
+                data-test-subj="contentPanelTitle"
+              >
+                Additional settings
+              </h3>
               <div
-                class="euiFlexGroup euiFlexGroup--gutterLarge euiFlexGroup--alignItemsBaseline euiFlexGroup--justifyContentSpaceBetween euiFlexGroup--directionRow"
+                class="euiFlexGroup euiFlexGroup--gutterLarge euiFlexGroup--directionRow euiFlexGroup--responsive"
               >
                 <div
-                  class="euiFlexItem euiFlexItem--flexGrowZero"
-                />
-                <div
-                  class="euiFlexItem euiFlexItem--flexGrowZero"
+                  class="euiFlexItem content-panel-subTitle"
+                  style="line-height: normal; max-width: 75%;"
                 />
               </div>
             </div>
-            <table
-              class="euiTable euiTable--responsive"
-              id="random_html_id"
-              tabindex="-1"
+            <div
+              class="euiFlexItem euiFlexItem--flexGrowZero"
             >
-              <caption
-                class="euiScreenReaderOnly euiTableCaption"
-              />
-              <thead>
-                <tr>
-                  <th
-                    class="euiTableHeaderCell"
-                    data-test-subj="tableHeaderCell_categoryField_0"
-                    role="columnheader"
-                    scope="col"
-                  >
-                    <span
-                      class="euiTableCellContent"
-                    >
-                      <span
-                        class="euiTableCellContent__text"
-                        title="Category field"
-                      >
-                        Category field
-                      </span>
-                    </span>
-                  </th>
-                  <th
-                    class="euiTableHeaderCell"
-                    data-test-subj="tableHeaderCell_shingleSize_1"
-                    role="columnheader"
-                    scope="col"
-                  >
-                    <span
-                      class="euiTableCellContent"
-                    >
-                      <span
-                        class="euiTableCellContent__text"
-                        title="Shingle size"
-                      >
-                        Shingle size
-                      </span>
-                    </span>
-                  </th>
-                  <th
-                    class="euiTableHeaderCell"
-                    data-test-subj="tableHeaderCell_imputationMethod_2"
-                    role="columnheader"
-                    scope="col"
-                  >
-                    <span
-                      class="euiTableCellContent"
-                    >
-                      <span
-                        class="euiTableCellContent__text"
-                        title="Imputation method"
-                      >
-                        Imputation method
-                      </span>
-                    </span>
-                  </th>
-                  <th
-                    class="euiTableHeaderCell"
-                    data-test-subj="tableHeaderCell_customValues_3"
-                    role="columnheader"
-                    scope="col"
-                  >
-                    <span
-                      class="euiTableCellContent"
-                    >
-                      <span
-                        class="euiTableCellContent__text"
-                        title="Custom values"
-                      >
-                        Custom values
-                      </span>
-                    </span>
-                  </th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr
-                  class="euiTableRow"
-                >
-                  <td
-                    class="euiTableRowCell"
+              <div
+                class="euiFlexGroup euiFlexGroup--gutterMedium euiFlexGroup--alignItemsCenter euiFlexGroup--justifyContentSpaceBetween euiFlexGroup--directionRow euiFlexGroup--responsive"
+              >
+                <div
+                  class="euiFlexItem"
+                />
+              </div>
+            </div>
+          </div>
+          <div>
+            <hr
+              class="euiHorizontalRule euiHorizontalRule--full euiHorizontalRule--marginSmall"
+            />
+            <div
+              style="padding: 10px 0px;"
+            >
+              <div
+                class="euiBasicTable header-single-value-euiBasicTable"
+              >
+                <div>
+                  <div
+                    class="euiTableHeaderMobile"
                   >
                     <div
-                      class="euiTableRowCell__mobileHeader euiTableRowCell--hideForDesktop"
-                    >
-                      Category field
-                    </div>
-                    <div
-                      class="euiTableCellContent"
-                    >
-                      <span
-                        class="euiTableCellContent__text"
-                      >
-                        -
-                      </span>
-                    </div>
-                  </td>
-                  <td
-                    class="euiTableRowCell"
-                  >
-                    <div
-                      class="euiTableRowCell__mobileHeader euiTableRowCell--hideForDesktop"
-                    >
-                      Shingle size
-                    </div>
-                    <div
-                      class="euiTableCellContent"
-                    >
-                      <span
-                        class="euiTableCellContent__text"
-                      >
-                        8
-                      </span>
-                    </div>
-                  </td>
-                  <td
-                    class="euiTableRowCell"
-                  >
-                    <div
-                      class="euiTableRowCell__mobileHeader euiTableRowCell--hideForDesktop"
-                    >
-                      Imputation method
-                    </div>
-                    <div
-                      class="euiTableCellContent"
-                    >
-                      <span
-                        class="euiTableCellContent__text"
-                      >
-                        set_to_zero
-                      </span>
-                    </div>
-                  </td>
-                  <td
-                    class="euiTableRowCell"
-                  >
-                    <div
-                      class="euiTableRowCell__mobileHeader euiTableRowCell--hideForDesktop"
-                    >
-                      Custom values
-                    </div>
-                    <div
-                      class="euiTableCellContent euiTableCellContent--overflowingContent"
+                      class="euiFlexGroup euiFlexGroup--gutterLarge euiFlexGroup--alignItemsBaseline euiFlexGroup--justifyContentSpaceBetween euiFlexGroup--directionRow"
                     >
                       <div
-                        class=""
+                        class="euiFlexItem euiFlexItem--flexGrowZero"
+                      />
+                      <div
+                        class="euiFlexItem euiFlexItem--flexGrowZero"
                       />
                     </div>
-                  </td>
-                </tr>
-              </tbody>
-            </table>
+                  </div>
+                  <table
+                    class="euiTable euiTable--responsive"
+                    id="random_html_id"
+                    tabindex="-1"
+                  >
+                    <caption
+                      class="euiScreenReaderOnly euiTableCaption"
+                    />
+                    <thead>
+                      <tr>
+                        <th
+                          class="euiTableHeaderCell"
+                          data-test-subj="tableHeaderCell_categoryField_0"
+                          role="columnheader"
+                          scope="col"
+                        >
+                          <span
+                            class="euiTableCellContent"
+                          >
+                            <span
+                              class="euiTableCellContent__text"
+                              title="Category field"
+                            >
+                              Category field
+                            </span>
+                          </span>
+                        </th>
+                        <th
+                          class="euiTableHeaderCell"
+                          data-test-subj="tableHeaderCell_shingleSize_1"
+                          role="columnheader"
+                          scope="col"
+                        >
+                          <span
+                            class="euiTableCellContent"
+                          >
+                            <span
+                              class="euiTableCellContent__text"
+                              title="Shingle size"
+                            >
+                              Shingle size
+                            </span>
+                          </span>
+                        </th>
+                        <th
+                          class="euiTableHeaderCell"
+                          data-test-subj="tableHeaderCell_imputationMethod_2"
+                          role="columnheader"
+                          scope="col"
+                        >
+                          <span
+                            class="euiTableCellContent"
+                          >
+                            <span
+                              class="euiTableCellContent__text"
+                              title="Imputation method"
+                            >
+                              Imputation method
+                            </span>
+                          </span>
+                        </th>
+                        <th
+                          class="euiTableHeaderCell"
+                          data-test-subj="tableHeaderCell_customValues_3"
+                          role="columnheader"
+                          scope="col"
+                        >
+                          <span
+                            class="euiTableCellContent"
+                          >
+                            <span
+                              class="euiTableCellContent__text"
+                              title="Custom values"
+                            >
+                              Custom values
+                            </span>
+                          </span>
+                        </th>
+                        <th
+                          class="euiTableHeaderCell"
+                          data-test-subj="tableHeaderCell_suppresionRules_4"
+                          role="columnheader"
+                          scope="col"
+                        >
+                          <span
+                            class="euiTableCellContent"
+                          >
+                            <span
+                              class="euiTableCellContent__text"
+                              title="Suppression rules"
+                            >
+                              Suppression rules
+                            </span>
+                          </span>
+                        </th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr
+                        class="euiTableRow"
+                      >
+                        <td
+                          class="euiTableRowCell"
+                        >
+                          <div
+                            class="euiTableRowCell__mobileHeader euiTableRowCell--hideForDesktop"
+                          >
+                            Category field
+                          </div>
+                          <div
+                            class="euiTableCellContent"
+                          >
+                            <span
+                              class="euiTableCellContent__text"
+                            >
+                              -
+                            </span>
+                          </div>
+                        </td>
+                        <td
+                          class="euiTableRowCell"
+                        >
+                          <div
+                            class="euiTableRowCell__mobileHeader euiTableRowCell--hideForDesktop"
+                          >
+                            Shingle size
+                          </div>
+                          <div
+                            class="euiTableCellContent"
+                          >
+                            <span
+                              class="euiTableCellContent__text"
+                            >
+                              8
+                            </span>
+                          </div>
+                        </td>
+                        <td
+                          class="euiTableRowCell"
+                        >
+                          <div
+                            class="euiTableRowCell__mobileHeader euiTableRowCell--hideForDesktop"
+                          >
+                            Imputation method
+                          </div>
+                          <div
+                            class="euiTableCellContent"
+                          >
+                            <span
+                              class="euiTableCellContent__text"
+                            >
+                              set_to_zero
+                            </span>
+                          </div>
+                        </td>
+                        <td
+                          class="euiTableRowCell"
+                        >
+                          <div
+                            class="euiTableRowCell__mobileHeader euiTableRowCell--hideForDesktop"
+                          >
+                            Custom values
+                          </div>
+                          <div
+                            class="euiTableCellContent euiTableCellContent--overflowingContent"
+                          >
+                            <div
+                              class=""
+                            >
+                              <p>
+                                -
+                              </p>
+                            </div>
+                          </div>
+                        </td>
+                        <td
+                          class="euiTableRowCell"
+                        >
+                          <div
+                            class="euiTableRowCell__mobileHeader euiTableRowCell--hideForDesktop"
+                          >
+                            Suppression rules
+                          </div>
+                          <div
+                            class="euiTableCellContent euiTableCellContent--overflowingContent"
+                          >
+                            <div
+                              class=""
+                            >
+                              <button
+                                class="euiButtonEmpty euiButtonEmpty--primary euiButtonEmpty--small"
+                                type="button"
+                              >
+                                <span
+                                  class="euiButtonContent euiButtonEmpty__content"
+                                >
+                                  <span
+                                    class="euiButtonEmpty__text"
+                                  >
+                                    2
+                                     rules
+                                  </span>
+                                </span>
+                              </button>
+                            </div>
+                          </div>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
         <div

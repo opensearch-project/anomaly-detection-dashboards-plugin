@@ -35,6 +35,7 @@ import {
   getShingleSizeFromObject,
   imputationMethodToFormik,
   getCustomValueStrArray,
+  getSuppressionRulesArray,
  } from '../../../ConfigureModel/utils/helpers';
 import { SORT_DIRECTION } from '../../../../../server/utils/constants';
 
@@ -324,6 +325,7 @@ export const ModelConfigurationFields = (
           categoryField={get(props, 'detector.categoryField', [])}
           imputationMethod={imputationMethodStr}
           customValues={getCustomValueStrArray(imputationMethodStr, props.detector)}
+          suppressionRules={getSuppressionRulesArray(props.detector)}
         />
         <EuiSpacer />
         <ContentPanel
