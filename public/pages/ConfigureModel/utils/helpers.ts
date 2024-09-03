@@ -23,6 +23,7 @@ import {
   FeaturesFormikValues,
   CustomValueFormikValues,
   ImputationFormikValues,
+  RuleFormikValues,
 } from '../../ConfigureModel/models/interfaces';
 import { INITIAL_MODEL_CONFIGURATION_VALUES } from '../../ConfigureModel/utils/constants';
 import {
@@ -32,6 +33,11 @@ import {
 import {
   ImputationMethod,
   ImputationOption,
+  Condition,
+  Rule,
+  ThresholdType,
+  Operator,
+  Action,
 } from '../../../models/types';
 import {
   SparseDataOptionValue
@@ -218,6 +224,11 @@ export const focusOnImputationOption = () => {
   component?.focus();
 };
 
+export const focusOnSuppressionRules = () => {
+  const component = document.getElementById('suppressionRules');
+  component?.focus();
+};
+
 export const getShingleSizeFromObject = (obj: object) => {
   return get(obj, 'shingleSize', DEFAULT_SHINGLE_SIZE);
 };
@@ -269,6 +280,7 @@ export function modelConfigurationToFormik(
     categoryField: get(detector, 'categoryField', []),
     shingleSize: get(detector, 'shingleSize', DEFAULT_SHINGLE_SIZE),
     imputationOption: imputationFormikValues,
+    suppressionRules: rulesToFormik(detector.rules),
   };
 }
 
@@ -317,6 +329,7 @@ export function formikToModelConfiguration(
       ? values.categoryField
       : undefined,
     imputationOption: formikToImputationOption(values.imputationOption),
+    rules: formikToRules(values.suppressionRules),
   } as Detector;
 
   return detectorBody;
@@ -425,3 +438,138 @@ export const getCustomValueStrArray = (imputationMethodStr : string, detector: D
   }
   return []
 }
+
+export const getSuppressionRulesArray = (detector: Detector): string[] => {
+  if (!detector.rules || detector.rules.length === 0) {
+    return []; // Return an empty array if there are no rules
+  }
+
+  return detector.rules.flatMap((rule) => {
+    // Convert each condition to a readable string
+    return rule.conditions.map((condition) => {
+      const featureName = condition.featureName;
+      const thresholdType = condition.thresholdType;
+      let value = condition.value;
+      const isPercentage = thresholdType === ThresholdType.ACTUAL_OVER_EXPECTED_RATIO || thresholdType === ThresholdType.EXPECTED_OVER_ACTUAL_RATIO;
+
+      // If it is a percentage, multiply by 100
+      if (isPercentage) {
+        value *= 100;
+      }
+
+      // Determine whether it is "above" or "below" based on ThresholdType
+      const aboveOrBelow = thresholdType === ThresholdType.ACTUAL_OVER_EXPECTED_MARGIN || thresholdType === ThresholdType.ACTUAL_OVER_EXPECTED_RATIO ? 'above' : 'below';
+
+      // Construct the formatted string
+      return `Ignore anomalies for feature "${featureName}" with no more than ${value}${isPercentage ? '%' : ''} ${aboveOrBelow} expected value.`;
+    });
+  });
+};
+
+
+// Convert RuleFormikValues[] to Rule[]
+export const formikToRules = (formikValues?: RuleFormikValues[]): Rule[] | undefined => {
+  if (!formikValues || formikValues.length === 0) {
+    return undefined; // Return undefined for undefined or empty input
+  }
+
+  return formikValues.map((formikValue) => {
+    const conditions: Condition[] = [];
+
+    // Determine the threshold type based on aboveBelow and the threshold type (absolute or relative)
+    const getThresholdType = (aboveBelow: string, isAbsolute: boolean): ThresholdType => {
+      if (isAbsolute) {
+        return aboveBelow === 'above'
+          ? ThresholdType.ACTUAL_OVER_EXPECTED_MARGIN
+          : ThresholdType.EXPECTED_OVER_ACTUAL_MARGIN;
+      } else {
+        return aboveBelow === 'above'
+          ? ThresholdType.ACTUAL_OVER_EXPECTED_RATIO
+          : ThresholdType.EXPECTED_OVER_ACTUAL_RATIO;
+      }
+    };
+
+    // Check if absoluteThreshold is provided, create a condition
+    if (formikValue.absoluteThreshold !== undefined && formikValue.absoluteThreshold !== 0 && formikValue.absoluteThreshold !== null
+      && typeof formikValue.absoluteThreshold === 'number' && // Check if it's a number
+      !isNaN(formikValue.absoluteThreshold) && // Ensure it's not NaN
+      formikValue.absoluteThreshold > 0 // Check if it's positive
+    ) {
+      conditions.push({
+        featureName: formikValue.featureName,
+        thresholdType: getThresholdType(formikValue.aboveBelow, true),
+        operator: Operator.LTE,
+        value: formikValue.absoluteThreshold,
+      });
+    }
+
+    // Check if relativeThreshold is provided, create a condition
+    if (formikValue.relativeThreshold !== undefined && formikValue.relativeThreshold !== 0 && formikValue.relativeThreshold !== null
+      && typeof formikValue.relativeThreshold === 'number' && // Check if it's a number
+      !isNaN(formikValue.relativeThreshold) && // Ensure it's not NaN
+      formikValue.relativeThreshold > 0 // Check if it's positive
+    ) {
+      conditions.push({
+        featureName: formikValue.featureName,
+        thresholdType: getThresholdType(formikValue.aboveBelow, false),
+        operator: Operator.LTE,
+        value: formikValue.relativeThreshold / 100,  // Convert percentage to decimal,
+      });
+    }
+
+    return {
+      action: Action.IGNORE_ANOMALY,
+      conditions,
+    };
+  });
+};
+
+// Convert Rule[] to RuleFormikValues[]
+export const rulesToFormik = (rules?: Rule[]): RuleFormikValues[] => {
+  if (!rules || rules.length === 0) {
+    return []; // Return empty array for undefined or empty input
+  }
+
+  return rules.map((rule) => {
+    // Start with default values
+    const formikValue: RuleFormikValues = {
+      featureName: '',
+      absoluteThreshold: undefined,
+      relativeThreshold: undefined,
+      aboveBelow: 'above', // Default to 'above', adjust as needed
+    };
+
+    // Loop through conditions to populate formikValue
+    rule.conditions.forEach((condition) => {
+      formikValue.featureName = condition.featureName;
+
+      // Determine the value and type of threshold
+      switch (condition.thresholdType) {
+        case ThresholdType.ACTUAL_OVER_EXPECTED_MARGIN:
+          formikValue.absoluteThreshold = condition.value;
+          formikValue.aboveBelow = 'above';
+          break;
+        case ThresholdType.EXPECTED_OVER_ACTUAL_MARGIN:
+          formikValue.absoluteThreshold = condition.value;
+          formikValue.aboveBelow = 'below';
+          break;
+        case ThresholdType.ACTUAL_OVER_EXPECTED_RATIO:
+          // *100 to convert to percentage
+          formikValue.relativeThreshold = condition.value * 100;
+          formikValue.aboveBelow = 'above';
+          break;
+        case ThresholdType.EXPECTED_OVER_ACTUAL_RATIO:
+          // *100 to convert to percentage
+          formikValue.relativeThreshold = condition.value * 100;
+          formikValue.aboveBelow = 'below';
+          break;
+        default:
+          break;
+      }
+    });
+
+    return formikValue;
+  });
+};
+
+

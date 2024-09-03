@@ -28,17 +28,24 @@ import {
   UiFeature,
   FeatureAttributes,
   OPERATORS_MAP,
+  UNITS,
 } from '../../../../models/interfaces';
 import {
   getRandomDetector,
-  randomFixedValue,
+  getUIMetadata,
 } from '../../../../redux/reducers/__tests__/utils';
 import { coreServicesMock } from '../../../../../test/mocks';
 import { toStringConfigCell } from '../../../ReviewAndCreate/utils/helpers';
 import { DATA_TYPES } from '../../../../utils/constants';
 import { mockedStore, initialState } from '../../../../redux/utils/testUtils';
 import { CoreServicesContext } from '../../../../components/CoreServices/CoreServices';
-import { ImputationMethod } from '../../../../models/types';
+import {
+  ImputationMethod,
+  Action,
+  ThresholdType,
+  Operator,
+} from '../../../../models/types';
+import { DETECTOR_STATE } from '../../../../../server/utils/constants';
 
 const renderWithRouter = (detector: Detector) => ({
   ...render(
@@ -143,6 +150,25 @@ describe('<DetectorConfig /> spec', () => {
     const randomDetector = {
       ...getRandomDetector(false),
       imputationOption: { method: ImputationMethod.PREVIOUS },
+      rules: [
+        {
+          action: Action.IGNORE_ANOMALY,
+          conditions: [
+            {
+              featureName: 'value', // Matches a feature in featureAttributes
+              thresholdType: ThresholdType.ACTUAL_OVER_EXPECTED_MARGIN,
+              operator: Operator.LTE,
+              value: 5,
+            },
+            {
+              featureName: 'value2', // Matches another feature in featureAttributes
+              thresholdType: ThresholdType.EXPECTED_OVER_ACTUAL_RATIO,
+              operator: Operator.LTE,
+              value: 10,
+            },
+          ],
+        },
+      ],
     };
     const { container } = renderWithRouter(randomDetector);
     expect(container.firstChild).toMatchSnapshot();
@@ -362,8 +388,88 @@ describe('<DetectorConfig /> spec', () => {
         },
       } as UiMetaData,
       imputationOption: imputationOption,
+      rules: [
+        {
+          action: Action.IGNORE_ANOMALY,
+          conditions: [
+            {
+              featureName: 'value', // Matches a feature in featureAttributes
+              thresholdType: ThresholdType.ACTUAL_OVER_EXPECTED_MARGIN,
+              operator: Operator.LTE,
+              value: 5,
+            },
+            {
+              featureName: 'value2', // Matches another feature in featureAttributes
+              thresholdType: ThresholdType.EXPECTED_OVER_ACTUAL_RATIO,
+              operator: Operator.LTE,
+              value: 10,
+            },
+          ],
+        },
+      ],
     };
     const { container } = renderWithRouter(randomDetector);
+    expect(container.firstChild).toMatchSnapshot();
+  });
+  test('renders rules', () => {
+    // Define example features
+    const features = [
+      {
+        featureName: 'value',
+        featureEnabled: true,
+        aggregationQuery: featureQuery1,
+      },
+      {
+        featureName: 'value2',
+        featureEnabled: true,
+        aggregationQuery: featureQuery2,
+      },
+      {
+        featureName: 'value',
+        featureEnabled: false,
+      },
+    ] as FeatureAttributes[];
+
+    // Updated example detector
+    const testDetector: Detector = {
+      primaryTerm: 1,
+      seqNo: 1,
+      id: 'detector-1',
+      name: 'Sample Detector',
+      description: 'A sample detector for testing',
+      timeField: 'timestamp',
+      indices: ['index1'],
+      filterQuery: {},
+      featureAttributes: features, // Using the provided features
+      windowDelay: { period: { interval: 1, unit: UNITS.MINUTES } },
+      detectionInterval: { period: { interval: 1, unit: UNITS.MINUTES } },
+      shingleSize: 8,
+      lastUpdateTime: 1586823218000,
+      curState: DETECTOR_STATE.RUNNING,
+      stateError: '',
+      uiMetadata: getUIMetadata(features),
+      rules: [
+        {
+          action: Action.IGNORE_ANOMALY,
+          conditions: [
+            {
+              featureName: 'value', // Matches a feature in featureAttributes
+              thresholdType: ThresholdType.ACTUAL_OVER_EXPECTED_MARGIN,
+              operator: Operator.LTE,
+              value: 5,
+            },
+            {
+              featureName: 'value2', // Matches another feature in featureAttributes
+              thresholdType: ThresholdType.EXPECTED_OVER_ACTUAL_RATIO,
+              operator: Operator.LTE,
+              value: 10,
+            },
+          ],
+        },
+      ],
+    };
+
+    const { container } = renderWithRouter(testDetector);
     expect(container.firstChild).toMatchSnapshot();
   });
 });
