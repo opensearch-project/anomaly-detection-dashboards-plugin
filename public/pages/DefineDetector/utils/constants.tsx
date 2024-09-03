@@ -48,6 +48,4 @@ export const INITIAL_DETECTOR_DEFINITION_VALUES: DetectorDefinitionFormikValues 
     resultIndexMinSize: 51200,
     resultIndexTtl: 60,
     flattenCustomResultIndex: false,
-    imputationMethod: undefined,
-    customImputationValue: undefined
   };
