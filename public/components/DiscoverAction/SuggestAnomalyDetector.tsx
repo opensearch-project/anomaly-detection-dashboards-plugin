@@ -24,7 +24,7 @@ import {
     EuiComboBox,
 } from '@elastic/eui';
 import '../FeatureAnywhereContextMenu/CreateAnomalyDetector/styles.scss';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { isEmpty, get } from 'lodash';
 import {
     Field,
@@ -54,6 +54,7 @@ import {
 } from '../../../server/utils/constants';
 import {
     focusOnFirstWrongFeature,
+    getCategoryFields,
     initialFeatureValue,
     validateFeatures,
 } from '../../pages/ConfigureModel/utils/helpers';
@@ -61,7 +62,7 @@ import { formikToDetector } from '../../pages/ReviewAndCreate/utils/helpers';
 import { FormattedFormRow } from '../FormattedFormRow/FormattedFormRow';
 import { FeatureAccordion } from '../../pages/ConfigureModel/components/FeatureAccordion';
 import { AD_DOCS_LINK, DEFAULT_SHINGLE_SIZE, MAX_FEATURE_NUM, PLUGIN_NAME } from '../../utils/constants';
-import { getNotifications } from '../../services';
+import { getNotifications, getQueryService } from '../../services';
 import { prettifyErrorMessage } from '../../../server/utils/helpers';
 import EnhancedAccordion from '../FeatureAnywhereContextMenu/EnhancedAccordion';
 import MinimalAccordion from '../FeatureAnywhereContextMenu/MinimalAccordion';
@@ -69,10 +70,11 @@ import { DataFilterList } from '../../pages/DefineDetector/components/DataFilter
 import { generateParameters } from '../../redux/reducers/assistant';
 import { FEATURE_TYPE } from '../../models/interfaces';
 import { FeaturesFormikValues } from '../../pages/ConfigureModel/models/interfaces';
-import { DiscoverActionContext } from '../../../../../src/plugins/data_explorer/public/types';
 import { getMappings } from '../../redux/reducers/opensearch';
 import { mountReactNode } from '../../../../../src/core/public/utils';
 import { formikToDetectorName } from '../FeatureAnywhereContextMenu/CreateAnomalyDetector/helpers';
+import { DEFAULT_DATA } from '../../../../../src/plugins/data/common';
+import { AppState } from '../../redux/reducers';
 
 export interface GeneratedParameters {
     categoryField: string;
@@ -80,41 +82,35 @@ export interface GeneratedParameters {
     dateFields: string[];
 }
 
-function GenerateAnomalyDetector({
+function SuggestAnomalyDetector({
     closeFlyout,
-    context,
 }: {
     closeFlyout: any;
-    context: DiscoverActionContext;
 }) {
     const dispatch = useDispatch();
     const notifications = getNotifications();
-    const indexPatternId = context.indexPattern?.id;
-    const indexPatternName = context.indexPattern?.title;
-    if (!indexPatternId || !indexPatternName) {
+    const queryString = getQueryService().queryString;
+    const dataset = queryString.getQuery().dataset || queryString.getDefaultQuery().dataset;
+    const datasetType = dataset.type;
+    if (datasetType != DEFAULT_DATA.SET_TYPES.INDEX_PATTERN && datasetType != DEFAULT_DATA.SET_TYPES.INDEX) {
         notifications.toasts.addDanger(
-            'Cannot extract index pattern from the context'
+            'Unsupported dataset type'
         );
         return <></>;
     }
 
-    const dataSourceId = context.indexPattern?.dataSourceRef?.id;
-    const timeFieldFromIndexPattern = context.indexPattern?.timeFieldName;
-    const fieldsFromContext = context.indexPattern?.fields || [];
-    const [categoricalFields, dateFields] = fieldsFromContext.reduce(
-        ([cFields, dFields], indexPatternField) => {
-            const esType = indexPatternField.spec.esTypes?.[0];
-            const name = indexPatternField.spec.name;
-            if (esType === 'keyword' || esType === 'ip') {
-                cFields.push(name);
-            } else if (esType === 'date') {
-                dFields.push(name);
-            }
-            return [cFields, dFields];
-        },
-        [[], []] as [string[], string[]]
-    ) || [[], []];
+    const indexPatternId = dataset.id;
+    // indexName could be a index pattern or a concrete index
+    const indexName = dataset.title;
+    const timeFieldName = dataset.timeFieldName;
+    if (!indexPatternId || !indexName || !timeFieldName) {
+        notifications.toasts.addDanger(
+            'Cannot extract complete index info from the context'
+        );
+        return <></>;
+    }
 
+    const dataSourceId = dataset.dataSource?.id;
     const [isLoading, setIsLoading] = useState<boolean>(true);
     const [buttonName, setButtonName] = useState<string>(
         'Generating parameters...'
@@ -127,14 +123,22 @@ function GenerateAnomalyDetector({
     const [delayValue, setDelayValue] = useState(1);
     const [enabled, setEnabled] = useState<boolean>(false);
     const [detectorName, setDetectorName] = useState(
-        formikToDetectorName(indexPatternName.substring(0, 40))
+        formikToDetectorName(indexName.substring(0, 40))
     );
+    const indexDataTypes = useSelector(
+        (state: AppState) => state.opensearch.dataTypes
+    );
+    const categoricalFields = getCategoryFields(indexDataTypes);
+
+    const dateFields = get(indexDataTypes, 'date', []) as string[];
+    const dateNanoFields = get(indexDataTypes, 'date_nanos', []) as string[];
+    const allDateFields = dateFields.concat(dateNanoFields);
 
     // let LLM to generate parameters for creating anomaly detector
     async function getParameters() {
         try {
             const result = await dispatch(
-                generateParameters(indexPatternName!, dataSourceId)
+                generateParameters(indexName!, dataSourceId)
             );
             const rawGeneratedParameters = get(result, 'generatedParameters');
             if (!rawGeneratedParameters) {
@@ -207,11 +211,8 @@ function GenerateAnomalyDetector({
 
     useEffect(() => {
         async function fetchData() {
+            await dispatch(getMappings(indexName, dataSourceId));
             await getParameters();
-            const getMappingDispatchCall = dispatch(
-                getMappings(indexPatternName, dataSourceId)
-            );
-            await Promise.all([getMappingDispatchCall]);
         }
         fetchData();
     }, []);
@@ -353,8 +354,8 @@ function GenerateAnomalyDetector({
 
     let initialDetectorValue = {
         name: detectorName,
-        index: [{ label: indexPatternName }],
-        timeField: timeFieldFromIndexPattern,
+        index: [{ label: indexName }],
+        timeField: timeFieldName,
         interval: intervalValue,
         windowDelay: delayValue,
         shingleSize: DEFAULT_SHINGLE_SIZE,
@@ -382,7 +383,7 @@ function GenerateAnomalyDetector({
                         <EuiFlyoutHeader>
                             <EuiTitle size='s'>
                                 <h2 id="add-anomaly-detector__title">
-                                    Suggest anomaly detector
+                                    Suggested anomaly detector
                                 </h2>
                             </EuiTitle>
                             <EuiSpacer size="m" />
@@ -729,7 +730,7 @@ function GenerateAnomalyDetector({
                                                         data-test-subj="timestampFilter"
                                                         id="timeField"
                                                         placeholder="Find timestamp"
-                                                        options={dateFields.map((field) => {
+                                                        options={allDateFields.map((field) => {
                                                             return {
                                                                 label: field,
                                                             };
@@ -750,7 +751,7 @@ function GenerateAnomalyDetector({
                                                                         label: field.value,
                                                                     },
                                                                 ]
-                                                                : [{ label: timeFieldFromIndexPattern }]
+                                                                : [{ label: timeFieldName }]
                                                         }
                                                         singleSelection={{ asPlainText: true }}
                                                         isClearable={false}
@@ -857,4 +858,4 @@ function GenerateAnomalyDetector({
     );
 }
 
-export default GenerateAnomalyDetector;
+export default SuggestAnomalyDetector;

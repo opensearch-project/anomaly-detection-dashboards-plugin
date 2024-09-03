@@ -8,7 +8,7 @@
   "optionalPlugins": [
     "dataSource",
     "dataSourceManagement",
-    "dataExplorer"
+    "assistantDashboards"
   ],
   "requiredPlugins": [
     "opensearchDashboardsUtils",

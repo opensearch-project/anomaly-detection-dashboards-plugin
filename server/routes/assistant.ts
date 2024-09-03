@@ -56,16 +56,14 @@ export default class AssistantService {
       });
 
       if (
-        !getAgentResponse ||
-        !getAgentResponse['configuration'] ||
-        !getAgentResponse['configuration']['agent_id']
+        !getAgentResponse || !(getAgentResponse.ml_configuration?.agent_id || getAgentResponse.configuration?.agent_id)
       ) {
         throw new Error(
           'Cannot get flow agent id for generating anomaly detector'
         );
       }
 
-      const agentId = getAgentResponse['configuration']['agent_id'];
+      const agentId = getAgentResponse.ml_configuration?.agent_id || getAgentResponse.configuration?.agent_id;
 
       const executeAgentResponse = await callWithRequest('ml.executeAgent', {
         agentId: agentId,

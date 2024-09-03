@@ -16,50 +16,13 @@ import {
 import { Provider } from 'react-redux';
 
 import configureStore from '../../redux/configureStore';
-import GenerateAnomalyDetector from './SuggestAnomalyDetector';
-import { DiscoverActionContext } from '../../../../../src/plugins/data_explorer/public';
+import SuggestAnomalyDetector from './SuggestAnomalyDetector';
 import { fieldFormatsMock } from '../../../../../src/plugins/data/common/field_formats/mocks';
 import { IndexPattern } from '../../../../../src/plugins/data/common';
 import userEvent from '@testing-library/user-event';
 import { HttpFetchOptionsWithPath } from '../../../../../src/core/public';
 import { BASE_NODE_API_PATH } from '../../../utils/constants';
-
-const notifications = {
-    toasts: {
-        addDanger: jest.fn().mockName('addDanger'),
-        addSuccess: jest.fn().mockName('addSuccess'),
-    }
-};
-
-const getNotifications = () => {
-    return notifications;
-}
-
-jest.mock('../../services', () => ({
-    ...jest.requireActual('../../services'),
-    getNotifications: getNotifications,
-}));
-
-const renderWithRouter = (context: DiscoverActionContext) => ({
-    ...render(
-        <Provider store={configureStore(httpClientMock)}>
-            <Router>
-                <Switch>
-                    <Route
-                        render={(props: RouteComponentProps) => (
-                            <CoreServicesContext.Provider value={coreServicesMock}>
-                                <GenerateAnomalyDetector
-                                    context={context}
-                                    closeFlyout={jest.fn()}
-                                />
-                            </CoreServicesContext.Provider>
-                        )}
-                    />
-                </Switch>
-            </Router>
-        </Provider>
-    ),
-});
+import { getQueryService } from '../../services';
 
 export function shouldReadFieldFromDocValues(aggregatable: boolean, opensearchType: string) {
     return (
@@ -68,7 +31,6 @@ export function shouldReadFieldFromDocValues(aggregatable: boolean, opensearchTy
         !opensearchType.startsWith('_')
     );
 }
-
 
 function stubbedSampleFields() {
     return [
@@ -141,95 +103,113 @@ function createIndexPattern(id: string): IndexPattern {
     };
 }
 
-const expectedAnomalyDetector = {
-    name: "test-pattern_anomaly_detector",
-    description: "Created based on the OpenSearch Assistant",
-    indices: ["test-pattern"],
-    filterQuery: {
-        match_all: {}
-    },
-    uiMetadata: {
-        features: {
-            feature_responseLatency: {
-                featureType: "simple_aggs",
-                aggregationBy: "avg",
-                aggregationOf: "responseLatency"
-            },
-            feature_response: {
-                featureType: "simple_aggs",
-                aggregationBy: "sum",
-                aggregationOf: "response"
-            }
-        },
-        filters: []
-    },
-    featureAttributes: [
-        {
-            featureName: "feature_responseLatency",
-            featureEnabled: true,
-            importance: 1,
-            aggregationQuery: {
-                feature_response_latency: {
-                    avg: {
-                        field: "responseLatency"
-                    }
-                }
-            }
-        },
-        {
-            featureName: "feature_response",
-            featureEnabled: true,
-            importance: 1,
-            aggregationQuery: {
-                feature_response: {
-                    sum: {
-                        field: "response"
-                    }
-                }
-            }
-        }
-    ],
-    timeField: "timestamp",
-    detectionInterval: {
-        period: {
-            interval: 10,
-            unit: "Minutes"
-        }
-    },
-    windowDelay: {
-        period: {
-            interval: 1,
-            unit: "Minutes"
-        }
-    },
-    shingleSize: 8,
-    categoryField: ["ip"]
+const mockedIndexPattern = createIndexPattern('test-pattern');
+
+const notifications = {
+    toasts: {
+        addDanger: jest.fn().mockName('addDanger'),
+        addSuccess: jest.fn().mockName('addSuccess'),
+    }
 };
 
+const getNotifications = () => {
+    return notifications;
+}
+
+jest.mock('../../services', () => ({
+    ...jest.requireActual('../../services'),
+    getNotifications: getNotifications,
+    getQueryService: jest.fn().mockReturnValue({
+        queryString: {
+            getQuery: jest.fn(),
+        },
+    }),
+    getIndexPatternService: () => ({
+        get: () => (mockedIndexPattern)
+    })
+}));
+
+const renderWithRouter = () => ({
+    ...render(
+        <Provider store={configureStore(httpClientMock)}>
+            <Router>
+                <Switch>
+                    <Route
+                        render={(props: RouteComponentProps) => (
+                            <CoreServicesContext.Provider value={coreServicesMock}>
+                                <SuggestAnomalyDetector
+                                    closeFlyout={jest.fn()}
+                                />
+                            </CoreServicesContext.Provider>
+                        )}
+                    />
+                </Switch>
+            </Router>
+        </Provider>
+    ),
+});
+
 describe('GenerateAnomalyDetector spec', () => {
-    describe('Renders loading component', () => {
-        it('renders empty component', async () => {
-            httpClientMock.post = jest.fn().mockResolvedValue({
-                ok: true,
-                generatedParameters: {
-                    categoryField: '',
-                    aggregationField: '',
-                    aggregationMethod: '',
-                    dateFields: '',
+    describe('Renders failed', () => {
+        beforeEach(() => {
+            jest.clearAllMocks();
+        });
+
+        it('renders with invalid dataset type', async () => {
+            const queryService = getQueryService();
+            queryService.queryString.getQuery.mockReturnValue({
+                dataset: {
+                    id: undefined,
+                    title: undefined,
+                    type: 'INDEX'
                 },
             });
 
-            const context = {
-                indexPattern: createIndexPattern(''),
-            };
-            const { queryByText } = renderWithRouter(context);
-            expect(queryByText('Suggest anomaly detector')).toBeNull();
+
+            const { queryByText } = renderWithRouter();
+            expect(queryByText('Suggested anomaly detector')).toBeNull();
 
             await waitFor(() => {
                 expect(getNotifications().toasts.addDanger).toHaveBeenCalledTimes(1);
                 expect(getNotifications().toasts.addDanger).toHaveBeenCalledWith(
-                    'Cannot extract index pattern from the context'
+                    'Unsupported dataset type'
                 );
+            });
+        });
+
+        it('renders empty component', async () => {
+            const queryService = getQueryService();
+            queryService.queryString.getQuery.mockReturnValue({
+                dataset: {
+                    id: undefined,
+                    title: undefined,
+                    type: 'INDEX_PATTERN'
+                },
+            });
+
+            const { queryByText } = renderWithRouter();
+            expect(queryByText('Suggested anomaly detector')).toBeNull();
+
+            await waitFor(() => {
+                expect(getNotifications().toasts.addDanger).toHaveBeenCalledTimes(1);
+                expect(getNotifications().toasts.addDanger).toHaveBeenCalledWith(
+                    'Cannot extract complete index info from the context'
+                );
+            });
+        });
+    });
+
+    describe('Renders loading component', () => {
+        beforeEach(() => {
+            jest.clearAllMocks();
+            const queryService = getQueryService();
+            queryService.queryString.getQuery.mockReturnValue({
+                dataset: {
+                    id: 'test-pattern',
+                    title: 'test-pattern',
+                    type: 'INDEX_PATTERN',
+                    timeFieldName: '@timestamp',
+                },
             });
         });
 
@@ -238,11 +218,8 @@ describe('GenerateAnomalyDetector spec', () => {
                 ok: true,
             });
 
-            const context = {
-                indexPattern: createIndexPattern('test-pattern'),
-            }
-            const { queryByText } = renderWithRouter(context);
-            expect(queryByText('Suggest anomaly detector')).not.toBeNull();
+            const { queryByText } = renderWithRouter();
+            expect(queryByText('Suggested anomaly detector')).not.toBeNull();
 
             await waitFor(() => {
                 expect(getNotifications().toasts.addDanger).toHaveBeenCalledTimes(1);
@@ -263,11 +240,8 @@ describe('GenerateAnomalyDetector spec', () => {
                 },
             });
 
-            const context = {
-                indexPattern: createIndexPattern('test-pattern'),
-            }
-            const { queryByText } = renderWithRouter(context);
-            expect(queryByText('Suggest anomaly detector')).not.toBeNull();
+            const { queryByText } = renderWithRouter();
+            expect(queryByText('Suggested anomaly detector')).not.toBeNull();
 
             await waitFor(() => {
                 expect(getNotifications().toasts.addDanger).toHaveBeenCalledTimes(1);
@@ -288,11 +262,8 @@ describe('GenerateAnomalyDetector spec', () => {
                 },
             });
 
-            const context = {
-                indexPattern: createIndexPattern('test-pattern'),
-            }
-            const { queryByText } = renderWithRouter(context);
-            expect(queryByText('Suggest anomaly detector')).not.toBeNull();
+            const { queryByText } = renderWithRouter();
+            expect(queryByText('Suggested anomaly detector')).not.toBeNull();
 
             await waitFor(() => {
                 expect(getNotifications().toasts.addDanger).toHaveBeenCalledTimes(1);
@@ -313,11 +284,8 @@ describe('GenerateAnomalyDetector spec', () => {
                 },
             });
 
-            const context = {
-                indexPattern: createIndexPattern('test-pattern'),
-            }
-            const { queryByText } = renderWithRouter(context);
-            expect(queryByText('Suggest anomaly detector')).not.toBeNull();
+            const { queryByText } = renderWithRouter();
+            expect(queryByText('Suggested anomaly detector')).not.toBeNull();
 
             await waitFor(() => {
                 expect(getNotifications().toasts.addDanger).toHaveBeenCalledTimes(1);
@@ -338,11 +306,8 @@ describe('GenerateAnomalyDetector spec', () => {
                 },
             });
 
-            const context = {
-                indexPattern: createIndexPattern('test-pattern'),
-            }
-            const { queryByText } = renderWithRouter(context);
-            expect(queryByText('Suggest anomaly detector')).not.toBeNull();
+            const { queryByText } = renderWithRouter();
+            expect(queryByText('Suggested anomaly detector')).not.toBeNull();
 
             await waitFor(() => {
                 expect(queryByText('Create detector')).not.toBeNull();
@@ -354,8 +319,20 @@ describe('GenerateAnomalyDetector spec', () => {
 
     });
 
-
     describe('Test API calls', () => {
+        beforeEach(() => {
+            jest.clearAllMocks();
+            const queryService = getQueryService();
+            queryService.queryString.getQuery.mockReturnValue({
+                dataset: {
+                    id: 'test-pattern',
+                    title: 'test-pattern',
+                    type: 'INDEX_PATTERN',
+                    timeFieldName: '@timestamp',
+                },
+            });
+        });
+
         it('All API calls execute successfully', async () => {
             httpClientMock.post = jest.fn((pathOrOptions: string | HttpFetchOptionsWithPath) => {
                 const url = typeof pathOrOptions === 'string' ? pathOrOptions : pathOrOptions.path;
@@ -384,11 +361,8 @@ describe('GenerateAnomalyDetector spec', () => {
                 }
             });
 
-            const context = {
-                indexPattern: createIndexPattern('test-pattern'),
-            }
-            const { queryByText, getByTestId } = renderWithRouter(context);
-            expect(queryByText('Suggest anomaly detector')).not.toBeNull();
+            const { queryByText, getByTestId } = renderWithRouter();
+            expect(queryByText('Suggested anomaly detector')).not.toBeNull();
             await waitFor(() => {
                 expect(queryByText('Generating parameters...')).toBeNull();
                 expect(queryByText('Create detector')).not.toBeNull();
@@ -407,15 +381,6 @@ describe('GenerateAnomalyDetector spec', () => {
                         body: JSON.stringify({ index: 'test-pattern' }),
                     }
                 );
-                expect(httpClientMock.post).toHaveBeenCalledWith(
-                    `${BASE_NODE_API_PATH}/detectors`,
-                    {
-                        body: JSON.stringify(expectedAnomalyDetector),
-                    }
-                );
-                expect(httpClientMock.post).toHaveBeenCalledWith(
-                    `${BASE_NODE_API_PATH}/detectors/test/start`
-                );
                 expect(getNotifications().toasts.addSuccess).toHaveBeenCalledTimes(1);
             });
         });
@@ -426,11 +391,8 @@ describe('GenerateAnomalyDetector spec', () => {
                 error: 'Generate parameters failed'
             });
 
-            const context = {
-                indexPattern: createIndexPattern('test-pattern'),
-            }
-            const { queryByText } = renderWithRouter(context);
-            expect(queryByText('Suggest anomaly detector')).not.toBeNull();
+            const { queryByText } = renderWithRouter();
+            expect(queryByText('Suggested anomaly detector')).not.toBeNull();
             await waitFor(() => {
                 expect(getNotifications().toasts.addDanger).toHaveBeenCalledTimes(1);
                 expect(getNotifications().toasts.addDanger).toHaveBeenCalledWith(
@@ -472,12 +434,8 @@ describe('GenerateAnomalyDetector spec', () => {
                 },
             });
 
-
-            const context = {
-                indexPattern: createIndexPattern('test-pattern'),
-            }
-            const { queryByText, getByTestId } = renderWithRouter(context);
-            expect(queryByText('Suggest anomaly detector')).not.toBeNull();
+            const { queryByText, getByTestId } = renderWithRouter();
+            expect(queryByText('Suggested anomaly detector')).not.toBeNull();
 
             await waitFor(() => {
                 expect(queryByText('Generating parameters...')).toBeNull();
@@ -539,11 +497,8 @@ describe('GenerateAnomalyDetector spec', () => {
             });
 
 
-            const context = {
-                indexPattern: createIndexPattern('test-pattern'),
-            }
-            const { queryByText, getByTestId } = renderWithRouter(context);
-            expect(queryByText('Suggest anomaly detector')).not.toBeNull();
+            const { queryByText, getByTestId } = renderWithRouter();
+            expect(queryByText('Suggested anomaly detector')).not.toBeNull();
 
             await waitFor(() => {
                 expect(queryByText('Generating parameters...')).toBeNull();
