@@ -58,7 +58,6 @@ const testDetector = {
   resultIndexMinAge: 7,
   resultIndexMinSize: 51200,
   resultIndexTtl: 60,
-  flattenCustomResultIndex: true,
 } as Detector;
 
 describe('<AdditionalSettings /> spec', () => {
@@ -86,7 +85,6 @@ describe('<AdditionalSettings /> spec', () => {
     getByText('test-timefield');
     getByText('1 Minutes');
     getByText('opensearch-ad-plugin-result-test');
-    getByText('Yes')
     getByText('7 Days');
     getByText('51200 MB');
     getByText('60 Days');

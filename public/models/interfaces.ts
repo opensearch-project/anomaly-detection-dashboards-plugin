@@ -194,7 +194,6 @@ export type Detector = {
   resultIndexMinAge?: number;
   resultIndexMinSize?: number;
   resultIndexTtl?: number;
-  flattenCustomResultIndex?: boolean;
   filterQuery: { [key: string]: any };
   featureAttributes: FeatureAttributes[];
   windowDelay: { period: Schedule };

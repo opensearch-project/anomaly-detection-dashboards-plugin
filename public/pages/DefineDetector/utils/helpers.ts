@@ -48,7 +48,6 @@ export function detectorDefinitionToFormik(
     resultIndexMinAge: get(ad, 'resultIndexMinAge', undefined),
     resultIndexMinSize:get(ad, 'resultIndexMinSize', undefined),
     resultIndexTtl: get(ad, 'resultIndexTtl', undefined),
-    flattenCustomResultIndex: get(ad, 'flattenCustomResultIndex', false),
   };
 }
 
@@ -126,7 +125,6 @@ export function formikToDetectorDefinition(
     resultIndexMinAge: values.resultIndexMinAge,
     resultIndexMinSize: values.resultIndexMinSize,
     resultIndexTtl: values.resultIndexTtl,
-    flattenCustomResultIndex: values.flattenCustomResultIndex,
   } as Detector;
 
   return detectorBody;
