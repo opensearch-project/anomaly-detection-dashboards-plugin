@@ -131,7 +131,6 @@ export const getRandomDetector = (
     resultIndexMinAge: 7,
     resultIndexMinSize: 51200,
     resultIndexTtl: 60,
-    flattenCustomResultIndex: true,
     imputationOption: randomImputationOption(features),
     rules: randomRules(features)
   };
