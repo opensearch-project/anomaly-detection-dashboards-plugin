@@ -18,6 +18,7 @@ import { RouteComponentProps, useLocation } from 'react-router';
 import { AppState } from '../../../redux/reducers';
 import { useSelector, useDispatch } from 'react-redux';
 import { getDetector } from '../../../redux/reducers/ad';
+import { getClustersInfo } from '../../../redux/reducers/opensearch'
 import { EuiLoadingSpinner } from '@elastic/eui';
 import { getDataSourceFromURL } from '../../../pages/utils/helpers';
 
@@ -35,9 +36,13 @@ export function DetectorConfig(props: DetectorConfigProps) {
   const detector = useSelector(
     (state: AppState) => state.ad.detectors[props.detectorId]
   );
+  const clusters = useSelector(
+    (state: AppState) => state.opensearch.clusters
+  );
 
   useEffect(() => {
     dispatch(getDetector(props.detectorId, dataSourceId));
+    dispatch(getClustersInfo());
   }, []);
 
   return (
@@ -49,6 +54,8 @@ export function DetectorConfig(props: DetectorConfigProps) {
             detector={detector}
             onEditDetectorDefinition={props.onEditDetector}
             isCreate={false}
+            clusters={clusters}
+            dataSourceId={dataSourceId}
           />
           <EuiSpacer />
           <Features

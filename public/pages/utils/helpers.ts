@@ -11,20 +11,30 @@
 import queryString from 'query-string';
 import {
   CatIndex,
+  ClusterInfo,
   IndexAlias,
   MDSQueryParams,
 } from '../../../server/models/types';
 import sortBy from 'lodash/sortBy';
 import { DetectorListItem } from '../../models/interfaces';
-import { DETECTORS_QUERY_PARAMS, SORT_DIRECTION } from '../../../server/utils/constants';
-import { ALL_INDICES, ALL_DETECTOR_STATES, MAX_DETECTORS, DEFAULT_QUERY_PARAMS } from './constants';
+import {
+  DETECTORS_QUERY_PARAMS,
+  SORT_DIRECTION,
+} from '../../../server/utils/constants';
+import {
+  ALL_INDICES,
+  ALL_DETECTOR_STATES,
+  MAX_DETECTORS,
+  DEFAULT_QUERY_PARAMS,
+} from './constants';
 import { DETECTOR_STATE } from '../../../server/utils/constants';
 import { timeFormatter } from '@elastic/charts';
-import { getDataSourceEnabled, getDataSourcePlugin } from '../../services';
+import { getDataSourceEnabled } from '../../services';
 import { DataSourceAttributes } from '../../../../../src/plugins/data_source/common/data_sources';
 import { SavedObject } from '../../../../../src/core/public';
-import * as pluginManifest from "../../../opensearch_dashboards.json";
-import semver from "semver";
+import * as pluginManifest from '../../../opensearch_dashboards.json';
+import semver from 'semver';
+import _ from 'lodash';
 
 export function sanitizeSearchText(searchValue: string): string {
   if (!searchValue || searchValue == '*') {
@@ -48,28 +58,72 @@ const isUserIndex = (index: string) => {
   if (!index) {
     return false;
   }
-  return !index.startsWith('.');
+  //.ml-config
+  return !(index.startsWith('.') || index.includes(':.'));
 };
 
-export function getVisibleOptions(indices: CatIndex[], aliases: IndexAlias[]) {
-  const visibleIndices = indices
-    .filter((value) => isUserIndex(value.index))
-    .map((value) => ({ label: value.index, health: value.health }));
-  const visibleAliases = aliases
-    .filter((value) => isUserIndex(value.alias))
-    .map((value) => ({ label: value.alias }));
+export function groupIndicesOrAliasesByCluster(
+  indices,
+  localClusterName: string,
+  dataType: string
+) {
+  return indices.reduce((acc, index) => {
+    const clusterName = index.label.includes(':')
+      ? index.label.split(':')[0]
+      : localClusterName;
 
-  return [
-    {
-      label: 'Indices',
-      options: visibleIndices,
-    },
-    {
-      label: 'Aliases',
-      options: visibleAliases,
-    },
-  ];
+    //if undefined should be local as well.
+    let label =
+      index.localCluster === undefined || index.localCluster
+        ? `${dataType}: ${localClusterName} (Local)`
+        : `${dataType}: ${clusterName} (Remote)`;
+
+    const { localCluster, ...indexWithOutLocalInfo } = index; // Destructure and remove localCluster
+    const cluster = acc.find((cluster) => cluster.label === label);
+    if (cluster) {
+      cluster.options.push(indexWithOutLocalInfo);
+    } else {
+      acc.push({ label, options: [indexWithOutLocalInfo] });
+    }
+
+    return acc;
+  }, [] as { label: string; options: any[] }[]);
 }
+
+export function getVisibleOptions(
+  indices: CatIndex[],
+  aliases: IndexAlias[],
+  localClusterName: string = ''
+) {
+  // Group by cluster or fallback to default label format
+  const getLabeledOptions = (items: any[], label: string) =>
+    items.length > 0
+      ? groupIndicesOrAliasesByCluster(items, localClusterName, label)
+      : [{ label, options: items }];
+
+  const visibleIndices = mapToVisibleOptions(indices, 'index');
+  const visibleAliases = mapToVisibleOptions(aliases, 'alias');
+
+  // Combine grouped indices and aliases
+  const visibleIndicesLabel = getLabeledOptions(visibleIndices, 'Indices');
+  const visibleAliasesLabel = getLabeledOptions(visibleAliases, 'Aliases');
+  const combinedVisibleIndicesAndAliases =
+    visibleIndicesLabel.concat(visibleAliasesLabel);
+  const sortedVisibleIndicesAndAliases = _.sortBy(combinedVisibleIndicesAndAliases, [
+    (item) => (item.label.includes('Indices:') ? 0 : 1), // Indices first, then Aliases
+    (item) => (item.label.includes('(Local)') ? 0 : 1), // Local first, then Remote
+  ]);
+  return sortedVisibleIndicesAndAliases;
+}
+
+export const mapToVisibleOptions = (items: any[], key: string) =>
+  items
+    .filter((value) => isUserIndex(value[key]))
+    .map((value) => ({
+      label: value[key],
+      ...(key === 'index' && { health: value.health }), // Only applicable to indices, ignored for aliases
+      localCluster: value.localCluster,
+    }));
 
 export const filterAndSortDetectors = (
   detectors: DetectorListItem[],
@@ -93,7 +147,7 @@ export const filterAndSortDetectors = (
     selectedIndices == ALL_INDICES
       ? filteredBySearchAndState
       : filteredBySearchAndState.filter((detector) =>
-          selectedIndices.includes(detector.indices[0])
+          detector.indices.some((index) => selectedIndices.includes(index))
         );
   let sorted = sortBy(filteredBySearchAndStateAndIndex, sortField);
   if (sortDirection == SORT_DIRECTION.DESC) {
@@ -169,7 +223,7 @@ export const constructHrefWithDataSourceId = (
     url.set(DETECTORS_QUERY_PARAMS.SEARCH, DEFAULT_QUERY_PARAMS.search);
     url.set(DETECTORS_QUERY_PARAMS.INDICES, DEFAULT_QUERY_PARAMS.indices);
     url.set(DETECTORS_QUERY_PARAMS.SORT_FIELD, DEFAULT_QUERY_PARAMS.sortField);
-    url.set(DETECTORS_QUERY_PARAMS.SORT_DIRECTION, SORT_DIRECTION.ASC)
+    url.set(DETECTORS_QUERY_PARAMS.SORT_DIRECTION, SORT_DIRECTION.ASC);
     if (dataSourceEnabled) {
       url.set(DETECTORS_QUERY_PARAMS.DATASOURCEID, '');
     }
@@ -189,7 +243,9 @@ export const constructHrefWithDataSourceId = (
   return `${basePath}?${url.toString()}`;
 };
 
-export const isDataSourceCompatible = (dataSource: SavedObject<DataSourceAttributes>) => {
+export const isDataSourceCompatible = (
+  dataSource: SavedObject<DataSourceAttributes>
+) => {
   if (
     'requiredOSDataSourcePlugins' in pluginManifest &&
     !pluginManifest.requiredOSDataSourcePlugins.every((plugin) =>
@@ -210,4 +266,8 @@ export const isDataSourceCompatible = (dataSource: SavedObject<DataSourceAttribu
     return false;
   }
   return true;
+};
+
+export const getLocalCluster = (clusters: ClusterInfo[]): ClusterInfo[] => {
+  return clusters.filter((cluster) => cluster.localCluster === true);
 };

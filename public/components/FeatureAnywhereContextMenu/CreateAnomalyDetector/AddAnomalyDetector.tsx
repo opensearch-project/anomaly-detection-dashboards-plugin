@@ -134,16 +134,23 @@ function AddAnomalyDetector({
   >();
 
   const indexPatternId = embeddable.vis.data.aggs.indexPattern.id;
-  const [dataSourceId, setDataSourceId] = useState<string | undefined>(undefined);
+  const [dataSourceId, setDataSourceId] = useState<string | undefined>(
+    undefined
+  );
 
   async function getDataSourceId() {
     try {
-      const indexPattern = await getSavedObjectsClient().get('index-pattern', indexPatternId);
+      const indexPattern = await getSavedObjectsClient().get(
+        'index-pattern',
+        indexPatternId
+      );
       const refs = indexPattern.references as References[];
-      const foundDataSourceId = refs.find(ref => ref.type === 'data-source')?.id;
-      setDataSourceId(foundDataSourceId); 
+      const foundDataSourceId = refs.find(
+        (ref) => ref.type === 'data-source'
+      )?.id;
+      setDataSourceId(foundDataSourceId);
     } catch (error) {
-      console.error("Error fetching index pattern:", error);
+      console.error('Error fetching index pattern:', error);
     }
   }
 
@@ -152,8 +159,12 @@ function AddAnomalyDetector({
     async function fetchData() {
       await getDataSourceId();
 
-      const getIndicesDispatchCall = dispatch(getIndices(queryText, dataSourceId));
-      const getMappingDispatchCall =  dispatch(getMappings(embeddable.vis.data.aggs.indexPattern.title, dataSourceId));
+      const getIndicesDispatchCall = dispatch(
+        getIndices(queryText, dataSourceId)
+      );
+      const getMappingDispatchCall = dispatch(
+        getMappings([embeddable.vis.data.aggs.indexPattern.title], dataSourceId)
+      );
       await Promise.all([getIndicesDispatchCall, getMappingDispatchCall]);
     }
 
@@ -167,7 +178,7 @@ function AddAnomalyDetector({
     }
     fetchData();
     createEmbeddable();
-  }, [dataSourceId]); 
+  }, [dataSourceId]);
 
   const [isShowVis, setIsShowVis] = useState(false);
   const [accordionsOpen, setAccordionsOpen] = useState({ modelFeatures: true });
@@ -335,7 +346,7 @@ function AddAnomalyDetector({
       name: OVERLAY_ANOMALIES,
       args: {
         detectorId: detectorId,
-        dataSourceId: dataSourceId
+        dataSourceId: dataSourceId,
       },
     } as VisLayerExpressionFn;
 
