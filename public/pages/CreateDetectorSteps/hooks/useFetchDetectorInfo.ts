@@ -10,7 +10,7 @@
  */
 
 import { get, isEmpty } from 'lodash';
-import { useEffect } from 'react';
+import { useEffect, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Detector } from '../../../models/interfaces';
 import { AppState } from '../../../redux/reducers';
@@ -40,13 +40,13 @@ export const useFetchDetectorInfo = (
   const isIndicesRequesting = useSelector(
     (state: AppState) => state.opensearch.requesting
   );
-  const selectedIndices = get(detector, 'indices.0', '');
+  const selectedIndices = useMemo(() => get(detector, 'indices', []), [detector]);
   useEffect(() => {
     const fetchDetector = async () => {
       if (!detector) {
         await dispatch(getDetector(detectorId, dataSourceId));
       }
-      if (selectedIndices) {
+      if (selectedIndices && selectedIndices.length > 0) {
         await dispatch(getMappings(selectedIndices, dataSourceId));
       }
     };

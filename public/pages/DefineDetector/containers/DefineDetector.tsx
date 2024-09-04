@@ -379,7 +379,7 @@ export const DefineDetector = (props: DefineDetectorProps) => {
                 <DataSource
                   formikProps={formikProps}
                   origIndex={
-                    props.isEdit ? get(detector, 'indices.0', '') : null
+                    props.isEdit ? get(detector, 'indices', [] as { label: string; }[]) : null
                   }
                   isEdit={props.isEdit}
                   setModelConfigValues={props.setModelConfigValues}

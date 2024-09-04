@@ -182,7 +182,9 @@ exports[`<ReviewAndCreate /> spec renders the component, validation loading 1`] 
                   >
                     <p
                       class="enabled"
-                    />
+                    >
+                      -
+                    </p>
                   </div>
                 </div>
               </div>
@@ -1469,7 +1471,9 @@ exports[`issue in detector validation issues in feature query 1`] = `
                     >
                       <p
                         class="enabled"
-                      />
+                      >
+                        -
+                      </p>
                     </div>
                   </div>
                 </div>

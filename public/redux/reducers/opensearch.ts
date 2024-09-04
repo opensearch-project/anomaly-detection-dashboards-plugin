@@ -18,10 +18,13 @@ import {
 } from '../middleware/types';
 import handleActions from '../utils/handleActions';
 import { getPathsPerDataType } from './mapper';
-import { CatIndex, IndexAlias } from '../../../server/models/types';
+import {
+  CatIndex,
+  ClusterInfo,
+  IndexAlias,
+} from '../../../server/models/types';
 import { AD_NODE_API } from '../../../utils/constants';
 import { get } from 'lodash';
-import { data } from 'jquery';
 
 const GET_INDICES = 'opensearch/GET_INDICES';
 const GET_ALIASES = 'opensearch/GET_ALIASES';
@@ -30,6 +33,8 @@ const SEARCH_OPENSEARCH = 'opensearch/SEARCH_OPENSEARCH';
 const CREATE_INDEX = 'opensearch/CREATE_INDEX';
 const BULK = 'opensearch/BULK';
 const DELETE_INDEX = 'opensearch/DELETE_INDEX';
+const GET_CLUSTERS_INFO = 'opensearch/GET_CLUSTERS_INFO';
+const GET_INDICES_AND_ALIASES = 'opensearch/GET_INDICES_AND_ALIASES';
 
 export type Mappings = {
   [key: string]: any;
@@ -63,7 +68,9 @@ interface OpenSearchState {
   requesting: boolean;
   searchResult: object;
   errorMessage: string;
+  clusters: ClusterInfo[];
 }
+
 export const initialState: OpenSearchState = {
   indices: [],
   aliases: [],
@@ -71,10 +78,35 @@ export const initialState: OpenSearchState = {
   requesting: false,
   searchResult: {},
   errorMessage: '',
+  clusters: [],
 };
 
 const reducer = handleActions<OpenSearchState>(
   {
+    [GET_INDICES_AND_ALIASES]: {
+      REQUEST: (state: OpenSearchState): OpenSearchState => {
+        return { ...state, requesting: true, errorMessage: '' };
+      },
+      SUCCESS: (
+        state: OpenSearchState,
+        action: APIResponseAction
+      ): OpenSearchState => {
+        return {
+          ...state,
+          requesting: false,
+          indices: get(action, 'result.response.indices', []),
+          aliases: get(action, 'result.response.aliases', []),
+        };
+      },
+      FAILURE: (
+        state: OpenSearchState,
+        action: APIErrorAction
+      ): OpenSearchState => ({
+        ...state,
+        requesting: false,
+        errorMessage: get(action, 'error.error', action.error),
+      }),
+    },
     [GET_INDICES]: {
       REQUEST: (state: OpenSearchState): OpenSearchState => {
         return { ...state, requesting: true, errorMessage: '' };
@@ -244,18 +276,74 @@ const reducer = handleActions<OpenSearchState>(
         errorMessage: get(action, 'error.error', action.error),
       }),
     },
+    [GET_CLUSTERS_INFO]: {
+      REQUEST: (state: OpenSearchState): OpenSearchState => {
+        return { ...state, requesting: true, errorMessage: '' };
+      },
+      SUCCESS: (
+        state: OpenSearchState,
+        action: APIResponseAction
+      ): OpenSearchState => {
+        return {
+          ...state,
+          requesting: false,
+          clusters: get(action, 'result.response.clusters', []),
+        };
+      },
+      FAILURE: (
+        state: OpenSearchState,
+        action: APIErrorAction
+      ): OpenSearchState => ({
+        ...state,
+        requesting: false,
+        errorMessage: get(action, 'error.error', action.error),
+      }),
+    },
   },
   initialState
 );
 
-export const getIndices = (searchKey = '', dataSourceId: string = '') => {
+export const getIndices = (
+  searchKey = '',
+  dataSourceId: string = '',
+  givenClusters: string = ''
+) => {
   const baseUrl = `..${AD_NODE_API._INDICES}`;
   const url = dataSourceId ? `${baseUrl}/${dataSourceId}` : baseUrl;
-
   return {
     type: GET_INDICES,
     request: (client: HttpSetup) =>
-      client.get(url, { query: { index: searchKey } }),
+      client.get(url, { query: { index: searchKey, clusters: givenClusters } }),
+  };
+};
+
+export const getClustersInfo = (dataSourceId: string = ''): APIAction => {
+  const baseUrl = `..${AD_NODE_API.GET_CLUSTERS_INFO}`;
+  const url = dataSourceId ? `${baseUrl}/${dataSourceId}` : baseUrl;
+  return {
+    type: GET_CLUSTERS_INFO,
+    request: (client: HttpSetup) => client.get(url),
+  };
+};
+
+export const getIndicesAndAliases = (
+  searchKey = '',
+  dataSourceId: string = '',
+  givenClusters: string = '',
+  queryForLocalCluster: boolean = true
+): APIAction => {
+  const baseUrl = `..${AD_NODE_API.GET_INDICES_AND_ALIASES}`;
+  const url = dataSourceId ? `${baseUrl}/${dataSourceId}` : baseUrl;
+  return {
+    type: GET_INDICES_AND_ALIASES,
+    request: (client: HttpSetup) =>
+      client.get(url, {
+        query: {
+          indexOrAliasQuery: searchKey,
+          clusters: givenClusters,
+          queryForLocalCluster: queryForLocalCluster,
+        },
+      }),
   };
 };
 
@@ -273,14 +361,18 @@ export const getAliases = (
   };
 };
 
-export const getMappings = (searchKey: string = '', dataSourceId: string = ''): APIAction => {
-  const url = dataSourceId ? `${AD_NODE_API._MAPPINGS}/${dataSourceId}` : AD_NODE_API._MAPPINGS;
-
+export const getMappings = (
+  searchKey: string[] = [],
+  dataSourceId: string = ''
+): APIAction => {
+  const url = dataSourceId
+    ? `${AD_NODE_API._MAPPINGS}/${dataSourceId}`
+    : AD_NODE_API._MAPPINGS;
   return {
     type: GET_MAPPINGS,
     request: (client: HttpSetup) =>
       client.get(`..${url}`, {
-        query: { index: searchKey },
+        query: { indices: searchKey },
       }),
   };
 };
@@ -293,7 +385,10 @@ export const searchOpenSearch = (requestData: any): APIAction => ({
     }),
 });
 
-export const createIndex = (indexConfig: any, dataSourceId: string = ''): APIAction => {
+export const createIndex = (
+  indexConfig: any,
+  dataSourceId: string = ''
+): APIAction => {
   const url = dataSourceId
     ? `${AD_NODE_API.CREATE_INDEX}/${dataSourceId}`
     : AD_NODE_API.CREATE_INDEX;
@@ -324,11 +419,14 @@ export const deleteIndex = (index: string): APIAction => ({
 });
 
 export const getPrioritizedIndices =
-  (searchKey: string, dataSourceId: string = ''): ThunkAction =>
+  (
+    searchKey: string,
+    dataSourceId: string = '',
+    clusters: string = '*'
+  ): ThunkAction =>
   async (dispatch, getState) => {
     //Fetch Indices and Aliases with text provided
-    await dispatch(getIndices(searchKey, dataSourceId));
-    await dispatch(getAliases(searchKey, dataSourceId));
+    await dispatch(getIndicesAndAliases(searchKey, dataSourceId, clusters));
     const osState = getState().opensearch;
     const exactMatchedIndices = osState.indices;
     const exactMatchedAliases = osState.aliases;
@@ -340,8 +438,9 @@ export const getPrioritizedIndices =
       };
     } else {
       //No results found for exact match, append wildCard and get partial matches if exists
-      await dispatch(getIndices(`${searchKey}*`, dataSourceId));
-      await dispatch(getAliases(`${searchKey}*`, dataSourceId));
+      await dispatch(
+        getIndicesAndAliases(`${searchKey}*`, dataSourceId, clusters)
+      );
       const osState = getState().opensearch;
       const partialMatchedIndices = osState.indices;
       const partialMatchedAliases = osState.aliases;

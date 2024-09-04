@@ -9,7 +9,7 @@
  * GitHub history for details.
  */
 
-import { EuiCompressedComboBox, EuiCallOut, EuiSpacer } from '@elastic/eui';
+import { EuiCompressedComboBox } from '@elastic/eui';
 import { Field, FieldProps, FormikProps } from 'formik';
 import { debounce, get, isEmpty } from 'lodash';
 import React, { useState } from 'react';
@@ -36,8 +36,6 @@ export function Timestamp(props: TimestampProps) {
   const MDSQueryParams = getDataSourceFromURL(location);
   const dataSourceId = MDSQueryParams.dataSourceId;
   const opensearchState = useSelector((state: AppState) => state.opensearch);
-  const selectedIndex = get(props, 'formikProps.values.index.0.label', '');
-  const isRemoteIndex = selectedIndex.includes(':');
   const [queryText, setQueryText] = useState('');
 
   const handleSearchChange = debounce(async (searchValue: string) => {
@@ -68,17 +66,6 @@ export function Timestamp(props: TimestampProps) {
       titleSize="s"
       subTitle="Select the time field you want to use for the time filter."
     >
-      {isRemoteIndex ? (
-        <div>
-          <EuiCallOut
-            title="A remote index is selected, so you need to manually input the time field."
-            color="warning"
-            iconType="alert"
-            size="s"
-          />
-          <EuiSpacer size="m" />
-        </div>
-      ) : null}
       <Field name="timeField" validate={required}>
         {({ field, form }: FieldProps) => (
           <FormattedFormRow
