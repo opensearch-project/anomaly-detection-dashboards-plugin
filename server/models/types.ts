@@ -14,12 +14,30 @@ import { SORT_DIRECTION, DETECTOR_STATE } from '../utils/constants';
 export type CatIndex = {
   index: string;
   health: string;
+  localCluster?: boolean; 
 };
 
+export type ClusterInfo = {
+  name: string;
+  localCluster: boolean;
+}
+
 export type IndexAlias = {
-  index: string;
+  index: string[] | string;
   alias: string;
+  localCluster?: boolean
 };
+
+export type IndexOption = {
+  label: string, 
+  health: string,
+  localCluster?: boolean
+}
+
+export type AliasOption = {
+  label: string,
+  localCluster?: string
+}
 
 export type GetAliasesResponse = {
   aliases: IndexAlias[];

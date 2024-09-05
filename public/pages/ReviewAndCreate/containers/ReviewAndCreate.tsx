@@ -346,6 +346,7 @@ export function ReviewAndCreate(props: ReviewAndCreateProps) {
                 isCreate={true}
                 isLoading={isLoading}
                 isCreatingDetector={isCreatingDetector}
+                dataSourceId={dataSourceId}
               />
               <EuiSpacer />
               <ModelConfigurationFields

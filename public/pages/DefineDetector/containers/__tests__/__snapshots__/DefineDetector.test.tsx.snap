@@ -232,7 +232,113 @@ exports[`<DefineDetector /> Full creating detector definition renders the compon
         >
           <div
             class="euiFormRow euiFormRow--compressed"
-            hint="Choose an index or index pattern as the data source."
+            hint="Select a local cluster or remote clusters from cross-cluster connections."
+            id="random_html_id-row"
+            title="Clusters"
+          >
+            <div
+              class="euiFormRow__labelWrapper"
+            >
+              <label
+                aria-invalid="false"
+                class="euiFormLabel euiFormRow__label"
+                for="random_html_id"
+              >
+                <div
+                  style="line-height: 8px;"
+                >
+                  <p>
+                    Clusters
+                  </p>
+                  <br />
+                  <div
+                    class="euiText euiText--medium sublabel"
+                    style="max-width: 400px;"
+                  >
+                    Select a local cluster or remote clusters from cross-cluster connections.
+                  </div>
+                </div>
+              </label>
+            </div>
+            <div
+              class="euiFormRow__fieldWrapper"
+            >
+              <div
+                aria-expanded="false"
+                aria-haspopup="listbox"
+                class="euiComboBox euiComboBox--compressed"
+                data-test-subj="clustersFilter"
+                role="combobox"
+              >
+                <div
+                  class="euiFormControlLayout euiFormControlLayout--compressed"
+                >
+                  <div
+                    class="euiFormControlLayout__childrenWrapper"
+                  >
+                    <div
+                      class="euiComboBox__inputWrap euiComboBox__inputWrap--compressed euiComboBox__inputWrap-isLoading"
+                      data-test-subj="comboBoxInput"
+                      tabindex="-1"
+                    >
+                      <p
+                        class="euiComboBoxPlaceholder"
+                      >
+                        Find clusters
+                      </p>
+                      <div
+                        class="euiComboBox__input"
+                        style="font-size: 14px; display: inline-block;"
+                      >
+                        <input
+                          aria-controls=""
+                          data-test-subj="comboBoxSearchInput"
+                          id="random_html_id"
+                          role="textbox"
+                          style="box-sizing: content-box; width: 2px;"
+                          value=""
+                        />
+                        <div
+                          style="position: absolute; top: 0px; left: 0px; visibility: hidden; height: 0px; overflow: scroll; white-space: pre; font-family: -webkit-small-control; letter-spacing: normal; text-transform: none;"
+                        />
+                      </div>
+                    </div>
+                    <div
+                      class="euiFormControlLayoutIcons euiFormControlLayoutIcons--right"
+                    >
+                      <span
+                        class="euiLoadingSpinner euiLoadingSpinner--medium"
+                      />
+                      <button
+                        aria-label="Open list of options"
+                        class="euiFormControlLayoutCustomIcon euiFormControlLayoutCustomIcon--clickable"
+                        data-test-subj="comboBoxToggleListButton"
+                        type="button"
+                      >
+                        <svg
+                          aria-hidden="true"
+                          class="euiIcon euiIcon--small euiIcon-isLoading euiFormControlLayoutCustomIcon__icon"
+                          focusable="false"
+                          height="16"
+                          role="img"
+                          viewBox="0 0 16 16"
+                          width="16"
+                          xmlns="http://www.w3.org/2000/svg"
+                        >
+                          <path
+                            d="M5.277 10.088c.02.014.04.03.057.047.582.55 1.134.812 1.666.812.586 0 1.84-.293 3.713-.88L9 6.212V2H7v4.212l-1.723 3.876Zm-.438.987L3.539 14h8.922l-1.32-2.969C9.096 11.677 7.733 12 7 12c-.74 0-1.463-.315-2.161-.925ZM6 2H5V1h6v1h-1v4l3.375 7.594A1 1 0 0 1 12.461 15H3.54a1 1 0 0 1-.914-1.406L6 6V2Z"
+                          />
+                        </svg>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div
+            class="euiFormRow euiFormRow--compressed"
+            hint="Choose an index, index pattern or alias as the data source."
             id="random_html_id-row"
             title="Index"
           >
@@ -255,7 +361,7 @@ exports[`<DefineDetector /> Full creating detector definition renders the compon
                     class="euiText euiText--medium sublabel"
                     style="max-width: 400px;"
                   >
-                    Choose an index or index pattern as the data source.
+                    Choose an index, index pattern or alias as the data source.
                   </div>
                 </div>
               </label>
@@ -278,7 +384,7 @@ exports[`<DefineDetector /> Full creating detector definition renders the compon
                     class="euiFormControlLayout__childrenWrapper"
                   >
                     <div
-                      class="euiComboBox__inputWrap euiComboBox__inputWrap--compressed euiComboBox__inputWrap--noWrap euiComboBox__inputWrap-isLoading"
+                      class="euiComboBox__inputWrap euiComboBox__inputWrap--compressed euiComboBox__inputWrap-isLoading"
                       data-test-subj="comboBoxInput"
                       tabindex="-1"
                     >
@@ -1211,7 +1317,114 @@ exports[`<DefineDetector /> empty creating detector definition renders the compo
         >
           <div
             class="euiFormRow euiFormRow--compressed"
-            hint="Choose an index or index pattern as the data source."
+            hint="Select a local cluster or remote clusters from cross-cluster connections."
+            id="random_html_id-row"
+            title="Clusters"
+          >
+            <div
+              class="euiFormRow__labelWrapper"
+            >
+              <label
+                aria-invalid="false"
+                class="euiFormLabel euiFormRow__label"
+                for="random_html_id"
+              >
+                <div
+                  style="line-height: 8px;"
+                >
+                  <p>
+                    Clusters
+                  </p>
+                  <br />
+                  <div
+                    class="euiText euiText--medium sublabel"
+                    style="max-width: 400px;"
+                  >
+                    Select a local cluster or remote clusters from cross-cluster connections.
+                  </div>
+                </div>
+              </label>
+            </div>
+            <div
+              class="euiFormRow__fieldWrapper"
+            >
+              <div
+                aria-expanded="false"
+                aria-haspopup="listbox"
+                class="euiComboBox euiComboBox--compressed"
+                data-test-subj="clustersFilter"
+                role="combobox"
+              >
+                <div
+                  class="euiFormControlLayout euiFormControlLayout--compressed"
+                >
+                  <div
+                    class="euiFormControlLayout__childrenWrapper"
+                  >
+                    <div
+                      class="euiComboBox__inputWrap euiComboBox__inputWrap--compressed euiComboBox__inputWrap-isLoading"
+                      data-test-subj="comboBoxInput"
+                      tabindex="-1"
+                    >
+                      <p
+                        class="euiComboBoxPlaceholder"
+                      >
+                        Find clusters
+                      </p>
+                      <div
+                        class="euiComboBox__input"
+                        style="font-size: 14px; display: inline-block;"
+                      >
+                        <input
+                          aria-controls=""
+                          data-test-subj="comboBoxSearchInput"
+                          id="random_html_id"
+                          role="textbox"
+                          style="box-sizing: content-box; width: 2px;"
+                          value=""
+                        />
+                        <div
+                          style="position: absolute; top: 0px; left: 0px; visibility: hidden; height: 0px; overflow: scroll; white-space: pre; font-family: -webkit-small-control; letter-spacing: normal; text-transform: none;"
+                        />
+                      </div>
+                    </div>
+                    <div
+                      class="euiFormControlLayoutIcons euiFormControlLayoutIcons--right"
+                    >
+                      <span
+                        class="euiLoadingSpinner euiLoadingSpinner--medium"
+                      />
+                      <button
+                        aria-label="Open list of options"
+                        class="euiFormControlLayoutCustomIcon euiFormControlLayoutCustomIcon--clickable"
+                        data-test-subj="comboBoxToggleListButton"
+                        type="button"
+                      >
+                        <svg
+                          aria-hidden="true"
+                          class="euiIcon euiIcon--small euiFormControlLayoutCustomIcon__icon"
+                          focusable="false"
+                          height="16"
+                          role="img"
+                          viewBox="0 0 16 16"
+                          width="16"
+                          xmlns="http://www.w3.org/2000/svg"
+                        >
+                          <path
+                            d="M13.069 5.157 8.384 9.768a.546.546 0 0 1-.768 0L2.93 5.158a.552.552 0 0 0-.771 0 .53.53 0 0 0 0 .759l4.684 4.61c.641.631 1.672.63 2.312 0l4.684-4.61a.53.53 0 0 0 0-.76.552.552 0 0 0-.771 0Z"
+                            fill-rule="non-zero"
+                          />
+                        </svg>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div
+            class="euiFormRow euiFormRow--compressed"
+            hint="Choose an index, index pattern or alias as the data source."
             id="random_html_id-row"
             title="Index"
           >
@@ -1234,7 +1447,7 @@ exports[`<DefineDetector /> empty creating detector definition renders the compo
                     class="euiText euiText--medium sublabel"
                     style="max-width: 400px;"
                   >
-                    Choose an index or index pattern as the data source.
+                    Choose an index, index pattern or alias as the data source.
                   </div>
                 </div>
               </label>
@@ -1257,7 +1470,7 @@ exports[`<DefineDetector /> empty creating detector definition renders the compo
                     class="euiFormControlLayout__childrenWrapper"
                   >
                     <div
-                      class="euiComboBox__inputWrap euiComboBox__inputWrap--compressed euiComboBox__inputWrap--noWrap euiComboBox__inputWrap-isLoading"
+                      class="euiComboBox__inputWrap euiComboBox__inputWrap--compressed euiComboBox__inputWrap-isLoading"
                       data-test-subj="comboBoxInput"
                       tabindex="-1"
                     >
@@ -2188,41 +2401,116 @@ exports[`<DefineDetector /> empty editing detector definition renders the compon
         <div
           style="padding: 10px 0px;"
         >
-          <div>
+          <div
+            class="euiFormRow euiFormRow--compressed"
+            hint="Select a local cluster or remote clusters from cross-cluster connections."
+            id="random_html_id-row"
+            title="Clusters"
+          >
             <div
-              class="euiCallOut euiCallOut--warning euiCallOut--small"
+              class="euiFormRow__labelWrapper"
             >
-              <div
-                class="euiCallOutHeader"
+              <label
+                aria-invalid="false"
+                class="euiFormLabel euiFormRow__label"
+                for="random_html_id"
               >
-                <svg
-                  aria-hidden="true"
-                  class="euiIcon euiIcon--medium euiIcon--inherit euiIcon-isLoading euiCallOutHeader__icon"
-                  focusable="false"
-                  height="16"
-                  role="img"
-                  viewBox="0 0 16 16"
-                  width="16"
-                  xmlns="http://www.w3.org/2000/svg"
+                <div
+                  style="line-height: 8px;"
                 >
-                  <path
-                    d="M5.277 10.088c.02.014.04.03.057.047.582.55 1.134.812 1.666.812.586 0 1.84-.293 3.713-.88L9 6.212V2H7v4.212l-1.723 3.876Zm-.438.987L3.539 14h8.922l-1.32-2.969C9.096 11.677 7.733 12 7 12c-.74 0-1.463-.315-2.161-.925ZM6 2H5V1h6v1h-1v4l3.375 7.594A1 1 0 0 1 12.461 15H3.54a1 1 0 0 1-.914-1.406L6 6V2Z"
-                  />
-                </svg>
-                <span
-                  class="euiCallOutHeader__title"
-                >
-                  Modifying the selected index resets your detector configuration.
-                </span>
-              </div>
+                  <p>
+                    Clusters
+                  </p>
+                  <br />
+                  <div
+                    class="euiText euiText--medium sublabel"
+                    style="max-width: 400px;"
+                  >
+                    Select a local cluster or remote clusters from cross-cluster connections.
+                  </div>
+                </div>
+              </label>
             </div>
             <div
-              class="euiSpacer euiSpacer--l"
-            />
+              class="euiFormRow__fieldWrapper"
+            >
+              <div
+                aria-expanded="false"
+                aria-haspopup="listbox"
+                class="euiComboBox euiComboBox--compressed"
+                data-test-subj="clustersFilter"
+                role="combobox"
+              >
+                <div
+                  class="euiFormControlLayout euiFormControlLayout--compressed"
+                >
+                  <div
+                    class="euiFormControlLayout__childrenWrapper"
+                  >
+                    <div
+                      class="euiComboBox__inputWrap euiComboBox__inputWrap--compressed euiComboBox__inputWrap-isLoading"
+                      data-test-subj="comboBoxInput"
+                      tabindex="-1"
+                    >
+                      <p
+                        class="euiComboBoxPlaceholder"
+                      >
+                        Find clusters
+                      </p>
+                      <div
+                        class="euiComboBox__input"
+                        style="font-size: 14px; display: inline-block;"
+                      >
+                        <input
+                          aria-controls=""
+                          data-test-subj="comboBoxSearchInput"
+                          id="random_html_id"
+                          role="textbox"
+                          style="box-sizing: content-box; width: 2px;"
+                          value=""
+                        />
+                        <div
+                          style="position: absolute; top: 0px; left: 0px; visibility: hidden; height: 0px; overflow: scroll; white-space: pre; font-family: -webkit-small-control; letter-spacing: normal; text-transform: none;"
+                        />
+                      </div>
+                    </div>
+                    <div
+                      class="euiFormControlLayoutIcons euiFormControlLayoutIcons--right"
+                    >
+                      <span
+                        class="euiLoadingSpinner euiLoadingSpinner--medium"
+                      />
+                      <button
+                        aria-label="Open list of options"
+                        class="euiFormControlLayoutCustomIcon euiFormControlLayoutCustomIcon--clickable"
+                        data-test-subj="comboBoxToggleListButton"
+                        type="button"
+                      >
+                        <svg
+                          aria-hidden="true"
+                          class="euiIcon euiIcon--small euiFormControlLayoutCustomIcon__icon"
+                          focusable="false"
+                          height="16"
+                          role="img"
+                          viewBox="0 0 16 16"
+                          width="16"
+                          xmlns="http://www.w3.org/2000/svg"
+                        >
+                          <path
+                            d="M13.069 5.157 8.384 9.768a.546.546 0 0 1-.768 0L2.93 5.158a.552.552 0 0 0-.771 0 .53.53 0 0 0 0 .759l4.684 4.61c.641.631 1.672.63 2.312 0l4.684-4.61a.53.53 0 0 0 0-.76.552.552 0 0 0-.771 0Z"
+                            fill-rule="non-zero"
+                          />
+                        </svg>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
           <div
             class="euiFormRow euiFormRow--compressed"
-            hint="Choose an index or index pattern as the data source."
+            hint="Choose an index, index pattern or alias as the data source."
             id="random_html_id-row"
             title="Index"
           >
@@ -2245,7 +2533,7 @@ exports[`<DefineDetector /> empty editing detector definition renders the compon
                     class="euiText euiText--medium sublabel"
                     style="max-width: 400px;"
                   >
-                    Choose an index or index pattern as the data source.
+                    Choose an index, index pattern or alias as the data source.
                   </div>
                 </div>
               </label>
@@ -2268,7 +2556,7 @@ exports[`<DefineDetector /> empty editing detector definition renders the compon
                     class="euiFormControlLayout__childrenWrapper"
                   >
                     <div
-                      class="euiComboBox__inputWrap euiComboBox__inputWrap--compressed euiComboBox__inputWrap--noWrap euiComboBox__inputWrap-isLoading"
+                      class="euiComboBox__inputWrap euiComboBox__inputWrap--compressed euiComboBox__inputWrap-isLoading"
                       data-test-subj="comboBoxInput"
                       tabindex="-1"
                     >
