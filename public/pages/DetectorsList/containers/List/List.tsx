@@ -39,7 +39,8 @@ import {
   deleteDetector,
 } from '../../../../redux/reducers/ad';
 import {
-  getIndices,
+  getClustersInfo,
+  getIndicesAndAliases,
   getPrioritizedIndices,
 } from '../../../../redux/reducers/opensearch';
 import { APP_PATH, MDS_BREADCRUMBS, PLUGIN_NAME, USE_NEW_HOME_PAGE } from '../../../../utils/constants';
@@ -174,13 +175,25 @@ export const DetectorList = (props: ListProps) => {
     isStopDisabled: false,
   });
 
+  const [localClusterName, setLocalClusterName] = useState("");
+
   // Getting all initial monitors
   useEffect(() => {
     const getInitialMonitors = async () => {
       dispatch(searchMonitors(state.selectedDataSourceId));
     };
+    const getInitialClusters = async () => {
+      await dispatch(getClustersInfo(state.selectedDataSourceId));
+    }
     getInitialMonitors();
+    getInitialClusters();
   }, []);
+
+  useEffect(() => {
+    if (opensearchState.clusters && opensearchState.clusters.length > 0) {
+      setLocalClusterName(opensearchState.clusters.find(cluster => cluster.localCluster)?.name || "local")
+    }
+  }, [opensearchState.clusters]);
 
   useEffect(() => {
     if (
@@ -201,7 +214,7 @@ export const DetectorList = (props: ListProps) => {
   // Updating displayed indices (initializing to first 20 for now)
   const visibleIndices = get(opensearchState, 'indices', []) as CatIndex[];
   const visibleAliases = get(opensearchState, 'aliases', []) as IndexAlias[];
-  const indexOptions = getVisibleOptions(visibleIndices, visibleAliases);
+  const indexOptions = getVisibleOptions(visibleIndices, visibleAliases, localClusterName);
 
   const queryParams = getURLQueryParams(props.location);
   const [state, setState] = useState<ListState>({
@@ -235,7 +248,7 @@ export const DetectorList = (props: ListProps) => {
   const [indexQuery, setIndexQuery] = useState('');
   useEffect(() => {
     const getInitialIndices = async () => {
-      await dispatch(getIndices(indexQuery, state.selectedDataSourceId));
+      await dispatch(getIndicesAndAliases(indexQuery, state.selectedDataSourceId, "*"))
     };
     getInitialIndices();
   }, [state.selectedDataSourceId]);

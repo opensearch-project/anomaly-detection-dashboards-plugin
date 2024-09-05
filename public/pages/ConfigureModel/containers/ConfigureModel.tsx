@@ -30,7 +30,11 @@ import { RouteComponentProps, useLocation } from 'react-router-dom';
 import { AppState } from '../../../redux/reducers';
 import { getMappings } from '../../../redux/reducers/opensearch';
 import { useFetchDetectorInfo } from '../../CreateDetectorSteps/hooks/useFetchDetectorInfo';
-import { BREADCRUMBS, BASE_DOCS_LINK, MDS_BREADCRUMBS } from '../../../utils/constants';
+import {
+  BREADCRUMBS,
+  BASE_DOCS_LINK,
+  MDS_BREADCRUMBS,
+} from '../../../utils/constants';
 import { useHideSideNavBar } from '../../main/hooks/useHideSideNavBar';
 import { updateDetector } from '../../../redux/reducers/ad';
 import {
@@ -121,7 +125,7 @@ export function ConfigureModel(props: ConfigureModelProps) {
       setIsHCDetector(true);
     }
     if (detector?.indices) {
-      dispatch(getMappings(detector.indices[0], dataSourceId));
+      dispatch(getMappings(detector.indices, dataSourceId));
     }
   }, [detector]);
 
@@ -133,7 +137,11 @@ export function ConfigureModel(props: ConfigureModelProps) {
           MDS_BREADCRUMBS.DETECTORS(dataSourceId),
           {
             text: detector && detector.name ? detector.name : '',
-            href: constructHrefWithDataSourceId(`#/detectors/${detectorId}`, dataSourceId, false)
+            href: constructHrefWithDataSourceId(
+              `#/detectors/${detectorId}`,
+              dataSourceId,
+              false
+            ),
           },
           MDS_BREADCRUMBS.EDIT_MODEL_CONFIGURATION,
         ]);
@@ -167,12 +175,11 @@ export function ConfigureModel(props: ConfigureModelProps) {
 
   useEffect(() => {
     if (hasError) {
-      if(dataSourceEnabled) {
+      if (dataSourceEnabled) {
         props.history.push(
           constructHrefWithDataSourceId('/detectors', dataSourceId, false)
         );
-      }
-      else {
+      } else {
         props.history.push('/detectors');
       }
     }

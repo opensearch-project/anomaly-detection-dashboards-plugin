@@ -32,6 +32,7 @@ import { getIndexFields, getOperators, isNullOperator } from '../utils/helpers';
 import FilterValue from './FilterValue';
 import { DetectorDefinitionFormikValues } from '../../../models/interfaces';
 import { EMPTY_UI_FILTER } from '../../../utils/constants';
+import _ from 'lodash';
 
 interface SimpleFilterProps {
   filter: UIFilter;
@@ -40,8 +41,20 @@ interface SimpleFilterProps {
   replace(index: number, value: any): void;
 }
 
+// This sorting is needed because we utilize two different ways to get index fields,
+// through get mapping call and through field_caps API for remote indices
+const sortByLabel = (indexFields) => {
+  //sort the `options` array inside each object by the `label` field
+  indexFields.forEach(item => {
+      item.options = _.sortBy(item.options, 'label');
+  });
+  //sort the outer array by the `label` field
+  return _.sortBy(indexFields, 'label');
+};
+
 export const SimpleFilter = (props: SimpleFilterProps) => {
-  const indexFields = getIndexFields(useSelector(getAllFields));
+  let indexFields = getIndexFields(useSelector(getAllFields));
+  indexFields = sortByLabel(indexFields)
   const [searchedIndexFields, setSearchedIndexFields] = useState<
     ({
       label: DATA_TYPES;

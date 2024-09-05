@@ -1,0 +1,5 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`<DataConnectionFlyout /> spec renders the flyout with indices and local cluster name 1`] = `null`;
+
+exports[`<DataConnectionFlyout /> spec renders the flyout with only local indices 1`] = `null`;

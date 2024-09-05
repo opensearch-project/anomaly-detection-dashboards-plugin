@@ -34,7 +34,7 @@ export function detectorDefinitionToFormik(
     ...initialValues,
     name: ad.name,
     description: ad.description,
-    index: [{ label: ad.indices[0] }], // Currently we support only one index
+    index: [...ad.indices.map(index => ({ label: index }))],
     resultIndex: ad.resultIndex,
     filters: filtersToFormik(ad),
     filterQuery: JSON.stringify(
