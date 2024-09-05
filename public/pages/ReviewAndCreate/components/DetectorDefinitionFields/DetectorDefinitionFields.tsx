@@ -18,16 +18,23 @@ import {
   EuiLoadingSpinner,
   EuiFlexGroup,
   EuiText,
+  EuiLink,
 } from '@elastic/eui';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { get, isEqual } from 'lodash';
 import {
   Detector,
   ValidationSettingResponse,
 } from '../../../../models/interfaces';
+import { useDispatch, useSelector } from 'react-redux';
 import { FilterDisplayList } from '../FilterDisplayList';
 import { ConfigCell, FixedWidthRow } from '../../../../components/ConfigCell';
 import { toStringConfigCell } from '../../utils/helpers';
+import { DataConnectionFlyout } from '../DataConnectionFlyout/DataConnectionFlyout';
+import { ClusterInfo } from '../../../../../server/models/types';
+import { getLocalCluster } from '../../../../pages/utils/helpers';
+import { getClustersInfo } from '../../../../redux/reducers/opensearch';
+import { AppState } from '../../../../redux/reducers';
 interface DetectorDefinitionFieldsProps {
   detector: Detector;
   onEditDetectorDefinition(): void;
@@ -37,11 +44,18 @@ interface DetectorDefinitionFieldsProps {
   validationResponse?: ValidationSettingResponse;
   isLoading?: boolean;
   isCreatingDetector?: boolean;
+  dataSourceId: string;
+  clusters?: ClusterInfo[];
 }
 
 export const DetectorDefinitionFields = (
   props: DetectorDefinitionFieldsProps
 ) => {
+  const dispatch = useDispatch();
+  const opensearchState = useSelector((state: AppState) => state.opensearch);
+  const [showDataConnectionFlyout, setShowDataConnectionFlyout] =
+    useState<boolean>(false);
+
   const filterInputs = {
     uiMetadata: get(props, 'detector.uiMetadata', {}),
     filterQuery: JSON.stringify(
@@ -50,6 +64,13 @@ export const DetectorDefinitionFields = (
       4
     ),
   };
+
+  useEffect(() => {
+    const getInitialClusters = async () => {
+      await dispatch(getClustersInfo());
+    };
+    getInitialClusters();
+  }, [props.dataSourceId]);
 
   const getValidationCallout = () => {
     //When validation response is loading then displaying loading spinner, don't display
@@ -130,120 +151,150 @@ export const DetectorDefinitionFields = (
       }
     }
   };
-
   const minAgeValue = get(props, 'detector.resultIndexMinAge', undefined);
-  const minAge = (minAgeValue === undefined) ? '-' : minAgeValue + " Days";
+  const minAge = minAgeValue === undefined ? '-' : minAgeValue + ' Days';
   const minSizeValue = get(props, 'detector.resultIndexMinSize', undefined);
-  const minSize = (minSizeValue === undefined) ? '-' : minSizeValue + " MB";
+  const minSize = minSizeValue === undefined ? '-' : minSizeValue + ' MB';
   const ttlValue = get(props, 'detector.resultIndexTtl', undefined);
   const ttl = (ttlValue === undefined) ? '-' : ttlValue + " Days";
-
+  
+  const getDataConnectionsDisplay = (indices: string[]) => {
+    if (indices.length === 0) return '-';
+    if (indices.length === 1) return indices[0];
+    return (
+      <p data-test-subj="indexNameCellViewAllLink">
+        {indices[0]}...&nbsp;
+        <EuiLink 
+          onClick={() => setShowDataConnectionFlyout(true)}
+          style={{ fontSize: '12px' }}
+        >
+          View all {indices.length}
+        </EuiLink>
+      </p>
+    );
+  };
 
   return (
-    <ContentPanel
-      title="Detector settings"
-      titleDataTestSubj="detectorSettingsHeader"
-      titleSize="s"
-      panelStyles={{ margin: '0px' }}
-      actions={[
-        <EuiSmallButton
-          data-test-subj="editDetectorSettingsButton"
-          onClick={props.onEditDetectorDefinition}
-        >
-          Edit
-        </EuiSmallButton>,
-      ]}
-    >
-      {props.isCreate ? getValidationCallout() : null}
-      <EuiFlexGrid columns={0} gutterSize="l" style={{ border: 'none' }}>
-        <EuiFlexItem data-test-subj="detectorNameCell">
-          <ConfigCell
-            title="Name"
-            description={get(props, 'detector.name', '')}
-          />
-        </EuiFlexItem>
-        <EuiFlexItem data-test-subj="indexNameCell">
-          <ConfigCell
-            title="Data source index"
-            description={get(props, 'detector.indices.0', '')}
-          />
-        </EuiFlexItem>
-        <EuiFlexItem>
-          <FixedWidthRow label="Data filter">
-            <FilterDisplayList {...filterInputs} />
-          </FixedWidthRow>
-        </EuiFlexItem>
-        <EuiFlexItem>
-          <ConfigCell
-            title="Detector interval"
-            description={toStringConfigCell(
-              get(props, 'detector.detectionInterval', 0)
-            )}
-          />
-        </EuiFlexItem>
-        {props.isCreate ? null : (
-          <EuiFlexItem data-test-subj="detectorIdCell">
+    <React.Fragment>
+      <ContentPanel
+        title="Detector settings"
+        titleDataTestSubj="detectorSettingsHeader"
+        titleSize="s"
+        panelStyles={{ margin: '0px' }}
+        actions={[
+          <EuiSmallButton
+            data-test-subj="editDetectorSettingsButton"
+            onClick={props.onEditDetectorDefinition}
+          >
+            Edit
+          </EuiSmallButton>,
+        ]}
+      >
+        {props.isCreate ? getValidationCallout() : null}
+        <EuiFlexGrid columns={0} gutterSize="l" style={{ border: 'none' }}>
+          <EuiFlexItem data-test-subj="detectorNameCell">
             <ConfigCell
-              title="ID"
-              description={get(props, 'detector.id', '')}
+              title="Name"
+              description={get(props, 'detector.name', '')}
             />
           </EuiFlexItem>
-        )}
-        <EuiFlexItem data-test-subj="detectorDescriptionCell">
-          <ConfigCell
-            title="Description"
-            description={get(props, 'detector.description', '')}
-          />
-        </EuiFlexItem>
-        <EuiFlexItem data-test-subj="timestampNameCell">
-          <ConfigCell
-            title="Timestamp"
-            description={get(props, 'detector.timeField', '')}
-          />
-        </EuiFlexItem>
-        {props.isCreate ? null : (
-          <EuiFlexItem>
+          <EuiFlexItem data-test-subj="indexNameCell">
             <ConfigCell
-              title="Last Updated"
-              description={toStringConfigCell(
-                get(props, 'detector.lastUpdateTime', '')
+              title="Data source index"
+              description={getDataConnectionsDisplay(
+                get(props.detector, 'indices', [])
               )}
             />
           </EuiFlexItem>
-        )}
-        <EuiFlexItem>
-          <ConfigCell
-            title="Window delay"
-            description={toStringConfigCell(
-              get(props, 'detector.windowDelay', 0)
+          <EuiFlexItem>
+            <FixedWidthRow label="Data filter">
+              <FilterDisplayList {...filterInputs} />
+            </FixedWidthRow>
+          </EuiFlexItem>
+          <EuiFlexItem>
+            <ConfigCell
+              title="Detector interval"
+              description={toStringConfigCell(
+                get(props, 'detector.detectionInterval', 0)
+              )}
+            />
+          </EuiFlexItem>
+          {props.isCreate ? null : (
+            <EuiFlexItem data-test-subj="detectorIdCell">
+              <ConfigCell
+                title="ID"
+                description={get(props, 'detector.id', '')}
+              />
+            </EuiFlexItem>
+          )}
+          <EuiFlexItem data-test-subj="detectorDescriptionCell">
+            <ConfigCell
+              title="Description"
+              description={get(props, 'detector.description', '')}
+            />
+          </EuiFlexItem>
+          <EuiFlexItem data-test-subj="timestampNameCell">
+            <ConfigCell
+              title="Timestamp"
+              description={get(props, 'detector.timeField', '')}
+            />
+          </EuiFlexItem>
+          {props.isCreate ? null : (
+              <EuiFlexItem>
+                <ConfigCell
+                  title="Last Updated"
+                  description={toStringConfigCell(
+                    get(props, 'detector.lastUpdateTime', '')
+                  )}
+                />
+              </EuiFlexItem>
             )}
-          />
-        </EuiFlexItem>
-        <EuiFlexItem>
-          <ConfigCell
-            title="Custom result index"
-            description={get(props, 'detector.resultIndex', '-')}
-          />
-        </EuiFlexItem>
-        <EuiFlexItem>
-          <ConfigCell
-            title="Custom result index min age"
-            description={minAge}
-          />
-        </EuiFlexItem>
-        <EuiFlexItem>
-          <ConfigCell
-            title="Custom result index min size"
-            description={minSize}
-          />
-        </EuiFlexItem>
-        <EuiFlexItem>
-          <ConfigCell
-            title="Custom result index TTL"
-            description={ttl}
-          />
-        </EuiFlexItem>
-      </EuiFlexGrid>
-    </ContentPanel>
+          <EuiFlexItem>
+            <ConfigCell
+              title="Window delay"
+              description={toStringConfigCell(
+                get(props, 'detector.windowDelay', 0)
+              )}
+            />
+          </EuiFlexItem>
+          <EuiFlexItem>
+            <ConfigCell
+              title="Custom result index"
+              description={get(props, 'detector.resultIndex', '-')}
+            />
+          </EuiFlexItem>
+          <EuiFlexItem>
+            <ConfigCell
+              title="Custom result index min age"
+              description={minAge}
+            />
+          </EuiFlexItem>
+          <EuiFlexItem>
+            <ConfigCell
+              title="Custom result index min size"
+              description={minSize}
+            />
+          </EuiFlexItem>
+          <EuiFlexItem>
+            <ConfigCell
+              title="Custom result index TTL"
+              description={ttl}
+            />
+          </EuiFlexItem>
+        </EuiFlexGrid>
+      </ContentPanel>
+      {showDataConnectionFlyout ? (
+        <DataConnectionFlyout
+          indices={get(props.detector, 'indices', [])}
+          onClose={() => setShowDataConnectionFlyout(false)}
+          localClusterName={
+            opensearchState.clusters?.length
+              ? getLocalCluster(opensearchState.clusters as ClusterInfo[])[0]
+                  ?.name
+              : 'local-cluster'
+          }
+        />
+      ) : null}
+    </React.Fragment>
   );
 };

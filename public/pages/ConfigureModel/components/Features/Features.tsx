@@ -65,16 +65,6 @@ export function Features(props: FeaturesProps) {
           {({ push, remove, form: { values } }: FieldArrayRenderProps) => {
             return (
               <Fragment>
-                {get(props.detector, 'indices.0', '').includes(':') ? (
-                  <div>
-                    <EuiCallOut
-                      title="This detector is using a remote cluster index, so you need to manually input the field."
-                      color="warning"
-                      iconType="alert"
-                    />
-                    <EuiSpacer size="m" />
-                  </div>
-                ) : null}
                 {values.featureList.map((feature: any, index: number) => (
                   <FeatureAccordion
                     onDelete={() => {
