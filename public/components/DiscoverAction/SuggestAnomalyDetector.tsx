@@ -51,6 +51,7 @@ import {
 import {
     CUSTOM_AD_RESULT_INDEX_PREFIX,
     MAX_DETECTORS,
+    SUGGEST_ANOMALY_DETECTOR_CONFIG_ID,
 } from '../../../server/utils/constants';
 import {
     focusOnFirstWrongFeature,
@@ -62,12 +63,11 @@ import { formikToDetector } from '../../pages/ReviewAndCreate/utils/helpers';
 import { FormattedFormRow } from '../FormattedFormRow/FormattedFormRow';
 import { FeatureAccordion } from '../../pages/ConfigureModel/components/FeatureAccordion';
 import { AD_DOCS_LINK, DEFAULT_SHINGLE_SIZE, MAX_FEATURE_NUM, PLUGIN_NAME } from '../../utils/constants';
-import { getNotifications, getQueryService } from '../../services';
+import { getAssistantClient, getNotifications, getQueryService } from '../../services';
 import { prettifyErrorMessage } from '../../../server/utils/helpers';
 import EnhancedAccordion from '../FeatureAnywhereContextMenu/EnhancedAccordion';
 import MinimalAccordion from '../FeatureAnywhereContextMenu/MinimalAccordion';
 import { DataFilterList } from '../../pages/DefineDetector/components/DataFilterList/DataFilterList';
-import { generateParameters } from '../../redux/reducers/assistant';
 import { FEATURE_TYPE } from '../../models/interfaces';
 import { FeaturesFormikValues } from '../../pages/ConfigureModel/models/interfaces';
 import { getMappings } from '../../redux/reducers/opensearch';
@@ -89,6 +89,8 @@ function SuggestAnomalyDetector({
 }) {
     const dispatch = useDispatch();
     const notifications = getNotifications();
+    const assistantClient = getAssistantClient();
+
     const queryString = getQueryService().queryString;
     const dataset = queryString.getQuery().dataset || queryString.getDefaultQuery().dataset;
     const datasetType = dataset.type;
@@ -137,15 +139,15 @@ function SuggestAnomalyDetector({
     // let LLM to generate parameters for creating anomaly detector
     async function getParameters() {
         try {
-            const result = await dispatch(
-                generateParameters(indexName!, dataSourceId)
-            );
-            const rawGeneratedParameters = get(result, 'generatedParameters');
+            const executeAgentResponse = await
+                assistantClient.executeAgentByName(SUGGEST_ANOMALY_DETECTOR_CONFIG_ID, { index: indexName }, { dataSourceId }
+                );
+            const rawGeneratedParameters = executeAgentResponse?.body?.inference_results?.[0]?.output?.[0]?.result;
             if (!rawGeneratedParameters) {
                 throw new Error('Cannot get generated parameters!');
             }
 
-            const generatedParameters = formatGeneratedParameters(rawGeneratedParameters);
+            const generatedParameters = formatGeneratedParameters(JSON.parse(rawGeneratedParameters));
             if (generatedParameters.features.length == 0) {
                 throw new Error('Generated parameters have empty model features!');
             }
@@ -840,7 +842,7 @@ function SuggestAnomalyDetector({
                                 <EuiFlexItem grow={false}>
                                     <EuiButton
                                         fill={true}
-                                        data-test-subj="GenerateAnomalyDetectorCreateButton"
+                                        data-test-subj="SuggestAnomalyDetectorCreateButton"
                                         isLoading={isLoading}
                                         onClick={() => {
                                             handleValidationAndSubmit(formikProps);

@@ -27,6 +27,3 @@ export const ALERTING_NODE_API = Object.freeze({
   ALERTS: `${BASE_NODE_API_PATH}/monitors/alerts`,
   MONITORS: `${BASE_NODE_API_PATH}/monitors`,
 });
-export const ASSISTANT_NODE_API = Object.freeze({
-  GENERATE_PARAMETERS: `${BASE_NODE_API_PATH}/_generate_parameters`,
-});

@@ -17,93 +17,9 @@ import { Provider } from 'react-redux';
 
 import configureStore from '../../redux/configureStore';
 import SuggestAnomalyDetector from './SuggestAnomalyDetector';
-import { fieldFormatsMock } from '../../../../../src/plugins/data/common/field_formats/mocks';
-import { IndexPattern } from '../../../../../src/plugins/data/common';
 import userEvent from '@testing-library/user-event';
 import { HttpFetchOptionsWithPath } from '../../../../../src/core/public';
-import { BASE_NODE_API_PATH } from '../../../utils/constants';
-import { getQueryService } from '../../services';
-
-export function shouldReadFieldFromDocValues(aggregatable: boolean, opensearchType: string) {
-    return (
-        aggregatable &&
-        !['text', 'geo_shape'].includes(opensearchType) &&
-        !opensearchType.startsWith('_')
-    );
-}
-
-function stubbedSampleFields() {
-    return [
-        ['bytes', 'long', true, true, { count: 10 }],
-        ['response', 'integer', true, true],
-        ['responseLatency', 'float', true, true],
-        ['@timestamp', 'date', true, true, { count: 30 }],
-        ['@tags', 'keyword', true, true],
-        ['utc_time', 'date', true, true],
-        ['phpmemory', 'integer', true, true],
-        ['ip', 'ip', true, true],
-        ['geo.src', 'keyword', true, true],
-        ['_id', '_id', true, true],
-        ['_type', '_type', true, true],
-        ['_source', '_source', true, true],
-    ].map(function (row) {
-        const [
-            name,
-            opensearchType,
-            aggregatable,
-            searchable,
-            metadata = {},
-            subType = undefined,
-        ] = row;
-
-        const {
-            count = 0,
-            script,
-            lang = script ? 'expression' : undefined,
-            scripted = !!script,
-        } = metadata;
-
-        return {
-            name,
-            opensearchType,
-            spec: {
-                esTypes: [opensearchType],
-                name: name,
-            },
-            readFromDocValues: shouldReadFieldFromDocValues(aggregatable, opensearchType),
-            aggregatable,
-            searchable,
-            count,
-            script,
-            lang,
-            scripted,
-            subType,
-        };
-    });
-}
-
-function createIndexPattern(id: string): IndexPattern {
-    const type = 'index-pattern';
-    const version = '2';
-    const timeFieldName = 'timestamp';
-    const fields = stubbedSampleFields();
-    const title = id;
-
-    return {
-        id,
-        type,
-        version,
-        timeFieldName,
-        fields,
-        title,
-        savedObjectsClient: {} as any,
-        fieldFormats: fieldFormatsMock,
-        shortDotsEnable: false,
-        metaFields: [],
-    };
-}
-
-const mockedIndexPattern = createIndexPattern('test-pattern');
+import { getAssistantClient, getQueryService } from '../../services';
 
 const notifications = {
     toasts: {
@@ -124,8 +40,8 @@ jest.mock('../../services', () => ({
             getQuery: jest.fn(),
         },
     }),
-    getIndexPatternService: () => ({
-        get: () => (mockedIndexPattern)
+    getAssistantClient: jest.fn().mockReturnValue({
+        executeAgentByName: jest.fn(),
     })
 }));
 
@@ -211,11 +127,20 @@ describe('GenerateAnomalyDetector spec', () => {
                     timeFieldName: '@timestamp',
                 },
             });
+
         });
 
         it('renders with empty generated parameters', async () => {
-            httpClientMock.post = jest.fn().mockResolvedValue({
-                ok: true,
+            (getAssistantClient().executeAgentByName as jest.Mock).mockResolvedValueOnce({
+                body: {
+                    inference_results: [
+                        {
+                            output: [
+                                { result: '' }
+                            ]
+                        }
+                    ]
+                }
             });
 
             const { queryByText } = renderWithRouter();
@@ -230,14 +155,16 @@ describe('GenerateAnomalyDetector spec', () => {
         });
 
         it('renders with empty parameter', async () => {
-            httpClientMock.post = jest.fn().mockResolvedValue({
-                ok: true,
-                generatedParameters: {
-                    categoryField: '',
-                    aggregationField: '',
-                    aggregationMethod: '',
-                    dateFields: '',
-                },
+            (getAssistantClient().executeAgentByName as jest.Mock).mockResolvedValueOnce({
+                body: {
+                    inference_results: [
+                        {
+                            output: [
+                                { result: "{\"index\":\"opensearch_dashboards_sample_data_logs\",\"categoryField\":\"ip\",\"aggregationField\":\"\",\"aggregationMethod\":\"\",\"dateFields\":\"utc_time,timestamp\"}" }
+                            ]
+                        }
+                    ]
+                }
             });
 
             const { queryByText } = renderWithRouter();
@@ -252,14 +179,16 @@ describe('GenerateAnomalyDetector spec', () => {
         });
 
         it('renders with empty aggregation field or empty aggregation method', async () => {
-            httpClientMock.post = jest.fn().mockResolvedValue({
-                ok: true,
-                generatedParameters: {
-                    categoryField: '',
-                    aggregationField: ',',
-                    aggregationMethod: ',',
-                    dateFields: 'timestamp',
-                },
+            (getAssistantClient().executeAgentByName as jest.Mock).mockResolvedValueOnce({
+                body: {
+                    inference_results: [
+                        {
+                            output: [
+                                { result: "{\"index\":\"opensearch_dashboards_sample_data_logs\",\"categoryField\":\"ip\",\"aggregationField\":\",\",\"aggregationMethod\":\",\",\"dateFields\":\"utc_time,timestamp\"}" }
+                            ]
+                        }
+                    ]
+                }
             });
 
             const { queryByText } = renderWithRouter();
@@ -274,14 +203,16 @@ describe('GenerateAnomalyDetector spec', () => {
         });
 
         it('renders with different number of aggregation methods and fields', async () => {
-            httpClientMock.post = jest.fn().mockResolvedValue({
-                ok: true,
-                generatedParameters: {
-                    categoryField: '',
-                    aggregationField: 'a,b',
-                    aggregationMethod: 'avg',
-                    dateFields: 'timestamp',
-                },
+            (getAssistantClient().executeAgentByName as jest.Mock).mockResolvedValueOnce({
+                body: {
+                    inference_results: [
+                        {
+                            output: [
+                                { result: "{\"index\":\"opensearch_dashboards_sample_data_logs\",\"categoryField\":\"ip\",\"aggregationField\":\"a,b\",\"aggregationMethod\":\"avg\",\"dateFields\":\"utc_time,timestamp\"}" }
+                            ]
+                        }
+                    ]
+                }
             });
 
             const { queryByText } = renderWithRouter();
@@ -296,14 +227,16 @@ describe('GenerateAnomalyDetector spec', () => {
         });
 
         it('renders component completely', async () => {
-            httpClientMock.post = jest.fn().mockResolvedValue({
-                ok: true,
-                generatedParameters: {
-                    categoryField: 'ip',
-                    aggregationField: 'responseLatency,response',
-                    aggregationMethod: 'avg,sum',
-                    dateFields: '@timestamp,utc_time',
-                },
+            (getAssistantClient().executeAgentByName as jest.Mock).mockResolvedValueOnce({
+                body: {
+                    inference_results: [
+                        {
+                            output: [
+                                { result: "{\"index\":\"opensearch_dashboards_sample_data_logs\",\"categoryField\":\"ip\",\"aggregationField\":\"responseLatency,response\",\"aggregationMethod\":\"avg,sum\",\"dateFields\":\"utc_time,timestamp\"}" }
+                            ]
+                        }
+                    ]
+                }
             });
 
             const { queryByText } = renderWithRouter();
@@ -337,16 +270,6 @@ describe('GenerateAnomalyDetector spec', () => {
             httpClientMock.post = jest.fn((pathOrOptions: string | HttpFetchOptionsWithPath) => {
                 const url = typeof pathOrOptions === 'string' ? pathOrOptions : pathOrOptions.path;
                 switch (url) {
-                    case '/api/anomaly_detectors/_generate_parameters':
-                        return Promise.resolve({
-                            ok: true,
-                            generatedParameters: {
-                                categoryField: 'ip',
-                                aggregationField: 'responseLatency,response',
-                                aggregationMethod: 'avg,sum',
-                                dateFields: '@timestamp,utc_time',
-                            }
-                        });
                     case '/api/anomaly_detectors/detectors':
                         return Promise.resolve({
                             ok: true,
@@ -360,6 +283,18 @@ describe('GenerateAnomalyDetector spec', () => {
                         });
                 }
             });
+            (getAssistantClient().executeAgentByName as jest.Mock).mockResolvedValueOnce({
+                body: {
+                    inference_results: [
+                        {
+                            output: [
+                                { result: "{\"index\":\"test-pattern\",\"categoryField\":\"ip\",\"aggregationField\":\"responseLatency,response\",\"aggregationMethod\":\"avg,sum\",\"dateFields\":\"utc_time,timestamp\"}" }
+                            ]
+                        }
+                    ]
+                }
+            });
+
 
             const { queryByText, getByTestId } = renderWithRouter();
             expect(queryByText('Suggested anomaly detector')).not.toBeNull();
@@ -371,25 +306,16 @@ describe('GenerateAnomalyDetector spec', () => {
                 expect(queryByText('Model Features')).not.toBeNull();
             });
 
-            userEvent.click(getByTestId("GenerateAnomalyDetectorCreateButton"));
+            userEvent.click(getByTestId("SuggestAnomalyDetectorCreateButton"));
 
             await waitFor(() => {
-                expect(httpClientMock.post).toHaveBeenCalledTimes(3);
-                expect(httpClientMock.post).toHaveBeenCalledWith(
-                    `${BASE_NODE_API_PATH}/_generate_parameters`,
-                    {
-                        body: JSON.stringify({ index: 'test-pattern' }),
-                    }
-                );
+                expect(httpClientMock.post).toHaveBeenCalledTimes(2);
                 expect(getNotifications().toasts.addSuccess).toHaveBeenCalledTimes(1);
             });
         });
 
         it('Generate parameters failed', async () => {
-            httpClientMock.post = jest.fn().mockResolvedValue({
-                ok: false,
-                error: 'Generate parameters failed'
-            });
+            (getAssistantClient().executeAgentByName as jest.Mock).mockRejectedValueOnce('Generate parameters failed');
 
             const { queryByText } = renderWithRouter();
             expect(queryByText('Suggested anomaly detector')).not.toBeNull();
@@ -405,16 +331,6 @@ describe('GenerateAnomalyDetector spec', () => {
             httpClientMock.post = jest.fn((pathOrOptions: string | HttpFetchOptionsWithPath) => {
                 const url = typeof pathOrOptions === 'string' ? pathOrOptions : pathOrOptions.path;
                 switch (url) {
-                    case '/api/anomaly_detectors/_generate_parameters':
-                        return Promise.resolve({
-                            ok: true,
-                            generatedParameters: {
-                                categoryField: 'ip',
-                                aggregationField: 'responseLatency,response',
-                                aggregationMethod: 'avg,sum',
-                                dateFields: '@timestamp,utc_time',
-                            }
-                        });
                     case '/api/anomaly_detectors/detectors':
                         return Promise.resolve({
                             ok: false,
@@ -424,6 +340,17 @@ describe('GenerateAnomalyDetector spec', () => {
                         return Promise.resolve({
                             ok: true
                         });
+                }
+            });
+            (getAssistantClient().executeAgentByName as jest.Mock).mockResolvedValueOnce({
+                body: {
+                    inference_results: [
+                        {
+                            output: [
+                                { result: "{\"index\":\"test-pattern\",\"categoryField\":\"ip\",\"aggregationField\":\"responseLatency,response\",\"aggregationMethod\":\"avg,sum\",\"dateFields\":\"utc_time,timestamp\"}" }
+                            ]
+                        }
+                    ]
                 }
             });
 
@@ -445,7 +372,7 @@ describe('GenerateAnomalyDetector spec', () => {
                 expect(queryByText('Model Features')).not.toBeNull();
             });
 
-            userEvent.click(getByTestId("GenerateAnomalyDetectorCreateButton"));
+            userEvent.click(getByTestId("SuggestAnomalyDetectorCreateButton"));
 
             await waitFor(() => {
                 expect(getNotifications().toasts.addDanger).toHaveBeenCalledTimes(1);
@@ -460,16 +387,6 @@ describe('GenerateAnomalyDetector spec', () => {
             httpClientMock.post = jest.fn((pathOrOptions: string | HttpFetchOptionsWithPath) => {
                 const url = typeof pathOrOptions === 'string' ? pathOrOptions : pathOrOptions.path;
                 switch (url) {
-                    case '/api/anomaly_detectors/_generate_parameters':
-                        return Promise.resolve({
-                            ok: true,
-                            generatedParameters: {
-                                categoryField: 'ip',
-                                aggregationField: 'responseLatency,response',
-                                aggregationMethod: 'avg,sum',
-                                dateFields: '@timestamp,utc_time',
-                            }
-                        });
                     case '/api/anomaly_detectors/detectors':
                         return Promise.resolve({
                             ok: true,
@@ -496,6 +413,18 @@ describe('GenerateAnomalyDetector spec', () => {
                 },
             });
 
+            (getAssistantClient().executeAgentByName as jest.Mock).mockResolvedValueOnce({
+                body: {
+                    inference_results: [
+                        {
+                            output: [
+                                { result: "{\"index\":\"test-pattern\",\"categoryField\":\"ip\",\"aggregationField\":\"responseLatency,response\",\"aggregationMethod\":\"avg,sum\",\"dateFields\":\"utc_time,timestamp\"}" }
+                            ]
+                        }
+                    ]
+                }
+            });
+
 
             const { queryByText, getByTestId } = renderWithRouter();
             expect(queryByText('Suggested anomaly detector')).not.toBeNull();
@@ -508,7 +437,7 @@ describe('GenerateAnomalyDetector spec', () => {
                 expect(queryByText('Model Features')).not.toBeNull();
             });
 
-            userEvent.click(getByTestId("GenerateAnomalyDetectorCreateButton"));
+            userEvent.click(getByTestId("SuggestAnomalyDetectorCreateButton"));
 
             await waitFor(() => {
                 expect(getNotifications().toasts.addDanger).toHaveBeenCalledTimes(1);
@@ -517,7 +446,6 @@ describe('GenerateAnomalyDetector spec', () => {
                 );
             });
         });
-
     });
 
 

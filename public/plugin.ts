@@ -43,7 +43,7 @@ import {
   setDataSourceEnabled,
   setNavigationUI,
   setApplication,
-  setIndexPatternService
+  setAssistantClient,
 } from './services';
 import { AnomalyDetectionOpenSearchDashboardsPluginStart } from 'public';
 import {
@@ -55,7 +55,7 @@ import { DataPublicPluginSetup, DataPublicPluginStart } from '../../../src/plugi
 import { DataSourceManagementPluginSetup } from '../../../src/plugins/data_source_management/public';
 import { DataSourcePluginSetup } from '../../../src/plugins/data_source/public';
 import { NavigationPublicPluginStart } from '../../../src/plugins/navigation/public';
-import { AssistantSetup } from '../../../plugins/dashboards-assistant/public';
+import { AssistantPublicPluginStart } from '../../dashboards-assistant/public';
 
 declare module '../../../src/plugins/ui_actions/public' {
   export interface ActionContextMapping {
@@ -81,6 +81,7 @@ export interface AnomalyDetectionStartDeps {
   uiActions: UiActionsStart;
   data: DataPublicPluginStart;
   navigation: NavigationPublicPluginStart;
+  assistantDashboards: AssistantPublicPluginStart;
 }
 
 export class AnomalyDetectionOpenSearchDashboardsPlugin
@@ -194,9 +195,10 @@ export class AnomalyDetectionOpenSearchDashboardsPlugin
     });
 
     // Add suggest anomaly detector action to the uiActions in Discover
-    const suggestAnomalyDetectorAction = getSuggestAnomalyDetectorAction();
-    plugins.uiActions.addTriggerAction(plugins.assistantDashboards.assistantTriggers.AI_ASSISTANT_TRIGGER, suggestAnomalyDetectorAction);
-
+    if (plugins.assistantDashboards?.assistantTriggers?.AI_ASSISTANT_TRIGGER) {
+      const suggestAnomalyDetectorAction = getSuggestAnomalyDetectorAction();
+      plugins.uiActions.addTriggerAction(plugins.assistantDashboards.assistantTriggers.AI_ASSISTANT_TRIGGER, suggestAnomalyDetectorAction);
+    }
     // registers the expression function used to render anomalies on an Augmented Visualization
     plugins.expressions.registerFunction(overlayAnomaliesFunction);
     return {};
@@ -204,7 +206,7 @@ export class AnomalyDetectionOpenSearchDashboardsPlugin
 
   public start(
     core: CoreStart,
-    { embeddable, visAugmenter, uiActions, data, navigation }: AnomalyDetectionStartDeps
+    { embeddable, visAugmenter, uiActions, data, navigation, assistantDashboards }: AnomalyDetectionStartDeps
   ): AnomalyDetectionOpenSearchDashboardsPluginStart {
     setUISettings(core.uiSettings);
     setEmbeddable(embeddable);
@@ -215,6 +217,9 @@ export class AnomalyDetectionOpenSearchDashboardsPlugin
     setQueryService(data.query);
     setSavedObjectsClient(core.savedObjects.client);
     setNavigationUI(navigation.ui);
+    if (assistantDashboards) {
+      setAssistantClient(assistantDashboards.assistantClient);
+    }
     setApplication(core.application);
     return {};
   }

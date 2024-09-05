@@ -37,8 +37,6 @@ import SampleDataService, {
 import { DEFAULT_HEADERS } from './utils/constants';
 import { DataSourcePluginSetup } from '../../../src/plugins/data_source/server/types';
 import { DataSourceManagementPlugin } from '../../../src/plugins/data_source_management/public';
-import AssistantService, { registerAssistantRoutes } from './routes/assistant';
-import mlPlugin from './cluster/ad/mlPlugin';
 
 export interface ADPluginSetupDependencies {
   dataSourceManagement?: ReturnType<DataSourceManagementPlugin['setup']>;
@@ -71,7 +69,7 @@ export class AnomalyDetectionOpenSearchDashboardsPlugin
     const client: ILegacyClusterClient = core.opensearch.legacy.createClient(
       'anomaly_detection',
       {
-        plugins: [adPlugin, alertingPlugin, mlPlugin],
+        plugins: [adPlugin, alertingPlugin],
         customHeaders: { ...customHeaders, ...DEFAULT_HEADERS },
         ...rest,
       }
@@ -82,7 +80,6 @@ export class AnomalyDetectionOpenSearchDashboardsPlugin
     if (dataSourceEnabled) {
       dataSource.registerCustomApiSchema(adPlugin);
       dataSource.registerCustomApiSchema(alertingPlugin);
-      dataSource.registerCustomApiSchema(mlPlugin);
     }
 
     // Create router
@@ -96,14 +93,12 @@ export class AnomalyDetectionOpenSearchDashboardsPlugin
     const alertingService = new AlertingService(client, dataSourceEnabled);
     const opensearchService = new OpenSearchService(client, dataSourceEnabled);
     const sampleDataService = new SampleDataService(client, dataSourceEnabled);
-    const assistantService = new AssistantService(client, dataSourceEnabled);
 
     // Register server routes with the service
     registerADRoutes(apiRouter, adService);
     registerAlertingRoutes(apiRouter, alertingService);
     registerOpenSearchRoutes(apiRouter, opensearchService);
     registerSampleDataRoutes(apiRouter, sampleDataService);
-    registerAssistantRoutes(apiRouter, assistantService);
 
     return {};
   }
