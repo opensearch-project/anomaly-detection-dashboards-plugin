@@ -81,7 +81,6 @@ describe('GenerateAnomalyDetector spec', () => {
                 },
             });
 
-
             const { queryByText } = renderWithRouter();
             expect(queryByText('Suggested anomaly detector')).toBeNull();
 
@@ -447,6 +446,4 @@ describe('GenerateAnomalyDetector spec', () => {
             });
         });
     });
-
-
 });
