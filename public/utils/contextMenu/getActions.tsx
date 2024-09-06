@@ -34,23 +34,23 @@ const grouping: Action['grouping'] = [
 export const getActions = () => {
   const getOnClick =
     (startingFlyout) =>
-      async ({ embeddable }) => {
-        const overlayService = getOverlays();
-        const openFlyout = overlayService.openFlyout;
-        const store = configureStore(getClient());
-        const overlay = openFlyout(
-          toMountPoint(
-            <Provider store={store}>
-              <AnywhereParentFlyout
-                startingFlyout={startingFlyout}
-                embeddable={embeddable}
-                closeFlyout={() => overlay.close()}
-              />
-            </Provider>
-          ),
-          { size: 'm', className: 'context-menu__flyout' }
-        );
-      };
+    async ({ embeddable }) => {
+      const overlayService = getOverlays();
+      const openFlyout = overlayService.openFlyout;
+      const store = configureStore(getClient());
+      const overlay = openFlyout(
+        toMountPoint(
+          <Provider store={store}>
+            <AnywhereParentFlyout
+              startingFlyout={startingFlyout}
+              embeddable={embeddable}
+              closeFlyout={() => overlay.close()}
+            />
+          </Provider>
+        ),
+        { size: 'm', className: 'context-menu__flyout' }
+      );
+    };
 
   return [
     {

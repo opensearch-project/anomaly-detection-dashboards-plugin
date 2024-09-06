@@ -424,33 +424,33 @@ export const getPrioritizedIndices =
     dataSourceId: string = '',
     clusters: string = '*'
   ): ThunkAction =>
-    async (dispatch, getState) => {
-      //Fetch Indices and Aliases with text provided
-      await dispatch(getIndicesAndAliases(searchKey, dataSourceId, clusters));
+  async (dispatch, getState) => {
+    //Fetch Indices and Aliases with text provided
+    await dispatch(getIndicesAndAliases(searchKey, dataSourceId, clusters));
+    const osState = getState().opensearch;
+    const exactMatchedIndices = osState.indices;
+    const exactMatchedAliases = osState.aliases;
+    if (exactMatchedAliases.length || exactMatchedIndices.length) {
+      //If we have exact match just return that
+      return {
+        indices: exactMatchedIndices,
+        aliases: exactMatchedAliases,
+      };
+    } else {
+      //No results found for exact match, append wildCard and get partial matches if exists
+      await dispatch(
+        getIndicesAndAliases(`${searchKey}*`, dataSourceId, clusters)
+      );
       const osState = getState().opensearch;
-      const exactMatchedIndices = osState.indices;
-      const exactMatchedAliases = osState.aliases;
-      if (exactMatchedAliases.length || exactMatchedIndices.length) {
-        //If we have exact match just return that
+      const partialMatchedIndices = osState.indices;
+      const partialMatchedAliases = osState.aliases;
+      if (partialMatchedAliases.length || partialMatchedIndices.length) {
         return {
-          indices: exactMatchedIndices,
-          aliases: exactMatchedAliases,
+          indices: partialMatchedIndices,
+          aliases: partialMatchedAliases,
         };
-      } else {
-        //No results found for exact match, append wildCard and get partial matches if exists
-        await dispatch(
-          getIndicesAndAliases(`${searchKey}*`, dataSourceId, clusters)
-        );
-        const osState = getState().opensearch;
-        const partialMatchedIndices = osState.indices;
-        const partialMatchedAliases = osState.aliases;
-        if (partialMatchedAliases.length || partialMatchedIndices.length) {
-          return {
-            indices: partialMatchedIndices,
-            aliases: partialMatchedAliases,
-          };
-        }
       }
-    };
+    }
+  };
 
 export default reducer;

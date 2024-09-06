@@ -290,20 +290,20 @@ describe('opensearch reducer actions', () => {
         { alias: 'alias1', index: 'index1' },
         { alias: 'alias2', index: 'index2' },
       ];
-
+      
       httpMockedClient.get = jest
         .fn()
         .mockResolvedValue({ ok: true, response: { indices, aliases } });
-
+    
       await store.dispatch(getIndicesAndAliases());
       const actions = store.getActions();
-
+    
       expect(actions[0].type).toBe('opensearch/GET_INDICES_AND_ALIASES_REQUEST');
       expect(reducer(initialState, actions[0])).toEqual({
         ...initialState,
         requesting: true,
       });
-
+    
       expect(actions[1].type).toBe('opensearch/GET_INDICES_AND_ALIASES_SUCCESS');
       expect(reducer(initialState, actions[1])).toEqual({
         ...initialState,
@@ -311,7 +311,7 @@ describe('opensearch reducer actions', () => {
         indices,
         aliases,
       });
-
+    
       expect(httpMockedClient.get).toHaveBeenCalledWith(
         `..${BASE_NODE_API_PATH}/_indices_and_aliases`,
         {
@@ -328,20 +328,20 @@ describe('opensearch reducer actions', () => {
         { alias: 'alias1', index: 'index1' },
         { alias: 'alias2', index: 'index2' },
       ];
-
+  
       httpMockedClient.get = jest
         .fn()
         .mockResolvedValue({ ok: true, response: { indices, aliases } });
-
+  
       await store.dispatch(getIndicesAndAliases('', '', 'cluster-2,cluster-3'));
       const actions = store.getActions();
-
+  
       expect(actions[0].type).toBe('opensearch/GET_INDICES_AND_ALIASES_REQUEST');
       expect(reducer(initialState, actions[0])).toEqual({
         ...initialState,
         requesting: true,
       });
-
+  
       expect(actions[1].type).toBe('opensearch/GET_INDICES_AND_ALIASES_SUCCESS');
       expect(reducer(initialState, actions[1])).toEqual({
         ...initialState,
@@ -349,7 +349,7 @@ describe('opensearch reducer actions', () => {
         indices,
         aliases,
       });
-
+  
       expect(httpMockedClient.get).toHaveBeenCalledWith(
         `..${BASE_NODE_API_PATH}/_indices_and_aliases`,
         {
@@ -366,26 +366,26 @@ describe('opensearch reducer actions', () => {
         ok: false,
         error: 'Something went wrong',
       });
-
+    
       try {
         await store.dispatch(getIndicesAndAliases());
       } catch (e) {
         const actions = store.getActions();
-
+    
         expect(actions[0].type).toBe('opensearch/GET_INDICES_AND_ALIASES_REQUEST');
         expect(reducer(initialState, actions[0])).toEqual({
           ...initialState,
           requesting: true,
           errorMessage: '',
         });
-
+    
         expect(actions[1].type).toBe('opensearch/GET_INDICES_AND_ALIASES_FAILURE');
         expect(reducer(initialState, actions[1])).toEqual({
           ...initialState,
           requesting: false,
           errorMessage: 'Something went wrong',
         });
-
+    
         expect(httpMockedClient.get).toHaveBeenCalledWith(
           `..${BASE_NODE_API_PATH}/_indices_and_aliases`,
           {
@@ -405,59 +405,59 @@ describe('opensearch reducer actions', () => {
         { cluster: 'cluster1', status: 'green' },
         { cluster: 'cluster2', status: 'yellow' },
       ];
-
+  
       httpMockedClient.get = jest
         .fn()
         .mockResolvedValue({ ok: true, response: { clusters } });
-
+  
       await store.dispatch(getClustersInfo());
       const actions = store.getActions();
-
+  
       expect(actions[0].type).toBe('opensearch/GET_CLUSTERS_INFO_REQUEST');
       expect(reducer(initialState, actions[0])).toEqual({
         ...initialState,
         requesting: true,
         errorMessage: '',
       });
-
+  
       expect(actions[1].type).toBe('opensearch/GET_CLUSTERS_INFO_SUCCESS');
       expect(reducer(initialState, actions[1])).toEqual({
         ...initialState,
         requesting: false,
         clusters,
       });
-
+  
       expect(httpMockedClient.get).toHaveBeenCalledWith(
         `..${BASE_NODE_API_PATH}/_remote/info`
       );
     });
     test('should invoke [REQUEST, FAILURE]', async () => {
       const errorMessage = 'Something went wrong';
-
+  
       httpMockedClient.get = jest.fn().mockRejectedValue({
         ok: false,
         error: errorMessage,
       });
-
+  
       try {
         await store.dispatch(getClustersInfo());
       } catch (e) {
         const actions = store.getActions();
-
+  
         expect(actions[0].type).toBe('opensearch/GET_CLUSTERS_INFO_REQUEST');
         expect(reducer(initialState, actions[0])).toEqual({
           ...initialState,
           requesting: true,
           errorMessage: '',
         });
-
+  
         expect(actions[1].type).toBe('opensearch/GET_CLUSTERS_INFO_FAILURE');
         expect(reducer(initialState, actions[1])).toEqual({
           ...initialState,
           requesting: false,
           errorMessage,
         });
-
+  
         expect(httpMockedClient.get).toHaveBeenCalledWith(
           `..${BASE_NODE_API_PATH}/_remote/info`
         );
@@ -465,5 +465,5 @@ describe('opensearch reducer actions', () => {
     });
   });
 
-  describe('getPrioritizedIndices', () => { });
+  describe('getPrioritizedIndices', () => {});
 });

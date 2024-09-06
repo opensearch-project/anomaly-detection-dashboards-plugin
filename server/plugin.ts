@@ -45,10 +45,10 @@ export interface ADPluginSetupDependencies {
 
 export class AnomalyDetectionOpenSearchDashboardsPlugin
   implements
-  Plugin<
-    AnomalyDetectionOpenSearchDashboardsPluginSetup,
-    AnomalyDetectionOpenSearchDashboardsPluginStart
-  >
+    Plugin<
+      AnomalyDetectionOpenSearchDashboardsPluginSetup,
+      AnomalyDetectionOpenSearchDashboardsPluginStart
+    >
 {
   private readonly logger: Logger;
   private readonly globalConfig$: any;
