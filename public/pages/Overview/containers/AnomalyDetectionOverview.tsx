@@ -70,7 +70,7 @@ import { RouteComponentProps } from 'react-router-dom';
 import queryString from 'querystring';
 import { getDataSourceFromURL, getSampleDetectorsQueryParamsWithDataSouceId, isDataSourceCompatible } from '../../../../public/pages/utils/helpers';
 import { MDSStates } from '../../../models/interfaces';
-import { TopNavControlButtonData } from '../../../../../../src/plugins/navigation/public';
+import { TopNavControlButtonData, TopNavControlLinkData } from '../../../../../../src/plugins/navigation/public';
 
 interface AnomalyDetectionOverviewProps extends RouteComponentProps {
   setActionMenu: (menuMount: MountPoint | undefined) => void;
@@ -108,8 +108,8 @@ export function AnomalyDetectionOverview(props: AnomalyDetectionOverviewProps) {
   const queryParams = getDataSourceFromURL(props.location);
   const [MDSOverviewState, setMDSOverviewState] = useState<MDSStates>({
     queryParams,
-    selectedDataSourceId: queryParams.dataSourceId === undefined 
-      ? undefined 
+    selectedDataSourceId: queryParams.dataSourceId === undefined
+      ? undefined
       : queryParams.dataSourceId,
   });
 
@@ -149,7 +149,7 @@ export function AnomalyDetectionOverview(props: AnomalyDetectionOverviewProps) {
         ...location,
         search: queryString.stringify(updatedParams),
       });
-    } 
+    }
     fetchData();
   }, [MDSOverviewState]);
 
@@ -275,7 +275,7 @@ export function AnomalyDetectionOverview(props: AnomalyDetectionOverviewProps) {
           componentType={'DataSourceSelectable'}
           componentConfig={{
             fullWidth: false,
-            activeOption: props.landingDataSourceId === undefined 
+            activeOption: props.landingDataSourceId === undefined
               || MDSOverviewState.selectedDataSourceId === undefined
                 ? undefined
                 : [{ id: MDSOverviewState.selectedDataSourceId }],
@@ -292,15 +292,14 @@ export function AnomalyDetectionOverview(props: AnomalyDetectionOverviewProps) {
 
   const descriptionData = [
     {
-      renderComponent: (
-        <EuiText>
-        The anomaly detection plugin automatically detects anomalies in your
-        data in near real-time using the Random Cut Forest (RCF) algorithm.{' '}
-        <EuiLink href={`${BASE_DOCS_LINK}/ad`} target="_blank">
-          Learn more
-        </EuiLink>
-      </EuiText>
-      ),
+      description: 'The anomaly detection plugin automatically detects anomalies in your data in near real-time using the Random Cut Forest (RCF) algorithm.',
+      links: {
+        label: 'Learn more',
+        target: '_blank',
+        flush: 'both',
+        href: `${BASE_DOCS_LINK}/ad`,
+        controlType: 'link',
+      } as TopNavControlLinkData,
     },
   ];
   let renderPageHeader = () => {
@@ -364,7 +363,7 @@ export function AnomalyDetectionOverview(props: AnomalyDetectionOverviewProps) {
     <Fragment>
       {dataSourceEnabled && renderDataSourceComponent}
       {renderPageHeader()}
-      
+
       <EuiSpacer size="xl" />
       <ContentPanel title="How it works">
         <EuiFlexGroup>

@@ -13,6 +13,9 @@ import { getRandomDetector } from '../../../../redux/reducers/__tests__/utils';
 import { prepareDetector } from '../../utils/helpers';
 import { FEATURE_TYPE } from '../../../../models/interfaces';
 import { FeaturesFormikValues } from '../../models/interfaces';
+import { modelConfigurationToFormik, rulesToFormik } from '../helpers';
+import { SparseDataOptionValue } from '../constants';
+import { ImputationMethod } from '../../../../models/types';
 
 describe('featuresToFormik', () => {
   test('should able to add new feature', () => {
@@ -71,4 +74,74 @@ describe('featuresToFormik', () => {
   //     ...randomDetector.featureAttributes.slice(1),
   //   ]);
   // });
+  test('should return correct values if detector is not null', () => {
+    const randomDetector = getRandomDetector();
+    const adFormikValues = modelConfigurationToFormik(randomDetector);
+
+    const imputationOption = randomDetector.imputationOption;
+    if (imputationOption) {
+      const method = imputationOption.method;
+      if (ImputationMethod.FIXED_VALUES === method) {
+        expect(adFormikValues.imputationOption?.imputationMethod).toEqual(
+          SparseDataOptionValue.CUSTOM_VALUE
+        );
+        expect(randomDetector.imputationOption?.defaultFill).toBeDefined();
+        expect(
+          randomDetector.imputationOption?.defaultFill?.length
+        ).toBeGreaterThan(0);
+
+        const formikCustom = adFormikValues.imputationOption?.custom_value;
+        expect(formikCustom).toBeDefined();
+
+        const defaultFill = randomDetector.imputationOption?.defaultFill || [];
+
+        defaultFill.forEach(({ featureName, data }) => {
+          const matchingFormikValue = formikCustom?.find(
+            (item) => item.featureName === featureName
+          );
+
+          // Assert that a matching value was found
+          expect(matchingFormikValue).toBeDefined();
+
+          // Assert that the data matches
+          expect(matchingFormikValue?.data).toEqual(data);
+        });
+      } else {
+        if (ImputationMethod.ZERO === method) {
+          expect(adFormikValues.imputationOption?.imputationMethod).toEqual(
+            SparseDataOptionValue.SET_TO_ZERO
+          );
+        } else {
+          expect(adFormikValues.imputationOption?.imputationMethod).toEqual(
+            SparseDataOptionValue.PREVIOUS_VALUE
+          );
+        }
+        expect(adFormikValues.imputationOption?.custom_value).toEqual(
+          undefined
+        );
+      }
+    } else {
+      expect(adFormikValues.imputationOption?.custom_value).toEqual(undefined);
+      expect(adFormikValues.imputationOption?.imputationMethod).toEqual(
+        SparseDataOptionValue.IGNORE
+      );
+    }
+  });
+  test('should return correct rules', () => {
+    const randomDetector = getRandomDetector(); // Generate a random detector object for testing
+    const adFormikValues = modelConfigurationToFormik(randomDetector); // Convert detector to Formik values
+
+    const rules = randomDetector.rules; // Get the rules from the detector
+
+    if (rules) {
+      // If rules exist, convert them to formik format using rulesToFormik
+      const expectedFormikRules = rulesToFormik(rules); // Convert rules to Formik-compatible format
+
+      // Compare the converted rules with the suppressionRules in Formik values
+      expect(adFormikValues.suppressionRules).toEqual(expectedFormikRules);
+    } else {
+      // If no rules exist, suppressionRules should be undefined
+      expect(adFormikValues.suppressionRules).toEqual([]);
+    }
+  });
 });

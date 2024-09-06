@@ -10,12 +10,11 @@
  */
 
 import chance from 'chance';
-import { isEmpty, snakeCase } from 'lodash';
+import { isEmpty, snakeCase, random } from 'lodash';
 import {
   Detector,
   FeatureAttributes,
   FEATURE_TYPE,
-  FILTER_TYPES,
   UiMetaData,
   UNITS,
   Monitor,
@@ -23,6 +22,15 @@ import {
 import moment from 'moment';
 import { DETECTOR_STATE } from '../../../../server/utils/constants';
 import { DEFAULT_SHINGLE_SIZE } from '../../../utils/constants';
+import {
+  ImputationMethod,
+  ImputationOption,
+  Rule,
+  Action,
+  Condition,
+  ThresholdType,
+  Operator,
+} from '../../../models/types';
 
 const detectorFaker = new chance('seed');
 
@@ -64,7 +72,7 @@ const randomQuery = () => {
   };
 };
 
-const getUIMetadata = (features: FeatureAttributes[]) => {
+export const getUIMetadata = (features: FeatureAttributes[]) => {
   const metaFeatures = features.reduce(
     (acc, feature) => ({
       ...acc,
@@ -124,6 +132,8 @@ export const getRandomDetector = (
     resultIndexMinSize: 51200,
     resultIndexTtl: 60,
     flattenCustomResultIndex: true,
+    imputationOption: randomImputationOption(features),
+    rules: randomRules(features)
   };
 };
 
@@ -201,4 +211,100 @@ export const getRandomMonitor = (
     triggers: [], //We don't need triggger for AD testing
     lastUpdateTime: moment(1586823218000).subtract(1, 'days').valueOf(),
   };
+};
+
+export const randomFixedValue = (features: FeatureAttributes[]): Array<{ featureName: string; data: number }> => {
+  const randomValues: Array<{ featureName: string; data: number }> = [];
+
+  if (!features) {
+    return randomValues;
+  }
+
+  features.forEach((feature) => {
+    if (feature.featureEnabled) {
+      const randomValue = Math.random() * 100; // generate a random value, e.g., between 0 and 100
+      randomValues.push({ featureName: feature.featureName, data: randomValue });
+    }
+  });
+
+  return randomValues;
+};
+
+
+export const randomImputationOption = (features: FeatureAttributes[]): ImputationOption | undefined => {
+  const randomFixedValueMap = randomFixedValue(features);
+
+  const options: ImputationOption[] = [];
+
+  if (Object.keys(randomFixedValueMap).length !== 0) {
+    options.push({
+      method: ImputationMethod.FIXED_VALUES,
+      defaultFill: randomFixedValueMap,
+    });
+  }
+
+  options.push({ method: ImputationMethod.ZERO });
+  options.push({ method: ImputationMethod.PREVIOUS });
+
+  // Select a random option. random in lodash is inclusive of both min and max
+  const randomIndex = random(0, options.length);
+  if (options.length == randomIndex) {
+    return undefined;
+  }
+  return options[randomIndex];
+};
+
+// Helper function to get a random item from an array
+function getRandomItem<T>(items: T[]): T {
+  return items[random(0, items.length - 1)];
+}
+
+// Helper function to generate a random value (for simplicity, let's use a range of 0 to 100)
+function getRandomValue(): number {
+  return random(0, 100, true); // Generates a random float between 0 and 100
+}
+
+export const randomRules = (features: FeatureAttributes[]): Rule[] | undefined => {
+  // If there are no features, return undefined
+  if (features.length === 0) {
+    return undefined;
+  }
+
+  const rules: Rule[] = [];
+
+  // Generate a random number of rules (between 1 and 3 for testing)
+  const numberOfRules = random(1, 3);
+
+  for (let i = 0; i < numberOfRules; i++) {
+    // Random action
+    const action = Action.IGNORE_ANOMALY;
+
+    // Generate a random number of conditions (between 1 and 2 for testing)
+    const numberOfConditions = random(1, 2);
+    const conditions: Condition[] = [];
+
+    for (let j = 0; j < numberOfConditions; j++) {
+      const featureName = getRandomItem(features.map((f) => f.featureName));
+      const thresholdType = getRandomItem(Object.values(ThresholdType));
+      const operator = getRandomItem(Object.values(Operator));
+      const value = getRandomValue();
+
+      conditions.push({
+        featureName,
+        thresholdType,
+        operator,
+        value,
+      });
+    }
+
+    // Create the rule with the generated action and conditions
+    rules.push({
+      action,
+      conditions,
+    });
+  }
+
+  // Randomly decide whether to return undefined or the generated rules
+  const shouldReturnUndefined = random(0, 1) === 0;
+  return shouldReturnUndefined ? undefined : rules;
 };

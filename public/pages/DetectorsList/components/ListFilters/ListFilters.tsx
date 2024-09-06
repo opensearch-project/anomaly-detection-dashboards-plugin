@@ -34,6 +34,14 @@ interface ListFiltersProps {
   onSearchIndexChange: (searchValue: string) => void;
   onPageClick: (pageNumber: number) => void;
 }
+
+const getVisibleIndices = (props) => {
+  const visibleIndices = props.selectedIndices.length > 0
+            ? props.selectedIndices.map((index) => ({ label: index }))
+            : []
+  return visibleIndices;
+}
+
 export const ListFilters = (props: ListFiltersProps) => (
   <EuiFlexGroup gutterSize="s">
     <EuiFlexItem grow={false} style={{ width: '40%' }}>
@@ -72,11 +80,7 @@ export const ListFilters = (props: ListFiltersProps) => (
         options={props.indexOptions}
         onChange={props.onIndexChange}
         onSearchChange={props.onSearchIndexChange}
-        selectedOptions={
-          props.selectedIndices.length > 0
-            ? props.selectedIndices.map((index) => ({ label: index }))
-            : []
-        }
+        selectedOptions={getVisibleIndices(props)}
         fullWidth={true}
       />
     </EuiFlexItem>

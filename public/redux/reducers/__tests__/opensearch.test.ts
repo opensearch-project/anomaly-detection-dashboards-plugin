@@ -15,7 +15,9 @@ import { BASE_NODE_API_PATH } from '../../../../utils/constants';
 import { mockedStore } from '../../utils/testUtils';
 import reducer, {
   getAliases,
+  getClustersInfo,
   getIndices,
+  getIndicesAndAliases,
   getMappings,
   initialState,
   searchOpenSearch,
@@ -52,7 +54,7 @@ describe('opensearch reducer actions', () => {
       expect(httpMockedClient.get).toHaveBeenCalledWith(
         `..${BASE_NODE_API_PATH}/_indices`,
         {
-          query: { index: '' },
+          query: { index: '', clusters: '' },
         }
       );
     });
@@ -79,7 +81,7 @@ describe('opensearch reducer actions', () => {
         expect(httpMockedClient.get).toHaveBeenCalledWith(
           `..${BASE_NODE_API_PATH}/_indices`,
           {
-            query: { index: '' },
+            query: { index: '', clusters: '' },
           }
         );
       }
@@ -175,7 +177,7 @@ describe('opensearch reducer actions', () => {
       expect(httpMockedClient.get).toHaveBeenCalledWith(
         `${BASE_NODE_API_PATH}/_mappings`,
         {
-          query: { index: '' },
+          query: { indices: [] },
         }
       );
     });
@@ -202,7 +204,7 @@ describe('opensearch reducer actions', () => {
         expect(httpMockedClient.get).toHaveBeenCalledWith(
           `${BASE_NODE_API_PATH}/_mappings`,
           {
-            query: { index: '' },
+            query: { indices: [] },
           }
         );
       }
@@ -278,5 +280,190 @@ describe('opensearch reducer actions', () => {
       }
     });
   });
+  describe('getIndicesAndAliases', () => {
+    test('should handle [REQUEST, SUCCESS] actions for getIndicesAndAliases', async () => {
+      const indices = [
+        { index: 'index1', health: 'green' },
+        { index: 'index2', health: 'yellow' },
+      ];
+      const aliases = [
+        { alias: 'alias1', index: 'index1' },
+        { alias: 'alias2', index: 'index2' },
+      ];
+
+      httpMockedClient.get = jest
+        .fn()
+        .mockResolvedValue({ ok: true, response: { indices, aliases } });
+
+      await store.dispatch(getIndicesAndAliases());
+      const actions = store.getActions();
+
+      expect(actions[0].type).toBe('opensearch/GET_INDICES_AND_ALIASES_REQUEST');
+      expect(reducer(initialState, actions[0])).toEqual({
+        ...initialState,
+        requesting: true,
+      });
+
+      expect(actions[1].type).toBe('opensearch/GET_INDICES_AND_ALIASES_SUCCESS');
+      expect(reducer(initialState, actions[1])).toEqual({
+        ...initialState,
+        requesting: false,
+        indices,
+        aliases,
+      });
+
+      expect(httpMockedClient.get).toHaveBeenCalledWith(
+        `..${BASE_NODE_API_PATH}/_indices_and_aliases`,
+        {
+          query: { indexOrAliasQuery: '', clusters: '', queryForLocalCluster: true },
+        }
+      );
+    });
+    test('should handle [REQUEST, SUCCESS] actions for getIndicesAndAliases with clusters', async () => {
+      const indices = [
+        { index: 'index1', health: 'green' },
+        { index: 'index2', health: 'yellow' },
+      ];
+      const aliases = [
+        { alias: 'alias1', index: 'index1' },
+        { alias: 'alias2', index: 'index2' },
+      ];
+
+      httpMockedClient.get = jest
+        .fn()
+        .mockResolvedValue({ ok: true, response: { indices, aliases } });
+
+      await store.dispatch(getIndicesAndAliases('', '', 'cluster-2,cluster-3'));
+      const actions = store.getActions();
+
+      expect(actions[0].type).toBe('opensearch/GET_INDICES_AND_ALIASES_REQUEST');
+      expect(reducer(initialState, actions[0])).toEqual({
+        ...initialState,
+        requesting: true,
+      });
+
+      expect(actions[1].type).toBe('opensearch/GET_INDICES_AND_ALIASES_SUCCESS');
+      expect(reducer(initialState, actions[1])).toEqual({
+        ...initialState,
+        requesting: false,
+        indices,
+        aliases,
+      });
+
+      expect(httpMockedClient.get).toHaveBeenCalledWith(
+        `..${BASE_NODE_API_PATH}/_indices_and_aliases`,
+        {
+          query: {
+            indexOrAliasQuery: '',
+            clusters: 'cluster-2,cluster-3',
+            queryForLocalCluster: true,
+          },
+        }
+      );
+    });
+    test('should handle [REQUEST, FAILURE] actions for getIndicesAndAliases', async () => {
+      httpMockedClient.get = jest.fn().mockRejectedValue({
+        ok: false,
+        error: 'Something went wrong',
+      });
+
+      try {
+        await store.dispatch(getIndicesAndAliases());
+      } catch (e) {
+        const actions = store.getActions();
+
+        expect(actions[0].type).toBe('opensearch/GET_INDICES_AND_ALIASES_REQUEST');
+        expect(reducer(initialState, actions[0])).toEqual({
+          ...initialState,
+          requesting: true,
+          errorMessage: '',
+        });
+
+        expect(actions[1].type).toBe('opensearch/GET_INDICES_AND_ALIASES_FAILURE');
+        expect(reducer(initialState, actions[1])).toEqual({
+          ...initialState,
+          requesting: false,
+          errorMessage: 'Something went wrong',
+        });
+
+        expect(httpMockedClient.get).toHaveBeenCalledWith(
+          `..${BASE_NODE_API_PATH}/_indices_and_aliases`,
+          {
+            query: {
+              indexOrAliasQuery: '',
+              clusters: '',
+              queryForLocalCluster: true,
+            },
+          }
+        );
+      }
+    });
+  });
+  describe('getClustersInfo', () => {
+    test('should invoke [REQUEST, SUCCESS]', async () => {
+      const clusters = [
+        { cluster: 'cluster1', status: 'green' },
+        { cluster: 'cluster2', status: 'yellow' },
+      ];
+
+      httpMockedClient.get = jest
+        .fn()
+        .mockResolvedValue({ ok: true, response: { clusters } });
+
+      await store.dispatch(getClustersInfo());
+      const actions = store.getActions();
+
+      expect(actions[0].type).toBe('opensearch/GET_CLUSTERS_INFO_REQUEST');
+      expect(reducer(initialState, actions[0])).toEqual({
+        ...initialState,
+        requesting: true,
+        errorMessage: '',
+      });
+
+      expect(actions[1].type).toBe('opensearch/GET_CLUSTERS_INFO_SUCCESS');
+      expect(reducer(initialState, actions[1])).toEqual({
+        ...initialState,
+        requesting: false,
+        clusters,
+      });
+
+      expect(httpMockedClient.get).toHaveBeenCalledWith(
+        `..${BASE_NODE_API_PATH}/_remote/info`
+      );
+    });
+    test('should invoke [REQUEST, FAILURE]', async () => {
+      const errorMessage = 'Something went wrong';
+
+      httpMockedClient.get = jest.fn().mockRejectedValue({
+        ok: false,
+        error: errorMessage,
+      });
+
+      try {
+        await store.dispatch(getClustersInfo());
+      } catch (e) {
+        const actions = store.getActions();
+
+        expect(actions[0].type).toBe('opensearch/GET_CLUSTERS_INFO_REQUEST');
+        expect(reducer(initialState, actions[0])).toEqual({
+          ...initialState,
+          requesting: true,
+          errorMessage: '',
+        });
+
+        expect(actions[1].type).toBe('opensearch/GET_CLUSTERS_INFO_FAILURE');
+        expect(reducer(initialState, actions[1])).toEqual({
+          ...initialState,
+          requesting: false,
+          errorMessage,
+        });
+
+        expect(httpMockedClient.get).toHaveBeenCalledWith(
+          `..${BASE_NODE_API_PATH}/_remote/info`
+        );
+      }
+    });
+  });
+
   describe('getPrioritizedIndices', () => { });
 });

@@ -26,4 +26,5 @@ export interface DetectorDefinitionFormikValues {
   resultIndexMinSize?: number | string;
   resultIndexTtl?:number | string;
   flattenCustomResultIndex?: boolean;
+  clusters?: any[];
 }
