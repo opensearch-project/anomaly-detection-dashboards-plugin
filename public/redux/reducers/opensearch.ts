@@ -372,7 +372,7 @@ export const getMappings = (
     type: GET_MAPPINGS,
     request: (client: HttpSetup) =>
       client.get(`${url}`, {
-        query: { index: searchKey },
+        query: { indices: searchKey },
       }),
   };
 };
