@@ -16,6 +16,7 @@ import { createGetterSetter } from '../../../src/plugins/opensearch_dashboards_u
 import { UiActionsStart } from '../../../src/plugins/ui_actions/public';
 import { SavedAugmentVisLoader } from '../../../src/plugins/vis_augmenter/public';
 import { NavigationPublicPluginStart } from '../../../src/plugins/navigation/public';
+import { AssistantPublicPluginStart } from '../../../plugins/dashboards-assistant/public/';
 
 export interface DataSourceEnabled {
   enabled: boolean;
@@ -45,6 +46,12 @@ export const [getUISettings, setUISettings] =
 export const [getQueryService, setQueryService] =
   createGetterSetter<DataPublicPluginStart['query']>('Query');
 
+export const [getAssistantEnabled, setAssistantEnabled] =
+  createGetterSetter<AssistantPublicPluginStart>('AssistantClient');
+
+export const [getAssistantClient, setAssistantClient] =
+  createGetterSetter<AssistantPublicPluginStart['assistantClient']>('AssistantClient');
+
 export const [getSavedObjectsClient, setSavedObjectsClient] =
   createGetterSetter<CoreStart['savedObjects']['client']>('SavedObjectsClient');
 
@@ -54,10 +61,10 @@ export const [getDataSourceManagementPlugin, setDataSourceManagementPlugin] =
 export const [getDataSourceEnabled, setDataSourceEnabled] =
   createGetterSetter<DataSourceEnabled>('DataSourceEnabled');
 
-export const [getNavigationUI, setNavigationUI] = 
+export const [getNavigationUI, setNavigationUI] =
   createGetterSetter<NavigationPublicPluginStart['ui']>('navigation');
 
-export const [getApplication, setApplication] = 
+export const [getApplication, setApplication] =
   createGetterSetter<CoreStart['application']>('application');
 
 // This is primarily used for mocking this module and each of its fns in tests.
