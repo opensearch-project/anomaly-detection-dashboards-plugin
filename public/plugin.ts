@@ -27,7 +27,7 @@ import {
 } from '../../../src/plugins/embeddable/public';
 import { ACTION_AD } from './action/ad_dashboard_action';
 import { APP_PATH, DASHBOARD_PAGE_NAV_ID, DETECTORS_PAGE_NAV_ID, OVERVIEW_PAGE_NAV_ID, PLUGIN_NAME } from './utils/constants';
-import { getActions } from './utils/contextMenu/getActions';
+import { ACTION_SUGGEST_AD, getActions, getSuggestAnomalyDetectorAction } from './utils/contextMenu/getActions';
 import { overlayAnomaliesFunction } from './expressions/overlay_anomalies';
 import {
   setClient,
@@ -42,7 +42,8 @@ import {
   setDataSourceManagementPlugin,
   setDataSourceEnabled,
   setNavigationUI,
-  setApplication
+  setApplication,
+  setAssistantClient,
 } from './services';
 import { AnomalyDetectionOpenSearchDashboardsPluginStart } from 'public';
 import {
@@ -50,14 +51,16 @@ import {
   VisAugmenterStart,
 } from '../../../src/plugins/vis_augmenter/public';
 import { UiActionsStart } from '../../../src/plugins/ui_actions/public';
-import { DataPublicPluginStart } from '../../../src/plugins/data/public';
+import { DataPublicPluginSetup, DataPublicPluginStart } from '../../../src/plugins/data/public';
 import { DataSourceManagementPluginSetup } from '../../../src/plugins/data_source_management/public';
 import { DataSourcePluginSetup } from '../../../src/plugins/data_source/public';
 import { NavigationPublicPluginStart } from '../../../src/plugins/navigation/public';
+import { AssistantPublicPluginStart } from '../../dashboards-assistant/public';
 
 declare module '../../../src/plugins/ui_actions/public' {
   export interface ActionContextMapping {
     [ACTION_AD]: {};
+    [ACTION_SUGGEST_AD]: {}
   }
 }
 
@@ -68,6 +71,7 @@ export interface AnomalyDetectionSetupDeps {
   visAugmenter: VisAugmenterSetup;
   dataSourceManagement: DataSourceManagementPluginSetup;
   dataSource: DataSourcePluginSetup;
+  data: DataPublicPluginSetup;
 }
 
 export interface AnomalyDetectionStartDeps {
@@ -77,6 +81,7 @@ export interface AnomalyDetectionStartDeps {
   uiActions: UiActionsStart;
   data: DataPublicPluginStart;
   navigation: NavigationPublicPluginStart;
+  assistantDashboards: AssistantPublicPluginStart;
 }
 
 export class AnomalyDetectionOpenSearchDashboardsPlugin
@@ -102,7 +107,7 @@ export class AnomalyDetectionOpenSearchDashboardsPlugin
     });
 
     // register applications with category and use case information
-    core.chrome.navGroup.addNavLinksToGroup(DEFAULT_NAV_GROUPS.observability,[
+    core.chrome.navGroup.addNavLinksToGroup(DEFAULT_NAV_GROUPS.observability, [
       {
         id: PLUGIN_NAME,
         category: DEFAULT_APP_CATEGORIES.detect,
@@ -121,7 +126,7 @@ export class AnomalyDetectionOpenSearchDashboardsPlugin
           const [coreStart] = await core.getStartServices();
           return renderApp(coreStart, params, APP_PATH.OVERVIEW, hideInAppSideNavBar);
         },
-      }); 
+      });
     }
 
     if (core.chrome.navGroup.getNavGroupEnabled()) {
@@ -135,7 +140,7 @@ export class AnomalyDetectionOpenSearchDashboardsPlugin
           const [coreStart] = await core.getStartServices();
           return renderApp(coreStart, params, APP_PATH.DASHBOARD, hideInAppSideNavBar);
         },
-      }); 
+      });
     }
 
     if (core.chrome.navGroup.getNavGroupEnabled()) {
@@ -149,15 +154,15 @@ export class AnomalyDetectionOpenSearchDashboardsPlugin
           const [coreStart] = await core.getStartServices();
           return renderApp(coreStart, params, APP_PATH.LIST_DETECTORS, hideInAppSideNavBar);
         },
-      }); 
+      });
     }
 
     // link the sub applications to the parent application
     core.chrome.navGroup.addNavLinksToGroup(
       DEFAULT_NAV_GROUPS.observability,
       [{
-          id: OVERVIEW_PAGE_NAV_ID,
-          parentNavLinkId: PLUGIN_NAME
+        id: OVERVIEW_PAGE_NAV_ID,
+        parentNavLinkId: PLUGIN_NAME
       },
       {
         id: DASHBOARD_PAGE_NAV_ID,
@@ -189,6 +194,11 @@ export class AnomalyDetectionOpenSearchDashboardsPlugin
       plugins.uiActions.addTriggerAction(CONTEXT_MENU_TRIGGER, action);
     });
 
+    // Add suggest anomaly detector action to the uiActions in Discover
+    if (plugins.assistantDashboards?.assistantTriggers?.AI_ASSISTANT_TRIGGER) {
+      const suggestAnomalyDetectorAction = getSuggestAnomalyDetectorAction();
+      plugins.uiActions.addTriggerAction(plugins.assistantDashboards.assistantTriggers.AI_ASSISTANT_TRIGGER, suggestAnomalyDetectorAction);
+    }
     // registers the expression function used to render anomalies on an Augmented Visualization
     plugins.expressions.registerFunction(overlayAnomaliesFunction);
     return {};
@@ -196,7 +206,7 @@ export class AnomalyDetectionOpenSearchDashboardsPlugin
 
   public start(
     core: CoreStart,
-    { embeddable, visAugmenter, uiActions, data, navigation }: AnomalyDetectionStartDeps
+    { embeddable, visAugmenter, uiActions, data, navigation, assistantDashboards }: AnomalyDetectionStartDeps
   ): AnomalyDetectionOpenSearchDashboardsPluginStart {
     setUISettings(core.uiSettings);
     setEmbeddable(embeddable);
@@ -207,6 +217,9 @@ export class AnomalyDetectionOpenSearchDashboardsPlugin
     setQueryService(data.query);
     setSavedObjectsClient(core.savedObjects.client);
     setNavigationUI(navigation.ui);
+    if (assistantDashboards) {
+      setAssistantClient(assistantDashboards.assistantClient);
+    }
     setApplication(core.application);
     return {};
   }
