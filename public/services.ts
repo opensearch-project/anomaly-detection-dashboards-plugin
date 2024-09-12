@@ -16,6 +16,7 @@ import { createGetterSetter } from '../../../src/plugins/opensearch_dashboards_u
 import { UiActionsStart } from '../../../src/plugins/ui_actions/public';
 import { SavedAugmentVisLoader } from '../../../src/plugins/vis_augmenter/public';
 import { NavigationPublicPluginStart } from '../../../src/plugins/navigation/public';
+import { UsageCollectionSetup } from '../../../src/plugins/usage_collection/public/plugin';
 import { AssistantPublicPluginStart } from '../../../plugins/dashboards-assistant/public/';
 
 export interface DataSourceEnabled {
@@ -45,6 +46,9 @@ export const [getUISettings, setUISettings] =
 
 export const [getQueryService, setQueryService] =
   createGetterSetter<DataPublicPluginStart['query']>('Query');
+
+export const [getUsageCollection, setUsageCollection] =
+  createGetterSetter<UsageCollectionSetup>('UsageCollection');
 
 export const [getAssistantEnabled, setAssistantEnabled] =
   createGetterSetter<AssistantPublicPluginStart>('AssistantClient');

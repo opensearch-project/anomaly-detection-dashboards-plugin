@@ -43,6 +43,7 @@ import {
   setDataSourceEnabled,
   setNavigationUI,
   setApplication,
+  setUsageCollection,
   setAssistantClient,
 } from './services';
 import { AnomalyDetectionOpenSearchDashboardsPluginStart } from 'public';
@@ -194,10 +195,11 @@ export class AnomalyDetectionOpenSearchDashboardsPlugin
       plugins.uiActions.addTriggerAction(CONTEXT_MENU_TRIGGER, action);
     });
 
+    setUsageCollection(plugins.usageCollection);
     // Add suggest anomaly detector action to the uiActions in Discover
-    if (plugins.assistantDashboards?.assistantTriggers?.AI_ASSISTANT_TRIGGER) {
+    if (plugins.assistantDashboards?.assistantTriggers?.AI_ASSISTANT_QUERY_EDITOR_TRIGGER) {
       const suggestAnomalyDetectorAction = getSuggestAnomalyDetectorAction();
-      plugins.uiActions.addTriggerAction(plugins.assistantDashboards.assistantTriggers.AI_ASSISTANT_TRIGGER, suggestAnomalyDetectorAction);
+      plugins.uiActions.addTriggerAction(plugins.assistantDashboards.assistantTriggers.AI_ASSISTANT_QUERY_EDITOR_TRIGGER, suggestAnomalyDetectorAction);
     }
     // registers the expression function used to render anomalies on an Augmented Visualization
     plugins.expressions.registerFunction(overlayAnomaliesFunction);

@@ -19,7 +19,7 @@ import configureStore from '../../redux/configureStore';
 import SuggestAnomalyDetector from './SuggestAnomalyDetector';
 import userEvent from '@testing-library/user-event';
 import { HttpFetchOptionsWithPath } from '../../../../../src/core/public';
-import { getAssistantClient, getQueryService } from '../../services';
+import { getAssistantClient, getQueryService, getUsageCollection } from '../../services';
 
 const notifications = {
     toasts: {
@@ -42,7 +42,8 @@ jest.mock('../../services', () => ({
     }),
     getAssistantClient: jest.fn().mockReturnValue({
         executeAgentByName: jest.fn(),
-    })
+    }),
+    getUsageCollection: jest.fn(),
 }));
 
 const renderWithRouter = () => ({
@@ -246,9 +247,108 @@ describe('GenerateAnomalyDetector spec', () => {
                 expect(queryByText('Detector details')).not.toBeNull();
                 expect(queryByText('Advanced configuration')).not.toBeNull();
                 expect(queryByText('Model Features')).not.toBeNull();
+                expect(queryByText('Was this helpful?')).not.toBeNull();
+            });
+        });
+    });
+
+    describe('Test feedback', () => {
+        let reportUiStatsMock: any;
+
+        beforeEach(() => {
+            const queryService = getQueryService();
+            queryService.queryString.getQuery.mockReturnValue({
+                dataset: {
+                    id: 'test-pattern',
+                    title: 'test-pattern',
+                    type: 'INDEX_PATTERN',
+                    timeFieldName: '@timestamp',
+                },
+            });
+
+            reportUiStatsMock = jest.fn();
+            (getUsageCollection as jest.Mock).mockReturnValue({
+                reportUiStats: reportUiStatsMock,
+                METRIC_TYPE: {
+                    CLICK: 'click',
+                },
             });
         });
 
+        afterEach(() => {
+            jest.clearAllMocks();
+        });
+
+        it('should call reportMetric with thumbup when thumbs up is clicked', async () => {
+            (getAssistantClient().executeAgentByName as jest.Mock).mockResolvedValueOnce({
+                body: {
+                    inference_results: [
+                        {
+                            output: [
+                                { result: "{\"index\":\"opensearch_dashboards_sample_data_logs\",\"categoryField\":\"ip\",\"aggregationField\":\"responseLatency,response\",\"aggregationMethod\":\"avg,sum\",\"dateFields\":\"utc_time,timestamp\"}" }
+                            ]
+                        }
+                    ]
+                }
+            });
+
+            const { queryByText, getByLabelText } = renderWithRouter();
+            expect(queryByText('Suggested anomaly detector')).not.toBeNull();
+
+            await waitFor(() => {
+                expect(queryByText('Create detector')).not.toBeNull();
+                expect(queryByText('Was this helpful?')).not.toBeNull();
+            });
+
+            userEvent.click(getByLabelText('feedback thumbs up'));
+            expect(reportUiStatsMock).toHaveBeenCalled();
+            expect(reportUiStatsMock).toHaveBeenCalledWith(
+                'suggestAD',
+                'click',
+                expect.stringContaining('generated-')
+            );
+            expect(reportUiStatsMock).toHaveBeenCalledWith(
+                'suggestAD',
+                'click',
+                expect.stringContaining('thumbup-')
+            );
+        });
+
+
+        it('should call reportMetric with thumbdown when thumbs down is clicked', async () => {
+            (getAssistantClient().executeAgentByName as jest.Mock).mockResolvedValueOnce({
+                body: {
+                    inference_results: [
+                        {
+                            output: [
+                                { result: "{\"index\":\"opensearch_dashboards_sample_data_logs\",\"categoryField\":\"ip\",\"aggregationField\":\"responseLatency,response\",\"aggregationMethod\":\"avg,sum\",\"dateFields\":\"utc_time,timestamp\"}" }
+                            ]
+                        }
+                    ]
+                }
+            });
+
+            const { queryByText, getByLabelText } = renderWithRouter();
+            expect(queryByText('Suggested anomaly detector')).not.toBeNull();
+
+            await waitFor(() => {
+                expect(queryByText('Create detector')).not.toBeNull();
+                expect(queryByText('Was this helpful?')).not.toBeNull();
+            });
+
+            userEvent.click(getByLabelText('feedback thumbs down'));
+            expect(reportUiStatsMock).toHaveBeenCalled();
+            expect(reportUiStatsMock).toHaveBeenCalledWith(
+                'suggestAD',
+                'click',
+                expect.stringContaining('generated-')
+            );
+            expect(reportUiStatsMock).toHaveBeenCalledWith(
+                'suggestAD',
+                'click',
+                expect.stringContaining('thumbdown-')
+            );
+        });
     });
 
     describe('Test API calls', () => {

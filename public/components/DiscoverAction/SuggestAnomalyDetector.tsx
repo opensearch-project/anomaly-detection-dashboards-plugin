@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import React, { useState, useEffect, Fragment } from 'react';
+import React, { useState, useEffect, Fragment, useCallback } from 'react';
 import {
     EuiFlyoutHeader,
     EuiFlyoutBody,
@@ -22,6 +22,7 @@ import {
     EuiButtonEmpty,
     EuiPanel,
     EuiComboBox,
+    EuiSmallButtonIcon,
 } from '@elastic/eui';
 import '../FeatureAnywhereContextMenu/CreateAnomalyDetector/styles.scss';
 import { useDispatch, useSelector } from 'react-redux';
@@ -62,8 +63,8 @@ import {
 import { formikToDetector } from '../../pages/ReviewAndCreate/utils/helpers';
 import { FormattedFormRow } from '../FormattedFormRow/FormattedFormRow';
 import { FeatureAccordion } from '../../pages/ConfigureModel/components/FeatureAccordion';
-import { AD_DOCS_LINK, DEFAULT_SHINGLE_SIZE, MAX_FEATURE_NUM, PLUGIN_NAME } from '../../utils/constants';
-import { getAssistantClient, getNotifications, getQueryService } from '../../services';
+import { AD_DOCS_LINK, DEFAULT_SHINGLE_SIZE, MAX_FEATURE_NUM, PLUGIN_NAME, SUGGEST_ANOMALY_DETECTOR_METRIC_TYPE } from '../../utils/constants';
+import { getAssistantClient, getNotifications, getQueryService, getUsageCollection } from '../../services';
 import { prettifyErrorMessage } from '../../../server/utils/helpers';
 import EnhancedAccordion from '../FeatureAnywhereContextMenu/EnhancedAccordion';
 import MinimalAccordion from '../FeatureAnywhereContextMenu/MinimalAccordion';
@@ -75,6 +76,7 @@ import { mountReactNode } from '../../../../../src/core/public/utils';
 import { formikToDetectorName } from '../FeatureAnywhereContextMenu/CreateAnomalyDetector/helpers';
 import { DEFAULT_DATA } from '../../../../../src/plugins/data/common';
 import { AppState } from '../../redux/reducers';
+import { v4 as uuidv4 } from 'uuid';
 
 export interface GeneratedParameters {
     categoryField: string;
@@ -89,6 +91,7 @@ function SuggestAnomalyDetector({
 }) {
     const dispatch = useDispatch();
     const notifications = getNotifications();
+    const usageCollection = getUsageCollection();
     const assistantClient = getAssistantClient();
 
     const queryString = getQueryService().queryString;
@@ -136,12 +139,15 @@ function SuggestAnomalyDetector({
     const dateNanoFields = get(indexDataTypes, 'date_nanos', []) as string[];
     const allDateFields = dateFields.concat(dateNanoFields);
 
+    const [feedbackResult, setFeedbackResult] = useState<boolean | undefined>(undefined);
+
     // let LLM to generate parameters for creating anomaly detector
     async function getParameters() {
         try {
             const executeAgentResponse = await
                 assistantClient.executeAgentByName(SUGGEST_ANOMALY_DETECTOR_CONFIG_ID, { index: indexName }, { dataSourceId }
                 );
+            reportMetric(SUGGEST_ANOMALY_DETECTOR_METRIC_TYPE.GENERATED);
             const rawGeneratedParameters = executeAgentResponse?.body?.inference_results?.[0]?.output?.[0]?.result;
             if (!rawGeneratedParameters) {
                 throw new Error('Cannot get generated parameters!');
@@ -240,6 +246,28 @@ function SuggestAnomalyDetector({
         setDelayValue(e.target.value);
     };
 
+    const reportMetric = usageCollection
+        ? (metric: string) => {
+            usageCollection.reportUiStats(
+                `suggestAD`,
+                usageCollection.METRIC_TYPE.CLICK,
+                metric + '-' + uuidv4()
+            );
+        }
+        : () => { };
+
+    const feedbackOutput = useCallback(
+        (correct: boolean, result: boolean | undefined) => {
+            // No repeated feedback.
+            if (result !== undefined) {
+                return;
+            }
+            reportMetric(correct ? SUGGEST_ANOMALY_DETECTOR_METRIC_TYPE.THUMBUP : SUGGEST_ANOMALY_DETECTOR_METRIC_TYPE.THUMBDOWN);
+            setFeedbackResult(correct);
+        },
+        []
+    );
+
     const handleValidationAndSubmit = (formikProps: any) => {
         if (formikProps.values.featureList.length !== 0) {
             formikProps.setFieldTouched('featureList', true);
@@ -264,6 +292,7 @@ function SuggestAnomalyDetector({
             const detectorToCreate = formikToDetector(formikProps.values);
             await dispatch(createDetector(detectorToCreate, dataSourceId))
                 .then(async (response: any) => {
+                    reportMetric(SUGGEST_ANOMALY_DETECTOR_METRIC_TYPE.CREATED);
                     const detectorId = response.response.id;
                     dispatch(startDetector(detectorId, dataSourceId))
                         .then(() => { })
@@ -839,6 +868,34 @@ function SuggestAnomalyDetector({
                                 <EuiFlexItem grow={false}>
                                     <EuiButtonEmpty onClick={closeFlyout}>Cancel</EuiButtonEmpty>
                                 </EuiFlexItem>
+                                <EuiFlexGroup alignItems="center" gutterSize='none' justifyContent="flexEnd">
+                                    <EuiFlexItem grow={false}>
+                                        <EuiText size='s'>Was this helpful?</EuiText>
+                                    </EuiFlexItem>
+                                    {feedbackResult !== false ? (
+                                        <EuiFlexItem grow={false}>
+                                            <EuiSmallButtonIcon
+                                                aria-label="feedback thumbs up"
+                                                color={feedbackResult === true ? 'primary' : 'text'}
+                                                iconType="thumbsUp"
+                                                disabled={isLoading}
+                                                onClick={() => feedbackOutput(true, feedbackResult)}
+                                            />
+                                        </EuiFlexItem>
+                                    ) : null}
+                                    {feedbackResult !== true ? (
+                                        <EuiFlexItem grow={false}>
+                                            <EuiSmallButtonIcon
+                                                aria-label="feedback thumbs down"
+                                                color={feedbackResult === false ? 'primary' : 'text'}
+                                                iconType="thumbsDown"
+                                                disabled={isLoading}
+                                                onClick={() => feedbackOutput(false, feedbackResult)}
+                                            />
+                                        </EuiFlexItem>
+                                    ) : null}
+                                </EuiFlexGroup>
+
                                 <EuiFlexItem grow={false}>
                                     <EuiButton
                                         fill={true}

@@ -8,7 +8,9 @@
   "optionalPlugins": [
     "dataSource",
     "dataSourceManagement",
-    "assistantDashboards"
+    "assistantDashboards",
+    "usageCollection",
+    "telemetry"
   ],
   "requiredPlugins": [
     "opensearchDashboardsUtils",
