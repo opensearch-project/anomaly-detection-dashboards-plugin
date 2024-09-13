@@ -41,7 +41,8 @@ jest.mock('../../services', () => ({
         },
     }),
     getAssistantClient: jest.fn().mockReturnValue({
-        executeAgentByName: jest.fn(),
+        agentConfigExists: jest.fn(),
+        executeAgentByConfigName: jest.fn(),
     }),
     getUsageCollection: jest.fn(),
 }));
@@ -127,11 +128,13 @@ describe('GenerateAnomalyDetector spec', () => {
                     timeFieldName: '@timestamp',
                 },
             });
-
+            (getAssistantClient().agentConfigExists as jest.Mock).mockResolvedValueOnce({
+                exists: true
+            });
         });
 
         it('renders with empty generated parameters', async () => {
-            (getAssistantClient().executeAgentByName as jest.Mock).mockResolvedValueOnce({
+            (getAssistantClient().executeAgentByConfigName as jest.Mock).mockResolvedValueOnce({
                 body: {
                     inference_results: [
                         {
@@ -155,7 +158,7 @@ describe('GenerateAnomalyDetector spec', () => {
         });
 
         it('renders with empty parameter', async () => {
-            (getAssistantClient().executeAgentByName as jest.Mock).mockResolvedValueOnce({
+            (getAssistantClient().executeAgentByConfigName as jest.Mock).mockResolvedValueOnce({
                 body: {
                     inference_results: [
                         {
@@ -179,7 +182,7 @@ describe('GenerateAnomalyDetector spec', () => {
         });
 
         it('renders with empty aggregation field or empty aggregation method', async () => {
-            (getAssistantClient().executeAgentByName as jest.Mock).mockResolvedValueOnce({
+            (getAssistantClient().executeAgentByConfigName as jest.Mock).mockResolvedValueOnce({
                 body: {
                     inference_results: [
                         {
@@ -203,7 +206,7 @@ describe('GenerateAnomalyDetector spec', () => {
         });
 
         it('renders with different number of aggregation methods and fields', async () => {
-            (getAssistantClient().executeAgentByName as jest.Mock).mockResolvedValueOnce({
+            (getAssistantClient().executeAgentByConfigName as jest.Mock).mockResolvedValueOnce({
                 body: {
                     inference_results: [
                         {
@@ -227,7 +230,7 @@ describe('GenerateAnomalyDetector spec', () => {
         });
 
         it('renders component completely', async () => {
-            (getAssistantClient().executeAgentByName as jest.Mock).mockResolvedValueOnce({
+            (getAssistantClient().executeAgentByConfigName as jest.Mock).mockResolvedValueOnce({
                 body: {
                     inference_results: [
                         {
@@ -248,6 +251,37 @@ describe('GenerateAnomalyDetector spec', () => {
                 expect(queryByText('Advanced configuration')).not.toBeNull();
                 expect(queryByText('Model Features')).not.toBeNull();
                 expect(queryByText('Was this helpful?')).not.toBeNull();
+            });
+        });
+    });
+
+    describe('Test agent not configured', () => {
+        beforeEach(() => {
+            jest.clearAllMocks();
+            const queryService = getQueryService();
+            queryService.queryString.getQuery.mockReturnValue({
+                dataset: {
+                    id: 'test-pattern',
+                    title: 'test-pattern',
+                    type: 'INDEX_PATTERN',
+                    timeFieldName: '@timestamp',
+                },
+            });
+        });
+
+        it('renders with empty generated parameters', async () => {
+            (getAssistantClient().agentConfigExists as jest.Mock).mockResolvedValueOnce({
+                exists: false
+            });
+
+            const { queryByText } = renderWithRouter();
+            expect(queryByText('Suggested anomaly detector')).not.toBeNull();
+
+            await waitFor(() => {
+                expect(getNotifications().toasts.addDanger).toHaveBeenCalledTimes(1);
+                expect(getNotifications().toasts.addDanger).toHaveBeenCalledWith(
+                    'Generate parameters for creating anomaly detector failed, reason: Error: Agent for suggest anomaly detector not found, please configure an agent firstly!'
+                );
             });
         });
     });
@@ -273,6 +307,10 @@ describe('GenerateAnomalyDetector spec', () => {
                     CLICK: 'click',
                 },
             });
+
+            (getAssistantClient().agentConfigExists as jest.Mock).mockResolvedValueOnce({
+                exists: true
+            });
         });
 
         afterEach(() => {
@@ -280,7 +318,7 @@ describe('GenerateAnomalyDetector spec', () => {
         });
 
         it('should call reportMetric with thumbup when thumbs up is clicked', async () => {
-            (getAssistantClient().executeAgentByName as jest.Mock).mockResolvedValueOnce({
+            (getAssistantClient().executeAgentByConfigName as jest.Mock).mockResolvedValueOnce({
                 body: {
                     inference_results: [
                         {
@@ -316,7 +354,7 @@ describe('GenerateAnomalyDetector spec', () => {
 
 
         it('should call reportMetric with thumbdown when thumbs down is clicked', async () => {
-            (getAssistantClient().executeAgentByName as jest.Mock).mockResolvedValueOnce({
+            (getAssistantClient().executeAgentByConfigName as jest.Mock).mockResolvedValueOnce({
                 body: {
                     inference_results: [
                         {
@@ -363,6 +401,9 @@ describe('GenerateAnomalyDetector spec', () => {
                     timeFieldName: '@timestamp',
                 },
             });
+            (getAssistantClient().agentConfigExists as jest.Mock).mockResolvedValueOnce({
+                exists: true
+            });
         });
 
         it('All API calls execute successfully', async () => {
@@ -382,7 +423,7 @@ describe('GenerateAnomalyDetector spec', () => {
                         });
                 }
             });
-            (getAssistantClient().executeAgentByName as jest.Mock).mockResolvedValueOnce({
+            (getAssistantClient().executeAgentByConfigName as jest.Mock).mockResolvedValueOnce({
                 body: {
                     inference_results: [
                         {
@@ -414,7 +455,7 @@ describe('GenerateAnomalyDetector spec', () => {
         });
 
         it('Generate parameters failed', async () => {
-            (getAssistantClient().executeAgentByName as jest.Mock).mockRejectedValueOnce('Generate parameters failed');
+            (getAssistantClient().executeAgentByConfigName as jest.Mock).mockRejectedValueOnce('Generate parameters failed');
 
             const { queryByText } = renderWithRouter();
             expect(queryByText('Suggested anomaly detector')).not.toBeNull();
@@ -441,7 +482,7 @@ describe('GenerateAnomalyDetector spec', () => {
                         });
                 }
             });
-            (getAssistantClient().executeAgentByName as jest.Mock).mockResolvedValueOnce({
+            (getAssistantClient().executeAgentByConfigName as jest.Mock).mockResolvedValueOnce({
                 body: {
                     inference_results: [
                         {
@@ -512,7 +553,7 @@ describe('GenerateAnomalyDetector spec', () => {
                 },
             });
 
-            (getAssistantClient().executeAgentByName as jest.Mock).mockResolvedValueOnce({
+            (getAssistantClient().executeAgentByConfigName as jest.Mock).mockResolvedValueOnce({
                 body: {
                     inference_results: [
                         {

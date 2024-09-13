@@ -144,8 +144,12 @@ function SuggestAnomalyDetector({
     // let LLM to generate parameters for creating anomaly detector
     async function getParameters() {
         try {
+            const checkAgentExistsResponse = await assistantClient.agentConfigExists(SUGGEST_ANOMALY_DETECTOR_CONFIG_ID, { dataSourceId });
+            if (!checkAgentExistsResponse?.exists) {
+                throw new Error('Agent for suggest anomaly detector not found, please configure an agent firstly!');
+            }
             const executeAgentResponse = await
-                assistantClient.executeAgentByName(SUGGEST_ANOMALY_DETECTOR_CONFIG_ID, { index: indexName }, { dataSourceId }
+                assistantClient.executeAgentByConfigName(SUGGEST_ANOMALY_DETECTOR_CONFIG_ID, { index: indexName }, { dataSourceId }
                 );
             reportMetric(SUGGEST_ANOMALY_DETECTOR_METRIC_TYPE.GENERATED);
             const rawGeneratedParameters = executeAgentResponse?.body?.inference_results?.[0]?.output?.[0]?.result;
@@ -317,7 +321,7 @@ function SuggestAnomalyDetector({
                             <EuiText>
                                 Detector created: <a href="#" onClick={(e) => {
                                     e.preventDefault();
-                                    const url = `../${PLUGIN_NAME}#/detectors/${detectorId}`;
+                                    const url = `../${PLUGIN_NAME}#/detectors/${detectorId}/results?dataSourceId=${dataSourceId}`;
                                     window.open(url, '_blank');
                                 }} style={{ textDecoration: 'underline' }}>{formikProps.values.name}</a>
                             </EuiText >
