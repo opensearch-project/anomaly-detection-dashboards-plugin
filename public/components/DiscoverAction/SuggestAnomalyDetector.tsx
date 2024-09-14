@@ -321,7 +321,7 @@ function SuggestAnomalyDetector({
                             <EuiText>
                                 Detector created: <a href="#" onClick={(e) => {
                                     e.preventDefault();
-                                    const url = `../${PLUGIN_NAME}#/detectors/${detectorId}/results?dataSourceId=${dataSourceId}`;
+                                    const url = `../${PLUGIN_NAME}#/detectors/${detectorId}/results?dataSourceId=${dataSourceId || ''}`;
                                     window.open(url, '_blank');
                                 }} style={{ textDecoration: 'underline' }}>{formikProps.values.name}</a>
                             </EuiText >
