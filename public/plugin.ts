@@ -43,6 +43,7 @@ import {
   setDataSourceEnabled,
   setNavigationUI,
   setApplication,
+  setUsageCollection,
   setAssistantClient,
 } from './services';
 import { AnomalyDetectionOpenSearchDashboardsPluginStart } from 'public';
@@ -194,10 +195,20 @@ export class AnomalyDetectionOpenSearchDashboardsPlugin
       plugins.uiActions.addTriggerAction(CONTEXT_MENU_TRIGGER, action);
     });
 
-    // Add suggest anomaly detector action to the uiActions in Discover
-    if (plugins.assistantDashboards?.assistantTriggers?.AI_ASSISTANT_TRIGGER) {
-      const suggestAnomalyDetectorAction = getSuggestAnomalyDetectorAction();
-      plugins.uiActions.addTriggerAction(plugins.assistantDashboards.assistantTriggers.AI_ASSISTANT_TRIGGER, suggestAnomalyDetectorAction);
+    // register suggest anomaly detector action to Discover only if the feature flag is enabled 
+    if (plugins.assistantDashboards?.getFeatureStatus().smartAnomalyDetector && plugins.assistantDashboards?.assistantTriggers?.AI_ASSISTANT_QUERY_EDITOR_TRIGGER) {
+      const checkAndRegisterAction = async () => {
+        const [coreStart] = await core.getStartServices();
+        const assistantEnabled = coreStart.application.capabilities?.assistant?.enabled === true;
+        if (assistantEnabled) {
+          // Add suggest anomaly detector action to the uiActions in Discover
+          const suggestAnomalyDetectorAction = getSuggestAnomalyDetectorAction();
+          plugins.uiActions.addTriggerAction(plugins.assistantDashboards.assistantTriggers.AI_ASSISTANT_QUERY_EDITOR_TRIGGER, suggestAnomalyDetectorAction);
+          // set usageCollection for metric report
+          setUsageCollection(plugins.usageCollection);
+        }
+      }
+      checkAndRegisterAction();
     }
     // registers the expression function used to render anomalies on an Augmented Visualization
     plugins.expressions.registerFunction(overlayAnomaliesFunction);
