@@ -118,3 +118,10 @@ export const DASHBOARD_PAGE_NAV_ID = `anomaly_detection_dashboard-dashboard`;
 export const DETECTORS_PAGE_NAV_ID = `anomaly_detection_dashboard-detectors`;
 
 export const USE_NEW_HOME_PAGE = 'home:useNewHomePage';
+
+export enum SUGGEST_ANOMALY_DETECTOR_METRIC_TYPE {
+  THUMBUP = 'thumbup',
+  THUMBDOWN = 'thumbdown',
+  GENERATED = 'generated',
+  CREATED = 'created',
+}
