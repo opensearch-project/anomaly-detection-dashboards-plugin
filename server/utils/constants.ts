@@ -132,5 +132,3 @@ export const HISTORICAL_TASK_TYPES = [
 ];
 
 export const CUSTOM_AD_RESULT_INDEX_PREFIX = 'opensearch-ad-plugin-result-';
-
-export const SUGGEST_ANOMALY_DETECTOR_CONFIG_ID = 'os_suggest_ad';

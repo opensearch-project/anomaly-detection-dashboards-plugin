@@ -54,7 +54,7 @@ describe('detector reducer actions', () => {
         },
       });
       expect(httpMockedClient.get).toHaveBeenCalledWith(
-        `${BASE_NODE_API_PATH}/detectors/${detectorId}`
+        `..${BASE_NODE_API_PATH}/detectors/${detectorId}`
       );
     });
     test('should invoke [REQUEST, FAILURE]', async () => {
@@ -76,7 +76,7 @@ describe('detector reducer actions', () => {
           errorMessage: 'Not found',
         });
         expect(httpMockedClient.get).toHaveBeenCalledWith(
-          `${BASE_NODE_API_PATH}/detectors/${detectorId}`
+          `..${BASE_NODE_API_PATH}/detectors/${detectorId}`
         );
       }
     });
@@ -104,7 +104,7 @@ describe('detector reducer actions', () => {
         },
       });
       expect(httpMockedClient.delete).toHaveBeenCalledWith(
-        `${BASE_NODE_API_PATH}/detectors/${expectedDetector.id}`
+        `..${BASE_NODE_API_PATH}/detectors/${expectedDetector.id}`
       );
     });
     test('should invoke [REQUEST, FAILURE]', async () => {
@@ -129,7 +129,7 @@ describe('detector reducer actions', () => {
           errorMessage: 'Detector is consumed by Monitor',
         });
         expect(httpMockedClient.delete).toHaveBeenCalledWith(
-          `${BASE_NODE_API_PATH}/detectors/${expectedDetector.id}`
+          `..${BASE_NODE_API_PATH}/detectors/${expectedDetector.id}`
         );
       }
     });
@@ -162,7 +162,7 @@ describe('detector reducer actions', () => {
         },
       });
       expect(httpMockedClient.post).toHaveBeenCalledWith(
-        `${BASE_NODE_API_PATH}/detectors`,
+        `..${BASE_NODE_API_PATH}/detectors`,
         {
           body: JSON.stringify(expectedDetector),
         }
@@ -190,7 +190,7 @@ describe('detector reducer actions', () => {
           errorMessage: 'Internal server error',
         });
         expect(httpMockedClient.post).toHaveBeenCalledWith(
-          `${BASE_NODE_API_PATH}/detectors`,
+          `..${BASE_NODE_API_PATH}/detectors`,
           {
             body: JSON.stringify(expectedDetector),
           }
@@ -230,7 +230,7 @@ describe('detector reducer actions', () => {
         },
       });
       expect(httpMockedClient.put).toHaveBeenCalledWith(
-        `${BASE_NODE_API_PATH}/detectors/${detectorId}`,
+        `..${BASE_NODE_API_PATH}/detectors/${detectorId}`,
         { body: JSON.stringify(randomDetector) }
       );
     });
@@ -258,7 +258,7 @@ describe('detector reducer actions', () => {
           errorMessage: 'Internal server error',
         });
         expect(httpMockedClient.post).toHaveBeenCalledWith(
-          `${BASE_NODE_API_PATH}/detectors`,
+          `..${BASE_NODE_API_PATH}/detectors`,
           randomDetector,
           {
             params: {
@@ -298,7 +298,7 @@ describe('detector reducer actions', () => {
         ),
       });
       expect(httpMockedClient.post).toHaveBeenCalledWith(
-        `${BASE_NODE_API_PATH}/detectors/_search`,
+        `..${BASE_NODE_API_PATH}/detectors/_search`,
         {
           body: JSON.stringify(query),
         }
@@ -328,7 +328,7 @@ describe('detector reducer actions', () => {
           errorMessage: 'Internal server error',
         });
         expect(httpMockedClient.post).toHaveBeenCalledWith(
-          `${BASE_NODE_API_PATH}/detectors`,
+          `..${BASE_NODE_API_PATH}/detectors`,
           randomDetector
         );
       }
