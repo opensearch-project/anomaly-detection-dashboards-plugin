@@ -175,7 +175,7 @@ describe('opensearch reducer actions', () => {
         },
       });
       expect(httpMockedClient.get).toHaveBeenCalledWith(
-        `${BASE_NODE_API_PATH}/_mappings`,
+        `..${BASE_NODE_API_PATH}/_mappings`,
         {
           query: { indices: [] },
         }
@@ -202,7 +202,7 @@ describe('opensearch reducer actions', () => {
           errorMessage: 'Something went wrong',
         });
         expect(httpMockedClient.get).toHaveBeenCalledWith(
-          `${BASE_NODE_API_PATH}/_mappings`,
+          `..${BASE_NODE_API_PATH}/_mappings`,
           {
             query: { indices: [] },
           }
