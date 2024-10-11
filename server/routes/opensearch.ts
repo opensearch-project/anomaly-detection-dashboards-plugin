@@ -570,14 +570,19 @@ export default class OpenSearchService {
 
       let clustersResponse: ClusterInfo[] = [];
 
-      const remoteInfo = await callWithRequest('transport.request', {
-        method: 'GET',
-        path: '/_remote/info',
-      });
-      clustersResponse = Object.keys(remoteInfo).map((key) => ({
-        name: key,
-        localCluster: false,
-      }));
+      try {
+        const remoteInfo = await callWithRequest('transport.request', {
+          method: 'GET',
+          path: '/_remote/info',
+        });
+        clustersResponse = Object.keys(remoteInfo).map((key) => ({
+          name: key,
+          localCluster: false,
+        }));
+      } catch (remoteErr) {
+        console.warn('Failed to fetch remote cluster info, proceeding with local datasource info only.', remoteErr);
+      }
+
 
       const clusterHealth = await callWithRequest('cat.health', {
         format: 'json',
