@@ -1080,6 +1080,16 @@ exports[`<DefineDetector /> Full creating detector definition renders the compon
               </div>
             </div>
           </div>
+          <div
+            class="euiFlexGroup euiFlexGroup--gutterLarge euiFlexGroup--directionColumn euiFlexGroup--responsive"
+          >
+            <div
+              class="euiFlexItem"
+            />
+            <div
+              class="euiFlexItem"
+            />
+          </div>
         </div>
       </div>
     </div>
@@ -1593,7 +1603,7 @@ exports[`<DefineDetector /> empty creating detector definition renders the compo
                     xmlns="http://www.w3.org/2000/svg"
                   >
                     <path
-                      d="M7.999 15.999a8 8 0 1 1 0-16 8 8 0 0 1 0 16ZM8 15A7 7 0 1 0 8 1a7 7 0 0 0 0 14ZM3.5 5h9a.5.5 0 1 1 0 1h-9a.5.5 0 0 1 0-1Zm2 3h5a.5.5 0 1 1 0 1h-5a.5.5 0 0 1 0-1Zm2 3h1a.5.5 0 1 1 0 1h-1a.5.5 0 1 1 0-1Z"
+                      d="m9.759 12.652-1.8 2.25-.78-.625 1.8-2.25A.1.1 0 0 0 9 11.965V8.362a1 1 0 0 1 .232-.64l4.631-5.558A.1.1 0 0 0 13.787 2H2.213a.1.1 0 0 0-.077.164l4.631 5.558a1 1 0 0 1 .232.64v5.853a.1.1 0 0 0 .178.062l.781.625c-.65.812-1.959.353-1.959-.687V8.362L1.368 2.804C.771 2.088 1.281 1 2.214 1h11.573c.932 0 1.442 1.088.845 1.804L10 8.362v3.603a1.1 1.1 0 0 1-.241.687Z"
                       fill-rule="evenodd"
                     />
                   </svg>
@@ -2166,6 +2176,16 @@ exports[`<DefineDetector /> empty creating detector definition renders the compo
               </div>
             </div>
           </div>
+          <div
+            class="euiFlexGroup euiFlexGroup--gutterLarge euiFlexGroup--directionColumn euiFlexGroup--responsive"
+          >
+            <div
+              class="euiFlexItem"
+            />
+            <div
+              class="euiFlexItem"
+            />
+          </div>
         </div>
       </div>
     </div>
@@ -2679,7 +2699,7 @@ exports[`<DefineDetector /> empty editing detector definition renders the compon
                     xmlns="http://www.w3.org/2000/svg"
                   >
                     <path
-                      d="M7.999 15.999a8 8 0 1 1 0-16 8 8 0 0 1 0 16ZM8 15A7 7 0 1 0 8 1a7 7 0 0 0 0 14ZM3.5 5h9a.5.5 0 1 1 0 1h-9a.5.5 0 0 1 0-1Zm2 3h5a.5.5 0 1 1 0 1h-5a.5.5 0 0 1 0-1Zm2 3h1a.5.5 0 1 1 0 1h-1a.5.5 0 1 1 0-1Z"
+                      d="m9.759 12.652-1.8 2.25-.78-.625 1.8-2.25A.1.1 0 0 0 9 11.965V8.362a1 1 0 0 1 .232-.64l4.631-5.558A.1.1 0 0 0 13.787 2H2.213a.1.1 0 0 0-.077.164l4.631 5.558a1 1 0 0 1 .232.64v5.853a.1.1 0 0 0 .178.062l.781.625c-.65.812-1.959.353-1.959-.687V8.362L1.368 2.804C.771 2.088 1.281 1 2.214 1h11.573c.932 0 1.442 1.088.845 1.804L10 8.362v3.603a1.1 1.1 0 0 1-.241.687Z"
                       fill-rule="evenodd"
                     />
                   </svg>
@@ -3252,6 +3272,16 @@ exports[`<DefineDetector /> empty editing detector definition renders the compon
                 </label>
               </div>
             </div>
+          </div>
+          <div
+            class="euiFlexGroup euiFlexGroup--gutterLarge euiFlexGroup--directionColumn euiFlexGroup--responsive"
+          >
+            <div
+              class="euiFlexItem"
+            />
+            <div
+              class="euiFlexItem"
+            />
           </div>
         </div>
       </div>
