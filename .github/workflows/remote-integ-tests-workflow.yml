@@ -153,14 +153,14 @@ jobs:
         working-directory: opensearch-dashboards-functional-test
 
       - name: Capture failure screenshots
-        uses: actions/upload-artifact@v1
+        uses: actions/upload-artifact@v2
         if: failure()
         with:
           name: cypress-screenshots-${{ matrix.os }}
           path: opensearch-dashboards-functional-test/cypress/screenshots
 
       - name: Capture failure test video
-        uses: actions/upload-artifact@v1
+        uses: actions/upload-artifact@v2
         if: failure()
         with:
           name: cypress-videos-${{ matrix.os }}
