@@ -139,7 +139,7 @@ function CustomResultIndex(props: CustomResultIndexProps) {
 
             {enabled ? (
               <EuiFlexItem>
-                <EuiCheckbox
+                <EuiCompressedCheckbox
                   id={'resultIndexConditionCheckbox'}
                   label="Enable custom result index lifecycle management"
                   checked={customResultIndexConditionsEnabled}
