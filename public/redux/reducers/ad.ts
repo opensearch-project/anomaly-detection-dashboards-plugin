@@ -492,10 +492,8 @@ export const startHistoricalDetector = (
   startTime: number,
   endTime: number
 ): APIAction => {
-  const baseUrl = `${AD_NODE_API.DETECTOR}/${detectorId}`;
-  const url = dataSourceId
-    ? `${baseUrl}/${dataSourceId}/start`
-    : `${baseUrl}/start`;
+  const baseUrl = `${AD_NODE_API.DETECTOR}/${detectorId}/start`;
+  const url = dataSourceId ? `${baseUrl}/${dataSourceId}` : baseUrl;
 
   return {
     type: START_HISTORICAL_DETECTOR,
