@@ -99,7 +99,7 @@ function CustomResultIndex(props: CustomResultIndexProps) {
                 disabled={props.isEdit}
                 onChange={() => {
                   if (enabled) {
-                    form.setFieldValue('resultIndex', '');
+                    form.setFieldValue('resultIndex', undefined);
                   }
                   setEnabled(!enabled);
                 }}
