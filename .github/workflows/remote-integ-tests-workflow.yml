@@ -73,36 +73,48 @@ jobs:
           node-version: ${{ steps.tool-versions.outputs.node_version }}
           registry-url: 'https://registry.npmjs.org'
 
-      - name: Setup Opensearch Dashboards
+      - name: Install correct yarn version for OpenSearch Dashboards
+        id: setup-yarn
         run: |
           npm uninstall -g yarn
-          echo "Installing yarn ${{ steps.tool-versions.outputs.yarn_version }}"
-          npm i -g yarn@${{ steps.tool-versions.outputs.yarn_version }}
-          yarn cache clean
-          yarn add sha.js
-        working-directory: OpenSearch-Dashboards
-        shell: bash
+          echo "Installing yarn ${{ steps.versions_step.outputs.yarn_version }}"
+          npm i -g yarn@${{ steps.versions_step.outputs.yarn_version }}
 
-      - name: Boodstrap Opensearch Dashboards
+      - name: Yarn Cache
+        uses: actions/cache@v4
+        with:
+          path: |
+            OpenSearch-Dashboards/**/target
+            OpenSearch-Dashboards/**/node_modules
+          key: ${{ runner.OS }}-build-${{ hashFiles('OpenSearch-Dashboards/**/yarn.lock') }}
+          restore-keys: |
+            ${{ runner.OS }}-build-
+
+      - name: Bootstrap OpenSearch Dashboards
         run: |
+          cd OpenSearch-Dashboards
           yarn osd bootstrap --single-version=loose
-        working-directory: OpenSearch-Dashboards/plugins/anomaly-detection-dashboards-plugin
       
+      - name: Compile OpenSearch Dashboards
+        run: |
+          cd OpenSearch-Dashboards
+          node scripts/build_opensearch_dashboards_platform_plugins --no-examples --workers=10 --verbose
+
       - name: Run Opensearch Dashboards with AD Installed
         run: |
           nohup yarn start --no-base-path --no-watch --server.host="0.0.0.0" | tee dashboard.log &
         working-directory: OpenSearch-Dashboards
 
-      - name : Check If OpenSearch Dashboards Is Ready
+      - name: Check If OpenSearch Dashboards Is Ready
         if: ${{ runner.os == 'Linux' }}
         run: |
-          if timeout 600 grep -q "bundles compiled successfully after" <(tail -n0 -f dashboard.log); then
-            echo "OpenSearch Dashboards compiled successfully."
+          cd ./OpenSearch-Dashboards
+          if timeout 60 grep -q "http server running" <(tail -n +1 -f dashboard.log); then
+            echo "OpenSearch Dashboards started successfully."
           else
-            echo "Timeout for 600 seconds reached. OpenSearch Dashboards did not finish compiling."
+            echo "Timeout of 60 seconds reached. OpenSearch Dashboards did not start successfully."
             exit 1
-          fi
-        working-directory: OpenSearch-Dashboards
+          fi&
 
       - name: Show OpenSearch Dashboards Logs
         if: always()

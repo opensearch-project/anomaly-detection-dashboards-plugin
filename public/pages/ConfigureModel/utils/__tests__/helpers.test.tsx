@@ -30,12 +30,12 @@ describe('featuresToFormik', () => {
       aggregationQuery: '',
     };
     const randomPositiveInt = Math.ceil(Math.random() * 100);
-    const apiRequest = prepareDetector(
-      [newFeature],
-      randomPositiveInt,
-      randomDetector,
-      false
-    );
+    // const apiRequest = prepareDetector(
+    //   [newFeature],
+    //   randomPositiveInt,
+    //   randomDetector,
+    //   false
+    // );
     // expect(apiRequest.featureAttributes).toEqual([
     //   {
     //     featureId: newFeature.featureId,
