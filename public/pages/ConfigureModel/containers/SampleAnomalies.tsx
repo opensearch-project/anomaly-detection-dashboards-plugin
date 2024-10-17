@@ -44,7 +44,7 @@ import {
 } from '../../utils/anomalyResultUtils';
 import { focusOnFirstWrongFeature } from '../utils/helpers';
 import { prepareDetector } from '../utils/helpers';
-import { FeaturesFormikValues } from '../models/interfaces';
+import { FeaturesFormikValues, ImputationFormikValues, RuleFormikValues} from '../models/interfaces';
 import { BASE_DOCS_LINK } from '../../../utils/constants';
 import { prettifyErrorMessage } from '../../../../server/utils/helpers';
 import { CoreStart } from '../../../../../../src/core/public';
@@ -59,6 +59,8 @@ interface SampleAnomaliesProps {
   categoryFields: string[];
   errors: any;
   setFieldTouched: any;
+  imputationOption?: ImputationFormikValues;
+  suppressionRules?: RuleFormikValues[];
 }
 
 export function SampleAnomalies(props: SampleAnomaliesProps) {
@@ -183,7 +185,9 @@ export function SampleAnomalies(props: SampleAnomaliesProps) {
         props.shingleSize,
         props.categoryFields,
         newDetector,
-        true
+        true,
+        props.imputationOption,
+        props.suppressionRules,
       );
       setPreviewDone(false);
       setZoomRange({ ...dateRange });
