@@ -340,7 +340,9 @@ export function prepareDetector(
   shingleSizeValue: number,
   categoryFields: string[],
   ad: Detector,
-  forPreview: boolean = false
+  forPreview: boolean = false,
+  imputationOption?: ImputationFormikValues,
+  suppressionRules?: RuleFormikValues[]
 ): Detector {
   const detector = cloneDeep(ad);
   const featureAttributes = formikToFeatures(featureValues, forPreview);
@@ -354,6 +356,8 @@ export function prepareDetector(
       ...detector.uiMetadata,
       features: { ...featuresToUIMetadata(featureValues) },
     },
+    imputationOption: formikToImputationOption(imputationOption),
+    rules: formikToRules(suppressionRules),
   };
 }
 
