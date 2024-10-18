@@ -1,13 +1,15 @@
 {
   "id": "anomalyDetectionDashboards",
-  "version": "2.17.1.0",
-  "opensearchDashboardsVersion": "2.17.1",
+  "version": "2.17.0.0",
+  "opensearchDashboardsVersion": "2.17.0",
   "configPath": [
     "anomaly_detection_dashboards"
   ],
   "optionalPlugins": [
     "dataSource",
-    "dataSourceManagement"
+    "dataSourceManagement",
+    "assistantDashboards",
+    "usageCollection"
   ],
   "requiredPlugins": [
     "opensearchDashboardsUtils",
