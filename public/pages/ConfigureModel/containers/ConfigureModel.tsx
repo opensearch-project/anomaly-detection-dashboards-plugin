@@ -456,6 +456,8 @@ export function ConfigureModel(props: ConfigureModelProps) {
                   categoryFields={formikProps.values.categoryField}
                   errors={formikProps.errors}
                   setFieldTouched={formikProps.setFieldTouched}
+                  imputationOption={formikProps.values.imputationOption}
+                  suppressionRules={formikProps.values.suppressionRules}
                 />
               ) : null}
             </EuiPageBody>
