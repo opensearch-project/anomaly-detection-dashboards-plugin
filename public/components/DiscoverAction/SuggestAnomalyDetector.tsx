@@ -77,6 +77,7 @@ import { formikToDetectorName } from '../FeatureAnywhereContextMenu/CreateAnomal
 import { DEFAULT_DATA } from '../../../../../src/plugins/data/common';
 import { AppState } from '../../redux/reducers';
 import { v4 as uuidv4 } from 'uuid';
+import { getPathsPerDataType } from '../../redux/reducers/mapper';
 
 export interface GeneratedParameters {
     categoryField: string;
@@ -107,8 +108,7 @@ function SuggestAnomalyDetector({
     const indexPatternId = dataset.id;
     // indexName could be a index pattern or a concrete index
     const indexName = dataset.title;
-    const timeFieldName = dataset.timeFieldName;
-    if (!indexPatternId || !indexName || !timeFieldName) {
+    if (!indexPatternId || !indexName) {
         notifications.toasts.addDanger(
             'Cannot extract complete index info from the context'
         );
@@ -135,11 +135,12 @@ function SuggestAnomalyDetector({
     );
     const categoricalFields = getCategoryFields(indexDataTypes);
 
-    const dateFields = get(indexDataTypes, 'date', []) as string[];
-    const dateNanoFields = get(indexDataTypes, 'date_nanos', []) as string[];
-    const allDateFields = dateFields.concat(dateNanoFields);
-
+    // const dateFields = get(indexDataTypes, 'date', []) as string[];
+    // const dateNanoFields = get(indexDataTypes, 'date_nanos', []) as string[];
+    // const allDateFields = dateFields.concat(dateNanoFields);
+    const [allDateFields, setAllDateFields] = useState<string[]>([]);
     const [feedbackResult, setFeedbackResult] = useState<boolean | undefined>(undefined);
+    const [timeFieldName, setTimeFieldName] = useState(dataset.timeFieldName || '');
 
     // let LLM to generate parameters for creating anomaly detector
     async function getParameters() {
@@ -166,6 +167,16 @@ function SuggestAnomalyDetector({
             initialDetectorValue.categoryFieldEnabled = !!generatedParameters.categoryField;
             initialDetectorValue.categoryField = initialDetectorValue.categoryFieldEnabled ? [generatedParameters.categoryField] : [];
 
+            // if the dataset has no time field, then we find a root level field from the mapping, or we use the first one as the default time field
+            if (!timeFieldName) {
+                if (generatedParameters.dateFields.length == 0) {
+                    throw new Error('Cannot find any date type fields!');
+                }
+                const defaultTimeField = generatedParameters.dateFields.find(dateField => !dateField.includes('.')) || generatedParameters.dateFields[0];
+                setTimeFieldName(defaultTimeField);
+                initialDetectorValue.timeField = defaultTimeField;
+            }
+
             setIsLoading(false);
             setButtonName('Create detector');
             setCategoryFieldEnabled(!!generatedParameters.categoryField);
@@ -183,7 +194,7 @@ function SuggestAnomalyDetector({
         const rawAggregationMethods = rawGeneratedParameters['aggregationMethod'];
         const rawDataFields = rawGeneratedParameters['dateFields'];
         if (!rawAggregationFields || !rawAggregationMethods || !rawDataFields) {
-            throw new Error('Cannot find aggregation field, aggregation method or data fields!');
+            throw new Error('Cannot find aggregation field, aggregation method or date fields!');
         }
         const aggregationFields =
             rawAggregationFields.split(',');
@@ -196,19 +207,21 @@ function SuggestAnomalyDetector({
         }
 
         const featureList = aggregationFields.map((field: string, index: number) => {
-            const method = aggregationMethods[index];
+            let method = aggregationMethods[index];
             if (!field || !method) {
                 throw new Error('The generated aggregation field or aggregation method is empty!');
             }
+            // for the count aggregation method, display name and actual name are different, need to convert the display name to actual name
+            method = method.replace('count', 'value_count');
             const aggregationOption = {
                 label: field,
             };
             const feature: FeaturesFormikValues = {
-                featureName: `feature_${field}`,
+                featureName: `feature_${field}`.substring(0, 64),
                 featureType: FEATURE_TYPE.SIMPLE,
                 featureEnabled: true,
                 aggregationQuery: '',
-                aggregationBy: aggregationMethods[index],
+                aggregationBy: method,
                 aggregationOf: [aggregationOption],
             };
             return feature;
@@ -223,8 +236,31 @@ function SuggestAnomalyDetector({
 
     useEffect(() => {
         async function fetchData() {
-            await dispatch(getMappings(indexName, dataSourceId));
-            await getParameters();
+            await dispatch(getMappings(indexName, dataSourceId))
+                .then(async (result: any) => {
+                    const indexDataTypes = getPathsPerDataType(result.response.mappings);
+                    const dateFields = get(indexDataTypes, 'date', []) as string[];
+                    const dateNanoFields = get(indexDataTypes, 'date_nanos', []) as string[];
+                    const allDateFields = dateFields.concat(dateNanoFields);
+                    setAllDateFields(allDateFields);
+                    if (allDateFields.length == 0) {
+                        notifications.toasts.addDanger(
+                            'Cannot find any date type fields!'
+                        );
+                    } else {
+                        await getParameters();
+                    }
+                })
+                .catch((err: any) => {
+                    notifications.toasts.addDanger(
+                        prettifyErrorMessage(
+                            getErrorMessage(
+                                err,
+                                'There was a problem getting the index mapping'
+                            )
+                        )
+                    );
+                });
         }
         fetchData();
     }, []);
