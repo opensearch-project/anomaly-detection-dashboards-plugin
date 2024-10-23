@@ -20,6 +20,7 @@ import SuggestAnomalyDetector from './SuggestAnomalyDetector';
 import userEvent from '@testing-library/user-event';
 import { HttpFetchOptionsWithPath } from '../../../../../src/core/public';
 import { getAssistantClient, getQueryService, getUsageCollection } from '../../services';
+import { getMappings } from '../../redux/reducers/opensearch';
 
 const notifications = {
     toasts: {
@@ -131,6 +132,23 @@ describe('GenerateAnomalyDetector spec', () => {
             (getAssistantClient().agentConfigExists as jest.Mock).mockResolvedValueOnce({
                 exists: true
             });
+
+            httpClientMock.get = jest.fn().mockResolvedValue({
+                ok: true,
+                response: {
+                    mappings: {
+                        test: {
+                            mappings: {
+                                properties: {
+                                    field: {
+                                        type: 'date',
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+            });
         });
 
         it('renders with empty generated parameters', async () => {
@@ -176,7 +194,7 @@ describe('GenerateAnomalyDetector spec', () => {
             await waitFor(() => {
                 expect(getNotifications().toasts.addDanger).toHaveBeenCalledTimes(1);
                 expect(getNotifications().toasts.addDanger).toHaveBeenCalledWith(
-                    'Generate parameters for creating anomaly detector failed, reason: Error: Cannot find aggregation field, aggregation method or data fields!'
+                    'Generate parameters for creating anomaly detector failed, reason: Error: Cannot find aggregation field, aggregation method or date fields!'
                 );
             });
         });
@@ -255,41 +273,11 @@ describe('GenerateAnomalyDetector spec', () => {
         });
     });
 
-    describe('Test agent not configured', () => {
-        beforeEach(() => {
-            jest.clearAllMocks();
-            const queryService = getQueryService();
-            queryService.queryString.getQuery.mockReturnValue({
-                dataset: {
-                    id: 'test-pattern',
-                    title: 'test-pattern',
-                    type: 'INDEX_PATTERN',
-                    timeFieldName: '@timestamp',
-                },
-            });
-        });
-
-        it('renders with empty generated parameters', async () => {
-            (getAssistantClient().agentConfigExists as jest.Mock).mockResolvedValueOnce({
-                exists: false
-            });
-
-            const { queryByText } = renderWithRouter();
-            expect(queryByText('Suggested anomaly detector')).not.toBeNull();
-
-            await waitFor(() => {
-                expect(getNotifications().toasts.addDanger).toHaveBeenCalledTimes(1);
-                expect(getNotifications().toasts.addDanger).toHaveBeenCalledWith(
-                    'Generate parameters for creating anomaly detector failed, reason: Error: Agent for suggest anomaly detector not found, please configure an agent firstly!'
-                );
-            });
-        });
-    });
-
     describe('Test feedback', () => {
         let reportUiStatsMock: any;
 
         beforeEach(() => {
+            jest.clearAllMocks();
             const queryService = getQueryService();
             queryService.queryString.getQuery.mockReturnValue({
                 dataset: {
@@ -404,6 +392,40 @@ describe('GenerateAnomalyDetector spec', () => {
             (getAssistantClient().agentConfigExists as jest.Mock).mockResolvedValueOnce({
                 exists: true
             });
+
+            httpClientMock.get = jest.fn((pathOrOptions: string | HttpFetchOptionsWithPath) => {
+                const url = typeof pathOrOptions === 'string' ? pathOrOptions : pathOrOptions.path;
+                switch (url) {
+                    case '/api/anomaly_detectors/_mappings':
+                        return Promise.resolve({
+                            ok: true,
+                            response: {
+                                mappings: {
+                                    test: {
+                                        mappings: {
+                                            properties: {
+                                                field: {
+                                                    type: 'date',
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            },
+                        });
+                    case '/api/anomaly_detectors/detectors/_count':
+                        return Promise.resolve({
+                            ok: true,
+                            response: {
+                                count: 0
+                            },
+                        });
+                    default:
+                        return Promise.resolve({
+                            ok: true
+                        });
+                }
+            });
         });
 
         it('All API calls execute successfully', async () => {
@@ -494,13 +516,6 @@ describe('GenerateAnomalyDetector spec', () => {
                 }
             });
 
-            httpClientMock.get = jest.fn().mockResolvedValue({
-                ok: true,
-                response: {
-                    count: 0
-                },
-            });
-
             const { queryByText, getByTestId } = renderWithRouter();
             expect(queryByText('Suggested anomaly detector')).not.toBeNull();
 
@@ -546,13 +561,6 @@ describe('GenerateAnomalyDetector spec', () => {
                 }
             });
 
-            httpClientMock.get = jest.fn().mockResolvedValue({
-                ok: true,
-                response: {
-                    count: 0
-                },
-            });
-
             (getAssistantClient().executeAgentByConfigName as jest.Mock).mockResolvedValueOnce({
                 body: {
                     inference_results: [
@@ -583,6 +591,42 @@ describe('GenerateAnomalyDetector spec', () => {
                 expect(getNotifications().toasts.addDanger).toHaveBeenCalledTimes(1);
                 expect(getNotifications().toasts.addDanger).toHaveBeenCalledWith(
                     'Start anomaly detector failed'
+                );
+            });
+        });
+    });
+
+    describe('Test getting index mapping failed', () => {
+        beforeEach(() => {
+            jest.clearAllMocks();
+            const queryService = getQueryService();
+            queryService.queryString.getQuery.mockReturnValue({
+                dataset: {
+                    id: 'test-pattern',
+                    title: 'test-pattern',
+                    type: 'INDEX_PATTERN',
+                    timeFieldName: '@timestamp',
+                },
+            });
+        });
+
+        afterEach(() => {
+            jest.clearAllMocks();
+        });
+
+        it('renders with getting index mapping failed', async () => {
+            httpClientMock.get = jest.fn().mockResolvedValue({
+                ok: false,
+                error: 'failed to get index mapping'
+            });
+
+            const { queryByText } = renderWithRouter();
+            expect(queryByText('Suggested anomaly detector')).not.toBeNull();
+
+            await waitFor(() => {
+                expect(getNotifications().toasts.addDanger).toHaveBeenCalledTimes(1);
+                expect(getNotifications().toasts.addDanger).toHaveBeenCalledWith(
+                    'failed to get index mapping'
                 );
             });
         });
