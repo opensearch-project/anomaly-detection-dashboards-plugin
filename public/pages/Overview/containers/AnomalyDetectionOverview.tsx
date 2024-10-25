@@ -155,23 +155,26 @@ export function AnomalyDetectionOverview(props: AnomalyDetectionOverviewProps) {
 
   // fetch smaple detectors and sample indices
   const fetchData = async () => {
-    await dispatch(
-      getDetectorList(
-        getSampleDetectorsQueryParamsWithDataSouceId(
+    // wait until selected data source is ready before doing dispatch calls if mds is enabled
+    if (!dataSourceEnabled || (MDSOverviewState.selectedDataSourceId && MDSOverviewState.selectedDataSourceId !== "")) {
+      await dispatch(
+        getDetectorList(
+          getSampleDetectorsQueryParamsWithDataSouceId(
+            MDSOverviewState.selectedDataSourceId
+          )
+        )
+      ).catch((error: any) => {
+        console.error('Error getting sample detectors: ', error);
+      });
+      await dispatch(
+        getIndices(
+          GET_SAMPLE_INDICES_QUERY,
           MDSOverviewState.selectedDataSourceId
         )
-      )
-    ).catch((error: any) => {
-      console.error('Error getting sample detectors: ', error);
-    });
-    await dispatch(
-      getIndices(
-        GET_SAMPLE_INDICES_QUERY,
-        MDSOverviewState.selectedDataSourceId
-      )
-    ).catch((error: any) => {
-      console.error('Error getting sample indices: ', error);
-    });
+      ).catch((error: any) => {
+        console.error('Error getting sample indices: ', error);
+      });
+    }
   };
 
   // Create and populate sample index, create and start sample detector
