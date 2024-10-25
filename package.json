@@ -32,8 +32,7 @@
     "jest-canvas-mock": "^2.5.1",
     "lint-staged": "^9.2.0",
     "moment": "^2.24.0",
-    "redux-mock-store": "^1.5.4",
-    "start-server-and-test": "^1.11.7"
+    "redux-mock-store": "^1.5.4"
   },
   "dependencies": {
     "babel-polyfill": "^6.26.0",
