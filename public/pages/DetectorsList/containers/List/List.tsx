@@ -330,11 +330,14 @@ export const DetectorList = (props: ListProps) => {
   }, [confirmModalState.isRequestingToClose, isLoading]);
 
   const getUpdatedDetectors = async () => {
-    dispatch(
-      getDetectorList(
-        getAllDetectorsQueryParamsWithDataSourceId(state.selectedDataSourceId)
-      )
-    );
+    // wait until selected data source is ready before doing dispatch calls if mds is enabled
+    if (!dataSourceEnabled || (state.selectedDataSourceId && state.selectedDataSourceId !== "")) {
+      dispatch(
+        getDetectorList(
+          getAllDetectorsQueryParamsWithDataSourceId(state.selectedDataSourceId)
+        )
+      );
+    }
   };
 
   const handlePageChange = (pageNumber: number) => {
