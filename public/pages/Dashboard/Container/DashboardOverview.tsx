@@ -207,15 +207,18 @@ export function DashboardOverview(props: OverviewProps) {
   };
 
   const intializeDetectors = async () => {
-    dispatch(
-      getDetectorList(
-        getAllDetectorsQueryParamsWithDataSourceId(
-          MDSOverviewState.selectedDataSourceId
+    // wait until selected data source is ready before doing dispatch calls if mds is enabled
+    if (!dataSourceEnabled || (MDSOverviewState.selectedDataSourceId && MDSOverviewState.selectedDataSourceId !== "")) {
+      dispatch(
+        getDetectorList(
+          getAllDetectorsQueryParamsWithDataSourceId(
+            MDSOverviewState.selectedDataSourceId
+          )
         )
-      )
-    );
-    dispatch(getIndices('', MDSOverviewState.selectedDataSourceId));
-    dispatch(getAliases('', MDSOverviewState.selectedDataSourceId));
+      );
+      dispatch(getIndices('', MDSOverviewState.selectedDataSourceId));
+      dispatch(getAliases('', MDSOverviewState.selectedDataSourceId));
+    }
   };
 
   useEffect(() => {

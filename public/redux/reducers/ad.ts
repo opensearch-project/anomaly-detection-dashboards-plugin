@@ -419,7 +419,7 @@ export const getDetector = (
 export const getDetectorList = (
   queryParams: GetDetectorsQueryParams
 ): APIAction => {
-  const dataSourceId = queryParams.dataSourceId || '';
+  const dataSourceId = queryParams.dataSourceId;
 
   const baseUrl = `${AD_NODE_API.DETECTOR}/_list`;
   const url = dataSourceId
