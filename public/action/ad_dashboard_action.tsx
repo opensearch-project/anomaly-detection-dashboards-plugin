@@ -66,7 +66,7 @@ export const createADAction = ({
           embeddable.getInput()?.viewMode === 'view' &&
           isDashboard(embeddable.parent) &&
           vis !== undefined &&
-          isEligibleForVisLayers(vis, getUISettings())
+          await isEligibleForVisLayers(vis, getUISettings())
       );
     },
     execute: async ({ embeddable }: ActionContext) => {
