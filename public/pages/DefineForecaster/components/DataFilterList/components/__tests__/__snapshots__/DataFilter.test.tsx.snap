@@ -1,0 +1,35 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`dataFilter renders data filter 1`] = `
+<div>
+  <div
+    class="euiFlexItem euiFlexItem--flexGrowZero"
+    style="margin-bottom: 2px;"
+  >
+    <div
+      class="euiPopover euiPopover--anchorDownCenter euiPopover-isOpen"
+    >
+      <div
+        class="euiPopover__anchor"
+      >
+        <button
+          class="EuiSmallButtonEmpty EuiSmallButtonEmpty--primary EuiSmallButtonEmpty--xSmall"
+          data-test-subj="addDataFilterButton"
+          style="margin-top: -2px;"
+          type="button"
+        >
+          <span
+            class="EuiSmallButtonContent EuiSmallButtonEmpty__content"
+          >
+            <span
+              class="EuiSmallButtonEmpty__text"
+            >
+              + Add data filter
+            </span>
+          </span>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+`;

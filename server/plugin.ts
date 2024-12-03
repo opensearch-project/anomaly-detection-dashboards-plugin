@@ -9,7 +9,7 @@
  * GitHub history for details.
  */
 
-import { BASE_NODE_API_PATH } from '../utils/constants';
+import { BASE_NODE_API_PATH, FORECAST_BASE_NODE_API_PATH } from '../utils/constants';
 import { first } from 'rxjs/operators';
 import { default as createRouter, Router } from './router';
 import {
@@ -26,6 +26,7 @@ import {
 import { ILegacyClusterClient } from '../../../src/core/server/';
 import adPlugin from './cluster/ad/adPlugin';
 import alertingPlugin from './cluster/ad/alertingPlugin';
+import forecastFeature from './cluster/ad/forecastFeature';
 import AdService, { registerADRoutes } from './routes/ad';
 import AlertingService, { registerAlertingRoutes } from './routes/alerting';
 import OpenSearchService, {
@@ -37,6 +38,7 @@ import SampleDataService, {
 import { DEFAULT_HEADERS } from './utils/constants';
 import { DataSourcePluginSetup } from '../../../src/plugins/data_source/server/types';
 import { DataSourceManagementPlugin } from '../../../src/plugins/data_source_management/public';
+import ForecastService, { registerForecastRoutes } from './routes/forecast';
 
 export interface ADPluginSetupDependencies {
   dataSourceManagement?: ReturnType<DataSourceManagementPlugin['setup']>;
@@ -69,7 +71,8 @@ export class AnomalyDetectionOpenSearchDashboardsPlugin
     const client: ILegacyClusterClient = core.opensearch.legacy.createClient(
       'anomaly_detection',
       {
-        plugins: [adPlugin, alertingPlugin],
+        // forecastFeature is still inside adPlugin, but totally independent from adPlugin
+        plugins: [adPlugin, alertingPlugin, forecastFeature],
         customHeaders: { ...customHeaders, ...DEFAULT_HEADERS },
         ...rest,
       }
@@ -80,6 +83,7 @@ export class AnomalyDetectionOpenSearchDashboardsPlugin
     if (dataSourceEnabled) {
       dataSource.registerCustomApiSchema(adPlugin);
       dataSource.registerCustomApiSchema(alertingPlugin);
+      dataSource.registerCustomApiSchema(forecastFeature);
     }
 
     // Create router
@@ -88,18 +92,24 @@ export class AnomalyDetectionOpenSearchDashboardsPlugin
       BASE_NODE_API_PATH
     );
 
+    const forecastApiRouter: Router = createRouter(
+      core.http.createRouter(),
+      FORECAST_BASE_NODE_API_PATH
+    );
+
     // Create services & register with OpenSearch client
     const adService = new AdService(client, dataSourceEnabled);
     const alertingService = new AlertingService(client, dataSourceEnabled);
     const opensearchService = new OpenSearchService(client, dataSourceEnabled);
     const sampleDataService = new SampleDataService(client, dataSourceEnabled);
+    const forecastService = new ForecastService(client, dataSourceEnabled);
 
     // Register server routes with the service
     registerADRoutes(apiRouter, adService);
     registerAlertingRoutes(apiRouter, alertingService);
     registerOpenSearchRoutes(apiRouter, opensearchService);
     registerSampleDataRoutes(apiRouter, sampleDataService);
-
+    registerForecastRoutes(forecastApiRouter, forecastService);
     return {};
   }
 

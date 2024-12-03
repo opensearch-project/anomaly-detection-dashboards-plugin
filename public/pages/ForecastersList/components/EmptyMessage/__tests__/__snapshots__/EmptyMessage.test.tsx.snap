@@ -1,0 +1,116 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`<EmptyDetectorMessage /> spec Empty results renders component with empty message 1`] = `
+<div
+  class="euiEmptyPrompt"
+  data-test-subj="emptyDetectorListMessage"
+  style="max-width: 45em;"
+>
+  <span
+    class="euiTextColor euiTextColor--subdued"
+  >
+    <div
+      class="euiText euiText--medium"
+    >
+      <div
+        class="euiText euiText--small"
+      >
+        <p>
+          A detector is an individual anomaly detection task. You can create multiple detectors, and all the detectors can run simultaneously, with each analyzing data from different sources. Create an anomaly detector to get started.
+        </p>
+      </div>
+    </div>
+  </span>
+  <div
+    class="euiSpacer euiSpacer--l"
+  />
+  <div
+    class="euiFlexGroup euiFlexGroup--gutterMedium euiFlexGroup--justifyContentCenter euiFlexGroup--directionRow euiFlexGroup--responsive"
+  >
+    <div
+      class="euiFlexItem euiFlexItem--flexGrowZero"
+    >
+      <a
+        class="EuiSmallButton EuiSmallButton--primary EuiSmallButton--small"
+        data-test-subj="sampleDetectorButton"
+        href="anomaly-detection-dashboards#/overview?"
+        rel="noreferrer"
+        style="width: 200px;"
+      >
+        <span
+          class="EuiSmallButtonContent EuiSmallButton__content"
+        >
+          <span
+            class="EuiSmallButton__text"
+          >
+            Try a sample detector
+          </span>
+        </span>
+      </a>
+    </div>
+    <div
+      class="euiFlexItem euiFlexItem--flexGrowZero"
+    >
+      <a
+        class="EuiSmallButton EuiSmallButton--primary EuiSmallButton--small EuiSmallButton--fill"
+        data-test-subj="createDetectorButton"
+        href="anomaly-detection-dashboards#/create-ad/?"
+        rel="noreferrer"
+        style="width: 200px;"
+      >
+        <span
+          class="EuiSmallButtonContent EuiSmallButton__content"
+        >
+          <span
+            class="EuiSmallButton__text"
+          >
+            Create detector
+          </span>
+        </span>
+      </a>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`<EmptyDetectorMessage /> spec Filters results message renders component no result for filters message 1`] = `
+<div
+  class="euiEmptyPrompt"
+  data-test-subj="emptyDetectorListMessage"
+  style="max-width: 45em;"
+>
+  <span
+    class="euiTextColor euiTextColor--subdued"
+  >
+    <div
+      class="euiText euiText--medium"
+    >
+      <div
+        class="euiText euiText--small"
+      >
+        <p>
+          There are no detectors matching your applied filters. Reset your filters to view all detectors.
+        </p>
+      </div>
+    </div>
+  </span>
+  <div
+    class="euiSpacer euiSpacer--l"
+  />
+  <button
+    class="EuiSmallButton EuiSmallButton--primary EuiSmallButton--small EuiSmallButton--fill"
+    data-test-subj="resetListFilters"
+    type="button"
+  >
+    <span
+      class="EuiSmallButtonContent EuiSmallButton__content"
+    >
+      <span
+        class="EuiSmallButton__text"
+      >
+        Reset filters
+      </span>
+    </span>
+  </button>
+</div>
+`;

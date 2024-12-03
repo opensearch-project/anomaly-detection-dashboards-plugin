@@ -16,7 +16,7 @@ type FormattedFormRowProps = {
   title?: string;
   formattedTitle?: ReactNode;
   children: ReactElement;
-  hint?: string | string[];
+  hint?: string | string[] | ReactNode | ReactNode[];
   isInvalid?: boolean;
   error?: ReactNode | ReactNode[];
   fullWidth?: boolean;
@@ -42,7 +42,8 @@ export const FormattedFormRow = (props: FormattedFormRowProps) => {
       ))
     : null;
 
-  const { formattedTitle, linkToolTip, ...euiFormRowProps } = props;
+  // Extract hintLink to avoid passing it to EuiCompressedFormRow as an unknown prop
+  const { formattedTitle, hintLink, linkToolTip, ...euiFormRowProps } = props;
 
   return (
     <EuiCompressedFormRow
