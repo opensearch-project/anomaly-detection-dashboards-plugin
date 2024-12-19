@@ -143,23 +143,6 @@ exports[`<AdditionalSettings /> spec renders the component with high cardinality
                       </span>
                     </span>
                   </th>
-                  <th
-                    class="euiTableHeaderCell"
-                    data-test-subj="tableHeaderCell_suppresionRules_4"
-                    role="columnheader"
-                    scope="col"
-                  >
-                    <span
-                      class="euiTableCellContent"
-                    >
-                      <span
-                        class="euiTableCellContent__text"
-                        title="Suppression rules"
-                      >
-                        Suppression rules
-                      </span>
-                    </span>
-                  </th>
                 </tr>
               </thead>
               <tbody>
@@ -227,26 +210,6 @@ exports[`<AdditionalSettings /> spec renders the component with high cardinality
                       class="euiTableRowCell__mobileHeader euiTableRowCell--hideForDesktop"
                     >
                       Custom values
-                    </div>
-                    <div
-                      class="euiTableCellContent euiTableCellContent--overflowingContent"
-                    >
-                      <div
-                        class=""
-                      >
-                        <p>
-                          -
-                        </p>
-                      </div>
-                    </div>
-                  </td>
-                  <td
-                    class="euiTableRowCell"
-                  >
-                    <div
-                      class="euiTableRowCell__mobileHeader euiTableRowCell--hideForDesktop"
-                    >
-                      Suppression rules
                     </div>
                     <div
                       class="euiTableCellContent euiTableCellContent--overflowingContent"
@@ -414,23 +377,6 @@ exports[`<AdditionalSettings /> spec renders the component with high cardinality
                       </span>
                     </span>
                   </th>
-                  <th
-                    class="euiTableHeaderCell"
-                    data-test-subj="tableHeaderCell_suppresionRules_4"
-                    role="columnheader"
-                    scope="col"
-                  >
-                    <span
-                      class="euiTableCellContent"
-                    >
-                      <span
-                        class="euiTableCellContent__text"
-                        title="Suppression rules"
-                      >
-                        Suppression rules
-                      </span>
-                    </span>
-                  </th>
                 </tr>
               </thead>
               <tbody>
@@ -511,38 +457,6 @@ exports[`<AdditionalSettings /> spec renders the component with high cardinality
                         <p>
                           denySum:10
                         </p>
-                      </div>
-                    </div>
-                  </td>
-                  <td
-                    class="euiTableRowCell"
-                  >
-                    <div
-                      class="euiTableRowCell__mobileHeader euiTableRowCell--hideForDesktop"
-                    >
-                      Suppression rules
-                    </div>
-                    <div
-                      class="euiTableCellContent euiTableCellContent--overflowingContent"
-                    >
-                      <div
-                        class=""
-                      >
-                        <button
-                          class="euiButtonEmpty euiButtonEmpty--primary euiButtonEmpty--small"
-                          type="button"
-                        >
-                          <span
-                            class="euiButtonContent euiButtonEmpty__content"
-                          >
-                            <span
-                              class="euiButtonEmpty__text"
-                            >
-                              2
-                               rules
-                            </span>
-                          </span>
-                        </button>
                       </div>
                     </div>
                   </td>
