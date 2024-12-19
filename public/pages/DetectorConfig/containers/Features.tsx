@@ -17,6 +17,8 @@ import {
   EuiSmallButton,
   EuiEmptyPrompt,
   EuiSpacer,
+  EuiOverlayMask,
+  EuiButtonEmpty,
 } from '@elastic/eui';
 import {
   Detector,
@@ -34,7 +36,10 @@ import {
   imputationMethodToFormik,
   getCustomValueStrArray,
   getSuppressionRulesArray,
+  getSuppressionRulesArrayForFeature,
 } from '../../ConfigureModel/utils/helpers';
+import { SuppressionRulesModal } from '../../ReviewAndCreate/components/SuppressionRulesModal/SuppressionRulesModal';
+import { Rule } from '../../../models/types';
 
 interface FeaturesProps {
   detectorId: string;
@@ -56,6 +61,34 @@ export const Features = (props: FeaturesProps) => {
     sortField: 'name',
     sortDirection: 'asc',
   });
+  const [isRuleModalVisible, setIsRuleModalVisible] = useState(false);
+
+  const [modalContent, setModalContent] = useState<string[]>([]);
+
+  const closeRuleModal = () => setIsRuleModalVisible(false);
+
+  const showRulesInModal = (rules: string[]) => {
+    setModalContent(rules);
+    setIsRuleModalVisible(true);
+  };
+
+  const renderSuppressionRules = (suppressionRules: string[], featureIndex: number) => {
+    return (
+      <div>
+        {suppressionRules.length > 0 ? (
+          <EuiButtonEmpty
+            size="s"
+            data-test-subj={`suppression-rules-button-${featureIndex}`}
+            onClick={() => showRulesInModal(suppressionRules)}
+          >
+            {suppressionRules.length} rules
+          </EuiButtonEmpty>
+        ) : (
+          <p>any</p>
+        )}
+      </div>
+    );
+  };
 
   const closeModal = (index: number) => {
     const cloneShowCodeModal = [...featuresState.showCodeModel];
@@ -109,6 +142,7 @@ export const Features = (props: FeaturesProps) => {
       name: feature.featureName,
       definition: index,
       state: feature.featureEnabled ? 'Enabled' : 'Disabled',
+      suppressionRule: index,
     })
   );
 
@@ -174,6 +208,19 @@ export const Features = (props: FeaturesProps) => {
     {
       field: 'state',
       name: 'Feature state',
+    },
+    {
+      field: 'suppressionRule',
+      name: 'Anomaly Criteria',
+      render: (featureIndex: number) => {
+        const feature = featureAttributes[featureIndex];
+        return renderSuppressionRules(
+          getSuppressionRulesArrayForFeature(
+            props.detector,
+            feature.featureName
+          ),featureIndex
+        );
+      },
     },
   ];
 
@@ -246,6 +293,14 @@ export const Features = (props: FeaturesProps) => {
               sorting={sorting}
               onChange={handleTableChange}
             />
+            {isRuleModalVisible && (
+              <EuiOverlayMask>
+                <SuppressionRulesModal
+                  onClose={closeRuleModal}
+                  rules={modalContent}
+                />
+              </EuiOverlayMask>
+            )}
           </ContentPanel>
           <EuiSpacer size="m" />
           <AdditionalSettings

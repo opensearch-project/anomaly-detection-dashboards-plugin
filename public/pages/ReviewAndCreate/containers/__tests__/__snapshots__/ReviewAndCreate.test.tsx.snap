@@ -778,23 +778,6 @@ exports[`<ReviewAndCreate /> spec renders the component, validation loading 1`] 
                                 </span>
                               </span>
                             </th>
-                            <th
-                              class="euiTableHeaderCell"
-                              data-test-subj="tableHeaderCell_suppresionRules_4"
-                              role="columnheader"
-                              scope="col"
-                            >
-                              <span
-                                class="euiTableCellContent"
-                              >
-                                <span
-                                  class="euiTableCellContent__text"
-                                  title="Suppression rules"
-                                >
-                                  Suppression rules
-                                </span>
-                              </span>
-                            </th>
                           </tr>
                         </thead>
                         <tbody>
@@ -862,26 +845,6 @@ exports[`<ReviewAndCreate /> spec renders the component, validation loading 1`] 
                                 class="euiTableRowCell__mobileHeader euiTableRowCell--hideForDesktop"
                               >
                                 Custom values
-                              </div>
-                              <div
-                                class="euiTableCellContent euiTableCellContent--overflowingContent"
-                              >
-                                <div
-                                  class=""
-                                >
-                                  <p>
-                                    -
-                                  </p>
-                                </div>
-                              </div>
-                            </td>
-                            <td
-                              class="euiTableRowCell"
-                            >
-                              <div
-                                class="euiTableRowCell__mobileHeader euiTableRowCell--hideForDesktop"
-                              >
-                                Suppression rules
                               </div>
                               <div
                                 class="euiTableCellContent euiTableCellContent--overflowingContent"
@@ -1111,6 +1074,23 @@ exports[`<ReviewAndCreate /> spec renders the component, validation loading 1`] 
                                 </span>
                               </span>
                             </th>
+                            <th
+                              class="euiTableHeaderCell"
+                              data-test-subj="tableHeaderCell_suppressionRule_3"
+                              role="columnheader"
+                              scope="col"
+                            >
+                              <span
+                                class="euiTableCellContent"
+                              >
+                                <span
+                                  class="euiTableCellContent__text"
+                                  title="Anomaly Criteria"
+                                >
+                                  Anomaly Criteria
+                                </span>
+                              </span>
+                            </th>
                           </tr>
                         </thead>
                         <tbody>
@@ -1119,7 +1099,7 @@ exports[`<ReviewAndCreate /> spec renders the component, validation loading 1`] 
                           >
                             <td
                               class="euiTableRowCell euiTableRowCell--isMobileFullWidth"
-                              colspan="3"
+                              colspan="4"
                             >
                               <div
                                 class="euiTableCellContent euiTableCellContent--alignCenter"
@@ -2079,23 +2059,6 @@ exports[`issue in detector validation issues in feature query 1`] = `
                                   </span>
                                 </span>
                               </th>
-                              <th
-                                class="euiTableHeaderCell"
-                                data-test-subj="tableHeaderCell_suppresionRules_4"
-                                role="columnheader"
-                                scope="col"
-                              >
-                                <span
-                                  class="euiTableCellContent"
-                                >
-                                  <span
-                                    class="euiTableCellContent__text"
-                                    title="Suppression rules"
-                                  >
-                                    Suppression rules
-                                  </span>
-                                </span>
-                              </th>
                             </tr>
                           </thead>
                           <tbody>
@@ -2163,26 +2126,6 @@ exports[`issue in detector validation issues in feature query 1`] = `
                                   class="euiTableRowCell__mobileHeader euiTableRowCell--hideForDesktop"
                                 >
                                   Custom values
-                                </div>
-                                <div
-                                  class="euiTableCellContent euiTableCellContent--overflowingContent"
-                                >
-                                  <div
-                                    class=""
-                                  >
-                                    <p>
-                                      -
-                                    </p>
-                                  </div>
-                                </div>
-                              </td>
-                              <td
-                                class="euiTableRowCell"
-                              >
-                                <div
-                                  class="euiTableRowCell__mobileHeader euiTableRowCell--hideForDesktop"
-                                >
-                                  Suppression rules
                                 </div>
                                 <div
                                   class="euiTableCellContent euiTableCellContent--overflowingContent"
@@ -2413,6 +2356,23 @@ exports[`issue in detector validation issues in feature query 1`] = `
                                   </span>
                                 </span>
                               </th>
+                              <th
+                                class="euiTableHeaderCell"
+                                data-test-subj="tableHeaderCell_suppressionRule_3"
+                                role="columnheader"
+                                scope="col"
+                              >
+                                <span
+                                  class="euiTableCellContent"
+                                >
+                                  <span
+                                    class="euiTableCellContent__text"
+                                    title="Anomaly Criteria"
+                                  >
+                                    Anomaly Criteria
+                                  </span>
+                                </span>
+                              </th>
                             </tr>
                           </thead>
                           <tbody>
@@ -2421,7 +2381,7 @@ exports[`issue in detector validation issues in feature query 1`] = `
                             >
                               <td
                                 class="euiTableRowCell euiTableRowCell--isMobileFullWidth"
-                                colspan="3"
+                                colspan="4"
                               >
                                 <div
                                   class="euiTableCellContent euiTableCellContent--alignCenter"

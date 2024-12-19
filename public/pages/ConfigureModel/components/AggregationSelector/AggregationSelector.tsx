@@ -26,6 +26,7 @@ import {
   isInvalid,
   getError,
 } from '../../../../utils/utils';
+import { FormattedFormRow } from '../../../../components/FormattedFormRow/FormattedFormRow';
 
 interface AggregationSelectorProps {
   index?: number;
@@ -41,9 +42,10 @@ export const AggregationSelector = (props: AggregationSelectorProps) => {
         validate={requiredSelectField}
       >
         {({ field, form }: FieldProps) => (
-          <EuiCompressedFormRow
-            label="Aggregation method"
-            helpText="The aggregation method determines what constitutes an anomaly. For example, if you choose min(), the detector focuses on finding anomalies based on the minimum values of your feature."
+          <FormattedFormRow
+            title="Aggregation method"
+            hint="The aggregation method determines what constitutes an anomaly."
+            helpText="E.g, if you choose min(), the detector focuses on finding anomalies based on the minimum values of your feature."
             isInvalid={isInvalid(field.name, form)}
             error={getError(field.name, form)}
           >
@@ -71,7 +73,7 @@ export const AggregationSelector = (props: AggregationSelectorProps) => {
               }}
               data-test-subj="aggregationType"
             />
-          </EuiCompressedFormRow>
+          </FormattedFormRow>
         )}
       </Field>
 

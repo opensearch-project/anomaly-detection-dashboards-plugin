@@ -110,7 +110,6 @@ export const validatePositiveInteger = (value: any) => {
     return 'Must be a positive integer';
 };
 
-// Validation function for positive decimal numbers
 export function validatePositiveDecimal(value: any) {
   // Allow empty, NaN, or non-number values without showing an error
   if (value === '' || value === null || isNaN(value) || typeof value !== 'number') {

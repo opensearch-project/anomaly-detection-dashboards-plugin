@@ -76,3 +76,9 @@ export enum SparseDataOptionValue {
   SET_TO_ZERO = 'set_to_zero',
   CUSTOM_VALUE = 'custom_value',
 }
+
+export const FEATURE_DIRECTION_OPTIONS = [
+  { text: 'Deviation in any direction (default)', value: "both" },
+  { text: 'Rise above expected value', value: "above" },
+  { text: 'Drop below expected value', value: "below" }
+];

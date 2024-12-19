@@ -273,7 +273,7 @@ exports[`<ConfigureModel /> spec creating model configuration renders the compon
                           class="euiFormHelpText euiFormRow__text"
                           id="random_html_id-help-0"
                         >
-                          Enter a descriptive name. The name must be unique within this detector. Feature name must contain 1-64 characters. Valid characters are a-z, A-Z, 0-9, -(hyphen) and _(underscore).
+                          Enter a descriptive, unique name. The name must contain 1-64 characters. Valid characters are a-z, A-Z, 0-9, -(hyphen) and _(underscore).
                         </div>
                       </div>
                     </div>
@@ -386,7 +386,9 @@ exports[`<ConfigureModel /> spec creating model configuration renders the compon
                     </div>
                     <div
                       class="euiFormRow euiFormRow--compressed"
+                      hint="The aggregation method determines what constitutes an anomaly."
                       id="random_html_id-row"
+                      title="Aggregation method"
                     >
                       <div
                         class="euiFormRow__labelWrapper"
@@ -396,7 +398,20 @@ exports[`<ConfigureModel /> spec creating model configuration renders the compon
                           class="euiFormLabel euiFormRow__label"
                           for="random_html_id"
                         >
-                          Aggregation method
+                          <div
+                            style="line-height: 8px;"
+                          >
+                            <p>
+                              Aggregation method
+                            </p>
+                            <br />
+                            <div
+                              class="euiText euiText--medium sublabel"
+                              style="max-width: 400px;"
+                            >
+                              The aggregation method determines what constitutes an anomaly.
+                            </div>
+                          </div>
                         </label>
                       </div>
                       <div
@@ -469,7 +484,7 @@ exports[`<ConfigureModel /> spec creating model configuration renders the compon
                           class="euiFormHelpText euiFormRow__text"
                           id="random_html_id-help-0"
                         >
-                          The aggregation method determines what constitutes an anomaly. For example, if you choose min(), the detector focuses on finding anomalies based on the minimum values of your feature.
+                          E.g, if you choose min(), the detector focuses on finding anomalies based on the minimum values of your feature.
                         </div>
                       </div>
                     </div>
@@ -558,6 +573,276 @@ exports[`<ConfigureModel /> spec creating model configuration renders the compon
                                 </button>
                               </div>
                             </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div
+                      class="euiFormRow euiFormRow--compressed"
+                      hint="Acceptable difference between the expected and actual values"
+                      id="random_html_id-row"
+                      title="Anomaly criteria"
+                    >
+                      <div
+                        class="euiFormRow__labelWrapper"
+                      >
+                        <label
+                          aria-invalid="false"
+                          class="euiFormLabel euiFormRow__label"
+                          for="random_html_id"
+                        >
+                          <div
+                            style="line-height: 8px;"
+                          >
+                            <p>
+                              Anomaly criteria
+                            </p>
+                            <br />
+                            <div
+                              class="euiText euiText--medium sublabel"
+                              style="max-width: 400px;"
+                            >
+                              Acceptable difference between the expected and actual values
+                            </div>
+                          </div>
+                        </label>
+                      </div>
+                      <div
+                        class="euiFormRow__fieldWrapper"
+                      >
+                        <div
+                          class="euiFormControlLayout euiFormControlLayout--compressed"
+                        >
+                          <div
+                            class="euiFormControlLayout__childrenWrapper"
+                          >
+                            <select
+                              class="euiSelect euiSelect--compressed"
+                              id="random_html_id"
+                              name="suppressionRules0-direction"
+                            >
+                              <option
+                                value="both"
+                              >
+                                Deviation in any direction (default)
+                              </option>
+                              <option
+                                value="above"
+                              >
+                                Rise above expected value
+                              </option>
+                              <option
+                                value="below"
+                              >
+                                Drop below expected value
+                              </option>
+                            </select>
+                            <div
+                              class="euiFormControlLayoutIcons euiFormControlLayoutIcons--right"
+                            >
+                              <span
+                                class="euiFormControlLayoutCustomIcon"
+                              >
+                                <svg
+                                  aria-hidden="true"
+                                  class="euiIcon euiIcon--small euiIcon-isLoading euiFormControlLayoutCustomIcon__icon"
+                                  focusable="false"
+                                  height="16"
+                                  role="img"
+                                  viewBox="0 0 16 16"
+                                  width="16"
+                                  xmlns="http://www.w3.org/2000/svg"
+                                >
+                                  <path
+                                    d="M5.277 10.088c.02.014.04.03.057.047.582.55 1.134.812 1.666.812.586 0 1.84-.293 3.713-.88L9 6.212V2H7v4.212l-1.723 3.876Zm-.438.987L3.539 14h8.922l-1.32-2.969C9.096 11.677 7.733 12 7 12c-.74 0-1.463-.315-2.161-.925ZM6 2H5V1h6v1h-1v4l3.375 7.594A1 1 0 0 1 12.461 15H3.54a1 1 0 0 1-.914-1.406L6 6V2Z"
+                                  />
+                                </svg>
+                              </span>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div
+                      class="euiSpacer euiSpacer--m"
+                    />
+                    <div
+                      class="euiAccordion"
+                    >
+                      <div
+                        class="euiAccordion__triggerWrapper"
+                      >
+                        <button
+                          aria-controls="SuppressionRulesAccordion"
+                          aria-expanded="false"
+                          class="euiAccordion__button euiSuppresionAccordion"
+                          id="random_html_id"
+                          type="button"
+                        >
+                          <span
+                            class="euiAccordion__iconWrapper"
+                          >
+                            <svg
+                              aria-hidden="true"
+                              class="euiIcon euiIcon--medium euiIcon-isLoading euiAccordion__icon"
+                              focusable="false"
+                              height="16"
+                              role="img"
+                              viewBox="0 0 16 16"
+                              width="16"
+                              xmlns="http://www.w3.org/2000/svg"
+                            >
+                              <path
+                                d="M5.277 10.088c.02.014.04.03.057.047.582.55 1.134.812 1.666.812.586 0 1.84-.293 3.713-.88L9 6.212V2H7v4.212l-1.723 3.876Zm-.438.987L3.539 14h8.922l-1.32-2.969C9.096 11.677 7.733 12 7 12c-.74 0-1.463-.315-2.161-.925ZM6 2H5V1h6v1h-1v4l3.375 7.594A1 1 0 0 1 12.461 15H3.54a1 1 0 0 1-.914-1.406L6 6V2Z"
+                              />
+                            </svg>
+                          </span>
+                          <span
+                            class="euiIEFlexWrapFix"
+                          >
+                            <div
+                              class="euiFlexGroup euiFlexGroup--gutterSmall euiFlexGroup--alignItemsCenter euiFlexGroup--directionRow"
+                            >
+                              <div
+                                class="euiFlexItem euiFlexItem--flexGrowZero"
+                              >
+                                <p
+                                  style="font-size: 14.5px; margin: 0px;"
+                                >
+                                  Customize Suppression Rules
+                                </p>
+                              </div>
+                            </div>
+                          </span>
+                        </button>
+                      </div>
+                      <div
+                        aria-labelledby="random_html_id"
+                        class="euiAccordion__childWrapper"
+                        id="SuppressionRulesAccordion"
+                        role="region"
+                        tabindex="-1"
+                      >
+                        <div>
+                          <div
+                            class="euiAccordion__padding--s"
+                          >
+                            <div
+                              class="euiFlexGroup euiFlexGroup--gutterLarge euiFlexGroup--directionRow euiFlexGroup--responsive"
+                            >
+                              <div
+                                class="euiFlexItem euiFlexItem--flexGrowZero"
+                                style="max-width: 1200px; margin-top: 0px; margin-bottom: 2px;"
+                              >
+                                <div
+                                  class="euiFormRow euiFormRow--fullWidth euiFormRow--compressed"
+                                  hint="Set rules to ignore anomalies by comparing actual values against expected values."
+                                  hintlink="https://opensearch.org/docs/monitoring-plugins/ad"
+                                  id="random_html_id-row"
+                                >
+                                  <div
+                                    class="euiFormRow__labelWrapper"
+                                  >
+                                    <label
+                                      aria-invalid="false"
+                                      class="euiFormLabel euiFormRow__label"
+                                      for="random_html_id"
+                                    >
+                                      <div
+                                        style="line-height: 8px;"
+                                      >
+                                        <p />
+                                        <br />
+                                        <div
+                                          class="euiText euiText--medium sublabel"
+                                          style="max-width: 400px;"
+                                        >
+                                          Set rules to ignore anomalies by comparing actual values against expected values.
+                                           
+                                          <a
+                                            class="euiLink euiLink--primary"
+                                            href="https://opensearch.org/docs/monitoring-plugins/ad"
+                                            rel="noopener noreferrer"
+                                            target="_blank"
+                                          >
+                                            Learn more
+                                            <svg
+                                              aria-hidden="true"
+                                              aria-label="External link"
+                                              class="euiIcon euiIcon--small euiIcon-isLoading euiLink__externalIcon"
+                                              focusable="false"
+                                              height="16"
+                                              role="img"
+                                              viewBox="0 0 16 16"
+                                              width="16"
+                                              xmlns="http://www.w3.org/2000/svg"
+                                            >
+                                              <path
+                                                d="M5.277 10.088c.02.014.04.03.057.047.582.55 1.134.812 1.666.812.586 0 1.84-.293 3.713-.88L9 6.212V2H7v4.212l-1.723 3.876Zm-.438.987L3.539 14h8.922l-1.32-2.969C9.096 11.677 7.733 12 7 12c-.74 0-1.463-.315-2.161-.925ZM6 2H5V1h6v1h-1v4l3.375 7.594A1 1 0 0 1 12.461 15H3.54a1 1 0 0 1-.914-1.406L6 6V2Z"
+                                              />
+                                            </svg>
+                                            <span
+                                              class="euiScreenReaderOnly"
+                                            >
+                                              (opens in a new tab or window)
+                                            </span>
+                                          </a>
+                                        </div>
+                                      </div>
+                                    </label>
+                                  </div>
+                                  <div
+                                    class="euiFormRow__fieldWrapper"
+                                  >
+                                    <div
+                                      class="euiSpacer euiSpacer--s"
+                                    />
+                                    <div
+                                      class="euiText euiText--medium"
+                                    >
+                                      <p
+                                        style="font-size: 15px;"
+                                      >
+                                        Ignore anomalies when the actual value is no more than:
+                                      </p>
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                            <div
+                              class="euiSpacer euiSpacer--s"
+                            />
+                            <button
+                              aria-label="Add rule"
+                              class="euiButtonEmpty euiButtonEmpty--primary"
+                              style="margin-top: 5px;"
+                              type="button"
+                            >
+                              <span
+                                class="euiButtonContent euiButtonEmpty__content"
+                              >
+                                <svg
+                                  aria-hidden="true"
+                                  class="euiIcon euiIcon--medium euiIcon--inherit euiIcon-isLoading euiButtonContent__icon"
+                                  focusable="false"
+                                  height="16"
+                                  role="img"
+                                  viewBox="0 0 16 16"
+                                  width="16"
+                                  xmlns="http://www.w3.org/2000/svg"
+                                >
+                                  <path
+                                    d="M5.277 10.088c.02.014.04.03.057.047.582.55 1.134.812 1.666.812.586 0 1.84-.293 3.713-.88L9 6.212V2H7v4.212l-1.723 3.876Zm-.438.987L3.539 14h8.922l-1.32-2.969C9.096 11.677 7.733 12 7 12c-.74 0-1.463-.315-2.161-.925ZM6 2H5V1h6v1h-1v4l3.375 7.594A1 1 0 0 1 12.461 15H3.54a1 1 0 0 1-.914-1.406L6 6V2Z"
+                                  />
+                                </svg>
+                                <span
+                                  class="euiButtonEmpty__text"
+                                >
+                                  Add suppression rule
+                                </span>
+                              </span>
+                            </button>
                           </div>
                         </div>
                       </div>
@@ -1255,7 +1540,7 @@ exports[`<ConfigureModel /> spec editing model configuration renders the compone
                           class="euiFormHelpText euiFormRow__text"
                           id="random_html_id-help-0"
                         >
-                          Enter a descriptive name. The name must be unique within this detector. Feature name must contain 1-64 characters. Valid characters are a-z, A-Z, 0-9, -(hyphen) and _(underscore).
+                          Enter a descriptive, unique name. The name must contain 1-64 characters. Valid characters are a-z, A-Z, 0-9, -(hyphen) and _(underscore).
                         </div>
                       </div>
                     </div>
@@ -1369,7 +1654,9 @@ exports[`<ConfigureModel /> spec editing model configuration renders the compone
                     </div>
                     <div
                       class="euiFormRow euiFormRow--compressed"
+                      hint="The aggregation method determines what constitutes an anomaly."
                       id="random_html_id-row"
+                      title="Aggregation method"
                     >
                       <div
                         class="euiFormRow__labelWrapper"
@@ -1379,7 +1666,20 @@ exports[`<ConfigureModel /> spec editing model configuration renders the compone
                           class="euiFormLabel euiFormRow__label"
                           for="random_html_id"
                         >
-                          Aggregation method
+                          <div
+                            style="line-height: 8px;"
+                          >
+                            <p>
+                              Aggregation method
+                            </p>
+                            <br />
+                            <div
+                              class="euiText euiText--medium sublabel"
+                              style="max-width: 400px;"
+                            >
+                              The aggregation method determines what constitutes an anomaly.
+                            </div>
+                          </div>
                         </label>
                       </div>
                       <div
@@ -1453,7 +1753,7 @@ exports[`<ConfigureModel /> spec editing model configuration renders the compone
                           class="euiFormHelpText euiFormRow__text"
                           id="random_html_id-help-0"
                         >
-                          The aggregation method determines what constitutes an anomaly. For example, if you choose min(), the detector focuses on finding anomalies based on the minimum values of your feature.
+                          E.g, if you choose min(), the detector focuses on finding anomalies based on the minimum values of your feature.
                         </div>
                       </div>
                     </div>
@@ -1543,6 +1843,278 @@ exports[`<ConfigureModel /> spec editing model configuration renders the compone
                                 </button>
                               </div>
                             </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div
+                      class="euiFormRow euiFormRow--compressed"
+                      hint="Acceptable difference between the expected and actual values"
+                      id="random_html_id-row"
+                      title="Anomaly criteria"
+                    >
+                      <div
+                        class="euiFormRow__labelWrapper"
+                      >
+                        <label
+                          aria-invalid="false"
+                          class="euiFormLabel euiFormRow__label"
+                          for="random_html_id"
+                        >
+                          <div
+                            style="line-height: 8px;"
+                          >
+                            <p>
+                              Anomaly criteria
+                            </p>
+                            <br />
+                            <div
+                              class="euiText euiText--medium sublabel"
+                              style="max-width: 400px;"
+                            >
+                              Acceptable difference between the expected and actual values
+                            </div>
+                          </div>
+                        </label>
+                      </div>
+                      <div
+                        class="euiFormRow__fieldWrapper"
+                      >
+                        <div
+                          class="euiFormControlLayout euiFormControlLayout--compressed"
+                        >
+                          <div
+                            class="euiFormControlLayout__childrenWrapper"
+                          >
+                            <select
+                              class="euiSelect euiSelect--compressed"
+                              id="random_html_id"
+                              name="suppressionRules0-direction"
+                            >
+                              <option
+                                value="both"
+                              >
+                                Deviation in any direction (default)
+                              </option>
+                              <option
+                                value="above"
+                              >
+                                Rise above expected value
+                              </option>
+                              <option
+                                value="below"
+                              >
+                                Drop below expected value
+                              </option>
+                            </select>
+                            <div
+                              class="euiFormControlLayoutIcons euiFormControlLayoutIcons--right"
+                            >
+                              <span
+                                class="euiFormControlLayoutCustomIcon"
+                              >
+                                <svg
+                                  aria-hidden="true"
+                                  class="euiIcon euiIcon--small euiFormControlLayoutCustomIcon__icon"
+                                  focusable="false"
+                                  height="16"
+                                  role="img"
+                                  viewBox="0 0 16 16"
+                                  width="16"
+                                  xmlns="http://www.w3.org/2000/svg"
+                                >
+                                  <path
+                                    d="M13.069 5.157 8.384 9.768a.546.546 0 0 1-.768 0L2.93 5.158a.552.552 0 0 0-.771 0 .53.53 0 0 0 0 .759l4.684 4.61c.641.631 1.672.63 2.312 0l4.684-4.61a.53.53 0 0 0 0-.76.552.552 0 0 0-.771 0Z"
+                                    fill-rule="non-zero"
+                                  />
+                                </svg>
+                              </span>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div
+                      class="euiSpacer euiSpacer--m"
+                    />
+                    <div
+                      class="euiAccordion"
+                    >
+                      <div
+                        class="euiAccordion__triggerWrapper"
+                      >
+                        <button
+                          aria-controls="SuppressionRulesAccordion"
+                          aria-expanded="false"
+                          class="euiAccordion__button euiSuppresionAccordion"
+                          id="random_html_id"
+                          type="button"
+                        >
+                          <span
+                            class="euiAccordion__iconWrapper"
+                          >
+                            <svg
+                              aria-hidden="true"
+                              class="euiIcon euiIcon--medium euiAccordion__icon"
+                              focusable="false"
+                              height="16"
+                              role="img"
+                              viewBox="0 0 16 16"
+                              width="16"
+                              xmlns="http://www.w3.org/2000/svg"
+                            >
+                              <path
+                                d="m5.157 13.069 4.611-4.685a.546.546 0 0 0 0-.768L5.158 2.93a.552.552 0 0 1 0-.771.53.53 0 0 1 .759 0l4.61 4.684c.631.641.63 1.672 0 2.312l-4.61 4.684a.53.53 0 0 1-.76 0 .552.552 0 0 1 0-.771Z"
+                                fill-rule="nonzero"
+                              />
+                            </svg>
+                          </span>
+                          <span
+                            class="euiIEFlexWrapFix"
+                          >
+                            <div
+                              class="euiFlexGroup euiFlexGroup--gutterSmall euiFlexGroup--alignItemsCenter euiFlexGroup--directionRow"
+                            >
+                              <div
+                                class="euiFlexItem euiFlexItem--flexGrowZero"
+                              >
+                                <p
+                                  style="font-size: 14.5px; margin: 0px;"
+                                >
+                                  Customize Suppression Rules
+                                </p>
+                              </div>
+                            </div>
+                          </span>
+                        </button>
+                      </div>
+                      <div
+                        aria-labelledby="random_html_id"
+                        class="euiAccordion__childWrapper"
+                        id="SuppressionRulesAccordion"
+                        role="region"
+                        tabindex="-1"
+                      >
+                        <div>
+                          <div
+                            class="euiAccordion__padding--s"
+                          >
+                            <div
+                              class="euiFlexGroup euiFlexGroup--gutterLarge euiFlexGroup--directionRow euiFlexGroup--responsive"
+                            >
+                              <div
+                                class="euiFlexItem euiFlexItem--flexGrowZero"
+                                style="max-width: 1200px; margin-top: 0px; margin-bottom: 2px;"
+                              >
+                                <div
+                                  class="euiFormRow euiFormRow--fullWidth euiFormRow--compressed"
+                                  hint="Set rules to ignore anomalies by comparing actual values against expected values."
+                                  hintlink="https://opensearch.org/docs/monitoring-plugins/ad"
+                                  id="random_html_id-row"
+                                >
+                                  <div
+                                    class="euiFormRow__labelWrapper"
+                                  >
+                                    <label
+                                      aria-invalid="false"
+                                      class="euiFormLabel euiFormRow__label"
+                                      for="random_html_id"
+                                    >
+                                      <div
+                                        style="line-height: 8px;"
+                                      >
+                                        <p />
+                                        <br />
+                                        <div
+                                          class="euiText euiText--medium sublabel"
+                                          style="max-width: 400px;"
+                                        >
+                                          Set rules to ignore anomalies by comparing actual values against expected values.
+                                           
+                                          <a
+                                            class="euiLink euiLink--primary"
+                                            href="https://opensearch.org/docs/monitoring-plugins/ad"
+                                            rel="noopener noreferrer"
+                                            target="_blank"
+                                          >
+                                            Learn more
+                                            <svg
+                                              aria-label="External link"
+                                              class="euiIcon euiIcon--small euiLink__externalIcon"
+                                              focusable="false"
+                                              height="16"
+                                              role="img"
+                                              viewBox="0 0 16 16"
+                                              width="16"
+                                              xmlns="http://www.w3.org/2000/svg"
+                                            >
+                                              <path
+                                                d="M13 8.5a.5.5 0 1 1 1 0V12a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h3.5a.5.5 0 0 1 0 1H4a1 1 0 0 0-1 1v8a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1V8.5Zm-5.12.339a.5.5 0 1 1-.706-.707L13.305 2H10.5a.5.5 0 1 1 0-1H14a1 1 0 0 1 1 1v3.5a.5.5 0 1 1-1 0V2.72L7.88 8.838Z"
+                                              />
+                                            </svg>
+                                            <span
+                                              class="euiScreenReaderOnly"
+                                            >
+                                              (opens in a new tab or window)
+                                            </span>
+                                          </a>
+                                        </div>
+                                      </div>
+                                    </label>
+                                  </div>
+                                  <div
+                                    class="euiFormRow__fieldWrapper"
+                                  >
+                                    <div
+                                      class="euiSpacer euiSpacer--s"
+                                    />
+                                    <div
+                                      class="euiText euiText--medium"
+                                    >
+                                      <p
+                                        style="font-size: 15px;"
+                                      >
+                                        Ignore anomalies when the actual value is no more than:
+                                      </p>
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                            <div
+                              class="euiSpacer euiSpacer--s"
+                            />
+                            <button
+                              aria-label="Add rule"
+                              class="euiButtonEmpty euiButtonEmpty--primary"
+                              style="margin-top: 5px;"
+                              type="button"
+                            >
+                              <span
+                                class="euiButtonContent euiButtonEmpty__content"
+                              >
+                                <svg
+                                  aria-hidden="true"
+                                  class="euiIcon euiIcon--medium euiIcon--inherit euiButtonContent__icon"
+                                  focusable="false"
+                                  height="16"
+                                  role="img"
+                                  viewBox="0 0 16 16"
+                                  width="16"
+                                  xmlns="http://www.w3.org/2000/svg"
+                                >
+                                  <path
+                                    d="M8 7h3.5a.5.5 0 1 1 0 1H8v3.5a.5.5 0 1 1-1 0V8H3.5a.5.5 0 0 1 0-1H7V3.5a.5.5 0 0 1 1 0V7Zm-.5-7C11.636 0 15 3.364 15 7.5S11.636 15 7.5 15 0 11.636 0 7.5 3.364 0 7.5 0Zm0 .882a6.618 6.618 0 1 0 0 13.236A6.618 6.618 0 0 0 7.5.882Z"
+                                    fill-rule="evenodd"
+                                  />
+                                </svg>
+                                <span
+                                  class="euiButtonEmpty__text"
+                                >
+                                  Add suppression rule
+                                </span>
+                              </span>
+                            </button>
                           </div>
                         </div>
                       </div>
