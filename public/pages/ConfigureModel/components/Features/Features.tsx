@@ -69,10 +69,16 @@ export function Features(props: FeaturesProps) {
                   <FeatureAccordion
                     onDelete={() => {
                       remove(index);
+                      // delete any leftover suppressionRules as well
+                      const updatedSuppressionRules = props.formikProps.values.suppressionRules.filter(
+                        (_, i) => i !== index
+                      );
+                      props.formikProps.setFieldValue('suppressionRules', updatedSuppressionRules);
                     }}
                     index={index}
                     feature={feature}
                     handleChange={props.formikProps.handleChange}
+                    rules={props}
                   />
                 ))}
                 <EuiFlexGroup

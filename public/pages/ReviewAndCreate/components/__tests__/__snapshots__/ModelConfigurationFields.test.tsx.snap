@@ -234,23 +234,6 @@ exports[`ModelConfigurationFields renders the component in create mode (no ID) 1
                             </span>
                           </span>
                         </th>
-                        <th
-                          class="euiTableHeaderCell"
-                          data-test-subj="tableHeaderCell_suppresionRules_4"
-                          role="columnheader"
-                          scope="col"
-                        >
-                          <span
-                            class="euiTableCellContent"
-                          >
-                            <span
-                              class="euiTableCellContent__text"
-                              title="Suppression rules"
-                            >
-                              Suppression rules
-                            </span>
-                          </span>
-                        </th>
                       </tr>
                     </thead>
                     <tbody>
@@ -328,38 +311,6 @@ exports[`ModelConfigurationFields renders the component in create mode (no ID) 1
                               <p>
                                 -
                               </p>
-                            </div>
-                          </div>
-                        </td>
-                        <td
-                          class="euiTableRowCell"
-                        >
-                          <div
-                            class="euiTableRowCell__mobileHeader euiTableRowCell--hideForDesktop"
-                          >
-                            Suppression rules
-                          </div>
-                          <div
-                            class="euiTableCellContent euiTableCellContent--overflowingContent"
-                          >
-                            <div
-                              class=""
-                            >
-                              <button
-                                class="euiButtonEmpty euiButtonEmpty--primary euiButtonEmpty--small"
-                                type="button"
-                              >
-                                <span
-                                  class="euiButtonContent euiButtonEmpty__content"
-                                >
-                                  <span
-                                    class="euiButtonEmpty__text"
-                                  >
-                                    2
-                                     rules
-                                  </span>
-                                </span>
-                              </button>
                             </div>
                           </div>
                         </td>
@@ -579,6 +530,23 @@ exports[`ModelConfigurationFields renders the component in create mode (no ID) 1
                             </span>
                           </span>
                         </th>
+                        <th
+                          class="euiTableHeaderCell"
+                          data-test-subj="tableHeaderCell_suppressionRule_3"
+                          role="columnheader"
+                          scope="col"
+                        >
+                          <span
+                            class="euiTableCellContent"
+                          >
+                            <span
+                              class="euiTableCellContent__text"
+                              title="Anomaly Criteria"
+                            >
+                              Anomaly Criteria
+                            </span>
+                          </span>
+                        </th>
                       </tr>
                     </thead>
                     <tbody>
@@ -651,6 +619,40 @@ exports[`ModelConfigurationFields renders the component in create mode (no ID) 1
                             </span>
                           </div>
                         </td>
+                        <td
+                          class="euiTableRowCell"
+                        >
+                          <div
+                            class="euiTableRowCell__mobileHeader euiTableRowCell--hideForDesktop"
+                          >
+                            Anomaly Criteria
+                          </div>
+                          <div
+                            class="euiTableCellContent"
+                          >
+                            <span
+                              class="euiTableCellContent__text"
+                            >
+                              <div>
+                                <button
+                                  class="euiButtonEmpty euiButtonEmpty--primary euiButtonEmpty--small"
+                                  type="button"
+                                >
+                                  <span
+                                    class="euiButtonContent euiButtonEmpty__content"
+                                  >
+                                    <span
+                                      class="euiButtonEmpty__text"
+                                    >
+                                      1
+                                       rules
+                                    </span>
+                                  </span>
+                                </button>
+                              </div>
+                            </span>
+                          </div>
+                        </td>
                       </tr>
                       <tr
                         class="euiTableRow"
@@ -718,6 +720,40 @@ exports[`ModelConfigurationFields renders the component in create mode (no ID) 1
                               class="euiTableCellContent__text"
                             >
                               Disabled
+                            </span>
+                          </div>
+                        </td>
+                        <td
+                          class="euiTableRowCell"
+                        >
+                          <div
+                            class="euiTableRowCell__mobileHeader euiTableRowCell--hideForDesktop"
+                          >
+                            Anomaly Criteria
+                          </div>
+                          <div
+                            class="euiTableCellContent"
+                          >
+                            <span
+                              class="euiTableCellContent__text"
+                            >
+                              <div>
+                                <button
+                                  class="euiButtonEmpty euiButtonEmpty--primary euiButtonEmpty--small"
+                                  type="button"
+                                >
+                                  <span
+                                    class="euiButtonContent euiButtonEmpty__content"
+                                  >
+                                    <span
+                                      class="euiButtonEmpty__text"
+                                    >
+                                      1
+                                       rules
+                                    </span>
+                                  </span>
+                                </button>
+                              </div>
                             </span>
                           </div>
                         </td>
