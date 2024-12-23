@@ -13,19 +13,12 @@ import {
   EuiFlexItem,
   EuiFlexGroup,
   EuiText,
-  EuiLink,
-  EuiTitle,
   EuiCompressedFieldNumber,
   EuiSpacer,
   EuiCompressedSelect,
   EuiButtonIcon,
-  EuiCompressedFieldText,
   EuiToolTip,
-  OuiTextColor,
-  EuiTextColor,
   EuiSelect,
-  EuiCheckbox,
-  EuiFieldNumber,
   EuiButtonEmpty,
 } from '@elastic/eui';
 import { Field, FieldProps, FieldArray } from 'formik';
@@ -34,8 +27,6 @@ import ContentPanel from '../../../../components/ContentPanel/ContentPanel';
 import { BASE_DOCS_LINK } from '../../../../utils/constants';
 import {
   isInvalid,
-  getError,
-  validatePositiveInteger,
   validatePositiveDecimal,
 } from '../../../../utils/utils';
 import { FormattedFormRow } from '../../../../components/FormattedFormRow/FormattedFormRow';
@@ -72,8 +63,8 @@ export function SuppressionRules(props: SuppressionRulesProps) {
                     ? 'relative threshold'
                     : fieldKey;
                 return typeof fieldError === 'string'
-                    ? `${friendlyFieldName} ${fieldError.toLowerCase()}`
-                    : String(fieldError || '');
+                  ? `${friendlyFieldName} ${fieldError.toLowerCase()}`
+                  : String(fieldError || '');
               }
             }
           }
@@ -315,23 +306,69 @@ export function SuppressionRules(props: SuppressionRulesProps) {
                                   <Field
                                     name={`suppressionRules.${props.featureIndex}[${index}].aboveBelow`}
                                   >
-                                    {({ field }: FieldProps) => (
-                                      <EuiToolTip content="Select above or below expected value">
-                                        <EuiSelect
-                                          options={[
-                                            {
-                                              value: 'above',
-                                              text: 'above the expected value',
-                                            },
-                                            {
-                                              value: 'below',
-                                              text: 'below the expected value',
-                                            },
-                                          ]}
-                                          {...field}
-                                        />
-                                      </EuiToolTip>
-                                    )}
+                                    {({ field }: FieldProps) => {
+                                      const currentRules =
+                                        form.values.suppressionRules?.[
+                                          props.featureIndex
+                                        ] || [];
+
+                                      // Check if there's a directionRule = true and get its "aboveBelow" value
+                                      const directionRule = currentRules.find(
+                                        (rule) => rule.directionRule === true
+                                      );
+
+                                      let options = [
+                                        {
+                                          value: 'above',
+                                          text: 'above the expected value',
+                                          disabled: false,
+                                        },
+                                        {
+                                          value: 'below',
+                                          text: 'below the expected value',
+                                          disabled: false,
+                                        },
+                                      ];
+
+                                      let tooltipContent =
+                                        'Select above or below expected value'; 
+
+                                      // Modify options based on the directionRule logic
+                                      if (directionRule) {
+                                        options = options.map((option) => ({
+                                          ...option,
+                                          disabled:
+                                            directionRule.aboveBelow !==
+                                            option.value, 
+                                        }));
+
+                                        if (
+                                          field.value !==
+                                          directionRule.aboveBelow
+                                        ) {
+                                          form.setFieldValue(
+                                            `suppressionRules.${props.featureIndex}[${index}].aboveBelow`,
+                                            directionRule.aboveBelow
+                                          );
+                                        }
+                                        if (directionRule?.aboveBelow) {
+                                          const directionText =
+                                            directionRule.aboveBelow === 'above'
+                                              ? 'exceeds'
+                                              : 'drops below';
+                                          tooltipContent = `Base criteria includes anomalies where the actual value ${directionText} the expected value. Rules can only be made in this direction.`;
+                                        }
+                                      }
+
+                                      return (
+                                        <EuiToolTip content={tooltipContent}>
+                                          <EuiSelect
+                                            options={options}
+                                            {...field}
+                                          />
+                                        </EuiToolTip>
+                                      );
+                                    }}
                                   </Field>
                                 </EuiFlexItem>
                                 <EuiFlexItem grow={false}>

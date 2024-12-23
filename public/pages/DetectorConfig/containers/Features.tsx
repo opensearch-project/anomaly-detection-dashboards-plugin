@@ -25,8 +25,8 @@ import {
   FEATURE_TYPE,
   FeatureAttributes,
 } from '../../../models/interfaces';
-import { get, isEmpty, sortBy } from 'lodash';
-import { PLUGIN_NAME, BASE_DOCS_LINK } from '../../../utils/constants';
+import { get, sortBy } from 'lodash';
+import { PLUGIN_NAME } from '../../../utils/constants';
 import ContentPanel from '../../../components/ContentPanel/ContentPanel';
 import { CodeModal } from '../components/CodeModal/CodeModal';
 import { getTitleWithCount } from '../../../utils/utils';
@@ -39,7 +39,6 @@ import {
   getSuppressionRulesArrayForFeature,
 } from '../../ConfigureModel/utils/helpers';
 import { SuppressionRulesModal } from '../../ReviewAndCreate/components/SuppressionRulesModal/SuppressionRulesModal';
-import { Rule } from '../../../models/types';
 
 interface FeaturesProps {
   detectorId: string;

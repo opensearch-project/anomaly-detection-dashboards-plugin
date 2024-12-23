@@ -24,7 +24,7 @@ import {
   EuiSpacer,
 } from '@elastic/eui';
 import './styles.scss';
-import { Field, FieldArray, FieldProps } from 'formik';
+import { Field, FieldProps } from 'formik';
 import {
   required,
   isInvalid,

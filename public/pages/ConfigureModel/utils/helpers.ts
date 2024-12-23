@@ -479,7 +479,6 @@ export const getSuppressionRulesArray = (detector: Detector): string[] => {
         return `Ignore anomalies for feature "${featureName}" when actual value is below the expected value`;
       }
 
-
       let value = condition.value;
       const isPercentage =
         thresholdType === ThresholdType.ACTUAL_OVER_EXPECTED_RATIO ||
@@ -558,15 +557,14 @@ export const getSuppressionRulesArrayForFeature = (
 export const formikToRules = (
   formikValues?: RuleFormikValues[]
 ): Rule[] | undefined => {
-
   if (!formikValues || formikValues.length === 0) {
     return undefined; // Return undefined for undefined or empty input
   }
 
-    // Flatten the nested array of suppressionRule by feature and filter out null entries
-    const flattenedSuppressionFormikValues = formikValues.flatMap((nestedArray) =>
-      nestedArray || [] // If null, replace with an empty array
-    );
+  // Flatten the nested array of suppressionRule by feature and filter out null entries
+  const flattenedSuppressionFormikValues = formikValues.flatMap(
+    (nestedArray) => nestedArray || [] // If null, replace with an empty array
+  );
 
   return flattenedSuppressionFormikValues.map((formikValue) => {
     const conditions: Condition[] = [];
@@ -592,12 +590,14 @@ export const formikToRules = (
         }
       };
 
-      
-
       if (formikValue.directionRule) {
         conditions.push({
           featureName: formikValue.featureName,
-          thresholdType: getThresholdType(formikValue.aboveBelow, true, formikValue.directionRule),
+          thresholdType: getThresholdType(
+            formikValue.aboveBelow,
+            true,
+            formikValue.directionRule
+          ),
           operator: undefined,
           value: undefined,
         });
@@ -647,28 +647,26 @@ export const formikToRules = (
   });
 };
 
-// Convert Rule[] to RuleFormikValues[][]
-export const rulesToFormik = (rules?: Rule[]): (RuleFormikValues[] | null)[] => {
+export const rulesToFormik = (
+  rules?: Rule[]
+): (RuleFormikValues[] | null)[] => {
   if (!rules || rules.length === 0) {
-    return []; // Return empty array for undefined or empty input
+    return [];
   }
   // Group rules by featureName
   const groupedRules: { [featureName: string]: RuleFormikValues[] } = {};
 
   rules.forEach((rule) => {
-    // Start with default values for each rule
-    const formikValue: RuleFormikValues = {
-      featureName: '',
-      absoluteThreshold: undefined,
-      relativeThreshold: undefined,
-      aboveBelow: 'above', // Default to 'above', adjust as needed
-    };
-
-    // Loop through conditions to populate formikValue
     rule.conditions.forEach((condition) => {
-      formikValue.featureName = condition.featureName;
+      // Create a new formikValue for each condition
+      const formikValue: RuleFormikValues = {
+        featureName: condition.featureName,
+        absoluteThreshold: undefined,
+        relativeThreshold: undefined,
+        aboveBelow: 'above', // Default to 'above', adjust as needed
+      };
 
-      // Determine the value and type of threshold
+      // Populate formikValue based on threshold type
       switch (condition.thresholdType) {
         case ThresholdType.ACTUAL_OVER_EXPECTED_MARGIN:
           formikValue.absoluteThreshold = condition.value;
@@ -679,13 +677,11 @@ export const rulesToFormik = (rules?: Rule[]): (RuleFormikValues[] | null)[] => 
           formikValue.aboveBelow = 'below';
           break;
         case ThresholdType.ACTUAL_OVER_EXPECTED_RATIO:
-          // *100 to convert to percentage
-          formikValue.relativeThreshold = (condition.value ?? 1) * 100;
+          formikValue.relativeThreshold = (condition.value ?? 1) * 100; // Convert to percentage
           formikValue.aboveBelow = 'above';
           break;
         case ThresholdType.EXPECTED_OVER_ACTUAL_RATIO:
-          // *100 to convert to percentage
-          formikValue.relativeThreshold = (condition.value ?? 1) * 100;
+          formikValue.relativeThreshold = (condition.value ?? 1) * 100; // Convert to percentage
           formikValue.aboveBelow = 'below';
           break;
         case ThresholdType.ACTUAL_IS_BELOW_EXPECTED:
@@ -701,21 +697,17 @@ export const rulesToFormik = (rules?: Rule[]): (RuleFormikValues[] | null)[] => 
         default:
           break;
       }
-    });
 
-    // Add the rule to the grouped object based on featureName
-    if (!groupedRules[formikValue.featureName]) {
-      groupedRules[formikValue.featureName] = [];
-    }
-    groupedRules[formikValue.featureName].push(formikValue);
+      if (!groupedRules[formikValue.featureName]) {
+        groupedRules[formikValue.featureName] = [];
+      }
+      groupedRules[formikValue.featureName].push(formikValue);
+    });
   });
 
-  // Convert grouped object into an array of arrays based on featureList index
-  const featureList = Object.keys(groupedRules); // Ensure you have a reference to your feature list somewhere
-
+  const featureList = Object.keys(groupedRules);
   const finalRules: (RuleFormikValues[] | null)[] = featureList.map(
     (featureName) => groupedRules[featureName] || null
   );
-
   return finalRules;
 };

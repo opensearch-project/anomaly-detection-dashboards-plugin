@@ -28,15 +28,11 @@ import {
 } from '../../../../models/types';
 import { getRandomDetector } from '../../../../redux/reducers/__tests__/utils';
 import {
-  Detector,
   UiMetaData,
   FILTER_TYPES,
-  UIFilter,
   FEATURE_TYPE,
   UiFeature,
   FeatureAttributes,
-  OPERATORS_MAP,
-  UNITS,
 } from '../../../../models/interfaces';
 import { featureQuery1, featureQuery2 } from './DetectorConfig.test';
 
