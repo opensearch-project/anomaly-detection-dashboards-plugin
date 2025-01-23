@@ -65,7 +65,7 @@ describe('SuppressionRules Component', () => {
     await waitFor(() => {
       expect(
         screen.getByText(
-          'absolute threshold must be a positive number greater than zero'
+          'Must be a positive number greater than zero'
         )
       ).toBeInTheDocument();
     });
@@ -92,12 +92,6 @@ describe('SuppressionRules Component', () => {
   const thresholdInput = screen.getAllByPlaceholderText('Threshold')[0];
   userEvent.type(thresholdInput, '-1');
 
-//   // Find the dropdown using the data-test-subj attribute
-//   const percentageDropdown = screen.getByTestId('thresholdType-dropdown-0-0');
-//   expect(percentageDropdown).toBeInTheDocument();
-
-//   fireEvent.change(percentageDropdown, { target: { value: 'percentage' } });
-
   // Trigger validation
   fireEvent.blur(thresholdInput);
 
@@ -105,7 +99,82 @@ describe('SuppressionRules Component', () => {
      await waitFor(() => {
         expect(
           screen.getByText(
-            'relative threshold must be a positive number greater than zero'
+            'Must be a positive number greater than zero'
+          )
+        ).toBeInTheDocument();
+      });
+    });
+    test('displays error when a rule aboveBelow value does not match below directionRule', async () => {
+      render(
+        <Formik
+          initialValues={{
+            suppressionRules: [
+              [
+                {
+                  featureName: '',
+                  absoluteThreshold: '',
+                  relativeThreshold: '',
+                  aboveBelow: 'above', 
+                  directionRule: false,
+                },
+                {
+                  featureName: 'f1',
+                  absoluteThreshold: '',
+                  relativeThreshold: '',
+                  aboveBelow: 'below',
+                  directionRule: true,
+                },
+              ],
+            ],
+          }}
+          onSubmit={jest.fn()}
+        >
+          {() => <SuppressionRules feature={testFeature} featureIndex={0} />}
+        </Formik>
+      );
+    
+      await waitFor(() => {
+        expect(
+          screen.getByText(
+            'Rules can only be made in the below direction. Same as the base criteria'
+          )
+        ).toBeInTheDocument();
+      });
+    });
+
+    test('displays error when a rule aboveBelow value does not match above directionRule', async () => {
+      render(
+        <Formik
+          initialValues={{
+            suppressionRules: [
+              [
+                {
+                  featureName: '',
+                  absoluteThreshold: '',
+                  relativeThreshold: '',
+                  aboveBelow: 'below', 
+                  directionRule: false,
+                },
+                {
+                  featureName: '',
+                  absoluteThreshold: '',
+                  relativeThreshold: '',
+                  aboveBelow: 'above',
+                  directionRule: true,
+                },
+              ],
+            ],
+          }}
+          onSubmit={jest.fn()}
+        >
+          {() => <SuppressionRules feature={testFeature} featureIndex={0} />}
+        </Formik>
+      );
+    
+      await waitFor(() => {
+        expect(
+          screen.getByText(
+            'Rules can only be made in the above direction. Same as the base criteria'
           )
         ).toBeInTheDocument();
       });

@@ -42,7 +42,7 @@ export const FormattedFormRow = (props: FormattedFormRowProps) => {
       ))
     : null;
 
-  const { formattedTitle, ...euiFormRowProps } = props;
+  const { formattedTitle, linkToolTip, ...euiFormRowProps } = props;
 
   return (
     <EuiCompressedFormRow
