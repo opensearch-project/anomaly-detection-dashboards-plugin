@@ -86,7 +86,7 @@ const testDetector = {
 describe('ModelConfigurationFields', () => {
   test('renders the component in create mode (no ID)', async () => {
     const onEditModelConfiguration = jest.fn();
-    const { container, getByText, getByTestId, queryByText, getByRole, queryByRole } = render(
+    const { container, getByText, getByTestId, queryByText, getAllByRole, queryByRole } = render(
       <CoreServicesContext.Provider value={coreServicesMock}>
         <ModelConfigurationFields
           detector={testDetector}
@@ -102,9 +102,9 @@ describe('ModelConfigurationFields', () => {
     expect(container.firstChild).toMatchSnapshot();
     getByText('set_to_zero');
 
-    // Check for the suppression rules button link
-    const button = getByRole('button', { name: '2 rules' });
-    expect(button).toBeInTheDocument();
+// Check for the suppression rules buttons with the name '1 rules'
+const buttons = getAllByRole('button', { name: '1 rules' });
+expect(buttons).toHaveLength(2);
 
     userEvent.click(getByTestId('viewFeature-0'));
     await waitFor(() => {

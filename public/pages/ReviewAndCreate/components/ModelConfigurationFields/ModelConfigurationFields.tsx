@@ -19,6 +19,8 @@ import {
   EuiLoadingSpinner,
   EuiFlexGroup,
   EuiText,
+  EuiButtonEmpty,
+  EuiOverlayMask,
 } from '@elastic/eui';
 import {
   Detector,
@@ -36,8 +38,10 @@ import {
   imputationMethodToFormik,
   getCustomValueStrArray,
   getSuppressionRulesArray,
- } from '../../../ConfigureModel/utils/helpers';
+  getSuppressionRulesArrayForFeature,
+} from '../../../ConfigureModel/utils/helpers';
 import { SORT_DIRECTION } from '../../../../../server/utils/constants';
+import { SuppressionRulesModal } from '../SuppressionRulesModal/SuppressionRulesModal';
 
 interface ModelConfigurationFieldsProps {
   detector: Detector;
@@ -89,6 +93,34 @@ export const ModelConfigurationFields = (
     return featuresState.showCodeModel[index];
   };
 
+  const [isRuleModalVisible, setIsRuleModalVisible] = useState(false);
+
+  const [modalContent, setModalContent] = useState<string[]>([]);
+
+  const closeRuleModal = () => setIsRuleModalVisible(false);
+
+  const showRulesInModal = (rules: string[]) => {
+    setModalContent(rules);
+    setIsRuleModalVisible(true);
+  };
+
+  const renderSuppressionRules = (suppressionRules: string[]) => {
+    return (
+      <div>
+        {suppressionRules.length > 0 ? (
+          <EuiButtonEmpty
+            size="s"
+            onClick={() => showRulesInModal(suppressionRules)}
+          >
+            {suppressionRules.length} rules
+          </EuiButtonEmpty>
+        ) : (
+          <p>any</p>
+        )}
+      </div>
+    );
+  };
+
   const handleTableChange = (props: any) => {
     setFeaturesState({
       ...featuresState,
@@ -120,6 +152,7 @@ export const ModelConfigurationFields = (
       name: feature.featureName,
       definition: index,
       state: feature.featureEnabled ? 'Enabled' : 'Disabled',
+      suppressionRule: index,
     })
   );
 
@@ -185,6 +218,19 @@ export const ModelConfigurationFields = (
     {
       field: 'state',
       name: 'Feature state',
+    },
+    {
+      field: 'suppressionRule',
+      name: 'Anomaly Criteria',
+      render: (featureIndex: number) => {
+        const feature = featureAttributes[featureIndex];
+        return renderSuppressionRules(
+          getSuppressionRulesArrayForFeature(
+            props.detector,
+            feature.featureName
+          )
+        );
+      },
     },
   ];
 
@@ -314,9 +360,19 @@ export const ModelConfigurationFields = (
       title="Model configuration"
       titleSize="s"
       actions={[
-        <EuiSmallButton onClick={props.onEditModelConfiguration}>Edit</EuiSmallButton>,
+        <EuiSmallButton onClick={props.onEditModelConfiguration}>
+          Edit
+        </EuiSmallButton>,
       ]}
     >
+      {isRuleModalVisible && (
+        <EuiOverlayMask>
+          <SuppressionRulesModal
+            onClose={closeRuleModal}
+            rules={modalContent}
+          />
+        </EuiOverlayMask>
+      )}
       {getValidationCallout()}
 
       <div>
@@ -324,7 +380,10 @@ export const ModelConfigurationFields = (
           shingleSize={shingleSize}
           categoryField={get(props, 'detector.categoryField', [])}
           imputationMethod={imputationMethodStr}
-          customValues={getCustomValueStrArray(imputationMethodStr, props.detector)}
+          customValues={getCustomValueStrArray(
+            imputationMethodStr,
+            props.detector
+          )}
           suppressionRules={getSuppressionRulesArray(props.detector)}
         />
         <EuiSpacer />
