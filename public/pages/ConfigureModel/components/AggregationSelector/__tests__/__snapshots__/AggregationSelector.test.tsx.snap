@@ -4,7 +4,9 @@ exports[`<AggregationSelector /> spec Empty results renders component with aggre
 <div>
   <div
     class="euiFormRow euiFormRow--compressed"
+    hint="The aggregation method determines what constitutes an anomaly."
     id="random_html_id-row"
+    title="Aggregation method"
   >
     <div
       class="euiFormRow__labelWrapper"
@@ -14,7 +16,20 @@ exports[`<AggregationSelector /> spec Empty results renders component with aggre
         class="euiFormLabel euiFormRow__label"
         for="random_html_id"
       >
-        Aggregation method
+        <div
+          style="line-height: 8px;"
+        >
+          <p>
+            Aggregation method
+          </p>
+          <br />
+          <div
+            class="euiText euiText--medium sublabel"
+            style="max-width: 400px;"
+          >
+            The aggregation method determines what constitutes an anomaly.
+          </div>
+        </div>
       </label>
     </div>
     <div
@@ -87,7 +102,7 @@ exports[`<AggregationSelector /> spec Empty results renders component with aggre
         class="euiFormHelpText euiFormRow__text"
         id="random_html_id-help-0"
       >
-        The aggregation method determines what constitutes an anomaly. For example, if you choose min(), the detector focuses on finding anomalies based on the minimum values of your feature.
+        E.g, if you choose min(), the detector focuses on finding anomalies based on the minimum values of your feature.
       </div>
     </div>
   </div>
