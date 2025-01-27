@@ -21,6 +21,7 @@ import {
   EuiCompressedFieldText,
   EuiCompressedCheckbox,
   EuiButtonIcon,
+  EuiSpacer,
 } from '@elastic/eui';
 import './styles.scss';
 import { Field, FieldProps } from 'formik';
@@ -31,11 +32,16 @@ import {
   validateFeatureName,
 } from '../../../../utils/utils';
 import { get } from 'lodash';
-import { FEATURE_TYPE_OPTIONS } from '../../utils/constants';
+import {
+  FEATURE_DIRECTION_OPTIONS,
+  FEATURE_TYPE_OPTIONS,
+} from '../../utils/constants';
 import { FEATURE_TYPE } from '../../../../models/interfaces';
 import { formikToSimpleAggregation } from '../../utils/helpers';
 import { AggregationSelector } from '../AggregationSelector';
 import { CustomAggregation } from '../CustomAggregation';
+import { FormattedFormRow } from '../../../../components/FormattedFormRow/FormattedFormRow';
+import { SuppressionRules } from '../SuppressionRules/SuppressionRules';
 
 interface FeatureAccordionProps {
   onDelete(): void;
@@ -109,11 +115,43 @@ export const FeatureAccordion = (props: FeatureAccordionProps) => {
     );
   };
 
+  const handleAnomalyCriteriaSelection = (value, form, featureIndex) => {
+    const featureName = form.values.featureList[props.index]?.featureName || '';
+
+    const updatedSuppressionRules = [...(form.values.suppressionRules || [])];
+
+    if (!updatedSuppressionRules[featureIndex]) {
+      updatedSuppressionRules[featureIndex] = [];
+    }
+
+    if (value === 'both') {
+      // Remove only directionRule for the feature
+      updatedSuppressionRules[featureIndex] = updatedSuppressionRules[
+        featureIndex
+      ].filter((rule) => !rule.directionRule);
+    } else {
+      const newRule = {
+        featureName: featureName,
+        absoluteThreshold: 0,
+        relativeThreshold: 0,
+        aboveBelow: value,
+        directionRule: true,
+      };
+
+      updatedSuppressionRules[featureIndex] = updatedSuppressionRules[
+        featureIndex
+      ].filter((rule) => !rule.directionRule);
+
+      updatedSuppressionRules[featureIndex].push(newRule);
+    }
+    form.setFieldValue('suppressionRules', updatedSuppressionRules);
+  };
+
   const deleteAction = (onClick: any) => {
     if (props.displayMode === 'flyout') {
       return (
         <EuiButtonIcon
-          aria-label='trash'
+          aria-label="trash"
           size="s"
           onClick={onClick}
           disabled={false}
@@ -157,7 +195,7 @@ export const FeatureAccordion = (props: FeatureAccordionProps) => {
         {({ field, form }: FieldProps) => (
           <EuiCompressedFormRow
             label="Feature name"
-            helpText="Enter a descriptive name. The name must be unique within this detector. Feature name must contain 1-64 characters. Valid characters are a-z, A-Z, 0-9, -(hyphen) and _(underscore)."
+            helpText="Enter a descriptive, unique name. The name must contain 1-64 characters. Valid characters are a-z, A-Z, 0-9, -(hyphen) and _(underscore)."
             isInvalid={isInvalid(field.name, form)}
             error={getError(field.name, form)}
           >
@@ -237,6 +275,57 @@ export const FeatureAccordion = (props: FeatureAccordionProps) => {
           </Fragment>
         )}
       </Field>
+      <Field id={`suppressionRules${props.index}-direction`} name={`suppressionRules${props.index}-direction`}>
+        {({ field, form }: FieldProps) => (
+          <FormattedFormRow
+            title="Anomaly criteria"
+            hint="Acceptable difference between the expected and actual values"
+            isInvalid={isInvalid(field.name, form)}
+            error={getError(field.name, form)}
+          >
+            <EuiCompressedSelect
+              {...field}
+              value={(() => {
+                const rules =
+                  form.values.suppressionRules?.[props.index]?.filter(
+                    (rule) => rule.directionRule === true
+                  ) || [];
+                return rules.length > 0 &&
+                  typeof rules[0]?.aboveBelow === 'string'
+                  ? rules[0].aboveBelow
+                  : 'both';
+              })()}
+              options={FEATURE_DIRECTION_OPTIONS}
+              onChange={(e) => {
+                const selectedValue = e.target.value;
+                handleAnomalyCriteriaSelection(
+                  selectedValue,
+                  form,
+                  props.index
+                );
+              }}
+            />
+          </FormattedFormRow>
+        )}
+      </Field>
+      <EuiSpacer size="m" />
+      <EuiAccordion
+        id="SuppressionRulesAccordion"
+        paddingSize="s"
+        buttonClassName="euiSuppresionAccordion"
+        style={{ paddingBottom: '0px !important' }}
+        buttonContent={
+          <EuiFlexGroup alignItems="center" gutterSize="s" responsive={false}>
+            <EuiFlexItem grow={false}>
+              <p style={{ fontSize: '14.5px', margin: 0 }}>
+                Customize Suppression Rules
+              </p>
+            </EuiFlexItem>
+          </EuiFlexGroup>
+        }
+      >
+        <SuppressionRules feature={props.feature} featureIndex={props.index} />
+      </EuiAccordion>
     </EuiAccordion>
   );
 };

@@ -95,7 +95,7 @@ const filters = [
   },
 ] as UIFilter[];
 
-const featureQuery1 = {
+export const featureQuery1 = {
   featureName: 'value',
   featureEnabled: true,
   aggregationQuery: {
@@ -133,7 +133,7 @@ const featureQuery1 = {
   },
 } as { [key: string]: any };
 
-const featureQuery2 = {
+export const featureQuery2 = {
   featureName: 'value2',
   featureEnabled: true,
   aggregationQuery: {

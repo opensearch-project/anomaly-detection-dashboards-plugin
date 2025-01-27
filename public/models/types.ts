@@ -92,6 +92,18 @@ export enum ThresholdType {
    * (b-a)/|a| is less than or equal to ignoreNearExpectedFromBelowByRatio.
    */
   EXPECTED_OVER_ACTUAL_RATIO = "EXPECTED_OVER_ACTUAL_RATIO",
+
+  /**
+  * Specifies a threshold for ignoring anomalies based on whether the actual value
+  * is over the expected value returned from the model.
+  */
+  ACTUAL_IS_OVER_EXPECTED = "ACTUAL_IS_OVER_EXPECTED",
+
+  /**
+  * Specifies a threshold for ignoring anomalies based on whether the actual value
+  * is below the expected value returned from the model.
+    * */
+  ACTUAL_IS_BELOW_EXPECTED = "ACTUAL_IS_BELOW_EXPECTED",
 }
 
 // Method to get the description of ThresholdType
@@ -113,7 +125,7 @@ export interface Rule {
 export interface Condition {
   featureName: string;
   thresholdType: ThresholdType;
-  operator: Operator;
-  value: number;
+  operator?: Operator;
+  value?: number;
 }
 
