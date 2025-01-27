@@ -32,13 +32,16 @@ import {
 } from '../../../../utils/utils';
 import { FormattedFormRow } from '../../../../components/FormattedFormRow/FormattedFormRow';
 import { EuiFormRow } from '@opensearch-project/oui';
+import { FeatureAttributes } from '../../../../models/interfaces';
 
 interface SuppressionRulesProps {
-  feature: any;
-  featureIndex: any;
+  feature: FeatureAttributes;
+  featureIndex: number;
 }
 
 export function SuppressionRules(props: SuppressionRulesProps) {
+  //This method makes sure we extract errrors for each suppression rule, and the corret error
+  // is later displayed below each individual field such as the threshold number field or the above/below select box
   function extractError(fieldName: string, form: any): string | undefined {
     const errors = form.errors?.suppressionRules;
 
@@ -65,7 +68,6 @@ export function SuppressionRules(props: SuppressionRulesProps) {
             {({ field, form }: FieldProps) => {
               const featureSuppressionRules =
                 form.values.suppressionRules?.[props.featureIndex] || [];
-
               return (
                 <>
                   <EuiFlexGroup>
@@ -83,7 +85,6 @@ export function SuppressionRules(props: SuppressionRulesProps) {
                         ]}
                         hintLink={`${BASE_DOCS_LINK}/ad`}
                         isInvalid={isInvalid(field.name, form)}
-                        //error={extractArrayError(field.name, form)}
                         fullWidth
                         linkToolTip={true}
                       >
@@ -106,12 +107,31 @@ export function SuppressionRules(props: SuppressionRulesProps) {
                                 ? rule.isPercentage
                                 : true;
 
+                            const thresholdFieldName = `suppressionRules.${
+                              props.featureIndex
+                            }[${index}].${
+                              isPercentage === false
+                                ? 'absoluteThreshold'
+                                : 'relativeThreshold'
+                            }`;
+
+                            const thresholdError = extractError(
+                              thresholdFieldName,
+                              form
+                            );
+
                             return (
                               <EuiFlexGroup
                                 key={index}
-                                style={{ paddingLeft: '0.1px' }}
+                                style={{
+                                  paddingLeft: '0.1px',
+                                  marginTop: '-20px',
+                                }}
                               >
-                                <EuiFlexItem grow={1}>
+                                <EuiFlexItem
+                                  style={{ marginBottom: '0px' }}
+                                  grow={1}
+                                >
                                   <Field
                                     name={`suppressionRules.${props.featureIndex}[${index}].featureName`}
                                   >
@@ -153,176 +173,148 @@ export function SuppressionRules(props: SuppressionRulesProps) {
                                       }}
                                     >
                                       <FormattedFormRow
-                                        isInvalid={
-                                          !!extractError(
-                                            `suppressionRules.${
-                                              props.featureIndex
-                                            }[${index}].${
-                                              isPercentage === false
-                                                ? 'absoluteThreshold'
-                                                : 'relativeThreshold'
-                                            }`,
-                                            form
-                                          )
-                                        }
-                                        error={extractError(
-                                          `suppressionRules.${
-                                            props.featureIndex
-                                          }[${index}].${
-                                            isPercentage === false
-                                              ? 'absoluteThreshold'
-                                              : 'relativeThreshold'
-                                          }`,
-                                          form
-                                        )}
+                                        isInvalid={!!thresholdError}
+                                        error={thresholdError}
                                         fullWidth
                                       >
-                                        <Field
-                                          name={`suppressionRules.${
-                                            props.featureIndex
-                                          }[${index}].${
-                                            isPercentage === false
-                                              ? 'absoluteThreshold'
-                                              : 'relativeThreshold'
-                                          }`}
-                                          validate={validatePositiveDecimal}
+                                        <EuiFlexGroup
+                                          gutterSize="none"
+                                          alignItems="center"
                                         >
-                                          {({ field }: FieldProps) => {
-                                            return (
-                                              <EuiCompressedFieldNumber
-                                                style={{
-                                                  minWidth: '100px',
-                                                  maxWidth: '160px',
-                                                }}
-                                                placeholder="Threshold"
-                                                fullWidth
-                                                name={field.name}
-                                                isInvalid={
-                                                  !!extractError(
-                                                    `suppressionRules.${
-                                                      props.featureIndex
-                                                    }[${index}].${
-                                                      isPercentage === false
-                                                        ? 'absoluteThreshold'
-                                                        : 'relativeThreshold'
-                                                    }`,
-                                                    form
-                                                  )
-                                                }
-                                                onBlur={(e) => {
-                                                  field.onBlur(e);
-                                                  form.setFieldTouched(
-                                                    field.name,
-                                                    true,
-                                                    true
-                                                  );
-                                                }}
-                                                value={
-                                                  isPercentage
-                                                    ? form.values
-                                                        .suppressionRules[
-                                                        props.featureIndex
-                                                      ][index]
-                                                        .relativeThreshold ?? ''
-                                                    : form.values
-                                                        .suppressionRules[
-                                                        props.featureIndex
-                                                      ][index]
-                                                        .absoluteThreshold ?? ''
-                                                }
-                                                onChange={(e) => {
-                                                  const value = e.target.value;
-                                                  form.setFieldValue(
-                                                    `suppressionRules.${
-                                                      props.featureIndex
-                                                    }[${index}].${
-                                                      isPercentage
-                                                        ? 'relativeThreshold'
-                                                        : 'absoluteThreshold'
-                                                    }`,
-                                                    value
-                                                      ? parseFloat(value)
-                                                      : null
-                                                  );
-                                                }}
-                                                append={
-                                                  <EuiCompressedSelect
-                                                    id={`thresholdType_${props.featureIndex}_${index}`}
-                                                    data-test-subj={`thresholdType-dropdown-${props.featureIndex}-${index}`}
-                                                    options={[
-                                                      {
-                                                        value: 'percentage',
-                                                        text: '%',
-                                                      },
-                                                      {
-                                                        value: 'units',
-                                                        text: 'Units',
-                                                      },
-                                                    ]}
+                                          <EuiFlexItem grow={false}>
+                                            <Field
+                                              name={`suppressionRules.${
+                                                props.featureIndex
+                                              }[${index}].${
+                                                isPercentage === false
+                                                  ? 'absoluteThreshold'
+                                                  : 'relativeThreshold'
+                                              }`}
+                                              validate={validatePositiveDecimal}
+                                            >
+                                              {({ field }: FieldProps) => {
+                                                return (
+                                                  <EuiCompressedFieldNumber
+                                                    style={{
+                                                      minWidth: '100px',
+                                                      maxWidth: '160px',
+                                                    }}
+                                                    placeholder="Threshold"
+                                                    fullWidth
+                                                    name={field.name}
+                                                    isInvalid={!!thresholdError}
+                                                    onBlur={(e) => {
+                                                      field.onBlur(e);
+                                                      form.setFieldTouched(
+                                                        field.name,
+                                                        true,
+                                                        true
+                                                      );
+                                                    }}
                                                     value={
                                                       isPercentage
-                                                        ? 'percentage'
-                                                        : 'units'
+                                                        ? form.values
+                                                            .suppressionRules[
+                                                            props.featureIndex
+                                                          ][index]
+                                                            .relativeThreshold ??
+                                                          ''
+                                                        : form.values
+                                                            .suppressionRules[
+                                                            props.featureIndex
+                                                          ][index]
+                                                            .absoluteThreshold ??
+                                                          ''
                                                     }
                                                     onChange={(e) => {
-                                                      const newValue =
+                                                      const value =
                                                         e.target.value;
-                                                      const currentValue =
-                                                        form.values
-                                                          .suppressionRules[
-                                                          props.featureIndex
-                                                        ][index][
-                                                          newValue ===
-                                                          'percentage'
-                                                            ? 'absoluteThreshold'
-                                                            : 'relativeThreshold'
-                                                        ];
-
-                                                      // Update isPercentage
-                                                      form.setFieldValue(
-                                                        `suppressionRules.${props.featureIndex}[${index}].isPercentage`,
-                                                        newValue ===
-                                                          'percentage'
-                                                      );
-
-                                                      // Transfer the current value to the correct field
                                                       form.setFieldValue(
                                                         `suppressionRules.${
                                                           props.featureIndex
                                                         }[${index}].${
-                                                          newValue ===
-                                                          'percentage'
+                                                          isPercentage
                                                             ? 'relativeThreshold'
                                                             : 'absoluteThreshold'
                                                         }`,
-                                                        currentValue !==
-                                                          undefined &&
-                                                          currentValue !== null
-                                                          ? parseFloat(
-                                                              currentValue
-                                                            )
+                                                        value
+                                                          ? parseFloat(value)
                                                           : null
-                                                      );
-
-                                                      // Clear the old field
-                                                      form.setFieldValue(
-                                                        `suppressionRules.${
-                                                          props.featureIndex
-                                                        }[${index}].${
-                                                          newValue ===
-                                                          'percentage'
-                                                            ? 'absoluteThreshold'
-                                                            : 'relativeThreshold'
-                                                        }`,
-                                                        null
                                                       );
                                                     }}
                                                   />
-                                                }
-                                              />
-                                            );
-                                          }}
-                                        </Field>
+                                                );
+                                              }}
+                                            </Field>
+                                          </EuiFlexItem>
+
+                                          <EuiFlexItem grow={false}>
+                                            <EuiCompressedSelect
+                                              style={{ minWidth: '80px' }}
+                                              id={`thresholdType_${props.featureIndex}_${index}`}
+                                              data-test-subj={`thresholdType-dropdown-${props.featureIndex}-${index}`}
+                                              options={[
+                                                {
+                                                  value: 'percentage',
+                                                  text: '%',
+                                                },
+                                                {
+                                                  value: 'units',
+                                                  text: 'Units',
+                                                },
+                                              ]}
+                                              value={
+                                                isPercentage
+                                                  ? 'percentage'
+                                                  : 'units'
+                                              }
+                                              onChange={(e) => {
+                                                const newValue = e.target.value;
+                                                const currentValue =
+                                                  form.values.suppressionRules[
+                                                    props.featureIndex
+                                                  ][index][
+                                                    newValue === 'percentage'
+                                                      ? 'absoluteThreshold'
+                                                      : 'relativeThreshold'
+                                                  ];
+
+                                                // Update isPercentage
+                                                form.setFieldValue(
+                                                  `suppressionRules.${props.featureIndex}[${index}].isPercentage`,
+                                                  newValue === 'percentage'
+                                                );
+
+                                                // Transfer the current value to the correct field
+                                                form.setFieldValue(
+                                                  `suppressionRules.${
+                                                    props.featureIndex
+                                                  }[${index}].${
+                                                    newValue === 'percentage'
+                                                      ? 'relativeThreshold'
+                                                      : 'absoluteThreshold'
+                                                  }`,
+                                                  currentValue !== undefined &&
+                                                    currentValue !== null
+                                                    ? parseFloat(currentValue)
+                                                    : null
+                                                );
+
+                                                // Clear the old field
+                                                form.setFieldValue(
+                                                  `suppressionRules.${
+                                                    props.featureIndex
+                                                  }[${index}].${
+                                                    newValue === 'percentage'
+                                                      ? 'absoluteThreshold'
+                                                      : 'relativeThreshold'
+                                                  }`,
+                                                  null
+                                                );
+                                              }}
+                                            />
+                                          </EuiFlexItem>
+                                        </EuiFlexGroup>
                                       </FormattedFormRow>
                                     </div>
                                   </EuiFlexItem>
@@ -363,8 +355,6 @@ export function SuppressionRules(props: SuppressionRulesProps) {
                                             featureSuppressionRules.find(
                                               (r) => r.directionRule === true
                                             );
-                                          if (directionRule) {
-                                          }
                                           if (
                                             directionRule &&
                                             value !== directionRule.aboveBelow
@@ -416,23 +406,7 @@ export function SuppressionRules(props: SuppressionRulesProps) {
                                       color="danger"
                                       aria-label="Delete rule"
                                       onClick={() => {
-                                        if (
-                                          form.values.suppressionRules[
-                                            props.featureIndex
-                                          ].length === 1
-                                        ) {
-                                          arrayHelpers.remove(index);
-                                          const cleanedSuppressionRules =
-                                            form.values.suppressionRules.filter(
-                                              (_, i) => i === props.featureIndex
-                                            );
-                                          form.setFieldValue(
-                                            `suppressionRules.`,
-                                            cleanedSuppressionRules
-                                          );
-                                        } else {
-                                          arrayHelpers.remove(index);
-                                        }
+                                        arrayHelpers.remove(index);
                                       }}
                                     />
                                   </EuiFlexItem>
