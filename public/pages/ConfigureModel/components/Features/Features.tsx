@@ -63,8 +63,6 @@ export function Features(props: FeaturesProps) {
       <EuiFlexGroup direction="column" style={{ margin: '0px' }}>
         <FieldArray name="featureList" validateOnChange={true}>
           {({ push, remove, form: { values } }: FieldArrayRenderProps) => {
-                              console.log("values.featureList: " + JSON.stringify(values.featureList))
-
             return (
               <Fragment>
                 {values.featureList.map((feature: any, index: number) => (
