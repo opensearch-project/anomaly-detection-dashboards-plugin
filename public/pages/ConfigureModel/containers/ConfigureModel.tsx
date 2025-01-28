@@ -228,11 +228,29 @@ export function ConfigureModel(props: ConfigureModelProps) {
     }
   };
 
+  const flattenErrorMessages = (errors): string => {
+    if (Array.isArray(errors)) {
+      return errors
+        .flatMap((innerArray) =>
+          Array.isArray(innerArray)
+            ? innerArray.map((errorObj) =>
+                Object.entries(errorObj || {})
+                  .map(([key, value]) => `${key}: ${value}`)
+                  .join(", ")
+              )
+            : []
+        )
+        .join(", ");
+    }
+    return typeof errors === "string" ? errors : "";
+  };
+  
+
   const validateRules = (
     formikValues: ModelConfigurationFormikValues,
     errors: any
   ) => {
-    const rules = formikValues.suppressionRules || [];
+    const suppressionRules = formikValues.suppressionRules || [];
 
   // Initialize an array to hold individual error messages
   const featureNameErrors: string[] = [];
@@ -243,11 +261,30 @@ export function ConfigureModel(props: ConfigureModelProps) {
     .map((feature: FeaturesFormikValues) => feature.featureName);
 
   // Validate that each featureName in suppressionRules exists in enabledFeatures
-  rules.forEach((rule: RuleFormikValues) => {
-    if (!enabledFeatures.includes(rule.featureName)) {
-      featureNameErrors.push(
-        `Feature "${rule.featureName}" in suppression rules does not exist or is not enabled in the feature list.`
-      );
+  suppressionRules.forEach((featureRules: RuleFormikValues[], featureIndex: number) => {
+    if (featureRules != null && featureRules.length > 0) {
+      const featureName = featureRules[0]?.featureName;
+      if (featureName === "" || featureName === undefined) {
+        featureNameErrors.push(
+          "Please make sure all features have unique names"
+        );
+        return;
+      }
+      
+      if (!enabledFeatures.includes(featureName)) {
+        featureNameErrors.push(
+          `Feature "${featureName}" in suppression rules does not exist or is not enabled in the feature list.`
+        );
+      }
+
+      // Additional validation for each rule if needed
+      featureRules.forEach((rule: RuleFormikValues, ruleIndex: number) => {
+        if (rule.absoluteThreshold === null && rule.relativeThreshold === null) {
+          featureNameErrors.push(
+            `Rule ${ruleIndex + 1} for feature "${featureName}" must have either an absolute or relative threshold.`
+          );
+        }
+      });
     }
   });
 
@@ -271,7 +308,6 @@ export function ConfigureModel(props: ConfigureModelProps) {
       formikProps.setFieldTouched('shingleSize');
       formikProps.setFieldTouched('imputationOption');
       formikProps.setFieldTouched('suppressionRules');
-
       formikProps.validateForm().then((errors) => {
         // Call the extracted validation method
         validateImputationOption(formikProps.values, errors);
@@ -306,8 +342,9 @@ export function ConfigureModel(props: ConfigureModelProps) {
 
           const ruleValueError = get(errors, 'suppressionRules')
           if (ruleValueError) {
+            const errorString = flattenErrorMessages(ruleValueError);
             core.notifications.toasts.addDanger(
-              ruleValueError
+              errorString
             );
             focusOnSuppressionRules();
             return;

@@ -19,7 +19,7 @@ export interface ModelConfigurationFormikValues {
   categoryField: string[];
   shingleSize: number;
   imputationOption?: ImputationFormikValues;
-  suppressionRules?: RuleFormikValues[];
+  suppressionRules?: Array<RuleFormikValues[] | null>;
 }
 
 export interface FeaturesFormikValues {
@@ -48,4 +48,5 @@ export interface RuleFormikValues {
   absoluteThreshold?: number;
   relativeThreshold?: number;
   aboveBelow: string;
+  directionRule?: boolean;
 }
