@@ -48,7 +48,6 @@ interface CustomResultIndexProps {
 function CustomResultIndex(props: CustomResultIndexProps) {
   const [enabled, setEnabled] = useState<boolean>(!!props.resultIndex);
   const [customResultIndexConditionsEnabled, setCustomResultIndexConditionsEnabled] = useState<boolean>(true);
-  const [isDisabled, setIsDisabled] = useState(false);
   const customResultIndexMinAge = get(props.formikProps, 'values.resultIndexMinAge');
   const customResultIndexMinSize = get(props.formikProps, 'values.resultIndexMinSize');
   const customResultIndexTTL = get(props.formikProps, 'values.resultIndexTtl');
@@ -66,14 +65,6 @@ function CustomResultIndex(props: CustomResultIndexProps) {
       setFieldValue('resultIndexTtl', '');
     }
   },[customResultIndexConditionsEnabled])
-
-  useEffect(() => {
-    if (props.isEdit && !get(props.formikProps, 'values.flattenCustomResultIndex')) {
-      setIsDisabled(true);
-    } else {
-      setIsDisabled(false);
-    }
-  }, [props.isEdit]);
 
   const hintTextStyle = {
     color: '#69707d',
@@ -171,7 +162,6 @@ function CustomResultIndex(props: CustomResultIndexProps) {
                     id={'flattenCustomResultIndex'}
                     label="Enable flattened custom result index"
                     checked={field.value ? field.value : get(props.formikProps, 'values.flattenCustomResultIndex')}
-                    disabled={isDisabled}
                     {...field}
                   />
                   <p style={hintTextStyle}>Flattening the custom result index will make it easier to query them on the dashboard. It also allows you to perform term aggregations on categorical fields.</p>
