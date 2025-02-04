@@ -9,6 +9,7 @@
     - [Integration Tests](#integration-tests)
   - [Formatting](#formatting)
   - [Backports](#backports)
+  - [Changelog](#changelog)
 
 ## Developer guide
 
@@ -94,3 +95,20 @@ original PR with an appropriate label `backport <backport-branch-name>` is merge
 run successfully on the PR. For example, if a PR on main needs to be backported to `1.x` branch, add a label
 `backport 1.x` to the PR and make sure the backport workflow runs on the PR along with other checks. Once this PR is
 merged to main, the workflow will create a backport PR to the `1.x` branch.
+
+## Changelog
+
+AD dashboards maintains version specific changelog by enforcing a change to the ongoing [CHANGELOG](CHANGELOG.md) file adhering to the [Keep A Changelog](https://keepachangelog.com/en/1.1.0/) format.
+
+Briefly, the changes are curated by version, with the changes to the main branch added chronologically to `Unreleased` version. Further, each version has corresponding sections which list out the category of the change - `Added`, `Changed`, `Deprecated`, `Removed`, `Fixed`, `Security`.
+
+#### How to add my changes to [CHANGELOG](CHANGELOG.md)?
+
+As a contributor, you must ensure that every pull request has the changes listed out within the corresponding version and appropriate section of [CHANGELOG](CHANGELOG.md) file.
+
+Adding in the change is two step process -
+1. Add your changes to the corresponding section within the CHANGELOG file with dummy pull request information, publish the PR
+
+`Your change here ([#PR_NUMBER](PR_URL))`
+
+2. Update the entry for your change in [`CHANGELOG.md`](CHANGELOG.md) and make sure that you reference the pull request there.
