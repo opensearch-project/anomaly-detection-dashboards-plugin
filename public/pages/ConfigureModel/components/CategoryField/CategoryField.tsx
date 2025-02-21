@@ -33,6 +33,7 @@ import {
   validateCategoryField,
 } from '../../../../utils/utils';
 import { ModelConfigurationFormikValues } from '../../models/interfaces';
+import './CategoryField.module.scss';
 
 interface CategoryFieldProps {
   isEdit: boolean;
@@ -74,7 +75,7 @@ export function CategoryField(props: CategoryFieldProps) {
           style={{ lineHeight: 'normal' }}
         >
           Split a single time series into multiple time series based on
-          categorical fields. You can select up to 2.{' '}
+          categorical fields. You can select up to 5.{' '}
           <EuiLink href={`${BASE_DOCS_LINK}/ad`} target="_blank">
             Learn more
           </EuiLink>
@@ -155,7 +156,7 @@ export function CategoryField(props: CategoryFieldProps) {
                     onChange={(options) => {
                       const selection = options.map((option) => option.label);
                       if (!isEmpty(selection)) {
-                        if (selection.length <= 2) {
+                        if (selection.length <= 5) {
                           form.setFieldValue('categoryField', selection);
                         }
                       } else {
