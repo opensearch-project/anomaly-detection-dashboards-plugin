@@ -7,8 +7,8 @@ env:
   # avoid warnings like "tput: No value for $TERM and no -T specified"
   TERM: xterm
   OPENSEARCH_DASHBOARDS_VERSION: 'main'
-  OPENSEARCH_VERSION: '3.0.0'
-  OPENSEARCH_PLUGIN_VERSION: '3.0.0.0'
+  OPENSEARCH_VERSION: '3.0.0-alpha1'
+  OPENSEARCH_PLUGIN_VERSION: '3.0.0.0-alpha1'
 
 jobs:
   tests:
