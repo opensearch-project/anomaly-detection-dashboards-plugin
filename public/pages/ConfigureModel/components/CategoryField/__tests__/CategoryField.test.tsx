@@ -205,6 +205,64 @@ describe('<CategoryField /> spec', () => {
     expect(queryByText('b')).not.toBeNull();
     expect(queryByText('c')).toBeNull();
   });
+  test(`limits selection to a maximum of 5 entities`, () => {
+    const { getAllByRole, getByTestId, queryByText } = render(
+      <Fragment>
+        <Formik
+          initialValues={{
+            categoryField: [],
+          }}
+          onSubmit={() => {}}
+        >
+          <Fragment>
+            <Form>
+              <CategoryField
+                isEdit={false}
+                isHCDetector={true}
+                categoryFieldOptions={['a', 'b', 'c', 'd', 'e', 'f']}
+                setIsHCDetector={(isHCDetector: boolean) => {
+                  return;
+                }}
+                isLoading={false}
+                formikProps={{
+                  values: {
+                    categoryFieldEnabled: true,
+                  },
+                }}
+              />
+            </Form>
+          </Fragment>
+        </Formik>
+      </Fragment>
+    );
+    // open combo box
+    fireEvent.click(getByTestId('comboBoxToggleListButton'));
+    expect(queryByText('a')).not.toBeNull();
+    expect(queryByText('b')).not.toBeNull();
+    expect(queryByText('c')).not.toBeNull();
+    expect(queryByText('d')).not.toBeNull();
+    expect(queryByText('e')).not.toBeNull();
+    expect(queryByText('f')).not.toBeNull();
+
+    // select top 6 options (a, b, c, d, e, f)
+    fireEvent.click(getAllByRole('option')[0]);
+    fireEvent.click(getAllByRole('option')[0]);
+    fireEvent.click(getAllByRole('option')[0]);
+    fireEvent.click(getAllByRole('option')[0]);
+    fireEvent.click(getAllByRole('option')[0]);
+    fireEvent.click(getAllByRole('option')[0]);
+
+    // close combo box
+    fireEvent.click(getByTestId('comboBoxToggleListButton'));
+
+    // the last selection (f) is still not selected
+    expect(queryByText('a')).not.toBeNull();
+    expect(queryByText('b')).not.toBeNull();
+    expect(queryByText('c')).not.toBeNull();
+    expect(queryByText('d')).not.toBeNull();
+    expect(queryByText('e')).not.toBeNull();
+    expect(queryByText('f')).toBeNull();
+  });
   test(`fields are readonly if editing`, () => {
     const { getByTestId, queryByText } = render(
       <Fragment>
