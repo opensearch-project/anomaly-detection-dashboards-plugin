@@ -45,6 +45,7 @@
     "reselect": "^4.0.0"
   },
   "resolutions": {
+    "@babel/runtime": "^7.26.10",
     "**/ansi-regex": "^5.0.1",
     "**/glob-parent": "^6.0.0",
     "**/loader-utils": "^2.0.4",
