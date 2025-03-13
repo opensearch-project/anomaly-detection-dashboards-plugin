@@ -19,6 +19,9 @@ module.exports = {
     require('@babel/plugin-transform-class-properties'),
     require('@babel/plugin-transform-object-rest-spread'),
     ['@babel/plugin-transform-modules-commonjs', { allowTopLevelThis: true }],
-    [require('@babel/plugin-transform-runtime'), { regenerator: true }],
+    [require('@babel/plugin-transform-runtime'), {
+      regenerator: true,
+      version: '^7.26.10'
+    }],
   ],
 };
