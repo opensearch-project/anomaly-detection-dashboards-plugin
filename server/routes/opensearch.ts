@@ -422,10 +422,10 @@ export default class OpenSearchService {
 
       // make call to fields_caps
       if (remoteIndices.length) {
-        const fieldCapsResponse = await callWithRequest('transport.request', {
-          method: 'GET',
-          path:
-            remoteIndices.toString() + '/_field_caps?fields=*&include_unmapped',
+        const fieldCapsResponse = await callWithRequest('fieldCaps', {
+          index: remoteIndices.toString(),
+          fields: '*',
+          include_unmapped: true
         });
         remoteMappings = convertFieldCapsToMappingStructure(fieldCapsResponse);
       }
