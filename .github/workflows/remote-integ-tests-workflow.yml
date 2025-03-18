@@ -6,7 +6,8 @@ env:
   CI: 1
   # avoid warnings like "tput: No value for $TERM and no -T specified"
   TERM: xterm
-  OPENSEARCH_DASHBOARDS_VERSION: 'main'
+  OPENSEARCH_DASHBOARDS_VERSION: 'feature/node-2x'
+  OPENSEARCH_DASHBOARDS_FTR_VERSION: 'main'
   OPENSEARCH_VERSION: '3.0.0-alpha1'
   OPENSEARCH_PLUGIN_VERSION: '3.0.0.0-alpha1'
 
@@ -27,7 +28,7 @@ jobs:
           java-version: ${{ matrix.jdk }}
 
       - name: Checkout Anomaly-Detection
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
         with:
           path: anomaly-detection
           repository: opensearch-project/anomaly-detection
@@ -46,18 +47,15 @@ jobs:
         shell: bash
       
       - name: Checkout OpenSearch Dashboards
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
         with:
           path: OpenSearch-Dashboards
           repository: opensearch-project/OpenSearch-Dashboards
           ref: ${{ env.OPENSEARCH_DASHBOARDS_VERSION }}
           fetch-depth: 0
-          filter: |
-            cypress
-            test
 
       - name: Checkout AD in OpenSearch Dashboards Plugins Dir
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
         with:
             path: OpenSearch-Dashboards/plugins/anomaly-detection-dashboards-plugin
 
@@ -132,11 +130,11 @@ jobs:
         shell: bash
 
       - name: Checkout Dashboards Functional Test Repo
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
         with:
           path: opensearch-dashboards-functional-test
           repository: opensearch-project/opensearch-dashboards-functional-test
-          ref: ${{ env.OPENSEARCH_DASHBOARDS_VERSION }}
+          ref: ${{ env.OPENSEARCH_DASHBOARDS_FTR_VERSION }}
           fetch-depth: 0
 
       - name: Install Cypress
