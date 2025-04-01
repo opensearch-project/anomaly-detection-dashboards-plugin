@@ -92,7 +92,7 @@ export default class AlertingService {
       );
 
       const response: SearchResponse<Monitor> = await callWithRequest(
-        'alerting.searchMonitors',
+        'adAlerting.searchMonitors',
         { body: requestBody }
       );
       const totalMonitors = get(response, 'hits.total.value', 0);
@@ -155,7 +155,7 @@ export default class AlertingService {
       );
 
       const response = callWithRequest(
-        'alerting.searchAlerts', {
+        'adAlerting.searchAlerts', {
           monitorId: monitorId,
           startTime: startTime,
           endTime: endTime,
