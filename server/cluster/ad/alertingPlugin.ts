@@ -18,10 +18,10 @@ export default function alertingPlugin(
 ) {
   const ca = components.clientAction.factory;
 
-  Client.prototype.alerting = components.clientAction.namespaceFactory();
-  const alerting = Client.prototype.alerting.prototype;
+  Client.prototype.adAlerting = components.clientAction.namespaceFactory();
+  const adAlerting = Client.prototype.adAlerting.prototype;
 
-  alerting.searchMonitors = ca({
+  adAlerting.searchMonitors = ca({
     url: {
       fmt: `${API.ALERTING_BASE}/_search`,
     },
@@ -29,7 +29,7 @@ export default function alertingPlugin(
     method: 'POST',
   });
 
-  alerting.searchAlerts = ca({
+  adAlerting.searchAlerts = ca({
     url: {
       fmt: `${API.ALERTING_BASE}/alerts?size=${MAX_ALERTS}&monitorId=<%=monitorId%>&sortString=start_time&sortOrder=desc&searchString=start_time:[<%=startTime%>%20TO%20<%=endTime%>]`,
       req: {
