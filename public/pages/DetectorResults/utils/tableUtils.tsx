@@ -74,6 +74,29 @@ export const staticColumn = [
     truncateText: false,
     dataType: 'number',
   },
+  {
+    field: 'actions',
+    name: (
+      <EuiText size="xs" style={columnStyle}>
+        <b>Actions</b>{' '}
+        <EuiIconTip
+          content="Opens the anomaly logs in Discover"
+          position="top"
+          type="iInCircle"
+        />
+      </EuiText>
+    ),    align: 'left',
+    truncateText: true,
+    actions: [
+      {
+        type: 'icon',
+        name: 'View in Discover',
+        description: 'View in Discover',
+        icon: 'editorLink',
+        onClick: () => {},
+      },
+    ],
+  } 
 ] as EuiBasicTableColumn<any>[];
 
 export const entityValueColumn = {
