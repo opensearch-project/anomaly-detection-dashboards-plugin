@@ -39,6 +39,7 @@ interface AnomalyResultsTableProps {
   isHistorical?: boolean;
   selectedHeatmapCell?: HeatmapCell | undefined;
   detectorIndex: string[];
+  detectorTimeField: string;
 }
 
 interface ListState {
@@ -75,30 +76,48 @@ export function AnomalyResultsTable(props: AnomalyResultsTableProps) {
       
       const basePath = `${window.location.origin}${window.location.pathname.split('/app/')[0]}`;
       
-      const detectorIndex = props.detectorIndex[0];
-
-      // get index pattern id
       const savedObjectsClient = getSavedObjectsClient();
+      
+      const indexPatternTitle = props.detectorIndex.join(',');
+      
+      // try to find an existing index pattern with this title
       const indexPatternResponse = await savedObjectsClient.find({
         type: 'index-pattern',
         fields: ['title'],
-        search: `"${detectorIndex}"`,
+        search: `"${indexPatternTitle}"`,
         searchFields: ['title'],
       });
-      if (!indexPatternResponse.savedObjects.length) {
-        getNotifications().toasts.addDanger(`No index pattern found with title: ${detectorIndex}`);
-        return;
-      }
-      const indexPatternId = indexPatternResponse.savedObjects[0].id;
       
-      // get query params
+      let indexPatternId;
+      
+      if (indexPatternResponse.savedObjects.length > 0) {
+        indexPatternId = indexPatternResponse.savedObjects[0].id;
+      } else {
+        // try to create a new index pattern
+        try {
+          const newIndexPattern = await savedObjectsClient.create('index-pattern', {
+            title: indexPatternTitle,
+            timeFieldName: props.detectorTimeField,
+          });
+          
+          indexPatternId = newIndexPattern.id;
+
+          getNotifications().toasts.addSuccess(`Created new index pattern: ${indexPatternTitle}`);
+        } catch (error) {
+          getNotifications().toasts.addDanger(`Failed to create index pattern: ${error.message}`);
+          return;
+        }
+      }
+      
+      // put query params for HC detector
       let queryParams = '';
       if (props.isHCDetector && item[ENTITY_VALUE_FIELD]) {
-        const [field, value] = item[ENTITY_VALUE_FIELD].split(': ').map(s => s.trim());
+        const [field, value] = item[ENTITY_VALUE_FIELD].split(': ').map((s: string) => s.trim());
         queryParams = `filters:!(('$state':(store:appState),meta:(alias:!n,disabled:!f,index:'${indexPatternId}',key:${field},negate:!f,params:(query:${value}),type:phrase),query:(match_phrase:(${field}:${value})))),`;
       }
 
       const discoverUrl = `${basePath}/app/data-explorer/discover#?_a=(discover:(columns:!(_source),isDirty:!f,sort:!()),metadata:(indexPattern:'${indexPatternId}',view:discover))&_g=(filters:!(),refreshInterval:(pause:!t,value:0),time:(from:'${startISO}',to:'${endISO}'))&_q=(${queryParams}query:(language:kuery,query:''))`;
+      
       window.open(discoverUrl, '_blank');
     } catch (error) {
       getNotifications().toasts.addDanger('Error opening discover view');

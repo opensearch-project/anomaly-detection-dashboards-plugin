@@ -80,7 +80,7 @@ export const staticColumn = [
       <EuiText size="xs" style={columnStyle}>
         <b>Actions</b>{' '}
         <EuiIconTip
-          content="Opens the anomaly logs in Discover"
+          content="This will create an index pattern with the indices used to create this detector and open the anomaly logs in Discover."
           position="top"
           type="iInCircle"
         />

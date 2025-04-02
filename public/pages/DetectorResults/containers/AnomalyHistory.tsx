@@ -991,6 +991,7 @@ export const AnomalyHistory = (props: AnomalyHistoryProps) => {
                     isHistorical={props.isHistorical}
                     selectedHeatmapCell={selectedHeatmapCell}
                     detectorIndex={props.detector.indices}
+                    detectorTimeField={props.detector.timeField}
                   />
                 )}
               </EuiPanel>
