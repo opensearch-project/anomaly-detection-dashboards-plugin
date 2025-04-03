@@ -13,7 +13,7 @@ import React from 'react';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import { AnomalyResultsTable } from '../containers/AnomalyResultsTable';
-import { getSavedObjectsClient, getNotifications } from '../../../services';
+import { getSavedObjectsClient, getNotifications, getDataSourceEnabled } from '../../../services';
 import { CoreServicesContext } from '../../../components/CoreServices/CoreServices';
 
 const mockWindowOpen = jest.fn();
@@ -25,6 +25,7 @@ Object.defineProperty(window, 'open', {
 jest.mock('../../../services', () => ({
   getSavedObjectsClient: jest.fn(),
   getNotifications: jest.fn(),
+  getDataSourceEnabled: jest.fn(),
 }));
 
 const mockCoreServices = {
@@ -75,6 +76,8 @@ describe('AnomalyResultsTable', () => {
         addDanger: jest.fn(),
       },
     });
+
+    (getDataSourceEnabled as jest.Mock).mockReturnValue({ enabled: false });
   });
 
   it('shows no anomalies message when there are no anomalies', () => {
@@ -167,5 +170,31 @@ describe('AnomalyResultsTable', () => {
         );
       });
     }
+  });
+
+  describe('mds feature flag', () => {
+    it('shows Actions column when mds is disabled', () => {
+      (getDataSourceEnabled as jest.Mock).mockReturnValue({ enabled: false });
+      
+      renderWithContext(<AnomalyResultsTable {...defaultProps} />);
+      
+      const actionsColumn = screen.getByText('Actions');
+      expect(actionsColumn).toBeInTheDocument();
+      
+      const discoverButton = screen.getByTestId('discoverIcon');
+      expect(discoverButton).toBeInTheDocument();
+    });
+
+    it('hides Actions column when mds is enabled', () => {
+      (getDataSourceEnabled as jest.Mock).mockReturnValue({ enabled: true });
+      
+      renderWithContext(<AnomalyResultsTable {...defaultProps} />);
+      
+      const actionsColumn = screen.queryByText('Actions');
+      expect(actionsColumn).not.toBeInTheDocument();
+      
+      const discoverButton = screen.queryByTestId('discoverIcon');
+      expect(discoverButton).not.toBeInTheDocument();
+    });
   });
 }); 

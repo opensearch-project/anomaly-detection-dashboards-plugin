@@ -28,7 +28,7 @@ import { AnomalyData } from '../../../models/interfaces';
 import { getTitleWithCount } from '../../../utils/utils';
 import { convertToCategoryFieldAndEntityString } from '../../utils/anomalyResultUtils';
 import { HeatmapCell } from '../../AnomalyCharts/containers/AnomalyHeatmapChart';
-import { getSavedObjectsClient, getNotifications } from '../../../services';
+import { getSavedObjectsClient, getNotifications, getDataSourceEnabled } from '../../../services';
 
 //@ts-ignore
 const EuiBasicTable = EuiBasicTableComponent as any;
@@ -130,22 +130,31 @@ export function AnomalyResultsTable(props: AnomalyResultsTableProps) {
   };
 
   const getCustomColumns = () => {
+    const dataSourceEnabled = getDataSourceEnabled().enabled;
     const columns = [...staticColumn] as any[];
-    const actionsColumnIndex = columns.findIndex((column: any) => column.field === 'actions');
     
-    if (actionsColumnIndex !== -1) {
-      const actionsColumn = { ...columns[actionsColumnIndex] } as any;
+    if (!dataSourceEnabled) {
+      const actionsColumnIndex = columns.findIndex((column: any) => column.field === 'actions');
       
-      if (actionsColumn.actions && Array.isArray(actionsColumn.actions)) {
-        actionsColumn.actions = [
-          {
-            ...actionsColumn.actions[0],
-            onClick: (item: any) => handleOpenDiscover(item.startTime, item.endTime, item),
-          },
-        ];
+      if (actionsColumnIndex !== -1) {
+        const actionsColumn = { ...columns[actionsColumnIndex] } as any;
+        
+        if (actionsColumn.actions && Array.isArray(actionsColumn.actions)) {
+          actionsColumn.actions = [
+            {
+              ...actionsColumn.actions[0],
+              onClick: (item: any) => handleOpenDiscover(item.startTime, item.endTime, item),
+            },
+          ];
+        }
+        
+        columns[actionsColumnIndex] = actionsColumn;
       }
-      
-      columns[actionsColumnIndex] = actionsColumn;
+    } else {
+      const actionsColumnIndex = columns.findIndex((column: any) => column.field === 'actions');
+      if (actionsColumnIndex !== -1) {
+        columns.splice(actionsColumnIndex, 1);
+      }
     }
     
     return columns;
