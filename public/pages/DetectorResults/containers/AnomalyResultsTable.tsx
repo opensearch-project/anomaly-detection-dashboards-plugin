@@ -112,8 +112,13 @@ export function AnomalyResultsTable(props: AnomalyResultsTableProps) {
       // put query params for HC detector
       let queryParams = '';
       if (props.isHCDetector && item[ENTITY_VALUE_FIELD]) {
-        const [field, value] = item[ENTITY_VALUE_FIELD].split(': ').map((s: string) => s.trim());
-        queryParams = `filters:!(('$state':(store:appState),meta:(alias:!n,disabled:!f,index:'${indexPatternId}',key:${field},negate:!f,params:(query:${value}),type:phrase),query:(match_phrase:(${field}:${value})))),`;
+        const entityValues = item[ENTITY_VALUE_FIELD].split('\n').map((s: string) => s.trim()).filter(Boolean);
+        const filters = entityValues.map((entityValue: string) => {
+          const [field, value] = entityValue.split(': ').map((s: string) => s.trim());
+          return `('$state':(store:appState),meta:(alias:!n,disabled:!f,index:'${indexPatternId}',key:${field},negate:!f,params:(query:${value}),type:phrase),query:(match_phrase:(${field}:${value})))`;
+        });
+        
+        queryParams = `filters:!(${filters.join(',')}),`;
       }
 
       const discoverUrl = `${basePath}/app/data-explorer/discover#?_a=(discover:(columns:!(_source),isDirty:!f,sort:!()),metadata:(indexPattern:'${indexPatternId}',view:discover))&_g=(filters:!(),refreshInterval:(pause:!t,value:0),time:(from:'${startISO}',to:'${endISO}'))&_q=(${queryParams}query:(language:kuery,query:''))`;
