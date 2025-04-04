@@ -38,7 +38,7 @@ interface AnomalyResultsTableProps {
   isHCDetector?: boolean;
   isHistorical?: boolean;
   selectedHeatmapCell?: HeatmapCell | undefined;
-  detectorIndex: string[];
+  detectorIndices: string[];
   detectorTimeField: string;
 }
 
@@ -78,7 +78,7 @@ export function AnomalyResultsTable(props: AnomalyResultsTableProps) {
       
       const savedObjectsClient = getSavedObjectsClient();
       
-      const indexPatternTitle = props.detectorIndex.join(',');
+      const indexPatternTitle = props.detectorIndices.join(',');
       
       // try to find an existing index pattern with this title
       const indexPatternResponse = await savedObjectsClient.find({

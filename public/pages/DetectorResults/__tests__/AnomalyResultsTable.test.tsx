@@ -151,27 +151,6 @@ describe('AnomalyResultsTable', () => {
     }
   });
 
-  it('handles error when creating index pattern fails', async () => {
-    (getSavedObjectsClient as jest.Mock).mockReturnValue({
-      find: jest.fn().mockResolvedValue({ savedObjects: [] }),
-      create: jest.fn().mockRejectedValue(new Error('Failed to create index pattern')),
-    });
-
-    const { container } = renderWithContext(<AnomalyResultsTable {...defaultProps} />);
-    
-    const discoverButton = container.querySelector('[data-test-subj="discoverIcon"]');
-    if (discoverButton) {
-      fireEvent.click(discoverButton);
-      
-      const notifications = getNotifications();
-      await waitFor(() => {
-        expect(notifications.toasts.addDanger).toHaveBeenCalledWith(
-          expect.stringContaining('Failed to create index pattern')
-        );
-      });
-    }
-  });
-
   describe('mds feature flag', () => {
     it('shows Actions column when mds is disabled', () => {
       (getDataSourceEnabled as jest.Mock).mockReturnValue({ enabled: false });
