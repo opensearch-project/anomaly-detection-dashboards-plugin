@@ -74,6 +74,30 @@ export const staticColumn = [
     truncateText: false,
     dataType: 'number',
   },
+  {
+    field: 'actions',
+    name: (
+      <EuiText size="xs" style={columnStyle}>
+        <b>Actions</b>{' '}
+        <EuiIconTip
+          content="This will create an index pattern with the indices used to create this detector (if it doesn't exist) and open the anomaly logs in Discover."
+          position="top"
+          type="iInCircle"
+        />
+      </EuiText>
+    ),    align: 'left',
+    truncateText: true,
+    actions: [
+      {
+        type: 'icon',
+        name: 'View in Discover',
+        description: 'View in Discover',
+        icon: 'editorLink',
+        onClick: () => {},
+        'data-test-subj': 'discoverIcon',
+      },
+    ],
+  } 
 ] as EuiBasicTableColumn<any>[];
 
 export const entityValueColumn = {
