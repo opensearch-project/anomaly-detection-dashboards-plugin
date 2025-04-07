@@ -990,7 +990,7 @@ export const AnomalyHistory = (props: AnomalyHistoryProps) => {
                     isHCDetector={isHCDetector}
                     isHistorical={props.isHistorical}
                     selectedHeatmapCell={selectedHeatmapCell}
-                    detectorIndex={props.detector.indices}
+                    detectorIndices={props.detector.indices}
                     detectorTimeField={props.detector.timeField}
                   />
                 )}

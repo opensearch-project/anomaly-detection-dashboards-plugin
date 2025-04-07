@@ -58,7 +58,7 @@ describe('AnomalyResultsTable', () => {
 
   const defaultProps = {
     anomalies: mockAnomalies,
-    detectorIndex: ['test-index'],
+    detectorIndices: ['test-index', 'followCluster:test-index'],
     detectorTimeField: 'timestamp',
   };
 
@@ -148,6 +148,33 @@ describe('AnomalyResultsTable', () => {
       
       const savedObjectsClient = getSavedObjectsClient();
       expect(savedObjectsClient.create).not.toHaveBeenCalled();
+    }
+  });
+
+  it('creates new index pattern when none exists', async () => {
+    const mockCreate = jest.fn().mockResolvedValue({ id: 'new-index-pattern-id' });
+    (getSavedObjectsClient as jest.Mock).mockReturnValue({
+      find: jest.fn().mockResolvedValue({ savedObjects: [] }),
+      create: mockCreate,
+    });
+
+    const { container } = renderWithContext(<AnomalyResultsTable {...defaultProps} />);
+    
+    const discoverButton = container.querySelector('[data-test-subj="discoverIcon"]');
+    if (discoverButton) {
+      fireEvent.click(discoverButton);
+      
+      await waitFor(() => {
+        expect(mockCreate).toHaveBeenCalledWith('index-pattern', {
+          title: 'test-index,followCluster:test-index',
+          timeFieldName: 'timestamp',
+        });
+      });
+
+      const notifications = getNotifications();
+      expect(notifications.toasts.addSuccess).toHaveBeenCalledWith(
+        expect.stringContaining('Created new index pattern: test-index,followCluster:test-index')
+      );
     }
   });
 
