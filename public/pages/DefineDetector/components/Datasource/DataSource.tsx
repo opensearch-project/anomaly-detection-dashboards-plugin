@@ -146,7 +146,15 @@ export function DataSource(props: DataSourceProps) {
       const localCluster: ClusterInfo[] = getLocalCluster(
         opensearchState.clusters
       );
-      setFieldValue('clusters', getVisibleClusterOptions(localCluster));
+      if (props.formikProps.values.clusters && props.formikProps.values.clusters.length > 0) {
+        const clusterInfoList: ClusterInfo[] = props.formikProps.values.clusters.map(option => ({
+          name: option.cluster,
+          localCluster: option.localcluster === 'true',
+        }));
+        setFieldValue('clusters', getVisibleClusterOptions(clusterInfoList));
+      } else {
+        setFieldValue('clusters', getVisibleClusterOptions(localCluster));
+      }
     }
   }, [opensearchState.clusters]);
 
