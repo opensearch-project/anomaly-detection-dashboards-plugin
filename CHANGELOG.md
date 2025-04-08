@@ -8,12 +8,8 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)
 ### Enhancements
 ### Bug Fixes
 ### Infrastructure
-
 ### Documentation
-
 ### Maintenance
-- Increment version to 3.0.0.0-beta1 ([#1004](https://github.com/opensearch-project/anomaly-detection-dashboards-plugin/pull/1004))
-
 ### Refactoring
 
 ## [Unreleased 2.x](https://github.com/opensearch-project/anomaly-detection/compare/2.19...2.x)
