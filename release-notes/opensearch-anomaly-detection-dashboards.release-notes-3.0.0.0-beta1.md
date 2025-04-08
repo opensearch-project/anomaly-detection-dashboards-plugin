@@ -2,7 +2,7 @@
 
 Compatible with OpenSearch Dashboards 3.0.0.0-beta1
 
-### Enhancements
+### Features
 - Implmentation of contextual launch ([#1005](https://github.com/opensearch-project/anomaly-detection-dashboards-plugin/pull/1005))
 
 ### Bug Fixes
