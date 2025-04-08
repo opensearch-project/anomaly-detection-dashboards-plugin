@@ -53,7 +53,7 @@ const getIndexItemsToDisplay = (props: DataConnectionFlyoutProps) => {
     const splitIndex = index.split(':');
     let clusterName = shouldSplit ? splitIndex[0] : props.localClusterName;
     clusterName =
-      clusterName === props.localClusterName
+      clusterName === props.localClusterName && !shouldSplit
         ? `${clusterName} (Local)`
         : `${clusterName} (Remote)`;
     const indexName = shouldSplit ? splitIndex[1] : index;
