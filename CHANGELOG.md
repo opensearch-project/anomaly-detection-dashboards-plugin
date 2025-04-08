@@ -8,9 +8,7 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)
 ### Enhancements
 ### Bug Fixes
 ### Infrastructure
-
 ### Documentation
-
 ### Maintenance
 ### Refactoring
 
