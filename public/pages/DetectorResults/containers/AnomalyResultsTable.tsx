@@ -10,8 +10,7 @@
  */
 
 import {
-  //@ts-ignore
-  EuiBasicTable,
+  EuiBasicTable as EuiBasicTableComponent,
   EuiEmptyPrompt,
   EuiText,
 } from '@elastic/eui';
@@ -29,12 +28,18 @@ import { AnomalyData } from '../../../models/interfaces';
 import { getTitleWithCount } from '../../../utils/utils';
 import { convertToCategoryFieldAndEntityString } from '../../utils/anomalyResultUtils';
 import { HeatmapCell } from '../../AnomalyCharts/containers/AnomalyHeatmapChart';
+import { getSavedObjectsClient, getNotifications, getDataSourceEnabled } from '../../../services';
+
+//@ts-ignore
+const EuiBasicTable = EuiBasicTableComponent as any;
 
 interface AnomalyResultsTableProps {
   anomalies: AnomalyData[];
   isHCDetector?: boolean;
   isHistorical?: boolean;
   selectedHeatmapCell?: HeatmapCell | undefined;
+  detectorIndices: string[];
+  detectorTimeField: string;
 }
 
 interface ListState {
@@ -61,6 +66,99 @@ export function AnomalyResultsTable(props: AnomalyResultsTableProps) {
     ((props.isHCDetector && props.selectedHeatmapCell) || !props.isHCDetector)
       ? props.anomalies.filter((anomaly) => anomaly.anomalyGrade > 0)
       : [];
+
+  const handleOpenDiscover = async (startTime: number, endTime: number, item: any) => {
+    try {
+      // calculate time range with 10-minute buffer on each side per customer request
+      const TEN_MINUTES_IN_MS = 10 * 60 * 1000;
+      const startISO = new Date(startTime - TEN_MINUTES_IN_MS).toISOString();
+      const endISO = new Date(endTime + TEN_MINUTES_IN_MS).toISOString();
+      
+      const basePath = `${window.location.origin}${window.location.pathname.split('/app/')[0]}`;
+      
+      const savedObjectsClient = getSavedObjectsClient();
+      
+      const indexPatternTitle = props.detectorIndices.join(',');
+      
+      // try to find an existing index pattern with this title
+      const indexPatternResponse = await savedObjectsClient.find({
+        type: 'index-pattern',
+        fields: ['title'],
+        search: `"${indexPatternTitle}"`,
+        searchFields: ['title'],
+      });
+      
+      let indexPatternId;
+      
+      if (indexPatternResponse.savedObjects.length > 0) {
+        indexPatternId = indexPatternResponse.savedObjects[0].id;
+      } else {
+        // try to create a new index pattern
+        try {
+          const newIndexPattern = await savedObjectsClient.create('index-pattern', {
+            title: indexPatternTitle,
+            timeFieldName: props.detectorTimeField,
+          });
+          
+          indexPatternId = newIndexPattern.id;
+
+          getNotifications().toasts.addSuccess(`Created new index pattern: ${indexPatternTitle}`);
+        } catch (error) {
+          getNotifications().toasts.addDanger(`Failed to create index pattern: ${error.message}`);
+          return;
+        }
+      }
+      
+      // put query params for HC detector
+      let queryParams = '';
+      if (props.isHCDetector && item[ENTITY_VALUE_FIELD]) {
+        const entityValues = item[ENTITY_VALUE_FIELD].split('\n').map((s: string) => s.trim()).filter(Boolean);
+        const filters = entityValues.map((entityValue: string) => {
+          const [field, value] = entityValue.split(': ').map((s: string) => s.trim());
+          return `('$state':(store:appState),meta:(alias:!n,disabled:!f,index:'${indexPatternId}',key:${field},negate:!f,params:(query:${value}),type:phrase),query:(match_phrase:(${field}:${value})))`;
+        });
+        
+        queryParams = `filters:!(${filters.join(',')}),`;
+      }
+
+      const discoverUrl = `${basePath}/app/data-explorer/discover#?_a=(discover:(columns:!(_source),isDirty:!f,sort:!()),metadata:(indexPattern:'${indexPatternId}',view:discover))&_g=(filters:!(),refreshInterval:(pause:!t,value:0),time:(from:'${startISO}',to:'${endISO}'))&_q=(${queryParams}query:(language:kuery,query:''))`;
+      
+      window.open(discoverUrl, '_blank');
+    } catch (error) {
+      getNotifications().toasts.addDanger('Error opening discover view');
+    }
+  };
+
+  const getCustomColumns = () => {
+    const dataSourceEnabled = getDataSourceEnabled().enabled;
+    const columns = [...staticColumn] as any[];
+    
+    if (!dataSourceEnabled) {
+      const actionsColumnIndex = columns.findIndex((column: any) => column.field === 'actions');
+      
+      if (actionsColumnIndex !== -1) {
+        const actionsColumn = { ...columns[actionsColumnIndex] } as any;
+        
+        if (actionsColumn.actions && Array.isArray(actionsColumn.actions)) {
+          actionsColumn.actions = [
+            {
+              ...actionsColumn.actions[0],
+              onClick: (item: any) => handleOpenDiscover(item.startTime, item.endTime, item),
+            },
+          ];
+        }
+        
+        columns[actionsColumnIndex] = actionsColumn;
+      }
+    } else {
+      const actionsColumnIndex = columns.findIndex((column: any) => column.field === 'actions');
+      if (actionsColumnIndex !== -1) {
+        columns.splice(actionsColumnIndex, 1);
+      }
+    }
+    
+    return columns;
+  };
 
   const sortFieldCompare = (field: string, sortDirection: SORT_DIRECTION) => {
     return (a: any, b: any) => {
@@ -134,6 +232,9 @@ export function AnomalyResultsTable(props: AnomalyResultsTableProps) {
     totalItemCount: Math.min(MAX_ANOMALIES, totalAnomalies.length),
     pageSizeOptions: [10, 30, 50, 100],
   };
+  
+  const customColumns = getCustomColumns();
+
   return (
     <ContentPanel
       title={getTitleWithCount('Anomaly occurrences', totalAnomalies.length)}
@@ -146,19 +247,19 @@ export function AnomalyResultsTable(props: AnomalyResultsTableProps) {
         columns={
           props.isHCDetector && props.isHistorical
             ? [
-                ...staticColumn.slice(0, 2),
+                ...customColumns.slice(0, 2),
                 entityValueColumn,
-                ...staticColumn.slice(3),
+                ...customColumns.slice(3),
               ]
             : props.isHCDetector
             ? [
-                ...staticColumn.slice(0, 2),
+                ...customColumns.slice(0, 2),
                 entityValueColumn,
-                ...staticColumn.slice(2),
+                ...customColumns.slice(2),
               ]
             : props.isHistorical
-            ? [...staticColumn.slice(0, 2), ...staticColumn.slice(3)]
-            : staticColumn
+            ? [...customColumns.slice(0, 2), ...customColumns.slice(3)]
+            : customColumns
         }
         onChange={handleTableChange}
         sorting={sorting}
