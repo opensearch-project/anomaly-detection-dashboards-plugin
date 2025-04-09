@@ -17,7 +17,7 @@ import React, {
   useState,
 } from 'react';
 import { RouteComponentProps, useLocation } from 'react-router';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { Dispatch } from 'redux';
 import { FormikProps, Formik } from 'formik';
 import { get, isEmpty } from 'lodash';
@@ -69,6 +69,7 @@ import {
   isDataSourceCompatible,
 } from '../../../pages/utils/helpers';
 import queryString from 'querystring';
+import { AppState } from '../../../redux/reducers';
 
 interface DefineDetectorRouterProps {
   detectorId?: string;
@@ -89,7 +90,7 @@ export const DefineDetector = (props: DefineDetectorProps) => {
   const MDSQueryParams = getDataSourceFromURL(location);
   const dataSourceId = MDSQueryParams.dataSourceId;
   const dataSourceEnabled = getDataSourceEnabled().enabled;
-
+  const opensearchState = useSelector((state: AppState) => state.opensearch);
   const core = React.useContext(CoreServicesContext) as CoreStart;
   const dispatch = useDispatch<Dispatch<APIAction>>();
   useHideSideNavBar(true, false);
@@ -345,7 +346,7 @@ export const DefineDetector = (props: DefineDetectorProps) => {
       initialValues={
         props.initialValues
           ? props.initialValues
-          : detectorDefinitionToFormik(detector)
+          : detectorDefinitionToFormik(detector, opensearchState.clusters)
       }
       enableReinitialize={true}
       onSubmit={() => {}}

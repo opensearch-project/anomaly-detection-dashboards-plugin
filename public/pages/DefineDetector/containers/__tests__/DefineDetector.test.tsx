@@ -26,6 +26,8 @@ import {
   INITIAL_DETECTOR_DEFINITION_VALUES,
   testDetectorDefinitionValues,
 } from '../../utils/constants';
+import { getRandomDetector } from '../../../../redux/reducers/__tests__/utils';
+import { useFetchDetectorInfo } from '../../../CreateDetectorSteps/hooks/useFetchDetectorInfo';
 
 jest.mock('../../../../services', () => {
   const originalModule = jest.requireActual('../../../../services');
@@ -33,24 +35,30 @@ jest.mock('../../../../services', () => {
   return {
     ...originalModule,
     getDataSourceEnabled: () => ({
-      enabled: false  
+      enabled: false,
     }),
     getUISettings: () => ({
       get: (flag) => {
         if (flag === 'home:useNewHomePage') {
-          return false; 
+          return false;
         }
         return originalModule.getUISettings().get(flag);
-      }
+      },
     }),
     getNavigationUI: () => ({
-      HeaderControl: null 
+      HeaderControl: null,
     }),
     getApplication: () => ({
-      setAppRightControls: null, 
-    })
+      setAppRightControls: null,
+    }),
   };
 });
+
+jest.mock('../../../CreateDetectorSteps/hooks/useFetchDetectorInfo', () => ({
+  // Within each test, the mock implementation for useFetchDetectorInfo is set using jest.Mock.
+  // This ensures that the hook returns the desired values for each test case.
+  useFetchDetectorInfo: jest.fn(),
+}));
 
 const renderWithRouterEmpty = (isEdit: boolean = false) => ({
   ...render(
@@ -98,6 +106,28 @@ const renderWithRouterFull = (isEdit: boolean = false) => ({
   ),
 });
 
+const renderWithRouterFullAndEdit = (isEdit: boolean = true) => ({
+  ...render(
+    <Provider store={configureStore(httpClientMock)}>
+      <Router>
+        <Switch>
+          <Route
+            render={(props: RouteComponentProps) => (
+              <CoreServicesContext.Provider value={coreServicesMock}>
+                <DefineDetector
+                  setActionMenu={jest.fn()}
+                  isEdit={isEdit}
+                  {...props}
+                />
+              </CoreServicesContext.Provider>
+            )}
+          />
+        </Switch>
+      </Router>
+    </Provider>
+  ),
+});
+
 describe('<DefineDetector /> Full', () => {
   beforeEach(() => {
     jest.clearAllMocks();
@@ -106,12 +136,32 @@ describe('<DefineDetector /> Full', () => {
   });
   describe('creating detector definition', () => {
     test('renders the component', () => {
+      const detectorInfo = {
+        detector: getRandomDetector(true),
+        hasError: false,
+        isLoadingDetector: true,
+        errorMessage: undefined,
+      };
+
+      (useFetchDetectorInfo as jest.Mock).mockImplementation(
+        () => detectorInfo
+      );
       const { container, getByText } = renderWithRouterFull(false);
       getByText('Define detector');
       expect(container.firstChild).toMatchSnapshot();
     });
 
     test('duplicate name', async () => {
+      const detectorInfo = {
+        detector: getRandomDetector(true),
+        hasError: false,
+        isLoadingDetector: true,
+        errorMessage: undefined,
+      };
+
+      (useFetchDetectorInfo as jest.Mock).mockImplementation(
+        () => detectorInfo
+      );
       httpClientMock.get = jest.fn().mockResolvedValue({
         ok: true,
         response: {
@@ -126,6 +176,31 @@ describe('<DefineDetector /> Full', () => {
       await waitFor(() => {});
       getByText('Duplicate detector name');
       getByText('Must specify an index');
+    });
+  });
+});
+
+describe('<DefineDetector /> FullEdit', () => {
+  beforeEach(() => {
+    console.error = jest.fn();
+    console.warn = jest.fn();
+  });
+  describe('editing detector page', () => {
+    test('renders the component', () => {
+      const detectorInfo = {
+        detector: getRandomDetector(true, '', ['opensearch:index-1']),
+        hasError: false,
+        isLoadingDetector: true,
+        errorMessage: undefined,
+      };
+
+      (useFetchDetectorInfo as jest.Mock).mockImplementation(
+        () => detectorInfo
+      );
+      const { container, getByText } = renderWithRouterFullAndEdit(true);
+      getByText('Edit detector settings');
+      getByText('opensearch (Remote)');
+      expect(container.firstChild).toMatchSnapshot();
     });
   });
 });

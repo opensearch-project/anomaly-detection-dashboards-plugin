@@ -23,13 +23,17 @@ import {
   formikToFilterQuery,
 } from '../../ReviewAndCreate/utils/helpers';
 import { DEFAULT_SHINGLE_SIZE } from '../../../utils/constants';
+import { useSelector } from 'react-redux';
+import { AppState } from '../../../redux/reducers';
+import { getLocalCluster } from '../../../pages/utils/helpers';
+import { ClusterInfo } from '../../../../server/models/types';
 
 export function detectorDefinitionToFormik(
-  ad: Detector
+  ad: Detector,
+  clusters: ClusterInfo[]
 ): DetectorDefinitionFormikValues {
   const initialValues = cloneDeep(INITIAL_DETECTOR_DEFINITION_VALUES);
   if (isEmpty(ad)) return initialValues;
-
   return {
     ...initialValues,
     name: ad.name,
@@ -49,7 +53,38 @@ export function detectorDefinitionToFormik(
     resultIndexMinSize:get(ad, 'resultIndexMinSize', undefined),
     resultIndexTtl: get(ad, 'resultIndexTtl', undefined),
     flattenCustomResultIndex: get(ad, 'flattenCustomResultIndex', false),
+    clusters: indicesToClusters(ad.indices, clusters)
   };
+}
+
+export function indicesToClusters(indices: string[], clusters: ClusterInfo[]) {
+  const seenClusters = new Set<string>();
+  const hasLocalCluster = indices.some(index => !index.includes(':'));
+
+  indices.forEach(index => {
+    const [cluster] = index.split(':');
+    if (cluster !== index) {
+      seenClusters.add(cluster);
+    }
+  });
+
+  const clusterOptions = Array.from(seenClusters).map(name => ({
+    label: getClusterOptionLabel({ name, localCluster: false }),
+    cluster: name,
+    localcluster: 'false',
+  }));
+
+  if (hasLocalCluster && clusters) {
+    const [local] = getLocalCluster(clusters);
+    if (local) {
+      clusterOptions.push({
+        label: getClusterOptionLabel(local),
+        cluster: local.name,
+        localcluster: 'true',
+      });
+    }
+  }
+  return clusterOptions;
 }
 
 export function filtersToFormik(detector: Detector): UIFilter[] {
@@ -144,3 +179,6 @@ export function clearModelConfiguration(ad: Detector): Detector {
     shingleSize: DEFAULT_SHINGLE_SIZE,
   };
 }
+
+  export const getClusterOptionLabel = (clusterInfo: ClusterInfo) =>
+    `${clusterInfo.name} ${clusterInfo.localCluster ? '(Local)' : '(Remote)'}`;

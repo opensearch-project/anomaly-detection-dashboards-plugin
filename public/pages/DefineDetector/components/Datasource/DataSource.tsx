@@ -46,8 +46,7 @@ import { INITIAL_MODEL_CONFIGURATION_VALUES } from '../../../ConfigureModel/util
 import { FILTER_TYPES } from '../../../../models/interfaces';
 import { useLocation } from 'react-router-dom';
 import _ from 'lodash';
-import { cleanString } from '../../../../../../../src/plugins/vis_type_vega/public/expressions/helpers';
-import { L } from '../../../../../../../src/plugins/maps_legacy/public/lazy_load_bundle/lazy';
+import { getClusterOptionLabel } from '../../utils/helpers';
 
 interface DataSourceProps {
   formikProps: FormikProps<DetectorDefinitionFormikValues>;
@@ -59,7 +58,7 @@ interface DataSourceProps {
   oldFilterQuery: any;
 }
 
-interface ClusterOption {
+export interface ClusterOption {
   label: string;
   cluster: string;
   localcluster: string;
@@ -81,7 +80,7 @@ export function DataSource(props: DataSourceProps) {
   useEffect(() => {
     const getInitialClusters = async () => {
       await dispatch(getClustersInfo(dataSourceId));
-      setFieldValue('clusters', props.formikProps.values.clusters);
+      handleClusterUpdate(opensearchState.clusters);
     };
     getInitialClusters();
   }, [dataSourceId]);
@@ -141,7 +140,7 @@ export function DataSource(props: DataSourceProps) {
     return clustersString;
   };
 
-  useEffect(() => {
+  const handleClusterUpdate = (clusters: ClusterInfo[]) => {
     if (opensearchState.clusters && opensearchState.clusters.length > 0) {
       const localCluster: ClusterInfo[] = getLocalCluster(
         opensearchState.clusters
@@ -156,10 +155,11 @@ export function DataSource(props: DataSourceProps) {
         setFieldValue('clusters', getVisibleClusterOptions(localCluster));
       }
     }
-  }, [opensearchState.clusters]);
+  };
 
-  const getClusterOptionLabel = (clusterInfo: ClusterInfo) =>
-    `${clusterInfo.name} ${clusterInfo.localCluster ? '(Local)' : '(Remote)'}`;
+  useEffect(() => {
+    handleClusterUpdate(opensearchState.clusters);
+  }, [opensearchState.clusters]);
 
   useEffect(() => {
     setIndexNames(props.formikProps.values.index);

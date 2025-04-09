@@ -21,22 +21,47 @@ import {
   OPERATORS_MAP,
   FILTER_TYPES,
 } from '../../../../models/interfaces';
+import { initialState, mockedStore } from '../../../../redux/utils/testUtils';
+import { ClusterOption } from '../../components/Datasource/DataSource';
+const mockClusters: ClusterInfo[] = [
+  { name: 'opensearch', localCluster: true },
+  { name: 'remote-cluster-1', localCluster: false },
+];
+
+const localOnlyClusterOption: ClusterOption[] = [
+  { cluster: 'opensearch', label: 'opensearch (Local)', localcluster: 'true' },
+];
+
+const clusterOptions: ClusterOption[] = [
+  {
+    cluster: 'remote-cluster-1',
+    label: 'remote-cluster-1 (Remote)',
+    localcluster: 'false',
+  },
+  { cluster: 'opensearch', label: 'opensearch (Local)', localcluster: 'true' },
+];
 
 describe('detectorDefinitionToFormik', () => {
   test('should return initialValues if detector is null', () => {
     const randomDetector = {} as Detector;
-    const adFormikValues = detectorDefinitionToFormik(randomDetector);
+    const adFormikValues = detectorDefinitionToFormik(
+      randomDetector,
+      mockClusters
+    );
     expect(adFormikValues).toEqual(INITIAL_DETECTOR_DEFINITION_VALUES);
   });
-  test('should return correct values if detector is not null', () => {
+  test('should return correct values if detector is not null, 1 local index', () => {
     const randomDetector = getRandomDetector();
-    const adFormikValues = detectorDefinitionToFormik(randomDetector);
+    const adFormikValues = detectorDefinitionToFormik(
+      randomDetector,
+      mockClusters
+    );
     expect(adFormikValues).toEqual({
       name: randomDetector.name,
       description: randomDetector.description,
       filters: randomDetector.uiMetadata.filters,
       filterQuery: JSON.stringify(randomDetector.filterQuery || {}, null, 4),
-      index: [{ label: randomDetector.indices[0] }], // Currently we support only one index
+      index: [{ label: randomDetector.indices[0] }],
       timeField: randomDetector.timeField,
       interval: randomDetector.detectionInterval.period.interval,
       windowDelay: randomDetector.windowDelay.period.interval,
@@ -45,13 +70,66 @@ describe('detectorDefinitionToFormik', () => {
       resultIndexMinSize: randomDetector.resultIndexMinSize,
       resultIndexTtl: randomDetector.resultIndexTtl,
       flattenCustomResultIndex: randomDetector.flattenCustomResultIndex,
+      clusters: localOnlyClusterOption,
+    });
+  });
+  test('should return correct values if detector is not null, 2 indices', () => {
+    const testIndices = ['index-1', 'index-2'];
+    const randomDetector = getRandomDetector(true, '', testIndices);
+    const adFormikValues = detectorDefinitionToFormik(
+      randomDetector,
+      mockClusters
+    );
+    expect(adFormikValues).toEqual({
+      name: randomDetector.name,
+      description: randomDetector.description,
+      filters: randomDetector.uiMetadata.filters,
+      filterQuery: JSON.stringify(randomDetector.filterQuery || {}, null, 4),
+      index: [{ label: 'index-1' }, { label: 'index-2' }],
+      timeField: randomDetector.timeField,
+      interval: randomDetector.detectionInterval.period.interval,
+      windowDelay: randomDetector.windowDelay.period.interval,
+      resultIndex: randomDetector.resultIndex,
+      resultIndexMinAge: randomDetector.resultIndexMinAge,
+      resultIndexMinSize: randomDetector.resultIndexMinSize,
+      resultIndexTtl: randomDetector.resultIndexTtl,
+      flattenCustomResultIndex: randomDetector.flattenCustomResultIndex,
+      clusters: localOnlyClusterOption,
+    });
+  });
+
+  test('should return correct values if detector is not null, 1 local, 1 remote index', () => {
+    const testIndices = ['index-1', 'remote-cluster-1:index-2'];
+    const randomDetector = getRandomDetector(true, '', testIndices);
+    const adFormikValues = detectorDefinitionToFormik(
+      randomDetector,
+      mockClusters
+    );
+    expect(adFormikValues).toEqual({
+      name: randomDetector.name,
+      description: randomDetector.description,
+      filters: randomDetector.uiMetadata.filters,
+      filterQuery: JSON.stringify(randomDetector.filterQuery || {}, null, 4),
+      index: [{ label: 'index-1' }, { label: 'remote-cluster-1:index-2' }],
+      timeField: randomDetector.timeField,
+      interval: randomDetector.detectionInterval.period.interval,
+      windowDelay: randomDetector.windowDelay.period.interval,
+      resultIndex: randomDetector.resultIndex,
+      resultIndexMinAge: randomDetector.resultIndexMinAge,
+      resultIndexMinSize: randomDetector.resultIndexMinSize,
+      resultIndexTtl: randomDetector.resultIndexTtl,
+      flattenCustomResultIndex: randomDetector.flattenCustomResultIndex,
+      clusters: clusterOptions,
     });
   });
   test('should return if detector does not have metadata', () => {
     const randomDetector = getRandomDetector();
     //@ts-ignore
     randomDetector.uiMetadata = undefined;
-    const adFormikValues = detectorDefinitionToFormik(randomDetector);
+    const adFormikValues = detectorDefinitionToFormik(
+      randomDetector,
+      mockClusters
+    );
     expect(adFormikValues).toEqual({
       name: randomDetector.name,
       description: randomDetector.description,
@@ -66,6 +144,7 @@ describe('detectorDefinitionToFormik', () => {
       resultIndexMinSize: randomDetector.resultIndexMinSize,
       resultIndexTtl: randomDetector.resultIndexTtl,
       flattenCustomResultIndex: randomDetector.flattenCustomResultIndex,
+      clusters: localOnlyClusterOption,
     });
   });
   test("upgrade old detector's filters to include filter type", () => {

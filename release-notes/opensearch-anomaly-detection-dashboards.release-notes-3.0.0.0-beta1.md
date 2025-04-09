@@ -9,6 +9,7 @@ Compatible with OpenSearch Dashboards 3.0.0.0-beta1
 - Switching fieldcaps api to utilize js client ([#984](https://github.com/opensearch-project/anomaly-detection-dashboards-plugin/pull/984))
 - Update namespace for alerting plugin to avoid conflict with alerting ([#1003](https://github.com/opensearch-project/anomaly-detection-dashboards-plugin/pull/1003))
 - Fix remote cluster bug when remote and local have same name ([#1007](https://github.com/opensearch-project/anomaly-detection-dashboards-plugin/pull/1007))
+- Display selected clusters correctly on edit page ([#1011](https://github.com/opensearch-project/anomaly-detection-dashboards-plugin/pull/1011))
 
 ### Infrastructure
 - change gradle run to dualcluster is true ([#998](https://github.com/opensearch-project/anomaly-detection-dashboards-plugin/pull/998))
