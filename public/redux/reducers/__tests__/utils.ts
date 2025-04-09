@@ -92,7 +92,8 @@ export const getUIMetadata = (features: FeatureAttributes[]) => {
 
 export const getRandomDetector = (
   isCreate: boolean = true,
-  customResultIndex: string = ''
+  customResultIndex: string = '',
+  indices: string[] = ['logstash-*']
 ): Detector => {
   const features = new Array(detectorFaker.natural({ min: 1, max: 5 }))
     .fill(null)
@@ -104,7 +105,7 @@ export const getRandomDetector = (
     name: detectorFaker.word({ length: 10 }),
     description: detectorFaker.paragraph({ sentences: 1 }),
     timeField: '@timestamp',
-    indices: ['logstash-*'],
+    indices: indices,
     featureAttributes: features,
     filterQuery: randomQuery(),
     uiMetadata: getUIMetadata(features),
