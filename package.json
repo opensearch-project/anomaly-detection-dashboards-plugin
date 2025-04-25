@@ -54,8 +54,10 @@
     "@sideway/formula": "^3.0.1",
     "semver": "^5.7.2",
     "browserify-sign": "^4.2.2",
-    "axios": "^1.6.1",
+    "axios": "^1.9.0",
     "braces": "^3.0.3",
-    "micromatch": "^4.0.8"
+    "micromatch": "^4.0.8",
+    "**/@babel/runtime": "^7.27.0",
+    "**/@babel/runtime-corejs3": "^7.27.0"
   }
 }
