@@ -7,6 +7,7 @@ import React from 'react';
 import { i18n } from '@osd/i18n';
 import { EuiIconType } from '@elastic/eui';
 import { toMountPoint } from '../../../../../src/plugins/opensearch_dashboards_react/public';
+import { DEFAULT_DATA } from '../../../../../src/plugins/data/common';
 import {
   Action,
   createAction,
@@ -121,7 +122,11 @@ export const getSuggestAnomalyDetectorAction = () => {
     getIconType: () => ANOMALY_DETECTION_ICON,
     // suggestAD is only compatible with data sources that have certain agents configured
     isCompatible: async (context) => {
-      if (context.datasetId) {
+      if (
+        context.datasetId &&
+        (context.datasetType === DEFAULT_DATA.SET_TYPES.INDEX_PATTERN ||
+          context.datasetType === DEFAULT_DATA.SET_TYPES.INDEX)
+      ) {
         const assistantClient = getAssistantClient();
         const res = await assistantClient.agentConfigExists(
           SUGGEST_ANOMALY_DETECTOR_CONFIG_ID,
