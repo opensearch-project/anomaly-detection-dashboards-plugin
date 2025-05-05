@@ -14,6 +14,7 @@ import { SearchResponse } from '../models/interfaces';
 import {
   CatIndex,
   ClusterInfo,
+  ClusterSetting,
   GetAliasesResponse,
   GetIndicesResponse,
   GetMappingResponse,
@@ -76,6 +77,7 @@ export function registerOpenSearchRoutes(
     '/_indices_and_aliases/{dataSourceId}',
     opensearchService.getIndicesAndAliases
   );
+  apiRouter.get('/_cluster/settings', opensearchService.getClustersSetting);
 }
 
 export default class OpenSearchService {
@@ -599,6 +601,58 @@ export default class OpenSearchService {
       });
     } catch (err) {
       console.error('Alerting - OpensearchService - getClusterHealth:', err);
+      return opensearchDashboardsResponse.ok({
+        body: {
+          ok: false,
+          error: getErrorMessage(err),
+        },
+      });
+    }
+  };
+
+  getClustersSetting = async (
+    context: RequestHandlerContext,
+    request: OpenSearchDashboardsRequest,
+    opensearchDashboardsResponse: OpenSearchDashboardsResponseFactory
+  ): Promise<IOpenSearchDashboardsResponse<any>> => {
+    const { dataSourceId = '' } = request.params as { dataSourceId?: string };
+    try {
+      const callWithRequest = getClientBasedOnDataSource(
+        context,
+        this.dataSourceEnabled,
+        request,
+        dataSourceId,
+        this.client
+      );
+
+      let anomalySettings: ClusterSetting[] = [];
+
+      try {
+        const anomalySettingsResponse = await callWithRequest('transport.request', {
+          method: 'GET',
+          path: '/_cluster/settings',
+        });
+
+        if (
+          anomalySettingsResponse?.persistent?.plugins?.anomaly_detection
+        ) {
+          const anomalyDetectionSettings = anomalySettingsResponse.persistent.plugins.anomaly_detection;
+          anomalySettings = Object.keys(anomalyDetectionSettings).map((key) => ({
+            name: key,
+            value: anomalyDetectionSettings[key],
+          }));
+        } else {
+          console.warn('Could not get anomaly detection setting');
+        }
+      } catch (err) {
+        console.warn('Could not get anomaly detection setting', err);
+      }
+
+      return opensearchDashboardsResponse.ok({
+        body: { ok: true, response: { settings: anomalySettings } },
+      });
+    } catch (err) {
+      console.log('Anomaly detector - Unable to get anomaly detection cluster setting', err);
       return opensearchDashboardsResponse.ok({
         body: {
           ok: false,

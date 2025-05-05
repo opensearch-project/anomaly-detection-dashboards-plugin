@@ -9,7 +9,7 @@
  * GitHub history for details.
  */
 
-import { DATA_TYPES, DEFAULT_SHINGLE_SIZE } from '../../../utils/constants';
+import { DATA_TYPES, DEFAULT_SHINGLE_SIZE, MAX_FEATURE_NUM } from '../../../utils/constants';
 import {
   FEATURE_TYPE,
   FeatureAttributes,
@@ -40,6 +40,7 @@ import {
   Action,
 } from '../../../models/types';
 import { SparseDataOptionValue } from './constants';
+import { ClusterSetting } from 'server/models/types';
 
 export const getFieldOptions = (
   allFields: { [key: string]: string[] },
@@ -711,3 +712,15 @@ export const rulesToFormik = (
   );
   return finalRules;
 };
+
+export function getMaxFeatureLimit(
+  settings: ClusterSetting[]
+) {
+  if (!settings || settings.length === 0) {
+    return MAX_FEATURE_NUM;
+  }
+  const maxFeatureSetting = settings.find(
+    (setting) => setting.name === 'max_anomaly_features'
+  );
+  return maxFeatureSetting ? parseInt(maxFeatureSetting.value, 10) : MAX_FEATURE_NUM;
+}

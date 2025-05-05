@@ -22,6 +22,11 @@ export type ClusterInfo = {
   localCluster: boolean;
 }
 
+export type ClusterSetting = {
+  name: string;
+  value: string;
+}
+
 export type IndexAlias = {
   index: string[] | string;
   alias: string;

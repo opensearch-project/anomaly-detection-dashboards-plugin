@@ -23,11 +23,14 @@ import { FieldArray, FieldArrayRenderProps, FormikProps } from 'formik';
 
 import { get } from 'lodash';
 import React, { Fragment, useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import ContentPanel from '../../../../components/ContentPanel/ContentPanel';
 import { Detector } from '../../../../models/interfaces';
-import { initialFeatureValue } from '../../utils/helpers';
-import { MAX_FEATURE_NUM, BASE_DOCS_LINK } from '../../../../utils/constants';
+import { initialFeatureValue, getMaxFeatureLimit } from '../../utils/helpers';
+import { BASE_DOCS_LINK } from '../../../../utils/constants';
 import { FeatureAccordion } from '../FeatureAccordion';
+import { getClustersSetting } from '../../../../redux/reducers/opensearch';
+import { AppState } from '../../../../redux/reducers';
 
 interface FeaturesProps {
   detector: Detector | undefined;
@@ -35,6 +38,19 @@ interface FeaturesProps {
 }
 
 export function Features(props: FeaturesProps) {
+  const dispatch = useDispatch();
+  const anomalySettings = useSelector(
+      (state: AppState) => state.opensearch.settings
+  );
+
+  useEffect(() => {
+    const getSettingResult = async () => {
+      await dispatch(getClustersSetting());
+    };
+    getSettingResult();
+  }, []);
+
+
   // If the features list is empty: push a default initial one
   useEffect(() => {
     if (get(props, 'formikProps.values.featureList', []).length === 0) {
@@ -88,7 +104,7 @@ export function Features(props: FeaturesProps) {
                   <EuiFlexItem grow={false}>
                     <EuiSmallButton
                       data-test-subj="addFeature"
-                      isDisabled={values.featureList.length >= MAX_FEATURE_NUM}
+                      isDisabled={values.featureList.length >= getMaxFeatureLimit(anomalySettings)}
                       onClick={() => {
                         push(initialFeatureValue());
                       }}
@@ -99,7 +115,7 @@ export function Features(props: FeaturesProps) {
                       <p>
                         You can add up to{' '}
                         {Math.max(
-                          MAX_FEATURE_NUM - values.featureList.length,
+                          getMaxFeatureLimit(anomalySettings) - values.featureList.length,
                           0
                         )}{' '}
                         more features.
