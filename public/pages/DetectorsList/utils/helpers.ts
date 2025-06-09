@@ -47,7 +47,7 @@ export const getURLQueryParams = (location: {
       typeof sortDirection !== 'string'
         ? DEFAULT_QUERY_PARAMS.sortDirection
         : (sortDirection as SORT_DIRECTION),
-    dataSourceId: dataSourceId === undefined ? undefined : dataSourceId,
+    dataSourceId: typeof dataSourceId === 'string' ? dataSourceId : undefined,
   };
 };
 

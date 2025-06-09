@@ -278,8 +278,12 @@ export const DetectorList = (props: ListProps) => {
     });
 
     setIsLoadingFinalDetectors(true);
-
-    getUpdatedDetectors();
+    
+    dispatch(
+      getDetectorList(
+        getAllDetectorsQueryParamsWithDataSourceId(state.selectedDataSourceId)
+      )
+    );
   }, [
     state.page,
     state.queryParams,
@@ -330,14 +334,11 @@ export const DetectorList = (props: ListProps) => {
   }, [confirmModalState.isRequestingToClose, isLoading]);
 
   const getUpdatedDetectors = async () => {
-    // wait until selected data source is ready before doing dispatch calls if mds is enabled
-    if (!dataSourceEnabled || (state.selectedDataSourceId && state.selectedDataSourceId !== "")) {
-      dispatch(
-        getDetectorList(
-          getAllDetectorsQueryParamsWithDataSourceId(state.selectedDataSourceId)
-        )
-      );
-    }
+    dispatch(
+      getDetectorList(
+        getAllDetectorsQueryParamsWithDataSourceId(state.selectedDataSourceId)
+      )
+    );
   };
 
   const handlePageChange = (pageNumber: number) => {

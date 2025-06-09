@@ -206,21 +206,6 @@ export function DashboardOverview(props: OverviewProps) {
     setCurrentDetectors(finalFilteredDetectors);
   };
 
-  const intializeDetectors = async () => {
-    // wait until selected data source is ready before doing dispatch calls if mds is enabled
-    if (!dataSourceEnabled || (MDSOverviewState.selectedDataSourceId && MDSOverviewState.selectedDataSourceId !== "")) {
-      dispatch(
-        getDetectorList(
-          getAllDetectorsQueryParamsWithDataSourceId(
-            MDSOverviewState.selectedDataSourceId
-          )
-        )
-      );
-      dispatch(getIndices('', MDSOverviewState.selectedDataSourceId));
-      dispatch(getAliases('', MDSOverviewState.selectedDataSourceId));
-    }
-  };
-
   useEffect(() => {
     const { history, location } = props;
     if (dataSourceEnabled) {
@@ -232,7 +217,16 @@ export function DashboardOverview(props: OverviewProps) {
         search: queryString.stringify(updatedParams),
       });
     }
-    intializeDetectors();
+    
++    dispatch(
+      getDetectorList(
+        getAllDetectorsQueryParamsWithDataSourceId(
+          MDSOverviewState.selectedDataSourceId
+        )
+      )
+    );
+    dispatch(getIndices('', MDSOverviewState.selectedDataSourceId));
+    dispatch(getAliases('', MDSOverviewState.selectedDataSourceId));
   }, [MDSOverviewState]);
 
   useEffect(() => {
