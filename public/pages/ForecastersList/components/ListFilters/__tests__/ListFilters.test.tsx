@@ -62,7 +62,7 @@ describe('<ListFilters />', () => {
     expect(screen.getByTestId('indicesFilter')).toBeInTheDocument();
     });
 
-  test('calls onSearchForecasterChange when user types in search box', () => {
+  test('calls onSearchForecasterChange when user types in search box', async () => {
     const user = userEvent.setup();
     render(<ListFilters {...defaultProps} />);
     const searchInput = screen.getByPlaceholderText('Search');

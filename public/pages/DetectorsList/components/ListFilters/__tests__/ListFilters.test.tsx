@@ -40,7 +40,7 @@ describe('<ListFilters /> spec', () => {
       const { container } = render(<ListFilters {...defaultProps} />);
       expect(container.firstChild).toMatchSnapshot();
     });
-    test('should call onSearchDetectorChange callback when user inputs text', () => {
+    test('should call onSearchDetectorChange callback when user inputs text', async () => {
       const { getByPlaceholderText } = render(
         <ListFilters {...defaultProps} />
       );
