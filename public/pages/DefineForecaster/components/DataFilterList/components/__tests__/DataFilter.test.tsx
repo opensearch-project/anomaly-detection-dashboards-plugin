@@ -131,6 +131,7 @@ const renderWithProvider = () => ({
 });
 
 describe('dataFilter', () => {
+  const user = userEvent.setup();
   beforeEach(() => {
     jest.clearAllMocks();
   });
@@ -141,28 +142,28 @@ describe('dataFilter', () => {
     getByText('Create custom label?');
     getByText('Operator');
     expect(getByTestId('switchForCustomLabel')).not.toBeChecked();
-    userEvent.click(getByTestId('switchForCustomLabel'));
+    await user.click(getByTestId('switchForCustomLabel'));
     await waitFor(() => {});
     expect(getByTestId('switchForCustomLabel')).toBeChecked();
-    userEvent.click(getByTestId('switchForCustomLabel'));
-    userEvent.click(getByTestId('comboBoxToggleListButton'));
+    await user.click(getByTestId('switchForCustomLabel'));
+    await user.click(getByTestId('comboBoxToggleListButton'));
     await waitFor(() => {
       getAllByText('cpu');
     });
-    userEvent.click(getByTestId('cancelFilter0Button'));
+    await user.click(getByTestId('cancelFilter0Button'));
   }, 30000);
   test('renders data filter, click on custom', async () => {
     const { container, getByText, getByTestId } = renderWithProvider();
     getByText('Create custom label?');
     getByText('Operator');
-    userEvent.click(getByTestId('filterTypeButton'));
+    await user.click(getByTestId('filterTypeButton'));
     await waitFor(() => {
       getByText('Use visual editor');
     });
-    userEvent.click(getByTestId('filterTypeButton'));
+    await user.click(getByTestId('filterTypeButton'));
     await waitFor(() => {
       getByText('Use query DSL');
     });
-    userEvent.click(getByTestId('cancelFilter0Button'));
+    await user.click(getByTestId('cancelFilter0Button'));
   }, 30000);
 });

@@ -63,9 +63,10 @@ describe('<ListFilters />', () => {
     });
 
   test('calls onSearchForecasterChange when user types in search box', () => {
+    const user = userEvent.setup();
     render(<ListFilters {...defaultProps} />);
     const searchInput = screen.getByPlaceholderText('Search');
-    userEvent.type(searchInput, 'test search');
+    await user.type(searchInput, 'test search');
     expect(mockOnSearchForecasterChange).toHaveBeenCalled();
     });
 
@@ -145,10 +146,11 @@ describe('<ListFilters />', () => {
   // a promise that resolves after all events have been fired. We use `await`
   // to ensure our assertions run only after the typing is complete.
   test('calls onSearchIndexChange when searching in index filter', async () => {
+    const user = userEvent.setup();
     render(<ListFilters {...defaultProps} />);
     const indexFilter = screen.getByTestId('indicesFilter');
     const input = within(indexFilter).getByRole('textbox');
-    await userEvent.type(input, 'search-term');
+    await user.type(input, 'search-term');
     // We verify that the callback was fired for each character typed.
     expect(mockOnSearchIndexChange).toHaveBeenCalledTimes('search-term'.length);
     // We use `toHaveBeenLastCalledWith` to check that the *final* call

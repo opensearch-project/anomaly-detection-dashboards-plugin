@@ -89,7 +89,7 @@ describe('<ConfirmDeleteDetectorsModal /> spec', () => {
         <ConfirmDeleteDetectorsModal {...defaultDeleteProps} />
       );
       await waitFor(() => {});
-      userEvent.type(getByPlaceholderText('delete'), 'delete');
+      await user.type(getByPlaceholderText('delete'), 'delete');
       await waitFor(() => {});
       await user.click(getByTestId('confirmButton'));
       await waitFor(() => {});
@@ -136,8 +136,8 @@ describe('<ConfirmDeleteDetectorsModal /> spec', () => {
       const { getByTestId } = render(
         <ConfirmDeleteDetectorsModal {...defaultDeleteProps} />
       );
-      await waitFor(() => {});
-      fireEvent.click(getByTestId('cancelButton'));
+      await waitFor(() => getByTestId('cancelButton'));
+      await user.click(getByTestId('cancelButton'));
       await waitFor(() => {});
       expect(defaultDeleteProps.onHide).toHaveBeenCalled();
     });
@@ -157,7 +157,7 @@ describe('<ConfirmDeleteDetectorsModal /> spec', () => {
         />
       );
       // Try clicking before 'delete' has been typed
-      await waitFor(() => {});
+      await waitFor(() => getByTestId('confirmButton'));
       await user.click(getByTestId('confirmButton'));
       await waitFor(() => {});
       expect(defaultDeleteProps.onStopDetectors).not.toHaveBeenCalled();

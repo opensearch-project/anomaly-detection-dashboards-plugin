@@ -319,16 +319,13 @@ describe('test over 10 associated objects functionality', () => {
     );
     expect(queryByText('detector_name_15')).toBeNull();
     // Navigate to next page
-    await waitFor(() =>
-      await user.click(getAllByTestId('pagination-button-next')[0])
-    );
+    await user.click(getAllByTestId('pagination-button-next')[0]);
     await waitFor(() => findByText('detector_name_15'));
 
     expect(queryByText('detector_name_0')).toBeNull();
     // Navigate to previous page
-    await waitFor(() =>
-      await user.click(getAllByTestId('pagination-button-previous')[0])
-    );
+    await user.click(getAllByTestId('pagination-button-previous')[0]);
+    await waitFor(() => {});
     getByText('detector_name_0');
     expect(queryByText('detector_name_15')).toBeNull();
   }, 200000);
@@ -355,7 +352,7 @@ describe('test over 10 associated objects functionality', () => {
     expect(queryByText('detector_name_15')).toBeNull();
 
     //Input search event
-    userEvent.type(getByPlaceholderText('Search...'), 'detector_name_15');
+    await user.type(getByPlaceholderText('Search...'), 'detector_name_15');
     await waitFor(() => {
       findByText('detector_name_15');
     });
