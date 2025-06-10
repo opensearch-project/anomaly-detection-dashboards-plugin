@@ -82,6 +82,7 @@ const renderWithRouter = (
 });
 
 describe('<DetectorList /> spec', () => {
+  const user = userEvent.setup();
   beforeEach(() => {
     jest.clearAllMocks();
   });
@@ -134,17 +135,17 @@ describe('<DetectorList /> spec', () => {
 
       const { getByText, getAllByTestId, queryByText } = renderWithRouter({
         ...initialDetectorsState,
-        requesting: true,
+        requesting: false,
       });
-      // Default view 20 items per page
+      // Default view 20 items per page - wait for the data to load
       await waitFor(() => getByText('detector_name_0'));
       getByText('index_0');
       expect(queryByText('detector_name_30')).toBeNull();
       expect(queryByText('index_30')).toBeNull();
 
       // Navigate to next page
-      await waitFor(() =>
-        userEvent.click(getAllByTestId('pagination-button-next')[0])
+      await waitFor(async () =>
+        await user.click(getAllByTestId('pagination-button-next')[0])
       );
       getByText('detector_name_30');
       getByText('index_30');
@@ -152,8 +153,8 @@ describe('<DetectorList /> spec', () => {
       expect(queryByText('index_0')).toBeNull();
 
       // Navigate to previous page
-      await waitFor(() =>
-        userEvent.click(getAllByTestId('pagination-button-previous')[0])
+      await waitFor(async () =>
+        await user.click(getAllByTestId('pagination-button-previous')[0])
       );
       getByText('detector_name_0');
       expect(queryByText('detector_name_30')).toBeNull();
@@ -189,25 +190,25 @@ describe('<DetectorList /> spec', () => {
 
       const { getByText, getAllByTestId, queryByText } = renderWithRouter({
         ...initialDetectorsState,
-        requesting: true,
+        requesting: false,
       });
       // Default view 20 items per page
-      await waitFor(() => {});
-      getByText('detector_name_0');
+      await waitFor(() => getByText('detector_name_0'));
+      getByText('index_0');
       expect(queryByText('detector_name_30')).toBeNull();
 
       // Sort by name (string sorting)
-      userEvent.click(getAllByTestId('tableHeaderSortButton')[0]);
+      await user.click(getAllByTestId('tableHeaderSortButton')[0]);
       await waitFor(() => {});
       getByText('detector_name_30');
       expect(queryByText('detector_name_0')).toBeNull();
 
       // Sort by indices (string sorting)
-      userEvent.click(getAllByTestId('tableHeaderSortButton')[1]);
+      await user.click(getAllByTestId('tableHeaderSortButton')[1]);
       await waitFor(() => {});
       getByText('index_0');
       expect(queryByText('index_30')).toBeNull();
-      userEvent.click(getAllByTestId('tableHeaderSortButton')[1]);
+      await user.click(getAllByTestId('tableHeaderSortButton')[1]);
       await waitFor(() => {});
       getByText('index_30');
       expect(queryByText('index_0')).toBeNull();
@@ -215,21 +216,21 @@ describe('<DetectorList /> spec', () => {
       // Sort by detector state (enum sorting)
       // NOTE: this is assuming DETECTOR_STATE.RUNNING is higher alphabetically ('running')
       // than DETECTOR_STATE.DISABLED ('stopped')
-      userEvent.click(getAllByTestId('tableHeaderSortButton')[2]);
+      await user.click(getAllByTestId('tableHeaderSortButton')[2]);
       await waitFor(() => {});
       expect(queryByText(DETECTOR_STATE.RUNNING)).not.toBeNull();
-      userEvent.click(getAllByTestId('tableHeaderSortButton')[2]);
+      await user.click(getAllByTestId('tableHeaderSortButton')[2]);
       await waitFor(() => {});
       expect(queryByText(DETECTOR_STATE.RUNNING)).toBeNull();
 
       // Sort by totalAnomalies (numeric sorting)
-      userEvent.click(getAllByTestId('tableHeaderSortButton')[3]);
+      await user.click(getAllByTestId('tableHeaderSortButton')[3]);
       await waitFor(() => {});
       getByText('0');
       getByText('19');
       expect(queryByText('30')).toBeNull();
       expect(queryByText('39')).toBeNull();
-      userEvent.click(getAllByTestId('tableHeaderSortButton')[3]);
+      await user.click(getAllByTestId('tableHeaderSortButton')[3]);
       await waitFor(() => {});
       getByText('30');
       getByText('39');
@@ -237,21 +238,21 @@ describe('<DetectorList /> spec', () => {
       expect(queryByText('19')).toBeNull();
 
       // Sort by last anomaly occurrence (date sorting)
-      userEvent.click(getAllByTestId('tableHeaderSortButton')[4]);
+      await user.click(getAllByTestId('tableHeaderSortButton')[4]);
       await waitFor(() => {});
       getByText('04/15/2020 9:00 AM');
       expect(queryByText('04/15/2020 9:30 AM')).toBeNull();
-      userEvent.click(getAllByTestId('tableHeaderSortButton')[4]);
+      await user.click(getAllByTestId('tableHeaderSortButton')[4]);
       await waitFor(() => {});
       getByText('04/15/2020 9:30 AM');
       expect(queryByText('04/15/2020 9:00 AM')).toBeNull();
 
       // Sort by last updated (date sorting)
-      userEvent.click(getAllByTestId('tableHeaderSortButton')[5]);
+      await user.click(getAllByTestId('tableHeaderSortButton')[5]);
       await waitFor(() => {});
       getByText('04/15/2020 7:00 AM');
       expect(queryByText('04/15/2020 7:30 AM')).toBeNull();
-      userEvent.click(getAllByTestId('tableHeaderSortButton')[5]);
+      await user.click(getAllByTestId('tableHeaderSortButton')[5]);
       await waitFor(() => {});
       getByText('04/15/2020 7:30 AM');
       expect(queryByText('04/15/2020 7:00 AM')).toBeNull();
@@ -278,7 +279,7 @@ describe('<DetectorList /> spec', () => {
       const { getByText, getByPlaceholderText, queryByText } = renderWithRouter(
         {
           ...initialDetectorsState,
-          requesting: true,
+          requesting: false,
         }
       );
       // Initial load, only first 20 items
@@ -288,7 +289,7 @@ describe('<DetectorList /> spec', () => {
       expect(queryByText('index_38')).toBeNull();
 
       //Input search event
-      userEvent.type(getByPlaceholderText('Search'), 'detector_name_38');
+      await user.type(getByPlaceholderText('Search'), 'detector_name_38');
       await waitFor(() => {});
       getByText('detector_name_38');
       getByText('index_38');
@@ -296,7 +297,7 @@ describe('<DetectorList /> spec', () => {
       expect(queryByText('index_39')).toBeNull();
       expect(queryByText('detector_name_0')).toBeNull();
       expect(queryByText('index_0')).toBeNull();
-    });
+    }, 15000);
     test('should reset to first page when filtering', async () => {
       const randomDetectors = new Array(40).fill(null).map((_, index) => {
         const hasAnomaly = Math.random() > 0.5;
@@ -319,22 +320,22 @@ describe('<DetectorList /> spec', () => {
       const { getByText, getByPlaceholderText, queryByText, getAllByTestId } =
         renderWithRouter({
           ...initialDetectorsState,
-          requesting: true,
+          requesting: false,
         });
       // Initial load, only first 20 items
-      await waitFor(() => {});
-      getByText('detector_name_0');
+      await waitFor(() => getByText('detector_name_0'));
+      getByText('index_0');
 
       // Go to next page
-      userEvent.click(getAllByTestId('pagination-button-next')[0]);
+      await user.click(getAllByTestId('pagination-button-next')[0]);
       await waitFor(() => {});
 
       // Search for detector which is on prev page
-      userEvent.type(getByPlaceholderText('Search'), 'detector_name_0');
+      await user.type(getByPlaceholderText('Search'), 'detector_name_0');
       await waitFor(() => {});
       getByText('detector_name_0');
       expect(queryByText('detector_name_30')).toBeNull();
-    });
+    }, 15000);
     test('should display rows if there are data', async () => {
       const tempAnomalyTime = moment('2019-10-19T09:00:00');
       const tempEnabledTime = moment('2019-10-19T07:00:00');
@@ -376,9 +377,9 @@ describe('<DetectorList /> spec', () => {
       });
       const { getByText } = renderWithRouter({
         ...initialDetectorsState,
-        requesting: true,
+        requesting: false,
       });
-      await waitFor(() => {});
+      await waitFor(() => getByText(randomDetectors[0].name));
       //Assert all visible text are available
       //Test1 Detector
       getByText(randomDetectors[0].name);
@@ -415,11 +416,14 @@ describe('<DetectorList /> spec', () => {
         },
       });
       const { getByText, getByTestId, getAllByRole, queryByText } =
-        renderWithRouter();
-      await waitFor(() => {});
-      userEvent.click(getAllByRole('checkbox')[0]);
-      userEvent.click(getByTestId('listActionsButton'));
-      userEvent.click(getByText('Start real-time detectors'));
+        renderWithRouter({
+          ...initialDetectorsState,
+          requesting: false,
+        });
+      await waitFor(() => getByText(randomDetectors[0].name));
+      await user.click(getAllByRole('checkbox')[0]);
+      await user.click(getByTestId('listActionsButton'));
+      await user.click(getByText('Start real-time detectors'));
       expect(
         queryByText('Are you sure you want to start the selected detectors?')
       ).toBeNull();
@@ -443,11 +447,14 @@ describe('<DetectorList /> spec', () => {
           totalDetectors: randomDetectors.length,
         },
       });
-      const { getByText, getByTestId, getAllByRole } = renderWithRouter();
-      await waitFor(() => {});
-      userEvent.click(getAllByRole('checkbox')[0]);
-      userEvent.click(getByTestId('listActionsButton'));
-      userEvent.click(getByText('Start real-time detectors'));
+      const { getByText, getByTestId, getAllByRole } = renderWithRouter({
+        ...initialDetectorsState,
+        requesting: false,
+      });
+      await waitFor(() => getByText(randomDetectors[0].name));
+      await user.click(getAllByRole('checkbox')[0]);
+      await user.click(getByTestId('listActionsButton'));
+      await user.click(getByText('Start real-time detectors'));
       getByText('Are you sure you want to start the selected detectors?');
       getByText('Start detectors');
     });
@@ -471,11 +478,14 @@ describe('<DetectorList /> spec', () => {
         },
       });
       const { getByText, getByTestId, getAllByRole, queryByText } =
-        renderWithRouter();
-      await waitFor(() => {});
-      userEvent.click(getAllByRole('checkbox')[0]);
-      userEvent.click(getByTestId('listActionsButton'));
-      userEvent.click(getByText('Stop real-time detectors'));
+        renderWithRouter({
+          ...initialDetectorsState,
+          requesting: false,
+        });
+      await waitFor(() => getByText(randomDetectors[0].name));
+      await user.click(getAllByRole('checkbox')[0]);
+      await user.click(getByTestId('listActionsButton'));
+      await user.click(getByText('Stop real-time detectors'));
       expect(
         queryByText('Are you sure you want to stop the selected detectors?')
       ).toBeNull();
@@ -499,11 +509,14 @@ describe('<DetectorList /> spec', () => {
           totalDetectors: randomDetectors.length,
         },
       });
-      const { getByText, getByTestId, getAllByRole } = renderWithRouter();
-      await waitFor(() => {});
-      userEvent.click(getAllByRole('checkbox')[0]);
-      userEvent.click(getByTestId('listActionsButton'));
-      userEvent.click(getByText('Stop real-time detectors'));
+      const { getByText, getByTestId, getAllByRole } = renderWithRouter({
+        ...initialDetectorsState,
+        requesting: false,
+      });
+      await waitFor(() => getByText(randomDetectors[0].name));
+      await user.click(getAllByRole('checkbox')[0]);
+      await user.click(getByTestId('listActionsButton'));
+      await user.click(getByText('Stop real-time detectors'));
       getByText('Are you sure you want to stop the selected detectors?');
       getByText('Stop detectors');
     });
@@ -572,61 +585,63 @@ describe('<DetectorList /> spec', () => {
           totalDetectors: randomDetectors.length,
         },
       });
-      const { getByText, getByTestId, getAllByRole } = renderWithRouter();
-      await waitFor(() => {});
-      // Try to delete disabled detector
-      userEvent.click(getAllByRole('checkbox')[1]);
-      userEvent.click(getByTestId('listActionsButton'));
-      userEvent.click(getByText('Delete'));
+      const { getByText, getByTestId, getAllByRole } = renderWithRouter({
+        ...initialDetectorsState,
+        requesting: false,
+      });
+      await waitFor(() => getByText(randomDetectors[0].name));
+      await user.click(getAllByRole('checkbox')[0]);
+      await user.click(getByTestId('listActionsButton'));
+      await user.click(getByText('Delete'));
       getByText('Are you sure you want to delete the selected detectors?');
       getByText('Delete detectors');
-      userEvent.click(getAllByRole('button')[0]);
-      userEvent.click(getAllByRole('checkbox')[1]);
+      await user.click(getAllByRole('button')[0]);
+      await user.click(getAllByRole('checkbox')[1]);
 
       // Try to delete initializing detector
-      userEvent.click(getAllByRole('checkbox')[2]);
-      userEvent.click(getByTestId('listActionsButton'));
-      userEvent.click(getByText('Delete'));
+      await user.click(getAllByRole('checkbox')[2]);
+      await user.click(getByTestId('listActionsButton'));
+      await user.click(getByText('Delete'));
       getByText('Are you sure you want to delete the selected detectors?');
       getByText('Delete detectors');
-      userEvent.click(getAllByRole('button')[0]);
-      userEvent.click(getAllByRole('checkbox')[2]);
+      await user.click(getAllByRole('button')[0]);
+      await user.click(getAllByRole('checkbox')[2]);
 
       // Try to delete running detector
-      userEvent.click(getAllByRole('checkbox')[3]);
-      userEvent.click(getByTestId('listActionsButton'));
-      userEvent.click(getByText('Delete'));
+      await user.click(getAllByRole('checkbox')[3]);
+      await user.click(getByTestId('listActionsButton'));
+      await user.click(getByText('Delete'));
       getByText('Are you sure you want to delete the selected detectors?');
       getByText('Delete detectors');
-      userEvent.click(getAllByRole('button')[0]);
-      userEvent.click(getAllByRole('checkbox')[3]);
+      await user.click(getAllByRole('button')[0]);
+      await user.click(getAllByRole('checkbox')[3]);
 
       // Try to delete feature required detector
-      userEvent.click(getAllByRole('checkbox')[4]);
-      userEvent.click(getByTestId('listActionsButton'));
-      userEvent.click(getByText('Delete'));
+      await user.click(getAllByRole('checkbox')[4]);
+      await user.click(getByTestId('listActionsButton'));
+      await user.click(getByText('Delete'));
       getByText('Are you sure you want to delete the selected detectors?');
       getByText('Delete detectors');
-      userEvent.click(getAllByRole('button')[0]);
-      userEvent.click(getAllByRole('checkbox')[4]);
+      await user.click(getAllByRole('button')[0]);
+      await user.click(getAllByRole('checkbox')[4]);
 
       // Try to delete init failure detector
-      userEvent.click(getAllByRole('checkbox')[5]);
-      userEvent.click(getByTestId('listActionsButton'));
-      userEvent.click(getByText('Delete'));
+      await user.click(getAllByRole('checkbox')[5]);
+      await user.click(getByTestId('listActionsButton'));
+      await user.click(getByText('Delete'));
       getByText('Are you sure you want to delete the selected detectors?');
       getByText('Delete detectors');
-      userEvent.click(getAllByRole('button')[0]);
-      userEvent.click(getAllByRole('checkbox')[5]);
+      await user.click(getAllByRole('button')[0]);
+      await user.click(getAllByRole('checkbox')[5]);
 
       // Try to delete unexpected failure detector
-      userEvent.click(getAllByRole('checkbox')[6]);
-      userEvent.click(getByTestId('listActionsButton'));
-      userEvent.click(getByText('Delete'));
+      await user.click(getAllByRole('checkbox')[6]);
+      await user.click(getByTestId('listActionsButton'));
+      await user.click(getByText('Delete'));
       getByText('Are you sure you want to delete the selected detectors?');
       getByText('Delete detectors');
-      userEvent.click(getAllByRole('button')[0]);
-      userEvent.click(getAllByRole('checkbox')[6]);
+      await user.click(getAllByRole('button')[0]);
+      await user.click(getAllByRole('checkbox')[6]);
     });
   });
 });

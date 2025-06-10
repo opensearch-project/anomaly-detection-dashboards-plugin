@@ -35,15 +35,16 @@ describe('<ListFilters /> spec', () => {
     jest.clearAllMocks();
   });
   describe('Empty results', () => {
+    const user = userEvent.setup();
     test('renders component with empty message', async () => {
       const { container } = render(<ListFilters {...defaultProps} />);
       expect(container.firstChild).toMatchSnapshot();
     });
-    test('should call onSearchDetectorChange callback when user inputs text', () => {
+    test('should call onSearchDetectorChange callback when user inputs text', async () => {
       const { getByPlaceholderText } = render(
         <ListFilters {...defaultProps} />
       );
-      userEvent.type(getByPlaceholderText('Search'), 'Testing');
+      await user.type(getByPlaceholderText('Search'), 'Testing');
       expect(defaultProps.onSearchDetectorChange).toHaveBeenCalledTimes(7);
     });
     test('pagination should be hidden if pages count is 1', async () => {
@@ -78,9 +79,9 @@ describe('<ListFilters /> spec', () => {
       expect(getByText(DETECTOR_STATE.DISABLED)).toBeInTheDocument();
       expect(getByText('test_index')).toBeInTheDocument();
     });
-    test('should call onIndexSearchChange when searching in index filter', () => {
+    test('should call onIndexSearchChange when searching in index filter', async () => {
       const { getAllByTestId } = render(<ListFilters {...defaultProps} />);
-      userEvent.type(getAllByTestId('comboBoxSearchInput')[1], 'Testing');
+      await user.type(getAllByTestId('comboBoxSearchInput')[1], 'Testing');
       expect(defaultProps.onSearchIndexChange).toHaveBeenCalledTimes(7);
     });
     test('should display multiple selected detector state and index options', () => {

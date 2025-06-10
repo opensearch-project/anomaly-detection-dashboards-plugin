@@ -124,6 +124,8 @@ const renderWithRouter = (visEmbeddable: VisualizeEmbeddable) => ({
   ),
 });
 describe('AssociatedDetectors spec', () => {
+  const user = userEvent.setup();
+
   let augmentVisLoader: SavedObjectLoaderAugmentVis;
   let mockDeleteFn: jest.Mock;
   let detectorsToAssociate = new Array(2).fill(null).map((_, index) => {
@@ -236,13 +238,13 @@ describe('AssociatedDetectors spec', () => {
       await waitFor(() => getByText('detector_name_0'));
       getByText('5');
       expect(queryByText('detector_name_1')).toBeNull();
-      userEvent.click(getAllByTestId('unlinkButton')[0]);
+      await user.click(getAllByTestId('unlinkButton')[0]);
       await waitFor(() =>
         getByText(
           'Removing association unlinks detector_name_0 detector from the visualization but does not delete it. The detector association can be restored.'
         )
       );
-      userEvent.click(getAllByTestId('confirmUnlinkButton')[0]);
+      await user.click(getAllByTestId('confirmUnlinkButton')[0]);
       expect(
         (
           await getAugmentVisSavedObjs(
@@ -259,6 +261,8 @@ describe('AssociatedDetectors spec', () => {
 
 //I have a new beforeEach because I making a lot more detectors and saved objects for these tests
 describe('test over 10 associated objects functionality', () => {
+  const user = userEvent.setup();
+
   let augmentVisLoader: SavedObjectLoaderAugmentVis;
   let mockDeleteFn: jest.Mock;
   const detectorsToAssociate = new Array(16).fill(null).map((_, index) => {
@@ -315,16 +319,13 @@ describe('test over 10 associated objects functionality', () => {
     );
     expect(queryByText('detector_name_15')).toBeNull();
     // Navigate to next page
-    await waitFor(() =>
-      userEvent.click(getAllByTestId('pagination-button-next')[0])
-    );
+    await user.click(getAllByTestId('pagination-button-next')[0]);
     await waitFor(() => findByText('detector_name_15'));
 
     expect(queryByText('detector_name_0')).toBeNull();
     // Navigate to previous page
-    await waitFor(() =>
-      userEvent.click(getAllByTestId('pagination-button-previous')[0])
-    );
+    await user.click(getAllByTestId('pagination-button-previous')[0]);
+    await waitFor(() => {});
     getByText('detector_name_0');
     expect(queryByText('detector_name_15')).toBeNull();
   }, 200000);
@@ -351,7 +352,7 @@ describe('test over 10 associated objects functionality', () => {
     expect(queryByText('detector_name_15')).toBeNull();
 
     //Input search event
-    userEvent.type(getByPlaceholderText('Search...'), 'detector_name_15');
+    await user.type(getByPlaceholderText('Search...'), 'detector_name_15');
     await waitFor(() => {
       findByText('detector_name_15');
     });
@@ -380,7 +381,7 @@ describe('test over 10 associated objects functionality', () => {
     expect(queryByText('detector_name_15')).toBeNull();
 
     // Sort by name (string sorting)
-    userEvent.click(getAllByTestId('tableHeaderSortButton')[0]);
+    await user.click(getAllByTestId('tableHeaderSortButton')[0]);
     await waitFor(() =>
       findByText('detector_name_15', undefined, { timeout: 150000 })
     );

@@ -27,6 +27,7 @@ const defaultProps = {
 };
 
 describe('<ConfirmDeleteForecastersModal /> spec', () => {
+  const user = userEvent.setup();
   beforeEach(() => {
     jest.clearAllMocks();
   });
@@ -101,13 +102,13 @@ describe('<ConfirmDeleteForecastersModal /> spec', () => {
       const deleteField = screen.getByTestId('typeDeleteField');
       const confirmButton = screen.getByTestId('confirmButton');
       
-      userEvent.type(deleteField, 'wrong');
+      await user.type(deleteField, 'wrong');
       await waitFor(() => {
         expect(confirmButton).toBeDisabled();
       });
       
-      userEvent.clear(deleteField);
-      userEvent.type(deleteField, 'delet');
+      await user.clear(deleteField);
+      await user.type(deleteField, 'delet');
       await waitFor(() => {
         expect(confirmButton).toBeDisabled();
       });
@@ -119,7 +120,7 @@ describe('<ConfirmDeleteForecastersModal /> spec', () => {
       const deleteField = screen.getByTestId('typeDeleteField');
       const confirmButton = screen.getByTestId('confirmButton');
       
-      userEvent.type(deleteField, 'delete');
+      await user.type(deleteField, 'delete');
       await waitFor(() => {
         expect(confirmButton).not.toBeDisabled();
       });
@@ -131,12 +132,12 @@ describe('<ConfirmDeleteForecastersModal /> spec', () => {
       const deleteField = screen.getByTestId('typeDeleteField');
       const confirmButton = screen.getByTestId('confirmButton');
       
-      userEvent.type(deleteField, 'delete');
+      await user.type(deleteField, 'delete');
       await waitFor(() => {
         expect(confirmButton).not.toBeDisabled();
       });
       
-      userEvent.clear(deleteField);
+      await user.clear(deleteField);
       await waitFor(() => {
         expect(confirmButton).toBeDisabled();
       });
@@ -195,7 +196,7 @@ describe('<ConfirmDeleteForecastersModal /> spec', () => {
       const deleteField = screen.getByTestId('typeDeleteField');
       const confirmButton = screen.getByTestId('confirmButton');
       
-      userEvent.type(deleteField, 'delete');
+      await user.type(deleteField, 'delete');
       await waitFor(() => {
         expect(confirmButton).not.toBeDisabled();
       });
@@ -222,7 +223,7 @@ describe('<ConfirmDeleteForecastersModal /> spec', () => {
       const deleteField = screen.getByTestId('typeDeleteField');
       const confirmButton = screen.getByTestId('confirmButton');
       
-      userEvent.type(deleteField, 'delete');
+      await user.type(deleteField, 'delete');
       await waitFor(() => {
         expect(confirmButton).not.toBeDisabled();
       });
@@ -258,7 +259,7 @@ describe('<ConfirmDeleteForecastersModal /> spec', () => {
       const deleteField = screen.getByTestId('typeDeleteField');
       const confirmButton = screen.getByTestId('confirmButton');
       
-      userEvent.type(deleteField, 'delete');
+      await user.type(deleteField, 'delete');
       await waitFor(() => {
         expect(confirmButton).not.toBeDisabled();
       });
@@ -300,7 +301,7 @@ describe('<ConfirmDeleteForecastersModal /> spec', () => {
       const deleteField = screen.getByTestId('typeDeleteField');
       const confirmButton = screen.getByTestId('confirmButton');
       
-      userEvent.type(deleteField, 'delete');
+      await user.type(deleteField, 'delete');
       await waitFor(() => {
         expect(confirmButton).not.toBeDisabled();
       });
@@ -329,7 +330,7 @@ describe('<ConfirmDeleteForecastersModal /> spec', () => {
       const deleteField = screen.getByTestId('typeDeleteField');
       const confirmButton = screen.getByTestId('confirmButton');
       
-      userEvent.type(deleteField, 'delete');
+      await user.type(deleteField, 'delete');
       await waitFor(() => {
         expect(confirmButton).not.toBeDisabled();
       });
@@ -358,7 +359,7 @@ describe('<ConfirmDeleteForecastersModal /> spec', () => {
       const deleteField = screen.getByTestId('typeDeleteField');
       const confirmButton = screen.getByTestId('confirmButton');
       
-      userEvent.type(deleteField, 'delete');
+      await user.type(deleteField, 'delete');
       await waitFor(() => {
         expect(confirmButton).not.toBeDisabled();
       });
@@ -402,7 +403,7 @@ describe('<ConfirmDeleteForecastersModal /> spec', () => {
       const deleteField = screen.getByTestId('typeDeleteField');
       const confirmButton = screen.getByTestId('confirmButton');
       
-      userEvent.type(deleteField, 'delete');
+      await user.type(deleteField, 'delete');
       await waitFor(() => {
         expect(confirmButton).not.toBeDisabled();
       });

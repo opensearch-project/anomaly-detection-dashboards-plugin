@@ -11,6 +11,8 @@ import { DetectorListItem } from '../../../../../../public/models/interfaces';
 import userEvent from '@testing-library/user-event';
 
 describe('ConfirmUnlinkDetectorModal spec', () => {
+  const user = userEvent.setup();
+
   beforeEach(() => {
     jest.clearAllMocks();
   });
@@ -48,7 +50,7 @@ describe('ConfirmUnlinkDetectorModal spec', () => {
       <ConfirmUnlinkDetectorModal {...ConfirmUnlinkDetectorModalProps} />
     );
     getByText('Remove association?');
-    userEvent.click(getByTestId('confirmUnlinkButton'));
+    await user.click(getByTestId('confirmUnlinkButton'));
     expect(ConfirmUnlinkDetectorModalProps.onConfirm).toHaveBeenCalled();
   });
   test('should call onConfirm() when closing', async () => {
@@ -56,14 +58,14 @@ describe('ConfirmUnlinkDetectorModal spec', () => {
       <ConfirmUnlinkDetectorModal {...ConfirmUnlinkDetectorModalProps} />
     );
     getByText('Remove association?');
-    userEvent.click(getByTestId('confirmUnlinkButton'));
+    await user.click(getByTestId('confirmUnlinkButton'));
     expect(ConfirmUnlinkDetectorModalProps.onConfirm).toHaveBeenCalled();
   });
   test('should call onHide() when closing', async () => {
     const { getByTestId } = render(
       <ConfirmUnlinkDetectorModal {...ConfirmUnlinkDetectorModalProps} />
     );
-    userEvent.click(getByTestId('cancelUnlinkButton'));
+    await user.click(getByTestId('cancelUnlinkButton'));
     expect(ConfirmUnlinkDetectorModalProps.onHide).toHaveBeenCalled();
   });
 });
