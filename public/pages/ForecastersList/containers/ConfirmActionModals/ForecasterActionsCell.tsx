@@ -63,17 +63,12 @@ export function ForecasterActionsCell(props: ForecasterActionsCellProps) {
 
     // Safely guard against out-of-bounds
     if (rowIndex >= forecastersToDisplay.length) return null;
-    console.log("forecastersToDisplay", forecastersToDisplay);
-    console.log("rowIndex", rowIndex);
     const forecaster = forecastersToDisplay[rowIndex];
     if (!forecaster) return null;
-    console.log("forecaster", forecaster);
 
     const forecasterState = forecaster.curState;
     const forecasterId = forecaster.id;
     const forecasterName = forecaster.name;
-    console.log("forecasterState", forecasterState);
-    console.log("forecasterId", forecasterId);
 
     // Now you can use React hooks here
     const [isPopoverVisible, setIsPopoverVisible] = useState(false);

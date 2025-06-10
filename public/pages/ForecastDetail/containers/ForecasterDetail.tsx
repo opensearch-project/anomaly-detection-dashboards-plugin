@@ -112,7 +112,6 @@ export const ForecasterDetail = (props: ForecasterDetailProps) => {
   const dataSourceEnabled = getDataSourceEnabled().enabled;
   const location = useLocation();
   const MDSQueryParams = getDataSourceFromURL(location);
-  console.log("ForecasterDetail MDSQueryParams", MDSQueryParams);
   const dataSourceId = MDSQueryParams.dataSourceId;
 
   // We can get forecasterId from URL params because this component is rendered by React Router

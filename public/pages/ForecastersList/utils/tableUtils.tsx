@@ -116,7 +116,6 @@ export function renderCellValueFactory(
       }
 
       const value = forecaster[columnId];
-      console.log("value", value, columnId);
 
       switch (columnId) {
         case 'name': {

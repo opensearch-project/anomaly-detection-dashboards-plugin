@@ -76,7 +76,7 @@ export const ConfirmStartForecastersModal = (
               setIsStarting(true);
               try {
                 await props.onStartForecaster(forecaster.id, forecaster.name);
-              props.onConfirm();
+                props.onConfirm();
               } catch (error) {
                 console.error("Failed to start forecaster:", error);
                 setIsStarting(false);

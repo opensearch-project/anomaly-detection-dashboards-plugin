@@ -1,3 +1,14 @@
+/*
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * The OpenSearch Contributors require contributions made to
+ * this file be licensed under the Apache-2.0 license or a
+ * compatible open source license.
+ *
+ * Modifications Copyright OpenSearch Contributors. See
+ * GitHub history for details.
+ */
+
 import React, { Fragment, useEffect, useRef, useState } from 'react';
 import { Field, FieldProps, FormikProps } from 'formik';
 import {
@@ -19,6 +30,7 @@ import {
 import { FORECASTER_DOCS_LINK, FIELD_MAX_WIDTH, INPUT_SLIDER_WIDTH } from '../../../../utils/constants';
 import { FormattedFormRow } from '../../../../components/FormattedFormRow/FormattedFormRow';
 import '../../index.scss';
+import { toNumberOrEmpty } from '../../utils/helpers';
 
 interface SettingsProps {
   isEditable?: boolean;
@@ -56,8 +68,7 @@ export const Settings = ({ isEditable = true }: SettingsProps) => {
                       style={{ width: '100%' }}
                       disabled={!isEditable}
                       onChange={(e) => {
-                        const raw = e.target.value;
-                        form.setFieldValue(field.name, raw === '' ? '' : Number(raw));
+                        form.setFieldValue(field.name, toNumberOrEmpty(e.target.value));
                       }}
                     />
                   </div>
@@ -105,8 +116,7 @@ export const Settings = ({ isEditable = true }: SettingsProps) => {
                       style={{ width: '100%' }}
                       disabled={!isEditable}
                       onChange={(e) => {
-                        const raw = e.target.value;
-                        form.setFieldValue(field.name, raw === '' ? '' : Number(raw));
+                        form.setFieldValue(field.name, toNumberOrEmpty(e.target.value));
                       }}
                     />
                   </div>
@@ -145,7 +155,6 @@ export const Settings = ({ isEditable = true }: SettingsProps) => {
                 sliderPanelRef.current &&
                 !sliderPanelRef.current.contains(e.target as Node)
               ) {
-                console.log('Outside slider => Hiding slider');
                 setShowHorizonDetails(false);
               }
             }
@@ -211,8 +220,7 @@ export const Settings = ({ isEditable = true }: SettingsProps) => {
                           setShowHorizonDetails(true);
                         }}
                         onChange={(e) => {
-                          const raw = e.target.value;
-                          form.setFieldValue(field.name, raw === '' ? '' : Number(raw));
+                          form.setFieldValue(field.name, toNumberOrEmpty(e.target.value));
                         }}
                       />
                     </div>
@@ -310,8 +318,7 @@ export const Settings = ({ isEditable = true }: SettingsProps) => {
                       disabled={!isEditable}
                     style={{ width: '100%' }}
                     onChange={(e) => {
-                      const raw = e.target.value;
-                      form.setFieldValue(field.name, raw === '' ? '' : Number(raw));
+                      form.setFieldValue(field.name, toNumberOrEmpty(e.target.value));
                     }}
                   />
                   </div>

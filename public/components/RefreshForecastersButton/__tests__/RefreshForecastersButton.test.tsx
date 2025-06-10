@@ -14,6 +14,13 @@ import { render } from '@testing-library/react';
 import { Router } from 'react-router-dom';
 import { createMemoryHistory } from 'history';
 import { RefreshForecastersButton } from '../RefreshForecastersButton';
+import { getDataSourceEnabled, } from '../../../services';
+
+// Mock the module
+jest.mock('../../../services', () => ({
+  ...jest.requireActual('../../../services'),
+  getDataSourceEnabled: jest.fn(),
+}));
 
 describe('<RefreshForecastersButton /> spec', () => {
   beforeAll(() => {
@@ -25,6 +32,13 @@ describe('<RefreshForecastersButton /> spec', () => {
         hash: '',
       },
       writable: true
+    });
+  });
+
+  beforeEach(() => {
+    // Mock the return value
+    (getDataSourceEnabled as jest.Mock).mockReturnValue({
+      enabled: false, // or true, depending on what you want to test
     });
   });
 

@@ -201,3 +201,7 @@ export const getCustomValueStrArray = (imputationMethodStr : string, forecaster:
   }
   return []
 }
+
+export const toNumberOrEmpty = (value: string): number | '' => {
+  return value === '' ? '' : Number(value);
+};

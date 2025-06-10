@@ -749,7 +749,6 @@ exports[`<DefineDetector /> Full creating detector definition renders the compon
               <div
                 class="euiFormRow euiFormRow--fullWidth euiFormRow--compressed"
                 hint="Define how often the detector collects data to generate anomalies. The shorter the interval is, the more real time the detector results will be, and the more computing resources the detector will need."
-                hintlink="https://opensearch.org/docs/monitoring-plugins/ad"
                 id="random_html_id-row"
                 title="Detector interval"
               >
@@ -856,7 +855,6 @@ exports[`<DefineDetector /> Full creating detector definition renders the compon
           <div
             class="euiFormRow euiFormRow--fullWidth euiFormRow--compressed"
             hint="Specify a window of delay for a detector to fetch data, if you need to account for extra processing time."
-            hintlink="https://opensearch.org/docs/monitoring-plugins/ad"
             id="random_html_id-row"
             style="margin-top: 16px;"
             title="Window delay"
@@ -1914,7 +1912,6 @@ exports[`<DefineDetector /> FullEdit editing detector page renders the component
               <div
                 class="euiFormRow euiFormRow--fullWidth euiFormRow--compressed"
                 hint="Define how often the detector collects data to generate anomalies. The shorter the interval is, the more real time the detector results will be, and the more computing resources the detector will need."
-                hintlink="https://opensearch.org/docs/monitoring-plugins/ad"
                 id="random_html_id-row"
                 title="Detector interval"
               >
@@ -2020,7 +2017,6 @@ exports[`<DefineDetector /> FullEdit editing detector page renders the component
           <div
             class="euiFormRow euiFormRow--fullWidth euiFormRow--compressed"
             hint="Specify a window of delay for a detector to fetch data, if you need to account for extra processing time."
-            hintlink="https://opensearch.org/docs/monitoring-plugins/ad"
             id="random_html_id-row"
             style="margin-top: 16px;"
             title="Window delay"
@@ -3011,7 +3007,6 @@ exports[`<DefineDetector /> empty creating detector definition renders the compo
               <div
                 class="euiFormRow euiFormRow--fullWidth euiFormRow--compressed"
                 hint="Define how often the detector collects data to generate anomalies. The shorter the interval is, the more real time the detector results will be, and the more computing resources the detector will need."
-                hintlink="https://opensearch.org/docs/monitoring-plugins/ad"
                 id="random_html_id-row"
                 title="Detector interval"
               >
@@ -3117,7 +3112,6 @@ exports[`<DefineDetector /> empty creating detector definition renders the compo
           <div
             class="euiFormRow euiFormRow--fullWidth euiFormRow--compressed"
             hint="Specify a window of delay for a detector to fetch data, if you need to account for extra processing time."
-            hintlink="https://opensearch.org/docs/monitoring-plugins/ad"
             id="random_html_id-row"
             style="margin-top: 16px;"
             title="Window delay"
@@ -4107,7 +4101,6 @@ exports[`<DefineDetector /> empty editing detector definition renders the compon
               <div
                 class="euiFormRow euiFormRow--fullWidth euiFormRow--compressed"
                 hint="Define how often the detector collects data to generate anomalies. The shorter the interval is, the more real time the detector results will be, and the more computing resources the detector will need."
-                hintlink="https://opensearch.org/docs/monitoring-plugins/ad"
                 id="random_html_id-row"
                 title="Detector interval"
               >
@@ -4213,7 +4206,6 @@ exports[`<DefineDetector /> empty editing detector definition renders the compon
           <div
             class="euiFormRow euiFormRow--fullWidth euiFormRow--compressed"
             hint="Specify a window of delay for a detector to fetch data, if you need to account for extra processing time."
-            hintlink="https://opensearch.org/docs/monitoring-plugins/ad"
             id="random_html_id-row"
             style="margin-top: 16px;"
             title="Window delay"

@@ -342,6 +342,10 @@ export function ConfigureForecastModel(props: ConfigureForecastModelProps) {
           });
         });
     } catch (e) {
+      console.error('Failed to create forecaster:', e);
+      core.notifications.toasts.addDanger(
+        'There was a problem creating the forecaster'
+      );
     } finally {
       formikHelpers.setSubmitting(false);
     }
@@ -414,6 +418,7 @@ export function ConfigureForecastModel(props: ConfigureForecastModelProps) {
                 <EuiSpacer size="l" />
 
                 <EuiSmallButton
+                  data-test-subj="suggestParametersButton"
                   onClick={() => setShowSuggestDialog(true)}
                 >
                   Suggest parameters

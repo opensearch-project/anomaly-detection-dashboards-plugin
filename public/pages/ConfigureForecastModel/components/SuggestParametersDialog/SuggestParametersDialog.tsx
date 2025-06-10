@@ -1,3 +1,14 @@
+/*
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * The OpenSearch Contributors require contributions made to
+ * this file be licensed under the Apache-2.0 license or a
+ * compatible open source license.
+ *
+ * Modifications Copyright OpenSearch Contributors. See
+ * GitHub history for details.
+ */
+
 import React, { useState } from 'react';
 import {
   EuiModal,
@@ -81,7 +92,6 @@ export const SuggestParametersDialog: React.FC<SuggestParametersDialogProps> = (
         : 'history,horizon,window_delay';
 
     try {
-      console.log('forecasterBody', forecasterBody);
       const resp: any = await dispatch(
         suggestForecaster(forecasterBody, suggestionParams, dataSourceId) as any
       );
@@ -138,7 +148,7 @@ export const SuggestParametersDialog: React.FC<SuggestParametersDialogProps> = (
   return (
     <EuiModal onClose={onClose} initialFocus="[name=radioGroup]">
       <EuiModalHeader>
-        <EuiModalHeaderTitle>
+        <EuiModalHeaderTitle data-test-subj="suggestParametersDialogTitle">
           <h2>Suggest parameters</h2>
         </EuiModalHeaderTitle>
       </EuiModalHeader>
@@ -215,13 +225,16 @@ export const SuggestParametersDialog: React.FC<SuggestParametersDialogProps> = (
 
         {isResult && (
           <>
-            <EuiText>
+            <EuiText data-test-subj="suggestedParametersResult">
               <p>Based on your inputs, the suggested parameters are:</p>
               <div className="eui-textLeft">
-                {suggestedInterval !== undefined && (
+                {suggestedInterval !== undefined ? (
                   <span>• Interval: {suggestedInterval} minutes<br /></span>
+                ) : (
+                  <span style={{ color: '#BD271E' }}>• Interval: Unable to determine a suitable interval<br /></span>
                 )}
-                {suggestedHorizon !== undefined && (
+                
+                {suggestedHorizon !== undefined ? (
                   <span>
                     • Horizon: {suggestedHorizon} intervals
                     {suggestedInterval && (
@@ -232,8 +245,11 @@ export const SuggestParametersDialog: React.FC<SuggestParametersDialogProps> = (
                     )}
                     <br />
                   </span>
+                ) : (
+                  <span style={{ color: '#BD271E' }}>• Horizon: Unable to determine a suitable horizon<br /></span>
                 )}
-                {suggestedHistory !== undefined && (
+                
+                {suggestedHistory !== undefined ? (
                   <span>
                     • History: {suggestedHistory} intervals
                     {suggestedInterval && (
@@ -244,9 +260,14 @@ export const SuggestParametersDialog: React.FC<SuggestParametersDialogProps> = (
                     )}
                     <br />
                   </span>
+                ) : (
+                  <span style={{ color: '#BD271E' }}>• History: Unable to determine a suitable history window<br /></span>
                 )}
-                {suggestedWindowDelay !== undefined && (
+                
+                {suggestedWindowDelay !== undefined ? (
                   <span>• Window delay: {suggestedWindowDelay} minutes</span>
+                ) : (
+                  <span style={{ color: '#BD271E' }}>• Window delay: Unable to determine a suitable delay</span>
                 )}
               </div>
             </EuiText>
@@ -262,6 +283,7 @@ export const SuggestParametersDialog: React.FC<SuggestParametersDialogProps> = (
             fill
             iconType="arrowRight"
             iconSide="right"
+            data-test-subj="generateSuggestionsButton"
             onClick={onGenerateSuggestions}
           >
             Generate suggestions
@@ -279,7 +301,7 @@ export const SuggestParametersDialog: React.FC<SuggestParametersDialogProps> = (
         )}
 
         {isResult && (
-          <EuiSmallButton fill color="primary" onClick={onUseSuggestedParams}>
+          <EuiSmallButton fill color="primary" onClick={onUseSuggestedParams} data-test-subj="useSuggestedParametersButton">
             Use suggested parameters
           </EuiSmallButton>
         )}

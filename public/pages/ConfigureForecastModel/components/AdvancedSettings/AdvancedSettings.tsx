@@ -1,3 +1,14 @@
+/*
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * The OpenSearch Contributors require contributions made to
+ * this file be licensed under the Apache-2.0 license or a
+ * compatible open source license.
+ *
+ * Modifications Copyright OpenSearch Contributors. See
+ * GitHub history for details.
+ */
+
 import { useEffect, useState } from 'react';
 import {
   EuiFlexItem,
@@ -30,7 +41,8 @@ import {
 import { FormattedFormRow } from '../../../../components/FormattedFormRow/FormattedFormRow';
 import { SparseDataOptionValue } from '../../utils/constants';
 import '../../index.scss';
-import React from 'react';
+import React, { ReactElement } from 'react';
+import { toNumberOrEmpty } from '../../utils/helpers';
 
 interface AdvancedSettingsProps {
   isEditable?: boolean;
@@ -111,8 +123,7 @@ export function AdvancedSettings({ isEditable = true }: AdvancedSettingsProps) {
                         value={field.value || ''}
                         disabled={!isEditable}
                         onChange={(e) => {
-                          const raw = e.target.value;
-                          form.setFieldValue(field.name, raw === '' ? '' : Number(raw));
+                          form.setFieldValue(field.name, toNumberOrEmpty(e.target.value));
                         }}
                       />
                     </div>
@@ -158,8 +169,7 @@ export function AdvancedSettings({ isEditable = true }: AdvancedSettingsProps) {
                         value={field.value || ''}
                         disabled={!isEditable}
                         onChange={(e) => {
-                          const raw = e.target.value;
-                          form.setFieldValue(field.name, raw === '' ? '' : Number(raw));
+                          form.setFieldValue(field.name, toNumberOrEmpty(e.target.value));
                         }}
                       />
                     </div>
@@ -225,8 +235,7 @@ export function AdvancedSettings({ isEditable = true }: AdvancedSettingsProps) {
                         value={field.value || ''}
                         disabled={!isEditable}
                         onChange={(e) => {
-                          const raw = e.target.value;
-                          form.setFieldValue(field.name, raw === '' ? '' : Number(raw));
+                          form.setFieldValue(field.name, toNumberOrEmpty(e.target.value));
                         }}
                       />
                     </div>
@@ -309,8 +318,7 @@ export function AdvancedSettings({ isEditable = true }: AdvancedSettingsProps) {
                                             name={field.name}
                                             disabled={!isEditable}
                                             onChange={(e) => {
-                                              const raw = e.target.value;
-                                              form.setFieldValue(field.name, raw === '' ? '' : Number(raw));
+                                              form.setFieldValue(field.name, toNumberOrEmpty(e.target.value));
                                             }}
                                             value={field.value || ''}
                                           />

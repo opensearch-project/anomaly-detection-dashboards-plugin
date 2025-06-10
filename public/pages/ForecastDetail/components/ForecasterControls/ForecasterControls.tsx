@@ -49,7 +49,6 @@ const formatTime = (timeField: string, forecaster: Forecaster) => {
 };
 
 const getStateMsg = (forecaster: Forecaster | undefined) => {
-    console.log('forecaster?.curState', forecaster?.curState);
     switch (forecaster?.curState) {
         case FORECASTER_STATE.INACTIVE_NOT_STARTED: {
             return 'Not started';

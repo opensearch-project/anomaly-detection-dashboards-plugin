@@ -51,7 +51,7 @@ describe('<EmptyForecasterMessage /> spec', () => {
       expect(container.firstChild).toMatchSnapshot();
       expect(getByText('Forecasts appear here.')).toBeInTheDocument();
       expect(getByText('Learn more')).toBeInTheDocument();
-      expect(getByText('Learn more').closest('a')).toHaveAttribute('href', `${BASE_DOCS_LINK}/forecast`);
+      expect(getByText('Learn more').closest('a')).toHaveAttribute('href', 'https://opensearch.org/docs/latest/observing-your-data/forecast/index/');
     });
   });
 

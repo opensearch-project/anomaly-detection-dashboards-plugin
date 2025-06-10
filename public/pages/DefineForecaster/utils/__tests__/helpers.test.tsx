@@ -9,117 +9,129 @@
  * GitHub history for details.
  */
 
-import { INITIAL_DETECTOR_DEFINITION_VALUES } from '../../utils/constants';
-import { DATA_TYPES } from '../../../../utils/constants';
-import { getRandomDetector } from '../../../../redux/reducers/__tests__/utils';
 import {
-  detectorDefinitionToFormik,
+  forecasterDefinitionToFormik,
   filtersToFormik,
-} from '../../utils/helpers';
+  featuresToFormik,
+} from '../helpers';
 import {
-  Detector,
-  OPERATORS_MAP,
+  Forecaster,
   FILTER_TYPES,
+  FEATURE_TYPE,
 } from '../../../../models/interfaces';
+import { INITIAL_FORECASTER_DEFINITION_VALUES } from '../constants';
+import { DATA_TYPES } from '../../../../utils/constants';
 
-describe('detectorDefinitionToFormik', () => {
-  test('should return initialValues if detector is null', () => {
-    const randomDetector = {} as Detector;
-    const adFormikValues = detectorDefinitionToFormik(randomDetector);
-    expect(adFormikValues).toEqual(INITIAL_DETECTOR_DEFINITION_VALUES);
-  });
-  test('should return correct values if detector is not null', () => {
-    const randomDetector = getRandomDetector();
-    const adFormikValues = detectorDefinitionToFormik(randomDetector);
-    expect(adFormikValues).toEqual({
-      name: randomDetector.name,
-      description: randomDetector.description,
-      filters: randomDetector.uiMetadata.filters,
-      filterQuery: JSON.stringify(randomDetector.filterQuery || {}, null, 4),
-      index: [{ label: randomDetector.indices[0] }], // Currently we support only one index
-      timeField: randomDetector.timeField,
-      interval: randomDetector.detectionInterval.period.interval,
-      windowDelay: randomDetector.windowDelay.period.interval,
-      resultIndex: randomDetector.resultIndex,
-      resultIndexMinAge: randomDetector.resultIndexMinAge,
-      resultIndexMinSize: randomDetector.resultIndexMinSize,
-      resultIndexTtl: randomDetector.resultIndexTtl,
-      flattenCustomResultIndex: randomDetector.flattenCustomResultIndex,
-    });
-  });
-  test('should return if detector does not have metadata', () => {
-    const randomDetector = getRandomDetector();
-    //@ts-ignore
-    randomDetector.uiMetadata = undefined;
-    const adFormikValues = detectorDefinitionToFormik(randomDetector);
-    expect(adFormikValues).toEqual({
-      name: randomDetector.name,
-      description: randomDetector.description,
-      filterQuery: JSON.stringify(randomDetector.filterQuery || {}, null, 4),
-      filters: filtersToFormik(randomDetector),
-      index: [{ label: randomDetector.indices[0] }], // Currently we support only one index
-      timeField: randomDetector.timeField,
-      interval: randomDetector.detectionInterval.period.interval,
-      windowDelay: randomDetector.windowDelay.period.interval,
-      resultIndex: randomDetector.resultIndex,
-      resultIndexMinAge: randomDetector.resultIndexMinAge,
-      resultIndexMinSize: randomDetector.resultIndexMinSize,
-      resultIndexTtl: randomDetector.resultIndexTtl,
-      flattenCustomResultIndex: randomDetector.flattenCustomResultIndex,
-    });
-  });
-  test("upgrade old detector's filters to include filter type", () => {
-    const randomDetector = getRandomDetector();
-    randomDetector.uiMetadata = {
-      features: {},
-      filters: [
-        {
-          fieldInfo: [
-            {
-              label: 'service',
-              type: DATA_TYPES.KEYWORD,
-            },
-          ],
-          fieldValue: 'app_3',
-          operator: OPERATORS_MAP.IS,
-        },
-        {
-          fieldInfo: [
-            {
-              label: 'host',
-              type: DATA_TYPES.KEYWORD,
-            },
-          ],
-          fieldValue: 'server_2',
-          operator: OPERATORS_MAP.IS,
-        },
-      ],
-      filterType: FILTER_TYPES.SIMPLE,
-    };
-    const adFormikValues = filtersToFormik(randomDetector);
-    expect(adFormikValues).toEqual([
+const getRandomForecaster = (): Forecaster => ({
+  name: 'test-forecaster',
+  description: 'Test forecaster description',
+  indices: ['test-index'],
+  timeField: 'timestamp',
+  forecastInterval: { period: { interval: 10, unit: 'Minutes' } },
+  horizon: { period: { interval: 24, unit: 'Hours' } },
+  filterQuery: { match_all: {} },
+  featureAttributes: [
+    {
+      featureId: 'feature_1',
+      featureName: 'test-feature',
+      featureEnabled: true,
+      importance: 1,
+      aggregationQuery: { sum_value: { sum: { field: 'value' } } },
+    },
+  ],
+  uiMetadata: {
+    filterType: FILTER_TYPES.SIMPLE,
+    filters: [
       {
-        fieldInfo: [
-          {
-            label: 'service',
-            type: DATA_TYPES.KEYWORD,
-          },
-        ],
-        fieldValue: 'app_3',
-        operator: OPERATORS_MAP.IS,
+        fieldInfo: [{ label: 'service', type: DATA_TYPES.KEYWORD }],
+        operator: 'is',
+        fieldValue: 'test_service',
         filterType: FILTER_TYPES.SIMPLE,
       },
-      {
-        fieldInfo: [
-          {
-            label: 'host',
-            type: DATA_TYPES.KEYWORD,
-          },
-        ],
-        fieldValue: 'server_2',
-        operator: OPERATORS_MAP.IS,
-        filterType: FILTER_TYPES.SIMPLE,
+    ],
+    features: {
+      'test-feature': {
+        featureType: FEATURE_TYPE.SIMPLE,
+        aggregationOf: 'value',
+        aggregationBy: 'sum',
       },
-    ]);
+    },
+  },
+  categoryField: ['category'],
+  shingleSize: 8,
+});
+
+describe('DefineForecaster helpers', () => {
+  describe('forecasterDefinitionToFormik', () => {
+    test('should return initialValues if forecaster is empty', () => {
+      const emptyForecaster = {} as Forecaster;
+      const formikValues = forecasterDefinitionToFormik(emptyForecaster);
+      expect(formikValues).toEqual(INITIAL_FORECASTER_DEFINITION_VALUES);
+    });
+
+    test('should return correct formik values for a given forecaster', () => {
+      const randomForecaster = getRandomForecaster();
+      const formikValues = forecasterDefinitionToFormik(randomForecaster);
+      expect(formikValues).toEqual({
+        name: randomForecaster.name,
+        description: randomForecaster.description,
+        index: [{ label: randomForecaster.indices[0] }],
+        filters: filtersToFormik(randomForecaster),
+        filterQuery: JSON.stringify(randomForecaster.filterQuery, null, 4),
+        timeField: randomForecaster.timeField,
+        featureList: featuresToFormik(randomForecaster),
+        categoryFieldEnabled: true,
+        categoryField: randomForecaster.categoryField,
+      });
+    });
+
+    test('should handle forecaster with no UI metadata', () => {
+      const randomForecaster = getRandomForecaster();
+      //@ts-ignore
+      randomForecaster.uiMetadata = undefined;
+      const formikValues = forecasterDefinitionToFormik(randomForecaster);
+      expect(formikValues.filters[0].filterType).toBe(FILTER_TYPES.CUSTOM);
+    });
+  });
+
+  describe('filtersToFormik', () => {
+    test('should add filterType to each filter', () => {
+      const randomForecaster = getRandomForecaster();
+      const formikFilters = filtersToFormik(randomForecaster);
+      expect(formikFilters).toHaveLength(1);
+      expect(formikFilters[0].filterType).toBe(FILTER_TYPES.SIMPLE);
+    });
+
+    test('should handle custom filters if no metadata', () => {
+      const randomForecaster = getRandomForecaster();
+      //@ts-ignore
+      randomForecaster.uiMetadata = {};
+      const formikFilters = filtersToFormik(randomForecaster);
+      expect(formikFilters).toHaveLength(1);
+      expect(formikFilters[0].filterType).toBe(FILTER_TYPES.CUSTOM);
+      expect(formikFilters[0].query).toBeDefined();
+    });
+  });
+
+  describe('featuresToFormik', () => {
+    test('should convert feature attributes to formik values', () => {
+      const randomForecaster = getRandomForecaster();
+      const formikFeatures = featuresToFormik(randomForecaster);
+      expect(formikFeatures).toHaveLength(1);
+      const feature = formikFeatures[0];
+      expect(feature.featureId).toBe('feature_1');
+      expect(feature.featureName).toBe('test-feature');
+      expect(feature.featureType).toBe(FEATURE_TYPE.SIMPLE);
+      expect(feature.aggregationOf).toEqual([{ label: 'value' }]);
+      expect(feature.aggregationBy).toBe('sum');
+    });
+
+    test('should handle features with no UI metadata', () => {
+      const randomForecaster = getRandomForecaster();
+      //@ts-ignore
+      randomForecaster.uiMetadata.features = {};
+      const formikFeatures = featuresToFormik(randomForecaster);
+      expect(formikFeatures[0].featureType).toBe(FEATURE_TYPE.CUSTOM);
+    });
   });
 });

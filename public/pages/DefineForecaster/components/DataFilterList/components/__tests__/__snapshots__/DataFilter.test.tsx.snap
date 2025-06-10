@@ -13,16 +13,16 @@ exports[`dataFilter renders data filter 1`] = `
         class="euiPopover__anchor"
       >
         <button
-          class="EuiSmallButtonEmpty EuiSmallButtonEmpty--primary EuiSmallButtonEmpty--xSmall"
+          class="euiButtonEmpty euiButtonEmpty--primary euiButtonEmpty--small"
           data-test-subj="addDataFilterButton"
           style="margin-top: -2px;"
           type="button"
         >
           <span
-            class="EuiSmallButtonContent EuiSmallButtonEmpty__content"
+            class="euiButtonContent euiButtonEmpty__content"
           >
             <span
-              class="EuiSmallButtonEmpty__text"
+              class="euiButtonEmpty__text"
             >
               + Add data filter
             </span>

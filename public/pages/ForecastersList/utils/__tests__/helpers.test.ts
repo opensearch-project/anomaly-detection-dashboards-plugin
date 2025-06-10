@@ -9,182 +9,108 @@
  * GitHub history for details.
  */
 
-import { SORT_DIRECTION } from '../../../../../server/utils/constants';
 import {
   getURLQueryParams,
+  getForecasterStateOptions,
+  getActionsForForecaster,
   getMonitorsForAction,
-  getDetectorStateOptions,
-  getDetectorsForAction,
 } from '../helpers';
-import { DetectorListItem, Monitor } from '../../../../models/interfaces';
-import { DETECTOR_STATE } from '../../../../../server/utils/constants';
-import { DETECTOR_ACTION } from '../constants';
+import { ForecasterListItem, Monitor } from '../../../../models/interfaces';
+import {
+  FORECASTER_STATE,
+  FORECASTER_STATE_DISPLAY,
+} from '../../../../../server/utils/constants';
+import { FORECASTER_ACTION } from '../constants';
 
-describe('helpers spec', () => {
+describe('ForecastersList helpers spec', () => {
   describe('getURLQueryParams', () => {
-    test('should return default values', () => {
-      expect(getURLQueryParams({ search: '' })).toEqual({
-        from: 0,
-        size: 20,
-        search: '',
-        indices: '',
-        sortField: 'name',
-        sortDirection: SORT_DIRECTION.ASC,
-        dataSourceId: undefined,
-      });
+    test('should return dataSourceId if present in query', () => {
+      const location = { search: '?dataSourceId=test-source' };
+      const queryParams = getURLQueryParams(location);
+      expect(queryParams).toEqual({ dataSourceId: 'test-source' });
     });
-    test('should  default values if missing from queryParams', () => {
-      expect(
-        getURLQueryParams({ search: 'from=100&size=20&indices=&search=test' })
-      ).toEqual({
-        from: 100,
-        size: 20,
-        search: 'test',
-        indices: '',
-        sortField: 'name',
-        sortDirection: SORT_DIRECTION.ASC,
-        dataSourceId: undefined,
-      });
+
+    test('should return undefined for dataSourceId if not present', () => {
+      const location = { search: '?otherParam=value' };
+      const queryParams = getURLQueryParams(location);
+      expect(queryParams).toEqual({ dataSourceId: undefined });
     });
-    test('should return queryParams from location', () => {
-      expect(
-        getURLQueryParams({
-          search:
-            'from=100&size=5&indices=someIndex&search=test&sortField=name&sortDirection=desc',
-        })
-      ).toEqual({
-        from: 100,
-        size: 5,
-        search: 'test',
-        indices: 'someIndex',
-        sortField: 'name',
-        sortDirection: SORT_DIRECTION.DESC,
-        dataSourceId: undefined,
-      });
+
+    test('should return undefined for dataSourceId for empty search string', () => {
+      const location = { search: '' };
+      const queryParams = getURLQueryParams(location);
+      expect(queryParams).toEqual({ dataSourceId: undefined });
     });
   });
 
-  describe('getDetectorStateOptions spec', () => {
-    test('should return all detector states', () => {
-      const result = getDetectorStateOptions();
-      expect(result.length).toEqual(7);
-      expect(result[0].label).toEqual(DETECTOR_STATE.DISABLED);
-      expect(result[1].label).toEqual(DETECTOR_STATE.INIT);
-      expect(result[2].label).toEqual(DETECTOR_STATE.RUNNING);
-      expect(result[3].label).toEqual(DETECTOR_STATE.FEATURE_REQUIRED);
-      expect(result[4].label).toEqual(DETECTOR_STATE.INIT_FAILURE);
-      expect(result[5].label).toEqual(DETECTOR_STATE.UNEXPECTED_FAILURE);
-      expect(result[6].label).toEqual(DETECTOR_STATE.FAILED);
+  describe('getForecasterStateOptions', () => {
+    test('should return unique forecaster state display options', () => {
+      const options = getForecasterStateOptions();
+      const uniqueDisplayStates = [
+        ...new Set(Object.values(FORECASTER_STATE_DISPLAY)),
+      ];
+      expect(options.length).toBe(uniqueDisplayStates.length);
+      expect(options[0].label).toBe(uniqueDisplayStates[0]);
     });
   });
 
-  describe('getDetectorsForAction spec', () => {
-    const testDetectors = [
-      {
-        id: 'detectorId1',
-        name: 'stopped-detector',
-        curState: DETECTOR_STATE.DISABLED,
-      },
-      {
-        id: 'detectorId2',
-        name: 'init-detector',
-        curState: DETECTOR_STATE.INIT,
-      },
-      {
-        id: 'detectorId1',
-        name: 'running-detector',
-        curState: DETECTOR_STATE.RUNNING,
-      },
-      {
-        id: 'detectorId2',
-        name: 'feature-required-detector',
-        curState: DETECTOR_STATE.FEATURE_REQUIRED,
-      },
-      {
-        id: 'detectorId1',
-        name: 'init-failure-detector',
-        curState: DETECTOR_STATE.INIT_FAILURE,
-      },
-      {
-        id: 'detectorId2',
-        name: 'unexpected-failure-detector',
-        curState: DETECTOR_STATE.UNEXPECTED_FAILURE,
-      },
-    ] as DetectorListItem[];
-    test('filters properly for start action', () => {
-      const result = getDetectorsForAction(
-        testDetectors,
-        DETECTOR_ACTION.START
-      );
-      expect(result.length).toEqual(3);
-      expect(result[0].name).toEqual('stopped-detector');
-      expect(result[1].name).toEqual('init-failure-detector');
-      expect(result[2].name).toEqual('unexpected-failure-detector');
+  describe('getActionsForForecaster', () => {
+    test('should return start/test/delete actions for inactive forecasters', () => {
+      const forecaster = {
+        curState: FORECASTER_STATE.INACTIVE_STOPPED,
+      } as ForecasterListItem;
+      const actions = getActionsForForecaster(forecaster);
+      expect(actions).toContain(FORECASTER_ACTION.START);
+      expect(actions).toContain(FORECASTER_ACTION.TEST);
+      expect(actions).toContain(FORECASTER_ACTION.DELETE);
+      expect(actions.length).toBe(3);
     });
-    test('filters properly for stop action', () => {
-      const result = getDetectorsForAction(testDetectors, DETECTOR_ACTION.STOP);
-      expect(result.length).toEqual(2);
-      expect(result[0].name).toEqual('init-detector');
-      expect(result[1].name).toEqual('running-detector');
+
+    test('should return cancel/delete actions for initializing forecasters', () => {
+      const forecaster = {
+        curState: FORECASTER_STATE.INITIALIZING_FORECAST,
+      } as ForecasterListItem;
+      const actions = getActionsForForecaster(forecaster);
+      expect(actions).toContain(FORECASTER_ACTION.CANCEL);
+      expect(actions).toContain(FORECASTER_ACTION.DELETE);
+      expect(actions.length).toBe(2);
     });
-    test('filters properly for delete action', () => {
-      const result = getDetectorsForAction(
-        testDetectors,
-        DETECTOR_ACTION.DELETE
-      );
-      expect(result.length).toEqual(6);
+
+    test('should return stop/delete actions for running forecasters', () => {
+      const forecaster = {
+        curState: FORECASTER_STATE.RUNNING,
+      } as ForecasterListItem;
+      const actions = getActionsForForecaster(forecaster);
+      expect(actions).toContain(FORECASTER_ACTION.STOP);
+      expect(actions).toContain(FORECASTER_ACTION.DELETE);
+      expect(actions.length).toBe(2);
     });
-    test('filters properly for undefined/invalid action', () => {
-      const result = getDetectorsForAction(testDetectors, 'something-invalid');
-      expect(result.length).toEqual(0);
+
+    test('should return empty array for unknown states', () => {
+      const forecaster = { curState: 'UNKNOWN_STATE' } as ForecasterListItem;
+      const actions = getActionsForForecaster(forecaster);
+      expect(actions).toEqual([]);
     });
   });
 
-  describe('getMonitorsForAction spec', () => {
+  describe('getMonitorsForAction', () => {
+    const testForecasters = [
+      { id: 'forecasterId1', name: 'test-forecaster-1' },
+      { id: 'forecasterId2', name: 'test-forecaster-2' },
+    ] as ForecasterListItem[];
+
     test('should return empty if no related monitors', () => {
-      const testDetectors = [
-        {
-          id: 'detectorId1',
-          name: 'test-detector-1',
-        },
-        {
-          id: 'detectorId2',
-          name: 'test-detector-2',
-        },
-      ] as DetectorListItem[];
-      let testMonitors: { [key: string]: Monitor } = {};
-      testMonitors = {
-        detectorId1: [],
-        detectorId2: [],
-      };
-      expect(getMonitorsForAction(testDetectors, testMonitors)).toEqual({});
+      const testMonitors: { [key: string]: Monitor } = {};
+      expect(getMonitorsForAction(testForecasters, testMonitors)).toEqual({});
     });
+
     test('should return related monitors', () => {
-      const testDetectors = [
-        {
-          id: 'detectorId1',
-          name: 'test-detector-1',
-        },
-        {
-          id: 'detectorId2',
-          name: 'test-detector-2',
-        },
-      ] as DetectorListItem[];
-      let testMonitors: { [key: string]: Monitor } = {};
-      testMonitors = {
-        detectorId1: [
-          {
-            id: 'monitorId1',
-            name: 'test-monitor-1',
-          },
-        ],
-        detectorId2: [],
+      const testMonitors: { [key: string]: any } = {
+        forecasterId1: [{ id: 'monitorId1', name: 'test-monitor-1' }],
+        forecasterId2: [],
       };
-      expect(getMonitorsForAction(testDetectors, testMonitors)).toEqual({
-        detectorId1: {
-          id: 'monitorId1',
-          name: 'test-monitor-1',
-        },
+      expect(getMonitorsForAction(testForecasters, testMonitors)).toEqual({
+        forecasterId1: { id: 'monitorId1', name: 'test-monitor-1' },
       });
     });
   });

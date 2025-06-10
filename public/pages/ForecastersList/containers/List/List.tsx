@@ -629,7 +629,7 @@ export const ForecastersList = (props: ListProps) => {
 
   const ForecasterActionsCellMemo = React.memo(ForecasterActionsCell);
 
-  const trailingControlColumns2 = [
+  const trailingControlColumns = [
     {
       id: 'actions',
       headerCellRender: () => (
@@ -790,7 +790,7 @@ const handleStartForecasterJob = async (forecasterId: string, forecasterName: st
                 aria-label="Forecasters list"
                 columns={columns}
                 columnVisibility={{ visibleColumns, setVisibleColumns }}
-                trailingControlColumns={trailingControlColumns2}
+                trailingControlColumns={trailingControlColumns}
                 rowCount={forecastersToDisplay.length}
                 renderCellValue={renderCellValueFactory(
                   forecastersToDisplay, 

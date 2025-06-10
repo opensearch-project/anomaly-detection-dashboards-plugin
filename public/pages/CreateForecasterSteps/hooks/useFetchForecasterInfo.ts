@@ -42,10 +42,9 @@ export const useFetchForecasterInfo = (
     (state: AppState) => state.opensearch.requesting
   );
   const selectedIndices = useMemo(() => get(forecaster, 'indices', []), [forecaster]);
-  console.log('forecasterId2', forecasterId);
+
   useEffect(() => {
     const fetchForecaster = async () => {
-      console.log('fetching forecaster', forecaster);
       if (!forecaster) {
         await dispatch(getForecaster(forecasterId, dataSourceId));
       }
@@ -53,7 +52,6 @@ export const useFetchForecasterInfo = (
         await dispatch(getMappings(selectedIndices, dataSourceId));
       }
     };
-    console.log('forecasterId', forecasterId);
     if (forecasterId) {
       fetchForecaster();
     }

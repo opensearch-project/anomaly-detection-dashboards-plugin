@@ -75,6 +75,7 @@ export function ForecastCategoryField(props: ForecastCategoryFieldProps) {
             <EuiFlexItem>
               <EuiCompressedCheckbox
                 id="categoryFieldCheckbox"
+                data-test-subj="categoryFieldCheckbox"
                 label="Split time series using categorical fields"
                 checked={enabled}
                 disabled={noCategoryFields || !isEditable}

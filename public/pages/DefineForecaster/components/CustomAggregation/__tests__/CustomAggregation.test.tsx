@@ -50,7 +50,6 @@ describe('<CustomAggregation /> spec', () => {
       expect(validateQuery('{"a":{"b":{}}}')).toBeUndefined();
     });
     test('should return error message if invalid query', () => {
-      console.log = jest.fn();
       expect(validateQuery('hello')).toEqual('Invalid JSON');
       expect(validateQuery('{a : b: {}')).toEqual('Invalid JSON');
     });
