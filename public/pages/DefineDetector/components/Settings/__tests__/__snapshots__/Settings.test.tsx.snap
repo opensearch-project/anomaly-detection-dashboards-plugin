@@ -57,7 +57,6 @@ exports[`<Settings /> spec renders the component 1`] = `
             <div
               class="euiFormRow euiFormRow--fullWidth euiFormRow--compressed"
               hint="Define how often the detector collects data to generate anomalies. The shorter the interval is, the more real time the detector results will be, and the more computing resources the detector will need."
-              hintlink="https://opensearch.org/docs/monitoring-plugins/ad"
               id="random_html_id-row"
               title="Detector interval"
             >
@@ -164,7 +163,6 @@ exports[`<Settings /> spec renders the component 1`] = `
         <div
           class="euiFormRow euiFormRow--fullWidth euiFormRow--compressed"
           hint="Specify a window of delay for a detector to fetch data, if you need to account for extra processing time."
-          hintlink="https://opensearch.org/docs/monitoring-plugins/ad"
           id="random_html_id-row"
           style="margin-top: 16px;"
           title="Window delay"

@@ -26,7 +26,9 @@ import {
   EmbeddableStart,
 } from '../../../src/plugins/embeddable/public';
 import { ACTION_AD } from './action/ad_dashboard_action';
-import { APP_PATH, DASHBOARD_PAGE_NAV_ID, DETECTORS_PAGE_NAV_ID, OVERVIEW_PAGE_NAV_ID, PLUGIN_NAME } from './utils/constants';
+import { APP_PATH, DASHBOARD_PAGE_NAV_ID, DETECTORS_PAGE_NAV_ID, OVERVIEW_PAGE_NAV_ID, PLUGIN_NAME, FORECASTING_FEATURE_NAME,
+  FORECASTING_OVERVIEW_PAGE_NAV_ID, FORECASTING_DASHBOARD_PAGE_NAV_ID, FORECASTERS_PAGE_NAV_ID
+ } from './utils/constants';
 import { ACTION_SUGGEST_AD, getActions, getSuggestAnomalyDetectorAction } from './utils/contextMenu/getActions';
 import { overlayAnomaliesFunction } from './expressions/overlay_anomalies';
 import {
@@ -90,6 +92,7 @@ export class AnomalyDetectionOpenSearchDashboardsPlugin
 {
   public setup(core: CoreSetup, plugins: any) {
     const hideInAppSideNavBar = core.chrome.navGroup.getNavGroupEnabled();
+    const forecastingEnabled = true;
 
     core.application.register({
       id: PLUGIN_NAME,
@@ -106,6 +109,26 @@ export class AnomalyDetectionOpenSearchDashboardsPlugin
         return renderApp(coreStart, params, undefined, hideInAppSideNavBar);
       },
     });
+
+    if (forecastingEnabled) {
+      core.application.register({
+        id: FORECASTING_FEATURE_NAME,
+        title: 'Forecasting',
+        category: {
+          id: 'opensearch',
+          label: 'OpenSearch Plugins',
+          order: 2000,
+        },
+        // 5010 as the following plugin Maps uses 5100
+        // read https://tinyurl.com/4255uk9r
+        order: 5010,
+        mount: async (params: AppMountParameters) => {
+          const { renderApp } = await import('./forecasting_app');
+          const [coreStart] = await core.getStartServices();
+          return renderApp(coreStart, params, APP_PATH.LIST_FORECASTERS, hideInAppSideNavBar);
+        },
+      });
+    }
 
     // register applications with category and use case information
     core.chrome.navGroup.addNavLinksToGroup(DEFAULT_NAV_GROUPS.observability, [
@@ -127,6 +150,27 @@ export class AnomalyDetectionOpenSearchDashboardsPlugin
       }
     ]);
 
+    if (forecastingEnabled) {
+      core.chrome.navGroup.addNavLinksToGroup(DEFAULT_NAV_GROUPS.observability, [
+        {
+          id: FORECASTING_FEATURE_NAME,
+          category: DEFAULT_APP_CATEGORIES.detect,
+        }
+      ]);
+      core.chrome.navGroup.addNavLinksToGroup(DEFAULT_NAV_GROUPS.all, [
+        {
+          id: FORECASTING_FEATURE_NAME,
+          category: DEFAULT_APP_CATEGORIES.detect,
+        }
+      ]);
+      core.chrome.navGroup.addNavLinksToGroup(DEFAULT_NAV_GROUPS['security-analytics'], [
+        {
+          id: FORECASTING_FEATURE_NAME,
+          category: DEFAULT_APP_CATEGORIES.detect,
+        }
+        ]);
+    }
+
     // register sub applications as standard OSD applications with use case
     if (core.chrome.navGroup.getNavGroupEnabled()) {
       core.application.register({
@@ -140,9 +184,7 @@ export class AnomalyDetectionOpenSearchDashboardsPlugin
           return renderApp(coreStart, params, APP_PATH.OVERVIEW, hideInAppSideNavBar);
         },
       });
-    }
 
-    if (core.chrome.navGroup.getNavGroupEnabled()) {
       core.application.register({
         id: DASHBOARD_PAGE_NAV_ID,
         title: 'Dashboard',
@@ -154,9 +196,7 @@ export class AnomalyDetectionOpenSearchDashboardsPlugin
           return renderApp(coreStart, params, APP_PATH.DASHBOARD, hideInAppSideNavBar);
         },
       });
-    }
 
-    if (core.chrome.navGroup.getNavGroupEnabled()) {
       core.application.register({
         id: DETECTORS_PAGE_NAV_ID,
         title: 'Detectors',
@@ -218,6 +258,56 @@ export class AnomalyDetectionOpenSearchDashboardsPlugin
         parentNavLinkId: PLUGIN_NAME
       }]
     );
+
+    if (forecastingEnabled) {
+      core.chrome.navGroup.addNavLinksToGroup(
+        DEFAULT_NAV_GROUPS.observability,
+        [{
+          id: FORECASTING_OVERVIEW_PAGE_NAV_ID,
+          parentNavLinkId: PLUGIN_NAME
+        },
+        {
+          id: FORECASTING_DASHBOARD_PAGE_NAV_ID,
+          parentNavLinkId: PLUGIN_NAME
+        },
+        {
+          id: FORECASTERS_PAGE_NAV_ID,
+          parentNavLinkId: PLUGIN_NAME
+        }]
+      );
+  
+      core.chrome.navGroup.addNavLinksToGroup(
+        DEFAULT_NAV_GROUPS.all,
+        [{
+          id: FORECASTING_OVERVIEW_PAGE_NAV_ID,
+          parentNavLinkId: PLUGIN_NAME
+        },
+        {
+          id: FORECASTING_DASHBOARD_PAGE_NAV_ID,
+          parentNavLinkId: PLUGIN_NAME
+        },
+        {
+          id: FORECASTERS_PAGE_NAV_ID,
+          parentNavLinkId: PLUGIN_NAME
+        }]
+      );
+  
+      core.chrome.navGroup.addNavLinksToGroup(
+        DEFAULT_NAV_GROUPS['security-analytics'],
+        [{
+          id: FORECASTING_OVERVIEW_PAGE_NAV_ID,
+          parentNavLinkId: PLUGIN_NAME
+        },
+        {
+          id: FORECASTING_DASHBOARD_PAGE_NAV_ID,
+          parentNavLinkId: PLUGIN_NAME
+        },
+        {
+          id: FORECASTERS_PAGE_NAV_ID,
+          parentNavLinkId: PLUGIN_NAME
+        }]
+      );
+    }
 
     setUISettings(core.uiSettings);
 

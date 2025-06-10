@@ -71,6 +71,7 @@ export function registerADRoutes(apiRouter: Router, adService: AdService) {
     adService.putDetector
   );
 
+  // routes not used in the UI, therefore no data source id
   apiRouter.post('/detectors/_search', adService.searchDetector);
 
   // post search anomaly results
@@ -719,6 +720,7 @@ export default class AdService {
     request: OpenSearchDashboardsRequest,
     opensearchDashboardsResponse: OpenSearchDashboardsResponseFactory
   ): Promise<IOpenSearchDashboardsResponse<any>> => {
+    console.log('getDetectors request', request);
     try {
       const {
         from = 0,
@@ -778,6 +780,7 @@ export default class AdService {
         dataSourceId,
         this.client
       );
+      console.log('requestBody', requestBody);
       const response = await callWithRequest('ad.searchDetector', {
         body: requestBody,
       });

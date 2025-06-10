@@ -1,0 +1,494 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`<Settings /> spec renders the component 1`] = `
+<div>
+  <div
+    class="euiFormRow euiFormRow--fullWidth euiFormRow--compressed"
+    hint="How often the forecast runs to generate next value."
+    id="random_html_id-row"
+    title="Forecasting interval"
+  >
+    <div
+      class="euiFormRow__labelWrapper"
+    >
+      <label
+        aria-invalid="false"
+        class="euiFormLabel euiFormRow__label"
+        for="random_html_id"
+      >
+        <div
+          style="line-height: 8px;"
+        >
+          <p>
+            Forecasting interval
+          </p>
+          <br />
+          <div
+            class="euiText euiText--medium sublabel"
+            style="max-width: 400px;"
+          >
+            How often the forecast runs to generate next value.
+             
+            <a
+              class="euiLink euiLink--primary"
+              href="https://opensearch.org/docs/latest/observing-your-data/forecast/index/"
+              rel="noopener noreferrer"
+              target="_blank"
+            >
+              Learn more
+              <svg
+                aria-hidden="true"
+                aria-label="External link"
+                class="euiIcon euiIcon--small euiIcon-isLoading euiLink__externalIcon"
+                focusable="false"
+                height="16"
+                role="img"
+                viewBox="0 0 16 16"
+                width="16"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M5.277 10.088c.02.014.04.03.057.047.582.55 1.134.812 1.666.812.586 0 1.84-.293 3.713-.88L9 6.212V2H7v4.212l-1.723 3.876Zm-.438.987L3.539 14h8.922l-1.32-2.969C9.096 11.677 7.733 12 7 12c-.74 0-1.463-.315-2.161-.925ZM6 2H5V1h6v1h-1v4l3.375 7.594A1 1 0 0 1 12.461 15H3.54a1 1 0 0 1-.914-1.406L6 6V2Z"
+                />
+              </svg>
+              <span
+                class="euiScreenReaderOnly"
+              >
+                (opens in a new tab or window)
+              </span>
+            </a>
+          </div>
+        </div>
+      </label>
+    </div>
+    <div
+      class="euiFormRow__fieldWrapper"
+    >
+      <div
+        aria-describedby="random_html_id-help-0"
+        class="euiFlexGroup euiFlexGroup--alignItemsCenter euiFlexGroup--directionRow euiFlexGroup--responsive"
+        id="random_html_id"
+        style="max-width: 400px;"
+      >
+        <div
+          class="euiFlexItem euiFlexItem--flexGrowZero"
+        >
+          <div
+            style="width: 300px;"
+          >
+            <div
+              class="euiFormControlLayout euiFormControlLayout--compressed"
+            >
+              <div
+                class="euiFormControlLayout__childrenWrapper"
+              >
+                <input
+                  class="euiFieldNumber euiFieldNumber--compressed"
+                  id="interval"
+                  name="interval"
+                  style="width: 100%;"
+                  type="number"
+                  value=""
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+        <div
+          class="euiFlexItem euiFlexItem--flexGrowZero"
+        >
+          <span
+            class="euiBadge euiBadge--iconLeft unit-badge"
+            style="background-color: rgb(211, 218, 230); color: rgb(0, 0, 0);"
+            title="minutes"
+          >
+            <span
+              class="euiBadge__content"
+            >
+              <span
+                class="euiBadge__text"
+              >
+                minutes
+              </span>
+            </span>
+          </span>
+        </div>
+      </div>
+      <div
+        class="euiFormHelpText euiFormRow__text"
+        id="random_html_id-help-0"
+      >
+        The interval must be at least one minute.
+      </div>
+    </div>
+  </div>
+  <div
+    class="euiSpacer euiSpacer--l"
+  />
+  <div
+    class="euiFormRow euiFormRow--fullWidth euiFormRow--compressed"
+    hint="Specify a window of delay for a forecaster to fetch data, if you need to account for extra processing time."
+    id="random_html_id-row"
+    title="Window delay"
+  >
+    <div
+      class="euiFormRow__labelWrapper"
+    >
+      <label
+        aria-invalid="false"
+        class="euiFormLabel euiFormRow__label"
+        for="random_html_id"
+      >
+        <div
+          style="line-height: 8px;"
+        >
+          <p>
+            Window delay
+          </p>
+          <br />
+          <div
+            class="euiText euiText--medium sublabel"
+            style="max-width: 400px;"
+          >
+            Specify a window of delay for a forecaster to fetch data, if you need to account for extra processing time.
+             
+            <a
+              class="euiLink euiLink--primary"
+              href="https://opensearch.org/docs/latest/observing-your-data/forecast/index/"
+              rel="noopener noreferrer"
+              target="_blank"
+            >
+              Learn more
+              <svg
+                aria-hidden="true"
+                aria-label="External link"
+                class="euiIcon euiIcon--small euiIcon-isLoading euiLink__externalIcon"
+                focusable="false"
+                height="16"
+                role="img"
+                viewBox="0 0 16 16"
+                width="16"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M5.277 10.088c.02.014.04.03.057.047.582.55 1.134.812 1.666.812.586 0 1.84-.293 3.713-.88L9 6.212V2H7v4.212l-1.723 3.876Zm-.438.987L3.539 14h8.922l-1.32-2.969C9.096 11.677 7.733 12 7 12c-.74 0-1.463-.315-2.161-.925ZM6 2H5V1h6v1h-1v4l3.375 7.594A1 1 0 0 1 12.461 15H3.54a1 1 0 0 1-.914-1.406L6 6V2Z"
+                />
+              </svg>
+              <span
+                class="euiScreenReaderOnly"
+              >
+                (opens in a new tab or window)
+              </span>
+            </a>
+          </div>
+        </div>
+      </label>
+    </div>
+    <div
+      class="euiFormRow__fieldWrapper"
+    >
+      <div
+        class="euiFlexGroup euiFlexGroup--alignItemsCenter euiFlexGroup--directionRow euiFlexGroup--responsive"
+        id="random_html_id"
+        style="max-width: 400px;"
+      >
+        <div
+          class="euiFlexItem euiFlexItem--flexGrowZero"
+        >
+          <div
+            style="width: 300px;"
+          >
+            <div
+              class="euiFormControlLayout euiFormControlLayout--compressed"
+            >
+              <div
+                class="euiFormControlLayout__childrenWrapper"
+              >
+                <input
+                  class="euiFieldNumber euiFieldNumber--compressed"
+                  id="windowDelay"
+                  name="windowDelay"
+                  style="width: 100%;"
+                  type="number"
+                  value=""
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+        <div
+          class="euiFlexItem euiFlexItem--flexGrowZero"
+        >
+          <span
+            class="euiBadge euiBadge--iconLeft unit-badge"
+            style="background-color: rgb(211, 218, 230); color: rgb(0, 0, 0);"
+            title="minutes"
+          >
+            <span
+              class="euiBadge__content"
+            >
+              <span
+                class="euiBadge__text"
+              >
+                minutes
+              </span>
+            </span>
+          </span>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div
+    class="euiSpacer euiSpacer--l"
+  />
+  <div
+    class="euiFormRow euiFormRow--fullWidth euiFormRow--compressed"
+    hint="How far the forecast extends into the future."
+    id="random_html_id-row"
+    title="Horizon"
+  >
+    <div
+      class="euiFormRow__labelWrapper"
+    >
+      <label
+        aria-invalid="false"
+        class="euiFormLabel euiFormRow__label"
+        for="random_html_id"
+      >
+        <div
+          style="line-height: 8px;"
+        >
+          <p>
+            Horizon
+          </p>
+          <br />
+          <div
+            class="euiText euiText--medium sublabel"
+            style="max-width: 400px;"
+          >
+            How far the forecast extends into the future.
+             
+            <a
+              class="euiLink euiLink--primary"
+              href="https://opensearch.org/docs/latest/observing-your-data/forecast/index/"
+              rel="noopener noreferrer"
+              target="_blank"
+            >
+              Learn more
+              <svg
+                aria-hidden="true"
+                aria-label="External link"
+                class="euiIcon euiIcon--small euiIcon-isLoading euiLink__externalIcon"
+                focusable="false"
+                height="16"
+                role="img"
+                viewBox="0 0 16 16"
+                width="16"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M5.277 10.088c.02.014.04.03.057.047.582.55 1.134.812 1.666.812.586 0 1.84-.293 3.713-.88L9 6.212V2H7v4.212l-1.723 3.876Zm-.438.987L3.539 14h8.922l-1.32-2.969C9.096 11.677 7.733 12 7 12c-.74 0-1.463-.315-2.161-.925ZM6 2H5V1h6v1h-1v4l3.375 7.594A1 1 0 0 1 12.461 15H3.54a1 1 0 0 1-.914-1.406L6 6V2Z"
+                />
+              </svg>
+              <span
+                class="euiScreenReaderOnly"
+              >
+                (opens in a new tab or window)
+              </span>
+            </a>
+          </div>
+        </div>
+      </label>
+    </div>
+    <div
+      class="euiFormRow__fieldWrapper"
+    >
+      <div
+        aria-describedby="random_html_id-help-0"
+        id="random_html_id"
+        style="max-width: 400px;"
+      >
+        <div
+          class="euiFlexGroup euiFlexGroup--alignItemsCenter euiFlexGroup--directionRow euiFlexGroup--responsive"
+        >
+          <div
+            class="euiFlexItem euiFlexItem--flexGrowZero"
+          >
+            <div
+              style="width: 300px;"
+            >
+              <div
+                class="euiFormControlLayout euiFormControlLayout--compressed"
+              >
+                <div
+                  class="euiFormControlLayout__childrenWrapper"
+                >
+                  <input
+                    class="euiFieldNumber euiFieldNumber--compressed"
+                    id="horizon"
+                    max="180"
+                    min="1"
+                    style="width: 100%;"
+                    type="number"
+                    value=""
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+          <div
+            class="euiFlexItem euiFlexItem--flexGrowZero"
+          >
+            <span
+              class="euiBadge euiBadge--iconLeft unit-badge"
+              style="background-color: rgb(211, 218, 230); color: rgb(0, 0, 0);"
+              title="intervals"
+            >
+              <span
+                class="euiBadge__content"
+              >
+                <span
+                  class="euiBadge__text"
+                >
+                  intervals
+                </span>
+              </span>
+            </span>
+          </div>
+        </div>
+      </div>
+      <div
+        class="euiFormHelpText euiFormRow__text"
+        id="random_html_id-help-0"
+      >
+        Click the number field for more options.
+      </div>
+    </div>
+  </div>
+  <div
+    class="euiSpacer euiSpacer--l"
+  />
+  <div
+    class="euiFormRow euiFormRow--fullWidth euiFormRow--compressed"
+    hint="How far back the model looks for training data."
+    id="random_html_id-row"
+    title="History"
+  >
+    <div
+      class="euiFormRow__labelWrapper"
+    >
+      <label
+        aria-invalid="false"
+        class="euiFormLabel euiFormRow__label"
+        for="random_html_id"
+      >
+        <div
+          style="line-height: 8px;"
+        >
+          <p>
+            History
+          </p>
+          <br />
+          <div
+            class="euiText euiText--medium sublabel"
+            style="max-width: 400px;"
+          >
+            How far back the model looks for training data.
+             
+            <a
+              class="euiLink euiLink--primary"
+              href="https://opensearch.org/docs/latest/observing-your-data/forecast/index/"
+              rel="noopener noreferrer"
+              target="_blank"
+            >
+              Learn more
+              <svg
+                aria-hidden="true"
+                aria-label="External link"
+                class="euiIcon euiIcon--small euiIcon-isLoading euiLink__externalIcon"
+                focusable="false"
+                height="16"
+                role="img"
+                viewBox="0 0 16 16"
+                width="16"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M5.277 10.088c.02.014.04.03.057.047.582.55 1.134.812 1.666.812.586 0 1.84-.293 3.713-.88L9 6.212V2H7v4.212l-1.723 3.876Zm-.438.987L3.539 14h8.922l-1.32-2.969C9.096 11.677 7.733 12 7 12c-.74 0-1.463-.315-2.161-.925ZM6 2H5V1h6v1h-1v4l3.375 7.594A1 1 0 0 1 12.461 15H3.54a1 1 0 0 1-.914-1.406L6 6V2Z"
+                />
+              </svg>
+              <span
+                class="euiScreenReaderOnly"
+              >
+                (opens in a new tab or window)
+              </span>
+            </a>
+          </div>
+        </div>
+      </label>
+    </div>
+    <div
+      class="euiFormRow__fieldWrapper"
+    >
+      <div
+        aria-describedby="random_html_id-help-0"
+        class="euiFlexGroup euiFlexGroup--alignItemsCenter euiFlexGroup--directionRow euiFlexGroup--responsive"
+        id="random_html_id"
+        style="max-width: 400px;"
+      >
+        <div
+          class="euiFlexItem euiFlexItem--flexGrowZero"
+        >
+          <div
+            style="width: 300px;"
+          >
+            <div
+              class="euiFormControlLayout euiFormControlLayout--compressed"
+            >
+              <div
+                class="euiFormControlLayout__childrenWrapper"
+              >
+                <input
+                  class="euiFieldNumber euiFieldNumber--compressed"
+                  id="history"
+                  max="10000"
+                  min="1"
+                  name="history"
+                  style="width: 100%;"
+                  type="number"
+                  value=""
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+        <div
+          class="euiFlexItem euiFlexItem--flexGrowZero"
+        >
+          <span
+            class="euiBadge euiBadge--iconLeft unit-badge"
+            style="background-color: rgb(211, 218, 230); color: rgb(0, 0, 0);"
+            title="intervals"
+          >
+            <span
+              class="euiBadge__content"
+            >
+              <span
+                class="euiBadge__text"
+              >
+                intervals
+              </span>
+            </span>
+          </span>
+        </div>
+      </div>
+      <div
+        class="euiFormHelpText euiFormRow__text"
+        id="random_html_id-help-0"
+      >
+        Minimum history: 40 intervals.
+      </div>
+    </div>
+  </div>
+</div>
+`;

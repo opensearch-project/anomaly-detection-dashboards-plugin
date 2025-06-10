@@ -1,0 +1,12 @@
+.display-option-badge {
+    height: 40px;
+    line-height: 30px;
+    padding: 0 8px;
+}
+
+/* CSS for the custom query modal form row */
+.custom-query-modal .form-row {
+  display: flex;               /* Make the container a flex container */
+  justify-content: space-between; /* Push first child to left, last child to right :contentReference[oaicite:0]{index=0}*/
+  align-items: center;         /* Vertically center items (or use baseline to align text baselines) */
+}

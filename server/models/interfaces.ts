@@ -36,10 +36,21 @@ export interface AlertingApis {
   [API_ROUTE: string]: string;
   readonly ALERTING_BASE: string;
 }
+
+export interface ForecastApis {
+  [API_ROUTE: string]: string;
+  readonly FORECASTER_BASE: string;
+}
+
 export interface Entity {
   name: string;
   value: string;
 }
+
+export interface ForecastEntity {
+  [name: string]: string;
+}
+
 export interface Anomaly {
   anomalyGrade: number;
   confidence: number;
@@ -78,4 +89,28 @@ export interface EntityAnomalySummaries {
   entityList: Entity[];
   anomalySummaries: EntityAnomalySummary[];
   modelId?: string;
+}
+
+export interface ForecastFeatureData {
+  startTime: number;
+  endTime: number;
+  plotTime: number;
+  data: number;
+  name: string;
+}
+
+export interface ForecastResult {
+  // inherited from AD, key is the feature id, value is the feature data
+  // features is a map of feature id to feature data
+  features: { [key: string]: ForecastFeatureData };
+  forecastValue: number[];
+  forecastLowerBound: number[];
+  forecastUpperBound: number[];
+  forecastStartTime: number[];
+  forecastEndTime: number[];
+  startTime: number;
+  endTime: number;
+  plotTime: number;
+  entity?: Entity[];
+  entityId?: string;
 }
