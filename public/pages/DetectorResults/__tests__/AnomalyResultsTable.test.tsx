@@ -28,9 +28,37 @@ jest.mock('../../../services', () => ({
   getDataSourceEnabled: jest.fn(),
 }));
 
+jest.mock('react-router-dom', () => ({
+  ...jest.requireActual('react-router-dom'),
+  useLocation: () => ({
+    pathname: '/',
+    search: '',
+    hash: '',
+    state: undefined,
+  }),
+}));
+
+jest.mock('../../../pages/utils/helpers', () => ({
+  getDataSourceFromURL: jest.fn().mockReturnValue({
+    dataSourceId: undefined,
+  }),
+}));
+
 const mockCoreServices = {
   uiSettings: {
     get: jest.fn().mockReturnValue(false),
+  },
+  workspaces: {
+    currentWorkspace$: {
+      pipe: jest.fn().mockReturnValue({
+        toPromise: jest.fn().mockResolvedValue(null),
+      }),
+    },
+    client$: {
+      getValue: jest.fn().mockReturnValue({
+        getCurrentWorkspaceId: jest.fn().mockReturnValue(null),
+      }),
+    },
   },
 };
 
@@ -191,16 +219,16 @@ describe('AnomalyResultsTable', () => {
       expect(discoverButton).toBeInTheDocument();
     });
 
-    it('hides Actions column when mds is enabled', () => {
+    it('shows Actions column when mds is enabled', () => {
       (getDataSourceEnabled as jest.Mock).mockReturnValue({ enabled: true });
       
       renderWithContext(<AnomalyResultsTable {...defaultProps} />);
       
       const actionsColumn = screen.queryByText('Actions');
-      expect(actionsColumn).not.toBeInTheDocument();
+      expect(actionsColumn).toBeInTheDocument();
       
       const discoverButton = screen.queryByTestId('discoverIcon');
-      expect(discoverButton).not.toBeInTheDocument();
+      expect(discoverButton).toBeInTheDocument();
     });
   });
 }); 

@@ -131,7 +131,7 @@ export function AnomalyResultsTable(props: AnomalyResultsTableProps) {
             const dataSourceTitle = attributes?.title;
             const dataSourceEngineType = attributes?.dataSourceEngineType;
 
-            // Put query params for HC detector (same as existing logic)
+            // Put query params for HC detector
             let filterParams = '';
             if (props.isHCDetector && item[ENTITY_VALUE_FIELD]) {
               const entityValues = item[ENTITY_VALUE_FIELD].split('\n').map((s: string) => s.trim()).filter(Boolean);
@@ -144,7 +144,7 @@ export function AnomalyResultsTable(props: AnomalyResultsTableProps) {
               filterParams = 'filters:!(),';
             }
 
-            // Construct discover URL based on existing logic but with data source info
+            // Construct discover URL
             const dataSourceInfo = `dataset:(dataSource:(id:'${dataSourceId}',title:${dataSourceTitle},type:${dataSourceEngineType}),id:'${indexPatternId}',isRemoteDataset:!f,timeFieldName:'${props.detectorTimeField}',title:'${indexPatternTitle}',type:INDEX_PATTERN)`;
 
             discoverUrl = `${basePath}/app/data-explorer/discover#?_a=(discover:(columns:!(_source),isDirty:!f,sort:!()),metadata:(view:discover))&_g=(filters:!(),refreshInterval:(pause:!t,value:0),time:(from:'${startISO}',to:'${endISO}'))&_q=(${filterParams}query:(${dataSourceInfo},language:kuery,query:''))`;
