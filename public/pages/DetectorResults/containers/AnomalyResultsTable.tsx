@@ -97,32 +97,69 @@ export function AnomalyResultsTable(props: AnomalyResultsTableProps) {
         const currentWorkspace = await core.workspaces.currentWorkspace$.pipe(first()).toPromise();
         const currentWorkspaceId = currentWorkspace?.id;
 
-        const createPayload: any = {
-          attributes: {
-            title: indexPatternTitle,
-            timeFieldName: props.detectorTimeField,
-          },
+        // try to find an existing index pattern with this title
+        let findExistingIndexPatternOptions: any = {
+          type: 'index-pattern',
+          fields: ['title'],
+          perPage: 10000,
         };
 
-        if (dataSourceId) {
-          createPayload.references = [
-            {
-              id: dataSourceId,
-              type: 'data-source',
-              name: 'dataSource'
-            }
-          ];
-        }
-
         if (currentWorkspaceId) {
-          createPayload.workspaces = [currentWorkspaceId];
+          findExistingIndexPatternOptions.workspaces = [currentWorkspaceId];
         }
 
-        const newIndexPattern = await savedObjectsClient.create('index-pattern', createPayload.attributes, {
-          references: createPayload.references,
-          workspaces: createPayload.workspaces,
-        });
-        indexPatternId = newIndexPattern.id;
+        const indexPatternResponse = await savedObjectsClient.find(findExistingIndexPatternOptions);
+        
+        // Filter by title and data source id
+        const matchingIndexPatterns = indexPatternResponse.savedObjects.filter(
+          (obj: any) => {
+            const titleMatches = obj.attributes.title === indexPatternTitle;
+            
+            const dataSourceRef = obj.references?.find(
+              (ref: any) => ref.type === 'data-source' && ref.name === 'dataSource'
+            );
+            const dataSourceMatches = dataSourceRef?.id === dataSourceId;
+            
+            return titleMatches && dataSourceMatches;
+          }
+        );
+        
+        if (matchingIndexPatterns.length > 0) {
+          indexPatternId = matchingIndexPatterns[0].id;
+        } else {
+          // try to create a new index pattern
+          try {
+            const createPayload: any = {
+              attributes: {
+                title: indexPatternTitle,
+                timeFieldName: props.detectorTimeField,
+              },
+            };
+
+            createPayload.references = [
+              {
+                id: dataSourceId,
+                type: 'data-source',
+                name: 'dataSource'
+              }
+            ];
+
+            if (currentWorkspaceId) {
+              createPayload.workspaces = [currentWorkspaceId];
+            }
+
+            const newIndexPattern = await savedObjectsClient.create('index-pattern', createPayload.attributes, {
+              references: createPayload.references,
+              workspaces: createPayload.workspaces,
+            });
+            indexPatternId = newIndexPattern.id;
+
+            getNotifications().toasts.addSuccess(`Created new index pattern: ${indexPatternTitle}`);
+          } catch (error: any) {
+            getNotifications().toasts.addDanger(`Failed to create index pattern: ${error.message}`);
+            return;
+          }
+        }
 
         if (dataSourceId) {
           try {
