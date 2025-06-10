@@ -113,8 +113,6 @@ export function DataSource(props: DataSourceProps) {
         ) {
           getIndicesAndAliasesBasedOnCluster([], localClusterExists);
           setLocalClusterName(selectedClusters[0].cluster);
-          console.log('Cluster useEffect triggered:', props.formikProps.values.clusters);
-          console.log('visibleIndices', visibleIndices);
         } else {
           getIndicesAndAliasesBasedOnCluster(
             selectedClusters,
@@ -126,7 +124,6 @@ export function DataSource(props: DataSourceProps) {
   }, [props.formikProps.values.clusters]);
 
   const handleClusterUpdate = (clusters: ClusterInfo[]) => {
-    console.log('handleClusterUpdate', clusters, isEdit);
     if (!clusters || clusters.length === 0) return;
 
     const visibleClusters: ClusterOption[] | undefined = props.formikProps.values.clusters ? props.formikProps.values.clusters :  getVisibleClusterOptions(getLocalCluster(clusters));
@@ -228,7 +225,6 @@ export function DataSource(props: DataSourceProps) {
   const visibleClusters = get(opensearchState, 'clusters', []) as ClusterInfo[];
   const visibleIndices = get(opensearchState, 'indices', []) as CatIndex[];
   const visibleAliases = get(opensearchState, 'aliases', []) as IndexAlias[];
-  console.log('visibleIndices', visibleIndices);
   return (
     <Fragment>
       {props.isEdit && isSelectedOptionIndexRemoved() ? (
@@ -289,7 +285,6 @@ export function DataSource(props: DataSourceProps) {
       )}
       <Field name="index" validate={validateIndex}>
         {({ field, form }: FieldProps) => {
-          console.log('index field value:', field.value);
           return (
             <FormattedFormRow
               title="Index or wildcard pattern"

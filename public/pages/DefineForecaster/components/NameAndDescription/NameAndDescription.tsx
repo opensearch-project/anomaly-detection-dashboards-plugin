@@ -23,7 +23,6 @@ interface NameAndDescriptionProps {
 }
 
 function NameAndDescription({ onValidateForecasterName, omitTitle = false, isEditable = true }: NameAndDescriptionProps) {
-  console.log('isEditable', isEditable);
   return (
     <Fragment>
       {!omitTitle && (

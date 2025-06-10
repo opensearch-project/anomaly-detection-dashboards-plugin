@@ -142,8 +142,6 @@ export const getForecasterResults = (
     url += `/${dataSourceId}`;
   }
 
-  console.log("getForecasterResults url", url);
-
   return {
     type: FORECASTER_RESULTS,
     request: (client: HttpSetup) => client.get(url, { query: queryParams }),

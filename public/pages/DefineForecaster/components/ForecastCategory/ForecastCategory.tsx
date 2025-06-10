@@ -50,8 +50,6 @@ export function ForecastCategoryField(props: ForecastCategoryFieldProps) {
     setEnabled(props.isHCForecaster);
   }, [props.isHCForecaster]);
 
-  console.log("enabled", enabled, props.isHCForecaster);
-
   const noCategoryFields = isEmpty(props.categoryFieldOptions);
   const convertedOptions = props.categoryFieldOptions.map((option: string) => ({
     label: option,

@@ -304,9 +304,6 @@ export const ForecasterDetail = (props: ForecasterDetailProps) => {
 
     // Reset forecast point selection
     setForecastFrom(undefined);
-
-    // debugging msg
-    console.log('Chart state reset after forecaster operation');
   };
 
   const handleStartTest = async () => {
@@ -417,8 +414,6 @@ export const ForecasterDetail = (props: ForecasterDetailProps) => {
           ? 60000  // 1 minute for INITIALIZING_FORECAST
           : 1000;  // 1 second for other states
 
-        console.log(`Setting polling interval to ${pollingInterval}ms for state: ${forecaster.curState}`);
-
         const intervalId = setInterval(() => {
           dispatch(getForecaster(forecasterId, dataSourceId));
         }, pollingInterval);
@@ -441,9 +436,7 @@ export const ForecasterDetail = (props: ForecasterDetailProps) => {
 
       // Set up polling interval
       const intervalId = setInterval(() => {
-        console.log('forecaster.forecastInterval.period.interval', forecaster.forecastInterval.period.interval);
         dispatch(getForecaster(forecasterId, dataSourceId));
-        console.log('checkLatestResults');
         checkLatestResults();
       }, forecaster.forecastInterval.period.interval * 60000); // 60000ms = 1 minute
 
@@ -498,7 +491,6 @@ export const ForecasterDetail = (props: ForecasterDetailProps) => {
     // Convert the new date range to epoch for comparison
     const { startDate: newStartEpoch } = convertToEpochRange(newDateRange);
 
-    console.log('newStartEpoch', newStartEpoch, earliestAllowedTime, lastUiBreakingTime);
     // Check if the start date is earlier than allowed
     if (lastUiBreakingTime > 0 && newStartEpoch < earliestAllowedTime) {
       if (!initialFetchExecutedRef.current) {
@@ -594,7 +586,6 @@ export const ForecasterDetail = (props: ForecasterDetailProps) => {
     while (isTest && currentRetry < maxRetries && 
           (currentRetry === 0 || (rawResults.length - prevResultsCount) >= MIN_NEW_RESULTS_THRESHOLD)) {
       currentRetry++;
-      console.log(`Retry attempt ${currentRetry}/${maxRetries}, previous results: ${prevResultsCount}, current results: ${rawResults.length}, delta: ${rawResults.length - prevResultsCount}`);
       
       // Wait for the current delay
       await new Promise(resolve => setTimeout(resolve, currentDelay));
@@ -677,11 +668,6 @@ const [visualizationOptions, setVisualizationOptions] = useState<VisualizationOp
     isResultsLoadingRef.current = true;
     setIsResultsLoading(true);
 
-    console.log('fetchForecasterResults call', {
-      source,
-      callTime: new Date().toISOString()
-    });
-
     try {
       if (!forecaster) {
         console.warn('No forecaster available');
@@ -701,8 +687,6 @@ const [visualizationOptions, setVisualizationOptions] = useState<VisualizationOp
       // Determine if we should fetch results.
       const active = isActiveState(forecaster?.curState);
       const testComplete = forecaster?.curState === FORECASTER_STATE.TEST_COMPLETE && forecaster?.taskId !== '';
-
-      console.log('currentDateRange', currentDateRange, startEpoch, endEpoch, active, testComplete, forecaster?.curState);
 
       // Early return if conditions aren't met
       if (!active && !testComplete) {
@@ -735,7 +719,6 @@ const [visualizationOptions, setVisualizationOptions] = useState<VisualizationOp
             throw new Error('No forecast data end time found in response');
           }
           const params = buildVisualizationParams(forecaster, effectiveOptions, maxPlotTime, maxEntities);
-          console.log('params', params);
 
           const topResultsResponse = await dispatch(
             getTopForecastResults(forecaster.id, dataSourceId, !active, params)
@@ -766,8 +749,6 @@ const [visualizationOptions, setVisualizationOptions] = useState<VisualizationOp
         selectedEntityList
       );
 
-      console.log('requestParams', requestParams);
-
       // Choose the correct id and test flag based on the forecaster state
       const id = active ? forecasterId : forecaster.taskId;
       const isTest = !active;
@@ -788,8 +769,6 @@ const [visualizationOptions, setVisualizationOptions] = useState<VisualizationOp
           isTest,
           forecaster.resultIndex || ''
         );
-
-      console.log('rawForecastResults', rawForecastResults);
 
       // Update state with the new forecast results
       setAtomicForecastResults(rawForecastResults);
@@ -823,8 +802,6 @@ const [visualizationOptions, setVisualizationOptions] = useState<VisualizationOp
 
       // Only fetch if we detect the specific transition
       if (isCompletingTest) {
-        console.log('Test completed - fetching results');
-
         fetchForecasterResults({ source: "useEffect - test complete" });
       }
 
@@ -836,8 +813,6 @@ const [visualizationOptions, setVisualizationOptions] = useState<VisualizationOp
   useEffect(() => {
     // Only proceed if forecaster is loaded and curState is defined
     if (!forecaster || forecaster.curState === undefined) return;
-
-    console.log('Forecaster available with state', forecaster.id, forecaster.curState);
 
     // If this is the first time we've seen the forecaster and we haven't fetched yet
     if (!initialFetchExecutedRef.current) {
@@ -851,8 +826,6 @@ const [visualizationOptions, setVisualizationOptions] = useState<VisualizationOp
 
   // Keep the dateRange effect, but make it only respond to out of range changes
   useEffect(() => {
-    console.log('User changed dateRange', dateRange, initialFetchExecutedRef.current);
-
     // Skip if we haven't done the initial fetch yet
     if (!initialFetchExecutedRef.current) {
       // Just update the ref and return
@@ -902,7 +875,6 @@ const [visualizationOptions, setVisualizationOptions] = useState<VisualizationOp
     // Now we know this is a user-initiated change that requires new data
     dateRangeRef.current = dateRange;
     if (forecaster) {
-      console.log('Fetching new data for date range change');
       fetchForecasterResults({ source: "useEffect - date range change" });
     }
   }, [dateRange]);
@@ -1162,7 +1134,6 @@ const [visualizationOptions, setVisualizationOptions] = useState<VisualizationOp
         validateForecaster(validationForecaster, 'model', dataSourceId)
       )
         .then((resp: any) => {
-          console.log('validateForecaster resp', resp);
           if (isEmpty(Object.keys(resp.response))) {
             setValidForecasterSettings(true);
             setValidModelConfigurations(true);
@@ -1339,7 +1310,6 @@ const [visualizationOptions, setVisualizationOptions] = useState<VisualizationOp
   // get all index mappings based on forecaster's selected index
   useEffect(() => {
     if (forecaster) {
-      console.log('setIsHCForecaster from forecaster check', Date.now());
       if (get(forecaster, 'categoryField', []).length > 0) {
         setIsHCForecaster(true);
       } else {

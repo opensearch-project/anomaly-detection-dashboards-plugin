@@ -107,8 +107,6 @@ export const validateForecasterNameTemplate = async (
     return undefined;
   }
 
-  console.log("isEdit", isEdit, match);
-
   if (!isEdit && match) {
     return 'Duplicate forecaster name';
   }
@@ -245,7 +243,6 @@ export const DefineForecaster = (props: DefineForecasterProps) => {
       formikProps.validateForm().then((errors) => {
         if (isEmpty(errors)) {
           // only used for define forecaster
-          console.log("formikProps.values", formikProps.values);
           optionallySaveValues(formikProps.values);
           //@ts-ignore
           props.setStep(2);

@@ -103,7 +103,6 @@ export function getVisibleOptions(
     items.length > 0
       ? groupIndicesOrAliasesByCluster(items, localClusterName, label)
       : [{ label, options: items }];
-  console.log('getVisibleOptions', indices, aliases, localClusterName);
 
   const visibleIndices = mapToVisibleOptions(indices, 'index');
   const visibleAliases = mapToVisibleOptions(aliases, 'alias');
@@ -166,7 +165,6 @@ export const filterAndSortForecasters = (
   selectedIndices: string[],
   selectedForecasterStates: FORECASTER_STATE[]
 ) => {
-  console.log('filterAndSortForecasters', search, selectedIndices, selectedForecasterStates);
   let filteredBySearch =
     search == ''
       ? forecasters
@@ -177,14 +175,12 @@ export const filterAndSortForecasters = (
       : filteredBySearch.filter((forecaster) =>
           selectedForecasterStates.includes(forecaster.curState)
         );
-  console.log('filteredBySearchAndState', filteredBySearchAndState, selectedIndices);
   let filteredBySearchAndStateAndIndex =
     selectedIndices == ALL_INDICES
       ? filteredBySearchAndState
       : filteredBySearchAndState.filter((forecaster) =>
           forecaster.indices.some((index) => selectedIndices.includes(index))
         );
-  console.log('filteredBySearchAndStateAndIndex', filteredBySearchAndStateAndIndex);
   return filteredBySearchAndStateAndIndex;
 };
 
@@ -332,7 +328,6 @@ export function getVisibleForecasterOptions(
     items.length > 0
       ? groupForecasterIndicesOrAliasesByCluster(items, localClusterName, label)
       : [{ label, options: items }];
-  console.log('getVisibleOptions', indices, aliases, localClusterName);
 
   const visibleIndices = mapToVisibleOptions(indices, 'index');
   const visibleAliases = mapToVisibleOptions(aliases, 'alias');

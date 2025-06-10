@@ -304,8 +304,6 @@ export default class ForecastService {
         convertForecastKeysToSnakeCase(request.body)
       );
 
-      console.log('create forecaster requestBody', requestBody);
-
       let params: PutForecasterParams = {
         forecasterId: forecasterId,
         ifSeqNo: ifSeqNo,
@@ -321,8 +319,6 @@ export default class ForecastService {
         dataSourceId,
         this.client
       );
-
-      console.log('params', params);
 
       if (isNumber(ifSeqNo) && isNumber(ifPrimaryTerm)) {
         response = await callWithRequest('forecast.updateForecaster', params);
@@ -376,7 +372,6 @@ export default class ForecastService {
       const requestBody = JSON.stringify(
         convertForecastKeysToSnakeCase(request.body)
       );
-      console.log('requestBody', requestBody);
       const response = await callWithRequest(
         'forecast.validateForecaster', {
         body: requestBody,
@@ -728,7 +723,6 @@ export default class ForecastService {
     opensearchDashboardsResponse: OpenSearchDashboardsResponseFactory
   ): Promise<IOpenSearchDashboardsResponse<any>> => {
     try {
-      console.log("request.query", request.query);
       const {
         dataSourceId = '',
       } = request.params as { dataSourceId?: string };
@@ -743,7 +737,6 @@ export default class ForecastService {
       const response = await callWithRequest('forecast.searchForecaster', {
         body: {},
       });
-      console.log('response', JSON.stringify(response));
       const totalForecasters = get(response, 'hits.total.value', 0);
 
       //Get all forecasters from search forecaster API
@@ -759,7 +752,6 @@ export default class ForecastService {
         }),
         {}
       );
-      console.log('allForecasters', JSON.stringify(allForecasters));
 
       // Fetch the latest realtime and runOnce tasks for all forecasters
       // using terms aggregations
@@ -863,7 +855,6 @@ export default class ForecastService {
         isRunOnce: any;
         resultIndex: string;
       };
-    console.log("getForecastResults request.params", request.params);
     const { dataSourceId = '' } = request.params as { dataSourceId?: string };
 
     if (!resultIndex) {
@@ -996,7 +987,6 @@ export default class ForecastService {
       if (maxEntities > 0) {
         const entityListAsObj =
           entityList.length === 0 ? {} : JSON.parse(entityList);
-        console.log('entityListAsObj', entityList, entityListAsObj);
 
         const entityFilters = isEmpty(entityListAsObj)
           ? {}
@@ -1123,8 +1113,6 @@ export default class ForecastService {
           this.client
         );
 
-        console.log('getForecastResults aggregatorRequestBody', JSON.stringify(aggregatorRequestBody));
-
         const aggResponse = !resultIndex
           ? await callWithRequest('forecast.searchResults', {
             body: aggregatorRequestBody,
@@ -1140,7 +1128,6 @@ export default class ForecastService {
         // Extract top entity_ids
         const topEntityBuckets = get(aggResponse, 'aggregations.top_entities.buckets', []);
         restrictedEntityIds = topEntityBuckets.map((b: any) => b.key);
-        console.log('Found top entities:', restrictedEntityIds);
 
         // If no entities matched, return empty
         if (!restrictedEntityIds.length) {
@@ -1177,8 +1164,6 @@ export default class ForecastService {
         this.client
       );
 
-      console.log('getForecastResults requestBody', JSON.stringify(requestBody));
-
       // Add pagination with search_after
       let allResults = [];
       let lastSort = null;
@@ -1205,8 +1190,6 @@ export default class ForecastService {
         if (lastSort) {
           paginatedRequestBody.search_after = lastSort;
         }
-
-        console.log('getForecastResults paginatedRequestBody', JSON.stringify(paginatedRequestBody));
 
         // Your existing API call, but with our paginated request body
         const response = !resultIndex
@@ -1238,8 +1221,6 @@ export default class ForecastService {
         }
       }
 
-      console.log('getForecastResults allResults', allResults.length);
-
       const groupedResults = new Map();
       allResults.forEach((result) => {
         const source = result._source;
@@ -1259,10 +1240,6 @@ export default class ForecastService {
         }
       });
 
-      // Convert Map to object for logging
-      // const groupedResultsObj = Object.fromEntries(groupedResults);
-      // console.log('groupedResults:', JSON.stringify(groupedResultsObj));
-
       const forecastResult: ForecastResult[] = [];
 
       // Process each group
@@ -1275,7 +1252,6 @@ export default class ForecastService {
         if (hasHorizonIndex) {
           // Sort forecasts by horizon_index and combine into arrays
           const sortedForecasts = orderBy(forecasts, ['_source.horizon_index'], ['asc']);
-          // console.log('sortedForecasts', sortedForecasts);
 
           const forecastValues: number[] = [];
           const forecastLowerBounds: number[] = [];
