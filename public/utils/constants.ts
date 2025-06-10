@@ -26,6 +26,8 @@ export const BREADCRUMBS = Object.freeze({
   EDIT_MODEL_CONFIGURATION: { text: 'Edit model configuration' },
   TITLE_GET_STARTED: { text: 'Get started'},
   TITLE_REAL_TIME_DASHBOARD: { text: 'Real-time dashboard'},
+  FORECASTING: { text: 'Forecasting', href: '#/forecasters' },
+  CREATE_FORECASTER: { text: 'Create forecaster' },
 });
 
 export const MDS_BREADCRUMBS = Object.freeze({
@@ -35,6 +37,8 @@ export const MDS_BREADCRUMBS = Object.freeze({
   EDIT_DETECTOR: { text: 'Edit detector' },
   DASHBOARD: (dataSourceId?: string) => ({ text: 'Dashboard', href: `#/dashboard?dataSourceId=${dataSourceId}` }),
   EDIT_MODEL_CONFIGURATION: { text: 'Edit model configuration' },
+  FORECASTING: (dataSourceId?: string) => ({ text: 'Forecasting', href: `#/forecasters?dataSourceId=${dataSourceId}` }),
+  CREATE_FORECASTER: { text: 'Create forecaster' },
 });
 
 export const APP_PATH = {
@@ -45,6 +49,9 @@ export const APP_PATH = {
   EDIT_FEATURES: '/detectors/:detectorId/features/',
   DETECTOR_DETAIL: '/detectors/:detectorId/',
   OVERVIEW: '/overview',
+  CREATE_FORECASTER: '/create-forecaster/',
+  LIST_FORECASTERS: '/forecasters',
+  FORECASTER_DETAIL: '/forecasters/:forecasterId/',
 };
 
 export const OPENSEARCH_DASHBOARDS_PATH = {
@@ -57,14 +64,19 @@ export const ALERTING_PLUGIN_NAME = 'alerting';
 
 export const OPENSEARCH_DASHBOARDS_NAME = 'dashboards';
 
+export const FORECASTING_FEATURE_NAME = 'forecasting';
+
 export const ANOMALY_DETECTORS_INDEX = '.opendistro-anomaly-detectors';
 
 export const ANOMALY_RESULT_INDEX = '.opendistro-anomaly-results';
 
 export const BASE_DOCS_LINK = 'https://opensearch.org/docs/monitoring-plugins';
 
-export const AD_DOCS_LINK =
-  'https://opensearch.org/docs/latest/observing-your-data/ad/index/';
+  export const AD_DOCS_LINK =
+    'https://opensearch.org/docs/latest/observing-your-data/ad/index/';
+
+export const FORECASTER_DOCS_LINK =
+  'https://opensearch.org/docs/latest/observing-your-data/forecast/index/';
 
 export const AD_HIGH_CARDINALITY_LINK =
   'https://opensearch.org/docs/latest/observing-your-data/ad/index/#optional-set-category-fields-for-high-cardinality';
@@ -94,6 +106,8 @@ export const INDEX_NAME_REGEX = RegExp('^[a-z0-9._-]+$');
 //https://github.com/opensearch-project/anomaly-detection/blob/main/src/main/java/com/amazon/opendistroforelasticsearch/ad/settings/AnomalyDetectorSettings.java
 export const DEFAULT_SHINGLE_SIZE = 8;
 
+export const DEFAULT_OUTPUT_AFTER = 32;
+
 export const FEATURE_DATA_POINTS_WINDOW = 3;
 
 export enum MISSING_FEATURE_DATA_SEVERITY {
@@ -117,6 +131,12 @@ export const DASHBOARD_PAGE_NAV_ID = `anomaly_detection_dashboard-dashboard`;
 
 export const DETECTORS_PAGE_NAV_ID = `anomaly_detection_dashboard-detectors`;
 
+export const FORECASTING_OVERVIEW_PAGE_NAV_ID = `forecasting_dashboard-overview`;
+
+export const FORECASTING_DASHBOARD_PAGE_NAV_ID = `forecasting_dashboard-dashboard`;
+
+export const FORECASTERS_PAGE_NAV_ID = `forecasting_dashboard-detectors`;
+
 export const USE_NEW_HOME_PAGE = 'home:useNewHomePage';
 
 export enum SUGGEST_ANOMALY_DETECTOR_METRIC_TYPE {
@@ -125,3 +145,11 @@ export enum SUGGEST_ANOMALY_DETECTOR_METRIC_TYPE {
   GENERATED = 'generated',
   CREATED = 'created',
 }
+
+export const FORECASTER_INSUFFICIENT_DATA_MESSAGE = 'This forecaster can be created, however it will not be able to initialize until there is at least 40 data points including the last interval.';
+export const FORECASTER_VALIDATION_ERROR_MESSAGE = 'There was a problem validating the forecaster definition';
+export const FORECASTER_EMPTY_DATA_IDENTIFIER = 'Empty data';
+
+export const FIELD_MAX_WIDTH = 400;
+// We define a narrower fixed width for the numeric field & slider.
+export const INPUT_SLIDER_WIDTH = 300;

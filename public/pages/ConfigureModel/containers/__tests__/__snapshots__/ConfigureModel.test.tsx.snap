@@ -737,7 +737,6 @@ exports[`<ConfigureModel /> spec creating model configuration renders the compon
                                 <div
                                   class="euiFormRow euiFormRow--fullWidth euiFormRow--compressed"
                                   hint="Set rules to ignore anomalies by comparing actual values against expected values."
-                                  hintlink="https://opensearch.org/docs/monitoring-plugins/ad"
                                   id="random_html_id-row"
                                 >
                                   <div
@@ -2009,7 +2008,6 @@ exports[`<ConfigureModel /> spec editing model configuration renders the compone
                                 <div
                                   class="euiFormRow euiFormRow--fullWidth euiFormRow--compressed"
                                   hint="Set rules to ignore anomalies by comparing actual values against expected values."
-                                  hintlink="https://opensearch.org/docs/monitoring-plugins/ad"
                                   id="random_html_id-row"
                                 >
                                   <div

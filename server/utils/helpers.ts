@@ -107,3 +107,11 @@ export function getClientBasedOnDataSource(
     return client.asScoped(request).callAsCurrentUser;
   }
 }
+
+// 1.If abs(num)>=0.01, will keep two digits;
+// 2.If abs(num)<0.01, will use scientific notation, for example 0.001234 will become 1.23e-3
+export const toFixedNumberForForecast = (num: number): number => {
+  return Math.abs(num) >= SHOW_DECIMAL_NUMBER_THRESHOLD
+    ? toFixedNumber(num, 2)
+    : Number(num.toExponential(2));
+};

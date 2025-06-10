@@ -16,9 +16,10 @@ import {
   MDSQueryParams,
 } from '../../../server/models/types';
 import sortBy from 'lodash/sortBy';
-import { DetectorListItem } from '../../models/interfaces';
+import { DetectorListItem, ForecasterListItem } from '../../models/interfaces';
 import {
   DETECTORS_QUERY_PARAMS,
+  FORECASTER_STATE,
   SORT_DIRECTION,
 } from '../../../server/utils/constants';
 import {
@@ -26,6 +27,8 @@ import {
   ALL_DETECTOR_STATES,
   MAX_DETECTORS,
   DEFAULT_QUERY_PARAMS,
+  MAX_FORECASTER,
+  EMPTY_FORECASTER_STATES,
 } from './constants';
 import { DETECTOR_STATE } from '../../../server/utils/constants';
 import { timeFormatter } from '@elastic/charts';
@@ -156,6 +159,31 @@ export const filterAndSortDetectors = (
   return sorted;
 };
 
+export const filterAndSortForecasters = (
+  forecasters: ForecasterListItem[],
+  search: string,
+  selectedIndices: string[],
+  selectedForecasterStates: FORECASTER_STATE[]
+) => {
+  let filteredBySearch =
+    search == ''
+      ? forecasters
+      : forecasters.filter((forecaster) => forecaster.name.includes(search));
+  let filteredBySearchAndState =
+    selectedForecasterStates == EMPTY_FORECASTER_STATES
+      ? filteredBySearch
+      : filteredBySearch.filter((forecaster) =>
+          selectedForecasterStates.includes(forecaster.curState)
+        );
+  let filteredBySearchAndStateAndIndex =
+    selectedIndices == ALL_INDICES
+      ? filteredBySearchAndState
+      : filteredBySearchAndState.filter((forecaster) =>
+          forecaster.indices.some((index) => selectedIndices.includes(index))
+        );
+  return filteredBySearchAndStateAndIndex;
+};
+
 export const getDetectorsToDisplay = (
   detectors: DetectorListItem[],
   page: number,
@@ -185,6 +213,18 @@ export const getAllDetectorsQueryParamsWithDataSourceId = (
   size: MAX_DETECTORS,
   sortDirection: SORT_DIRECTION.ASC,
   sortField: 'name',
+  dataSourceId,
+});
+
+export const getAllForecastersQueryParamsWithDataSourceId = (
+  dataSourceId: string = ''
+) => ({
+  from: 0,
+  search: '',
+  indices: '',
+  size: MAX_FORECASTER,
+  sortDirection: SORT_DIRECTION.ASC,
+  sortFieldId: 'name',
   dataSourceId,
 });
 
@@ -271,3 +311,72 @@ export const isDataSourceCompatible = (
 export const getLocalCluster = (clusters: ClusterInfo[]): ClusterInfo[] => {
   return clusters.filter((cluster) => cluster.localCluster === true);
 };
+
+export const getForecastClusterInfoLabel = (clusterInfo: ClusterInfo) =>
+  `${clusterInfo.name} ${clusterInfo.localCluster ? '' : '(Cross cluster connection)'}`;
+
+export const getClusterLabel = (localCluster: boolean, clusterName: string) =>
+  localCluster ? `${clusterName} (Local)` : `${clusterName} (Remote)`;
+
+export function getVisibleForecasterOptions(
+  indices: CatIndex[],
+  aliases: IndexAlias[],
+  localClusterName: string = ''
+) {
+  // Group by cluster or fallback to default label format
+  const getForecastLabeledOptions = (items: any[], label: string) =>
+    items.length > 0
+      ? groupForecasterIndicesOrAliasesByCluster(items, localClusterName, label)
+      : [{ label, options: items }];
+
+  const visibleIndices = mapToVisibleOptions(indices, 'index');
+  const visibleAliases = mapToVisibleOptions(aliases, 'alias');
+
+  // Combine grouped indices and aliases
+  const visibleIndicesLabel = getForecastLabeledOptions(visibleIndices, 'Indexes');
+  const visibleAliasesLabel = getForecastLabeledOptions(visibleAliases, 'Aliases');
+  const combinedVisibleIndicesAndAliases =
+    visibleIndicesLabel.concat(visibleAliasesLabel);
+  const sortedVisibleIndicesAndAliases = _.sortBy(combinedVisibleIndicesAndAliases, [
+    (item) => (item.label.includes('Indices:') ? 0 : 1), // Indices first, then Aliases
+    (item) => (item.label.includes('(Local)') ? 0 : 1), // Local first, then Remote
+  ]);
+  return sortedVisibleIndicesAndAliases;
+}
+
+export const mapToVisibleForecasterOptions = (items: any[], key: string) =>
+  items
+    .filter((value) => isUserIndex(value[key]))
+    .map((value) => ({
+      label: value[key],
+      ...(key === 'index' && { health: value.health }), // Only applicable to indices, ignored for aliases
+      localCluster: value.localCluster,
+    }));
+
+  export function groupForecasterIndicesOrAliasesByCluster(
+    indices,
+    localClusterName: string,
+    dataType: string
+  ) {
+    return indices.reduce((acc, index) => {
+      const clusterName = index.label.includes(':')
+        ? index.label.split(':')[0]
+        : localClusterName;
+  
+      //if undefined should be local as well.
+      let label =
+        index.localCluster === undefined || index.localCluster
+          ? `${localClusterName}: ${dataType}`
+          : `${clusterName} (Cross cluster connection): ${dataType}`;
+  
+      const { localCluster, ...indexWithOutLocalInfo } = index; // Destructure and remove localCluster
+      const cluster = acc.find((cluster) => cluster.label === label);
+      if (cluster) {
+        cluster.options.push(indexWithOutLocalInfo);
+      } else {
+        acc.push({ label, options: [indexWithOutLocalInfo] });
+      }
+  
+      return acc;
+    }, [] as { label: string; options: any[] }[]);
+  }

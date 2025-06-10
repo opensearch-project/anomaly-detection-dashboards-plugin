@@ -72,6 +72,12 @@ export const [getApplication, setApplication] =
   createGetterSetter<CoreStart['application']>('application');
 
 // This is primarily used for mocking this module and each of its fns in tests.
+// Testing frameworks (like Jest, which is commonly used in OpenSearch Dashboards plugins)
+// make it easy to mock entire modules. By importing the default export (import services
+// from './services';), a test setup can easily replace the entire services object or
+// specific functions within it (e.g., services.getSavedObjectsClient = jest.fn().mockReturnValue(...)).
+// This provides a convenient way to control the behavior of all these service accessors from
+// a single point in the test setup.
 export default {
   getSavedFeatureAnywhereLoader,
   getUISettings,

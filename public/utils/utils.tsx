@@ -26,6 +26,7 @@ import datemath from '@elastic/datemath';
 import moment from 'moment';
 import { Detector } from '../models/interfaces';
 import { CUSTOM_AD_RESULT_INDEX_PREFIX } from '../../server/utils/constants';
+import { FormikProps } from 'formik';
 
 export const validateFeatureName = (
   featureName: string
@@ -37,6 +38,12 @@ export const validateDetectorName = (
   detectorName: string
 ): string | undefined => {
   return validateName(detectorName, 'detector');
+};
+
+export const validateForecasterName = (
+  forecasterName: string
+): string | undefined => {
+  return validateName(forecasterName, 'forecaster');
 };
 
 export const validateName = (
@@ -67,7 +74,17 @@ export const validateCustomResultIndex = (name: string): string | undefined => {
   }
 };
 
-export const isInvalid = (name: string, form: any) =>
+/**
+ * Determines if a form field should display an error state.
+ * It returns true only if the field has been touched (interacted with) by the user
+ * AND there is currently a validation error associated with that field.
+ * This prevents showing errors for fields the user hasn't interacted with yet.
+ *
+ * @param name - The name (key) of the form field.
+ * @param form - The Formik form object containing 'touched' and 'errors' states.
+ * @returns {boolean} - True if the error should be shown, false otherwise.
+ */
+export const isInvalid = (name: string, form: any): boolean =>
   !!get(form.touched, name, false) && !!get(form.errors, name, false);
 
 export const getError = (name: string, form: any) => get(form.errors, name);
