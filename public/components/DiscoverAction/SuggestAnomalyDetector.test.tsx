@@ -69,6 +69,8 @@ const renderWithRouter = () => ({
 });
 
 describe('GenerateAnomalyDetector spec', () => {
+    const user = userEvent.setup();
+
     describe('Renders failed', () => {
         beforeEach(() => {
             jest.clearAllMocks();
@@ -326,7 +328,7 @@ describe('GenerateAnomalyDetector spec', () => {
                 expect(queryByText('Was this helpful?')).not.toBeNull();
             });
 
-            userEvent.click(getByLabelText('feedback thumbs up'));
+            await user.click(getByLabelText('feedback thumbs up'));
             expect(reportUiStatsMock).toHaveBeenCalled();
             expect(reportUiStatsMock).toHaveBeenCalledWith(
                 'suggestAD',
@@ -362,7 +364,7 @@ describe('GenerateAnomalyDetector spec', () => {
                 expect(queryByText('Was this helpful?')).not.toBeNull();
             });
 
-            userEvent.click(getByLabelText('feedback thumbs down'));
+            await user.click(getByLabelText('feedback thumbs down'));
             expect(reportUiStatsMock).toHaveBeenCalled();
             expect(reportUiStatsMock).toHaveBeenCalledWith(
                 'suggestAD',
@@ -468,7 +470,7 @@ describe('GenerateAnomalyDetector spec', () => {
                 expect(queryByText('Model Features')).not.toBeNull();
             });
 
-            userEvent.click(getByTestId("SuggestAnomalyDetectorCreateButton"));
+            await user.click(getByTestId("SuggestAnomalyDetectorCreateButton"));
 
             await waitFor(() => {
                 expect(httpClientMock.post).toHaveBeenCalledTimes(2);
@@ -527,7 +529,7 @@ describe('GenerateAnomalyDetector spec', () => {
                 expect(queryByText('Model Features')).not.toBeNull();
             });
 
-            userEvent.click(getByTestId("SuggestAnomalyDetectorCreateButton"));
+            await user.click(getByTestId("SuggestAnomalyDetectorCreateButton"));
 
             await waitFor(() => {
                 expect(getNotifications().toasts.addDanger).toHaveBeenCalledTimes(1);
@@ -585,7 +587,7 @@ describe('GenerateAnomalyDetector spec', () => {
                 expect(queryByText('Model Features')).not.toBeNull();
             });
 
-            userEvent.click(getByTestId("SuggestAnomalyDetectorCreateButton"));
+            await user.click(getByTestId("SuggestAnomalyDetectorCreateButton"));
 
             await waitFor(() => {
                 expect(getNotifications().toasts.addDanger).toHaveBeenCalledTimes(1);

@@ -105,8 +105,8 @@ describe('ModelConfigurationFields', () => {
 // Check for the suppression rules buttons with the name '1 rules'
 const buttons = getAllByRole('button', { name: '1 rules' });
 expect(buttons).toHaveLength(2);
-
-    userEvent.click(getByTestId('viewFeature-0'));
+    const user = userEvent.setup();
+    await user.click(getByTestId('viewFeature-0'));
     await waitFor(() => {
       queryByText('max');
     });

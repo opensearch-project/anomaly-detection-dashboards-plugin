@@ -241,6 +241,7 @@ describe('issue in detector validation', () => {
 });
 
 describe('create Detector', () => {
+  const user = userEvent.setup();
   test('renders succesful validation callout', async () => {
     httpClientMock.post = jest.fn().mockResolvedValue({
       ok: true,
@@ -250,6 +251,6 @@ describe('create Detector', () => {
     await waitFor(() => {});
     getByText('Detector settings are validated');
     getByText('Model configurations are validated');
-    userEvent.click(getByTestId('createDetectorButton'));
+    await user.click(getByTestId('createDetectorButton'));
   });
 });
