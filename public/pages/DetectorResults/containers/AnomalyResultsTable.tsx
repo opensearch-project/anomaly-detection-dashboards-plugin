@@ -16,6 +16,7 @@ import {
 } from '@elastic/eui';
 import { get } from 'lodash';
 import React, { useEffect, useState } from 'react';
+import { first } from 'rxjs/operators';
 import { SORT_DIRECTION } from '../../../../server/utils/constants';
 import ContentPanel from '../../../components/ContentPanel/ContentPanel';
 import {
@@ -29,6 +30,10 @@ import { getTitleWithCount } from '../../../utils/utils';
 import { convertToCategoryFieldAndEntityString } from '../../utils/anomalyResultUtils';
 import { HeatmapCell } from '../../AnomalyCharts/containers/AnomalyHeatmapChart';
 import { getSavedObjectsClient, getNotifications, getDataSourceEnabled } from '../../../services';
+import { CoreStart } from '../../../../../../src/core/public';
+import { CoreServicesContext } from '../../../components/CoreServices/CoreServices';
+import { useLocation } from 'react-router-dom';
+import { getDataSourceFromURL } from '../../../../public/pages/utils/helpers';
 
 //@ts-ignore
 const EuiBasicTable = EuiBasicTableComponent as any;
@@ -59,7 +64,13 @@ export function AnomalyResultsTable(props: AnomalyResultsTableProps) {
     },
   });
   const [targetAnomalies, setTargetAnomalies] = useState<any[]>([] as any[]);
+  
+  const core = React.useContext(CoreServicesContext) as CoreStart;
 
+  const location = useLocation();
+  const MDSQueryParams = getDataSourceFromURL(location);
+  const dataSourceId = MDSQueryParams.dataSourceId;
+  
   // Only return anomalies if they exist. If high-cardinality: only show when a heatmap cell is selected
   const totalAnomalies =
     props.anomalies &&
@@ -73,68 +84,167 @@ export function AnomalyResultsTable(props: AnomalyResultsTableProps) {
       const TEN_MINUTES_IN_MS = 10 * 60 * 1000;
       const startISO = new Date(startTime - TEN_MINUTES_IN_MS).toISOString();
       const endISO = new Date(endTime + TEN_MINUTES_IN_MS).toISOString();
-      
+
       const basePath = `${window.location.origin}${window.location.pathname.split('/app/')[0]}`;
-      
       const savedObjectsClient = getSavedObjectsClient();
-      
       const indexPatternTitle = props.detectorIndices.join(',');
       
-      // try to find an existing index pattern with this title
-      const indexPatternResponse = await savedObjectsClient.find({
-        type: 'index-pattern',
-        fields: ['title'],
-        search: `"${indexPatternTitle}"`,
-        searchFields: ['title'],
-      });
-      
-      let indexPatternId;
-      
-      if (indexPatternResponse.savedObjects.length > 0) {
-        indexPatternId = indexPatternResponse.savedObjects[0].id;
-      } else {
-        // try to create a new index pattern
-        try {
-          const newIndexPattern = await savedObjectsClient.create('index-pattern', {
-            title: indexPatternTitle,
-            timeFieldName: props.detectorTimeField,
-          });
-          
-          indexPatternId = newIndexPattern.id;
-
-          getNotifications().toasts.addSuccess(`Created new index pattern: ${indexPatternTitle}`);
-        } catch (error) {
-          getNotifications().toasts.addDanger(`Failed to create index pattern: ${error.message}`);
-          return;
-        }
-      }
-      
-      // put query params for HC detector
+      let discoverUrl = '';
+      let indexPatternId = '';
       let queryParams = '';
-      if (props.isHCDetector && item[ENTITY_VALUE_FIELD]) {
-        const entityValues = item[ENTITY_VALUE_FIELD].split('\n').map((s: string) => s.trim()).filter(Boolean);
-        const filters = entityValues.map((entityValue: string) => {
-          const [field, value] = entityValue.split(': ').map((s: string) => s.trim());
-          return `('$state':(store:appState),meta:(alias:!n,disabled:!f,index:'${indexPatternId}',key:${field},negate:!f,params:(query:${value}),type:phrase),query:(match_phrase:(${field}:${value})))`;
+
+      if (getDataSourceEnabled().enabled) {
+        const currentWorkspace = await core.workspaces.currentWorkspace$.pipe(first()).toPromise();
+        const currentWorkspaceId = currentWorkspace?.id;
+
+        // try to find an existing index pattern with this title
+        let findExistingIndexPatternOptions: any = {
+          type: 'index-pattern',
+          fields: ['title'],
+          perPage: 10000,
+        };
+
+        if (currentWorkspaceId) {
+          findExistingIndexPatternOptions.workspaces = [currentWorkspaceId];
+        }
+
+        const indexPatternResponse = await savedObjectsClient.find(findExistingIndexPatternOptions);
+        
+        // Filter by title and data source id
+        const matchingIndexPatterns = indexPatternResponse.savedObjects.filter(
+          (obj: any) => {
+            const titleMatches = obj.attributes.title === indexPatternTitle;
+            
+            const dataSourceRef = obj.references?.find(
+              (ref: any) => ref.type === 'data-source' && ref.name === 'dataSource'
+            );
+            const dataSourceMatches = dataSourceRef?.id === dataSourceId;
+            
+            return titleMatches && dataSourceMatches;
+          }
+        );
+        
+        if (matchingIndexPatterns.length > 0) {
+          indexPatternId = matchingIndexPatterns[0].id;
+        } else {
+          // try to create a new index pattern
+          try {
+            const createPayload: any = {
+              attributes: {
+                title: indexPatternTitle,
+                timeFieldName: props.detectorTimeField,
+              },
+            };
+
+            createPayload.references = [
+              {
+                id: dataSourceId,
+                type: 'data-source',
+                name: 'dataSource'
+              }
+            ];
+
+            if (currentWorkspaceId) {
+              createPayload.workspaces = [currentWorkspaceId];
+            }
+
+            const newIndexPattern = await savedObjectsClient.create('index-pattern', createPayload.attributes, {
+              references: createPayload.references,
+              workspaces: createPayload.workspaces,
+            });
+            indexPatternId = newIndexPattern.id;
+
+            getNotifications().toasts.addSuccess(`Created new index pattern: ${indexPatternTitle}`);
+          } catch (error: any) {
+            getNotifications().toasts.addDanger(`Failed to create index pattern: ${error.message}`);
+            return;
+          }
+        }
+
+        if (dataSourceId) {
+          try {
+            const dataSourceObject = await savedObjectsClient.get('data-source', dataSourceId);
+            const attributes = dataSourceObject.attributes as any;
+            const dataSourceTitle = attributes?.title;
+            const dataSourceEngineType = attributes?.dataSourceEngineType;
+
+            // Put query params for HC detector
+            let filterParams = '';
+            if (props.isHCDetector && item[ENTITY_VALUE_FIELD]) {
+              const entityValues = item[ENTITY_VALUE_FIELD].split('\n').map((s: string) => s.trim()).filter(Boolean);
+              const filters = entityValues.map((entityValue: string) => {
+                const [field, value] = entityValue.split(': ').map((s: string) => s.trim());
+                return `('$state':(store:appState),meta:(alias:!n,disabled:!f,key:${field},negate:!f,params:(query:${value}),type:phrase),query:(match_phrase:(${field}:${value})))`;
+              });
+              filterParams = `filters:!(${filters.join(',')}),`;
+            } else {
+              filterParams = 'filters:!(),';
+            }
+
+            // Construct discover URL
+            const dataSourceInfo = `dataset:(dataSource:(id:'${dataSourceId}',title:${dataSourceTitle},type:${dataSourceEngineType}),id:'${indexPatternId}',isRemoteDataset:!f,timeFieldName:'${props.detectorTimeField}',title:'${indexPatternTitle}',type:INDEX_PATTERN)`;
+
+            discoverUrl = `${basePath}/app/data-explorer/discover#?_a=(discover:(columns:!(_source),isDirty:!f,sort:!()),metadata:(view:discover))&_g=(filters:!(),refreshInterval:(pause:!t,value:0),time:(from:'${startISO}',to:'${endISO}'))&_q=(${filterParams}query:(${dataSourceInfo},language:kuery,query:''))`;
+            
+            window.open(discoverUrl, '_blank');
+            
+          } catch (error: any) {
+            console.error("Error fetching data source details:", error);
+          }
+        }
+
+      } else {
+        // try to find an existing index pattern with this title
+        const indexPatternResponse = await savedObjectsClient.find({
+          type: 'index-pattern',
+          fields: ['title'],
+          search: `"${indexPatternTitle}"`,
+          searchFields: ['title'],
         });
         
-        queryParams = `filters:!(${filters.join(',')}),`;
-      }
+        if (indexPatternResponse.savedObjects.length > 0) {
+          indexPatternId = indexPatternResponse.savedObjects[0].id;
+        } else {
+          // try to create a new index pattern
+          try {
+            const newIndexPattern = await savedObjectsClient.create('index-pattern', {
+              title: indexPatternTitle,
+              timeFieldName: props.detectorTimeField,
+            });
+            
+            indexPatternId = newIndexPattern.id;
 
-      const discoverUrl = `${basePath}/app/data-explorer/discover#?_a=(discover:(columns:!(_source),isDirty:!f,sort:!()),metadata:(indexPattern:'${indexPatternId}',view:discover))&_g=(filters:!(),refreshInterval:(pause:!t,value:0),time:(from:'${startISO}',to:'${endISO}'))&_q=(${queryParams}query:(language:kuery,query:''))`;
-      
-      window.open(discoverUrl, '_blank');
-    } catch (error) {
+            getNotifications().toasts.addSuccess(`Created new index pattern: ${indexPatternTitle}`);
+          } catch (error: any) {
+            getNotifications().toasts.addDanger(`Failed to create index pattern: ${error.message}`);
+            return;
+          }
+        }
+        
+        // put query params for HC detector
+        if (props.isHCDetector && item[ENTITY_VALUE_FIELD]) {
+          const entityValues = item[ENTITY_VALUE_FIELD].split('\n').map((s: string) => s.trim()).filter(Boolean);
+          const filters = entityValues.map((entityValue: string) => {
+            const [field, value] = entityValue.split(': ').map((s: string) => s.trim());
+            return `('$state':(store:appState),meta:(alias:!n,disabled:!f,index:'${indexPatternId}',key:${field},negate:!f,params:(query:${value}),type:phrase),query:(match_phrase:(${field}:${value})))`;
+          });
+          
+          queryParams = `filters:!(${filters.join(',')}),`;
+        }
+
+        discoverUrl = `${basePath}/app/data-explorer/discover#?_a=(discover:(columns:!(_source),isDirty:!f,sort:!()),metadata:(indexPattern:'${indexPatternId}',view:discover))&_g=(filters:!(),refreshInterval:(pause:!t,value:0),time:(from:'${startISO}',to:'${endISO}'))&_q=(${queryParams}query:(language:kuery,query:''))`;
+        
+        window.open(discoverUrl, '_blank');
+      }
+    } catch (error: any) {
       getNotifications().toasts.addDanger('Error opening discover view');
     }
   };
 
   const getCustomColumns = () => {
-    const dataSourceEnabled = getDataSourceEnabled().enabled;
     const columns = [...staticColumn] as any[];
     
-    if (!dataSourceEnabled) {
-      const actionsColumnIndex = columns.findIndex((column: any) => column.field === 'actions');
+    const actionsColumnIndex = columns.findIndex((column: any) => column.field === 'actions');
       
       if (actionsColumnIndex !== -1) {
         const actionsColumn = { ...columns[actionsColumnIndex] } as any;
@@ -150,13 +260,6 @@ export function AnomalyResultsTable(props: AnomalyResultsTableProps) {
         
         columns[actionsColumnIndex] = actionsColumn;
       }
-    } else {
-      const actionsColumnIndex = columns.findIndex((column: any) => column.field === 'actions');
-      if (actionsColumnIndex !== -1) {
-        columns.splice(actionsColumnIndex, 1);
-      }
-    }
-    
     return columns;
   };
 
