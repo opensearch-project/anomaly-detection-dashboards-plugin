@@ -159,6 +159,7 @@ export const ForecasterDetail = (props: ForecasterDetailProps) => {
     };
 
     // Validate both forms concurrently.
+    // invoke Field.validateForm() to validate the form such as FeatureAccordion.validateFeatureName
     return Promise.all([
       configFormik.validateForm(updatedConfigValues),
       detailsFormik.validateForm()
@@ -195,7 +196,11 @@ export const ForecasterDetail = (props: ForecasterDetailProps) => {
                       <strong>Configuration errors:</strong>
                       <ul>
                         {Object.entries(configErrors).map(([field, error]) => (
-                          <li key={field}>{`${field}: ${error}`}</li>
+                          <li key={field}>{`${field}: ${
+                            typeof error === 'object' && error !== null
+                              ? JSON.stringify(error)
+                              : error
+                          }`}</li>
                         ))}
                       </ul>
                     </div>
@@ -205,7 +210,11 @@ export const ForecasterDetail = (props: ForecasterDetailProps) => {
                       <strong>Details errors:</strong>
                       <ul>
                         {Object.entries(detailsErrors).map(([field, error]) => (
-                          <li key={field}>{`${field}: ${error}`}</li>
+                          <li key={field}>{`${field}: ${
+                            typeof error === 'object' && error !== null
+                              ? JSON.stringify(error)
+                              : error
+                          }`}</li>
                         ))}
                       </ul>
                     </div>

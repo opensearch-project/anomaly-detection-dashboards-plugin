@@ -62,9 +62,11 @@ import { mapKeysDeep, toCamel, toSnake } from "../../utils/helpers";
     console.log('updatedState', updatedState);
 
     // at the beginning, runOnceTask is inactive before going into initializing test state
+    // if runOnceTask is not empty and the error is empty, set the state to INIT_TEST
     const runOnceState = get(runOnceTask, 'state', 'INACTIVE_NOT_STARTED');
+    const runOnceStateError = get(runOnceTask, 'error', '');
     const updatedRunOnceStateString =
-      runOnceState === 'INACTIVE'
+      runOnceState === 'INACTIVE' && runOnceStateError === ''
         ? 'INIT_TEST'
         : runOnceState;
 
