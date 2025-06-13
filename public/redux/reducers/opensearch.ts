@@ -21,6 +21,7 @@ import { getPathsPerDataType } from './mapper';
 import {
   CatIndex,
   ClusterInfo,
+  ClusterSetting,
   IndexAlias,
 } from '../../../server/models/types';
 import { AD_NODE_API } from '../../../utils/constants';
@@ -35,6 +36,7 @@ const BULK = 'opensearch/BULK';
 const DELETE_INDEX = 'opensearch/DELETE_INDEX';
 const GET_CLUSTERS_INFO = 'opensearch/GET_CLUSTERS_INFO';
 const GET_INDICES_AND_ALIASES = 'opensearch/GET_INDICES_AND_ALIASES';
+const GET_CLUSTERS_SETTING = 'opensearch/GET_CLUSTERS_SETTING';
 
 export type Mappings = {
   [key: string]: any;
@@ -69,6 +71,7 @@ interface OpenSearchState {
   searchResult: object;
   errorMessage: string;
   clusters: ClusterInfo[];
+  settings: ClusterSetting[];
 }
 
 export const initialState: OpenSearchState = {
@@ -299,6 +302,31 @@ const reducer = handleActions<OpenSearchState>(
         errorMessage: get(action, 'error.error', action.error),
       }),
     },
+    [GET_CLUSTERS_SETTING]: {
+      REQUEST: (state: OpenSearchState): OpenSearchState => {
+        return { ...state, requesting: true, errorMessage: '' };
+      },
+      SUCCESS: (
+        state: OpenSearchState,
+        action: APIResponseAction
+      ): OpenSearchState => {
+        return {
+          ...state,
+          requesting: false,
+          settings: get(action, 'result.response.settings', []),
+        };
+      },
+      FAILURE: (
+        state: OpenSearchState,
+        action: APIErrorAction
+      ): OpenSearchState => {
+        return {
+          ...state,
+          requesting: false,
+          errorMessage: get(action, 'error.error', action.error),
+      }
+      },
+    },
   },
   initialState
 );
@@ -323,6 +351,14 @@ export const getClustersInfo = (dataSourceId: string = ''): APIAction => {
   return {
     type: GET_CLUSTERS_INFO,
     request: (client: HttpSetup) => client.get(url),
+  };
+};
+
+export const getClustersSetting = (): APIAction => {
+  const baseUrl = `..${AD_NODE_API.GET_CLUSTERS_SETTING}`;
+  return {
+    type: GET_CLUSTERS_SETTING,
+    request: (client: HttpSetup) => client.get(baseUrl),
   };
 };
 
