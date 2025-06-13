@@ -57,7 +57,7 @@ export const validateName = (
     return `Name is too big maximum limit is ${MAX_FEATURE_NAME_SIZE}`;
   }
   if (!NAME_REGEX.test(name)) {
-    return 'Valid characters are a-z, A-Z, 0-9, -(hyphen) and _(underscore)';
+    return `The name "${name}" contains invalid characters. Valid characters are a-z, A-Z, 0-9, -(hyphen) and _(underscore).`;
   }
 };
 
@@ -255,3 +255,14 @@ export function getHistoricalRangeString(detector: Detector) {
     );
   }
 }
+
+export const validateHistory = (value: any) => {
+  if (value === undefined || value === null || value === '') {
+    return 'A value is required.';
+  }
+  const num = Number(value);
+  if (isNaN(num) || !Number.isInteger(num) || num < 40) {
+    return 'Must be an integer of at least 40.';
+  }
+  return undefined;
+};
