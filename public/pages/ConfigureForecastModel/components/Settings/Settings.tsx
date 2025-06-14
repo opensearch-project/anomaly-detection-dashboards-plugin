@@ -26,6 +26,7 @@ import {
   getError,
   validatePositiveInteger,
   validateNonNegativeInteger,
+  validateHistory,
 } from '../../../../utils/utils';
 import { FORECASTER_DOCS_LINK, FIELD_MAX_WIDTH, INPUT_SLIDER_WIDTH } from '../../../../utils/constants';
 import { FormattedFormRow } from '../../../../components/FormattedFormRow/FormattedFormRow';
@@ -273,7 +274,7 @@ export const Settings = ({ isEditable = true }: SettingsProps) => {
       <EuiSpacer size="l" />
 
       {/* HISTORY */}
-      <Field name="history" validate={validatePositiveInteger}>
+      <Field name="history" validate={validateHistory}>
         {({ field, form }: FieldProps<number>) => {
           const interval = (form as FormikProps<any>).values.interval;
           const value = field.value ?? '';
@@ -310,7 +311,7 @@ export const Settings = ({ isEditable = true }: SettingsProps) => {
                 <EuiFlexItem grow={false}>
                   <div style={{ width: INPUT_SLIDER_WIDTH }}>
                     <EuiCompressedFieldNumber
-                      min={1}
+                      min={40}
                       max={10000}
                       name={field.name}
                       id={field.name}
