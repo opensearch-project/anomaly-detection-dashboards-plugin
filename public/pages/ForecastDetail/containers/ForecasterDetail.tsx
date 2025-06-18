@@ -474,6 +474,16 @@ export const ForecasterDetail = (props: ForecasterDetailProps) => {
   // Create a ref for tracking if this is the initial load
   const initialFetchExecutedRef = useRef(false);
 
+  const windowDelayInMinutes = useMemo(() => {
+    if (!forecaster?.windowDelay?.period) {
+      return 0;
+    }
+    const windowDelay = forecaster.windowDelay.period;
+    const windowDelayUnit = get(windowDelay, 'unit', UNITS.MINUTES);
+    const windowDelayInterval = get(windowDelay, 'interval', 0);
+    return windowDelayInterval * toDuration(windowDelayUnit).asMinutes();
+  }, [forecaster]);
+
   // Create a wrapper around setDateRange to enforce boundaries
   const setDateRange = (newDateRange: DateRange) => {
     if (!forecaster) {
@@ -481,12 +491,6 @@ export const ForecasterDetail = (props: ForecasterDetailProps) => {
       setDateRangeState(newDateRange);
       return;
     }
-
-    // Calculate the earliest allowed time
-    const windowDelay = forecaster.windowDelay?.period || { interval: 0, unit: UNITS.MINUTES };
-    const windowDelayUnit = get(windowDelay, 'unit', UNITS.MINUTES);
-    const windowDelayInterval = get(windowDelay, 'interval', 0);
-    const windowDelayInMinutes = windowDelayInterval * toDuration(windowDelayUnit).asMinutes();
 
     // Calculate earliest allowed time based on lastUiBreakingChangeTime
     const lastUiBreakingTime = forecaster.lastUiBreakingChangeTime || 0;
@@ -976,6 +980,8 @@ const [visualizationOptions, setVisualizationOptions] = useState<VisualizationOp
 
   const isForecasterMissingData = forecaster?.curState === FORECASTER_STATE.AWAITING_DATA_TO_INIT || forecaster?.curState === FORECASTER_STATE.AWAITING_DATA_TO_RESTART;
 
+  const isTestMissingData = forecaster?.curState === FORECASTER_STATE.INACTIVE_NOT_STARTED && forecaster?.taskError?.includes("not enough data");
+
   const initializationInfo = isForecasterMissingData
     ? getForecasterInitializationInfo(forecaster)
     : undefined;
@@ -1002,7 +1008,7 @@ const [visualizationOptions, setVisualizationOptions] = useState<VisualizationOp
     if (isForecasterUpdated) {
       return 'The forecaster configuration has changed since it was last stopped.';
     }
-    if (isForecasterMissingData) {
+    if (isForecasterMissingData || isTestMissingData) {
       return `Data is not being ingested correctly for feature: ${forecaster?.featureAttributes[0].featureName}. So, forecast result is missing during this time.`;
     }
     if (isPerformingColdStart) {
@@ -1075,7 +1081,7 @@ const [visualizationOptions, setVisualizationOptions] = useState<VisualizationOp
     }`;    
   };
 
-  const getCalloutContent = () => {
+  const getCalloutContent = (windowDelayInMinutes: number) => {
     return isForecasterUpdated ? (
       <p>
         Restart the forecaster to see accurate forecast based on configuration
@@ -1099,6 +1105,24 @@ const [visualizationOptions, setVisualizationOptions] = useState<VisualizationOp
       </p>
     ) : isInitOvertime ? (
       <p>{`${getInitProgressMessage()} ${initActionItem}`}</p>
+    ) : isTestMissingData ? (
+      <p>
+        The test cannot start as there is not enough data. Data is required
+        between{' '}
+        {moment()
+          .subtract(
+            (forecaster?.forecastInterval?.period?.interval || 0) *
+              (forecaster?.history || 0),
+            'minutes'
+          )
+          .subtract(windowDelayInMinutes, 'minutes')
+          .format('YYYY-MM-DD HH:mm:ss')}{' '}
+        and{' '}
+        {moment()
+          .subtract(windowDelayInMinutes, 'minutes')
+          .format('YYYY-MM-DD HH:mm:ss')}
+        .
+      </p>
     ) : (
       // forecaster has failure
       <p>{`Fix the issue or report bugs to the support team.`}</p>
@@ -1617,7 +1641,8 @@ const [visualizationOptions, setVisualizationOptions] = useState<VisualizationOp
           isForecasterMissingData ||
           isInitializingNormally ||
           isInitOvertime ||
-          isForecasterFailed ? (
+          isForecasterFailed ||
+          isTestMissingData ? (
           <EuiCallOut
             title={getCalloutTitle()}
             color={getCalloutColor()}
@@ -1630,7 +1655,7 @@ const [visualizationOptions, setVisualizationOptions] = useState<VisualizationOp
             }
             style={{ marginBottom: '20px' }}
           >
-            {getCalloutContent()}
+            {getCalloutContent(windowDelayInMinutes)}
             {/* Only show progress bar if the init state is for realTime and the initProgress is not null */}
             {/* We don't have initProgress for runOnce */}
             {isPerformingColdStart ? null : forecaster?.curState === FORECASTER_STATE.INITIALIZING_FORECAST &&
