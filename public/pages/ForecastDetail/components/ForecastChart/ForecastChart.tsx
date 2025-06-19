@@ -706,13 +706,6 @@ export const ForecastChart: FC<ForecastChartProps> = ({
             timestamp: now
           };
         }
-      } else {
-        console.log('Skipping change', {
-          timeSinceLastUpdate,
-          currentStart: windowStart,
-          newStart: newWindowStart,
-          diff: Math.abs(newWindowStart - lastUpdate.windowStart)
-        });
       }
     }
   }, [maxPoints, uniqueTimestamps]);
