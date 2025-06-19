@@ -39,7 +39,6 @@ import { ConfirmTestForecasterModal } from "./ConfirmTestForecasterModal";
 interface ForecasterActionsCellProps {
     rowIndex: number;
     forecastersToDisplay: ForecasterListItem[];
-    // allMonitors: { [key: string]: Monitor };
     confirmModalState: ConfirmModalState;
     setConfirmModalState: (state: any) => void;
     setIsLoadingFinalForecasters: (state: boolean) => void;

@@ -186,109 +186,6 @@ describe('AdvancedSettings Component', () => {
     });
   });
 
-  describe('Sparse data handling', () => {
-    beforeEach(() => {
-      renderWithFormik();
-      expandPanel();
-    });
-
-    test('renders sparse data handling dropdown with all options', () => {
-      const dropdown = screen.getByDisplayValue('Ignore missing value');
-      
-      expect(dropdown).toBeInTheDocument();
-      expect(screen.getByText('Choose how to handle missing data points.')).toBeInTheDocument();
-    });
-
-    test('shows all sparse data options', () => {
-      const dropdown = screen.getByDisplayValue('Ignore missing value');
-      
-      // Check that all options are available in the select
-      expect(dropdown.querySelector('option[value="ignore"]')).toBeInTheDocument();
-      expect(dropdown.querySelector('option[value="previous_value"]')).toBeInTheDocument();
-      expect(dropdown.querySelector('option[value="set_to_zero"]')).toBeInTheDocument();
-      expect(dropdown.querySelector('option[value="custom_value"]')).toBeInTheDocument();
-    });
-
-    test('changes sparse data handling option', () => {
-      const dropdown = screen.getByDisplayValue('Ignore missing value');
-      
-      fireEvent.change(dropdown, { target: { value: SparseDataOptionValue.PREVIOUS_VALUE } });
-      expect(dropdown).toHaveValue(SparseDataOptionValue.PREVIOUS_VALUE);
-    });
-
-    test('shows custom value section when custom value is selected', () => {
-      const dropdown = screen.getByDisplayValue('Ignore missing value');
-      
-      fireEvent.change(dropdown, { target: { value: SparseDataOptionValue.CUSTOM_VALUE } });
-      
-      expect(screen.getByRole('heading', { level: 5, name: 'Custom value' })).toBeInTheDocument();
-      expect(screen.getByPlaceholderText('Custom value')).toBeInTheDocument();
-    });
-
-    test('hides custom value section when other options are selected', () => {
-      // First select custom value
-      const dropdown = screen.getByDisplayValue('Ignore missing value');
-      fireEvent.change(dropdown, { target: { value: SparseDataOptionValue.CUSTOM_VALUE } });
-      expect(screen.getByRole('heading', { level: 5, name: 'Custom value' })).toBeInTheDocument();
-      
-      // Then select a different option
-      fireEvent.change(dropdown, { target: { value: SparseDataOptionValue.SET_TO_ZERO } });
-      expect(screen.queryByRole('heading', { level: 5, name: 'Custom value' })).not.toBeInTheDocument();
-    });
-  });
-
-  describe('Custom value functionality', () => {
-    test('automatically adds custom value field when custom value option is selected', () => {
-      const initialValues = {
-        ...defaultInitialValues,
-        imputationOption: {
-          imputationMethod: SparseDataOptionValue.CUSTOM_VALUE,
-          custom_value: [],
-        },
-      };
-      
-      renderWithFormik(initialValues);
-      expandPanel();
-      
-      expect(screen.getByRole('heading', { level: 5, name: 'Custom value' })).toBeInTheDocument();
-      expect(screen.getByPlaceholderText('Custom value')).toBeInTheDocument();
-    });
-
-    test('custom value input accepts numeric values', async () => {
-      const initialValues = {
-        ...defaultInitialValues,
-        imputationOption: {
-          imputationMethod: SparseDataOptionValue.CUSTOM_VALUE,
-          custom_value: [{ data: '' }],
-        },
-      };
-      
-      renderWithFormik(initialValues);
-      expandPanel();
-      
-      const customValueInput = screen.getByPlaceholderText('Custom value');
-      fireEvent.change(customValueInput, { target: { value: '42.5' } });
-      
-      expect((customValueInput as HTMLInputElement).value).toBe('42.5');
-    });
-
-    test('custom value field is disabled when not editable', () => {
-      const initialValues = {
-        ...defaultInitialValues,
-        imputationOption: {
-          imputationMethod: SparseDataOptionValue.CUSTOM_VALUE,
-          custom_value: [{ data: '' }],
-        },
-      };
-      
-      renderWithFormik(initialValues, { isEditable: false });
-      expandPanel();
-      
-      const customValueInput = screen.getByPlaceholderText('Custom value');
-      expect(customValueInput).toBeDisabled();
-    });
-  });
-
   describe('Form integration', () => {
     test('handles empty string values for numeric fields', () => {
       renderWithFormik();
@@ -315,10 +212,6 @@ describe('AdvancedSettings Component', () => {
         shingleSize: 16,
         suggestedSeasonality: 24,
         recencyEmphasis: 2560,
-        imputationOption: {
-          imputationMethod: SparseDataOptionValue.PREVIOUS_VALUE,
-          custom_value: [],
-        },
       };
       
       renderWithFormik(initialValues);
@@ -327,7 +220,6 @@ describe('AdvancedSettings Component', () => {
       expect((screen.getByTestId('shingleSize') as HTMLInputElement).value).toBe('16');
       expect((screen.getByTestId('suggestedSeasonality') as HTMLInputElement).value).toBe('24');
       expect((screen.getByTestId('recencyEmphasis') as HTMLInputElement).value).toBe('2560');
-      expect(screen.getByDisplayValue('Previous value')).toBeInTheDocument();
     });
   });
 
@@ -340,7 +232,6 @@ describe('AdvancedSettings Component', () => {
       expect(screen.getByText('Shingle size')).toBeInTheDocument();
       expect(screen.getByText('Suggested seasonality')).toBeInTheDocument();
       expect(screen.getAllByText('Recency emphasis')[0]).toBeInTheDocument();
-      expect(screen.getByText('Sparse data handling')).toBeInTheDocument();
     });
 
     test('shows unit badges for numeric fields', () => {
@@ -358,7 +249,6 @@ describe('AdvancedSettings Component', () => {
       expect(screen.getByTestId('shingleSize')).toBeDisabled();
       expect(screen.getByTestId('suggestedSeasonality')).toBeDisabled();
       expect(screen.getByTestId('recencyEmphasis')).toBeDisabled();
-      expect(screen.getByDisplayValue('Ignore missing value')).toBeDisabled();
     });
   });
 });
