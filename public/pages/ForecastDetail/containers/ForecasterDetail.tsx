@@ -482,7 +482,7 @@ export const ForecasterDetail = (props: ForecasterDetailProps) => {
     const windowDelayUnit = get(windowDelay, 'unit', UNITS.MINUTES);
     const windowDelayInterval = get(windowDelay, 'interval', 0);
     return windowDelayInterval * toDuration(windowDelayUnit).asMinutes();
-  }, [forecaster]);
+  }, [forecaster?.windowDelay]);
 
   // Create a wrapper around setDateRange to enforce boundaries
   const setDateRange = (newDateRange: DateRange) => {
