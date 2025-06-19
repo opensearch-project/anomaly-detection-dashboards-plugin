@@ -369,6 +369,7 @@ export const DefineForecaster = (props: DefineForecasterProps) => {
                     isLoading={isLoading}
                     formikProps={formikProps}
                   />
+                  <EuiSpacer />
                 </Fragment>
               </div>
             </EuiPageBody>
