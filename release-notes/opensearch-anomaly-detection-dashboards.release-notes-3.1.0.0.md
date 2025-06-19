@@ -6,6 +6,7 @@ Compatible with OpenSearch Dashboards 3.1.0.0
 - Fix a MDS bug ([#1039](https://github.com/opensearch-project/anomaly-detection-dashboards-plugin/pull/1039))
 - Improve validation, error display, and run-once state handling ([#1047](https://github.com/opensearch-project/anomaly-detection-dashboards-plugin/pull/1047))
 - surface “missing data” error in test mode ([#1050](https://github.com/opensearch-project/anomaly-detection-dashboards-plugin/pull/1050))
+- Improve Create Forecaster UI and cleanup logs ([#1052](https://github.com/opensearch-project/anomaly-detection-dashboards-plugin/pull/1052))
 
 ### Enhancements
 - Enable contextual launch in MDS OpenSearch UI ([#1041](https://github.com/opensearch-project/anomaly-detection-dashboards-plugin/pull/1041))

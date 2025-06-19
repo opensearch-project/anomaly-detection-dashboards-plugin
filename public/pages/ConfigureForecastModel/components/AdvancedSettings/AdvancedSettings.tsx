@@ -51,13 +51,6 @@ interface AdvancedSettingsProps {
 export function AdvancedSettings({ isEditable = true }: AdvancedSettingsProps) {
   const [showAdvancedSettings, setShowAdvancedSettings] = useState<boolean>(false);
 
-  const sparseDataOptions = [
-    { value: SparseDataOptionValue.IGNORE, text: 'Ignore missing value' },
-    { value: SparseDataOptionValue.PREVIOUS_VALUE, text: 'Previous value' },
-    { value: SparseDataOptionValue.SET_TO_ZERO, text: 'Set to zero' },
-    { value: SparseDataOptionValue.CUSTOM_VALUE, text: 'Custom value' },
-  ];
-
   return (
     <ContentPanel
       title={
@@ -250,94 +243,6 @@ export function AdvancedSettings({ isEditable = true }: AdvancedSettingsProps) {
             )}
           </Field>
 
-          {/* ---------------- Sparse data handling ---------------- */}
-          <Field
-            name="imputationOption.imputationMethod"
-            id="imputationOption.imputationMethod"
-          >
-            {({ field, form }: FieldProps) => {
-              // If "Custom value" is selected, ensure at least one row is present
-              useEffect(() => {
-                if (
-                  field.value === SparseDataOptionValue.CUSTOM_VALUE &&
-                  (!form.values.imputationOption?.custom_value ||
-                    form.values.imputationOption.custom_value.length === 0)
-                ) {
-                  form.setFieldValue('imputationOption.custom_value', [
-                    { featureName: '', value: undefined },
-                  ]);
-                }
-              }, [field.value, form]);
-
-              return (
-                <>
-                  <FormattedFormRow
-                    fullWidth
-                    title="Sparse data handling"
-                    hint={[`Choose how to handle missing data points.`]}
-                    hintLink={FORECASTER_DOCS_LINK}
-                    isInvalid={isInvalid(field.name, form)}
-                    error={getError(field.name, form)}
-                  >
-                    <div style={{ maxWidth: FIELD_MAX_WIDTH }}>
-                      <EuiCompressedSelect 
-                        {...field} 
-                        options={sparseDataOptions}
-                        disabled={!isEditable}
-                      />
-                    </div>
-                  </FormattedFormRow>
-
-                  {field.value === SparseDataOptionValue.CUSTOM_VALUE && (
-                    <div style={{ maxWidth: FIELD_MAX_WIDTH }}>
-                      <EuiSpacer size="m" />
-                      <EuiText size="xs">
-                        <h5>Custom value</h5>
-                      </EuiText>
-                      <EuiSpacer size="s" />
-                      <FieldArray name="imputationOption.custom_value">
-                        {(arrayHelpers) => (
-                          <>
-                            {form.values.imputationOption.custom_value?.map(
-                              (_, index) => (
-                                <EuiFlexGroup
-                                  key={index}
-                                  gutterSize="s"
-                                  alignItems="center"
-                                >
-                                  <EuiFlexItem grow={false}>
-                                    <Field
-                                      name={`imputationOption.custom_value.${index}.data`}
-                                      id={`imputationOption.custom_value.${index}.data`}
-                                    >
-                                      {({ field }: FieldProps) => (
-                                        <div style={{ width: INPUT_SLIDER_WIDTH }}>
-                                          <EuiCompressedFieldNumber
-                                            style={{ width: '100%' }}
-                                            placeholder="Custom value"
-                                            name={field.name}
-                                            disabled={!isEditable}
-                                            onChange={(e) => {
-                                              form.setFieldValue(field.name, toNumberOrEmpty(e.target.value));
-                                            }}
-                                            value={field.value || ''}
-                                          />
-                                        </div>
-                                      )}
-                                    </Field>
-                                  </EuiFlexItem>
-                                </EuiFlexGroup>
-                              )
-                            )}
-                          </>
-                        )}
-                      </FieldArray>
-                    </div>
-                  )}
-                </>
-              );
-            }}
-          </Field>
         </>
       ) : null}
     </ContentPanel>

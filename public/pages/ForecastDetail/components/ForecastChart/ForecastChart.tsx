@@ -191,10 +191,6 @@ export const ForecastChart: FC<ForecastChartProps> = ({
 
   // useEffect for datePickerRange
   useEffect(() => {
-    console.log('[EFFECT-1] datePickerRange update', {
-      startDate: dateRange.startDate,
-      endDate: dateRange.endDate
-    });
 
     setDatePickerRange({
       start: dateRange.startDate.toString(),
@@ -219,7 +215,6 @@ export const ForecastChart: FC<ForecastChartProps> = ({
           const startTimestamp = startTime.valueOf();
           const endTimestamp = endTime.valueOf();
 
-          console.log('startTime', startTimestamp, 'endTime', endTimestamp);
           // handleDateRangeChange(startTimestamp, endTimestamp, start, end);
 
           // Convert the current dateRange to absolute timestamps for comparison
@@ -231,10 +226,8 @@ export const ForecastChart: FC<ForecastChartProps> = ({
             startTimestamp >= currentStartTimestamp &&
             endTimestamp <= currentEndTimestamp
           ) {
-            console.log('handleZoomRangeChange');
             handleZoomRangeChange(startTimestamp, endTimestamp, start, end);
           } else {
-            console.log('handleDateRangeChange');
             handleDateRangeChange(startTimestamp, endTimestamp, start, end);
           }
         }
@@ -390,14 +383,9 @@ export const ForecastChart: FC<ForecastChartProps> = ({
 
   // Replace the existing effect with this optimized version
   useEffect(() => {
-    console.log('[EFFECT-4] selectedForecasts update', {
-      selectedForecasts: selectedForecasts,
-      forecastTo: forecastTo
-    });
     // Skip if there are no selected forecasts
     if (selectedForecasts.length === 0) {
       if (forecastTo !== undefined) {
-        console.log('[EFFECT-4] Clearing forecastTo (no selected forecasts)');
         setForecastTo(undefined);
       }
       prevSelectedForecastsRef.current = selectedForecasts;
@@ -411,11 +399,8 @@ export const ForecastChart: FC<ForecastChartProps> = ({
       JSON.stringify(prevForecasts) !== JSON.stringify(selectedForecasts);
 
     if (!hasChanged) {
-      console.log('[EFFECT-4] Skipping - selectedForecasts unchanged');
       return; // Skip processing if selectedForecasts hasn't changed
     }
-
-    console.log('[EFFECT-4] Processing new selectedForecasts');
 
     // Grab the first forecast run
     const firstRun = selectedForecasts[0];
@@ -435,7 +420,6 @@ export const ForecastChart: FC<ForecastChartProps> = ({
 
     // Only update state if the value has actually changed
     if (forecastTo !== newForecastTo) {
-      console.log('[EFFECT-4] Setting forecastTo', { from: forecastTo, to: newForecastTo });
       setForecastTo(newForecastTo);
     }
 
@@ -663,7 +647,6 @@ export const ForecastChart: FC<ForecastChartProps> = ({
     // Extract and sort all unique timestamps
     const uniqueXValues = Array.from(new Set(combinedData.map(d => d.x))).sort((a, b) => a - b);
 
-    console.log('Unique timestamps count:', uniqueXValues.length, 'Total data points:', combinedData.length);
     return uniqueXValues;
   }, [combinedData]);
 
@@ -708,17 +691,7 @@ export const ForecastChart: FC<ForecastChartProps> = ({
           !isSmallRapidWindowStartChange
         );
 
-      console.log('shouldUpdate', shouldUpdate, 'noChange:', noChange, 'newWindowSize:', newWindowSize, 'windowSize:', windowSize, 'newWindowStart:', newWindowStart, 'windowStart:', windowStart, timeSinceLastUpdate, now,
-        lastUpdate.timestamp, total, maxPoints);
-
       if (shouldUpdate) {
-        console.log('[EFFECT-3] Setting window values', {
-          fromSize: windowSize,
-          toSize: newWindowSize,
-          fromStart: windowStart,
-          toStart: newWindowStart,
-          timeSinceLastUpdate
-        });
 
         // Update the state
         setWindow({
@@ -734,7 +707,7 @@ export const ForecastChart: FC<ForecastChartProps> = ({
           };
         }
       } else {
-        console.log('[EFFECT-3] Skipping change', {
+        console.log('Skipping change', {
           timeSinceLastUpdate,
           currentStart: windowStart,
           newStart: newWindowStart,
@@ -772,14 +745,6 @@ export const ForecastChart: FC<ForecastChartProps> = ({
     // Filter combinedData to only include rows with x values in our window
     const data = combinedData.filter(
       row => row.x >= minTimestamp && row.x <= maxTimestamp
-    );
-
-    console.log(
-      'windowedData',
-      'Unique timestamps in window:', timestampSlice.length,
-      'Total rows in window:', data.length,
-      'Window start:', windowStart,
-      'Window size:', windowSize
     );
 
     return data;
@@ -900,7 +865,6 @@ export const ForecastChart: FC<ForecastChartProps> = ({
   // Disable zoom out when the window size already covers all unique timestamps
   // or when it reaches the maximum allowed points (maxPoints).
   const disableZoomOut = windowSize >= Math.min(uniqueTimestamps.length, maxPoints);
-  console.log('disabledZoomOut', windowSize, combinedData.length, maxPoints);
 
   // Check if current state is active AND the selected forecast is the latest
   const isLive = isActiveState(forecaster?.curState) &&
@@ -1322,7 +1286,6 @@ export const ForecastChart: FC<ForecastChartProps> = ({
       const intervalInMs = forecaster.forecastInterval.period.interval * 60000;
       setIntervalMilliseconds(intervalInMs);
 
-      console.log(`[ForecastChart] Updated interval milliseconds: ${intervalInMs}ms (${forecaster.forecastInterval.period.interval} minutes)`);
     }
   }, [forecaster]); // Re-run when forecaster changes
 
@@ -1374,10 +1337,6 @@ export const ForecastChart: FC<ForecastChartProps> = ({
         index.timeSlots[slotKey][entityId].push(point);
       });
     });
-
-    console.log('Built spatial index with',
-      Object.keys(index.timeSlots).length, 'time slots,',
-      'time range:', new Date(index.minTime).toISOString(), 'to', new Date(index.maxTime).toISOString());
 
     return index;
   }, [intervalMilliseconds]);
