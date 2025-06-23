@@ -38,7 +38,6 @@ export function configureToFormik(
   forecaster: Forecaster,
   allClusters: ClusterInfo[]
 ): ConfigureFormikValues {
-  console.log('forecaster', forecaster);
   const imputationFormikValues = createImputationFormikValues(forecaster);
 
   // Extract indices and handle undefined case
@@ -72,8 +71,6 @@ export function configureToFormik(
     extractedClusters = undefined;
   }
 
-  console.log('extractedClusters', extractedClusters);
-
   return {
     // index: [...indices.map(indexObj => indexObj.label)],
     index: [...indices.map(index => ({ label: index }))],
@@ -104,10 +101,6 @@ export function formikToForecaster(
   detailsValues: DetailsFormikValues,
   forecaster: Forecaster
 ): Forecaster {
-  console.log('configureValues', configureValues);
-  console.log('detailsValues', detailsValues);
-  console.log('categoryFieldEnabled:', configureValues.categoryFieldEnabled);
-  console.log('categoryField:', configureValues.categoryField);
   
   let forecasterBody = {
     ...forecaster,
@@ -156,7 +149,6 @@ export function formikToForecaster(
     horizon: configureValues.horizon,
     history: configureValues.history,
   } as Forecaster;
-  console.log('forecasterBody', forecasterBody);
 
   return forecasterBody;
 }
