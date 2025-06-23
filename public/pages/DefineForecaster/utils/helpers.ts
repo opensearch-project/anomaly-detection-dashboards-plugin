@@ -401,7 +401,7 @@ export const validateFeatures = (values: any) => {
       // @ts-ignore
       if (featureNameCount.get(attribute.featureName.toLowerCase()) > 1) {
         hasError = true;
-        return { featureName: 'Duplicate feature name' };
+        return { featureName: 'Duplicate indicator name' };
       } else {
         return undefined;
       }
@@ -409,7 +409,7 @@ export const validateFeatures = (values: any) => {
       hasError = true;
       // @ts-ignore
       return {
-        featureName: 'You must enter a feature name',
+        featureName: 'You must enter an indicator name',
       };
     }
   });

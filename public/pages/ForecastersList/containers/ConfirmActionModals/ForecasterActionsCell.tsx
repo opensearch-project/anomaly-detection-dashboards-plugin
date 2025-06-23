@@ -149,7 +149,6 @@ export function ForecasterActionsCell(props: ForecasterActionsCellProps) {
                 FORECASTER_STATE.INACTIVE_STOPPED,
                 FORECASTER_STATE.INACTIVE_NOT_STARTED,
                 FORECASTER_STATE.INIT_ERROR,
-                FORECASTER_STATE.FORECAST_FAILURE,
                 FORECASTER_STATE.INIT_TEST_FAILED,
                 FORECASTER_STATE.TEST_COMPLETE,
             ].includes(forecasterState)
@@ -171,6 +170,7 @@ export function ForecasterActionsCell(props: ForecasterActionsCellProps) {
                 FORECASTER_STATE.AWAITING_DATA_TO_RESTART,
                 FORECASTER_STATE.INIT_TEST,
                 FORECASTER_STATE.INITIALIZING_FORECAST,
+                FORECASTER_STATE.FORECAST_FAILURE,
             ].includes(forecasterState)
         ) {
             return [

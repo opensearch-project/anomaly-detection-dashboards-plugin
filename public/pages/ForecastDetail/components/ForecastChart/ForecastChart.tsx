@@ -42,6 +42,7 @@ import {
   EuiSwitch,
   EuiIconTip,
   EuiSmallButtonEmpty,
+  EuiSmallButtonIcon,
 } from '@elastic/eui';
 import {
   Chart,

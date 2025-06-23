@@ -77,7 +77,7 @@ export const FeaturePanel = (props: FeatureProps) => {
           >
             <EuiCompressedFieldText
               data-test-subj={`featureNameTextInput-${index}`}
-              placeholder="Enter feature name"
+              placeholder="Enter indicator name"
               {...field}
               disabled={!isEditable}
               // Ensure value is always a defined string to prevent React warning about

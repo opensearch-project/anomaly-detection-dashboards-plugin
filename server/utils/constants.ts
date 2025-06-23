@@ -227,7 +227,7 @@ export const isForecasterErrorState = (state: FORECASTER_STATE): boolean => {
 
 export function isActiveState(state: FORECASTER_STATE | undefined): boolean {
   if (!state) return false;
-  return state.startsWith('AWAITING_') || state === FORECASTER_STATE.RUNNING || state === FORECASTER_STATE.INITIALIZING_FORECAST;
+  return state.startsWith('AWAITING_') || state === FORECASTER_STATE.RUNNING || state === FORECASTER_STATE.INITIALIZING_FORECAST || state === FORECASTER_STATE.FORECAST_FAILURE;
 }
 
 export function isTestState(state: FORECASTER_STATE | undefined): boolean {
