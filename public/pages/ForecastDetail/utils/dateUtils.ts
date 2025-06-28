@@ -50,24 +50,42 @@ export const parseDateMath = (expression: string): number => {
  * @param dateRange DateRange object that may contain relative or absolute values
  * @returns DateRange with absolute epoch millisecond values
  */
-export const convertToEpochRange = (dateRange: DateRange): { startDate: number; endDate: number } => {
+export const convertToEpochRange = (
+  dateRange: DateRange
+): { startDate: number; endDate: number } => {
   let start: number;
   let end: number;
-  
+
   // Handle start date
   if (typeof dateRange.startDate === 'string' && dateRange.isRelative) {
     start = parseDateMath(dateRange.startDate);
   } else {
-    start = typeof dateRange.startDate === 'string' ? parseInt(dateRange.startDate, 10) : dateRange.startDate;
+    // For absolute dates, which can be a epoch number or a string
+    // (epoch or an ISO date string like "2020-01-01T21:52:56.000Z")
+    if (typeof dateRange.startDate === 'string') {
+      start = /^\d+$/.test(dateRange.startDate)
+        ? parseInt(dateRange.startDate, 10)
+        : new Date(dateRange.startDate).getTime();
+    } else {
+      start = dateRange.startDate;
+    }
   }
-  
+
   // Handle end date
   if (typeof dateRange.endDate === 'string' && dateRange.isRelative) {
     end = parseDateMath(dateRange.endDate);
   } else {
-    end = typeof dateRange.endDate === 'string' ? parseInt(dateRange.endDate, 10) : dateRange.endDate;
+    // For absolute dates, which can be a epoch number or a string
+    // (epoch or an ISO date string like "2020-01-01T21:52:56.000Z")
+    if (typeof dateRange.endDate === 'string') {
+      end = /^\d+$/.test(dateRange.endDate)
+        ? parseInt(dateRange.endDate, 10)
+        : new Date(dateRange.endDate).getTime();
+    } else {
+      end = dateRange.endDate;
+    }
   }
-  
+
   return { startDate: start, endDate: end };
 };
 
@@ -130,14 +148,24 @@ export const dateRangeToString = (dateRange: DateRange): string => {
     return `${formatEpochDate(startDate)} to ${formatEpochDate(endDate)}`;
   } else {
     // For absolute dates, just format them
-    const start = typeof dateRange.startDate === 'string' 
-      ? parseInt(dateRange.startDate, 10) 
-      : dateRange.startDate;
-      
-    const end = typeof dateRange.endDate === 'string'
-      ? parseInt(dateRange.endDate, 10)
-      : dateRange.endDate;
-      
+    let start: number;
+    if (typeof dateRange.startDate === 'string') {
+      start = /^\d+$/.test(dateRange.startDate)
+        ? parseInt(dateRange.startDate, 10)
+        : new Date(dateRange.startDate).getTime();
+    } else {
+      start = dateRange.startDate;
+    }
+
+    let end: number;
+    if (typeof dateRange.endDate === 'string') {
+      end = /^\d+$/.test(dateRange.endDate)
+        ? parseInt(dateRange.endDate, 10)
+        : new Date(dateRange.endDate).getTime();
+    } else {
+      end = dateRange.endDate;
+    }
+
     return `${formatEpochDate(start)} to ${formatEpochDate(end)}`;
   }
 };

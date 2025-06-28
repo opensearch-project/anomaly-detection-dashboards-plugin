@@ -48,8 +48,6 @@ import { mapKeysDeep, toCamel, toSnake } from "../../utils/helpers";
   // - override INACTIVE states (INACTIVE_STOPPED or INACTIVE_NOT_STARTED) with test-related states
   //   (INITIALIZING_TEST, TEST_COMPLETE, or INIT_TEST_FAILURE) if runOnceTask exists with these states
   export const combineTaskState = (realTimeTask?: any, runOnceTask?: any) => {
-    console.log('realTimeTask', realTimeTask);
-    console.log('runOnceTask', runOnceTask);
     const realTimeState = get(realTimeTask, 'state', 'INACTIVE_NOT_STARTED');
     const updatedStateString =
       realTimeState === 'CREATED'
@@ -59,7 +57,6 @@ import { mapKeysDeep, toCamel, toSnake } from "../../utils/helpers";
         : realTimeState;
     //@ts-ignore
     let updatedState = FORECASTER_STATE[updatedStateString];
-    console.log('updatedState', updatedState);
 
     // at the beginning, runOnceTask is inactive before going into initializing test state
     // if runOnceTask is not empty and the error is empty, set the state to INIT_TEST
@@ -69,8 +66,6 @@ import { mapKeysDeep, toCamel, toSnake } from "../../utils/helpers";
       runOnceState === 'INACTIVE' && runOnceStateError === ''
         ? 'INIT_TEST'
         : runOnceState;
-
-    console.log('updatedRunOnceStateString', updatedRunOnceStateString);
 
     const realTimeLastUpdateTime = get(realTimeTask, 'last_update_time', 0);
     const runOnceLastUpdateTime = get(runOnceTask, 'last_update_time', 0);

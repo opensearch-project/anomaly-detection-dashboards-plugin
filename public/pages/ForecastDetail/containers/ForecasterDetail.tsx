@@ -32,7 +32,6 @@ import {
   EuiSmallButton,
   EuiSpacer,
   EuiText,
-  EuiSmallButtonIcon,
   EuiLoadingSpinner,
   EuiCallOut,
   EuiProgress,

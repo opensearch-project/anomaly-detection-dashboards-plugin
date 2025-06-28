@@ -720,7 +720,6 @@ export default class AdService {
     request: OpenSearchDashboardsRequest,
     opensearchDashboardsResponse: OpenSearchDashboardsResponseFactory
   ): Promise<IOpenSearchDashboardsResponse<any>> => {
-    console.log('getDetectors request', request);
     try {
       const {
         from = 0,
@@ -780,7 +779,6 @@ export default class AdService {
         dataSourceId,
         this.client
       );
-      console.log('requestBody', requestBody);
       const response = await callWithRequest('ad.searchDetector', {
         body: requestBody,
       });

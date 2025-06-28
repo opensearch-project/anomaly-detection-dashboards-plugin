@@ -216,8 +216,6 @@ export const ForecastChart: FC<ForecastChartProps> = ({
           const startTimestamp = startTime.valueOf();
           const endTimestamp = endTime.valueOf();
 
-          // handleDateRangeChange(startTimestamp, endTimestamp, start, end);
-
           // Convert the current dateRange to absolute timestamps for comparison
           const { startDate: currentStartTimestamp, endDate: currentEndTimestamp } =
             convertToEpochRange(dateRange);
@@ -751,8 +749,14 @@ export const ForecastChart: FC<ForecastChartProps> = ({
 
     // Process each data point
     for (const point of windowedData) {
-      // Skip points with no data
-      if (!point.forecast && !point.upper && !point.lower && !point.actual) {
+      // Skip points that have no actual, forecast, or bound data.
+      // Explicitly check for null to avoid filtering out points with a value of 0.
+      if (
+        point.forecast === null &&
+        point.upper === null &&
+        point.lower === null &&
+        point.actual === null
+      ) {
         continue;
       }
 
@@ -1935,6 +1939,7 @@ export const ForecastChart: FC<ForecastChartProps> = ({
                             <EuiSmallButtonEmpty
                               iconType="controlsHorizontal"
                               aria-label="Split time series options"
+                              data-test-subj="splitTimeSeriesOptionsButton"
                               onClick={() => setIsDisplayOptionsOpen(!isDisplayOptionsOpen)}
                               style={{ borderRadius: 0 }}
                               isDisabled={!forecaster?.categoryField?.length}
@@ -1946,6 +1951,7 @@ export const ForecastChart: FC<ForecastChartProps> = ({
                           panelPaddingSize="s"
                           anchorPosition="downRight"
                           style={{ maxWidth: 'none' }}
+                          data-test-subj="splitTimeSeriesOptionsPopover"
                         >
                           {/* Split Time Series Controls Panel Content */}
                           <div style={{ width: 400 }}>
@@ -2232,6 +2238,7 @@ export const ForecastChart: FC<ForecastChartProps> = ({
                             {/* Update button */}
                             <EuiSmallButton
                               fullWidth
+                              data-test-subj="updateVisualizationButton"
                               onClick={() => {
                                 if (validateThresholdInputs()) {
                                   handleUpdateVisualization();
@@ -2811,7 +2818,7 @@ export const ForecastChart: FC<ForecastChartProps> = ({
 
             {/* display="rowCompressed" forces the label and its labelAppend to occupy a single row at the top,
 with the Documentation link flushed to the right, creating a clean header for the code editor below */}
-            <EuiModalBody>
+            <EuiModalBody data-test-subj="customQueryModal">
               <EuiForm>
                 <EuiFormRow
                   display="rowCompressed"
@@ -3020,6 +3027,7 @@ with the Documentation link flushed to the right, creating a clean header for th
               </EuiSmallButtonEmpty>
               <EuiSmallButton
                 fill
+                data-test-subj="addOrUpdateCustomQueryButton"
                 onClick={() => {
                   // Format the data and prepare it for API call
                   try {

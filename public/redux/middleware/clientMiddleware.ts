@@ -31,17 +31,11 @@ export default function clientMiddleware<State>(client: HttpSetup) {
         return action(dispatch, getState);
       }
       if (isAPIAction(action)) {
-        console.log('action', action);
-        
         const { request, type, ...rest } = action;
         try {
-          console.log('action type', `${type}_REQUEST`);
-          console.log('request', request);
-          console.log('rest', rest);
           // Network call
           next({ ...rest, type: `${type}_REQUEST` });
           const result = await request(client);
-          console.log('result', result);
           //@ts-ignore
           if (get(result, 'ok', true)) {
             next({ ...rest, result, type: `${type}_SUCCESS` });
