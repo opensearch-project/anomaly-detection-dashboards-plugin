@@ -87,7 +87,7 @@ exports[`<AggregationSelector /> spec Empty results renders component with aggre
         class="euiFormHelpText euiFormRow__text"
         id="random_html_id-help-0"
       >
-        The aggregation method determines what constitutes an anomaly. For example, if you choose min(), the detector focuses on finding anomalies based on the minimum values of your feature.
+        The aggregation function you select tells the forecaster which statistic to predict. If you pick min(), the model treats each forecast as an estimate of the series’ minimum value over the chosen horizon (just as avg() would target the mean, max() the peak, and so on).
       </div>
     </div>
   </div>
