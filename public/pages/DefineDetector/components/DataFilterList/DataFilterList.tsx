@@ -18,7 +18,6 @@ import {
 } from '@elastic/eui';
 import { FieldArray, FieldArrayRenderProps, FormikProps } from 'formik';
 import React, { useState, Fragment } from 'react';
-import { get } from 'lodash';
 import { DetectorDefinitionFormikValues } from '../../models/interfaces';
 import { UIFilter, FILTER_TYPES } from '../../../../models/interfaces';
 import { DataFilter } from './components/DataFilter';
@@ -62,7 +61,13 @@ export const DataFilterList = (props: DataFilterListProps) => {
             >
               <Fragment>
                 <EuiSpacer size="m" />
-                <EuiFlexGroup direction="row" gutterSize="xs">
+                <EuiFlexGroup
+                  direction="row"
+                  gutterSize="xs"
+                  style={{
+                    flexWrap: 'wrap',
+                  }}
+                >
                   <EuiFlexItem grow={false}>
                     {values.filters?.length === 0 ||
                     (values.filters?.length === 1 && isCreatingNewFilter) ? (

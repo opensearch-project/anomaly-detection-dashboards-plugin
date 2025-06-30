@@ -490,6 +490,7 @@ exports[`<DefineDetector /> Full creating detector definition renders the compon
               />
               <div
                 class="euiFlexGroup euiFlexGroup--gutterExtraSmall euiFlexGroup--directionRow euiFlexGroup--responsive"
+                style="flex-wrap: wrap;"
               >
                 <div
                   class="euiFlexItem euiFlexItem--flexGrowZero"
@@ -1651,6 +1652,7 @@ exports[`<DefineDetector /> FullEdit editing detector page renders the component
               />
               <div
                 class="euiFlexGroup euiFlexGroup--gutterExtraSmall euiFlexGroup--directionRow euiFlexGroup--responsive"
+                style="flex-wrap: wrap;"
               >
                 <div
                   class="euiFlexItem euiFlexItem--flexGrowZero"
@@ -2746,6 +2748,7 @@ exports[`<DefineDetector /> empty creating detector definition renders the compo
               />
               <div
                 class="euiFlexGroup euiFlexGroup--gutterExtraSmall euiFlexGroup--directionRow euiFlexGroup--responsive"
+                style="flex-wrap: wrap;"
               >
                 <div
                   class="euiFlexItem euiFlexItem--flexGrowZero"
@@ -3840,6 +3843,7 @@ exports[`<DefineDetector /> empty editing detector definition renders the compon
               />
               <div
                 class="euiFlexGroup euiFlexGroup--gutterExtraSmall euiFlexGroup--directionRow euiFlexGroup--responsive"
+                style="flex-wrap: wrap;"
               >
                 <div
                   class="euiFlexItem euiFlexItem--flexGrowZero"
