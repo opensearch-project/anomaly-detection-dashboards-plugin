@@ -207,6 +207,13 @@ export const DataFilter = (props: DataFilterProps) => {
         openPopover();
       }}
       onClickAriaLabel="onClick event for the button"
+      style={{
+        maxWidth: 'min(300px, 70vw)',
+        overflow: 'hidden',
+        textOverflow: 'ellipsis',
+        whiteSpace: 'nowrap',
+        display: 'inline-block',
+      }}
     >
       {labelToDisplay}
     </EuiBadge>
