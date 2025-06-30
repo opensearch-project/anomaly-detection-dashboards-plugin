@@ -19,7 +19,6 @@ import {
   EuiCompressedFormRow,
   EuiCompressedComboBox,
   EuiCompressedCheckbox,
-  EuiTitle,
 } from '@elastic/eui';
 import { Field, FieldProps, FormikProps } from 'formik';
 import { get, isEmpty } from 'lodash';

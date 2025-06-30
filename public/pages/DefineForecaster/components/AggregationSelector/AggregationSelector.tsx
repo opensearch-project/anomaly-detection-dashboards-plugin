@@ -46,7 +46,7 @@ export const AggregationSelector = (props: AggregationSelectorProps) => {
         {({ field, form }: FieldProps) => (
           <EuiCompressedFormRow
             label="Aggregation method"
-            helpText="The aggregation method determines what constitutes an anomaly. For example, if you choose min(), the detector focuses on finding anomalies based on the minimum values of your feature."
+            helpText="The aggregation function you select tells the forecaster which statistic to predict. If you pick min(), the model treats each forecast as an estimate of the series’ minimum value over the chosen horizon (just as avg() would target the mean, max() the peak, and so on)."
             isInvalid={isInvalid(field.name, form)}
             error={getError(field.name, form)}
           >

@@ -2,7 +2,7 @@ name: 'Install Dashboards with Plugin via Binary'
 
 on: [push, pull_request]
 env:
-  OPENSEARCH_VERSION: '3.0.0-beta1'
+  OPENSEARCH_VERSION: '3.1.0'
   CI: 1
   # avoid warnings like "tput: No value for $TERM and no -T specified"
   TERM: xterm
@@ -18,7 +18,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     steps:  
       - name: Checkout Branch
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Set env
         run: |
@@ -29,10 +29,11 @@ jobs:
         shell: bash
 
       - name: Run Opensearch
-        uses: derek-ho/start-opensearch@v2
+        uses: derek-ho/start-opensearch@v6
         with:
           opensearch-version: ${{ env.OPENSEARCH_VERSION }}
           security-enabled: false
+          jdk-version: 21
 
       - name: Run Dashboard
         id: setup-dashboards
