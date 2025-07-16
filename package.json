@@ -58,6 +58,7 @@
     "braces": "^3.0.3",
     "micromatch": "^4.0.8",
     "**/@babel/runtime": "^7.27.0",
-    "**/@babel/runtime-corejs3": "^7.27.0"
+    "**/@babel/runtime-corejs3": "^7.27.0",
+    "**/elliptic": "^6.6.1"
   }
 }
