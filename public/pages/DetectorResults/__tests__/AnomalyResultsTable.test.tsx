@@ -231,4 +231,171 @@ describe('AnomalyResultsTable', () => {
       expect(discoverButton).toBeInTheDocument();
     });
   });
+
+  describe('HC detector with entity values containing spaces', () => {
+    const mockAnomaliesWithSpaces = [
+      {
+        startTime: 1617235200000,
+        endTime: 1617238800000,
+        anomalyGrade: 0.8,
+        confidence: 0.9,
+        entity: [
+          { name: 'DestCityName', value: 'Des Moines' },
+          { name: 'OriginCityName', value: 'Los Angeles' },
+        ],
+      },
+    ];
+
+    const propsWithSpaces = {
+      anomalies: mockAnomaliesWithSpaces,
+      detectorIndices: ['test-index'],
+      detectorTimeField: 'timestamp',
+      isHCDetector: true,
+    };
+
+    it('handles entity values with spaces in HC detector', async () => {
+      const selectedHeatmapCell = {
+        entity: mockAnomaliesWithSpaces[0].entity,
+        startTime: mockAnomaliesWithSpaces[0].startTime,
+        endTime: mockAnomaliesWithSpaces[0].endTime,
+        dateRange: {
+          startDate: mockAnomaliesWithSpaces[0].startTime,
+          endDate: mockAnomaliesWithSpaces[0].endTime,
+        },
+        entityList: mockAnomaliesWithSpaces[0].entity,
+        severity: 0.8,
+      };
+
+      renderWithContext(
+        <AnomalyResultsTable 
+          {...propsWithSpaces} 
+          selectedHeatmapCell={selectedHeatmapCell}
+        />
+      );
+      
+      await waitFor(() => {
+        const table = screen.getByRole('table');
+        expect(table).toBeInTheDocument();
+        
+        const cells = screen.getAllByRole('cell');
+        const entityCell = cells.find(cell => 
+          cell.textContent?.includes('DestCityName: Des Moines') && 
+          cell.textContent?.includes('OriginCityName: Los Angeles')
+        );
+        
+        expect(entityCell).toBeInTheDocument();
+        expect(entityCell?.textContent).toContain('DestCityName: Des Moines');
+        expect(entityCell?.textContent).toContain('OriginCityName: Los Angeles');
+      });
+    });
+
+    it('generates properly quoted rison URL when opening discover with entity values containing spaces', async () => {
+      const selectedHeatmapCell = {
+        entity: mockAnomaliesWithSpaces[0].entity,
+        startTime: mockAnomaliesWithSpaces[0].startTime,
+        endTime: mockAnomaliesWithSpaces[0].endTime,
+        dateRange: {
+          startDate: mockAnomaliesWithSpaces[0].startTime,
+          endDate: mockAnomaliesWithSpaces[0].endTime,
+        },
+        entityList: mockAnomaliesWithSpaces[0].entity,
+        severity: 0.8,
+      };
+
+      // Mock existing index pattern
+      (getSavedObjectsClient as jest.Mock).mockReturnValue({
+        find: jest.fn().mockResolvedValue({ 
+          savedObjects: [{ id: 'existing-id' }] 
+        }),
+        create: jest.fn(),
+      });
+
+      const { container } = renderWithContext(
+        <AnomalyResultsTable 
+          {...propsWithSpaces} 
+          selectedHeatmapCell={selectedHeatmapCell}
+        />
+      );
+      
+      const discoverButton = container.querySelector('[data-test-subj="discoverIcon"]');
+      if (discoverButton) {
+        fireEvent.click(discoverButton);
+        
+        await waitFor(() => {
+          expect(mockWindowOpen).toHaveBeenCalled();
+          
+          const openedUrl = mockWindowOpen.mock.calls[0][0];
+          
+          expect(openedUrl).toContain("key:DestCityName"); 
+          expect(openedUrl).toContain("query:'Des Moines'");
+          expect(openedUrl).toContain("key:OriginCityName");
+          expect(openedUrl).toContain("query:'Los Angeles'");
+          
+          // Verify that the URL doesn't contain unquoted values with spaces
+          expect(openedUrl).not.toContain("query:Des Moines");
+          expect(openedUrl).not.toContain("query:Los Angeles");
+        });
+      }
+    });
+
+    it('handles entity values with special characters that need quoting', async () => {
+      const mockAnomaliesWithSpecialChars = [
+        {
+          startTime: 1617235200000,
+          endTime: 1617238800000,
+          anomalyGrade: 0.8,
+          confidence: 0.9,
+          entity: [
+            { name: 'field(with)parens', value: 'value with ! and symbols' },
+            { name: 'normal_field', value: 'normal_value' }
+          ],
+        },
+      ];
+
+      const selectedHeatmapCell = {
+        entity: mockAnomaliesWithSpecialChars[0].entity,
+        startTime: mockAnomaliesWithSpecialChars[0].startTime,
+        endTime: mockAnomaliesWithSpecialChars[0].endTime,
+        dateRange: {
+          startDate: mockAnomaliesWithSpecialChars[0].startTime,
+          endDate: mockAnomaliesWithSpecialChars[0].endTime,
+        },
+        entityList: mockAnomaliesWithSpecialChars[0].entity,
+        severity: 0.8,
+      };
+
+      // Mock existing index pattern
+      (getSavedObjectsClient as jest.Mock).mockReturnValue({
+        find: jest.fn().mockResolvedValue({ 
+          savedObjects: [{ id: 'existing-id' }] 
+        }),
+        create: jest.fn(),
+      });
+
+      const { container } = renderWithContext(
+        <AnomalyResultsTable 
+          {...propsWithSpaces} 
+          anomalies={mockAnomaliesWithSpecialChars}
+          selectedHeatmapCell={selectedHeatmapCell}
+        />
+      );
+      
+      const discoverButton = container.querySelector('[data-test-subj="discoverIcon"]');
+      if (discoverButton) {
+        fireEvent.click(discoverButton);
+        
+        await waitFor(() => {
+          expect(mockWindowOpen).toHaveBeenCalled();
+          
+          const openedUrl = mockWindowOpen.mock.calls[0][0];
+          
+          expect(openedUrl).toContain("key:'field(with)parens'");
+          expect(openedUrl).toContain("query:'value with ! and symbols'");
+          
+          expect(openedUrl).toContain("key:normal_field");
+          expect(openedUrl).toContain("query:normal_value");
+        });
+      }
+    });
+  });
 }); 

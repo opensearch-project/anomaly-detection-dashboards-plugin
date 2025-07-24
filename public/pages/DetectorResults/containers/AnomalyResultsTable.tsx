@@ -78,6 +78,14 @@ export function AnomalyResultsTable(props: AnomalyResultsTableProps) {
       ? props.anomalies.filter((anomaly) => anomaly.anomalyGrade > 0)
       : [];
 
+        // Helper function to properly quote values for rison encoding
+  const quoteRisonValue = (value: string): string => {
+    if (value.includes(' ') || value.includes(',') || value.includes('(') || value.includes(')') || value.includes('!') || value.includes(':') || value.includes("'")) {
+      return `'${value.replace(/'/g, "''")}'`;
+    }
+    return value;
+  };
+  
   const handleOpenDiscover = async (startTime: number, endTime: number, item: any) => {
     try {
       // calculate time range with 10-minute buffer on each side per customer request
@@ -174,7 +182,9 @@ export function AnomalyResultsTable(props: AnomalyResultsTableProps) {
               const entityValues = item[ENTITY_VALUE_FIELD].split('\n').map((s: string) => s.trim()).filter(Boolean);
               const filters = entityValues.map((entityValue: string) => {
                 const [field, value] = entityValue.split(': ').map((s: string) => s.trim());
-                return `('$state':(store:appState),meta:(alias:!n,disabled:!f,key:${field},negate:!f,params:(query:${value}),type:phrase),query:(match_phrase:(${field}:${value})))`;
+                const quotedValue = quoteRisonValue(value);
+                const quotedField = quoteRisonValue(field);
+                return `('$state':(store:appState),meta:(alias:!n,disabled:!f,key:${quotedField},negate:!f,params:(query:${quotedValue}),type:phrase),query:(match_phrase:(${quotedField}:${quotedValue})))`;
               });
               filterParams = `filters:!(${filters.join(',')}),`;
             } else {
@@ -226,7 +236,9 @@ export function AnomalyResultsTable(props: AnomalyResultsTableProps) {
           const entityValues = item[ENTITY_VALUE_FIELD].split('\n').map((s: string) => s.trim()).filter(Boolean);
           const filters = entityValues.map((entityValue: string) => {
             const [field, value] = entityValue.split(': ').map((s: string) => s.trim());
-            return `('$state':(store:appState),meta:(alias:!n,disabled:!f,index:'${indexPatternId}',key:${field},negate:!f,params:(query:${value}),type:phrase),query:(match_phrase:(${field}:${value})))`;
+            const quotedValue = quoteRisonValue(value);
+            const quotedField = quoteRisonValue(field);
+            return `('$state':(store:appState),meta:(alias:!n,disabled:!f,index:'${indexPatternId}',key:${quotedField},negate:!f,params:(query:${quotedValue}),type:phrase),query:(match_phrase:(${quotedField}:${quotedValue})))`;
           });
           
           queryParams = `filters:!(${filters.join(',')}),`;
