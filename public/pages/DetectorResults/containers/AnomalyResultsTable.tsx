@@ -34,6 +34,8 @@ import { CoreStart } from '../../../../../../src/core/public';
 import { CoreServicesContext } from '../../../components/CoreServices/CoreServices';
 import { useLocation } from 'react-router-dom';
 import { getDataSourceFromURL } from '../../../../public/pages/utils/helpers';
+import { setStateToOsdUrl } from '../../../../../../src/plugins/opensearch_dashboards_utils/public';
+import { opensearchFilters, IIndexPattern } from '../../../../../../src/plugins/data/public';
 
 //@ts-ignore
 const EuiBasicTable = EuiBasicTableComponent as any;
@@ -78,14 +80,8 @@ export function AnomalyResultsTable(props: AnomalyResultsTableProps) {
       ? props.anomalies.filter((anomaly) => anomaly.anomalyGrade > 0)
       : [];
 
-        // Helper function to properly quote values for rison encoding
-  const quoteRisonValue = (value: string): string => {
-    if (value.includes(' ') || value.includes(',') || value.includes('(') || value.includes(')') || value.includes('!') || value.includes(':') || value.includes("'")) {
-      return `'${value.replace(/'/g, "''")}'`;
-    }
-    return value;
-  };
-  
+
+
   const handleOpenDiscover = async (startTime: number, endTime: number, item: any) => {
     try {
       // calculate time range with 10-minute buffer on each side per customer request
@@ -99,7 +95,6 @@ export function AnomalyResultsTable(props: AnomalyResultsTableProps) {
       
       let discoverUrl = '';
       let indexPatternId = '';
-      let queryParams = '';
 
       if (getDataSourceEnabled().enabled) {
         const currentWorkspace = await core.workspaces.currentWorkspace$.pipe(first()).toPromise();
@@ -176,25 +171,82 @@ export function AnomalyResultsTable(props: AnomalyResultsTableProps) {
             const dataSourceTitle = attributes?.title;
             const dataSourceEngineType = attributes?.dataSourceEngineType;
 
-            // Put query params for HC detector
-            let filterParams = '';
+            // Build filters for HC detector
+            let filters: any[] = [];
             if (props.isHCDetector && item[ENTITY_VALUE_FIELD]) {
               const entityValues = item[ENTITY_VALUE_FIELD].split('\n').map((s: string) => s.trim()).filter(Boolean);
-              const filters = entityValues.map((entityValue: string) => {
+              filters = entityValues.map((entityValue: string) => {
                 const [field, value] = entityValue.split(': ').map((s: string) => s.trim());
-                const quotedValue = quoteRisonValue(value);
-                const quotedField = quoteRisonValue(field);
-                return `('$state':(store:appState),meta:(alias:!n,disabled:!f,key:${quotedField},negate:!f,params:(query:${quotedValue}),type:phrase),query:(match_phrase:(${quotedField}:${quotedValue})))`;
+                const mockField = { name: field, type: 'string' };
+                const mockIndexPattern = { 
+                  id: indexPatternId, 
+                  title: indexPatternTitle,
+                  fields: [],
+                  getFieldByName: () => undefined,
+                  getComputedFields: () => [],
+                  getScriptedFields: () => [],
+                  getSourceFilter: () => undefined,
+                  getTimeField: () => undefined,
+                  isTimeBased: () => false
+                } as unknown as IIndexPattern;
+                return opensearchFilters.buildPhraseFilter(mockField, value, mockIndexPattern);
               });
-              filterParams = `filters:!(${filters.join(',')}),`;
-            } else {
-              filterParams = 'filters:!(),';
             }
 
-            // Construct discover URL
-            const dataSourceInfo = `dataset:(dataSource:(id:'${dataSourceId}',title:${dataSourceTitle},type:${dataSourceEngineType}),id:'${indexPatternId}',isRemoteDataset:!f,timeFieldName:'${props.detectorTimeField}',title:'${indexPatternTitle}',type:INDEX_PATTERN)`;
+            // Build app state with filters
+            const appState = {
+              discover: {
+                columns: ['_source'],
+                isDirty: false,
+                sort: []
+              },
+              metadata: {
+                view: 'discover'
+              },
+              filters: filters
+            };
 
-            discoverUrl = `${basePath}/app/data-explorer/discover#?_a=(discover:(columns:!(_source),isDirty:!f,sort:!()),metadata:(view:discover))&_g=(filters:!(),refreshInterval:(pause:!t,value:0),time:(from:'${startISO}',to:'${endISO}'))&_q=(${filterParams}query:(${dataSourceInfo},language:kuery,query:''))`;
+            // Build global state with time range
+            const globalState = {
+              filters: [],
+              refreshInterval: {
+                pause: true,
+                value: 0
+              },
+              time: {
+                from: startISO,
+                to: endISO
+              }
+            };
+
+            // Build query state
+            const queryState = {
+              filters: filters,
+              query: {
+                dataset: {
+                  dataSource: {
+                    id: dataSourceId,
+                    title: dataSourceTitle,
+                    type: dataSourceEngineType
+                  },
+                  id: indexPatternId,
+                  isRemoteDataset: false,
+                  timeFieldName: props.detectorTimeField,
+                  title: indexPatternTitle,
+                  type: 'INDEX_PATTERN'
+                },
+                language: 'kuery',
+                query: ''
+              }
+            };
+
+            // Generate URL using setStateToOsdUrl
+            let url = `${basePath}/app/data-explorer/discover#/`;
+            url = setStateToOsdUrl('_a', appState, { useHash: false }, url);
+            url = setStateToOsdUrl('_g', globalState, { useHash: false }, url);
+            url = setStateToOsdUrl('_q', queryState, { useHash: false }, url);
+            
+            discoverUrl = url;
             
             window.open(discoverUrl, '_blank');
             
@@ -231,20 +283,71 @@ export function AnomalyResultsTable(props: AnomalyResultsTableProps) {
           }
         }
         
-        // put query params for HC detector
+        // Build filters for HC detector
+        let filters: any[] = [];
         if (props.isHCDetector && item[ENTITY_VALUE_FIELD]) {
           const entityValues = item[ENTITY_VALUE_FIELD].split('\n').map((s: string) => s.trim()).filter(Boolean);
-          const filters = entityValues.map((entityValue: string) => {
+          filters = entityValues.map((entityValue: string) => {
             const [field, value] = entityValue.split(': ').map((s: string) => s.trim());
-            const quotedValue = quoteRisonValue(value);
-            const quotedField = quoteRisonValue(field);
-            return `('$state':(store:appState),meta:(alias:!n,disabled:!f,index:'${indexPatternId}',key:${quotedField},negate:!f,params:(query:${quotedValue}),type:phrase),query:(match_phrase:(${quotedField}:${quotedValue})))`;
+            const mockField = { name: field, type: 'string' };
+            const mockIndexPattern = { 
+              id: indexPatternId, 
+              title: indexPatternTitle,
+              fields: [],
+              getFieldByName: () => undefined,
+              getComputedFields: () => [],
+              getScriptedFields: () => [],
+              getSourceFilter: () => undefined,
+              getTimeField: () => undefined,
+              isTimeBased: () => false
+            } as unknown as IIndexPattern;
+            return opensearchFilters.buildPhraseFilter(mockField, value, mockIndexPattern);
           });
-          
-          queryParams = `filters:!(${filters.join(',')}),`;
         }
 
-        discoverUrl = `${basePath}/app/data-explorer/discover#?_a=(discover:(columns:!(_source),isDirty:!f,sort:!()),metadata:(indexPattern:'${indexPatternId}',view:discover))&_g=(filters:!(),refreshInterval:(pause:!t,value:0),time:(from:'${startISO}',to:'${endISO}'))&_q=(${queryParams}query:(language:kuery,query:''))`;
+        // Build app state with filters
+        const appState = {
+          discover: {
+            columns: ['_source'],
+            isDirty: false,
+            sort: []
+          },
+          metadata: {
+            indexPattern: indexPatternId,
+            view: 'discover'
+          },
+          filters: filters
+        };
+
+        // Build global state with time range
+        const globalState = {
+          filters: [],
+          refreshInterval: {
+            pause: true,
+            value: 0
+          },
+          time: {
+            from: startISO,
+            to: endISO
+          }
+        };
+
+        // Build query state
+        const queryState = {
+          filters: filters,
+          query: {
+            language: 'kuery',
+            query: ''
+          }
+        };
+
+        // Generate URL using setStateToOsdUrl
+        let url = `${basePath}/app/data-explorer/discover#/`;
+        url = setStateToOsdUrl('_a', appState, { useHash: false }, url);
+        url = setStateToOsdUrl('_g', globalState, { useHash: false }, url);
+        url = setStateToOsdUrl('_q', queryState, { useHash: false }, url);
+        
+        discoverUrl = url;
         
         window.open(discoverUrl, '_blank');
       }

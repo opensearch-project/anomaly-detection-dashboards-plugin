@@ -232,7 +232,7 @@ describe('AnomalyResultsTable', () => {
     });
   });
 
-  describe('HC detector with entity values containing spaces', () => {
+  describe('HC detector with entity values containing special characters', () => {
     const mockAnomaliesWithSpaces = [
       {
         startTime: 1617235200000,
@@ -242,6 +242,8 @@ describe('AnomalyResultsTable', () => {
         entity: [
           { name: 'DestCityName', value: 'Des Moines' },
           { name: 'OriginCityName', value: 'Los Angeles' },
+          { name: 'lastName', value: "O'Brien" },
+          { name: 'host', value: 'cpu%user' },
         ],
       },
     ];
@@ -280,12 +282,16 @@ describe('AnomalyResultsTable', () => {
         const cells = screen.getAllByRole('cell');
         const entityCell = cells.find(cell => 
           cell.textContent?.includes('DestCityName: Des Moines') && 
-          cell.textContent?.includes('OriginCityName: Los Angeles')
+          cell.textContent?.includes('OriginCityName: Los Angeles') &&
+          cell.textContent?.includes("lastName: O'Brien") &&
+          cell.textContent?.includes('host: cpu%user')
         );
         
         expect(entityCell).toBeInTheDocument();
         expect(entityCell?.textContent).toContain('DestCityName: Des Moines');
         expect(entityCell?.textContent).toContain('OriginCityName: Los Angeles');
+        expect(entityCell?.textContent).toContain("lastName: O'Brien");
+        expect(entityCell?.textContent).toContain('host: cpu%user');
       });
     });
 
@@ -326,14 +332,17 @@ describe('AnomalyResultsTable', () => {
           
           const openedUrl = mockWindowOpen.mock.calls[0][0];
           
-          expect(openedUrl).toContain("key:DestCityName"); 
-          expect(openedUrl).toContain("query:'Des Moines'");
-          expect(openedUrl).toContain("key:OriginCityName");
-          expect(openedUrl).toContain("query:'Los Angeles'");
+          // Verify that the URL contains properly encoded filters
+          expect(openedUrl).toContain("DestCityName:'Des%20Moines'");
+          expect(openedUrl).toContain("OriginCityName:'Los%20Angeles'");
+          expect(openedUrl).toContain("lastName:'O!'Brien'");
+          expect(openedUrl).toContain("host:cpu%25user");
           
           // Verify that the URL doesn't contain unquoted values with spaces
-          expect(openedUrl).not.toContain("query:Des Moines");
-          expect(openedUrl).not.toContain("query:Los Angeles");
+          expect(openedUrl).not.toContain("DestCityName:Des Moines");
+          expect(openedUrl).not.toContain("OriginCityName:Los Angeles");
+          expect(openedUrl).not.toContain("lastName:O'Brien");
+          expect(openedUrl).not.toContain("host:cpu%user");
         });
       }
     });
@@ -389,11 +398,11 @@ describe('AnomalyResultsTable', () => {
           
           const openedUrl = mockWindowOpen.mock.calls[0][0];
           
-          expect(openedUrl).toContain("key:'field(with)parens'");
-          expect(openedUrl).toContain("query:'value with ! and symbols'");
+          // Verify that special characters are properly encoded
+          expect(openedUrl).toContain("'field(with)parens':'value%20with%20!!%20and%20symbols'");
           
-          expect(openedUrl).toContain("key:normal_field");
-          expect(openedUrl).toContain("query:normal_value");
+          // Normal field should not be quoted
+          expect(openedUrl).toContain("normal_field:normal_value");
         });
       }
     });
