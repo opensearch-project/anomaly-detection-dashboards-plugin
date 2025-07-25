@@ -231,4 +231,180 @@ describe('AnomalyResultsTable', () => {
       expect(discoverButton).toBeInTheDocument();
     });
   });
+
+  describe('HC detector with entity values containing special characters', () => {
+    const mockAnomaliesWithSpaces = [
+      {
+        startTime: 1617235200000,
+        endTime: 1617238800000,
+        anomalyGrade: 0.8,
+        confidence: 0.9,
+        entity: [
+          { name: 'DestCityName', value: 'Des Moines' },
+          { name: 'OriginCityName', value: 'Los Angeles' },
+          { name: 'lastName', value: "O'Brien" },
+          { name: 'host', value: 'cpu%user' },
+        ],
+      },
+    ];
+
+    const propsWithSpaces = {
+      anomalies: mockAnomaliesWithSpaces,
+      detectorIndices: ['test-index'],
+      detectorTimeField: 'timestamp',
+      isHCDetector: true,
+    };
+
+    it('handles entity values with spaces in HC detector', async () => {
+      const selectedHeatmapCell = {
+        entity: mockAnomaliesWithSpaces[0].entity,
+        startTime: mockAnomaliesWithSpaces[0].startTime,
+        endTime: mockAnomaliesWithSpaces[0].endTime,
+        dateRange: {
+          startDate: mockAnomaliesWithSpaces[0].startTime,
+          endDate: mockAnomaliesWithSpaces[0].endTime,
+        },
+        entityList: mockAnomaliesWithSpaces[0].entity,
+        severity: 0.8,
+      };
+
+      renderWithContext(
+        <AnomalyResultsTable 
+          {...propsWithSpaces} 
+          selectedHeatmapCell={selectedHeatmapCell}
+        />
+      );
+      
+      await waitFor(() => {
+        const table = screen.getByRole('table');
+        expect(table).toBeInTheDocument();
+        
+        const cells = screen.getAllByRole('cell');
+        const entityCell = cells.find(cell => 
+          cell.textContent?.includes('DestCityName: Des Moines') && 
+          cell.textContent?.includes('OriginCityName: Los Angeles') &&
+          cell.textContent?.includes("lastName: O'Brien") &&
+          cell.textContent?.includes('host: cpu%user')
+        );
+        
+        expect(entityCell).toBeInTheDocument();
+        expect(entityCell?.textContent).toContain('DestCityName: Des Moines');
+        expect(entityCell?.textContent).toContain('OriginCityName: Los Angeles');
+        expect(entityCell?.textContent).toContain("lastName: O'Brien");
+        expect(entityCell?.textContent).toContain('host: cpu%user');
+      });
+    });
+
+    it('generates properly quoted rison URL when opening discover with entity values containing spaces', async () => {
+      const selectedHeatmapCell = {
+        entity: mockAnomaliesWithSpaces[0].entity,
+        startTime: mockAnomaliesWithSpaces[0].startTime,
+        endTime: mockAnomaliesWithSpaces[0].endTime,
+        dateRange: {
+          startDate: mockAnomaliesWithSpaces[0].startTime,
+          endDate: mockAnomaliesWithSpaces[0].endTime,
+        },
+        entityList: mockAnomaliesWithSpaces[0].entity,
+        severity: 0.8,
+      };
+
+      // Mock existing index pattern
+      (getSavedObjectsClient as jest.Mock).mockReturnValue({
+        find: jest.fn().mockResolvedValue({ 
+          savedObjects: [{ id: 'existing-id' }] 
+        }),
+        create: jest.fn(),
+      });
+
+      const { container } = renderWithContext(
+        <AnomalyResultsTable 
+          {...propsWithSpaces} 
+          selectedHeatmapCell={selectedHeatmapCell}
+        />
+      );
+      
+      const discoverButton = container.querySelector('[data-test-subj="discoverIcon"]');
+      if (discoverButton) {
+        fireEvent.click(discoverButton);
+        
+        await waitFor(() => {
+          expect(mockWindowOpen).toHaveBeenCalled();
+          
+          const openedUrl = mockWindowOpen.mock.calls[0][0];
+          
+          // Verify that the URL contains properly encoded filters
+          expect(openedUrl).toContain("DestCityName:'Des%20Moines'");
+          expect(openedUrl).toContain("OriginCityName:'Los%20Angeles'");
+          expect(openedUrl).toContain("lastName:'O!'Brien'");
+          expect(openedUrl).toContain("host:cpu%25user");
+          
+          // Verify that the URL doesn't contain unquoted values with spaces
+          expect(openedUrl).not.toContain("DestCityName:Des Moines");
+          expect(openedUrl).not.toContain("OriginCityName:Los Angeles");
+          expect(openedUrl).not.toContain("lastName:O'Brien");
+          expect(openedUrl).not.toContain("host:cpu%user");
+        });
+      }
+    });
+
+    it('handles entity values with special characters that need quoting', async () => {
+      const mockAnomaliesWithSpecialChars = [
+        {
+          startTime: 1617235200000,
+          endTime: 1617238800000,
+          anomalyGrade: 0.8,
+          confidence: 0.9,
+          entity: [
+            { name: 'field(with)parens', value: 'value with ! and symbols' },
+            { name: 'normal_field', value: 'normal_value' }
+          ],
+        },
+      ];
+
+      const selectedHeatmapCell = {
+        entity: mockAnomaliesWithSpecialChars[0].entity,
+        startTime: mockAnomaliesWithSpecialChars[0].startTime,
+        endTime: mockAnomaliesWithSpecialChars[0].endTime,
+        dateRange: {
+          startDate: mockAnomaliesWithSpecialChars[0].startTime,
+          endDate: mockAnomaliesWithSpecialChars[0].endTime,
+        },
+        entityList: mockAnomaliesWithSpecialChars[0].entity,
+        severity: 0.8,
+      };
+
+      // Mock existing index pattern
+      (getSavedObjectsClient as jest.Mock).mockReturnValue({
+        find: jest.fn().mockResolvedValue({ 
+          savedObjects: [{ id: 'existing-id' }] 
+        }),
+        create: jest.fn(),
+      });
+
+      const { container } = renderWithContext(
+        <AnomalyResultsTable 
+          {...propsWithSpaces} 
+          anomalies={mockAnomaliesWithSpecialChars}
+          selectedHeatmapCell={selectedHeatmapCell}
+        />
+      );
+      
+      const discoverButton = container.querySelector('[data-test-subj="discoverIcon"]');
+      if (discoverButton) {
+        fireEvent.click(discoverButton);
+        
+        await waitFor(() => {
+          expect(mockWindowOpen).toHaveBeenCalled();
+          
+          const openedUrl = mockWindowOpen.mock.calls[0][0];
+          
+          // Verify that special characters are properly encoded
+          expect(openedUrl).toContain("'field(with)parens':'value%20with%20!!%20and%20symbols'");
+          
+          // Normal field should not be quoted
+          expect(openedUrl).toContain("normal_field:normal_value");
+        });
+      }
+    });
+  });
 }); 
