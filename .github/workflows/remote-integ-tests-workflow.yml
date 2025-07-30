@@ -6,7 +6,7 @@ env:
   CI: 1
   # avoid warnings like "tput: No value for $TERM and no -T specified"
   TERM: xterm
-  OPENSEARCH_DASHBOARDS_VERSION: 'main'
+  OPENSEARCH_DASHBOARDS_VERSION: '3.1.0'
   OPENSEARCH_VERSION: '3.1.0'
   OPENSEARCH_PLUGIN_VERSION: '3.1.0.0'
 

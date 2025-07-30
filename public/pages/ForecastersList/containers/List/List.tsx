@@ -226,8 +226,6 @@ export const ForecastersList = (props: ListProps) => {
 
   const intializeForecasters = async () => {
     // wait until selected data source is ready before doing dispatch calls if mds is enabled
-    console.log("intializeForecasters state.selectedDataSourceId", state.selectedDataSourceId);
-    //if (!dataSourceEnabled || (state.selectedDataSourceId && state.selectedDataSourceId !== "")) {
       dispatch(
         getForecasterList(
           getAllForecastersQueryParamsWithDataSourceId(
@@ -306,7 +304,6 @@ export const ForecastersList = (props: ListProps) => {
       state.selectedForecasterStates
     );
 
-    console.log('curSelectedForecasters', curSelectedForecasters);
     setForecastersToDisplay(curSelectedForecasters);
 
     setIsLoadingFinalForecasters(false);
@@ -457,26 +454,20 @@ export const ForecastersList = (props: ListProps) => {
 
   // Refresh data if user is selecting an index filter
   const handleIndexChange = (options: EuiComboBoxOptionProps[]): void => {
-    console.log('handleIndexChange called with options:', options);
-    
     let indices: string[];
     indices =
       options.length == 0
         ? ALL_INDICES
         : options.map((option) => {
-            console.log('Processing index option:', option);
             return option.label;
           }).slice(0, MAX_SELECTED_INDICES);
     
-    console.log('Setting indices to:', indices);
     
     setState((prevState) => {
-      console.log('Previous state for index change:', prevState);
       const newState = {
         ...prevState,
         selectedIndices: indices,
       };
-      console.log('New state for index change:', newState);
       return newState;
     });
   };

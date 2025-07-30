@@ -176,11 +176,11 @@ export const SuggestParametersDialog: React.FC<SuggestParametersDialogProps> = (
             {suggestMode === 'provided' && (
               <EuiFormRow
                 label="Forecasting interval"
-                helpText="A valid interval is from 1 to 60 minutes."
+                helpText="A valid interval is from 1 minute to 30 days."
               >
                 <EuiFieldNumber
                   min={1}
-                  max={60}
+                  max={43200} // 30 days
                   value={providedInterval}
                   onChange={(e) => setProvidedInterval(Number(e.target.value))}
                   append="minutes"
@@ -195,11 +195,13 @@ export const SuggestParametersDialog: React.FC<SuggestParametersDialogProps> = (
               buttonContent="Advanced"
               paddingSize="m"
             >
-              <EuiFormRow label="Shingle size">
+              <EuiFormRow 
+                label="Shingle size"
+                helpText="A valid shingle size is from 4 to 128.">
                 <EuiFieldNumber
                   value={shingleSize}
                   onChange={(e) => setShingleSize(Number(e.target.value))}
-                  min={1}
+                  min={4}
                   max={128}
                 />
               </EuiFormRow>
