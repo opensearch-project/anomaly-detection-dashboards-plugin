@@ -21,7 +21,7 @@ import { Router } from '../router';
 import {
   SORT_DIRECTION,
   CUSTOM_FORECAST_RESULT_INDEX_PREFIX,
-  CUSTOM_FORECAST_RESULT_INDEX_WILDCARD,
+  MAX_FORECASTER,
   FORECASTER_DOC_FIELDS,
 } from '../utils/constants';
 import {
@@ -735,7 +735,9 @@ export default class ForecastService {
         this.client
       );
       const response = await callWithRequest('forecast.searchForecaster', {
-        body: {},
+        body: {
+          size: MAX_FORECASTER,
+        },
       });
       const totalForecasters = get(response, 'hits.total.value', 0);
 
