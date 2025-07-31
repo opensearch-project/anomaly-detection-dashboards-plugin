@@ -108,7 +108,6 @@ export function ForecasterActionsCell(props: ForecasterActionsCellProps) {
             isListLoading: false,
             isRequestingToClose: false,
             affectedForecasters: [forecaster],
-            // affectedMonitors: getMonitorsForAction([forecaster], allMonitors),
         });
         closePopover();
     };
@@ -120,7 +119,6 @@ export function ForecasterActionsCell(props: ForecasterActionsCellProps) {
             isListLoading: false,
             isRequestingToClose: false,
             affectedForecasters: [forecaster],
-            // affectedMonitors: getMonitorsForAction([forecaster], allMonitors),
             actionText: isCancel ? 'cancel' : undefined,
         });
         closePopover();
@@ -254,8 +252,6 @@ export function ForecasterActionsCell(props: ForecasterActionsCellProps) {
         };
     };
 
-    // console.log("modalType", modalType);
-    console.log("confirmModalState", confirmModalState);
     // Update the modal rendering section
     let modal;
     
@@ -285,11 +281,12 @@ export function ForecasterActionsCell(props: ForecasterActionsCellProps) {
                 );
                 break;
             case FORECASTER_ACTION.DELETE:
+                const forecastToDelete = confirmModalState.affectedForecasters[0];
                 modal = (
                     <ConfirmDeleteForecastersModal
-                        forecasterId={forecasterId}
-                        forecasterName={forecasterName}
-                        forecasterState={forecasterState}
+                        forecasterId={forecastToDelete.id}
+                        forecasterName={forecastToDelete.name}
+                        forecasterState={forecastToDelete.curState}
                         onStopForecasters={(forecasterId: string, forecasterName: string) => handleStopForecasterJob(forecasterId, forecasterName)}
                         onDeleteForecasters={(forecasterId: string, forecasterName: string) => handleDeleteForecasterJob(forecasterId, forecasterName)}
                         onHide={handleHideModal}
@@ -318,7 +315,6 @@ export function ForecasterActionsCell(props: ForecasterActionsCellProps) {
         modal = null;
     }
 
-    console.log("modal", modal);
 
     return (
         <>
