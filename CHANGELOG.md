@@ -7,8 +7,6 @@ Inspired from [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)
 ### Features
 ### Enhancements
 ### Bug Fixes
-- Improve indicator helper, fix zero-value plotting etc ([#1058](https://github.com/opensearch-project/anomaly-detection-dashboards-plugin/pull/1058))
-
 ### Infrastructure
 ### Documentation
 ### Maintenance
