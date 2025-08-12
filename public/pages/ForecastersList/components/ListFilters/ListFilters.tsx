@@ -54,10 +54,6 @@ const getPlaceholderWithBadge = (label: string, count: number) => {
 
 // The ratio is now approximately 4:1:2 between search:status:index
 export const ListFilters = (props: ListFiltersProps) => {
-  console.log('ListFilters props:', {
-    selectedForecasterStates: props.selectedForecasterStates,
-    stateOptions: getForecasterStateOptions()
-  });
 
   return (
     <EuiFlexGroup gutterSize="s">
@@ -79,11 +75,9 @@ export const ListFilters = (props: ListFiltersProps) => {
           singleSelection={false}
           options={(() => {
             const options = getForecasterStateOptions();
-            console.log('State filter options:', options);
             return options;
           })()}
           onChange={(selectedOptions) => {
-            console.log('State filter onChange called with:', selectedOptions);
             props.onForecasterStateChange(selectedOptions);
             setTimeout(() => {
               console.log('After onForecasterStateChange, props are now:', props.selectedForecasterStates);

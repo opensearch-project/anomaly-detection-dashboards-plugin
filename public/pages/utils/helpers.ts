@@ -35,7 +35,7 @@ import { timeFormatter } from '@elastic/charts';
 import { getDataSourceEnabled } from '../../services';
 import { DataSourceAttributes } from '../../../../../src/plugins/data_source/common/data_sources';
 import { SavedObject } from '../../../../../src/core/public';
-import * as pluginManifest from '../../../opensearch_dashboards.json';
+import pluginManifest from '../../../opensearch_dashboards.json';
 import semver from 'semver';
 import _ from 'lodash';
 
@@ -287,7 +287,7 @@ export const isDataSourceCompatible = (
   dataSource: SavedObject<DataSourceAttributes>
 ) => {
   if (
-    'requiredOSDataSourcePlugins' in pluginManifest &&
+    pluginManifest.hasOwnProperty('requiredOSDataSourcePlugins') &&
     !pluginManifest.requiredOSDataSourcePlugins.every((plugin) =>
       dataSource.attributes.installedPlugins?.includes(plugin)
     )
@@ -295,17 +295,50 @@ export const isDataSourceCompatible = (
     return false;
   }
 
+  // Remove "-SNAPSHOT" (or any other suffix after a dash) before version check
+  const normalizedVersion = dataSource.attributes.dataSourceVersion?.includes('-')
+    ? dataSource.attributes.dataSourceVersion.split('-')[0]
+    : dataSource.attributes.dataSourceVersion;
+
   // filter out data sources which is NOT in the support range of plugin
   if (
-    'supportedOSDataSourceVersions' in pluginManifest &&
+    pluginManifest.hasOwnProperty('supportedOSDataSourceVersions') &&
     !semver.satisfies(
-      dataSource.attributes.dataSourceVersion,
+      normalizedVersion,
       pluginManifest.supportedOSDataSourceVersions
     )
   ) {
     return false;
   }
   return true;
+};
+
+export const isForecastingDataSourceCompatible = (
+  dataSource: SavedObject<DataSourceAttributes>
+) => {
+  // Remove "-SNAPSHOT" (or any other suffix after a dash) before version check
+  const normalizedVersion = dataSource.attributes.dataSourceVersion?.includes('-')
+    ? dataSource.attributes.dataSourceVersion.split('-')[0]
+    : dataSource.attributes.dataSourceVersion;
+
+  if (
+    // Note: When importing JSON with `import * as pluginManifest from '.../opensearch_dashboards.json'`,
+    // the result is a module namespace object: { __esModule: true, default: { ...actual JSON... } }.
+    // The `in` operator (`'requiredOSDataSourcePlugins' in pluginManifest`) checks only the outer
+    // namespace object, which does not directly contain the JSON keys—it only has "default" and metadata.
+    // This will always return false for JSON fields like "requiredOSDataSourcePlugins".
+    // Using `pluginManifest.hasOwnProperty('requiredOSDataSourcePlugins')` works here because
+    // `hasOwnProperty` is called on the *actual* object that contains the property. Alternatively,
+    // unwrap once with `const manifest = pluginManifest.default;` and use the `in` operator on `manifest`.
+    pluginManifest.hasOwnProperty('supportedOSDataSourceVersions') &&
+    !semver.satisfies(
+      normalizedVersion,
+      ">=3.1.0"
+    )
+  ) {
+    return false;
+  }
+  return isDataSourceCompatible(dataSource);
 };
 
 export const getLocalCluster = (clusters: ClusterInfo[]): ClusterInfo[] => {
