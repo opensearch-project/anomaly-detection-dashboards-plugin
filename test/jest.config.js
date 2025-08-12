@@ -17,6 +17,7 @@ module.exports = {
   coverageDirectory: './coverage',
   moduleNameMapper: {
     '\\.(css|less|scss)$': '<rootDir>/test/mocks/styleMock.ts',
+    '^opensearch-dashboards/public$': '<rootDir>/../../src/core/public',
   },
   testEnvironment: 'jest-environment-jsdom',
   coverageReporters: ['lcov', 'text', 'cobertura'],
