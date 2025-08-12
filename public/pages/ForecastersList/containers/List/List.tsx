@@ -61,7 +61,7 @@ import {
   getAllForecastersQueryParamsWithDataSourceId,
   getDataSourceFromURL,
   getVisibleOptions,
-  isDataSourceCompatible,
+  isForecastingDataSourceCompatible,
   sanitizeSearchText,
 } from '../../../utils/helpers';
 import { ListFilters } from '../../components/ListFilters/ListFilters';
@@ -573,7 +573,7 @@ export const ForecastersList = (props: ListProps) => {
             notifications: getNotifications(),
             onSelectedDataSources: (dataSources) =>
               handleDataSourceChange(dataSources),
-            dataSourceFilter: isDataSourceCompatible,
+            dataSourceFilter: isForecastingDataSourceCompatible,
           }}
         />
       );
