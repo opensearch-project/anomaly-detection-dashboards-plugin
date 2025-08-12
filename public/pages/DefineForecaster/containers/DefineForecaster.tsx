@@ -61,7 +61,7 @@ import { DataSourceSelectableConfig, } from '../../../../../../src/plugins/data_
 import {
   constructHrefWithDataSourceId,
   getDataSourceFromURL,
-  isDataSourceCompatible,
+  isForecastingDataSourceCompatible,
 } from '../../utils/helpers';
 import queryString from 'querystring';
 import { Features } from '../components/Features/Features';
@@ -307,7 +307,7 @@ export const DefineForecaster = (props: DefineForecasterProps) => {
               notifications: getNotifications(),
               onSelectedDataSources: (dataSources) =>
                 handleDataSourceChange(dataSources),
-              dataSourceFilter: isDataSourceCompatible,
+              dataSourceFilter: isForecastingDataSourceCompatible,
             }}
           />
         );
