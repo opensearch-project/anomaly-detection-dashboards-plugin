@@ -9,7 +9,19 @@
  * GitHub history for details.
  */
 
-import { getVisibleOptions, groupIndicesOrAliasesByCluster, sanitizeSearchText } from '../helpers';
+import {
+  getVisibleOptions,
+  groupIndicesOrAliasesByCluster,
+  isDataSourceCompatible,
+  isForecastingDataSourceCompatible,
+  sanitizeSearchText,
+} from '../helpers';
+
+jest.mock('../../../../opensearch_dashboards.json', () => ({
+  supportedOSDataSourceVersions: '>=2.9.0',
+  requiredOSDataSourcePlugins: ['opensearch-anomaly-detection'],
+}));
+
 describe('helpers', () => {
   describe('getVisibleOptions', () => {
     test('returns without system indices if valid index options and undefined localCluster', () => {
@@ -201,6 +213,80 @@ describe('helpers', () => {
     test('should prepend and append wildcard on valid input', () => {
       expect(sanitizeSearchText('h')).toBe('*h*');
       expect(sanitizeSearchText('hello')).toBe('*hello*');
+    });
+  });
+
+  describe('isDataSourceCompatible', () => {
+    const mockDataSource = (
+      version: string,
+      plugins: string[] = ['opensearch-anomaly-detection']
+    ) => ({
+      attributes: {
+        dataSourceVersion: version,
+        installedPlugins: plugins,
+      },
+    });
+
+    test('should be compatible for version 3.1.0', () => {
+      const dataSource = mockDataSource('3.1.0');
+      expect(isDataSourceCompatible(dataSource as any)).toBe(true);
+    });
+
+    test('should be compatible for version 2.19.3', () => {
+      const dataSource = mockDataSource('2.19.3');
+      expect(isDataSourceCompatible(dataSource as any)).toBe(true);
+    });
+
+    test('should be compatible for version 3.1.0-SNAPSHOT', () => {
+      const dataSource = mockDataSource('3.1.0-SNAPSHOT');
+      expect(isDataSourceCompatible(dataSource as any)).toBe(true);
+    });
+
+    test('should be incompatible for version 2.8.0', () => {
+      const dataSource = mockDataSource('2.8.0');
+      expect(isDataSourceCompatible(dataSource as any)).toBe(false);
+    });
+
+    test('should be incompatible if required plugin is missing', () => {
+      const dataSource = mockDataSource('3.1.0', ['some-other-plugin']);
+      expect(isDataSourceCompatible(dataSource as any)).toBe(false);
+    });
+  });
+
+  describe('isForecastingDataSourceCompatible', () => {
+    const mockDataSource = (
+      version: string,
+      plugins: string[] = ['opensearch-anomaly-detection']
+    ) => ({
+      attributes: {
+        dataSourceVersion: version,
+        installedPlugins: plugins,
+      },
+    });
+
+    test('should be compatible for version 3.1.0', () => {
+      const dataSource = mockDataSource('3.1.0');
+      expect(isForecastingDataSourceCompatible(dataSource as any)).toBe(true);
+    });
+
+    test('should be compatible for version 3.1.0-SNAPSHOT', () => {
+      const dataSource = mockDataSource('3.1.0-SNAPSHOT');
+      expect(isForecastingDataSourceCompatible(dataSource as any)).toBe(true);
+    });
+
+    test('should be incompatible for version 2.19.3', () => {
+      const dataSource = mockDataSource('2.19.3');
+      expect(isForecastingDataSourceCompatible(dataSource as any)).toBe(false);
+    });
+
+    test('should be incompatible for version 3.0.0', () => {
+      const dataSource = mockDataSource('3.0.0');
+      expect(isForecastingDataSourceCompatible(dataSource as any)).toBe(false);
+    });
+
+    test('should be incompatible if required plugin is missing', () => {
+      const dataSource = mockDataSource('3.1.0', ['some-other-plugin']);
+      expect(isForecastingDataSourceCompatible(dataSource as any)).toBe(false);
     });
   });
 });
