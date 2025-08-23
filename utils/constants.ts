@@ -23,6 +23,7 @@ export const AD_NODE_API = Object.freeze({
   CREATE_SAMPLE_DATA: `${BASE_NODE_API_PATH}/create_sample_data`,
   GET_CLUSTERS_INFO: `${BASE_NODE_API_PATH}/_remote/info`,
   GET_INDICES_AND_ALIASES: `${BASE_NODE_API_PATH}/_indices_and_aliases`,
+  GET_CLUSTERS_SETTING: `${BASE_NODE_API_PATH}/_cluster/settings`,
 });
 export const ALERTING_NODE_API = Object.freeze({
   _SEARCH: `${BASE_NODE_API_PATH}/monitors/_search`,
