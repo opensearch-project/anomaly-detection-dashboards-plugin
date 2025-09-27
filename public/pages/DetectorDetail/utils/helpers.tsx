@@ -30,6 +30,24 @@ export const getInitFailureMessageAndActionItem = (error: string): object => {
   return failureDetail;
 };
 
+/**
+ * Truncates error message to a maximum length and adds guidance for full details
+ * @param error - The error message to truncate
+ * @param maxLength - Maximum character length before truncation (default: 100)
+ * @returns Formatted error message with truncation notice if needed
+ */
+export const formatErrorMessage = (
+  error: string,
+  maxLength: number = 100
+): string => {
+  if (!error || error.length <= maxLength) {
+    return error;
+  }
+
+  const truncated = error.substring(0, maxLength);
+  return `${truncated}... (Use 'Get Detector' API in Dev Tools with task=true for full error details)`;
+};
+
 export const getDetectorStateDetails = (
   detector: Detector,
   isHCDetector: boolean,
@@ -40,6 +58,10 @@ export const getDetectorStateDetails = (
   const state = isHistorical
     ? get(detector, 'taskState', DETECTOR_STATE.DISABLED)
     : get(detector, 'curState', DETECTOR_STATE.DISABLED);
+
+  const error = isHistorical
+    ? get(detector, 'taskError', '')
+    : get(detector, 'stateError', '');
 
   return (
     <Fragment>
@@ -98,9 +120,15 @@ export const getDetectorStateDetails = (
           data-test-subj="detectorStateStopped"
         >
           {detector.disabledTime
-            ? `Stopped at ${moment(detector.disabledTime).format(
-                'MM/DD/YY h:mm A'
-              )}`
+            ? error
+              ? `Error: ${formatErrorMessage(error)} (Stopped at ${moment(
+                  detector.disabledTime
+                ).format('MM/DD/YY h:mm A')})`
+              : `Stopped at ${moment(detector.disabledTime).format(
+                  'MM/DD/YY h:mm A'
+                )}`
+            : error
+            ? `Error: ${formatErrorMessage(error)} (Detector is stopped)`
             : 'Detector is stopped'}
         </EuiHealth>
       ) : state === DETECTOR_STATE.FEATURE_REQUIRED ? (

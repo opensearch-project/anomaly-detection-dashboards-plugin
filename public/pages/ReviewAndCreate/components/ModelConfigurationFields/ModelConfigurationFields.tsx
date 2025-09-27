@@ -32,6 +32,7 @@ import { get, sortBy, isEqual } from 'lodash';
 import ContentPanel from '../../../../components/ContentPanel/ContentPanel';
 import { CodeModal } from '../../../../components/CodeModal/CodeModal';
 import { AdditionalSettings } from '../AdditionalSettings/AdditionalSettings';
+import { OperationalSettings } from '../OperationalSettings';
 import { getTitleWithCount } from '../../../../utils/utils';
 import {
   getShingleSizeFromObject,
@@ -376,6 +377,8 @@ export const ModelConfigurationFields = (
       {getValidationCallout()}
 
       <div>
+        <OperationalSettings detector={props.detector} />
+        <EuiSpacer />
         <AdditionalSettings
           shingleSize={shingleSize}
           categoryField={get(props, 'detector.categoryField', [])}

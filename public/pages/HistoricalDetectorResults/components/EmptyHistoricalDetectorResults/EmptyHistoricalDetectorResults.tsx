@@ -19,7 +19,7 @@ import {
 } from '@elastic/eui';
 import React, { Fragment, useState } from 'react';
 import { Detector } from '../../../../models/interfaces';
-import { BASE_DOCS_LINK } from '../../../../utils/constants';
+import { AD_DOCS_LINK } from '../../../../utils/constants';
 import { HistoricalRangeModal } from '../HistoricalRangeModal';
 
 interface EmptyHistoricalDetectorResultsProps {
@@ -54,7 +54,7 @@ export const EmptyHistoricalDetectorResults = (
               long historical data windows (weeks or months). You can identify
               anomaly patterns, seasonality, and trends.{' '}
               <EuiLink
-                href={`${BASE_DOCS_LINK}/ad/index/#step-6-analyze-historical-data`}
+                href={`${AD_DOCS_LINK}`}
                 target="_blank"
               >
                 Learn more

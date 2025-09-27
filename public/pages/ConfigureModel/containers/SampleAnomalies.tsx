@@ -45,7 +45,7 @@ import {
 import { focusOnFirstWrongFeature } from '../utils/helpers';
 import { prepareDetector } from '../utils/helpers';
 import { FeaturesFormikValues, ImputationFormikValues, RuleFormikValues} from '../models/interfaces';
-import { BASE_DOCS_LINK } from '../../../utils/constants';
+import { AD_DOCS_LINK } from '../../../utils/constants';
 import { prettifyErrorMessage } from '../../../../server/utils/helpers';
 import { CoreStart } from '../../../../../../src/core/public';
 import { CoreServicesContext } from '../../../components/CoreServices/CoreServices';
@@ -59,6 +59,10 @@ interface SampleAnomaliesProps {
   categoryFields: string[];
   errors: any;
   setFieldTouched: any;
+  interval: number;
+  windowDelay: number;
+  frequency?: number;
+  history?: number;
   imputationOption?: ImputationFormikValues;
   suppressionRules?: RuleFormikValues[];
 }
@@ -186,6 +190,10 @@ export function SampleAnomalies(props: SampleAnomaliesProps) {
         props.categoryFields,
         newDetector,
         true,
+        props.interval,
+        props.windowDelay,
+        props.frequency,
+        props.history,
         props.imputationOption,
         props.suppressionRules,
       );
@@ -213,7 +221,7 @@ export function SampleAnomalies(props: SampleAnomaliesProps) {
               {firstPreview
                 ? 'You can preview how your anomalies may look like from sample feature output and adjust the feature settings as needed.'
                 : 'Use the sample data as a reference to fine tune settings. To see the latest preview with your adjustments, click "Refresh preview". Once you are done with your edits, save your changes and run the detector to see real time anomalies for the new data set.'}{' '}
-              <EuiLink href={`${BASE_DOCS_LINK}/ad`} target="_blank">
+              <EuiLink href={`${AD_DOCS_LINK}`} target="_blank">
                 Learn more
               </EuiLink>
             </EuiText>

@@ -79,8 +79,6 @@ const values = {
   ],
   filterQuery: JSON.stringify({ bool: { filter: [] } }, null, 4),
   timeField: 'timestamp',
-  interval: 10,
-  windowDelay: 1,
 } as DetectorDefinitionFormikValues;
 
 const formikProps = {

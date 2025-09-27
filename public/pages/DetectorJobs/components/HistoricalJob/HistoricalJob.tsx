@@ -25,7 +25,7 @@ import ContentPanel from '../../../../components/ContentPanel/ContentPanel';
 import { FormattedFormRow } from '../../../../components/FormattedFormRow/FormattedFormRow';
 import { DetectorJobsFormikValues } from '../../models/interfaces';
 import { HISTORICAL_DATE_RANGE_COMMON_OPTIONS } from '../../utils/constants';
-import { BASE_DOCS_LINK } from '../../../../utils/constants';
+import { AD_DOCS_LINK } from '../../../../utils/constants';
 import {
   isInvalid,
   getError,
@@ -53,7 +53,7 @@ export function HistoricalJob(props: HistoricalJobProps) {
           Historical analysis detection lets you analyze and apply machine
           learning models over long historical data windows (weeks or months).
           You can identify anomaly patterns, seasonality, and trends.{' '}
-          <EuiLink href={`${BASE_DOCS_LINK}/ad`} target="_blank">
+          <EuiLink href={`${AD_DOCS_LINK}`} target="_blank">
             Learn more
           </EuiLink>
         </EuiText>

@@ -45,7 +45,6 @@ import { NameAndDescription } from '../components/NameAndDescription';
 import { DataSource } from '../components/Datasource/DataSource';
 import { CustomResultIndex } from '../components/CustomResultIndex';
 import { Timestamp } from '../components/Timestamp';
-import { Settings } from '../components/Settings';
 import {
   detectorDefinitionToFormik,
   formikToDetectorDefinition,
@@ -225,8 +224,6 @@ export const DefineDetector = (props: DefineDetectorProps) => {
       formikProps.setFieldTouched('resultIndex');
       formikProps.setFieldTouched('filters');
       formikProps.setFieldTouched('timeField');
-      formikProps.setFieldTouched('interval');
-      formikProps.setFieldTouched('windowDelay');
       formikProps.setFieldTouched('resultIndexMinAge');
       formikProps.setFieldTouched('resultIndexMinSize');
       formikProps.setFieldTouched('resultIndexTtl');
@@ -390,8 +387,6 @@ export const DefineDetector = (props: DefineDetectorProps) => {
                 />
                 <EuiSpacer />
                 <Timestamp formikProps={formikProps} />
-                <EuiSpacer />
-                <Settings />
                 <EuiSpacer />
                 <CustomResultIndex
                   isEdit={props.isEdit}

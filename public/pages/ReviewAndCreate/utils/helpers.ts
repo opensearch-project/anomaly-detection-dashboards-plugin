@@ -57,9 +57,26 @@ export function formikToDetector(values: CreateDetectorFormikValues): Detector {
     detectionInterval: {
       period: { interval: values.interval, unit: UNITS.MINUTES },
     },
-    windowDelay: {
-      period: { interval: values.windowDelay, unit: UNITS.MINUTES },
-    },
+    // A conditional spread only addes the field when it's non-zero.
+    ...(values.frequency
+      ? {
+          frequency: {
+            period: { interval: values.frequency, unit: UNITS.MINUTES },
+          },
+        }
+      : {}),
+    ...(values.history
+      ? {
+          history: values.history,
+        }
+      : {}),
+    ...(values.windowDelay
+      ? {
+          windowDelay: {
+            period: { interval: values.windowDelay, unit: UNITS.MINUTES },
+          },
+        }
+      : {}),
     shingleSize: values.shingleSize,
     categoryField: !isEmpty(values?.categoryField)
       ? values.categoryField

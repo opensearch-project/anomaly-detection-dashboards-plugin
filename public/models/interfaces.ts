@@ -197,7 +197,9 @@ export type Detector = {
   flattenCustomResultIndex?: boolean;
   filterQuery: { [key: string]: any };
   featureAttributes: FeatureAttributes[];
-  windowDelay: { period: Schedule };
+  windowDelay?: { period: Schedule };
+  frequency?: { period: Schedule };
+  history?: number;
   detectionInterval: { period: Schedule };
   shingleSize: number;
   uiMetadata: UiMetaData;
