@@ -213,14 +213,6 @@ export const DetectorDefinitionFields = (
               <FilterDisplayList {...filterInputs} />
             </FixedWidthRow>
           </EuiFlexItem>
-          <EuiFlexItem>
-            <ConfigCell
-              title="Detector interval"
-              description={toStringConfigCell(
-                get(props, 'detector.detectionInterval', 0)
-              )}
-            />
-          </EuiFlexItem>
           {props.isCreate ? null : (
             <EuiFlexItem data-test-subj="detectorIdCell">
               <ConfigCell
@@ -251,14 +243,6 @@ export const DetectorDefinitionFields = (
                 />
               </EuiFlexItem>
             )}
-          <EuiFlexItem>
-            <ConfigCell
-              title="Window delay"
-              description={toStringConfigCell(
-                get(props, 'detector.windowDelay', 0)
-              )}
-            />
-          </EuiFlexItem>
           <EuiFlexItem>
             <ConfigCell
               title="Custom result index"

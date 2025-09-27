@@ -27,7 +27,7 @@ import { Field, FieldProps, FormikProps, useFormikContext } from 'formik';
 import React, { useEffect, useState } from 'react';
 import ContentPanel from '../../../../components/ContentPanel/ContentPanel';
 import { CUSTOM_AD_RESULT_INDEX_PREFIX } from '../../../../../server/utils/constants';
-import { BASE_DOCS_LINK } from '../../../../utils/constants';
+import { AD_DOCS_LINK } from '../../../../utils/constants';
 import {
   isInvalid,
   getError,
@@ -89,7 +89,7 @@ function CustomResultIndex(props: CustomResultIndexProps) {
           style={{ lineHeight: 'normal' }}
         >
           Store detector results to your own index.{' '}
-          <EuiLink href={`${BASE_DOCS_LINK}/ad`} target="_blank">
+          <EuiLink href={`${AD_DOCS_LINK}`} target="_blank">
             Learn more
           </EuiLink>
         </EuiText>

@@ -34,7 +34,8 @@ import {
   UiFeature,
   FeatureAttributes,
 } from '../../../../models/interfaces';
-import { featureQuery1, featureQuery2 } from './DetectorConfig.test';
+import { featureQuery1, featureQuery2 } from './utils/featureQueries';
+import { toStringConfigCell } from '../../../../pages/ReviewAndCreate/utils/helpers';
 
 describe('<Features /> spec', () => {
   test('renders the component with suppression rules', async () => {
@@ -196,7 +197,7 @@ describe('<Features /> spec', () => {
       imputationOption: { method: ImputationMethod.ZERO }
     };
 
-    const { container, queryByText, getByText, queryByRole, getByTestId } =
+    const { container, queryByText, getByText, getAllByText, queryByRole, getByTestId } =
       render(
         <CoreServicesContext.Provider value={coreServicesMock}>
           <Formik initialValues={{}} onSubmit={jest.fn()}>
@@ -215,5 +216,13 @@ describe('<Features /> spec', () => {
     const tableCell = screen.getByRole('cell', { name: /anomaly criteria/i });
     const anyText = within(tableCell).getByText('any');
     expect(anyText).toBeInTheDocument();
+
+    await waitFor(() => {
+      // there should be 2 identical cells (same content) for the interval and frequency
+      // as they are the same by default
+      getAllByText(toStringConfigCell(randomDetector.detectionInterval));
+      getAllByText(toStringConfigCell(randomDetector.windowDelay));
+    });
+
   });
 });

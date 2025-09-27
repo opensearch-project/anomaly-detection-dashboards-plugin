@@ -129,7 +129,12 @@ export const validatePositiveInteger = (value: any) => {
 
 export function validatePositiveDecimal(value: any) {
   // Allow empty, NaN, or non-number values without showing an error
-  if (value === '' || value === null || isNaN(value) || typeof value !== 'number') {
+  if (
+    value === '' ||
+    value === null ||
+    isNaN(value) ||
+    typeof value !== 'number'
+  ) {
     return undefined; // No error for empty, NaN, or non-number values
   }
 
@@ -142,13 +147,56 @@ export function validatePositiveDecimal(value: any) {
 }
 
 export const validateEmptyOrPositiveInteger = (value: any) => {
-  if (Number.isInteger(value) && value < 1)
-    return 'Must be a positive integer';
+  if (Number.isInteger(value) && value < 1) return 'Must be a positive integer';
 };
 
 export const validateNonNegativeInteger = (value: any) => {
   if (!Number.isInteger(value) || value < 0)
     return 'Must be a non-negative integer';
+};
+
+export const validateEmptyOrNonNegativeInteger = (value: any) => {
+  if (Number.isInteger(value) && value < 0)
+    return 'Must be a non-negative integer';
+};
+
+/**
+ * Validates that a value is a multiple of another value (used for frequency validation).
+ *
+ * Parameters are typed as `unknown` because this function is called by Formik with
+ * whatever data exists in the form state. Even though the logical type might be `number`,
+ * Formik sends empty strings (`''`) until a user types something, so we must normalize
+ * the input before running any numeric validation checks.
+ *
+ * @param rawValue - The value to validate (from Formik form state)
+ * @param rawMultiple - The multiple to check against (from Formik form state)
+ * @returns Error message if validation fails, undefined if valid
+ */
+export const validateMultipleOf = (
+  rawValue: unknown,
+  rawMultiple: unknown
+): string | undefined => {
+  // Treat "", null, undefined as “not provided”
+  if (rawValue === '' || rawValue === null || rawValue === undefined)
+    return undefined;
+
+  const value = Number(rawValue);
+  if (!Number.isFinite(value)) return 'Must be a number';
+
+  const positiveIntegerError = validatePositiveInteger(value);
+  if (positiveIntegerError) return positiveIntegerError;
+
+  const multiple = Number(rawMultiple);
+  if (
+    !Number.isFinite(multiple) ||
+    multiple <= 0 ||
+    !Number.isInteger(multiple)
+  )
+    return undefined;
+
+  return value % multiple === 0
+    ? undefined
+    : `Value "${value}" is not a multiple of interval (${multiple} minutes)`;
 };
 
 export const getErrorMessage = (err: any, defaultMessage: string) => {

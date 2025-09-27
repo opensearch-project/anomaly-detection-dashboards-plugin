@@ -234,40 +234,6 @@ exports[`<ReviewAndCreate /> spec renders the component, validation loading 1`] 
             </div>
             <div
               class="euiFlexItem"
-            >
-              <div
-                class="euiFormRow euiFormRow--compressed"
-                id="random_html_id-row"
-                style="width: 250px;"
-              >
-                <div
-                  class="euiFormRow__labelWrapper"
-                >
-                  <label
-                    class="euiFormLabel euiFormRow__label"
-                    for="random_html_id"
-                  >
-                    Detector interval
-                  </label>
-                </div>
-                <div
-                  class="euiFormRow__fieldWrapper"
-                >
-                  <div
-                    class="euiText euiText--medium"
-                    id="random_html_id"
-                  >
-                    <p
-                      class="enabled"
-                    >
-                      10 Minutes
-                    </p>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div
-              class="euiFlexItem"
               data-test-subj="detectorDescriptionCell"
             >
               <div
@@ -328,40 +294,6 @@ exports[`<ReviewAndCreate /> spec renders the component, validation loading 1`] 
                     <p
                       class="enabled"
                     />
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div
-              class="euiFlexItem"
-            >
-              <div
-                class="euiFormRow euiFormRow--compressed"
-                id="random_html_id-row"
-                style="width: 250px;"
-              >
-                <div
-                  class="euiFormRow__labelWrapper"
-                >
-                  <label
-                    class="euiFormLabel euiFormRow__label"
-                    for="random_html_id"
-                  >
-                    Window delay
-                  </label>
-                </div>
-                <div
-                  class="euiFormRow__fieldWrapper"
-                >
-                  <div
-                    class="euiText euiText--medium"
-                    id="random_html_id"
-                  >
-                    <p
-                      class="enabled"
-                    >
-                      1 Minutes
-                    </p>
                   </div>
                 </div>
               </div>
@@ -637,6 +569,197 @@ exports[`<ReviewAndCreate /> spec renders the component, validation loading 1`] 
             </div>
           </div>
           <div>
+            <div
+              class="euiPanel euiPanel--paddingMedium euiPanel--borderRadiusMedium euiPanel--plain euiPanel--hasShadow"
+              style="padding: 20px;"
+            >
+              <div
+                class="euiFlexGroup euiFlexGroup--gutterLarge euiFlexGroup--alignItemsCenter euiFlexGroup--justifyContentSpaceBetween euiFlexGroup--directionRow euiFlexGroup--responsive"
+                style="padding: 0px;"
+              >
+                <div
+                  class="euiFlexItem"
+                >
+                  <h3
+                    class="euiTitle euiTitle--small"
+                    data-test-subj="contentPanelTitle"
+                  >
+                    Operational setting
+                  </h3>
+                  <div
+                    class="euiFlexGroup euiFlexGroup--gutterLarge euiFlexGroup--directionRow euiFlexGroup--responsive"
+                  >
+                    <div
+                      class="euiFlexItem content-panel-subTitle"
+                      style="line-height: normal; max-width: 75%;"
+                    />
+                  </div>
+                </div>
+                <div
+                  class="euiFlexItem euiFlexItem--flexGrowZero"
+                >
+                  <div
+                    class="euiFlexGroup euiFlexGroup--gutterMedium euiFlexGroup--alignItemsCenter euiFlexGroup--justifyContentSpaceBetween euiFlexGroup--directionRow euiFlexGroup--responsive"
+                  >
+                    <div
+                      class="euiFlexItem"
+                    />
+                  </div>
+                </div>
+              </div>
+              <div>
+                <hr
+                  class="euiHorizontalRule euiHorizontalRule--full euiHorizontalRule--marginSmall"
+                />
+                <div
+                  style="padding: 10px 0px;"
+                >
+                  <div
+                    class="euiFlexGrid euiFlexGrid--gutterLarge euiFlexGrid--halves euiFlexGrid--responsive"
+                  >
+                    <div
+                      class="euiFlexItem"
+                    >
+                      <div
+                        class="euiFormRow euiFormRow--compressed"
+                        id="random_html_id-row"
+                        style="width: 250px;"
+                      >
+                        <div
+                          class="euiFormRow__labelWrapper"
+                        >
+                          <label
+                            class="euiFormLabel euiFormRow__label"
+                            for="random_html_id"
+                          >
+                            Detector interval
+                          </label>
+                        </div>
+                        <div
+                          class="euiFormRow__fieldWrapper"
+                        >
+                          <div
+                            class="euiText euiText--medium"
+                            id="random_html_id"
+                          >
+                            <p
+                              class="enabled"
+                            >
+                              undefined Minutes
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div
+                      class="euiFlexItem"
+                    >
+                      <div
+                        class="euiFormRow euiFormRow--compressed"
+                        id="random_html_id-row"
+                        style="width: 250px;"
+                      >
+                        <div
+                          class="euiFormRow__labelWrapper"
+                        >
+                          <label
+                            class="euiFormLabel euiFormRow__label"
+                            for="random_html_id"
+                          >
+                            Window delay
+                          </label>
+                        </div>
+                        <div
+                          class="euiFormRow__fieldWrapper"
+                        >
+                          <div
+                            class="euiText euiText--medium"
+                            id="random_html_id"
+                          >
+                            <p
+                              class="enabled"
+                            >
+                              0 minutes
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div
+                      class="euiFlexItem"
+                    >
+                      <div
+                        class="euiFormRow euiFormRow--compressed"
+                        id="random_html_id-row"
+                        style="width: 250px;"
+                      >
+                        <div
+                          class="euiFormRow__labelWrapper"
+                        >
+                          <label
+                            class="euiFormLabel euiFormRow__label"
+                            for="random_html_id"
+                          >
+                            Frequency
+                          </label>
+                        </div>
+                        <div
+                          class="euiFormRow__fieldWrapper"
+                        >
+                          <div
+                            class="euiText euiText--medium"
+                            id="random_html_id"
+                          >
+                            <p
+                              class="enabled"
+                            >
+                              undefined Minutes
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div
+                      class="euiFlexItem"
+                    >
+                      <div
+                        class="euiFormRow euiFormRow--compressed"
+                        id="random_html_id-row"
+                        style="width: 250px;"
+                      >
+                        <div
+                          class="euiFormRow__labelWrapper"
+                        >
+                          <label
+                            class="euiFormLabel euiFormRow__label"
+                            for="random_html_id"
+                          >
+                            History
+                          </label>
+                        </div>
+                        <div
+                          class="euiFormRow__fieldWrapper"
+                        >
+                          <div
+                            class="euiText euiText--medium"
+                            id="random_html_id"
+                          >
+                            <p
+                              class="enabled"
+                            >
+                              -
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div
+              class="euiSpacer euiSpacer--l"
+            />
             <div
               class="euiPanel euiPanel--paddingMedium euiPanel--borderRadiusMedium euiPanel--plain euiPanel--hasShadow"
               style="padding: 20px;"
@@ -1503,40 +1626,6 @@ exports[`issue in detector validation issues in feature query 1`] = `
               </div>
               <div
                 class="euiFlexItem"
-              >
-                <div
-                  class="euiFormRow euiFormRow--compressed"
-                  id="random_html_id-row"
-                  style="width: 250px;"
-                >
-                  <div
-                    class="euiFormRow__labelWrapper"
-                  >
-                    <label
-                      class="euiFormLabel euiFormRow__label"
-                      for="random_html_id"
-                    >
-                      Detector interval
-                    </label>
-                  </div>
-                  <div
-                    class="euiFormRow__fieldWrapper"
-                  >
-                    <div
-                      class="euiText euiText--medium"
-                      id="random_html_id"
-                    >
-                      <p
-                        class="enabled"
-                      >
-                        10 Minutes
-                      </p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div
-                class="euiFlexItem"
                 data-test-subj="detectorDescriptionCell"
               >
                 <div
@@ -1597,40 +1686,6 @@ exports[`issue in detector validation issues in feature query 1`] = `
                       <p
                         class="enabled"
                       />
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div
-                class="euiFlexItem"
-              >
-                <div
-                  class="euiFormRow euiFormRow--compressed"
-                  id="random_html_id-row"
-                  style="width: 250px;"
-                >
-                  <div
-                    class="euiFormRow__labelWrapper"
-                  >
-                    <label
-                      class="euiFormLabel euiFormRow__label"
-                      for="random_html_id"
-                    >
-                      Window delay
-                    </label>
-                  </div>
-                  <div
-                    class="euiFormRow__fieldWrapper"
-                  >
-                    <div
-                      class="euiText euiText--medium"
-                      id="random_html_id"
-                    >
-                      <p
-                        class="enabled"
-                      >
-                        1 Minutes
-                      </p>
                     </div>
                   </div>
                 </div>
@@ -1918,6 +1973,197 @@ exports[`issue in detector validation issues in feature query 1`] = `
               </div>
             </div>
             <div>
+              <div
+                class="euiPanel euiPanel--paddingMedium euiPanel--borderRadiusMedium euiPanel--plain euiPanel--hasShadow"
+                style="padding: 20px;"
+              >
+                <div
+                  class="euiFlexGroup euiFlexGroup--gutterLarge euiFlexGroup--alignItemsCenter euiFlexGroup--justifyContentSpaceBetween euiFlexGroup--directionRow euiFlexGroup--responsive"
+                  style="padding: 0px;"
+                >
+                  <div
+                    class="euiFlexItem"
+                  >
+                    <h3
+                      class="euiTitle euiTitle--small"
+                      data-test-subj="contentPanelTitle"
+                    >
+                      Operational setting
+                    </h3>
+                    <div
+                      class="euiFlexGroup euiFlexGroup--gutterLarge euiFlexGroup--directionRow euiFlexGroup--responsive"
+                    >
+                      <div
+                        class="euiFlexItem content-panel-subTitle"
+                        style="line-height: normal; max-width: 75%;"
+                      />
+                    </div>
+                  </div>
+                  <div
+                    class="euiFlexItem euiFlexItem--flexGrowZero"
+                  >
+                    <div
+                      class="euiFlexGroup euiFlexGroup--gutterMedium euiFlexGroup--alignItemsCenter euiFlexGroup--justifyContentSpaceBetween euiFlexGroup--directionRow euiFlexGroup--responsive"
+                    >
+                      <div
+                        class="euiFlexItem"
+                      />
+                    </div>
+                  </div>
+                </div>
+                <div>
+                  <hr
+                    class="euiHorizontalRule euiHorizontalRule--full euiHorizontalRule--marginSmall"
+                  />
+                  <div
+                    style="padding: 10px 0px;"
+                  >
+                    <div
+                      class="euiFlexGrid euiFlexGrid--gutterLarge euiFlexGrid--halves euiFlexGrid--responsive"
+                    >
+                      <div
+                        class="euiFlexItem"
+                      >
+                        <div
+                          class="euiFormRow euiFormRow--compressed"
+                          id="random_html_id-row"
+                          style="width: 250px;"
+                        >
+                          <div
+                            class="euiFormRow__labelWrapper"
+                          >
+                            <label
+                              class="euiFormLabel euiFormRow__label"
+                              for="random_html_id"
+                            >
+                              Detector interval
+                            </label>
+                          </div>
+                          <div
+                            class="euiFormRow__fieldWrapper"
+                          >
+                            <div
+                              class="euiText euiText--medium"
+                              id="random_html_id"
+                            >
+                              <p
+                                class="enabled"
+                              >
+                                undefined Minutes
+                              </p>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      <div
+                        class="euiFlexItem"
+                      >
+                        <div
+                          class="euiFormRow euiFormRow--compressed"
+                          id="random_html_id-row"
+                          style="width: 250px;"
+                        >
+                          <div
+                            class="euiFormRow__labelWrapper"
+                          >
+                            <label
+                              class="euiFormLabel euiFormRow__label"
+                              for="random_html_id"
+                            >
+                              Window delay
+                            </label>
+                          </div>
+                          <div
+                            class="euiFormRow__fieldWrapper"
+                          >
+                            <div
+                              class="euiText euiText--medium"
+                              id="random_html_id"
+                            >
+                              <p
+                                class="enabled"
+                              >
+                                0 minutes
+                              </p>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      <div
+                        class="euiFlexItem"
+                      >
+                        <div
+                          class="euiFormRow euiFormRow--compressed"
+                          id="random_html_id-row"
+                          style="width: 250px;"
+                        >
+                          <div
+                            class="euiFormRow__labelWrapper"
+                          >
+                            <label
+                              class="euiFormLabel euiFormRow__label"
+                              for="random_html_id"
+                            >
+                              Frequency
+                            </label>
+                          </div>
+                          <div
+                            class="euiFormRow__fieldWrapper"
+                          >
+                            <div
+                              class="euiText euiText--medium"
+                              id="random_html_id"
+                            >
+                              <p
+                                class="enabled"
+                              >
+                                undefined Minutes
+                              </p>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      <div
+                        class="euiFlexItem"
+                      >
+                        <div
+                          class="euiFormRow euiFormRow--compressed"
+                          id="random_html_id-row"
+                          style="width: 250px;"
+                        >
+                          <div
+                            class="euiFormRow__labelWrapper"
+                          >
+                            <label
+                              class="euiFormLabel euiFormRow__label"
+                              for="random_html_id"
+                            >
+                              History
+                            </label>
+                          </div>
+                          <div
+                            class="euiFormRow__fieldWrapper"
+                          >
+                            <div
+                              class="euiText euiText--medium"
+                              id="random_html_id"
+                            >
+                              <p
+                                class="enabled"
+                              >
+                                -
+                              </p>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div
+                class="euiSpacer euiSpacer--l"
+              />
               <div
                 class="euiPanel euiPanel--paddingMedium euiPanel--borderRadiusMedium euiPanel--plain euiPanel--hasShadow"
                 style="padding: 20px;"

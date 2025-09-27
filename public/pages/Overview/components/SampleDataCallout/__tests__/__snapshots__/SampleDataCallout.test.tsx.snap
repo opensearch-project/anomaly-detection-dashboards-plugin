@@ -38,7 +38,7 @@ exports[`<SampleDataCallout /> spec Data not loaded renders component 1`] = `
          
         <a
           class="euiLink euiLink--primary"
-          href="https://opensearch.org/docs/monitoring-plugins/ad"
+          href="https://opensearch.org/docs/latest/observing-your-data/ad/index/"
           rel="noopener noreferrer"
           target="_blank"
         >

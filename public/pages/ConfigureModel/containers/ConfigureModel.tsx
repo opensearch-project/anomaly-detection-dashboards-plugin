@@ -32,7 +32,7 @@ import { getMappings } from '../../../redux/reducers/opensearch';
 import { useFetchDetectorInfo } from '../../CreateDetectorSteps/hooks/useFetchDetectorInfo';
 import {
   BREADCRUMBS,
-  BASE_DOCS_LINK,
+  AD_DOCS_LINK,
   MDS_BREADCRUMBS,
 } from '../../../utils/constants';
 import { useHideSideNavBar } from '../../main/hooks/useHideSideNavBar';
@@ -77,6 +77,9 @@ import {
 } from '../../../services';
 import { DataSourceViewConfig } from '../../../../../../src/plugins/data_source_management/public';
 import { SparseDataOptionValue } from '../utils/constants';
+import { SuggestParametersDialog } from '../components/SuggestParametersDialog/SuggestParametersDialog';
+import { Settings } from '../components/Settings';
+import ContentPanel from '../../../components/ContentPanel/ContentPanel';
 
 interface ConfigureModelRouterProps {
   detectorId?: string;
@@ -308,6 +311,11 @@ export function ConfigureModel(props: ConfigureModelProps) {
       formikProps.setFieldTouched('shingleSize');
       formikProps.setFieldTouched('imputationOption');
       formikProps.setFieldTouched('suppressionRules');
+      formikProps.setFieldTouched('interval');
+      formikProps.setFieldTouched('windowDelay');
+      formikProps.setFieldTouched('frequency');
+      formikProps.setFieldTouched('history');
+
       formikProps.validateForm().then((errors) => {
         // Call the extracted validation method
         validateImputationOption(formikProps.values, errors);
@@ -422,6 +430,8 @@ export function ConfigureModel(props: ConfigureModelProps) {
     );
   }
 
+  const [showSuggestDialog, setShowSuggestDialog] = useState(false);
+
   return (
     <Formik
       initialValues={
@@ -464,7 +474,7 @@ export function ConfigureModel(props: ConfigureModelProps) {
                       for more granular views. After you set the model features
                       and other optional parameters, you can preview your
                       anomalies from a sample feature output.{' '}
-                      <EuiLink href={`${BASE_DOCS_LINK}/ad`} target="_blank">
+                      <EuiLink href={`${AD_DOCS_LINK}`} target="_blank">
                         Learn more
                       </EuiLink>
                     </EuiText>
@@ -483,6 +493,28 @@ export function ConfigureModel(props: ConfigureModelProps) {
                 formikProps={formikProps}
               />
               <EuiSpacer />
+              <ContentPanel title="Operation settings" titleSize="s">
+                <EuiSmallButton
+                  data-test-subj="suggestParametersButton"
+                  onClick={() => setShowSuggestDialog(true)}
+                >
+                  Suggest parameters
+                </EuiSmallButton>
+
+                {/* Conditionally render the SuggestParametersDialog */}
+                {showSuggestDialog && (
+                  <SuggestParametersDialog
+                    onClose={() => setShowSuggestDialog(false)}
+                    dataSourceId={dataSourceId}
+                    detectorDefinitionValues={props.detectorDefinitionValues!}
+                    formikProps={formikProps}
+                  />
+                )}
+
+                <EuiSpacer />
+                <Settings />
+              </ContentPanel>
+              <EuiSpacer />
               <AdvancedSettings />
               {!isEmpty(detectorToCreate) ? <EuiSpacer /> : null}
               {!isEmpty(detectorToCreate) ? (
@@ -495,6 +527,10 @@ export function ConfigureModel(props: ConfigureModelProps) {
                   setFieldTouched={formikProps.setFieldTouched}
                   imputationOption={formikProps.values.imputationOption}
                   suppressionRules={formikProps.values.suppressionRules}
+                  interval={formikProps.values.interval}
+                  windowDelay={formikProps.values.windowDelay}
+                  frequency={formikProps.values.frequency}
+                  history={formikProps.values.history}
                 />
               ) : null}
             </EuiPageBody>

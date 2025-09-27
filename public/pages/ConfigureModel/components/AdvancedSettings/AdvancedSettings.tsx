@@ -26,7 +26,7 @@ import {
 import { Field, FieldProps, FieldArray } from 'formik';
 import React, { useEffect, useState } from 'react';
 import ContentPanel from '../../../../components/ContentPanel/ContentPanel';
-import { BASE_DOCS_LINK } from '../../../../utils/constants';
+import { AD_DOCS_LINK } from '../../../../utils/constants';
 import {
   isInvalid,
   getError,
@@ -87,7 +87,7 @@ export function AdvancedSettings(props: AdvancedSettingsProps) {
                 increase recall but also false positives. Larger values
                 might be useful for ignoring noise in a signal.`,
                 ]}
-                hintLink={`${BASE_DOCS_LINK}/ad`}
+                hintLink={`${AD_DOCS_LINK}`}
                 isInvalid={isInvalid(field.name, form)}
                 error={getError(field.name, form)}
               >
@@ -133,7 +133,7 @@ export function AdvancedSettings(props: AdvancedSettingsProps) {
                   <FormattedFormRow
                     title="Sparse data handling"
                     hint={[`Choose how to handle missing data points.`]}
-                    hintLink={`${BASE_DOCS_LINK}/ad`}
+                    hintLink={`${AD_DOCS_LINK}`}
                     isInvalid={isInvalid(field.name, form)}
                     error={getError(field.name, form)}
                   >

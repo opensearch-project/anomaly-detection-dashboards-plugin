@@ -126,6 +126,8 @@ describe('featuresToFormik', () => {
         SparseDataOptionValue.IGNORE
       );
     }
+    expect(adFormikValues.interval).toEqual(randomDetector.detectionInterval.period.interval);
+    expect(adFormikValues.windowDelay).toEqual(randomDetector.windowDelay.period.interval);
   });
   test('should return correct rules', () => {
     const randomDetector = getRandomDetector(); // Generate a random detector object for testing

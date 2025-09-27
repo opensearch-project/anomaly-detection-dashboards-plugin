@@ -22,7 +22,11 @@ export const INITIAL_MODEL_CONFIGURATION_VALUES: ModelConfigurationFormikValues 
     categoryFieldEnabled: false,
     categoryField: [],
     shingleSize: DEFAULT_SHINGLE_SIZE,
-    imputationOption: undefined
+    imputationOption: undefined,
+    interval: undefined,
+    windowDelay: undefined,
+    frequency: undefined,
+    history: undefined,
   };
 
 export const INITIAL_FEATURE_VALUES: FeaturesFormikValues = {

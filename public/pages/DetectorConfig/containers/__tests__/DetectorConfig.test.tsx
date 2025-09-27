@@ -46,6 +46,7 @@ import {
   Operator,
 } from '../../../../models/types';
 import { DETECTOR_STATE } from '../../../../../server/utils/constants';
+import { featureQuery1, featureQuery2 } from './utils/featureQueries';
 
 const renderWithRouter = (detector: Detector) => ({
   ...render(
@@ -95,56 +96,6 @@ const filters = [
   },
 ] as UIFilter[];
 
-export const featureQuery1 = {
-  featureName: 'value',
-  featureEnabled: true,
-  aggregationQuery: {
-    size: 0,
-    query: {
-      bool: {
-        must: {
-          terms: {
-            detector_id: ['detector_1', 'detector_2'],
-          },
-        },
-      },
-    },
-    aggs: {
-      unique_detectors: {
-        terms: {
-          field: 'detector_id',
-          size: 20,
-          order: {
-            total_anomalies_in_24hr: 'asc',
-          },
-        },
-        aggs: {
-          total_anomalies_in_24hr: {
-            filter: {
-              range: {
-                data_start_time: { gte: 'now-24h', lte: 'now' },
-              },
-            },
-          },
-          latest_anomaly_time: { max: { field: 'data_start_time' } },
-        },
-      },
-    },
-  },
-} as { [key: string]: any };
-
-export const featureQuery2 = {
-  featureName: 'value2',
-  featureEnabled: true,
-  aggregationQuery: {
-    aggregation_name: {
-      max: {
-        field: 'value2',
-      },
-    },
-  },
-} as { [key: string]: any };
-
 describe('<DetectorConfig /> spec', () => {
   test('renders the component', () => {
     const randomDetector = {
@@ -182,16 +133,14 @@ describe('<DetectorConfig /> spec', () => {
       shingleSize: 8,
     };
     const { getByText, queryByText } = renderWithRouter(randomDetector);
-    waitFor(() => {
+    await waitFor(() => {
       getByText('Model parameters are required to run a detector');
       queryByText('Set the index fields');
       getByText('Model configuration');
       getByText(randomDetector.name);
       getByText(randomDetector.indices[0]);
-      getByText(toStringConfigCell(randomDetector.detectionInterval));
       getByText(toStringConfigCell(randomDetector.lastUpdateTime));
       getByText(randomDetector.id);
-      getByText(toStringConfigCell(randomDetector.windowDelay));
       getByText(randomDetector.description);
       // filter should be -
       getByText('-');

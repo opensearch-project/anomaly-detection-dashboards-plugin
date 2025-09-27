@@ -39,6 +39,7 @@ import {
   getSuppressionRulesArrayForFeature,
 } from '../../ConfigureModel/utils/helpers';
 import { SuppressionRulesModal } from '../../ReviewAndCreate/components/SuppressionRulesModal/SuppressionRulesModal';
+import { OperationalSettings } from '../../ReviewAndCreate/components/OperationalSettings/OperationalSettings';
 
 interface FeaturesProps {
   detectorId: string;
@@ -301,6 +302,8 @@ export const Features = (props: FeaturesProps) => {
               </EuiOverlayMask>
             )}
           </ContentPanel>
+          <EuiSpacer size="m" />
+          <OperationalSettings detector={props.detector} />
           <EuiSpacer size="m" />
           <AdditionalSettings
             shingleSize={shingleSize}

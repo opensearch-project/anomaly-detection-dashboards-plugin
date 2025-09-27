@@ -97,6 +97,16 @@ export function registerADRoutes(apiRouter: Router, adService: AdService) {
   apiRouter.post('/detectors/preview', adService.previewDetector);
   apiRouter.post('/detectors/preview/{dataSourceId}', adService.previewDetector);
 
+  // suggest detector
+  apiRouter.post(
+    '/detectors/_suggest/{suggestType}',
+    adService.suggestDetector
+  );
+  apiRouter.post(
+    '/detectors/_suggest/{suggestType}/{dataSourceId}',
+    adService.suggestDetector
+  );
+
   // get detector anomaly results
   apiRouter.get(
     '/detectors/{id}/results/{isHistorical}/{resultIndex}/{onlyQueryCustomResultIndex}',
@@ -259,6 +269,50 @@ export default class AdService {
       });
     } catch (err) {
       console.log('Anomaly detector - previewDetector', err);
+      return opensearchDashboardsResponse.ok({
+        body: {
+          ok: false,
+          error: getErrorMessage(err),
+        },
+      });
+    }
+  };
+
+  suggestDetector = async (
+    context: RequestHandlerContext,
+    request: OpenSearchDashboardsRequest,
+    opensearchDashboardsResponse: OpenSearchDashboardsResponseFactory
+  ): Promise<IOpenSearchDashboardsResponse<any>> => {
+    try {
+      let { suggestType } = request.params as {
+        suggestType: string;
+      };
+      const { dataSourceId = '' } = request.params as { dataSourceId?: string };
+
+      const callWithRequest = getClientBasedOnDataSource(
+        context,
+        this.dataSourceEnabled,
+        request,
+        dataSourceId,
+        this.client
+      );
+
+      const requestBody = JSON.stringify(
+        convertDetectorKeysToSnakeCase(request.body)
+      );
+      const response = await callWithRequest(
+        'ad.suggestDetector', {
+          body: requestBody,
+          suggestType: suggestType,
+        });
+      return opensearchDashboardsResponse.ok({
+        body: {
+          ok: true,
+          response: response,
+        },
+      });
+    } catch (err) {
+      console.log('Anomaly detector - suggestDetector', err);
       return opensearchDashboardsResponse.ok({
         body: {
           ok: false,

@@ -27,7 +27,7 @@ import { Field, FieldProps, FormikProps, useFormikContext } from 'formik';
 import React, { useEffect, useState } from 'react';
 import ContentPanel from '../../../../components/ContentPanel/ContentPanel';
 import { CUSTOM_FORECASTER_RESULT_INDEX_PREFIX } from '../../../../../server/utils/constants';
-import { BASE_DOCS_LINK, FORECASTER_DOCS_LINK } from '../../../../utils/constants';
+import { FORECASTER_DOCS_LINK } from '../../../../utils/constants';
 import {
   isInvalid,
   getError,

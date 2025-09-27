@@ -14,7 +14,6 @@ import { render, fireEvent } from '@testing-library/react';
 import { Router } from 'react-router-dom';
 import { createMemoryHistory } from 'history';
 import { EmptyForecasterMessage } from '../EmptyMessage';
-import { BASE_DOCS_LINK } from '../../../../../utils/constants';
 
 jest.mock('../../../../../services', () => ({
   ...jest.requireActual('../../../../../services'),

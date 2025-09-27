@@ -14,7 +14,7 @@ import { EuiCallOut, EuiLink } from '@elastic/eui';
 import {
   APP_PATH,
   PLUGIN_NAME,
-  BASE_DOCS_LINK,
+  AD_DOCS_LINK,
 } from '../../../../utils/constants';
 
 export const SampleDataCallout = () => {
@@ -26,7 +26,7 @@ export const SampleDataCallout = () => {
     >
       <p>
         Read the{' '}
-        <EuiLink href={`${BASE_DOCS_LINK}/ad`} target="_blank">
+        <EuiLink href={`${AD_DOCS_LINK}`} target="_blank">
           documentation
         </EuiLink>{' '}
         or create a{' '}
