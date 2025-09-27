@@ -47,8 +47,6 @@ export function detectorDefinitionToFormik(
       4
     ),
     timeField: ad.timeField,
-    interval: get(ad, 'detectionInterval.period.interval', 10),
-    windowDelay: get(ad, 'windowDelay.period.interval', 0),
     resultIndexMinAge: get(ad, 'resultIndexMinAge', undefined),
     resultIndexMinSize:get(ad, 'resultIndexMinSize', undefined),
     resultIndexTtl: get(ad, 'resultIndexTtl', undefined),
@@ -152,12 +150,6 @@ export function formikToDetectorDefinition(
       filters: get(values, 'filters', []),
     },
     timeField: values.timeField,
-    detectionInterval: {
-      period: { interval: values.interval, unit: UNITS.MINUTES },
-    },
-    windowDelay: {
-      period: { interval: values.windowDelay, unit: UNITS.MINUTES },
-    },
     resultIndexMinAge: values.resultIndexMinAge,
     resultIndexMinSize: values.resultIndexMinSize,
     resultIndexTtl: values.resultIndexTtl,

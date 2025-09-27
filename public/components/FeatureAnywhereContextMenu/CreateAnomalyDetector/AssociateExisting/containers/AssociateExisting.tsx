@@ -44,7 +44,7 @@ import {
 } from '../../../../../../../../src/plugins/vis_augmenter/public';
 import { stateToColorMap } from '../../../../../pages/utils/constants';
 import {
-  BASE_DOCS_LINK,
+  AD_DOCS_LINK,
   PLUGIN_NAME,
 } from '../../../../../../public/utils/constants';
 import { renderTime } from '../../../../../../public/pages/DetectorsList/utils/tableUtils';
@@ -211,7 +211,7 @@ export function AssociateExisting(
           View existing anomaly detectors across your system and add the
           detector(s) to a dashboard and visualization.{' '}
           <a
-            href={`${BASE_DOCS_LINK}/ad`}
+            href={`${AD_DOCS_LINK}`}
             target="_blank"
             style={{ display: 'inline-block' }}
           >

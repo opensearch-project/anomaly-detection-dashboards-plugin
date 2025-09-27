@@ -24,7 +24,7 @@ import {
 import { Field, FieldProps, FieldArray } from 'formik';
 import React, { useEffect, useState, useMemo } from 'react';
 import ContentPanel from '../../../../components/ContentPanel/ContentPanel';
-import { BASE_DOCS_LINK } from '../../../../utils/constants';
+import { AD_DOCS_LINK } from '../../../../utils/constants';
 import {
   getError,
   isInvalid,
@@ -83,7 +83,7 @@ export function SuppressionRules(props: SuppressionRulesProps) {
                         hint={[
                           `Set rules to ignore anomalies by comparing actual values against expected values.`,
                         ]}
-                        hintLink={`${BASE_DOCS_LINK}/ad`}
+                        hintLink={`${AD_DOCS_LINK}`}
                         isInvalid={isInvalid(field.name, form)}
                         fullWidth
                         linkToolTip={true}

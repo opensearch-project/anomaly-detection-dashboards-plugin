@@ -49,7 +49,7 @@ export function AdditionalSettings(props: AdditionalSettingsProps) {
     { name: 'Custom values',
       field: 'customValues',
       render: (customValues: string[]) => renderCustomValues(customValues), // Use a custom render function
-    }
+    },
   ];
   return (
     <ContentPanel title="Additional settings" titleSize="s">

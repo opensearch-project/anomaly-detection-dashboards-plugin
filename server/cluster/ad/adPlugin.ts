@@ -56,6 +56,19 @@ export default function adPlugin(Client: any, config: any, components: any) {
     needBody: true,
     method: 'POST',
   });
+  ad.suggestDetector = ca({
+    url: {
+      fmt: `${API.DETECTOR_BASE}/_suggest/<%=suggestType%>`,
+      req: {
+        suggestType: {
+          type: 'string',
+          required: true,
+        },
+      },
+    },
+    needBody: true,
+    method: 'POST',
+  });
   ad.searchDetector = ca({
     url: {
       fmt: `${API.DETECTOR_BASE}/_search`,

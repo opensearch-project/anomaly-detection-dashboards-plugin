@@ -26,7 +26,7 @@ import React, { Fragment, useEffect } from 'react';
 import ContentPanel from '../../../../components/ContentPanel/ContentPanel';
 import { Detector } from '../../../../models/interfaces';
 import { initialFeatureValue } from '../../utils/helpers';
-import { MAX_FEATURE_NUM, BASE_DOCS_LINK } from '../../../../utils/constants';
+import { MAX_FEATURE_NUM, AD_DOCS_LINK } from '../../../../utils/constants';
 import { FeatureAccordion } from '../FeatureAccordion';
 
 interface FeaturesProps {
@@ -54,7 +54,7 @@ export function Features(props: FeaturesProps) {
         >
           A feature is the field in your index that you use to check for
           anomalies. You can add up to 5 features.{' '}
-          <EuiLink href={`${BASE_DOCS_LINK}/ad`} target="_blank">
+          <EuiLink href={`${AD_DOCS_LINK}`} target="_blank">
             Learn more
           </EuiLink>
         </EuiText>

@@ -26,6 +26,10 @@ import {
   Operator,
   Rule
 } from '../../../../models/types';
+import { Provider } from 'react-redux';
+import { MemoryRouter as Router, Route, Switch } from 'react-router-dom';
+import { Formik } from 'formik';
+import configureStore from 'redux-mock-store';
 
 const detectorFaker = new chance('seed');
 const features = new Array(detectorFaker.natural({ min: 1, max: 5 }))
@@ -110,5 +114,50 @@ expect(buttons).toHaveLength(2);
     await waitFor(() => {
       queryByText('max');
     });
+  });
+});
+
+describe('ModelConfigurationFields with router', () => {
+  const mockStore = configureStore();
+  const store = mockStore({});
+
+  const renderWithRouter = (isCreatingDetector: boolean = false, testDetector: Detector) => {
+    const onEditModelConfiguration = jest.fn();
+    return {
+      ...render(
+        <Provider store={store}>
+          <Router>
+            <Switch>
+              <Route
+                render={() => (
+                  <CoreServicesContext.Provider value={coreServicesMock}>
+                    <Formik initialValues={{}} onSubmit={jest.fn()}>
+                      {() => (
+                        <ModelConfigurationFields
+                          detector={testDetector}
+                          onEditModelConfiguration={onEditModelConfiguration}
+                          validationFeatureResponse={{} as ValidationModelResponse}
+                          validModel={true}
+                          validationError={false}
+                          isLoading={false}
+                          isCreatingDetector={isCreatingDetector}
+                        />
+                      )}
+                    </Formik>
+                  </CoreServicesContext.Provider>
+                )}
+              />
+            </Switch>
+          </Router>
+        </Provider>
+      ),
+    };
+  };
+
+  test('renders the component in create mode with router', async () => {
+    // getAllByText tolerates multiple matches
+    const { getAllByText, getByText } = renderWithRouter(true, testDetector);
+    expect(getAllByText('10 Minutes').length).toBeGreaterThan(0);
+    getByText('1 Minutes');
   });
 });

@@ -40,8 +40,8 @@ describe('<Settings /> spec', () => {
       </Formik>
     );
     expect(queryByText('Required')).toBeNull();
-    fireEvent.focus(getByPlaceholderText('Detector interval'));
-    fireEvent.blur(getByPlaceholderText('Detector interval'));
+    fireEvent.focus(getByPlaceholderText('Interval'));
+    fireEvent.blur(getByPlaceholderText('Interval'));
     expect(findByText('Required')).not.toBeNull();
   });
   test('shows error for invalid interval when toggling focus/blur', async () => {
@@ -55,8 +55,8 @@ describe('<Settings /> spec', () => {
       </Formik>
     );
     expect(queryByText('Required')).toBeNull();
-    userEvent.type(getByPlaceholderText('Detector interval'), '-1');
-    fireEvent.blur(getByPlaceholderText('Detector interval'));
+    userEvent.type(getByPlaceholderText('Interval'), '-1');
+    fireEvent.blur(getByPlaceholderText('Interval'));
     expect(findByText('Must be a positive integer')).not.toBeNull();
   });
   test('shows error for interval of 0 when toggling focus/blur', async () => {
@@ -70,8 +70,8 @@ describe('<Settings /> spec', () => {
       </Formik>
     );
     expect(queryByText('Required')).toBeNull();
-    userEvent.type(getByPlaceholderText('Detector interval'), '0');
-    fireEvent.blur(getByPlaceholderText('Detector interval'));
+    userEvent.type(getByPlaceholderText('Interval'), '0');
+    fireEvent.blur(getByPlaceholderText('Interval'));
     expect(findByText('Must be a positive integer')).not.toBeNull();
   });
   test('shows error for empty window delay when toggling focus/blur', async () => {
