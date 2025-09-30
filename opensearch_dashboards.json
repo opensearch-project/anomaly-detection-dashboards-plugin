@@ -1,7 +1,7 @@
 {
   "id": "anomalyDetectionDashboards",
-  "version": "3.2.0.0",
-  "opensearchDashboardsVersion": "3.2.0",
+  "version": "3.3.0.0",
+  "opensearchDashboardsVersion": "3.3.0",
   "configPath": [
     "anomaly_detection_dashboards"
   ],
