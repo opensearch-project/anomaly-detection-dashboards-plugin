@@ -172,40 +172,6 @@ exports[`<AdditionalSettings /> spec renders the component in create mode (no ID
           </div>
           <div
             class="euiFlexItem"
-          >
-            <div
-              class="euiFormRow euiFormRow--compressed"
-              id="random_html_id-row"
-              style="width: 250px;"
-            >
-              <div
-                class="euiFormRow__labelWrapper"
-              >
-                <label
-                  class="euiFormLabel euiFormRow__label"
-                  for="random_html_id"
-                >
-                  Detector interval
-                </label>
-              </div>
-              <div
-                class="euiFormRow__fieldWrapper"
-              >
-                <div
-                  class="euiText euiText--medium"
-                  id="random_html_id"
-                >
-                  <p
-                    class="enabled"
-                  >
-                    10 Minutes
-                  </p>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div
-            class="euiFlexItem"
             data-test-subj="detectorDescriptionCell"
           >
             <div
@@ -269,40 +235,6 @@ exports[`<AdditionalSettings /> spec renders the component in create mode (no ID
                     class="enabled"
                   >
                     test-timefield
-                  </p>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div
-            class="euiFlexItem"
-          >
-            <div
-              class="euiFormRow euiFormRow--compressed"
-              id="random_html_id-row"
-              style="width: 250px;"
-            >
-              <div
-                class="euiFormRow__labelWrapper"
-              >
-                <label
-                  class="euiFormLabel euiFormRow__label"
-                  for="random_html_id"
-                >
-                  Window delay
-                </label>
-              </div>
-              <div
-                class="euiFormRow__fieldWrapper"
-              >
-                <div
-                  class="euiText euiText--medium"
-                  id="random_html_id"
-                >
-                  <p
-                    class="enabled"
-                  >
-                    1 Minutes
                   </p>
                 </div>
               </div>
@@ -670,40 +602,6 @@ exports[`<AdditionalSettings /> spec renders the component in create mode (no ID
           </div>
           <div
             class="euiFlexItem"
-          >
-            <div
-              class="euiFormRow euiFormRow--compressed"
-              id="random_html_id-row"
-              style="width: 250px;"
-            >
-              <div
-                class="euiFormRow__labelWrapper"
-              >
-                <label
-                  class="euiFormLabel euiFormRow__label"
-                  for="random_html_id"
-                >
-                  Detector interval
-                </label>
-              </div>
-              <div
-                class="euiFormRow__fieldWrapper"
-              >
-                <div
-                  class="euiText euiText--medium"
-                  id="random_html_id"
-                >
-                  <p
-                    class="enabled"
-                  >
-                    10 Minutes
-                  </p>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div
-            class="euiFlexItem"
             data-test-subj="detectorDescriptionCell"
           >
             <div
@@ -767,40 +665,6 @@ exports[`<AdditionalSettings /> spec renders the component in create mode (no ID
                     class="enabled"
                   >
                     test-timefield
-                  </p>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div
-            class="euiFlexItem"
-          >
-            <div
-              class="euiFormRow euiFormRow--compressed"
-              id="random_html_id-row"
-              style="width: 250px;"
-            >
-              <div
-                class="euiFormRow__labelWrapper"
-              >
-                <label
-                  class="euiFormLabel euiFormRow__label"
-                  for="random_html_id"
-                >
-                  Window delay
-                </label>
-              </div>
-              <div
-                class="euiFormRow__fieldWrapper"
-              >
-                <div
-                  class="euiText euiText--medium"
-                  id="random_html_id"
-                >
-                  <p
-                    class="enabled"
-                  >
-                    1 Minutes
                   </p>
                 </div>
               </div>
@@ -1155,40 +1019,6 @@ exports[`<AdditionalSettings /> spec renders the component in edit mode (with ID
           </div>
           <div
             class="euiFlexItem"
-          >
-            <div
-              class="euiFormRow euiFormRow--compressed"
-              id="random_html_id-row"
-              style="width: 250px;"
-            >
-              <div
-                class="euiFormRow__labelWrapper"
-              >
-                <label
-                  class="euiFormLabel euiFormRow__label"
-                  for="random_html_id"
-                >
-                  Detector interval
-                </label>
-              </div>
-              <div
-                class="euiFormRow__fieldWrapper"
-              >
-                <div
-                  class="euiText euiText--medium"
-                  id="random_html_id"
-                >
-                  <p
-                    class="enabled"
-                  >
-                    10 Minutes
-                  </p>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div
-            class="euiFlexItem"
             data-test-subj="detectorIdCell"
           >
             <div
@@ -1321,40 +1151,6 @@ exports[`<AdditionalSettings /> spec renders the component in edit mode (with ID
                     class="enabled"
                   >
                     -
-                  </p>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div
-            class="euiFlexItem"
-          >
-            <div
-              class="euiFormRow euiFormRow--compressed"
-              id="random_html_id-row"
-              style="width: 250px;"
-            >
-              <div
-                class="euiFormRow__labelWrapper"
-              >
-                <label
-                  class="euiFormLabel euiFormRow__label"
-                  for="random_html_id"
-                >
-                  Window delay
-                </label>
-              </div>
-              <div
-                class="euiFormRow__fieldWrapper"
-              >
-                <div
-                  class="euiText euiText--medium"
-                  id="random_html_id"
-                >
-                  <p
-                    class="enabled"
-                  >
-                    1 Minutes
                   </p>
                 </div>
               </div>

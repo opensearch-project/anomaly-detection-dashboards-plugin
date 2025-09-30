@@ -12,7 +12,7 @@
 import { EuiEmptyPrompt, EuiLink, EuiIcon, EuiText } from '@elastic/eui';
 import React, { Component, Fragment } from 'react';
 import { CreateDetectorButtons } from '../../../../components/CreateDetectorButtons/CreateDetectorButtons';
-import { BASE_DOCS_LINK } from '../../../../utils/constants';
+import { AD_DOCS_LINK } from '../../../../utils/constants';
 
 export class EmptyDashboard extends Component<{}, {}> {
   render() {
@@ -30,7 +30,7 @@ export class EmptyDashboard extends Component<{}, {}> {
               </p>
               <p>
                 Read about{' '}
-                <EuiLink href={`${BASE_DOCS_LINK}/ad`} target="_blank">
+                <EuiLink href={`${AD_DOCS_LINK}`} target="_blank">
                   Get started with Anomaly detection
                 </EuiLink>{' '}
               </p>

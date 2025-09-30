@@ -17,7 +17,7 @@ import {
   EuiIcon,
 } from '@elastic/eui';
 import React from 'react';
-import { BASE_DOCS_LINK } from '../../../utils/constants';
+import { AD_DOCS_LINK } from '../../../utils/constants';
 
 interface CreateWorkflowStepDetailsProps {
   title: string;
@@ -36,7 +36,7 @@ export const CreateWorkflowStepDetails = (
         <EuiFlexItem grow={false} style={{ marginTop: '0px' }}>
           <EuiText style={{ fontSize: '14px' }}>
             {props.content}{' '}
-            <EuiLink href={`${BASE_DOCS_LINK}/ad`} target="_blank">
+            <EuiLink href={`${AD_DOCS_LINK}`} target="_blank">
               Learn more
             </EuiLink>
           </EuiText>

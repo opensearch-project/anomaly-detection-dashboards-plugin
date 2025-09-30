@@ -14,6 +14,7 @@ import {
   FEATURE_TYPE,
   FeatureAttributes,
   Detector,
+  UNITS,
 } from '../../../models/interfaces';
 import { v4 as uuidv4 } from 'uuid';
 import { get, forOwn, cloneDeep, isEmpty } from 'lodash';
@@ -251,6 +252,10 @@ export function modelConfigurationToFormik(
   if (isEmpty(detector)) {
     return initialValues;
   }
+  var interval = get(detector, 'detectionInterval.period.interval', 10);
+  var windowDelay = get(detector, 'windowDelay.period.interval', 0);
+  var frequency = get(detector, 'frequency.period.interval', interval);
+  var history = get(detector, 'history', 40);
 
   var imputationMethod = imputationMethodToFormik(detector);
 
@@ -286,6 +291,10 @@ export function modelConfigurationToFormik(
     shingleSize: get(detector, 'shingleSize', DEFAULT_SHINGLE_SIZE),
     imputationOption: imputationFormikValues,
     suppressionRules: rulesToFormik(detector.rules),
+    interval: interval,
+    windowDelay: windowDelay,
+    frequency: frequency,
+    history: history,
   };
 }
 
@@ -335,6 +344,28 @@ export function formikToModelConfiguration(
       : undefined,
     imputationOption: formikToImputationOption(values.imputationOption),
     rules: formikToRules(values.suppressionRules),
+    detectionInterval: {
+      period: { interval: values.interval, unit: UNITS.MINUTES },
+    },
+    ...(values.windowDelay && values.windowDelay > 0
+      ? {
+          windowDelay: {
+            period: { interval: values.windowDelay, unit: UNITS.MINUTES },
+          },
+        }
+      : {}),
+    ...(values.frequency && values.frequency > 0
+      ? {
+          frequency: {
+            period: { interval: values.frequency, unit: UNITS.MINUTES },
+          },
+        }
+      : {}),
+    ...(values.history && values.history > 0
+      ? {
+          history: values.history,
+        }
+      : {}),
   } as Detector;
 
   return detectorBody;
@@ -346,8 +377,12 @@ export function prepareDetector(
   categoryFields: string[],
   ad: Detector,
   forPreview: boolean = false,
+  interval: number,
+  windowDelay?: number,
+  frequency?: number,
+  history?: number,
   imputationOption?: ImputationFormikValues,
-  suppressionRules?: RuleFormikValues[]
+  suppressionRules?: RuleFormikValues[],
 ): Detector {
   const detector = cloneDeep(ad);
   const featureAttributes = formikToFeatures(featureValues, forPreview);
@@ -363,6 +398,28 @@ export function prepareDetector(
     },
     imputationOption: formikToImputationOption(imputationOption),
     rules: formikToRules(suppressionRules),
+    detectionInterval: {
+      period: { interval: interval, unit: UNITS.MINUTES },
+    },
+    ...(windowDelay && windowDelay > 0
+      ? {
+          windowDelay: {
+            period: { interval: windowDelay, unit: UNITS.MINUTES },
+          },
+        }
+      : {}),
+    ...(frequency && frequency > 0
+      ? {
+          frequency: {
+            period: { interval: frequency, unit: UNITS.MINUTES },
+          },
+        }
+      : {}),
+    ...(history && history > 0
+      ? {
+          history: history,
+        }
+      : {}),
   };
 }
 

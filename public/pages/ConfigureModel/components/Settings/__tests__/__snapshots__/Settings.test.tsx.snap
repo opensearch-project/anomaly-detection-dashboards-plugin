@@ -1,0 +1,447 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`<Settings /> spec renders the component 1`] = `
+<div>
+  <div
+    class="euiFlexGroup euiFlexGroup--gutterLarge euiFlexGroup--directionRow euiFlexGroup--responsive"
+  >
+    <div
+      class="euiFlexItem"
+      style="max-width: 70%;"
+    >
+      <div
+        class="euiFormRow euiFormRow--fullWidth euiFormRow--compressed"
+        hint="Interval sets the time window for summarizing and modeling data (e.g., 5 min to 1 hr), where too small creates noise, higher cost, and overreaction to fluctuations, while too large smooths out anomalies and delays detection."
+        id="random_html_id-row"
+        title="Interval"
+      >
+        <div
+          class="euiFormRow__labelWrapper"
+        >
+          <label
+            aria-invalid="false"
+            class="euiFormLabel euiFormRow__label"
+            for="random_html_id"
+          >
+            <div
+              style="line-height: 8px;"
+            >
+              <p>
+                Interval
+              </p>
+              <br />
+              <div
+                class="euiText euiText--medium sublabel"
+                style="max-width: 400px;"
+              >
+                Interval sets the time window for summarizing and modeling data (e.g., 5 min to 1 hr), where too small creates noise, higher cost, and overreaction to fluctuations, while too large smooths out anomalies and delays detection.
+                 
+                <a
+                  class="euiLink euiLink--primary"
+                  href="https://opensearch.org/docs/latest/observing-your-data/ad/index/"
+                  rel="noopener noreferrer"
+                  target="_blank"
+                >
+                  Learn more
+                  <svg
+                    aria-hidden="true"
+                    aria-label="External link"
+                    class="euiIcon euiIcon--small euiIcon-isLoading euiLink__externalIcon"
+                    focusable="false"
+                    height="16"
+                    role="img"
+                    viewBox="0 0 16 16"
+                    width="16"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      d="M5.277 10.088c.02.014.04.03.057.047.582.55 1.134.812 1.666.812.586 0 1.84-.293 3.713-.88L9 6.212V2H7v4.212l-1.723 3.876Zm-.438.987L3.539 14h8.922l-1.32-2.969C9.096 11.677 7.733 12 7 12c-.74 0-1.463-.315-2.161-.925ZM6 2H5V1h6v1h-1v4l3.375 7.594A1 1 0 0 1 12.461 15H3.54a1 1 0 0 1-.914-1.406L6 6V2Z"
+                    />
+                  </svg>
+                  <span
+                    class="euiScreenReaderOnly"
+                  >
+                    (opens in a new tab or window)
+                  </span>
+                </a>
+              </div>
+            </div>
+          </label>
+        </div>
+        <div
+          class="euiFormRow__fieldWrapper"
+        >
+          <div
+            class="euiFlexGroup euiFlexGroup--gutterSmall euiFlexGroup--alignItemsCenter euiFlexGroup--directionRow euiFlexGroup--responsive"
+            id="random_html_id"
+          >
+            <div
+              class="euiFlexItem euiFlexItem--flexGrowZero"
+            >
+              <div
+                class="euiFormControlLayout euiFormControlLayout--compressed"
+              >
+                <div
+                  class="euiFormControlLayout__childrenWrapper"
+                >
+                  <input
+                    class="euiFieldNumber euiFieldNumber--compressed"
+                    data-test-subj="detectionInterval"
+                    id="detectionInterval"
+                    min="1"
+                    name="interval"
+                    placeholder="Interval"
+                    style="width: 140px;"
+                    type="number"
+                    value=""
+                  />
+                </div>
+              </div>
+            </div>
+            <div
+              class="euiFlexItem"
+            >
+              <div
+                class="euiText euiText--medium"
+              >
+                <p
+                  class="minutes"
+                >
+                  minutes
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div
+    class="euiFlexGroup euiFlexGroup--gutterLarge euiFlexGroup--directionRow euiFlexGroup--responsive"
+    style="margin-top: 16px;"
+  >
+    <div
+      class="euiFlexItem"
+      style="max-width: 70%;"
+    >
+      <div
+        class="euiFormRow euiFormRow--fullWidth euiFormRow--compressed"
+        hint="Frequency sets how often the detector queries and scores data—i.e., how often alerts may fire. It must be a multiple of the interval and defaults to the same value. Choosing a longer frequency than the interval can improve efficiency by batching short intervals when ultra-fast alerting isn’t required (e.g., monitoring daily counts of anomalies across detectors) and is also useful for infrequent or batch log ingestion where data arrives irregularly or in bulk (e.g., a single daily ingestion spanning the entire day)."
+        id="random_html_id-row"
+        title="Frequency"
+      >
+        <div
+          class="euiFormRow__labelWrapper"
+        >
+          <label
+            aria-invalid="false"
+            class="euiFormLabel euiFormRow__label"
+            for="random_html_id"
+          >
+            <div
+              style="line-height: 8px;"
+            >
+              <p>
+                Frequency
+              </p>
+              <br />
+              <div
+                class="euiText euiText--medium sublabel"
+                style="max-width: 400px;"
+              >
+                Frequency sets how often the detector queries and scores data—i.e., how often alerts may fire. It must be a multiple of the interval and defaults to the same value. Choosing a longer frequency than the interval can improve efficiency by batching short intervals when ultra-fast alerting isn’t required (e.g., monitoring daily counts of anomalies across detectors) and is also useful for infrequent or batch log ingestion where data arrives irregularly or in bulk (e.g., a single daily ingestion spanning the entire day).
+                 
+                <a
+                  class="euiLink euiLink--primary"
+                  href="https://opensearch.org/docs/latest/observing-your-data/ad/index/"
+                  rel="noopener noreferrer"
+                  target="_blank"
+                >
+                  Learn more
+                  <svg
+                    aria-hidden="true"
+                    aria-label="External link"
+                    class="euiIcon euiIcon--small euiIcon-isLoading euiLink__externalIcon"
+                    focusable="false"
+                    height="16"
+                    role="img"
+                    viewBox="0 0 16 16"
+                    width="16"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      d="M5.277 10.088c.02.014.04.03.057.047.582.55 1.134.812 1.666.812.586 0 1.84-.293 3.713-.88L9 6.212V2H7v4.212l-1.723 3.876Zm-.438.987L3.539 14h8.922l-1.32-2.969C9.096 11.677 7.733 12 7 12c-.74 0-1.463-.315-2.161-.925ZM6 2H5V1h6v1h-1v4l3.375 7.594A1 1 0 0 1 12.461 15H3.54a1 1 0 0 1-.914-1.406L6 6V2Z"
+                    />
+                  </svg>
+                  <span
+                    class="euiScreenReaderOnly"
+                  >
+                    (opens in a new tab or window)
+                  </span>
+                </a>
+              </div>
+            </div>
+          </label>
+        </div>
+        <div
+          class="euiFormRow__fieldWrapper"
+        >
+          <div
+            class="euiFlexGroup euiFlexGroup--gutterSmall euiFlexGroup--alignItemsCenter euiFlexGroup--directionRow euiFlexGroup--responsive"
+            id="random_html_id"
+          >
+            <div
+              class="euiFlexItem euiFlexItem--flexGrowZero"
+            >
+              <div
+                class="euiFormControlLayout euiFormControlLayout--compressed"
+              >
+                <div
+                  class="euiFormControlLayout__childrenWrapper"
+                >
+                  <input
+                    class="euiFieldNumber euiFieldNumber--compressed"
+                    data-test-subj="frequency"
+                    id="frequency"
+                    min="1"
+                    name="frequency"
+                    placeholder="Frequency"
+                    style="width: 140px;"
+                    type="number"
+                    value=""
+                  />
+                </div>
+              </div>
+            </div>
+            <div
+              class="euiFlexItem"
+            >
+              <div
+                class="euiText euiText--medium"
+              >
+                <p
+                  class="minutes"
+                >
+                  minutes
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div
+    class="euiFormRow euiFormRow--fullWidth euiFormRow--compressed"
+    hint="Specify a window of delay for a detector to fetch data, if you need to account for extra processing time."
+    id="random_html_id-row"
+    style="margin-top: 16px;"
+    title="Window delay"
+  >
+    <div
+      class="euiFormRow__labelWrapper"
+    >
+      <label
+        aria-invalid="false"
+        class="euiFormLabel euiFormRow__label"
+        for="random_html_id"
+      >
+        <div
+          style="line-height: 8px;"
+        >
+          <p>
+            Window delay
+          </p>
+          <br />
+          <div
+            class="euiText euiText--medium sublabel"
+            style="max-width: 400px;"
+          >
+            Specify a window of delay for a detector to fetch data, if you need to account for extra processing time.
+             
+            <a
+              class="euiLink euiLink--primary"
+              href="https://opensearch.org/docs/latest/observing-your-data/ad/index/"
+              rel="noopener noreferrer"
+              target="_blank"
+            >
+              Learn more
+              <svg
+                aria-hidden="true"
+                aria-label="External link"
+                class="euiIcon euiIcon--small euiIcon-isLoading euiLink__externalIcon"
+                focusable="false"
+                height="16"
+                role="img"
+                viewBox="0 0 16 16"
+                width="16"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M5.277 10.088c.02.014.04.03.057.047.582.55 1.134.812 1.666.812.586 0 1.84-.293 3.713-.88L9 6.212V2H7v4.212l-1.723 3.876Zm-.438.987L3.539 14h8.922l-1.32-2.969C9.096 11.677 7.733 12 7 12c-.74 0-1.463-.315-2.161-.925ZM6 2H5V1h6v1h-1v4l3.375 7.594A1 1 0 0 1 12.461 15H3.54a1 1 0 0 1-.914-1.406L6 6V2Z"
+                />
+              </svg>
+              <span
+                class="euiScreenReaderOnly"
+              >
+                (opens in a new tab or window)
+              </span>
+            </a>
+          </div>
+        </div>
+      </label>
+    </div>
+    <div
+      class="euiFormRow__fieldWrapper"
+    >
+      <div
+        class="euiFlexGroup euiFlexGroup--gutterSmall euiFlexGroup--alignItemsCenter euiFlexGroup--directionRow euiFlexGroup--responsive"
+        id="random_html_id"
+      >
+        <div
+          class="euiFlexItem euiFlexItem--flexGrowZero"
+        >
+          <div
+            class="euiFormControlLayout euiFormControlLayout--compressed"
+          >
+            <div
+              class="euiFormControlLayout__childrenWrapper"
+            >
+              <input
+                class="euiFieldNumber euiFieldNumber--compressed"
+                data-test-subj="windowDelay"
+                id="windowDelay"
+                name="windowDelay"
+                placeholder="Window delay"
+                style="width: 140px;"
+                type="number"
+                value=""
+              />
+            </div>
+          </div>
+        </div>
+        <div
+          class="euiFlexItem"
+        >
+          <div
+            class="euiText euiText--medium"
+          >
+            <p
+              class="minutes"
+            >
+              minutes
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div
+    class="euiFormRow euiFormRow--fullWidth euiFormRow--compressed"
+    hint="How far back the model looks for training data. This determines the amount of historical data used to train the anomaly detection model. Minimum history is 40 intervals, maximum is 10,000 intervals, and the default is 40."
+    id="random_html_id-row"
+    style="margin-top: 16px;"
+    title="History"
+  >
+    <div
+      class="euiFormRow__labelWrapper"
+    >
+      <label
+        aria-invalid="false"
+        class="euiFormLabel euiFormRow__label"
+        for="random_html_id"
+      >
+        <div
+          style="line-height: 8px;"
+        >
+          <p>
+            History
+          </p>
+          <br />
+          <div
+            class="euiText euiText--medium sublabel"
+            style="max-width: 400px;"
+          >
+            How far back the model looks for training data. This determines the amount of historical data used to train the anomaly detection model. Minimum history is 40 intervals, maximum is 10,000 intervals, and the default is 40.
+             
+            <a
+              class="euiLink euiLink--primary"
+              href="https://opensearch.org/docs/latest/observing-your-data/ad/index/"
+              rel="noopener noreferrer"
+              target="_blank"
+            >
+              Learn more
+              <svg
+                aria-hidden="true"
+                aria-label="External link"
+                class="euiIcon euiIcon--small euiIcon-isLoading euiLink__externalIcon"
+                focusable="false"
+                height="16"
+                role="img"
+                viewBox="0 0 16 16"
+                width="16"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M5.277 10.088c.02.014.04.03.057.047.582.55 1.134.812 1.666.812.586 0 1.84-.293 3.713-.88L9 6.212V2H7v4.212l-1.723 3.876Zm-.438.987L3.539 14h8.922l-1.32-2.969C9.096 11.677 7.733 12 7 12c-.74 0-1.463-.315-2.161-.925ZM6 2H5V1h6v1h-1v4l3.375 7.594A1 1 0 0 1 12.461 15H3.54a1 1 0 0 1-.914-1.406L6 6V2Z"
+                />
+              </svg>
+              <span
+                class="euiScreenReaderOnly"
+              >
+                (opens in a new tab or window)
+              </span>
+            </a>
+          </div>
+        </div>
+      </label>
+    </div>
+    <div
+      class="euiFormRow__fieldWrapper"
+    >
+      <div
+        class="euiFlexGroup euiFlexGroup--gutterSmall euiFlexGroup--alignItemsCenter euiFlexGroup--directionRow euiFlexGroup--responsive"
+        id="random_html_id"
+      >
+        <div
+          class="euiFlexItem euiFlexItem--flexGrowZero"
+        >
+          <div
+            class="euiFormControlLayout euiFormControlLayout--compressed"
+          >
+            <div
+              class="euiFormControlLayout__childrenWrapper"
+            >
+              <input
+                class="euiFieldNumber euiFieldNumber--compressed"
+                data-test-subj="history"
+                id="history"
+                max="10000"
+                min="40"
+                name="history"
+                placeholder="History"
+                style="width: 140px;"
+                type="number"
+                value=""
+              />
+            </div>
+          </div>
+        </div>
+        <div
+          class="euiFlexItem"
+        >
+          <div
+            class="euiText euiText--medium"
+          >
+            <p
+              class="minutes"
+            >
+              intervals
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+`;

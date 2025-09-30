@@ -77,6 +77,19 @@ describe('<SampleAnomalies /> spec', () => {
       },
     ];
 
+    const mockInterval = {
+      period: {
+        interval: 10,
+        unit: 'Minutes',
+      },
+    };
+    const mockWindowDelay = {
+      period: {
+        interval: 1,
+        unit: 'Minutes',
+      },
+    };
+
     const props = {
       detector: mockDetector,
       featureList: mockFeatureList,
@@ -86,6 +99,8 @@ describe('<SampleAnomalies /> spec', () => {
       setFieldTouched: jest.fn(),
       imputationOption: mockImputationOption,
       suppressionRules: mockSuppressionRules,
+      interval: mockInterval.period.interval,
+      windowDelay: mockWindowDelay.period.interval,
     };
 
     // Create a mock history and store
@@ -120,6 +135,10 @@ describe('<SampleAnomalies /> spec', () => {
         props.categoryFields,
         expect.anything(), // newDetector (could be the same as props.detector or modified)
         true,
+        mockInterval.period.interval,
+        mockWindowDelay.period.interval,
+        undefined,
+        undefined,
         props.imputationOption,
         props.suppressionRules
       );

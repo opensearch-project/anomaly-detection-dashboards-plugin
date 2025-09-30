@@ -20,6 +20,10 @@ export interface ModelConfigurationFormikValues {
   shingleSize: number;
   imputationOption?: ImputationFormikValues;
   suppressionRules?: Array<RuleFormikValues[] | null>;
+  interval: number;
+  windowDelay: number;
+  frequency?: number;
+  history?: number;
 }
 
 export interface FeaturesFormikValues {

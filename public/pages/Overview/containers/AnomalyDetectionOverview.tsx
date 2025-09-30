@@ -26,7 +26,7 @@ import {
   APP_PATH,
   BREADCRUMBS,
   PLUGIN_NAME,
-  BASE_DOCS_LINK,
+  AD_DOCS_LINK,
   MDS_BREADCRUMBS,
   USE_NEW_HOME_PAGE,
 } from '../../../utils/constants';
@@ -297,7 +297,7 @@ export function AnomalyDetectionOverview(props: AnomalyDetectionOverviewProps) {
         label: 'Learn more',
         target: '_blank',
         flush: 'both',
-        href: `${BASE_DOCS_LINK}/ad`,
+        href: `${AD_DOCS_LINK}`,
         controlType: 'link',
       } as TopNavControlLinkData,
     },
@@ -347,7 +347,7 @@ export function AnomalyDetectionOverview(props: AnomalyDetectionOverviewProps) {
       <EuiText size="s">
         The anomaly detection plugin automatically detects anomalies in your
         data in near real-time using the Random Cut Forest (RCF) algorithm.{' '}
-        <EuiLink href={`${BASE_DOCS_LINK}/ad`} target="_blank">
+        <EuiLink href={`${AD_DOCS_LINK}`} target="_blank">
           Learn more
         </EuiLink>
       </EuiText>

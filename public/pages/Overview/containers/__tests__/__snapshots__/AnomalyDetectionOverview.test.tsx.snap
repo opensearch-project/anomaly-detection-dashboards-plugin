@@ -49,7 +49,7 @@ exports[`<AnomalyDetectionOverview /> spec No sample detectors created renders c
      
     <a
       class="euiLink euiLink--primary"
-      href="https://opensearch.org/docs/monitoring-plugins/ad"
+      href="https://opensearch.org/docs/latest/observing-your-data/ad/index/"
       rel="noopener noreferrer"
       target="_blank"
     >
@@ -156,7 +156,7 @@ exports[`<AnomalyDetectionOverview /> spec No sample detectors created renders c
                    
                   <a
                     class="euiLink euiLink--primary"
-                    href="https://opensearch.org/docs/monitoring-plugins/ad"
+                    href="https://opensearch.org/docs/latest/observing-your-data/ad/index/"
                     rel="noopener noreferrer"
                     target="_blank"
                   >
@@ -222,7 +222,7 @@ exports[`<AnomalyDetectionOverview /> spec No sample detectors created renders c
                    
                   <a
                     class="euiLink euiLink--primary"
-                    href="https://opensearch.org/docs/monitoring-plugins/ad"
+                    href="https://opensearch.org/docs/latest/observing-your-data/ad/index/"
                     rel="noopener noreferrer"
                     target="_blank"
                   >
@@ -288,7 +288,7 @@ exports[`<AnomalyDetectionOverview /> spec No sample detectors created renders c
                    
                   <a
                     class="euiLink euiLink--primary"
-                    href="https://opensearch.org/docs/monitoring-plugins/ad"
+                    href="https://opensearch.org/docs/latest/observing-your-data/ad/index/"
                     rel="noopener noreferrer"
                     target="_blank"
                   >
@@ -354,7 +354,7 @@ exports[`<AnomalyDetectionOverview /> spec No sample detectors created renders c
                    
                   <a
                     class="euiLink euiLink--primary"
-                    href="https://opensearch.org/docs/monitoring-plugins/ad"
+                    href="https://opensearch.org/docs/latest/observing-your-data/ad/index/"
                     rel="noopener noreferrer"
                     target="_blank"
                   >
@@ -823,7 +823,7 @@ exports[`<AnomalyDetectionOverview /> spec Some detectors created renders compon
      
     <a
       class="euiLink euiLink--primary"
-      href="https://opensearch.org/docs/monitoring-plugins/ad"
+      href="https://opensearch.org/docs/latest/observing-your-data/ad/index/"
       rel="noopener noreferrer"
       target="_blank"
     >
@@ -929,7 +929,7 @@ exports[`<AnomalyDetectionOverview /> spec Some detectors created renders compon
                    
                   <a
                     class="euiLink euiLink--primary"
-                    href="https://opensearch.org/docs/monitoring-plugins/ad"
+                    href="https://opensearch.org/docs/latest/observing-your-data/ad/index/"
                     rel="noopener noreferrer"
                     target="_blank"
                   >
@@ -994,7 +994,7 @@ exports[`<AnomalyDetectionOverview /> spec Some detectors created renders compon
                    
                   <a
                     class="euiLink euiLink--primary"
-                    href="https://opensearch.org/docs/monitoring-plugins/ad"
+                    href="https://opensearch.org/docs/latest/observing-your-data/ad/index/"
                     rel="noopener noreferrer"
                     target="_blank"
                   >
@@ -1059,7 +1059,7 @@ exports[`<AnomalyDetectionOverview /> spec Some detectors created renders compon
                    
                   <a
                     class="euiLink euiLink--primary"
-                    href="https://opensearch.org/docs/monitoring-plugins/ad"
+                    href="https://opensearch.org/docs/latest/observing-your-data/ad/index/"
                     rel="noopener noreferrer"
                     target="_blank"
                   >
@@ -1124,7 +1124,7 @@ exports[`<AnomalyDetectionOverview /> spec Some detectors created renders compon
                    
                   <a
                     class="euiLink euiLink--primary"
-                    href="https://opensearch.org/docs/monitoring-plugins/ad"
+                    href="https://opensearch.org/docs/latest/observing-your-data/ad/index/"
                     rel="noopener noreferrer"
                     target="_blank"
                   >
@@ -1592,7 +1592,7 @@ exports[`<AnomalyDetectionOverview /> spec Some detectors created renders compon
      
     <a
       class="euiLink euiLink--primary"
-      href="https://opensearch.org/docs/monitoring-plugins/ad"
+      href="https://opensearch.org/docs/latest/observing-your-data/ad/index/"
       rel="noopener noreferrer"
       target="_blank"
     >
@@ -1698,7 +1698,7 @@ exports[`<AnomalyDetectionOverview /> spec Some detectors created renders compon
                    
                   <a
                     class="euiLink euiLink--primary"
-                    href="https://opensearch.org/docs/monitoring-plugins/ad"
+                    href="https://opensearch.org/docs/latest/observing-your-data/ad/index/"
                     rel="noopener noreferrer"
                     target="_blank"
                   >
@@ -1763,7 +1763,7 @@ exports[`<AnomalyDetectionOverview /> spec Some detectors created renders compon
                    
                   <a
                     class="euiLink euiLink--primary"
-                    href="https://opensearch.org/docs/monitoring-plugins/ad"
+                    href="https://opensearch.org/docs/latest/observing-your-data/ad/index/"
                     rel="noopener noreferrer"
                     target="_blank"
                   >
@@ -1828,7 +1828,7 @@ exports[`<AnomalyDetectionOverview /> spec Some detectors created renders compon
                    
                   <a
                     class="euiLink euiLink--primary"
-                    href="https://opensearch.org/docs/monitoring-plugins/ad"
+                    href="https://opensearch.org/docs/latest/observing-your-data/ad/index/"
                     rel="noopener noreferrer"
                     target="_blank"
                   >
@@ -1893,7 +1893,7 @@ exports[`<AnomalyDetectionOverview /> spec Some detectors created renders compon
                    
                   <a
                     class="euiLink euiLink--primary"
-                    href="https://opensearch.org/docs/monitoring-plugins/ad"
+                    href="https://opensearch.org/docs/latest/observing-your-data/ad/index/"
                     rel="noopener noreferrer"
                     target="_blank"
                   >

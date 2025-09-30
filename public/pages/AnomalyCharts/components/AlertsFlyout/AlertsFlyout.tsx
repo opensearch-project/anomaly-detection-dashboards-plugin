@@ -25,7 +25,7 @@ import React from 'react';
 import { EuiIcon } from '@elastic/eui';
 import { Monitor } from '../../../../models/interfaces';
 import { AlertsButton } from '../AlertsButton/AlertsButton';
-import { BASE_DOCS_LINK } from '../../../..//utils/constants';
+import { ALERTING_DOCS_LINK } from '../../../..//utils/constants';
 
 type AlertsFlyoutProps = {
   detectorId: string;
@@ -84,7 +84,7 @@ export const AlertsFlyout = (props: AlertsFlyoutProps) => {
             <EuiText>
               <p className="alerts_flyout_p">
                 Anomaly detector alerts are powered by the
-                <EuiLink href={`${BASE_DOCS_LINK}/alerting`}>
+                <EuiLink href={`${ALERTING_DOCS_LINK}`}>
                   {' '}
                   Alerting plugin
                 </EuiLink>
@@ -103,7 +103,7 @@ export const AlertsFlyout = (props: AlertsFlyoutProps) => {
         <EuiFlexGroup alignItems="center" justifyContent="flexEnd">
           <EuiFlexItem grow={true}>
             <EuiSmallButton
-              href={`${BASE_DOCS_LINK}/alerting`}
+              href={`${ALERTING_DOCS_LINK}`}
               target="_blank"
               data-test-subj="setUpAlerts"
             >

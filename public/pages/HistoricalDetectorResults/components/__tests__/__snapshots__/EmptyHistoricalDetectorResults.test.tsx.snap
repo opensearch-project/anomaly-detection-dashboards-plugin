@@ -27,7 +27,7 @@ exports[`<EmptyHistoricalDetectorResults /> spec renders component 1`] = `
            
           <a
             class="euiLink euiLink--primary"
-            href="https://opensearch.org/docs/monitoring-plugins/ad/index/#step-6-analyze-historical-data"
+            href="https://opensearch.org/docs/latest/observing-your-data/ad/index/"
             rel="noopener noreferrer"
             target="_blank"
           >
