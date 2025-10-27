@@ -26,7 +26,13 @@ jest.mock('@elastic/eui/lib/services/accessibility/html_id_generator', () => ({
 }));
 
 // address issue: https://github.com/opensearch-project/anomaly-detection-dashboards-plugin/issues/832
-jest.mock('@osd/monaco', () => ({}));
+jest.mock('@osd/monaco', () => ({
+  monaco: {
+    languages: {
+      CompletionItemKind: {}
+    }
+  }
+}));
 
 //for mocking window.scroll(0,0)
 const noop = () => {};
