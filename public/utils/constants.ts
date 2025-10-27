@@ -52,6 +52,7 @@ export const APP_PATH = {
   CREATE_FORECASTER: '/create-forecaster/',
   LIST_FORECASTERS: '/forecasters',
   FORECASTER_DETAIL: '/forecasters/:forecasterId/',
+  DAILY_INSIGHTS: '/daily-insights',
 };
 
 export const OPENSEARCH_DASHBOARDS_PATH = {
@@ -65,6 +66,8 @@ export const ALERTING_PLUGIN_NAME = 'alerting';
 export const OPENSEARCH_DASHBOARDS_NAME = 'dashboards';
 
 export const FORECASTING_FEATURE_NAME = 'forecasting';
+
+export const DAILY_INSIGHTS_FEATURE_NAME = 'daily-insights';
 
 export const ANOMALY_DETECTORS_INDEX = '.opendistro-anomaly-detectors';
 
@@ -137,6 +140,8 @@ export const FORECASTING_OVERVIEW_PAGE_NAV_ID = `forecasting_dashboard-overview`
 export const FORECASTING_DASHBOARD_PAGE_NAV_ID = `forecasting_dashboard-dashboard`;
 
 export const FORECASTERS_PAGE_NAV_ID = `forecasting_dashboard-detectors`;
+
+export const DAILY_INSIGHTS_PAGE_NAV_ID = `daily_insights_dashboard-insights`;
 
 export const USE_NEW_HOME_PAGE = 'home:useNewHomePage';
 
