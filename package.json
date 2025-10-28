@@ -54,11 +54,14 @@
     "@sideway/formula": "^3.0.1",
     "semver": "^5.7.2",
     "browserify-sign": "^4.2.2",
-    "axios": "^1.9.0",
     "braces": "^3.0.3",
     "micromatch": "^4.0.8",
     "**/@babel/runtime": "^7.27.0",
     "**/@babel/runtime-corejs3": "^7.27.0",
-    "**/elliptic": "^6.6.1"
+    "**/elliptic": "^6.6.1",
+    "cipher-base": "^1.0.7",
+    "sha.js": "^2.4.12",
+    "**/form-data": "^4.0.4",
+    "pbkdf2": "^3.1.3"
   }
 }
