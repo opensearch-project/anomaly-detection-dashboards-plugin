@@ -3,5 +3,4 @@
 Compatible with OpenSearch and OpenSearch Dashboards version 2.19.4
 
 ### Maintenance
-* [AUTO] Increment version to 2.19.4.0 ([#1095](https://github.com/opensearch-project/anomaly-detection-dashboards-plugin/pull/1095))
 * [2.19] Updating several dependencies ([#1113](https://github.com/opensearch-project/anomaly-detection-dashboards-plugin/pull/1113))
