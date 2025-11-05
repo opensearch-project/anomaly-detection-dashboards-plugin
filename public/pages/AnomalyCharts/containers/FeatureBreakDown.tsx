@@ -170,15 +170,17 @@ export const FeatureBreakDown = React.memo((props: FeatureBreakDownProps) => {
                 focusOnFeatureAccordion(index);
               }}
               detectorInterval={props.detector.detectionInterval.period}
+              // if frequency is not set, use the detection interval
+              detectorFrequency={get(props, 'detector.frequency.period', props.detector.detectionInterval.period)}
               showFeatureMissingDataPointAnnotation={
                 props.showFeatureMissingDataPointAnnotation
               }
               detectorEnabledTime={props.detector.enabledTime}
               entityData={getEntityDataForChart(props.anomalyAndFeatureResults)}
               isHCDetector={props.isHCDetector}
-              windowDelay={get(props, `detector.windowDelay.period`, {
-                period: { interval: 0, unit: UNITS.MINUTES },
-              })}
+              windowDelay={get(props, `detector.windowDelay.period`, 
+                { interval: 0, unit: UNITS.MINUTES },
+              )}
             />
             {index + 1 ===
             get(props, 'detector.featureAttributes', []).length ? null : (

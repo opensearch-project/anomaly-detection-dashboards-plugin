@@ -817,7 +817,7 @@ export const FEATURE_DATA_CHECK_WINDOW_OFFSET = 2;
 
 /**
  * Returns feature data points array specified in a data range
- * @param featureData Feature aggregation data array
+ * @param featureData Feature aggregation data array that is displayed on the chart
  * @param interval Detector interval
  * @param dateRange Plot date rage
  * @param windowDelay Detector window delay
@@ -831,7 +831,8 @@ export const getFeatureDataPoints = (
   interval: number,
   dateRange: DateRange | undefined,
   windowDelay: Schedule | undefined,
-  windowDelayAdjusted: boolean | undefined
+  windowDelayAdjusted: boolean | undefined,
+  detectorFrequency: number | undefined
 ): FeatureDataPoint[] => {
   const featureDataPoints = [] as FeatureDataPoint[];
   if (!dateRange) {
@@ -854,6 +855,11 @@ export const getFeatureDataPoints = (
       windowDelayInterval * toDuration(windowDelayUnit).asMilliseconds();
   }
 
+  let minutesToSkip = 0;
+  if (detectorFrequency && detectorFrequency !== interval) {
+    minutesToSkip = detectorFrequency;
+  }
+
   for (
     let currentTime = getRoundedTimeInMin(dateRange.startDate);
     currentTime <
@@ -866,7 +872,10 @@ export const getFeatureDataPoints = (
     getRoundedTimeInMin(
       dateRange.endDate -
         FEATURE_DATA_CHECK_WINDOW_OFFSET * interval * MIN_IN_MILLI_SECS -
-        windowDelayInMilliSecs
+        windowDelayInMilliSecs -
+        // skip frequency time (e.g., 5 minutes) to check if the data point is missing
+        // as data is only available at the end of the frequency interval
+        minutesToSkip * MIN_IN_MILLI_SECS
     );
     currentTime += interval * MIN_IN_MILLI_SECS
   ) {
@@ -1028,14 +1037,16 @@ export const getFeatureMissingDataAnnotations = (
   windowDelay: Schedule,
   queryDateRange?: DateRange,
   displayDateRange?: DateRange,
-  windowDelayAdjusted?: boolean
+  windowDelayAdjusted?: boolean,
+  detectorFrequency?: number
 ) => {
   const featureMissingDataPoints = getFeatureDataPoints(
     featureData,
     interval,
     queryDateRange,
     windowDelay,
-    windowDelayAdjusted
+    windowDelayAdjusted,
+    detectorFrequency
   ).filter((dataPoint) => get(dataPoint, 'isMissing', false));
 
   const featureMissingAnnotations = finalizeFeatureMissingDataAnnotations(
@@ -1066,7 +1077,8 @@ export const getFeatureDataPointsForDetector = (
   featuresData: { [key: string]: FeatureAggregationData[] },
   interval: number,
   dateRange?: DateRange,
-  windowDelayAdjusted?: boolean
+  windowDelayAdjusted?: boolean,
+  detectorFrequencyAdjusted?: boolean
 ) => {
   let featureDataPointsForDetector = {} as {
     [key: string]: FeatureDataPoint[];
@@ -1085,9 +1097,11 @@ export const getFeatureDataPointsForDetector = (
       interval,
       dateRange,
       get(detector, `windowDelay.period`, {
-        period: { interval: 0, unit: UNITS.MINUTES },
+        interval: 0,
+        unit: UNITS.MINUTES,
       }),
-      windowDelayAdjusted
+      windowDelayAdjusted,
+      detectorFrequencyAdjusted ? 0 : get(detector, 'frequency.period.interval', interval)
     );
     featureDataPointsForDetector = {
       ...featureDataPointsForDetector,
