@@ -209,6 +209,12 @@ export function AnomalyResults(props: AnomalyResultsProps) {
     1
   );
 
+  const detectorFrequencyInMin = get(
+    detector,
+    'frequency.period.interval',
+    1
+  );
+
   const isInitializingNormally =
     isDetectorInitializing &&
     isInitOvertime != undefined &&
@@ -231,9 +237,11 @@ export function AnomalyResults(props: AnomalyResultsProps) {
         windowDelayInterval * toDuration(windowDelayUnit).asMinutes();
     }
 
-    // The query in this function uses data start/end time. So we should consider window delay
+    const minutesToSkip = detectorFrequencyInMin !== detectorIntervalInMin ? detectorFrequencyInMin : detectorIntervalInMin;
+
+    // The query in this function uses data start/end time. So we should consider window delay and frequency
     let adjustedCurrentTime = moment().subtract(
-      windowDelayInMinutes,
+      windowDelayInMinutes + minutesToSkip,
       'minutes'
     );
 
@@ -245,7 +253,7 @@ export function AnomalyResults(props: AnomalyResultsProps) {
           .clone()
           .subtract(
             (FEATURE_DATA_POINTS_WINDOW + FEATURE_DATA_CHECK_WINDOW_OFFSET) *
-              detectorIntervalInMin,
+            detectorIntervalInMin,
             'minutes'
           )
           .valueOf(),
@@ -283,6 +291,7 @@ export function AnomalyResults(props: AnomalyResultsProps) {
         featuresData,
         detectorIntervalInMin,
         featureDataPointsRange,
+        true,
         true
       );
 
