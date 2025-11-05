@@ -17,6 +17,7 @@ import { DailyInsights } from './pages/DailyInsights';
 import { Provider } from 'react-redux';
 import configureStore from './redux/configureStore';
 import { CoreServicesContext } from './components/CoreServices/CoreServices';
+import { getDataSourceFromURL } from './pages/utils/helpers';
 
 export function renderApp(coreStart: CoreStart, params: AppMountParameters) {
   const http = coreStart.http;
@@ -30,6 +31,8 @@ export function renderApp(coreStart: CoreStart, params: AppMountParameters) {
     require('@elastic/charts/dist/theme_only_light.css');
   }
 
+  const landingDataSourceId = getDataSourceFromURL(window.location).dataSourceId;
+
   ReactDOM.render(
     <Provider store={store}>
       <Router>
@@ -38,6 +41,7 @@ export function renderApp(coreStart: CoreStart, params: AppMountParameters) {
             <CoreServicesContext.Provider value={coreStart}>
               <DailyInsights
                 setActionMenu={params.setHeaderActionMenu}
+                landingDataSourceId={landingDataSourceId}
                 {...props}
               />
             </CoreServicesContext.Provider>

@@ -28,7 +28,8 @@ import {
 import { ACTION_AD } from './action/ad_dashboard_action';
 import { APP_PATH, DASHBOARD_PAGE_NAV_ID, DETECTORS_PAGE_NAV_ID, OVERVIEW_PAGE_NAV_ID, PLUGIN_NAME, FORECASTING_FEATURE_NAME,
   FORECASTING_OVERVIEW_PAGE_NAV_ID, FORECASTING_DASHBOARD_PAGE_NAV_ID, FORECASTERS_PAGE_NAV_ID, DAILY_INSIGHTS_FEATURE_NAME
- } from './utils/constants';
+} from './utils/constants';
+import { DAILY_INSIGHTS_ENABLED } from '../utils/constants';
 import { ACTION_SUGGEST_AD, getActions, getSuggestAnomalyDetectorAction } from './utils/contextMenu/getActions';
 import { overlayAnomaliesFunction } from './expressions/overlay_anomalies';
 import {
@@ -93,7 +94,7 @@ export class AnomalyDetectionOpenSearchDashboardsPlugin
   public setup(core: CoreSetup, plugins: any) {
     const hideInAppSideNavBar = core.chrome.navGroup.getNavGroupEnabled();
     const forecastingEnabled = true;
-    const dailyInsightsEnabled = true;
+    const dailyInsightsEnabled = core.uiSettings.get(DAILY_INSIGHTS_ENABLED, false);
 
     core.application.register({
       id: PLUGIN_NAME,
@@ -194,19 +195,19 @@ export class AnomalyDetectionOpenSearchDashboardsPlugin
       core.chrome.navGroup.addNavLinksToGroup(DEFAULT_NAV_GROUPS.observability, [
         {
           id: DAILY_INSIGHTS_FEATURE_NAME,
-          category: DEFAULT_APP_CATEGORIES.insights,
+          category: DEFAULT_APP_CATEGORIES.detectionInsights,
         }
       ]);
       core.chrome.navGroup.addNavLinksToGroup(DEFAULT_NAV_GROUPS.all, [
         {
           id: DAILY_INSIGHTS_FEATURE_NAME,
-          category: DEFAULT_APP_CATEGORIES.insights,
+          category: DEFAULT_APP_CATEGORIES.detectionInsights,
         }
       ]);
       core.chrome.navGroup.addNavLinksToGroup(DEFAULT_NAV_GROUPS['security-analytics'], [
         {
           id: DAILY_INSIGHTS_FEATURE_NAME,
-          category: DEFAULT_APP_CATEGORIES.insights,
+          category: DEFAULT_APP_CATEGORIES.detectionInsights,
         }
       ]);
     }

@@ -23,6 +23,10 @@ export const AD_NODE_API = Object.freeze({
   CREATE_SAMPLE_DATA: `${BASE_NODE_API_PATH}/create_sample_data`,
   GET_CLUSTERS_INFO: `${BASE_NODE_API_PATH}/_remote/info`,
   GET_INDICES_AND_ALIASES: `${BASE_NODE_API_PATH}/_indices_and_aliases`,
+  INSIGHTS_START: `${BASE_NODE_API_PATH}/insights/_start`,
+  INSIGHTS_STOP: `${BASE_NODE_API_PATH}/insights/_stop`,
+  INSIGHTS_STATUS: `${BASE_NODE_API_PATH}/insights/_status`,
+  INSIGHTS_RESULTS: `${BASE_NODE_API_PATH}/insights/_results`,
 });
 export const ALERTING_NODE_API = Object.freeze({
   _SEARCH: `${BASE_NODE_API_PATH}/monitors/_search`,
@@ -45,3 +49,6 @@ export const FORECAST_NODE_API = Object.freeze({
   GET_CLUSTERS_INFO: `${FORECAST_BASE_NODE_API_PATH}/_remote/info`,
   GET_INDICES_AND_ALIASES: `${FORECAST_BASE_NODE_API_PATH}/_indices_and_aliases`,
 });
+
+// Feature Flags
+export const DAILY_INSIGHTS_ENABLED = 'anomalyDetection:dailyInsightsEnabled';
