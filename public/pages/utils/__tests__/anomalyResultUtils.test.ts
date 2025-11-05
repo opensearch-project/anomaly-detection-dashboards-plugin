@@ -298,6 +298,42 @@ describe('anomalyResultUtils', () => {
     });
   });
   describe('getFeatureMissingDataAnnotations', () => {
+    test('returns no missing data annotation when latest 5 minutes are missing but frequency is 5 minutes', () => {
+      const MIN = 60 * 1000;
+      const BASE = 1587431400000;
+
+      // Feature data for the first 5 minutes only; last 5 minutes are missing
+      const featureData = Array.from({ length: 5 })
+        .map((_, i) => {
+          const startTime = BASE + i * MIN;
+          const endTime = startTime + MIN;
+          return {
+            startTime,
+            endTime,
+            plotTime: endTime,
+            data: 1,
+          };
+        })
+        .reverse();
+
+      // Detection interval is 1 minute; frequency is 5 minutes
+      const interval = 1;
+      const windowDelay = { interval: 0, unit: UNITS.MINUTES };
+      const queryDateRange = { startDate: BASE, endDate: BASE + 10 * MIN };
+      const displayDateRange = queryDateRange;
+
+      const annotations = getFeatureMissingDataAnnotations(
+        featureData as any,
+        interval,
+        windowDelay as any,
+        queryDateRange as any,
+        displayDateRange as any,
+        false,
+        5 // frequency in minutes
+      );
+
+      expect(annotations).toEqual([]);
+    });
     test('returns missing data annotation with 20 seconds window delay', () => {
       expect(
         getFeatureMissingDataAnnotations(
