@@ -27,8 +27,9 @@ import {
 } from '../../../src/plugins/embeddable/public';
 import { ACTION_AD } from './action/ad_dashboard_action';
 import { APP_PATH, DASHBOARD_PAGE_NAV_ID, DETECTORS_PAGE_NAV_ID, OVERVIEW_PAGE_NAV_ID, PLUGIN_NAME, FORECASTING_FEATURE_NAME,
-  FORECASTING_OVERVIEW_PAGE_NAV_ID, FORECASTING_DASHBOARD_PAGE_NAV_ID, FORECASTERS_PAGE_NAV_ID
- } from './utils/constants';
+  FORECASTING_OVERVIEW_PAGE_NAV_ID, FORECASTING_DASHBOARD_PAGE_NAV_ID, FORECASTERS_PAGE_NAV_ID, DAILY_INSIGHTS_FEATURE_NAME
+} from './utils/constants';
+import { DAILY_INSIGHTS_ENABLED } from '../utils/constants';
 import { ACTION_SUGGEST_AD, getActions, getSuggestAnomalyDetectorAction } from './utils/contextMenu/getActions';
 import { overlayAnomaliesFunction } from './expressions/overlay_anomalies';
 import {
@@ -93,6 +94,7 @@ export class AnomalyDetectionOpenSearchDashboardsPlugin
   public setup(core: CoreSetup, plugins: any) {
     const hideInAppSideNavBar = core.chrome.navGroup.getNavGroupEnabled();
     const forecastingEnabled = true;
+    const dailyInsightsEnabled = core.uiSettings.get(DAILY_INSIGHTS_ENABLED, false);
 
     core.application.register({
       id: PLUGIN_NAME,
@@ -126,6 +128,24 @@ export class AnomalyDetectionOpenSearchDashboardsPlugin
           const { renderApp } = await import('./forecasting_app');
           const [coreStart] = await core.getStartServices();
           return renderApp(coreStart, params, APP_PATH.LIST_FORECASTERS, hideInAppSideNavBar);
+        },
+      });
+    }
+
+    if (dailyInsightsEnabled) {
+      core.application.register({
+        id: DAILY_INSIGHTS_FEATURE_NAME,
+        title: 'Daily Insights',
+        category: {
+          id: 'opensearch',
+          label: 'OpenSearch Plugins',
+          order: 2000,
+        },
+        order: 5020,
+        mount: async (params: AppMountParameters) => {
+          const { renderApp } = await import('./daily_insights_app');
+          const [coreStart] = await core.getStartServices();
+          return renderApp(coreStart, params);
         },
       });
     }
@@ -169,6 +189,27 @@ export class AnomalyDetectionOpenSearchDashboardsPlugin
           category: DEFAULT_APP_CATEGORIES.detect,
         }
         ]);
+    }
+
+    if (dailyInsightsEnabled) {
+      core.chrome.navGroup.addNavLinksToGroup(DEFAULT_NAV_GROUPS.observability, [
+        {
+          id: DAILY_INSIGHTS_FEATURE_NAME,
+          category: DEFAULT_APP_CATEGORIES.detectionInsights,
+        }
+      ]);
+      core.chrome.navGroup.addNavLinksToGroup(DEFAULT_NAV_GROUPS.all, [
+        {
+          id: DAILY_INSIGHTS_FEATURE_NAME,
+          category: DEFAULT_APP_CATEGORIES.detectionInsights,
+        }
+      ]);
+      core.chrome.navGroup.addNavLinksToGroup(DEFAULT_NAV_GROUPS['security-analytics'], [
+        {
+          id: DAILY_INSIGHTS_FEATURE_NAME,
+          category: DEFAULT_APP_CATEGORIES.detectionInsights,
+        }
+      ]);
     }
 
     // register sub applications as standard OSD applications with use case

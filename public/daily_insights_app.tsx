@@ -1,0 +1,56 @@
+/*
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * The OpenSearch Contributors require contributions made to
+ * this file be licensed under the Apache-2.0 license or a
+ * compatible open source license.
+ *
+ * Modifications Copyright OpenSearch Contributors. See
+ * GitHub history for details.
+ */
+
+import { CoreStart, AppMountParameters } from '../../../src/core/public';
+import React from 'react';
+import ReactDOM from 'react-dom';
+import { HashRouter as Router, Route } from 'react-router-dom';
+import { DailyInsights } from './pages/DailyInsights';
+import { Provider } from 'react-redux';
+import configureStore from './redux/configureStore';
+import { CoreServicesContext } from './components/CoreServices/CoreServices';
+import { getDataSourceFromURL } from './pages/utils/helpers';
+
+export function renderApp(coreStart: CoreStart, params: AppMountParameters) {
+  const http = coreStart.http;
+  const store = configureStore(http);
+
+  // Load Chart's dark mode CSS (if applicable)
+  const isDarkMode = coreStart.uiSettings.get('theme:darkMode') || false;
+  if (isDarkMode) {
+    require('@elastic/charts/dist/theme_only_dark.css');
+  } else {
+    require('@elastic/charts/dist/theme_only_light.css');
+  }
+
+  const landingDataSourceId = getDataSourceFromURL(window.location).dataSourceId;
+
+  ReactDOM.render(
+    <Provider store={store}>
+      <Router>
+        <Route
+          render={(props) => (
+            <CoreServicesContext.Provider value={coreStart}>
+              <DailyInsights
+                setActionMenu={params.setHeaderActionMenu}
+                landingDataSourceId={landingDataSourceId}
+                {...props}
+              />
+            </CoreServicesContext.Provider>
+          )}
+        />
+      </Router>
+    </Provider>,
+    params.element
+  );
+  return () => ReactDOM.unmountComponentAtNode(params.element);
+}
+

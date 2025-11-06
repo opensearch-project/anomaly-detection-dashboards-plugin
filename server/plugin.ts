@@ -39,6 +39,7 @@ import { DEFAULT_HEADERS } from './utils/constants';
 import { DataSourcePluginSetup } from '../../../src/plugins/data_source/server/types';
 import { DataSourceManagementPlugin } from '../../../src/plugins/data_source_management/public';
 import ForecastService, { registerForecastRoutes } from './routes/forecast';
+import { getAnomalyDetectionUiSettings } from './ui_settings';
 
 export interface ADPluginSetupDependencies {
   dataSourceManagement?: ReturnType<DataSourceManagementPlugin['setup']>;
@@ -63,6 +64,9 @@ export class AnomalyDetectionOpenSearchDashboardsPlugin
     core: CoreSetup,
     { dataSource }: ADPluginSetupDependencies
   ) {
+    // Register UI settings
+    core.uiSettings.register(getAnomalyDetectionUiSettings());
+
     // Get any custom/overridden headers
     const globalConfig = await this.globalConfig$.pipe(first()).toPromise();
     const { customHeaders, ...rest } = globalConfig.opensearch;

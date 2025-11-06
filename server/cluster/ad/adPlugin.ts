@@ -257,4 +257,32 @@ export default function adPlugin(Client: any, config: any, components: any) {
     },
     method: 'POST',
   });
+
+  ad.startInsights = ca({
+    url: {
+      fmt: `/_plugins/_anomaly_detection/insights/_start`,
+    },
+    method: 'POST',
+  });
+
+  ad.stopInsights = ca({
+    url: {
+      fmt: `/_plugins/_anomaly_detection/insights/_stop`,
+    },
+    method: 'POST',
+  });
+
+  ad.getInsightsStatus = ca({
+    url: {
+      fmt: `/_plugins/_anomaly_detection/insights/_status`,
+    },
+    method: 'GET',
+  });
+
+  ad.getInsightsResults = ca({
+    url: {
+      fmt: `/_plugins/_anomaly_detection/insights/_results`,
+    },
+    method: 'GET',
+  });
 }
