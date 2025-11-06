@@ -188,6 +188,22 @@ export function registerADRoutes(apiRouter: Router, adService: AdService) {
     '/detectors/_validate/{validationType}/{dataSourceId}',
     adService.validateDetector
   );
+
+  // start insights job
+  apiRouter.post('/insights/_start', adService.startInsights);
+  apiRouter.post('/insights/_start/{dataSourceId}', adService.startInsights);
+
+  // stop insights job
+  apiRouter.post('/insights/_stop', adService.stopInsights);
+  apiRouter.post('/insights/_stop/{dataSourceId}', adService.stopInsights);
+
+  // get insights status
+  apiRouter.get('/insights/_status', adService.getInsightsStatus);
+  apiRouter.get('/insights/_status/{dataSourceId}', adService.getInsightsStatus);
+
+  // get insights results
+  apiRouter.get('/insights/_results', adService.getInsightsResults);
+  apiRouter.get('/insights/_results/{dataSourceId}', adService.getInsightsResults);
 }
 
 export default class AdService {
@@ -420,6 +436,144 @@ export default class AdService {
       });
     } catch (err) {
       console.log('Anomaly detector - validateDetector', err);
+      return opensearchDashboardsResponse.ok({
+        body: {
+          ok: false,
+          error: getErrorMessage(err),
+        },
+      });
+    }
+  };
+
+  startInsights = async (
+    context: RequestHandlerContext,
+    request: OpenSearchDashboardsRequest,
+    opensearchDashboardsResponse: OpenSearchDashboardsResponseFactory
+  ): Promise<IOpenSearchDashboardsResponse<any>> => {
+    try {
+      const { dataSourceId = '' } = request.params as { dataSourceId?: string };
+
+      const callWithRequest = getClientBasedOnDataSource(
+        context,
+        this.dataSourceEnabled,
+        request,
+        dataSourceId,
+        this.client
+      );
+
+      const response = await callWithRequest('ad.startInsights', {});
+      return opensearchDashboardsResponse.ok({
+        body: {
+          ok: true,
+          response: response,
+          message: 'Insights job started successfully',
+        },
+      });
+    } catch (err) {
+      console.log('Anomaly detector - startInsights', err);
+      return opensearchDashboardsResponse.ok({
+        body: {
+          ok: false,
+          error: getErrorMessage(err),
+        },
+      });
+    }
+  };
+
+  stopInsights = async (
+    context: RequestHandlerContext,
+    request: OpenSearchDashboardsRequest,
+    opensearchDashboardsResponse: OpenSearchDashboardsResponseFactory
+  ): Promise<IOpenSearchDashboardsResponse<any>> => {
+    try {
+      const { dataSourceId = '' } = request.params as { dataSourceId?: string };
+
+      const callWithRequest = getClientBasedOnDataSource(
+        context,
+        this.dataSourceEnabled,
+        request,
+        dataSourceId,
+        this.client
+      );
+
+      const response = await callWithRequest('ad.stopInsights', {});
+      return opensearchDashboardsResponse.ok({
+        body: {
+          ok: true,
+          response: response,
+          message: 'Insights job stopped successfully',
+        },
+      });
+    } catch (err) {
+      console.log('Anomaly detector - stopInsights', err);
+      return opensearchDashboardsResponse.ok({
+        body: {
+          ok: false,
+          error: getErrorMessage(err),
+        },
+      });
+    }
+  };
+
+  getInsightsStatus = async (
+    context: RequestHandlerContext,
+    request: OpenSearchDashboardsRequest,
+    opensearchDashboardsResponse: OpenSearchDashboardsResponseFactory
+  ): Promise<IOpenSearchDashboardsResponse<any>> => {
+    try {
+      const { dataSourceId = '' } = request.params as { dataSourceId?: string };
+
+      const callWithRequest = getClientBasedOnDataSource(
+        context,
+        this.dataSourceEnabled,
+        request,
+        dataSourceId,
+        this.client
+      );
+
+      const response = await callWithRequest('ad.getInsightsStatus', {});
+      return opensearchDashboardsResponse.ok({
+        body: {
+          ok: true,
+          response: response,
+        },
+      });
+    } catch (err) {
+      console.log('Anomaly detector - getInsightsStatus', err);
+      return opensearchDashboardsResponse.ok({
+        body: {
+          ok: false,
+          error: getErrorMessage(err),
+        },
+      });
+    }
+  };
+
+  getInsightsResults = async (
+    context: RequestHandlerContext,
+    request: OpenSearchDashboardsRequest,
+    opensearchDashboardsResponse: OpenSearchDashboardsResponseFactory
+  ): Promise<IOpenSearchDashboardsResponse<any>> => {
+    try {
+      const { dataSourceId = '' } = request.params as { dataSourceId?: string };
+
+      const callWithRequest = getClientBasedOnDataSource(
+        context,
+        this.dataSourceEnabled,
+        request,
+        dataSourceId,
+        this.client
+      );
+
+      const response = await callWithRequest('ad.getInsightsResults', {});
+      return opensearchDashboardsResponse.ok({
+        body: {
+          ok: true,
+          response: response,
+        },
+      });
+    } catch (err) {
+      console.log('Anomaly detector - getInsightsResults', err);
       return opensearchDashboardsResponse.ok({
         body: {
           ok: false,
