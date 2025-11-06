@@ -200,14 +200,17 @@ describe('<DailyInsights /> spec', () => {
 
   describe('Insights view with results', () => {
     test('renders insights results when enabled', async () => {
+      const generatedAt = new Date(Date.now() - 30 * 60 * 1000).toISOString();
+      const windowStart = new Date(Date.now() - 3 * 60 * 60 * 1000).toISOString();
+      const windowEnd = new Date(Date.now() - 60 * 60 * 1000).toISOString();
       const mockResults = {
         response: {
           results: [
             {
               task_id: 'task-123',
-              window_start: '2025-11-04T10:30:31.461Z',
-              window_end: '2025-11-05T10:30:31.461Z',
-              generated_at: '2025-11-05T13:09:31.461Z',
+              window_start: windowStart,
+              window_end: windowEnd,
+              generated_at: generatedAt,
               doc_detector_ids: ['detector-1'],
               doc_indices: ['index-1'],
               doc_series_keys: ['series-1'],
@@ -217,8 +220,8 @@ describe('<DailyInsights /> spec', () => {
                   detector_ids: ['detector-1'],
                   entities: ['entity-1', 'entity-2'],
                   series_keys: ['series-1'],
-                  start: '2025-11-05T10:30:31.461Z',
-                  end: '2025-11-05T13:09:31.461Z',
+                  start: windowStart,
+                  end: windowEnd,
                   text: 'Correlated anomalies detected across 1 detector(s)',
                 },
               ],
@@ -334,14 +337,17 @@ describe('<DailyInsights /> spec', () => {
 
   describe('Event modal', () => {
     test('opens modal when clicking on an event', async () => {
+      const generatedAt = new Date(Date.now() - 30 * 60 * 1000).toISOString();
+      const windowStart = new Date(Date.now() - 3 * 60 * 60 * 1000).toISOString();
+      const windowEnd = new Date(Date.now() - 60 * 60 * 1000).toISOString();
       const mockResults = {
         response: {
           results: [
             {
               task_id: 'task-123',
-              window_start: '2025-11-04T10:30:31.461Z',
-              window_end: '2025-11-05T10:30:31.461Z',
-              generated_at: '2025-11-05T13:09:31.461Z',
+              window_start: windowStart,
+              window_end: windowEnd,
+              generated_at: generatedAt,
               doc_detector_ids: ['detector-1'],
               doc_indices: ['index-1'],
               doc_series_keys: ['series-1'],
@@ -351,8 +357,8 @@ describe('<DailyInsights /> spec', () => {
                   detector_ids: ['detector-1'],
                   entities: ['entity-1'],
                   series_keys: ['series-1'],
-                  start: '2025-11-05T10:30:31.461Z',
-                  end: '2025-11-05T13:09:31.461Z',
+                  start: windowStart,
+                  end: windowEnd,
                   text: 'Test anomaly text',
                 },
               ],
