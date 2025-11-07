@@ -347,14 +347,6 @@ const fetchInsightsStatus = async () => {
         </EuiBadge>
       ),
     },
-    {
-      name: 'Actions',
-      render: (item: IndexInsightData) => (
-        <EuiSmallButton size="s">
-          View Details
-        </EuiSmallButton>
-      ),
-    },
   ];
 
   const renderAddIndicesPanel = () => (
@@ -439,14 +431,8 @@ const fetchInsightsStatus = async () => {
     return null;
   };
 
-  const getExcludedIndices = () => {
-    return indicesData.map(item => item.indexName);
-  };
-
   return (
-    <React.Fragment>
-      {insightsEnabled && renderAddIndicesPanel()}
-      
+    <React.Fragment>      
       <EuiSpacer size="l" />
 
       <div style={{ margin: '0 24px' }}>
