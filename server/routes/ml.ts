@@ -72,10 +72,12 @@ export default class MLService {
         },
       });
     } catch (err) {
+    console.log('ML - execute agent failed', err);
+    const errorDetails = err?.body?.error?.details || err?.body?.error?.reason;
       return opensearchDashboardsResponse.ok({
         body: {
           ok: false,
-          error: getErrorMessage(err),
+          error: errorDetails,
         },
       });
     }

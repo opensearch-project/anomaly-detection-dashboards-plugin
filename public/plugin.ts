@@ -293,7 +293,7 @@ export class AnomalyDetectionOpenSearchDashboardsPlugin
         // Indices Management sub-page (new functionality)
         core.application.register({
           id: DAILY_INSIGHTS_INDICES_PAGE_NAV_ID,
-          title: 'Indices Management',
+          title: 'Insight Management',
           order: 8051,
           category: DEFAULT_APP_CATEGORIES.detectionInsights,
           mount: async (params: AppMountParameters) => {

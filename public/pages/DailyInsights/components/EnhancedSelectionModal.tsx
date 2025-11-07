@@ -53,6 +53,7 @@ import {
   getVisibleOptions,
 } from '../../utils/helpers';
 import { getClusterOptionLabel } from '../../DefineDetector/utils/helpers';
+import { getDataSourceEnabled } from '../../../../public/services';
 
 export interface ClusterOption {
   label: string;
@@ -65,9 +66,12 @@ interface EnhancedSelectionModalProps {
   selectedIndices: string[];
   onSelectionChange: (indices: string[]) => void;
   onCancel: () => void;
-  onConfirm: () => void;
+  onConfirm: (agentId?: string) => void; // Pass agentId when immediateExecute is true
   onStartInsights?: (indices: string[], agentId: string) => Promise<void>;
   isLoading?: boolean;
+  immediateExecute?: boolean; // If true, executes on confirm; if false, returns selection
+  modalTitle?: string; // Custom modal title
+  confirmButtonText?: string; // Custom confirm button text
 }
 
 export function EnhancedSelectionModal({
@@ -78,6 +82,9 @@ export function EnhancedSelectionModal({
   onConfirm,
   onStartInsights,
   isLoading = false,
+  immediateExecute = false,
+  modalTitle = 'Select Indices for Daily Insights',
+  confirmButtonText = 'Confirm Selected Indices',
 }: EnhancedSelectionModalProps) {
   const dispatch = useDispatch();
   const location = useLocation();
@@ -87,6 +94,7 @@ export function EnhancedSelectionModal({
   const [currentStep, setCurrentStep] = useState<'selection' | 'confirmation'>('selection');
   const [isStartingJob, setIsStartingJob] = useState(false);
   const [agentId, setAgentId] = useState('auto-create-detector-agent');
+  const dataSourceEnabled = getDataSourceEnabled().enabled;
 
   // Reset to selection step when modal opens
   useEffect(() => {
@@ -97,8 +105,14 @@ export function EnhancedSelectionModal({
   }, [isVisible]);
 
   const handleAddSelectedIndices = () => {
-    onConfirm(); // Update parent state
-    setCurrentStep('confirmation'); // Move to step 2
+    if (immediateExecute) {
+      // Skip confirmation step, execute immediately with agent ID
+      onConfirm(agentId);
+    } else {
+      // Two-step flow: update parent state and show confirmation
+      onConfirm();
+      setCurrentStep('confirmation');
+    }
   };
 
   const handleBackToSelection = () => {
@@ -334,7 +348,7 @@ export function EnhancedSelectionModal({
     <EuiModal onClose={handleClose} style={{ width: 1200, minHeight: 600 }}>
       <EuiModalHeader>
         <EuiModalHeaderTitle>
-          Select Indices for Auto Insights
+          {modalTitle}
         </EuiModalHeaderTitle>
       </EuiModalHeader>
       
@@ -464,6 +478,20 @@ export function EnhancedSelectionModal({
             })}
           />
         </div>
+        
+        {/* Agent ID field - show in selection step when immediateExecute is true */}
+        {immediateExecute && dataSourceEnabled && (
+          <>
+            <EuiSpacer size="m" />
+            <EuiFormRow label="ML Agent ID" helpText="The ML Commons agent ID for creating detectors">
+              <EuiFieldText
+                value={agentId}
+                onChange={(e) => setAgentId(e.target.value)}
+                placeholder="Enter agent ID"
+              />
+            </EuiFormRow>
+          </>
+        )}
           </>
         ) : (
           // Step 2: Confirmation
@@ -477,15 +505,17 @@ export function EnhancedSelectionModal({
             </EuiText>
             
             <EuiSpacer size="m" />
-
-            <EuiFormRow label="ML Agent ID" helpText="The ML Commons agent ID for creating detectors">
+            {dataSourceEnabled && (
+              <>
+      <EuiFormRow label="ML Agent ID" helpText="The ML Commons agent ID for creating detectors">
               <EuiFieldText
                 value={agentId}
                 onChange={(e) => setAgentId(e.target.value)}
                 placeholder="Enter agent ID"
               />
             </EuiFormRow>
-            
+            </>
+            )}        
             <EuiSpacer size="m" />
             
             <EuiPanel paddingSize="m" color="subdued">
@@ -519,7 +549,7 @@ export function EnhancedSelectionModal({
               onClick={handleAddSelectedIndices}
               isLoading={isLoading}
             >
-              Confirm Selected Indices ({selectedIndices.length})
+              {confirmButtonText} ({selectedIndices.length})
             </EuiSmallButton>
           </>
         ) : (

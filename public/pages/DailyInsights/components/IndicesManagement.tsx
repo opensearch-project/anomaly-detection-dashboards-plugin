@@ -33,6 +33,7 @@ import ContentPanel from '../../../components/ContentPanel/ContentPanel';
 import { EnhancedSelectionModal } from './EnhancedSelectionModal';
 import { getDataSourceFromURL, getAllDetectorsQueryParamsWithDataSourceId } from '../../utils/helpers';
 import { getDetectorList } from '../../../redux/reducers/ad';
+import { executeAutoCreateAgent } from '../../../redux/reducers/ml';
 import { AppState } from '../../../redux/reducers';
 import { CoreServicesConsumer } from '../../../components/CoreServices/CoreServices';
 import { CoreStart } from '../../../../../../src/core/public';
@@ -224,16 +225,48 @@ const fetchInsightsStatus = async () => {
   };
 
   const [selectedModalIndices, setSelectedModalIndices] = useState<string[]>([]);
+  const [agentId, setAgentId] = useState('auto-create-detector-agent');
 
-  const handleStartAutoInsights = async (selectedIndices: string[]) => {
-    setIsStartingInsights(true);
-    try {
-      setIsModalVisible(false);
-    } catch (error) {
-      console.error('Error starting auto insights:', error);
-    } finally {
-      setIsStartingInsights(false);
+  const handleStartAutoInsights = async (selectedIndices: string[], agentIdToUse: string) => {
+    if (selectedIndices.length === 0) {
+      getNotifications().toasts.addWarning('Please select at least one index');
+      return;
     }
+
+    setIsStartingInsights(true);
+    
+    // Execute ML agent to create detectors
+    dispatch(
+      executeAutoCreateAgent(
+        selectedIndices, 
+        agentIdToUse,
+        MDSInsightsState.selectedDataSourceId || ''
+      )
+    ).then((resp: any) => {      
+      if (!resp || resp.error) {
+        const errorMsg = resp?.error?.message || resp?.error || 'Unknown error';
+        getNotifications().toasts.addDanger(
+          `Failed to execute ML agent: ${errorMsg}`
+        );
+        setIsStartingInsights(false);
+        return;
+      }
+
+      getNotifications().toasts.addSuccess(
+        `Started creating anomaly detectors for ${selectedIndices.length} ${selectedIndices.length === 1 ? 'index' : 'indices'}`
+      );
+      setIsModalVisible(false);
+      setSelectedModalIndices([]);
+      setIsStartingInsights(false);
+      loadDetectors();
+    }).catch((error: any) => {
+      console.error('Error starting auto insights:', error);
+      const errorMsg = error?.body?.message || error?.message || error?.toString() || 'Unknown error';
+      getNotifications().toasts.addDanger(
+        `Failed to start auto insights: ${errorMsg}`
+      );
+      setIsStartingInsights(false);
+    });
   };
 
 
@@ -433,6 +466,7 @@ const fetchInsightsStatus = async () => {
 
   return (
     <React.Fragment>      
+        {insightsEnabled && renderAddIndicesPanel()}
       <EuiSpacer size="l" />
 
       <div style={{ margin: '0 24px' }}>
@@ -472,10 +506,13 @@ const fetchInsightsStatus = async () => {
           setIsModalVisible(false);
           setSelectedModalIndices([]);
         }}
-        onConfirm={() => {
-          handleStartAutoInsights(selectedModalIndices);
+        onConfirm={(agentIdFromModal) => {
+          handleStartAutoInsights(selectedModalIndices, agentIdFromModal || agentId);
         }}
         isLoading={isStartingInsights}
+        immediateExecute={true}
+        modalTitle="Add Indices to Daily Insights"
+        confirmButtonText="Add Indices"
       />
     </React.Fragment>
   );
