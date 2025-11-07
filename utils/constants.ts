@@ -34,6 +34,10 @@ export const ALERTING_NODE_API = Object.freeze({
   MONITORS: `${BASE_NODE_API_PATH}/monitors`,
 });
 
+export const ML_COMMONS_NODE_API = Object.freeze({
+  AGENT_EXECUTE: `/api/ml/agents`,
+});
+
 export const FORECAST_BASE_NODE_API_PATH = '/api/forecasting';
 
 export const FORECAST_NODE_API = Object.freeze({

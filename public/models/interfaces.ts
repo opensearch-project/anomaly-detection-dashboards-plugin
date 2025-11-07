@@ -218,6 +218,7 @@ export type Detector = {
   taskError?: string;
   imputationOption?: ImputationOption;
   rules?: Rule[];
+  auto_created: boolean;
 };
 
 export type DetectorListItem = {
@@ -231,6 +232,7 @@ export type DetectorListItem = {
   lastUpdateTime: number;
   enabledTime?: number;
   detectorType?: string;
+  auto_created?: boolean;
 };
 
 export type Forecaster = {

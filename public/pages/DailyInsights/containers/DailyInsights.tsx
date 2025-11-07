@@ -26,13 +26,21 @@ import {
   EuiButtonEmpty,
   EuiDescriptionList,
   EuiCodeBlock,
+  EuiFlexGroup,
+  EuiFlexItem,
+  EuiToolTip,
 } from '@elastic/eui';
 import React, { useState, useEffect, useMemo, Fragment } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import ReactDOM from 'react-dom';
 import { RouteComponentProps } from 'react-router-dom';
 import queryString from 'querystring';
 import { CoreServicesContext } from '../../../components/CoreServices/CoreServices';
 import { AD_NODE_API } from '../../../../utils/constants';
+import { AppState } from '../../../redux/reducers';
+import { executeAutoCreateAgent } from '../../../redux/reducers/ml';
+import { getErrorMessage } from '../../../utils/utils';
+import { prettifyErrorMessage } from '../../../../server/utils/helpers';
 import { MDSStates } from '../../../models/interfaces';
 import { 
   getDataSourceFromURL,
@@ -50,9 +58,9 @@ import {
   getApplication,
   getUISettings,
 } from '../../../services';
-import { prettifyErrorMessage } from '../../../../server/utils/helpers';
 import { DAILY_INSIGHTS_ENABLED } from '../../../../utils/constants';
 import moment from 'moment';
+import { EnhancedSelectionModal } from '../components/EnhancedSelectionModal';
 
 interface DailyInsightsProps extends RouteComponentProps {
   setActionMenu: (menuMount: MountPoint | undefined) => void;
@@ -90,6 +98,9 @@ interface InsightsSchedule {
 
 export function DailyInsights(props: DailyInsightsProps) {
   const core = React.useContext(CoreServicesContext) as CoreStart;
+  const dispatch = useDispatch();
+  const mlState = useSelector((state: AppState) => state.ml);
+  
   const [isStarting, setIsStarting] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [isRefreshing, setIsRefreshing] = useState(false);
@@ -98,6 +109,11 @@ export function DailyInsights(props: DailyInsightsProps) {
   const [insightsResults, setInsightsResults] = useState<InsightResult[]>([]);
   const [selectedEvent, setSelectedEvent] = useState<{paragraph: Paragraph, result: InsightResult} | null>(null);
   const [featureEnabled, setFeatureEnabled] = useState<boolean>(false);
+  
+  // Index selection for setup flow
+  const [selectedIndicesForSetup, setSelectedIndicesForSetup] = useState<string[]>([]);
+
+  const [isIndexSelectionModalVisible, setIsIndexSelectionModalVisible] = useState(false);
   
   const useUpdatedUX = getUISettings().get(USE_NEW_HOME_PAGE);
   const { HeaderControl } = getNavigationUI();
@@ -266,38 +282,64 @@ export function DailyInsights(props: DailyInsightsProps) {
     }
   };
 
-  const handleStartInsights = async () => {
-    setIsStarting(true);
-    try {
-      const apiPath = MDSInsightsState.selectedDataSourceId
-        ? `${AD_NODE_API.INSIGHTS_START}/${MDSInsightsState.selectedDataSourceId}`
-        : AD_NODE_API.INSIGHTS_START;
-      
-      const frequencyString = '24h';
-      
-      const response = await core?.http.post(apiPath, {
-        body: JSON.stringify({ frequency: frequencyString })
-      });
-      
-      core?.notifications.toasts.addSuccess({
-        title: 'Insights job started successfully',
-        text: response?.message || 'The insights generation job has been initiated.',
-      });
+  const handleStartInsights = async (agentId?: string) => {
+    if (selectedIndicesForSetup.length === 0) {
+      setIsIndexSelectionModalVisible(true);
+      return;
+    }
 
-      setIsRefreshing(true);
-      
-      await new Promise(resolve => setTimeout(resolve, 2000));
-      await fetchInsightsStatus();
-      
-      setIsRefreshing(false);
-    } catch (error: any) {
-      setIsRefreshing(false);
-      core?.notifications.toasts.addDanger({
-        title: 'Failed to start insights job',
-        text: error?.body?.message || error?.message || 'An error occurred while starting the insights job.',
-      });
-    } finally {
-      setIsStarting(false);
+    setIsStarting(true);
+    
+    if (agentId) {
+      // Step 1: Execute ML agent - following ReviewAndCreate pattern exactly
+      dispatch(
+        executeAutoCreateAgent(selectedIndicesForSetup, agentId, MDSInsightsState.selectedDataSourceId || '')
+      ).then((resp: any) => {
+          // Check if response indicates success
+          if (!resp || resp.error || !resp.response) {     
+            core?.notifications.toasts.addDanger(
+              'Failed to execute ML agent - API endpoint not available'
+            );
+            setIsStarting(false);
+            return;
+          }
+          const taskId = resp?.response?.task_id || resp?.task_id;
+          // Step 2: Start insights job after delay
+          setTimeout(async () => {
+            try {
+              const apiPath = MDSInsightsState.selectedDataSourceId
+                ? `${AD_NODE_API.INSIGHTS_START}/${MDSInsightsState.selectedDataSourceId}`
+                : AD_NODE_API.INSIGHTS_START;
+              
+              const insightsResponse = await core?.http.post(apiPath, {
+                body: JSON.stringify({ frequency: '24h' })
+              });
+              
+              core?.notifications.toasts.addSuccess({
+                title: 'Insights job started successfully',
+                text: `Auto-created detectors for ${selectedIndicesForSetup.length} indices.`,
+              });
+              
+              await fetchInsightsStatus();
+            } catch (error: any) {              
+              core?.notifications.toasts.addDanger(
+                prettifyErrorMessage(
+                  getErrorMessage(error, 'There was a problem starting the insights job')
+                )
+              );
+            } finally {
+              setIsStarting(false);
+            }
+          }, 3000);
+        })
+        .catch((err: any) => {          
+          core?.notifications.toasts.addDanger(
+            prettifyErrorMessage(
+              getErrorMessage(err, 'There was a problem executing the ML agent')
+            )
+          );
+          setIsStarting(false);
+        });
     }
   };
 
@@ -307,9 +349,7 @@ export function DailyInsights(props: DailyInsightsProps) {
       const apiPath = MDSInsightsState.selectedDataSourceId
         ? `${AD_NODE_API.INSIGHTS_STOP}/${MDSInsightsState.selectedDataSourceId}`
         : AD_NODE_API.INSIGHTS_STOP;
-      
       const response = await core?.http.post(apiPath);
-      
       core?.notifications.toasts.addSuccess({
         title: 'Insights job stopped successfully',
         text: response?.message || 'The insights job has been stopped.',
@@ -346,16 +386,20 @@ export function DailyInsights(props: DailyInsightsProps) {
       container.appendChild(buttonElement);
 
       const button = (
-        <EuiSmallButton
-          color={insightsEnabled ? 'danger' : 'success'}
-          onClick={insightsEnabled ? handleStopInsights : handleStartInsights}
-          isLoading={isStarting}
-          iconType={insightsEnabled ? 'stop' : 'play'}
-        >
-          {insightsEnabled ? 'Stop Insights Job' : 'Start Insights Job'}
-        </EuiSmallButton>
+        insightsEnabled ? (
+          <EuiSmallButton
+            color="danger"
+            onClick={handleStopInsights}
+            isLoading={isStarting}
+            iconType="stop"
+          >
+            Stop Insights Job
+          </EuiSmallButton>
+        ) : null
       );
-      (ReactDOM as any).render(button, buttonElement);
+      if (button) {
+        (ReactDOM as any).render(button, buttonElement);
+      }
       const unmountPicker = mountPoint(pickerElement);
 
       return () => {
@@ -607,13 +651,27 @@ export function DailyInsights(props: DailyInsightsProps) {
 
   const renderSetupView = () => (
     <EuiEmptyPrompt
+      data-test-subj="dailyInsightsSetupPrompt"
       icon={<span style={{ fontSize: '64px' }}>🔍</span>}
       title={<h2>Daily Insights Not Configured</h2>}
       body={
-        <p>
+        <p data-test-subj="setupDescription">
           Daily Insights analyzes your anomaly detection results to identify patterns and correlations across your detectors.
-          Click the "Start Insights Job" button in the top-right corner to begin generating daily summaries.
+          Select indices to monitor and we'll automatically create optimized detectors and start generating daily insights.
         </p>
+      }
+      actions={
+        <EuiSmallButton
+          color="primary"
+          fill
+          iconType="plus"
+          onClick={() => {
+            setIsIndexSelectionModalVisible(true);
+          }}
+          data-test-subj="selectIndicesToMonitorButton"
+        >
+          Select Indices to Monitor
+        </EuiSmallButton>
       }
     />
   );
@@ -685,9 +743,35 @@ export function DailyInsights(props: DailyInsightsProps) {
         </Fragment>
       ) : (
         <div style={{ paddingLeft: '24px', paddingRight: '24px' }}>
-          {renderSetupView()}
+          <EuiSpacer size="l" />
+          <EuiPanel hasBorder paddingSize="l" data-test-subj="dailyInsightsSetupPanel">
+            {renderSetupView()}
+            
+          </EuiPanel>
         </div>
       )}
+
+      {/* Index Selection Modal */}
+      <EnhancedSelectionModal
+        isVisible={isIndexSelectionModalVisible}
+        selectedIndices={selectedIndicesForSetup}
+        onSelectionChange={(indices) => {
+          setSelectedIndicesForSetup(indices);
+        }}
+        onCancel={() => {
+          setIsIndexSelectionModalVisible(false);
+        }}
+        onConfirm={() => {}}
+        onStartInsights={async (indices, agentId) => {
+          setSelectedIndicesForSetup(indices);
+          try {
+            await handleStartInsights(agentId);
+            setIsIndexSelectionModalVisible(false);
+          } catch (error: any) {
+          }
+        }}
+        isLoading={isStarting}
+      />
     </Fragment>
   );
 }

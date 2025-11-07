@@ -13,13 +13,12 @@ import { CoreStart, AppMountParameters } from '../../../src/core/public';
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { HashRouter as Router, Route } from 'react-router-dom';
-import { DailyInsights } from './pages/DailyInsights';
+import { DailyInsightsMain } from './pages/main/DailyInsightsMain';
 import { Provider } from 'react-redux';
 import configureStore from './redux/configureStore';
 import { CoreServicesContext } from './components/CoreServices/CoreServices';
-import { getDataSourceFromURL } from './pages/utils/helpers';
 
-export function renderApp(coreStart: CoreStart, params: AppMountParameters) {
+export function renderApp(coreStart: CoreStart, params: AppMountParameters, landingPage?: string) {  
   const http = coreStart.http;
   const store = configureStore(http);
 
@@ -31,17 +30,15 @@ export function renderApp(coreStart: CoreStart, params: AppMountParameters) {
     require('@elastic/charts/dist/theme_only_light.css');
   }
 
-  const landingDataSourceId = getDataSourceFromURL(window.location).dataSourceId;
-
   ReactDOM.render(
     <Provider store={store}>
       <Router>
         <Route
           render={(props) => (
             <CoreServicesContext.Provider value={coreStart}>
-              <DailyInsights
-                setActionMenu={params.setHeaderActionMenu}
-                landingDataSourceId={landingDataSourceId}
+              <DailyInsightsMain
+                setHeaderActionMenu={params.setHeaderActionMenu}
+                landingPage={landingPage}
                 {...props}
               />
             </CoreServicesContext.Provider>
