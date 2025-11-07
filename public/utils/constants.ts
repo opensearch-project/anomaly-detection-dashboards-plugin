@@ -26,6 +26,7 @@ export const BREADCRUMBS = Object.freeze({
   EDIT_MODEL_CONFIGURATION: { text: 'Edit model configuration' },
   TITLE_GET_STARTED: { text: 'Get started'},
   TITLE_REAL_TIME_DASHBOARD: { text: 'Real-time dashboard'},
+  DAILY_INSIGHTS: { text: 'Daily Insights'},
   FORECASTING: { text: 'Forecasting', href: '#/forecasters' },
   CREATE_FORECASTER: { text: 'Create forecaster' },
 });
@@ -53,6 +54,8 @@ export const APP_PATH = {
   LIST_FORECASTERS: '/forecasters',
   FORECASTER_DETAIL: '/forecasters/:forecasterId/',
   DAILY_INSIGHTS: '/daily-insights',
+  DAILY_INSIGHTS_OVERVIEW: '/daily-insights/overview', 
+  DAILY_INSIGHTS_INDICES: '/daily-insights/indices',
 };
 
 export const OPENSEARCH_DASHBOARDS_PATH = {
@@ -142,6 +145,10 @@ export const FORECASTING_DASHBOARD_PAGE_NAV_ID = `forecasting_dashboard-dashboar
 export const FORECASTERS_PAGE_NAV_ID = `forecasting_dashboard-detectors`;
 
 export const DAILY_INSIGHTS_PAGE_NAV_ID = `daily_insights_dashboard-insights`;
+
+export const DAILY_INSIGHTS_OVERVIEW_PAGE_NAV_ID = `daily_insights_dashboard-overview`;
+
+export const DAILY_INSIGHTS_INDICES_PAGE_NAV_ID = `daily_insights_dashboard-indices`;
 
 export const USE_NEW_HOME_PAGE = 'home:useNewHomePage';
 

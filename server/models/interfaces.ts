@@ -37,6 +37,11 @@ export interface AlertingApis {
   readonly ALERTING_BASE: string;
 }
 
+export interface MlApis {
+  [API_ROUTE: string]: string;
+  readonly ML_BASE: string;
+}
+
 export interface ForecastApis {
   [API_ROUTE: string]: string;
   readonly FORECASTER_BASE: string;

@@ -26,9 +26,11 @@ import {
 import { ILegacyClusterClient } from '../../../src/core/server/';
 import adPlugin from './cluster/ad/adPlugin';
 import alertingPlugin from './cluster/ad/alertingPlugin';
+import mlPlugin from './cluster/ad/mlPlugin';
 import forecastFeature from './cluster/ad/forecastFeature';
 import AdService, { registerADRoutes } from './routes/ad';
 import AlertingService, { registerAlertingRoutes } from './routes/alerting';
+import MLService, { registerMLRoutes } from './routes/ml';
 import OpenSearchService, {
   registerOpenSearchRoutes,
 } from './routes/opensearch';
@@ -76,7 +78,7 @@ export class AnomalyDetectionOpenSearchDashboardsPlugin
       'anomaly_detection',
       {
         // forecastFeature is still inside adPlugin, but totally independent from adPlugin
-        plugins: [adPlugin, alertingPlugin, forecastFeature],
+        plugins: [adPlugin, alertingPlugin, forecastFeature, mlPlugin],
         customHeaders: { ...customHeaders, ...DEFAULT_HEADERS },
         ...rest,
       }
@@ -88,12 +90,17 @@ export class AnomalyDetectionOpenSearchDashboardsPlugin
       dataSource.registerCustomApiSchema(adPlugin);
       dataSource.registerCustomApiSchema(alertingPlugin);
       dataSource.registerCustomApiSchema(forecastFeature);
+      dataSource.registerCustomApiSchema(mlPlugin);
     }
 
     // Create router
     const apiRouter: Router = createRouter(
       core.http.createRouter(),
       BASE_NODE_API_PATH
+    );
+    const mlApiRouter: Router = createRouter(
+      core.http.createRouter(),
+      '/api/ml'
     );
 
     const forecastApiRouter: Router = createRouter(
@@ -104,6 +111,7 @@ export class AnomalyDetectionOpenSearchDashboardsPlugin
     // Create services & register with OpenSearch client
     const adService = new AdService(client, dataSourceEnabled);
     const alertingService = new AlertingService(client, dataSourceEnabled);
+    const mlService = new MLService(client, dataSourceEnabled);
     const opensearchService = new OpenSearchService(client, dataSourceEnabled);
     const sampleDataService = new SampleDataService(client, dataSourceEnabled);
     const forecastService = new ForecastService(client, dataSourceEnabled);
@@ -111,6 +119,7 @@ export class AnomalyDetectionOpenSearchDashboardsPlugin
     // Register server routes with the service
     registerADRoutes(apiRouter, adService);
     registerAlertingRoutes(apiRouter, alertingService);
+    registerMLRoutes(mlApiRouter, mlService);
     registerOpenSearchRoutes(apiRouter, opensearchService);
     registerSampleDataRoutes(apiRouter, sampleDataService);
     registerForecastRoutes(forecastApiRouter, forecastService);

@@ -27,7 +27,8 @@ import {
 } from '../../../src/plugins/embeddable/public';
 import { ACTION_AD } from './action/ad_dashboard_action';
 import { APP_PATH, DASHBOARD_PAGE_NAV_ID, DETECTORS_PAGE_NAV_ID, OVERVIEW_PAGE_NAV_ID, PLUGIN_NAME, FORECASTING_FEATURE_NAME,
-  FORECASTING_OVERVIEW_PAGE_NAV_ID, FORECASTING_DASHBOARD_PAGE_NAV_ID, FORECASTERS_PAGE_NAV_ID, DAILY_INSIGHTS_FEATURE_NAME
+  FORECASTING_OVERVIEW_PAGE_NAV_ID, FORECASTING_DASHBOARD_PAGE_NAV_ID, FORECASTERS_PAGE_NAV_ID, DAILY_INSIGHTS_FEATURE_NAME,
+  DAILY_INSIGHTS_OVERVIEW_PAGE_NAV_ID, DAILY_INSIGHTS_INDICES_PAGE_NAV_ID
 } from './utils/constants';
 import { DAILY_INSIGHTS_ENABLED } from '../utils/constants';
 import { ACTION_SUGGEST_AD, getActions, getSuggestAnomalyDetectorAction } from './utils/contextMenu/getActions';
@@ -133,6 +134,7 @@ export class AnomalyDetectionOpenSearchDashboardsPlugin
     }
 
     if (dailyInsightsEnabled) {
+      // Daily Insights parent (for navigation grouping only)
       core.application.register({
         id: DAILY_INSIGHTS_FEATURE_NAME,
         title: 'Daily Insights',
@@ -143,9 +145,9 @@ export class AnomalyDetectionOpenSearchDashboardsPlugin
         },
         order: 5020,
         mount: async (params: AppMountParameters) => {
-          const { renderApp } = await import('./daily_insights_app');
-          const [coreStart] = await core.getStartServices();
-          return renderApp(coreStart, params);
+          // Redirect to overview by default
+          window.location.hash = `#/${APP_PATH.DAILY_INSIGHTS_OVERVIEW}`;
+          return () => {};
         },
       });
     }
@@ -196,18 +198,42 @@ export class AnomalyDetectionOpenSearchDashboardsPlugin
         {
           id: DAILY_INSIGHTS_FEATURE_NAME,
           category: DEFAULT_APP_CATEGORIES.detectionInsights,
+        },
+        {
+          id: DAILY_INSIGHTS_OVERVIEW_PAGE_NAV_ID,
+          parentNavLinkId: DAILY_INSIGHTS_FEATURE_NAME
+        },
+        {
+          id: DAILY_INSIGHTS_INDICES_PAGE_NAV_ID,
+          parentNavLinkId: DAILY_INSIGHTS_FEATURE_NAME
         }
       ]);
       core.chrome.navGroup.addNavLinksToGroup(DEFAULT_NAV_GROUPS.all, [
         {
           id: DAILY_INSIGHTS_FEATURE_NAME,
           category: DEFAULT_APP_CATEGORIES.detectionInsights,
+        },
+        {
+          id: DAILY_INSIGHTS_OVERVIEW_PAGE_NAV_ID,
+          parentNavLinkId: DAILY_INSIGHTS_FEATURE_NAME
+        },
+        {
+          id: DAILY_INSIGHTS_INDICES_PAGE_NAV_ID,
+          parentNavLinkId: DAILY_INSIGHTS_FEATURE_NAME
         }
       ]);
       core.chrome.navGroup.addNavLinksToGroup(DEFAULT_NAV_GROUPS['security-analytics'], [
         {
           id: DAILY_INSIGHTS_FEATURE_NAME,
           category: DEFAULT_APP_CATEGORIES.detectionInsights,
+        },
+        {
+          id: DAILY_INSIGHTS_OVERVIEW_PAGE_NAV_ID,
+          parentNavLinkId: DAILY_INSIGHTS_FEATURE_NAME
+        },
+        {
+          id: DAILY_INSIGHTS_INDICES_PAGE_NAV_ID,
+          parentNavLinkId: DAILY_INSIGHTS_FEATURE_NAME
         }
       ]);
     }
@@ -249,6 +275,34 @@ export class AnomalyDetectionOpenSearchDashboardsPlugin
           return renderApp(coreStart, params, APP_PATH.LIST_DETECTORS, hideInAppSideNavBar);
         },
       });
+
+      if (dailyInsightsEnabled) {
+        // Overview sub-page (Jackie's current Daily Insights content)
+        core.application.register({
+          id: DAILY_INSIGHTS_OVERVIEW_PAGE_NAV_ID,
+          title: 'Overview',
+          order: 8050,
+          category: DEFAULT_APP_CATEGORIES.detectionInsights,
+          mount: async (params: AppMountParameters) => {
+            const { renderApp } = await import('./daily_insights_app');
+            const [coreStart] = await core.getStartServices();
+            return renderApp(coreStart, params, APP_PATH.DAILY_INSIGHTS_OVERVIEW);
+          },
+        });
+
+        // Indices Management sub-page (new functionality)
+        core.application.register({
+          id: DAILY_INSIGHTS_INDICES_PAGE_NAV_ID,
+          title: 'Insight Management',
+          order: 8051,
+          category: DEFAULT_APP_CATEGORIES.detectionInsights,
+          mount: async (params: AppMountParameters) => {
+            const { renderApp } = await import('./daily_insights_app');
+            const [coreStart] = await core.getStartServices();
+            return renderApp(coreStart, params, APP_PATH.DAILY_INSIGHTS_INDICES);
+          },
+        });
+      }
     }
 
     // link the sub applications to the parent application
