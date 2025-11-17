@@ -26,20 +26,21 @@ import {
   EuiIcon,
   EuiLoadingSpinner,
 } from '@elastic/eui';
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { useLocation } from 'react-router-dom';
+import { RouteComponentProps } from 'react-router-dom';
 import ContentPanel from '../../../components/ContentPanel/ContentPanel';
 import { EnhancedSelectionModal } from './EnhancedSelectionModal';
-import { getDataSourceFromURL, getAllDetectorsQueryParamsWithDataSourceId } from '../../utils/helpers';
+import { getDataSourceFromURL, getAllDetectorsQueryParamsWithDataSourceId, isDataSourceCompatible } from '../../utils/helpers';
 import { getDetectorList } from '../../../redux/reducers/ad';
 import { executeAutoCreateAgent } from '../../../redux/reducers/ml';
 import { AppState } from '../../../redux/reducers';
-import { CoreServicesConsumer } from '../../../components/CoreServices/CoreServices';
-import { CoreStart } from '../../../../../../src/core/public';
-import { getDataSourceEnabled, getApplication, getNotifications } from '../../../services';
-import { BREADCRUMBS, DAILY_INSIGHTS_OVERVIEW_PAGE_NAV_ID, PLUGIN_NAME } from '../../../utils/constants';
-import { useHistory } from 'react-router-dom';
+import { CoreServicesContext } from '../../../components/CoreServices/CoreServices';
+import { CoreStart, MountPoint } from '../../../../../../src/core/public';
+import { getDataSourceEnabled, getApplication, getNotifications, getDataSourceManagementPlugin, getSavedObjectsClient } from '../../../services';
+import { DataSourceSelectableConfig } from '../../../../../../src/plugins/data_source_management/public';
+import { BREADCRUMBS, MDS_BREADCRUMBS, DAILY_INSIGHTS_OVERVIEW_PAGE_NAV_ID, PLUGIN_NAME } from '../../../utils/constants';
+import { useHistory, useLocation } from 'react-router-dom';
 import queryString from 'querystring';
 import { prettifyErrorMessage } from '../../../../server/utils/helpers';
 import { DetectorListItem, MDSStates } from '../../../models/interfaces';
@@ -52,17 +53,12 @@ interface IndexInsightData {
   overallStatus: string;
 }
 
-export function IndicesManagement() {
-  return (
-    <CoreServicesConsumer>
-      {(core: CoreStart | null) => 
-        core && <IndicesManagementContent core={core} />
-      }
-    </CoreServicesConsumer>
-  );
+interface IndicesManagementProps extends RouteComponentProps {
+  setActionMenu: (menuMount: MountPoint | undefined) => void;
 }
 
-function IndicesManagementContent({ core }: { core: CoreStart }) {
+export function IndicesManagement(props: IndicesManagementProps) {
+  const core = React.useContext(CoreServicesContext) as CoreStart;
   const dispatch = useDispatch();
   const location = useLocation();
   const queryParams = getDataSourceFromURL(location);
@@ -76,64 +72,51 @@ function IndicesManagementContent({ core }: { core: CoreStart }) {
   const [isStartingInsights, setIsStartingInsights] = useState(false);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [insightsEnabled, setInsightsEnabled] = useState(false);
-    const [MDSInsightsState, setMDSInsightsState] = useState<MDSStates>({
-      queryParams,
-      selectedDataSourceId: queryParams.dataSourceId === undefined
-        ? undefined
-        : queryParams.dataSourceId,
-    });
-  
+  const [MDSInsightsState, setMDSInsightsState] = useState<MDSStates>({
+    queryParams,
+    selectedDataSourceId: queryParams.dataSourceId === undefined
+      ? undefined
+      : queryParams.dataSourceId,
+  });
 
   const history = useHistory();
 
-  // Set breadcrumbs
-  useEffect(() => {
-    core.chrome.setBreadcrumbs([BREADCRUMBS.DAILY_INSIGHTS]);
-    core.chrome.docTitle.change('Daily Insights');
-  }, [dataSourceId, dataSourceEnabled, core]);
-
-  useEffect(() => {
-    // Initial load
-    loadDetectors();
-    fetchInsightsStatus();
-    
-    // Set up 30-second refresh for async detector creation
-    const interval = setInterval(loadDetectors, 30000);
-    
-    return () => clearInterval(interval);
-  }, [dataSourceId]);
-
-// Use this in useEffect and fetchInsightsStatus
-useEffect(() => {
-  fetchInsightsStatus();
-}, [dataSourceId]);
-
-const fetchInsightsStatus = async () => {
-  try {
-      const statusPath = MDSInsightsState.selectedDataSourceId
-        ? `${AD_NODE_API.INSIGHTS_STATUS}/${MDSInsightsState.selectedDataSourceId}`
-        : AD_NODE_API.INSIGHTS_STATUS;
-      
-      const statusResponse = await core?.http.get(statusPath);
-      const enabled = statusResponse?.response?.enabled || false;
-
-    setInsightsEnabled(enabled);
-  } catch (error: any) {
-    console.error('Error fetching insights status:', error);
-    setInsightsEnabled(false);
+  // Create datasource selector
+  let renderDataSourceComponent = null;
+  if (dataSourceEnabled) {
+    const DataSourceMenu =
+      getDataSourceManagementPlugin()?.ui.getDataSourceMenu<DataSourceSelectableConfig>();
+    renderDataSourceComponent = useMemo(() => {
+      return (
+        <DataSourceMenu
+          setMenuMountPoint={props.setActionMenu}
+          componentType={'DataSourceSelectable'}
+          componentConfig={{
+            fullWidth: false,
+            activeOption: MDSInsightsState.selectedDataSourceId === undefined
+              ? undefined
+              : [{ id: MDSInsightsState.selectedDataSourceId }],
+            savedObjects: getSavedObjectsClient(),
+            notifications: getNotifications(),
+            onSelectedDataSources: (dataSources) =>
+              handleDataSourceChange(dataSources),
+            dataSourceFilter: isDataSourceCompatible,
+          }}
+        />
+      );
+    }, [getSavedObjectsClient(), getNotifications(), MDSInsightsState.selectedDataSourceId, insightsEnabled]);
   }
-};
 
   const handleDataSourceChange = (dataSources: any[]) => {
-    const dataSourceId = dataSources[0]?.id;
-    if (dataSourceEnabled && dataSourceId === undefined) {
+    const selectedDataSourceId = dataSources[0]?.id;
+    if (dataSourceEnabled && selectedDataSourceId === undefined) {
       getNotifications().toasts.addDanger(
         prettifyErrorMessage('Unable to set data source.')
       );
     } else {
       setMDSInsightsState({
-        queryParams: dataSourceId,
-        selectedDataSourceId: dataSourceId,
+        queryParams: selectedDataSourceId,
+        selectedDataSourceId: selectedDataSourceId,
       });
     }
   };
@@ -151,6 +134,52 @@ const fetchInsightsStatus = async () => {
     }
   }, [MDSInsightsState]);
 
+  // Set breadcrumbs
+  useEffect(() => {
+    if (dataSourceEnabled) {
+      core.chrome.setBreadcrumbs([
+        MDS_BREADCRUMBS.ANOMALY_DETECTOR(MDSInsightsState.selectedDataSourceId),
+        { text: 'Daily Insights' },
+      ]);
+    } else {
+      core.chrome.setBreadcrumbs([
+        BREADCRUMBS.ANOMALY_DETECTOR,
+        { text: 'Daily Insights' },
+      ]);
+    }
+    core.chrome.docTitle.change('Daily Insights');
+  }, [MDSInsightsState]);
+
+  // Fetch status and results
+  useEffect(() => {
+    fetchInsightsStatus();
+  }, [MDSInsightsState]);
+
+  useEffect(() => {
+    // Initial load
+    loadDetectors();
+    
+    // Set up 30-second refresh for async detector creation
+    const interval = setInterval(loadDetectors, 30000);
+    
+    return () => clearInterval(interval);
+  }, [MDSInsightsState.selectedDataSourceId]);
+
+const fetchInsightsStatus = async () => {
+  try {
+      const statusPath = MDSInsightsState.selectedDataSourceId
+        ? `${AD_NODE_API.INSIGHTS_STATUS}/${MDSInsightsState.selectedDataSourceId}`
+        : AD_NODE_API.INSIGHTS_STATUS;
+      
+      const statusResponse = await core?.http.get(statusPath);
+      const enabled = statusResponse?.response?.enabled || false;
+
+    setInsightsEnabled(enabled);
+  } catch (error: any) {
+    console.error('Error fetching insights status:', error);
+    setInsightsEnabled(false);
+  }
+};
 
   // Process detectors when they change
   useEffect(() => {
@@ -161,7 +190,7 @@ const fetchInsightsStatus = async () => {
 
   const loadDetectors = async () => {
     try {
-      await dispatch(getDetectorList(getAllDetectorsQueryParamsWithDataSourceId(dataSourceId)));
+      await dispatch(getDetectorList(getAllDetectorsQueryParamsWithDataSourceId(MDSInsightsState.selectedDataSourceId)));
     } catch (error) {
       console.error('Error loading detectors:', error);
       setIndicesData([]);
@@ -465,7 +494,8 @@ const fetchInsightsStatus = async () => {
   };
 
   return (
-    <React.Fragment>      
+    <React.Fragment>
+        {dataSourceEnabled && renderDataSourceComponent}
         {insightsEnabled && renderAddIndicesPanel()}
       <EuiSpacer size="l" />
 
