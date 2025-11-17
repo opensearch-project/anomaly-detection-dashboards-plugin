@@ -63,7 +63,7 @@ export function IndicesManagement(props: IndicesManagementProps) {
   const location = useLocation();
   const queryParams = getDataSourceFromURL(location);
   
-  const dataSourceId = queryParams.dataSourceId;
+  const dataSourceId = queryParams.dataSourceId || undefined;
   const dataSourceEnabled = !!getDataSourceEnabled().enabled;
   
   const adState = useSelector((state: AppState) => state.ad);
@@ -74,9 +74,9 @@ export function IndicesManagement(props: IndicesManagementProps) {
   const [insightsEnabled, setInsightsEnabled] = useState(false);
   const [MDSInsightsState, setMDSInsightsState] = useState<MDSStates>({
     queryParams,
-    selectedDataSourceId: queryParams.dataSourceId === undefined
-      ? undefined
-      : queryParams.dataSourceId,
+    selectedDataSourceId: dataSourceEnabled
+      ? (dataSourceId || undefined)
+      : undefined,
   });
 
   const history = useHistory();
@@ -115,7 +115,7 @@ export function IndicesManagement(props: IndicesManagementProps) {
       );
     } else {
       setMDSInsightsState({
-        queryParams: selectedDataSourceId,
+        queryParams: { dataSourceId: selectedDataSourceId ?? undefined },
         selectedDataSourceId: selectedDataSourceId,
       });
     }
