@@ -82,32 +82,30 @@ export function IndicesManagement(props: IndicesManagementProps) {
   const history = useHistory();
 
   // Create datasource selector
-  const renderDataSourceComponent = useMemo(() => {
-    if (!dataSourceEnabled) return null;
-    
+  let renderDataSourceComponent = null;
+  if (dataSourceEnabled) {
     const DataSourceMenu =
       getDataSourceManagementPlugin()?.ui.getDataSourceMenu<DataSourceSelectableConfig>();
-    
-    if (!DataSourceMenu) return null;
-    
-    return (
-      <DataSourceMenu
-        setMenuMountPoint={props.setActionMenu}
-        componentType={'DataSourceSelectable'}
-        componentConfig={{
-          fullWidth: false,
-          activeOption: MDSInsightsState.selectedDataSourceId === undefined
-            ? undefined
-            : [{ id: MDSInsightsState.selectedDataSourceId }],
-          savedObjects: getSavedObjectsClient(),
-          notifications: getNotifications(),
-          onSelectedDataSources: (dataSources) =>
-            handleDataSourceChange(dataSources),
-          dataSourceFilter: isDataSourceCompatible,
-        }}
-      />
-    );
-  }, [dataSourceEnabled, getSavedObjectsClient(), getNotifications(), MDSInsightsState.selectedDataSourceId, insightsEnabled]);
+    renderDataSourceComponent = useMemo(() => {
+      return (
+        <DataSourceMenu
+          setMenuMountPoint={props.setActionMenu}
+          componentType={'DataSourceSelectable'}
+          componentConfig={{
+            fullWidth: false,
+            activeOption: MDSInsightsState.selectedDataSourceId === undefined
+              ? undefined
+              : [{ id: MDSInsightsState.selectedDataSourceId }],
+            savedObjects: getSavedObjectsClient(),
+            notifications: getNotifications(),
+            onSelectedDataSources: (dataSources) =>
+              handleDataSourceChange(dataSources),
+            dataSourceFilter: isDataSourceCompatible,
+          }}
+        />
+      );
+    }, [getSavedObjectsClient(), getNotifications(), MDSInsightsState.selectedDataSourceId, insightsEnabled]);
+  }
 
   const handleDataSourceChange = (dataSources: any[]) => {
     const selectedDataSourceId = dataSources[0]?.id;
