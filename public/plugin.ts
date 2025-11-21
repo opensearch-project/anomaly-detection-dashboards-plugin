@@ -277,7 +277,6 @@ export class AnomalyDetectionOpenSearchDashboardsPlugin
       });
 
       if (dailyInsightsEnabled) {
-        // Overview sub-page (Jackie's current Daily Insights content)
         core.application.register({
           id: DAILY_INSIGHTS_OVERVIEW_PAGE_NAV_ID,
           title: 'Overview',

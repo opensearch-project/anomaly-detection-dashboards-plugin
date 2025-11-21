@@ -48,7 +48,9 @@ export function DailyInsightsMain(props: DailyInsightsMainProps) {
             <Route
               path={APP_PATH.DAILY_INSIGHTS_INDICES}
               render={(props: RouteComponentProps) => (
-                <IndicesManagement />
+                <IndicesManagement
+                  setActionMenu={setHeaderActionMenu}
+                  {...props} />
               )}
             />
             <Route
