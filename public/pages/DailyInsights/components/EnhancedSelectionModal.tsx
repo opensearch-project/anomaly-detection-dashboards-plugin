@@ -354,7 +354,6 @@ export function EnhancedSelectionModal({
       
       <EuiModalBody style={{ maxHeight: '70vh', overflowY: 'auto', minHeight: 400 }}>
         {currentStep === 'selection' ? (
-          // Step 1: Index selection
           <>
         {/* Cluster Selection */}
         <EuiFormRow label="Clusters">
@@ -370,7 +369,6 @@ export function EnhancedSelectionModal({
 
         <EuiSpacer size="s" />
         
-        {/* Selection Summary */}
         {selectedIndices.length > 0 && (
           <>
             <EuiPanel color="success" paddingSize="s">
@@ -478,9 +476,7 @@ export function EnhancedSelectionModal({
             })}
           />
         </div>
-        
-        {/* Agent ID field - show in selection step when immediateExecute is true */}
-        {immediateExecute && dataSourceEnabled && (
+        {immediateExecute && (
           <>
             <EuiSpacer size="m" />
             <EuiFormRow label="ML Agent ID" helpText="The ML Commons agent ID for creating detectors">
@@ -505,9 +501,8 @@ export function EnhancedSelectionModal({
             </EuiText>
             
             <EuiSpacer size="m" />
-            {dataSourceEnabled && (
               <>
-      <EuiFormRow label="ML Agent ID" helpText="The ML Commons agent ID for creating detectors">
+            <EuiFormRow label="ML Agent ID" helpText="The ML Commons agent ID for creating detectors">
               <EuiFieldText
                 value={agentId}
                 onChange={(e) => setAgentId(e.target.value)}
@@ -515,7 +510,7 @@ export function EnhancedSelectionModal({
               />
             </EuiFormRow>
             </>
-            )}        
+                    
             <EuiSpacer size="m" />
             
             <EuiPanel paddingSize="m" color="subdued">
