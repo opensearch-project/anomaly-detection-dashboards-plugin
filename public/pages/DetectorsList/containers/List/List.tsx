@@ -73,7 +73,7 @@ import {
 } from '../../../utils/helpers';
 import { getColumns } from '../../utils/tableUtils';
 import { DETECTOR_ACTION } from '../../utils/constants';
-import { getTitleWithCount, Listener } from '../../../../utils/utils';
+import { getTitleWithCount, Listener, isNoLivingConnectionsError } from '../../../../utils/utils';
 import { ListActions } from '../../components/ListActions/ListActions';
 import { searchMonitors } from '../../../../redux/reducers/alerting';
 import { Monitor } from '../../../../models/interfaces';
@@ -200,6 +200,9 @@ export const DetectorList = (props: ListProps) => {
       errorGettingDetectors &&
       !errorGettingDetectors.includes(SINGLE_DETECTOR_NOT_FOUND_MSG)
     ) {
+      if (isNoLivingConnectionsError(errorGettingDetectors)) {
+        return;
+      }
       console.error(errorGettingDetectors);
       core.notifications.toasts.addDanger(
         typeof errorGettingDetectors === 'string' &&

@@ -205,6 +205,15 @@ export const getErrorMessage = (err: any, defaultMessage: string) => {
   return defaultMessage;
 };
 
+/**
+ * When there's no local cluster, it's expected that some
+ * bootstrap calls may fail with "No Living connections". 
+ * Do not turn those into generic detector error toasts.
+ */
+export const isNoLivingConnectionsError = (error: any): boolean => {
+  return typeof error === 'string' && error.includes('No Living connections');
+};
+
 const getPluginRootPath = (url: string, pluginName: string) => {
   return url.slice(0, url.indexOf(pluginName) + pluginName.length);
 };

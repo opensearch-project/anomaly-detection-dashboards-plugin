@@ -66,6 +66,7 @@ import {
   getSavedObjectsClient,
   getUISettings,
 } from '../../../services';
+import { isNoLivingConnectionsError } from '../../../utils/utils';
 import { RouteComponentProps } from 'react-router-dom';
 
 interface OverviewProps extends RouteComponentProps {
@@ -231,6 +232,9 @@ export function DashboardOverview(props: OverviewProps) {
 
   useEffect(() => {
     if (errorGettingDetectors) {
+      if (isNoLivingConnectionsError(errorGettingDetectors)) {
+        return;
+      }
       console.error(errorGettingDetectors);
       core.notifications.toasts.addDanger(
         typeof errorGettingDetectors === 'string' &&
