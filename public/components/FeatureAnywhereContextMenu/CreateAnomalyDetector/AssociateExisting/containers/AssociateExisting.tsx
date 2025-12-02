@@ -49,6 +49,7 @@ import {
 } from '../../../../../../public/utils/constants';
 import { renderTime } from '../../../../../../public/pages/DetectorsList/utils/tableUtils';
 import { getAllDetectorsQueryParamsWithDataSourceId } from '../../../../../pages/utils/helpers';
+import { isNoLivingConnectionsError } from '../../../../../utils/utils';
 
 interface AssociateExistingProps {
   embeddableVisId: string;
@@ -104,6 +105,9 @@ export function AssociateExisting(
       errorGettingDetectors &&
       !errorGettingDetectors.includes(SINGLE_DETECTOR_NOT_FOUND_MSG)
     ) {
+      if (isNoLivingConnectionsError(errorGettingDetectors)) {
+        return;
+      }
       console.error(errorGettingDetectors);
       core.notifications.toasts.addDanger(
         typeof errorGettingDetectors === 'string' &&

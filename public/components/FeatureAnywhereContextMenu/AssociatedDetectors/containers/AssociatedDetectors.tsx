@@ -50,6 +50,7 @@ import {
 import { ASSOCIATED_DETECTOR_ACTION } from '../utils/constants';
 import { PLUGIN_AUGMENTATION_MAX_OBJECTS_SETTING } from '../../../../../public/expressions/constants';
 import { getAllDetectorsQueryParamsWithDataSourceId } from '../../../../../public/pages/utils/helpers';
+import { isNoLivingConnectionsError } from '../../../../utils/utils';
 
 interface ConfirmModalState {
   isOpen: boolean;
@@ -127,6 +128,9 @@ function AssociatedDetectors({ embeddable, closeFlyout, setMode }) {
       errorGettingDetectors &&
       !errorGettingDetectors.includes(SINGLE_DETECTOR_NOT_FOUND_MSG)
     ) {
+      if (isNoLivingConnectionsError(errorGettingDetectors)) {
+        return;
+      }
       console.error(errorGettingDetectors);
       notifications.toasts.addDanger(
         typeof errorGettingDetectors === 'string' &&
