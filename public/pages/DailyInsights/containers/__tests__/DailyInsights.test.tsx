@@ -24,6 +24,13 @@ import { httpClientMock, coreServicesMock } from '../../../../../test/mocks';
 import configureStore from '../../../../redux/configureStore';
 import { CoreServicesContext } from '../../../../components/CoreServices/CoreServices';
 
+// Work around react/react-router type mismatches in the test environment by casting
+// router components to `any` (runtime behavior is unchanged).
+const AnyRouter: any = Router;
+const AnySwitch: any = Switch;
+const AnyRoute: any = Route;
+const AnyRedirect: any = Redirect;
+
 jest.mock('../../../../services', () => {
   const originalModule = jest.requireActual('../../../../services');
 
@@ -90,13 +97,13 @@ const mockCoreServices = {
 const renderWithRouter = (landingDataSourceId?: string) => ({
   ...render(
     <Provider store={configureStore(httpClientMock)}>
-      <Router initialEntries={['/daily-insights']}>
-        <Switch>
-          <Route
+      <AnyRouter initialEntries={['/daily-insights']}>
+        <AnySwitch>
+          <AnyRoute
             exact
             path="/daily-insights"
             render={(props: RouteComponentProps) => (
-              <CoreServicesContext.Provider value={mockCoreServices}>
+              <CoreServicesContext.Provider value={mockCoreServices as any}>
                 <DailyInsights
                   setActionMenu={jest.fn()}
                   landingDataSourceId={landingDataSourceId}
@@ -105,9 +112,9 @@ const renderWithRouter = (landingDataSourceId?: string) => ({
               </CoreServicesContext.Provider>
             )}
           />
-          <Redirect from="/" to="/daily-insights" />
-        </Switch>
-      </Router>
+          <AnyRedirect from="/" to="/daily-insights" />
+        </AnySwitch>
+      </AnyRouter>
     </Provider>
   ),
 });
@@ -115,6 +122,8 @@ const renderWithRouter = (landingDataSourceId?: string) => ({
 describe('<DailyInsights /> spec', () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    httpClientMock.get = jest.fn();
+    httpClientMock.post = jest.fn();
   });
 
   beforeAll(() => {
@@ -140,11 +149,11 @@ describe('<DailyInsights /> spec', () => {
 
       const { getByText } = render(
         <Provider store={configureStore(httpClientMock)}>
-          <Router initialEntries={['/daily-insights']}>
-            <Route
+          <AnyRouter initialEntries={['/daily-insights']}>
+            <AnyRoute
               path="/daily-insights"
               render={(props: RouteComponentProps) => (
-                <CoreServicesContext.Provider value={mockCore}>
+                <CoreServicesContext.Provider value={mockCore as any}>
                   <DailyInsights
                     setActionMenu={jest.fn()}
                     landingDataSourceId={undefined}
@@ -153,7 +162,7 @@ describe('<DailyInsights /> spec', () => {
                 </CoreServicesContext.Provider>
               )}
             />
-          </Router>
+          </AnyRouter>
         </Provider>
       );
 
@@ -165,8 +174,8 @@ describe('<DailyInsights /> spec', () => {
 
   describe('Loading state', () => {
     test('renders loading spinner initially', async () => {
-      mockCoreServices.http.get = jest.fn(() =>
-        new Promise(() => {}) // Never resolves to keep loading state
+      httpClientMock.get = jest.fn(() =>
+        (new Promise<any>(() => {}) as any) // Never resolves to keep loading state
       );
 
       const { container } = renderWithRouter();
@@ -180,7 +189,7 @@ describe('<DailyInsights /> spec', () => {
 
   describe('Setup view when insights not enabled', () => {
     test('renders setup view when insights job is not running', async () => {
-      mockCoreServices.http.get = jest.fn().mockResolvedValue({
+      httpClientMock.get = jest.fn().mockResolvedValue({
         response: {
           enabled: false,
           schedule: null,
@@ -211,18 +220,30 @@ describe('<DailyInsights /> spec', () => {
               window_start: windowStart,
               window_end: windowEnd,
               generated_at: generatedAt,
+              doc_detector_names: ['detector-1'],
               doc_detector_ids: ['detector-1'],
               doc_indices: ['index-1'],
-              doc_series_keys: ['series-1'],
-              paragraphs: [
+              doc_model_ids: ['model-1'],
+              clusters: [
                 {
                   indices: ['index-1'],
                   detector_ids: ['detector-1'],
+                  detector_names: ['detector-1'],
                   entities: ['entity-1', 'entity-2'],
-                  series_keys: ['series-1'],
-                  start: windowStart,
-                  end: windowEnd,
-                  text: 'Correlated anomalies detected across 1 detector(s)',
+                  model_ids: ['model-1'],
+                  event_start: windowStart,
+                  event_end: windowEnd,
+                  cluster_text: 'Correlated anomalies detected across 1 detector(s)',
+                  num_anomalies: 1,
+                  anomalies: [
+                    {
+                      model_id: 'model-1',
+                      detector_id: 'detector-1',
+                      config_id: 'detector-1',
+                      data_start_time: windowStart,
+                      data_end_time: windowEnd,
+                    },
+                  ],
                 },
               ],
             },
@@ -230,7 +251,7 @@ describe('<DailyInsights /> spec', () => {
         },
       };
 
-      mockCoreServices.http.get = jest
+      httpClientMock.get = jest
         .fn()
         .mockResolvedValueOnce({
           response: {
@@ -256,7 +277,7 @@ describe('<DailyInsights /> spec', () => {
     });
 
     test('renders empty state when no results available', async () => {
-      mockCoreServices.http.get = jest
+      httpClientMock.get = jest
         .fn()
         .mockResolvedValueOnce({
           response: {
@@ -286,14 +307,14 @@ describe('<DailyInsights /> spec', () => {
 
   describe('Start insights job', () => {
     test('calls start API with 24h frequency', async () => {
-      mockCoreServices.http.get = jest.fn().mockResolvedValue({
+      httpClientMock.get = jest.fn().mockResolvedValue({
         response: {
           enabled: false,
           schedule: null,
         },
       });
 
-      mockCoreServices.http.post = jest.fn().mockResolvedValue({
+      httpClientMock.post = jest.fn().mockResolvedValue({
         message: 'Success',
       });
 
@@ -304,13 +325,13 @@ describe('<DailyInsights /> spec', () => {
       });
 
       // Note: Button is in action menu, testing the API call
-      expect(mockCoreServices.http.post).not.toHaveBeenCalled();
+      expect(httpClientMock.post).not.toHaveBeenCalled();
     });
   });
 
   describe('Stop insights job', () => {
     test('calls stop API when stopping job', async () => {
-      mockCoreServices.http.get = jest.fn().mockResolvedValue({
+      httpClientMock.get = jest.fn().mockResolvedValue({
         response: {
           enabled: true,
           schedule: {
@@ -323,14 +344,14 @@ describe('<DailyInsights /> spec', () => {
         },
       });
 
-      mockCoreServices.http.post = jest.fn().mockResolvedValue({
+      httpClientMock.post = jest.fn().mockResolvedValue({
         message: 'Success',
       });
 
       renderWithRouter();
 
       await waitFor(() => {
-        expect(mockCoreServices.http.get).toHaveBeenCalled();
+        expect(httpClientMock.get).toHaveBeenCalled();
       });
     });
   });
@@ -348,18 +369,30 @@ describe('<DailyInsights /> spec', () => {
               window_start: windowStart,
               window_end: windowEnd,
               generated_at: generatedAt,
+              doc_detector_names: ['detector-1'],
               doc_detector_ids: ['detector-1'],
               doc_indices: ['index-1'],
-              doc_series_keys: ['series-1'],
-              paragraphs: [
+              doc_model_ids: ['model-1'],
+              clusters: [
                 {
                   indices: ['index-1'],
                   detector_ids: ['detector-1'],
+                  detector_names: ['detector-1'],
                   entities: ['entity-1'],
-                  series_keys: ['series-1'],
-                  start: windowStart,
-                  end: windowEnd,
-                  text: 'Test anomaly text',
+                  model_ids: ['model-1'],
+                  event_start: windowStart,
+                  event_end: windowEnd,
+                  cluster_text: 'Test anomaly text',
+                  num_anomalies: 1,
+                  anomalies: [
+                    {
+                      model_id: 'model-1',
+                      detector_id: 'detector-1',
+                      config_id: 'detector-1',
+                      data_start_time: windowStart,
+                      data_end_time: windowEnd,
+                    },
+                  ],
                 },
               ],
             },
@@ -367,7 +400,7 @@ describe('<DailyInsights /> spec', () => {
         },
       };
 
-      mockCoreServices.http.get = jest
+      httpClientMock.get = jest
         .fn()
         .mockResolvedValueOnce({
           response: {
@@ -400,19 +433,19 @@ describe('<DailyInsights /> spec', () => {
 
   describe('Error handling', () => {
     test('shows error toast when fetching status fails', async () => {
-      mockCoreServices.http.get = jest
+      httpClientMock.get = jest
         .fn()
         .mockRejectedValue(new Error('API Error'));
 
       renderWithRouter();
 
       await waitFor(() => {
-        expect(mockCoreServices.http.get).toHaveBeenCalled();
+        expect(httpClientMock.get).toHaveBeenCalled();
       });
     });
 
     test('shows error toast when fetching results fails', async () => {
-      mockCoreServices.http.get = jest
+      httpClientMock.get = jest
         .fn()
         .mockResolvedValueOnce({
           response: {
@@ -438,7 +471,7 @@ describe('<DailyInsights /> spec', () => {
 
   describe('Breadcrumbs', () => {
     test('sets breadcrumbs on mount', async () => {
-      mockCoreServices.http.get = jest.fn().mockResolvedValue({
+      httpClientMock.get = jest.fn().mockResolvedValue({
         response: {
           enabled: false,
           schedule: null,
