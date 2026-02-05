@@ -7,7 +7,7 @@ on:
     branches:
       - "*"
 env:
-  OPENSEARCH_DASHBOARDS_VERSION: '3.5'
+  OPENSEARCH_DASHBOARDS_VERSION: 'main'
 
 jobs:
   Get-CI-Image-Tag:
