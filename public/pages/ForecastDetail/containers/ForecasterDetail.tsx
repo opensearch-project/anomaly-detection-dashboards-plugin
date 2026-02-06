@@ -10,7 +10,7 @@
  */
 
 import React, { Fragment, useEffect, useMemo, useRef, useState } from 'react';
-import ReactDOM from 'react-dom';
+import { createRoot } from 'react-dom/client';
 import {
   RouteComponentProps,
   useLocation,
@@ -187,8 +187,8 @@ export const ForecasterDetail = (props: ForecasterDetailProps) => {
             text: (element: HTMLElement) => {
               // The toast API expects the text property to be either a string or a "mount point" 
               // (a function that receives a DOM element and mounts your UI into it).
-              // Here we use ReactDOM.render to mount our error message UI into the provided element.
-              ReactDOM.render(
+              const root = createRoot(element);
+              root.render(
                 <>
                   {Object.keys(configErrors).length > 0 ? (
                     <div>
@@ -218,10 +218,9 @@ export const ForecasterDetail = (props: ForecasterDetailProps) => {
                       </ul>
                     </div>
                   )}
-                </>,
-                element
+                </>
               );
-              return () => ReactDOM.unmountComponentAtNode(element);
+              return () => root.unmount();
             },
           });
           // just return (or throw) so the `.finally` below gets triggered.
