@@ -723,6 +723,7 @@ exports[`<DetectorConfig /> spec renders rules 1`] = `
                                 >
                                   <span
                                     class="euiTableCellContent__text"
+                                    title="Feature name"
                                   >
                                     Feature name
                                   </span>
@@ -754,6 +755,7 @@ exports[`<DetectorConfig /> spec renders rules 1`] = `
                               >
                                 <span
                                   class="euiTableCellContent__text"
+                                  title="Feature definition"
                                 >
                                   Feature definition
                                 </span>
@@ -770,6 +772,7 @@ exports[`<DetectorConfig /> spec renders rules 1`] = `
                               >
                                 <span
                                   class="euiTableCellContent__text"
+                                  title="Feature state"
                                 >
                                   Feature state
                                 </span>
@@ -786,6 +789,7 @@ exports[`<DetectorConfig /> spec renders rules 1`] = `
                               >
                                 <span
                                   class="euiTableCellContent__text"
+                                  title="Anomaly Criteria"
                                 >
                                   Anomaly Criteria
                                 </span>
@@ -1385,6 +1389,7 @@ exports[`<DetectorConfig /> spec renders rules 1`] = `
                               >
                                 <span
                                   class="euiTableCellContent__text"
+                                  title="Categorical fields"
                                 >
                                   Categorical fields
                                 </span>
@@ -1401,6 +1406,7 @@ exports[`<DetectorConfig /> spec renders rules 1`] = `
                               >
                                 <span
                                   class="euiTableCellContent__text"
+                                  title="Shingle size"
                                 >
                                   Shingle size
                                 </span>
@@ -1417,6 +1423,7 @@ exports[`<DetectorConfig /> spec renders rules 1`] = `
                               >
                                 <span
                                   class="euiTableCellContent__text"
+                                  title="Imputation method"
                                 >
                                   Imputation method
                                 </span>
@@ -1433,6 +1440,7 @@ exports[`<DetectorConfig /> spec renders rules 1`] = `
                               >
                                 <span
                                   class="euiTableCellContent__text"
+                                  title="Custom values"
                                 >
                                   Custom values
                                 </span>
@@ -1607,9 +1615,7 @@ exports[`<DetectorConfig /> spec renders rules 1`] = `
                     >
                       <p
                         class="enabled"
-                      >
-                        
-                      </p>
+                      />
                     </p>
                   </div>
                 </div>
@@ -3943,6 +3949,7 @@ exports[`<DetectorConfig /> spec renders the component with 2 custom and 1 simpl
                                 >
                                   <span
                                     class="euiTableCellContent__text"
+                                    title="Feature name"
                                   >
                                     Feature name
                                   </span>
@@ -3974,6 +3981,7 @@ exports[`<DetectorConfig /> spec renders the component with 2 custom and 1 simpl
                               >
                                 <span
                                   class="euiTableCellContent__text"
+                                  title="Feature definition"
                                 >
                                   Feature definition
                                 </span>
@@ -3990,6 +3998,7 @@ exports[`<DetectorConfig /> spec renders the component with 2 custom and 1 simpl
                               >
                                 <span
                                   class="euiTableCellContent__text"
+                                  title="Feature state"
                                 >
                                   Feature state
                                 </span>
@@ -4006,6 +4015,7 @@ exports[`<DetectorConfig /> spec renders the component with 2 custom and 1 simpl
                               >
                                 <span
                                   class="euiTableCellContent__text"
+                                  title="Anomaly Criteria"
                                 >
                                   Anomaly Criteria
                                 </span>
@@ -4614,6 +4624,7 @@ exports[`<DetectorConfig /> spec renders the component with 2 custom and 1 simpl
                               >
                                 <span
                                   class="euiTableCellContent__text"
+                                  title="Categorical fields"
                                 >
                                   Categorical fields
                                 </span>
@@ -4630,6 +4641,7 @@ exports[`<DetectorConfig /> spec renders the component with 2 custom and 1 simpl
                               >
                                 <span
                                   class="euiTableCellContent__text"
+                                  title="Shingle size"
                                 >
                                   Shingle size
                                 </span>
@@ -4646,6 +4658,7 @@ exports[`<DetectorConfig /> spec renders the component with 2 custom and 1 simpl
                               >
                                 <span
                                   class="euiTableCellContent__text"
+                                  title="Imputation method"
                                 >
                                   Imputation method
                                 </span>
@@ -4662,6 +4675,7 @@ exports[`<DetectorConfig /> spec renders the component with 2 custom and 1 simpl
                               >
                                 <span
                                   class="euiTableCellContent__text"
+                                  title="Custom values"
                                 >
                                   Custom values
                                 </span>

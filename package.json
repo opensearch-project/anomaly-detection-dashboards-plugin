@@ -41,7 +41,7 @@
     "plotly.js-dist": "^2.29.1",
     "prettier": "^2.1.1",
     "react-plotly.js": "^2.6.0",
-    "react-redux": "^7.2.0",
+    "react-redux": "^8.1.0",
     "reselect": "^4.0.0"
   },
   "resolutions": {

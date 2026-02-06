@@ -76,7 +76,6 @@ exports[`<IndexOptions /> spec renders with highlight 1`] = `
         class=""
       >
         <span>
-          
           <mark
             class="euiMark"
           >

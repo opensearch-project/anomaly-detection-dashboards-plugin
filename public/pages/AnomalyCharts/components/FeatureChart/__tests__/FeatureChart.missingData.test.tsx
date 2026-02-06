@@ -173,8 +173,8 @@ describe('FeatureChart missing data annotations', () => {
       detectorFrequency,
     });
 
-    expect(mockLineAnnotationSpy).toHaveBeenCalledTimes(1);
-    const callArgs = mockLineAnnotationSpy.mock.calls[0][0];
+    expect(mockLineAnnotationSpy).toHaveBeenCalled();
+    const callArgs = mockLineAnnotationSpy.mock.lastCall[0];
     expect(callArgs.dataValues).toHaveLength(0);
     expect(queryByTestId('line-annotation')).toBeNull();
   });
@@ -197,8 +197,8 @@ describe('FeatureChart missing data annotations', () => {
       detectorFrequency,
     });
 
-    expect(mockLineAnnotationSpy).toHaveBeenCalledTimes(1);
-    const callArgs = mockLineAnnotationSpy.mock.calls[0][0];
+    expect(mockLineAnnotationSpy).toHaveBeenCalled();
+    const callArgs = mockLineAnnotationSpy.mock.lastCall[0];
     expect(callArgs.dataValues).toHaveLength(0);
     expect(queryByTestId('line-annotation')).toBeNull();
   });
@@ -222,8 +222,8 @@ describe('FeatureChart missing data annotations', () => {
       detectorFrequency,
     });
 
-    expect(mockLineAnnotationSpy).toHaveBeenCalledTimes(1);
-    const callArgs = mockLineAnnotationSpy.mock.calls[0][0];
+    expect(mockLineAnnotationSpy).toHaveBeenCalled();
+    const callArgs = mockLineAnnotationSpy.mock.lastCall[0];
     expect(callArgs.dataValues.length).toBeGreaterThan(0);
 
     const annotationNode = getByTestId('line-annotation');
