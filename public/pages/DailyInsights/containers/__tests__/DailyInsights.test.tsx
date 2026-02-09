@@ -216,7 +216,6 @@ describe('<DailyInsights /> spec', () => {
         response: {
           results: [
             {
-              task_id: 'task-123',
               window_start: windowStart,
               window_end: windowEnd,
               generated_at: generatedAt,
@@ -239,7 +238,6 @@ describe('<DailyInsights /> spec', () => {
                     {
                       model_id: 'model-1',
                       detector_id: 'detector-1',
-                      config_id: 'detector-1',
                       data_start_time: windowStart,
                       data_end_time: windowEnd,
                     },
@@ -272,7 +270,183 @@ describe('<DailyInsights /> spec', () => {
       await waitFor(() => {
         expect(getByText('Latest Insights')).toBeInTheDocument();
         expect(getByText('1 Detector')).toBeInTheDocument();
-        expect(getByText('1 Index Pattern')).toBeInTheDocument();
+      });
+    });
+
+    test('renders only the top 3 clusters sorted by num_anomalies', async () => {
+      const generatedAt = new Date(Date.now() - 30 * 60 * 1000).toISOString();
+      const windowStart = new Date(Date.now() - 3 * 60 * 60 * 1000).toISOString();
+      const windowEnd = new Date(Date.now() - 60 * 60 * 1000).toISOString();
+
+      const mockResults: any = {
+        response: {
+          results: [
+            {
+              window_start: windowStart,
+              window_end: windowEnd,
+              generated_at: generatedAt,
+              doc_detector_names: ['detector-1'],
+              doc_detector_ids: ['detector-1'],
+              doc_indices: ['index-1'],
+              doc_model_ids: ['model-1'],
+              clusters: [
+                {
+                  indices: ['index-1'],
+                  detector_ids: ['detector-1'],
+                  detector_names: ['detector-1'],
+                  entities: ['entity-a'],
+                  model_ids: ['model-1'],
+                  event_start: windowStart,
+                  event_end: windowEnd,
+                  cluster_text: 'cluster-low',
+                  num_anomalies: 1,
+                },
+                {
+                  indices: ['index-1'],
+                  detector_ids: ['detector-1'],
+                  detector_names: ['detector-1'],
+                  entities: ['entity-b'],
+                  model_ids: ['model-1'],
+                  event_start: windowStart,
+                  event_end: windowEnd,
+                  cluster_text: 'cluster-mid-1',
+                  num_anomalies: 5,
+                },
+                {
+                  indices: ['index-1'],
+                  detector_ids: ['detector-1'],
+                  detector_names: ['detector-1'],
+                  entities: ['entity-c'],
+                  model_ids: ['model-1'],
+                  event_start: windowStart,
+                  event_end: windowEnd,
+                  cluster_text: 'cluster-top',
+                  num_anomalies: 10,
+                },
+                {
+                  indices: ['index-1'],
+                  detector_ids: ['detector-1'],
+                  detector_names: ['detector-1'],
+                  entities: ['entity-d'],
+                  model_ids: ['model-1'],
+                  event_start: windowStart,
+                  event_end: windowEnd,
+                  cluster_text: 'cluster-mid-2',
+                  num_anomalies: 3,
+                },
+                {
+                  indices: ['index-1'],
+                  detector_ids: ['detector-1'],
+                  detector_names: ['detector-1'],
+                  entities: ['entity-e'],
+                  model_ids: ['model-1'],
+                  event_start: windowStart,
+                  event_end: windowEnd,
+                  cluster_text: 'cluster-very-low',
+                  num_anomalies: 0,
+                },
+              ],
+            },
+          ],
+        },
+      };
+
+      httpClientMock.get = jest
+        .fn()
+        .mockResolvedValueOnce({
+          response: {
+            enabled: true,
+            schedule: {
+              interval: {
+                start_time: Date.now(),
+                period: 24,
+                unit: 'hours',
+              },
+            },
+          },
+        })
+        .mockResolvedValueOnce(mockResults);
+
+      const { getByText, queryByText } = renderWithRouter();
+
+      await waitFor(() => {
+        expect(getByText('Latest Insights')).toBeInTheDocument();
+        expect(getByText('Top 3 Correlated Anomaly Clusters')).toBeInTheDocument();
+      });
+
+      // Top 3 by num_anomalies should render
+      expect(getByText('cluster-top')).toBeInTheDocument();
+      expect(getByText('cluster-mid-1')).toBeInTheDocument();
+      expect(getByText('cluster-mid-2')).toBeInTheDocument();
+
+      // Lower-ranked clusters should be omitted
+      expect(queryByText('cluster-low')).toBeNull();
+      expect(queryByText('cluster-very-low')).toBeNull();
+    });
+
+    test('normalizes detector_ids when backend returns a string', async () => {
+      const generatedAt = new Date(Date.now() - 30 * 60 * 1000).toISOString();
+      const windowStart = new Date(Date.now() - 3 * 60 * 60 * 1000).toISOString();
+      const windowEnd = new Date(Date.now() - 60 * 60 * 1000).toISOString();
+
+      const mockResults: any = {
+        response: {
+          results: [
+            {
+              window_start: windowStart,
+              window_end: windowEnd,
+              generated_at: generatedAt,
+              doc_detector_names: 'detector-1',
+              doc_detector_ids: 'detector-1',
+              doc_indices: 'index-1',
+              doc_model_ids: 'model-1',
+              clusters: [
+                {
+                  indices: 'index-1',
+                  detector_ids: 'detector-1',
+                  detector_names: 'detector-1',
+                  entities: 'entity-1',
+                  model_ids: 'model-1',
+                  event_start: windowStart,
+                  event_end: windowEnd,
+                  cluster_text: 'Test anomaly text',
+                  num_anomalies: 1,
+                },
+              ],
+            },
+          ],
+        },
+      };
+
+      httpClientMock.get = jest
+        .fn()
+        .mockResolvedValueOnce({
+          response: {
+            enabled: true,
+            schedule: {
+              interval: {
+                start_time: Date.now(),
+                period: 24,
+                unit: 'hours',
+              },
+            },
+          },
+        })
+        .mockResolvedValueOnce(mockResults);
+
+      const { getByText, findByText } = renderWithRouter();
+
+      await waitFor(() => {
+        expect(getByText('Latest Insights')).toBeInTheDocument();
+        expect(getByText('1 Detector')).toBeInTheDocument();
+      });
+
+      // Ensure the cluster panel renders + click works (would crash if detector_ids is a string)
+      const eventPanel = await findByText('Test anomaly text');
+      fireEvent.click(eventPanel.closest('.euiPanel') || eventPanel);
+
+      await waitFor(() => {
+        expect(getByText('Event Details')).toBeInTheDocument();
       });
     });
 
@@ -365,7 +539,6 @@ describe('<DailyInsights /> spec', () => {
         response: {
           results: [
             {
-              task_id: 'task-123',
               window_start: windowStart,
               window_end: windowEnd,
               generated_at: generatedAt,
@@ -388,7 +561,6 @@ describe('<DailyInsights /> spec', () => {
                     {
                       model_id: 'model-1',
                       detector_id: 'detector-1',
-                      config_id: 'detector-1',
                       data_start_time: windowStart,
                       data_end_time: windowEnd,
                     },

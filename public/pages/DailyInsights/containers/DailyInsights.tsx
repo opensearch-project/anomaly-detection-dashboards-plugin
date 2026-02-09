@@ -69,7 +69,6 @@ interface DailyInsightsProps extends RouteComponentProps {
 }
 
 interface InsightResult {
-  task_id: string;
   window_start: string;
   window_end: string;
   generated_at: string;
@@ -96,7 +95,6 @@ interface InsightCluster {
 interface ClusterAnomaly {
   model_id: string;
   detector_id: string;
-  config_id: string;
   data_start_time: string;
   data_end_time: string;
 }
@@ -108,6 +106,75 @@ interface InsightsSchedule {
     unit: string;
   };
 }
+
+const normalizeStringArray = (value: any): string[] => {
+  if (Array.isArray(value)) {
+    return value.filter((v) => typeof v === 'string');
+  }
+  if (typeof value === 'string') {
+    return [value];
+  }
+  return [];
+};
+
+const getClusterAnomalyCount = (cluster: any): number => {
+  const fromNum = cluster?.num_anomalies;
+  if (typeof fromNum === 'number' && Number.isFinite(fromNum)) {
+    return fromNum;
+  }
+  const anomalies = cluster?.anomalies;
+  return Array.isArray(anomalies) ? anomalies.length : 0;
+};
+
+const getClusterDetectorIdCount = (cluster: any): number => {
+  return normalizeStringArray(cluster?.detector_ids).length;
+};
+
+// Returns top N clusters sorted by:
+// 1) num_anomalies (desc; falls back to anomalies.length)
+// 2) detector_ids count (desc; after normalization)
+const selectTopClusters = (clusters: any[], topN = 3): any[] => {
+  if (!Array.isArray(clusters) || topN <= 0) {
+    return [];
+  }
+
+  type Entry = {
+    cluster: any;
+    anomalyCount: number;
+    detectorIdCount: number;
+  };
+
+  const shouldComeBefore = (a: Entry, b: Entry): boolean => {
+    if (a.anomalyCount !== b.anomalyCount) {
+      return a.anomalyCount > b.anomalyCount;
+    }
+    return a.detectorIdCount > b.detectorIdCount;
+  };
+
+  // Maintain a small sorted array of size <= topN. O(topN) per cluster.
+  const top: Entry[] = [];
+  for (const cluster of clusters) {
+    const entry: Entry = {
+      cluster,
+      anomalyCount: getClusterAnomalyCount(cluster),
+      detectorIdCount: getClusterDetectorIdCount(cluster),
+    };
+
+    let insertAt = top.length;
+    for (let i = 0; i < top.length; i++) {
+      if (shouldComeBefore(entry, top[i])) {
+        insertAt = i;
+        break;
+      }
+    }
+    top.splice(insertAt, 0, entry);
+    if (top.length > topN) {
+      top.pop();
+    }
+  }
+
+  return top.map((e) => e.cluster);
+};
 
 export function DailyInsights(props: DailyInsightsProps) {
   const core = React.useContext(CoreServicesContext) as CoreStart;
@@ -238,7 +305,9 @@ export function DailyInsights(props: DailyInsightsProps) {
         getInsightsResultsAction(MDSInsightsState.selectedDataSourceId || '')
       );
       
-      const allResults = resultsResponse?.response?.results || [];
+      const allResults = Array.isArray(resultsResponse?.response?.results)
+        ? resultsResponse.response.results
+        : [];
       
       // use current job schedule, or default to 24 hours
       let filterPeriod = 24;
@@ -251,51 +320,51 @@ export function DailyInsights(props: DailyInsightsProps) {
       }
       
       const cutoffTime = moment().subtract(filterPeriod, filterUnit);
+      const cutoffTs = cutoffTime.valueOf();
       
-      const mappedResults = allResults.map((result: InsightResult) => ({
-        ...result,
-        doc_detector_names: result.doc_detector_names || [],
-        doc_detector_ids: result.doc_detector_ids || [],
-        doc_indices: result.doc_indices || [],
-        doc_model_ids: result.doc_model_ids || [],
-        clusters: Array.isArray(result.clusters) ? result.clusters : [],
+      // We only render the latest insight and its top 3 clusters, so avoid normalizing/sorting everything.
+      let mostRecentRaw: any = null;
+      let mostRecentTs = -Infinity;
+      for (const result of allResults) {
+        const ts = moment((result as any)?.generated_at).valueOf();
+        if (!Number.isFinite(ts) || ts <= cutoffTs) {
+          continue;
+        }
+        if (ts > mostRecentTs) {
+          mostRecentTs = ts;
+          mostRecentRaw = result;
+        }
+      }
+
+      if (!mostRecentRaw) {
+        setInsightsResults([]);
+        return;
+      }
+
+      const rawClusters = Array.isArray((mostRecentRaw as any)?.clusters)
+        ? (mostRecentRaw as any).clusters
+        : [];
+      const top3RawClusters = selectTopClusters(rawClusters, 3);
+      const normalizedTopClusters = top3RawClusters.map((cluster: any) => ({
+        ...cluster,
+        indices: normalizeStringArray(cluster?.indices),
+        detector_ids: normalizeStringArray(cluster?.detector_ids),
+        detector_names: normalizeStringArray(cluster?.detector_names),
+        entities: normalizeStringArray(cluster?.entities),
+        model_ids: normalizeStringArray(cluster?.model_ids),
+        anomalies: Array.isArray(cluster?.anomalies) ? cluster.anomalies : [],
       }));
 
-      const filteredResults = mappedResults
-        .filter((result: InsightResult) => {
-          const generatedAt = moment(result.generated_at);
-          
-          const isRecentlyGenerated = generatedAt.isAfter(cutoffTime);
-          
-          return isRecentlyGenerated;
-        })
-        .sort((a: InsightResult, b: InsightResult) => {
-          return moment(b.generated_at).valueOf() - moment(a.generated_at).valueOf();
-        });
+      const normalizedMostRecent: InsightResult = {
+        ...(mostRecentRaw as any),
+        doc_detector_names: normalizeStringArray((mostRecentRaw as any).doc_detector_names),
+        doc_detector_ids: normalizeStringArray((mostRecentRaw as any).doc_detector_ids),
+        doc_indices: normalizeStringArray((mostRecentRaw as any).doc_indices),
+        doc_model_ids: normalizeStringArray((mostRecentRaw as any).doc_model_ids),
+        clusters: normalizedTopClusters,
+      };
 
-      const mostRecentInsight = filteredResults.length > 0 ? filteredResults[0] : null;
-      
-      // get top 3 clusters by anomaly count (fallback to detector count)
-      let processedResults: InsightResult[] = [];
-      if (mostRecentInsight && Array.isArray(mostRecentInsight.clusters)) {
-        const sortedClusters = [...mostRecentInsight.clusters]
-          .sort((a, b) => {
-            const aCount = a.num_anomalies ?? a.anomalies?.length ?? 0;
-            const bCount = b.num_anomalies ?? b.anomalies?.length ?? 0;
-            if (bCount !== aCount) {
-              return bCount - aCount;
-            }
-            return (b.detector_ids?.length ?? 0) - (a.detector_ids?.length ?? 0);
-          })
-          .slice(0, 3);
-        
-        processedResults = [{
-          ...mostRecentInsight,
-          clusters: sortedClusters
-        }];
-      }
-      
-      setInsightsResults(processedResults);
+      setInsightsResults([normalizedMostRecent]);
     } catch (error: any) {
       core?.notifications.toasts.addDanger({
         title: 'Failed to fetch insights results',
@@ -325,7 +394,6 @@ export function DailyInsights(props: DailyInsightsProps) {
             setIsStarting(false);
             return;
           }
-          const taskId = resp?.response?.task_id || resp?.task_id;
           // Step 2: Start insights job after delay
           setTimeout(async () => {
             try {
@@ -597,7 +665,7 @@ export function DailyInsights(props: DailyInsightsProps) {
     return (
       <Fragment>
         {insightsResults.map((result) => (
-          <Fragment key={result.task_id}>
+          <Fragment key={`${result.generated_at}-${result.window_start}-${result.window_end}`}>
             <div style={{ marginBottom: '16px' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
                 <EuiTitle size="m">

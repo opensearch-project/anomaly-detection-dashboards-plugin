@@ -556,6 +556,12 @@ export default class AdService {
   ): Promise<IOpenSearchDashboardsResponse<any>> => {
     try {
       const { dataSourceId = '' } = request.params as { dataSourceId?: string };
+      const { detector_id, index, from, size } = (request.query || {}) as {
+        detector_id?: string;
+        index?: string;
+        from?: string;
+        size?: string;
+      };
 
       const callWithRequest = getClientBasedOnDataSource(
         context,
@@ -565,7 +571,35 @@ export default class AdService {
         this.client
       );
 
-      const response = await callWithRequest('ad.getInsightsResults', {});
+      const fromNum = from ? Number(from) : 0;
+      const sizeNum = size ? Number(size) : 20;
+
+      const must: any[] = [];
+      if (detector_id) {
+        must.push({ term: { doc_detector_ids: detector_id } });
+      }
+      if (index) {
+        must.push({ term: { doc_indices: index } });
+      }
+
+      const searchBody = {
+        query: must.length > 0 ? { bool: { must } } : { match_all: {} },
+        from: Number.isFinite(fromNum) ? fromNum : 0,
+        size: Number.isFinite(sizeNum) ? sizeNum : 20,
+        sort: [{ generated_at: { order: 'desc' as const } }],
+      };
+
+      const searchResp = await callWithRequest('search', {
+        index: 'opensearch-ad-plugin-insights',
+        body: searchBody,
+      });
+
+      const hits = searchResp?.hits?.hits || [];
+      const totalHits = searchResp?.hits?.total?.value ?? 0;
+      const response = {
+        total_hits: totalHits,
+        results: hits.map((h: any) => h?._source).filter(Boolean),
+      };
       return opensearchDashboardsResponse.ok({
         body: {
           ok: true,
@@ -573,6 +607,17 @@ export default class AdService {
         },
       });
     } catch (err) {
+      // If insights index doesn't exist yet, return empty results.
+      const errType = (err as any)?.body?.error?.type;
+      const statusCode = (err as any)?.statusCode;
+      if (statusCode === 404 || errType === 'index_not_found_exception') {
+        return opensearchDashboardsResponse.ok({
+          body: {
+            ok: true,
+            response: { total_hits: 0, results: [] },
+          },
+        });
+      }
       console.log('Anomaly detector - getInsightsResults', err);
       return opensearchDashboardsResponse.ok({
         body: {

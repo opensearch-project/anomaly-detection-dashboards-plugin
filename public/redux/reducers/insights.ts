@@ -32,7 +32,6 @@ export interface InsightsSchedule {
 }
 
 export interface InsightResult {
-  task_id: string;
   window_start: string;
   window_end: string;
   generated_at: string;
