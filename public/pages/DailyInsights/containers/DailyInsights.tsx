@@ -485,14 +485,16 @@ export function DailyInsights(props: DailyInsightsProps) {
           </EuiSmallButton>
         ) : null
       );
+      let buttonRoot: Root | null = null;
       if (button) {
-        (ReactDOM as any).render(button, buttonElement);
+        buttonRoot = createRoot(buttonElement);
+        buttonRoot.render(button);
       }
       const unmountPicker = mountPoint(pickerElement);
 
       return () => {
         if (unmountPicker) unmountPicker();
-        (ReactDOM as any).unmountComponentAtNode(buttonElement);
+        buttonRoot?.unmount();
       };
     });
   };

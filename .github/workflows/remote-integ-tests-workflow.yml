@@ -6,7 +6,8 @@ env:
   CI: 1
   # avoid warnings like "tput: No value for $TERM and no -T specified"
   TERM: xterm
-  OPENSEARCH_DASHBOARDS_VERSION: '3.5'
+  # Using main branch which includes React 18 upgrade (OpenSearch-Dashboards#11187)
+  OPENSEARCH_DASHBOARDS_VERSION: 'main'
   OPENSEARCH_VERSION: '3.5.0'
   OPENSEARCH_PLUGIN_VERSION: '3.5.0.0'
 
@@ -163,7 +164,7 @@ jobs:
 
       - name: Run spec files from output
         run: |
-          env CYPRESS_NO_COMMAND_LOG=1 yarn cypress:run-without-security --browser chromium --spec 'cypress/integration/plugins/anomaly-detection-dashboards-plugin/*'
+          env CYPRESS_NO_COMMAND_LOG=1 yarn cypress:run-without-security --browser electron --spec 'cypress/integration/plugins/anomaly-detection-dashboards-plugin/*'
         working-directory: opensearch-dashboards-functional-test
 
       - name: Capture failure screenshots
