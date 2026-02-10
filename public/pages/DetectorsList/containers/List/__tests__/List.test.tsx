@@ -455,7 +455,7 @@ describe('<DetectorList /> spec', () => {
       await user.click(getAllByRole('checkbox')[0]);
       await user.click(getByTestId('listActionsButton'));
       await user.click(getByText('Start real-time detectors'));
-      getByText('Are you sure you want to start the selected detectors?');
+      await waitFor(() => getByText('Are you sure you want to start the selected detectors?'));
       getByText('Start detectors');
     });
     test('stop action disabled if selected detector is stopped', async () => {

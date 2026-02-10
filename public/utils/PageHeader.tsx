@@ -19,6 +19,7 @@ export interface PageHeaderProps {
   appBadgeControls?: TopNavControlData[];
   appDescriptionControls?: (TopNavControlDescriptionData | TopNavControlLinkData | TopNavControlIconData)[];
   appBottomControls?: TopNavControlData[];
+  children?: React.ReactNode;
 }
 
 export const PageHeader: React.FC<PageHeaderProps> = ({

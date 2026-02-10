@@ -171,30 +171,34 @@ describe('<ConfirmStartForecastersModal /> spec', () => {
 
     test('handles error during start operation and resets loading state', async () => {
       const mockOnStartForecaster = jest.fn().mockRejectedValue(new Error('Start failed'));
+      const mockOnConfirm = jest.fn();
       const mockConsoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
       
       render(
         <ConfirmStartForecastersModal 
           {...defaultProps} 
           onStartForecaster={mockOnStartForecaster}
+          onConfirm={mockOnConfirm}
         />
       );
       
       const confirmButton = screen.getByTestId('confirmButton');
       fireEvent.click(confirmButton);
       
-      // Wait for all async operations to complete
-      await waitFor(async () => {
+      // Wait for async operations to complete
+      await waitFor(() => {
         expect(mockOnStartForecaster).toHaveBeenCalled();
+      });
+      
+      await waitFor(() => {
         expect(mockConsoleErrorSpy).toHaveBeenCalledWith('Failed to start forecaster:', expect.any(Error));
-        
         // Should reset loading state and show cancel button again
         expect(screen.getByTestId('cancelButton')).toBeInTheDocument();
         expect(confirmButton).not.toBeDisabled();
-        
-        // onConfirm should not be called if start fails (it's inside the try block)
-        expect(defaultProps.onConfirm).not.toHaveBeenCalled();
       });
+      
+      // onConfirm should not be called if start fails (it's inside the try block)
+      expect(mockOnConfirm).not.toHaveBeenCalled();
       
       mockConsoleErrorSpy.mockRestore();
     });

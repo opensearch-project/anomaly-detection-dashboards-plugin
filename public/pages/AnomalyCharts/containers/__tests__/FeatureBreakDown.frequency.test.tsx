@@ -10,7 +10,7 @@
  */
 
 import React from 'react';
-import { render } from '@testing-library/react';
+import { render, waitFor } from '@testing-library/react';
 import { getRandomDetector } from '../../../../redux/reducers/__tests__/utils';
 import { FeatureBreakDown } from '../FeatureBreakDown';
 import {
@@ -82,19 +82,19 @@ describe('FeatureBreakDown frequency handling', () => {
     jest.restoreAllMocks();
   });
 
-  test('defaults detectorFrequency to detection interval when frequency is undefined', () => {
+  test('defaults detectorFrequency to detection interval when frequency is undefined', async () => {
     const detector = getRandomDetector(false);
     const featureChartSpy = jest.spyOn(FeatureChartModule, 'FeatureChart');
 
     renderFeatureBreakDown(detector);
 
-    expect(featureChartSpy).toHaveBeenCalled();
-    featureChartSpy.mock.calls.forEach((call) => {
-      const props = call[0] as any;
-      expect(props.detectorFrequency).toEqual(
-        detector.detectionInterval.period
-      );
+    await waitFor(() => {
+      expect(featureChartSpy).toHaveBeenCalled();
     });
+    const props = featureChartSpy.mock.lastCall?.[0] as any;
+    expect(props.detectorFrequency).toEqual(
+      detector.detectionInterval.period
+    );
   });
 
   test('passes detector frequency when defined on detector', () => {

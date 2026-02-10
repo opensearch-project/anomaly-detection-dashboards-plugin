@@ -11,7 +11,7 @@
 
 import { CoreStart, AppMountParameters } from '../../../src/core/public';
 import React from 'react';
-import ReactDOM from 'react-dom';
+import { createRoot } from 'react-dom/client';
 import { HashRouter as Router, Route } from 'react-router-dom';
 import { Main } from './pages/main';
 import { Provider } from 'react-redux';
@@ -30,7 +30,8 @@ export function renderApp(coreStart: CoreStart, params: AppMountParameters, land
     require('@elastic/charts/dist/theme_only_light.css');
   }
 
-  ReactDOM.render(
+  const root = createRoot(params.element);
+  root.render(
     <Provider store={store}>
       <Router>
         <Route
@@ -46,8 +47,7 @@ export function renderApp(coreStart: CoreStart, params: AppMountParameters, land
           )}
         />
       </Router>
-    </Provider>,
-    params.element
+    </Provider>
   );
-  return () => ReactDOM.unmountComponentAtNode(params.element);
+  return () => root.unmount();
 }
