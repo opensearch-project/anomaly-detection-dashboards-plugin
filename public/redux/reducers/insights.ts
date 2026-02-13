@@ -151,7 +151,9 @@ export const getInsightsResults = (dataSourceId: string = ''): APIAction => {
   const url = withDataSourceIdSuffix(AD_NODE_API.INSIGHTS_RESULTS, dataSourceId);
   return {
     type: GET_INSIGHTS_RESULTS,
-    request: (client: HttpSetup) => client.get(url),
+    // Backend sorts insight doc by `generated_at: desc` and defaults size=20, 
+    // so request size=1 to reduce payload.
+    request: (client: HttpSetup) => client.get(url, { query: { from: 0, size: 1 } }),
   };
 };
 

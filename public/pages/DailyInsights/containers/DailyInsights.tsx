@@ -29,7 +29,7 @@ import {
 } from '@elastic/eui';
 import React, { useState, useEffect, useMemo, Fragment } from 'react';
 import { useDispatch } from 'react-redux';
-import ReactDOM from 'react-dom';
+import { createRoot, Root } from 'react-dom/client';
 import { RouteComponentProps } from 'react-router-dom';
 import queryString from 'querystring';
 import { CoreServicesContext } from '../../../components/CoreServices/CoreServices';
