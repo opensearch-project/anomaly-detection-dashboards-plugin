@@ -26,19 +26,20 @@ import {
   EuiButtonEmpty,
   EuiDescriptionList,
   EuiCodeBlock,
-  EuiFlexGroup,
-  EuiFlexItem,
-  EuiToolTip,
 } from '@elastic/eui';
 import React, { useState, useEffect, useMemo, Fragment } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { createRoot, Root } from 'react-dom/client';
 import { RouteComponentProps } from 'react-router-dom';
 import queryString from 'querystring';
 import { CoreServicesContext } from '../../../components/CoreServices/CoreServices';
-import { AD_NODE_API } from '../../../../utils/constants';
-import { AppState } from '../../../redux/reducers';
 import { executeAutoCreateAgent } from '../../../redux/reducers/ml';
+import {
+  getInsightsResults as getInsightsResultsAction,
+  getInsightsStatus as getInsightsStatusAction,
+  startInsightsJob as startInsightsJobAction,
+  stopInsightsJob as stopInsightsJobAction,
+} from '../../../redux/reducers/insights';
 import { getErrorMessage } from '../../../utils/utils';
 import { prettifyErrorMessage } from '../../../../server/utils/helpers';
 import { MDSStates } from '../../../models/interfaces';
@@ -68,24 +69,34 @@ interface DailyInsightsProps extends RouteComponentProps {
 }
 
 interface InsightResult {
-  task_id: string;
   window_start: string;
   window_end: string;
   generated_at: string;
+  doc_detector_names: string[];
   doc_detector_ids: string[];
   doc_indices: string[];
-  doc_series_keys: string[];
-  paragraphs: Paragraph[];
+  doc_model_ids: string[];
+  clusters: InsightCluster[];
 }
 
-interface Paragraph {
+interface InsightCluster {
   indices: string[];
   detector_ids: string[];
+  detector_names: string[];
   entities: string[];
-  series_keys: string[];
-  start: string;
-  end: string;
-  text: string;
+  model_ids: string[];
+  num_anomalies?: number;
+  event_start: string;
+  event_end: string;
+  cluster_text: string;
+  anomalies?: ClusterAnomaly[];
+}
+
+interface ClusterAnomaly {
+  model_id: string;
+  detector_id: string;
+  data_start_time: string;
+  data_end_time: string;
 }
 
 interface InsightsSchedule {
@@ -96,10 +107,78 @@ interface InsightsSchedule {
   };
 }
 
+const normalizeStringArray = (value: any): string[] => {
+  if (Array.isArray(value)) {
+    return value.filter((v) => typeof v === 'string');
+  }
+  if (typeof value === 'string') {
+    return [value];
+  }
+  return [];
+};
+
+const getClusterAnomalyCount = (cluster: any): number => {
+  const fromNum = cluster?.num_anomalies;
+  if (typeof fromNum === 'number' && Number.isFinite(fromNum)) {
+    return fromNum;
+  }
+  const anomalies = cluster?.anomalies;
+  return Array.isArray(anomalies) ? anomalies.length : 0;
+};
+
+const getClusterDetectorIdCount = (cluster: any): number => {
+  return normalizeStringArray(cluster?.detector_ids).length;
+};
+
+// Returns top N clusters sorted by:
+// 1) num_anomalies (desc; falls back to anomalies.length)
+// 2) detector_ids count (desc; after normalization)
+const selectTopClusters = (clusters: any[], topN = 3): any[] => {
+  if (!Array.isArray(clusters) || topN <= 0) {
+    return [];
+  }
+
+  type Entry = {
+    cluster: any;
+    anomalyCount: number;
+    detectorIdCount: number;
+  };
+
+  const shouldComeBefore = (a: Entry, b: Entry): boolean => {
+    if (a.anomalyCount !== b.anomalyCount) {
+      return a.anomalyCount > b.anomalyCount;
+    }
+    return a.detectorIdCount > b.detectorIdCount;
+  };
+
+  // Maintain a small sorted array of size <= topN. O(topN) per cluster.
+  const top: Entry[] = [];
+  for (const cluster of clusters) {
+    const entry: Entry = {
+      cluster,
+      anomalyCount: getClusterAnomalyCount(cluster),
+      detectorIdCount: getClusterDetectorIdCount(cluster),
+    };
+
+    let insertAt = top.length;
+    for (let i = 0; i < top.length; i++) {
+      if (shouldComeBefore(entry, top[i])) {
+        insertAt = i;
+        break;
+      }
+    }
+    top.splice(insertAt, 0, entry);
+    if (top.length > topN) {
+      top.pop();
+    }
+  }
+
+  return top.map((e) => e.cluster);
+};
+
 export function DailyInsights(props: DailyInsightsProps) {
   const core = React.useContext(CoreServicesContext) as CoreStart;
   const dispatch = useDispatch();
-  const mlState = useSelector((state: AppState) => state.ml);
   
   const [isStarting, setIsStarting] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
@@ -107,7 +186,7 @@ export function DailyInsights(props: DailyInsightsProps) {
   const [insightsEnabled, setInsightsEnabled] = useState(false);
   const [insightsSchedule, setInsightsSchedule] = useState<InsightsSchedule | null>(null);
   const [insightsResults, setInsightsResults] = useState<InsightResult[]>([]);
-  const [selectedEvent, setSelectedEvent] = useState<{paragraph: Paragraph, result: InsightResult} | null>(null);
+  const [selectedEvent, setSelectedEvent] = useState<{cluster: InsightCluster, result: InsightResult} | null>(null);
   const [featureEnabled, setFeatureEnabled] = useState<boolean>(false);
   
   // Index selection for setup flow
@@ -116,7 +195,7 @@ export function DailyInsights(props: DailyInsightsProps) {
   const [isIndexSelectionModalVisible, setIsIndexSelectionModalVisible] = useState(false);
   
   const useUpdatedUX = getUISettings().get(USE_NEW_HOME_PAGE);
-  const { HeaderControl } = getNavigationUI();
+  const { HeaderControl } = getNavigationUI() as any;
   const { setAppDescriptionControls } = getApplication();
   
   const dataSourceEnabled = getDataSourceEnabled().enabled;
@@ -197,11 +276,9 @@ export function DailyInsights(props: DailyInsightsProps) {
   const fetchInsightsStatus = async () => {
     setIsLoading(true);
     try {
-      const statusPath = MDSInsightsState.selectedDataSourceId
-        ? `${AD_NODE_API.INSIGHTS_STATUS}/${MDSInsightsState.selectedDataSourceId}`
-        : AD_NODE_API.INSIGHTS_STATUS;
-      
-      const statusResponse = await core?.http.get(statusPath);
+      const statusResponse = await dispatch(
+        getInsightsStatusAction(MDSInsightsState.selectedDataSourceId || '')
+      );
       const enabled = statusResponse?.response?.enabled || false;
       const schedule = statusResponse?.response?.schedule || null;
       
@@ -224,13 +301,13 @@ export function DailyInsights(props: DailyInsightsProps) {
 
   const fetchInsightsResults = async () => {
     try {
-      const resultsPath = MDSInsightsState.selectedDataSourceId
-        ? `${AD_NODE_API.INSIGHTS_RESULTS}/${MDSInsightsState.selectedDataSourceId}`
-        : AD_NODE_API.INSIGHTS_RESULTS;
+      const resultsResponse = await dispatch(
+        getInsightsResultsAction(MDSInsightsState.selectedDataSourceId || '')
+      );
       
-      const resultsResponse = await core?.http.get(resultsPath);
-      
-      const allResults = resultsResponse?.response?.results || [];
+      const allResults = Array.isArray(resultsResponse?.response?.results)
+        ? resultsResponse.response.results
+        : [];
       
       // use current job schedule, or default to 24 hours
       let filterPeriod = 24;
@@ -243,37 +320,51 @@ export function DailyInsights(props: DailyInsightsProps) {
       }
       
       const cutoffTime = moment().subtract(filterPeriod, filterUnit);
+      const cutoffTs = cutoffTime.valueOf();
       
-      const mappedResults = allResults;
-
-      const filteredResults = mappedResults
-        .filter((result: InsightResult) => {
-          const generatedAt = moment(result.generated_at);
-          
-          const isRecentlyGenerated = generatedAt.isAfter(cutoffTime);
-          
-          return isRecentlyGenerated;
-        })
-        .sort((a: InsightResult, b: InsightResult) => {
-          return moment(b.generated_at).valueOf() - moment(a.generated_at).valueOf();
-        });
-
-      const mostRecentInsight = filteredResults.length > 0 ? filteredResults[0] : null;
-      
-      // get top 3 clusters by detector count
-      let processedResults: InsightResult[] = [];
-      if (mostRecentInsight) {
-        const sortedParagraphs = [...mostRecentInsight.paragraphs]
-          .sort((a, b) => b.detector_ids.length - a.detector_ids.length)
-          .slice(0, 3);
-        
-        processedResults = [{
-          ...mostRecentInsight,
-          paragraphs: sortedParagraphs
-        }];
+      // We only render the latest insight and its top 3 clusters, so avoid normalizing/sorting everything.
+      let mostRecentRaw: any = null;
+      let mostRecentTs = -Infinity;
+      for (const result of allResults) {
+        const ts = moment((result as any)?.generated_at).valueOf();
+        if (!Number.isFinite(ts) || ts <= cutoffTs) {
+          continue;
+        }
+        if (ts > mostRecentTs) {
+          mostRecentTs = ts;
+          mostRecentRaw = result;
+        }
       }
-      
-      setInsightsResults(processedResults);
+
+      if (!mostRecentRaw) {
+        setInsightsResults([]);
+        return;
+      }
+
+      const rawClusters = Array.isArray((mostRecentRaw as any)?.clusters)
+        ? (mostRecentRaw as any).clusters
+        : [];
+      const top3RawClusters = selectTopClusters(rawClusters, 3);
+      const normalizedTopClusters = top3RawClusters.map((cluster: any) => ({
+        ...cluster,
+        indices: normalizeStringArray(cluster?.indices),
+        detector_ids: normalizeStringArray(cluster?.detector_ids),
+        detector_names: normalizeStringArray(cluster?.detector_names),
+        entities: normalizeStringArray(cluster?.entities),
+        model_ids: normalizeStringArray(cluster?.model_ids),
+        anomalies: Array.isArray(cluster?.anomalies) ? cluster.anomalies : [],
+      }));
+
+      const normalizedMostRecent: InsightResult = {
+        ...(mostRecentRaw as any),
+        doc_detector_names: normalizeStringArray((mostRecentRaw as any).doc_detector_names),
+        doc_detector_ids: normalizeStringArray((mostRecentRaw as any).doc_detector_ids),
+        doc_indices: normalizeStringArray((mostRecentRaw as any).doc_indices),
+        doc_model_ids: normalizeStringArray((mostRecentRaw as any).doc_model_ids),
+        clusters: normalizedTopClusters,
+      };
+
+      setInsightsResults([normalizedMostRecent]);
     } catch (error: any) {
       core?.notifications.toasts.addDanger({
         title: 'Failed to fetch insights results',
@@ -303,17 +394,15 @@ export function DailyInsights(props: DailyInsightsProps) {
             setIsStarting(false);
             return;
           }
-          const taskId = resp?.response?.task_id || resp?.task_id;
           // Step 2: Start insights job after delay
           setTimeout(async () => {
             try {
-              const apiPath = MDSInsightsState.selectedDataSourceId
-                ? `${AD_NODE_API.INSIGHTS_START}/${MDSInsightsState.selectedDataSourceId}`
-                : AD_NODE_API.INSIGHTS_START;
-              
-              const insightsResponse = await core?.http.post(apiPath, {
-                body: JSON.stringify({ frequency: '24h' })
-              });
+              await dispatch(
+                startInsightsJobAction(
+                  '24h',
+                  MDSInsightsState.selectedDataSourceId || ''
+                )
+              );
               
               core?.notifications.toasts.addSuccess({
                 title: 'Insights job started successfully',
@@ -346,10 +435,9 @@ export function DailyInsights(props: DailyInsightsProps) {
   const handleStopInsights = async () => {
     setIsStarting(true);
     try {
-      const apiPath = MDSInsightsState.selectedDataSourceId
-        ? `${AD_NODE_API.INSIGHTS_STOP}/${MDSInsightsState.selectedDataSourceId}`
-        : AD_NODE_API.INSIGHTS_STOP;
-      const response = await core?.http.post(apiPath);
+      const response = await dispatch(
+        stopInsightsJobAction(MDSInsightsState.selectedDataSourceId || '')
+      );
       core?.notifications.toasts.addSuccess({
         title: 'Insights job stopped successfully',
         text: response?.message || 'The insights job has been stopped.',
@@ -414,7 +502,7 @@ export function DailyInsights(props: DailyInsightsProps) {
   let renderDataSourceComponent = null;
   if (dataSourceEnabled) {
     const DataSourceMenu =
-      getDataSourceManagementPlugin()?.ui.getDataSourceMenu<DataSourceSelectableConfig>();
+      getDataSourceManagementPlugin()?.ui.getDataSourceMenu<DataSourceSelectableConfig>() as any;
     renderDataSourceComponent = useMemo(() => {
   return (
         <DataSourceMenu
@@ -428,7 +516,7 @@ export function DailyInsights(props: DailyInsightsProps) {
                 : [{ id: MDSInsightsState.selectedDataSourceId }],
             savedObjects: getSavedObjectsClient(),
             notifications: getNotifications(),
-            onSelectedDataSources: (dataSources) =>
+            onSelectedDataSources: (dataSources: any[]) =>
               handleDataSourceChange(dataSources),
             dataSourceFilter: isDataSourceCompatible,
           }}
@@ -440,28 +528,36 @@ export function DailyInsights(props: DailyInsightsProps) {
   const renderEventModal = () => {
     if (!selectedEvent) return null;
 
-    const { paragraph, result } = selectedEvent;
+    const { cluster, result } = selectedEvent;
+    const detectorNames = cluster.detector_names && cluster.detector_names.length > 0
+      ? cluster.detector_names
+      : cluster.detector_ids;
+    const formattedAnomalies = (cluster.anomalies || []).map((anomaly) => ({
+      detector_id: anomaly.detector_id,
+      data_start_time: moment(anomaly.data_start_time).format('lll'),
+      data_end_time: moment(anomaly.data_end_time).format('lll'),
+    }));
     
     const descriptionListItems = [
       {
         title: 'Time Range',
-        description: `${moment(paragraph.start).format('lll')} → ${moment(paragraph.end).format('lll')}`,
+        description: `${moment(cluster.event_start).format('lll')} → ${moment(cluster.event_end).format('lll')}`,
       },
       {
         title: 'Duration',
-        description: moment.duration(moment(paragraph.end).diff(moment(paragraph.start))).humanize(),
+        description: moment.duration(moment(cluster.event_end).diff(moment(cluster.event_start))).humanize(),
       },
       {
         title: 'Detectors',
-        description: paragraph.detector_ids.join(', '),
+        description: detectorNames.join(', '),
       },
       {
         title: 'Indices',
-        description: paragraph.indices.join(', '),
+        description: cluster.indices.join(', '),
       },
       {
         title: 'Number of Entities',
-        description: paragraph.entities.length.toString(),
+        description: cluster.entities.length.toString(),
       },
     ];
 
@@ -476,7 +572,7 @@ export function DailyInsights(props: DailyInsightsProps) {
         <EuiModalBody>
           <EuiText>
             <h3>Summary</h3>
-            <p>{paragraph.text}</p>
+            <p>{cluster.cluster_text}</p>
           </EuiText>
           
           <EuiSpacer size="m" />
@@ -490,11 +586,11 @@ export function DailyInsights(props: DailyInsightsProps) {
           <EuiSpacer size="m" />
           
           <EuiText>
-            <h3>Affected Entities ({paragraph.entities.length})</h3>
+            <h3>Affected Entities ({cluster.entities.length})</h3>
           </EuiText>
           <EuiSpacer size="s" />
           <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
-            {paragraph.entities.map((entity, index) => (
+            {cluster.entities.map((entity, index) => (
               <EuiBadge key={index} color="hollow">{entity}</EuiBadge>
             ))}
           </div>
@@ -516,22 +612,25 @@ export function DailyInsights(props: DailyInsightsProps) {
                 description: `${moment(result.window_start).format('lll')} to ${moment(result.window_end).format('lll')}`,
               },
               {
-                title: 'Total Events in Report',
-                description: result.paragraphs.length.toString(),
+                title: 'Total Clusters in Report',
+                description: result.clusters.length.toString(),
               },
             ]}
             type="column"
           />
           
-          <EuiSpacer size="m" />
-          
-          <EuiText>
-            <h3>Series Keys</h3>
-          </EuiText>
-          <EuiSpacer size="s" />
-          <EuiCodeBlock language="json" paddingSize="s" isCopyable>
-            {JSON.stringify(paragraph.series_keys, null, 2)}
-          </EuiCodeBlock>
+          {formattedAnomalies.length > 0 && (
+            <>
+              <EuiSpacer size="m" />
+              <EuiText>
+                <h3>Anomalies ({formattedAnomalies.length})</h3>
+              </EuiText>
+              <EuiSpacer size="s" />
+              <EuiCodeBlock language="json" paddingSize="s" isCopyable>
+                {JSON.stringify(formattedAnomalies, null, 2)}
+              </EuiCodeBlock>
+            </>
+          )}
         </EuiModalBody>
 
         <EuiModalFooter>
@@ -557,10 +656,18 @@ export function DailyInsights(props: DailyInsightsProps) {
       );
     }
 
+    const getUniqueEntities = (clusters: InsightCluster[]) => {
+      const entitySet = new Set<string>();
+      clusters.forEach((cluster) => {
+        cluster.entities?.forEach((entity) => entitySet.add(entity));
+      });
+      return entitySet;
+    };
+
     return (
       <Fragment>
         {insightsResults.map((result) => (
-          <Fragment key={result.task_id}>
+          <Fragment key={`${result.generated_at}-${result.window_start}-${result.window_end}`}>
             <div style={{ marginBottom: '16px' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
                 <EuiTitle size="m">
@@ -575,11 +682,8 @@ export function DailyInsights(props: DailyInsightsProps) {
                 <EuiBadge color="primary">
                   {result.doc_detector_ids.length} Detector{result.doc_detector_ids.length !== 1 ? 's' : ''}
                 </EuiBadge>
-                <EuiBadge color="success">
-                  {result.doc_indices.length} Index Pattern{result.doc_indices.length !== 1 ? 's' : ''}
-                </EuiBadge>
                 <EuiBadge color="warning">
-                  {result.doc_series_keys.length} Series
+                  {getUniqueEntities(result.clusters).size} Entities
                 </EuiBadge>
               </div>
 
@@ -590,21 +694,21 @@ export function DailyInsights(props: DailyInsightsProps) {
               </EuiPanel>
             </div>
 
-            {result.paragraphs && result.paragraphs.length > 0 && (
+            {result.clusters && result.clusters.length > 0 && (
               <div>
                 <EuiTitle size="s">
-                  <h3>Top {result.paragraphs.length} Correlated Anomaly Events</h3>
+                  <h3>Top {result.clusters.length} Correlated Anomaly Clusters</h3>
                 </EuiTitle>
                 <EuiText size="xs" color="subdued">
-                  <p>Showing the most significant correlation clusters by detector count</p>
+                  <p>Showing the most significant correlation clusters by anomaly count</p>
                 </EuiText>
                 <EuiSpacer size="m" />
-                    {result.paragraphs.map((paragraph, pIndex) => (
+                    {result.clusters.map((cluster, pIndex) => (
                       <EuiPanel 
                         key={pIndex} 
                         hasBorder 
                         style={{ marginBottom: '12px', cursor: 'pointer' }}
-                        onClick={() => setSelectedEvent({ paragraph, result })}
+                        onClick={() => setSelectedEvent({ cluster, result })}
                         onMouseEnter={(e: React.MouseEvent<HTMLDivElement>) => (e.currentTarget.style.backgroundColor = '#F5F7FA')}
                         onMouseLeave={(e: React.MouseEvent<HTMLDivElement>) => (e.currentTarget.style.backgroundColor = 'transparent')}
                       >
@@ -612,13 +716,13 @@ export function DailyInsights(props: DailyInsightsProps) {
                           <span style={{ fontSize: '24px', flexShrink: 0 }}>⚠️</span>
                           <div style={{ flex: 1 }}>
                             <EuiTitle size="xxs">
-                              <h5>Event {pIndex + 1}: {paragraph.entities.length} {paragraph.entities.length === 1 ? 'entity' : 'entities'}</h5>
+                              <h5>Cluster {pIndex + 1}: {cluster.entities.length} {cluster.entities.length === 1 ? 'entity' : 'entities'}</h5>
                             </EuiTitle>
                             <EuiSpacer size="s" />
                             <EuiText size="s">
-                              <p>{paragraph.text}</p>
+                              <p>{cluster.cluster_text}</p>
                             </EuiText>
-                            {paragraph.entities.length > 0 && (
+                            {cluster.entities.length > 0 && (
                               <Fragment>
                                 <EuiSpacer size="s" />
                                 <EuiText size="xs" color="subdued">
@@ -626,11 +730,11 @@ export function DailyInsights(props: DailyInsightsProps) {
                                 </EuiText>
                                 <EuiSpacer size="xs" />
                                 <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
-                                  {paragraph.entities.slice(0, 5).map((entity, eIndex) => (
+                                  {cluster.entities.slice(0, 5).map((entity, eIndex) => (
                                     <EuiBadge key={eIndex} color="hollow">{entity}</EuiBadge>
                                   ))}
-                                  {paragraph.entities.length > 5 && (
-                                    <EuiBadge color="hollow">+{paragraph.entities.length - 5} more</EuiBadge>
+                                  {cluster.entities.length > 5 && (
+                                    <EuiBadge color="hollow">+{cluster.entities.length - 5} more</EuiBadge>
                                   )}
                                 </div>
                               </Fragment>

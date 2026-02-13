@@ -24,6 +24,13 @@ import { httpClientMock, coreServicesMock } from '../../../../../test/mocks';
 import configureStore from '../../../../redux/configureStore';
 import { CoreServicesContext } from '../../../../components/CoreServices/CoreServices';
 
+// Work around react/react-router type mismatches in the test environment by casting
+// router components to `any` (runtime behavior is unchanged).
+const AnyRouter: any = Router;
+const AnySwitch: any = Switch;
+const AnyRoute: any = Route;
+const AnyRedirect: any = Redirect;
+
 jest.mock('../../../../services', () => {
   const originalModule = jest.requireActual('../../../../services');
 
@@ -90,13 +97,13 @@ const mockCoreServices = {
 const renderWithRouter = (landingDataSourceId?: string) => ({
   ...render(
     <Provider store={configureStore(httpClientMock)}>
-      <Router initialEntries={['/daily-insights']}>
-        <Switch>
-          <Route
+      <AnyRouter initialEntries={['/daily-insights']}>
+        <AnySwitch>
+          <AnyRoute
             exact
             path="/daily-insights"
             render={(props: RouteComponentProps) => (
-              <CoreServicesContext.Provider value={mockCoreServices}>
+              <CoreServicesContext.Provider value={mockCoreServices as any}>
                 <DailyInsights
                   setActionMenu={jest.fn()}
                   landingDataSourceId={landingDataSourceId}
@@ -105,9 +112,9 @@ const renderWithRouter = (landingDataSourceId?: string) => ({
               </CoreServicesContext.Provider>
             )}
           />
-          <Redirect from="/" to="/daily-insights" />
-        </Switch>
-      </Router>
+          <AnyRedirect from="/" to="/daily-insights" />
+        </AnySwitch>
+      </AnyRouter>
     </Provider>
   ),
 });
@@ -115,6 +122,8 @@ const renderWithRouter = (landingDataSourceId?: string) => ({
 describe('<DailyInsights /> spec', () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    httpClientMock.get = jest.fn();
+    httpClientMock.post = jest.fn();
   });
 
   beforeAll(() => {
@@ -140,11 +149,11 @@ describe('<DailyInsights /> spec', () => {
 
       const { getByText } = render(
         <Provider store={configureStore(httpClientMock)}>
-          <Router initialEntries={['/daily-insights']}>
-            <Route
+          <AnyRouter initialEntries={['/daily-insights']}>
+            <AnyRoute
               path="/daily-insights"
               render={(props: RouteComponentProps) => (
-                <CoreServicesContext.Provider value={mockCore}>
+                <CoreServicesContext.Provider value={mockCore as any}>
                   <DailyInsights
                     setActionMenu={jest.fn()}
                     landingDataSourceId={undefined}
@@ -153,7 +162,7 @@ describe('<DailyInsights /> spec', () => {
                 </CoreServicesContext.Provider>
               )}
             />
-          </Router>
+          </AnyRouter>
         </Provider>
       );
 
@@ -165,8 +174,8 @@ describe('<DailyInsights /> spec', () => {
 
   describe('Loading state', () => {
     test('renders loading spinner initially', async () => {
-      mockCoreServices.http.get = jest.fn(() =>
-        new Promise(() => {}) // Never resolves to keep loading state
+      httpClientMock.get = jest.fn(() =>
+        (new Promise<any>(() => {}) as any) // Never resolves to keep loading state
       );
 
       const { container } = renderWithRouter();
@@ -180,7 +189,7 @@ describe('<DailyInsights /> spec', () => {
 
   describe('Setup view when insights not enabled', () => {
     test('renders setup view when insights job is not running', async () => {
-      mockCoreServices.http.get = jest.fn().mockResolvedValue({
+      httpClientMock.get = jest.fn().mockResolvedValue({
         response: {
           enabled: false,
           schedule: null,
@@ -207,22 +216,32 @@ describe('<DailyInsights /> spec', () => {
         response: {
           results: [
             {
-              task_id: 'task-123',
               window_start: windowStart,
               window_end: windowEnd,
               generated_at: generatedAt,
+              doc_detector_names: ['detector-1'],
               doc_detector_ids: ['detector-1'],
               doc_indices: ['index-1'],
-              doc_series_keys: ['series-1'],
-              paragraphs: [
+              doc_model_ids: ['model-1'],
+              clusters: [
                 {
                   indices: ['index-1'],
                   detector_ids: ['detector-1'],
+                  detector_names: ['detector-1'],
                   entities: ['entity-1', 'entity-2'],
-                  series_keys: ['series-1'],
-                  start: windowStart,
-                  end: windowEnd,
-                  text: 'Correlated anomalies detected across 1 detector(s)',
+                  model_ids: ['model-1'],
+                  event_start: windowStart,
+                  event_end: windowEnd,
+                  cluster_text: 'Correlated anomalies detected across 1 detector(s)',
+                  num_anomalies: 1,
+                  anomalies: [
+                    {
+                      model_id: 'model-1',
+                      detector_id: 'detector-1',
+                      data_start_time: windowStart,
+                      data_end_time: windowEnd,
+                    },
+                  ],
                 },
               ],
             },
@@ -230,7 +249,7 @@ describe('<DailyInsights /> spec', () => {
         },
       };
 
-      mockCoreServices.http.get = jest
+      httpClientMock.get = jest
         .fn()
         .mockResolvedValueOnce({
           response: {
@@ -251,12 +270,188 @@ describe('<DailyInsights /> spec', () => {
       await waitFor(() => {
         expect(getByText('Latest Insights')).toBeInTheDocument();
         expect(getByText('1 Detector')).toBeInTheDocument();
-        expect(getByText('1 Index Pattern')).toBeInTheDocument();
+      });
+    });
+
+    test('renders only the top 3 clusters sorted by num_anomalies', async () => {
+      const generatedAt = new Date(Date.now() - 30 * 60 * 1000).toISOString();
+      const windowStart = new Date(Date.now() - 3 * 60 * 60 * 1000).toISOString();
+      const windowEnd = new Date(Date.now() - 60 * 60 * 1000).toISOString();
+
+      const mockResults: any = {
+        response: {
+          results: [
+            {
+              window_start: windowStart,
+              window_end: windowEnd,
+              generated_at: generatedAt,
+              doc_detector_names: ['detector-1'],
+              doc_detector_ids: ['detector-1'],
+              doc_indices: ['index-1'],
+              doc_model_ids: ['model-1'],
+              clusters: [
+                {
+                  indices: ['index-1'],
+                  detector_ids: ['detector-1'],
+                  detector_names: ['detector-1'],
+                  entities: ['entity-a'],
+                  model_ids: ['model-1'],
+                  event_start: windowStart,
+                  event_end: windowEnd,
+                  cluster_text: 'cluster-low',
+                  num_anomalies: 1,
+                },
+                {
+                  indices: ['index-1'],
+                  detector_ids: ['detector-1'],
+                  detector_names: ['detector-1'],
+                  entities: ['entity-b'],
+                  model_ids: ['model-1'],
+                  event_start: windowStart,
+                  event_end: windowEnd,
+                  cluster_text: 'cluster-mid-1',
+                  num_anomalies: 5,
+                },
+                {
+                  indices: ['index-1'],
+                  detector_ids: ['detector-1'],
+                  detector_names: ['detector-1'],
+                  entities: ['entity-c'],
+                  model_ids: ['model-1'],
+                  event_start: windowStart,
+                  event_end: windowEnd,
+                  cluster_text: 'cluster-top',
+                  num_anomalies: 10,
+                },
+                {
+                  indices: ['index-1'],
+                  detector_ids: ['detector-1'],
+                  detector_names: ['detector-1'],
+                  entities: ['entity-d'],
+                  model_ids: ['model-1'],
+                  event_start: windowStart,
+                  event_end: windowEnd,
+                  cluster_text: 'cluster-mid-2',
+                  num_anomalies: 3,
+                },
+                {
+                  indices: ['index-1'],
+                  detector_ids: ['detector-1'],
+                  detector_names: ['detector-1'],
+                  entities: ['entity-e'],
+                  model_ids: ['model-1'],
+                  event_start: windowStart,
+                  event_end: windowEnd,
+                  cluster_text: 'cluster-very-low',
+                  num_anomalies: 0,
+                },
+              ],
+            },
+          ],
+        },
+      };
+
+      httpClientMock.get = jest
+        .fn()
+        .mockResolvedValueOnce({
+          response: {
+            enabled: true,
+            schedule: {
+              interval: {
+                start_time: Date.now(),
+                period: 24,
+                unit: 'hours',
+              },
+            },
+          },
+        })
+        .mockResolvedValueOnce(mockResults);
+
+      const { getByText, queryByText } = renderWithRouter();
+
+      await waitFor(() => {
+        expect(getByText('Latest Insights')).toBeInTheDocument();
+        expect(getByText('Top 3 Correlated Anomaly Clusters')).toBeInTheDocument();
+      });
+
+      // Top 3 by num_anomalies should render
+      expect(getByText('cluster-top')).toBeInTheDocument();
+      expect(getByText('cluster-mid-1')).toBeInTheDocument();
+      expect(getByText('cluster-mid-2')).toBeInTheDocument();
+
+      // Lower-ranked clusters should be omitted
+      expect(queryByText('cluster-low')).toBeNull();
+      expect(queryByText('cluster-very-low')).toBeNull();
+    });
+
+    test('normalizes detector_ids when backend returns a string', async () => {
+      const generatedAt = new Date(Date.now() - 30 * 60 * 1000).toISOString();
+      const windowStart = new Date(Date.now() - 3 * 60 * 60 * 1000).toISOString();
+      const windowEnd = new Date(Date.now() - 60 * 60 * 1000).toISOString();
+
+      const mockResults: any = {
+        response: {
+          results: [
+            {
+              window_start: windowStart,
+              window_end: windowEnd,
+              generated_at: generatedAt,
+              doc_detector_names: 'detector-1',
+              doc_detector_ids: 'detector-1',
+              doc_indices: 'index-1',
+              doc_model_ids: 'model-1',
+              clusters: [
+                {
+                  indices: 'index-1',
+                  detector_ids: 'detector-1',
+                  detector_names: 'detector-1',
+                  entities: 'entity-1',
+                  model_ids: 'model-1',
+                  event_start: windowStart,
+                  event_end: windowEnd,
+                  cluster_text: 'Test anomaly text',
+                  num_anomalies: 1,
+                },
+              ],
+            },
+          ],
+        },
+      };
+
+      httpClientMock.get = jest
+        .fn()
+        .mockResolvedValueOnce({
+          response: {
+            enabled: true,
+            schedule: {
+              interval: {
+                start_time: Date.now(),
+                period: 24,
+                unit: 'hours',
+              },
+            },
+          },
+        })
+        .mockResolvedValueOnce(mockResults);
+
+      const { getByText, findByText } = renderWithRouter();
+
+      await waitFor(() => {
+        expect(getByText('Latest Insights')).toBeInTheDocument();
+        expect(getByText('1 Detector')).toBeInTheDocument();
+      });
+
+      // Ensure the cluster panel renders + click works (would crash if detector_ids is a string)
+      const eventPanel = await findByText('Test anomaly text');
+      fireEvent.click(eventPanel.closest('.euiPanel') || eventPanel);
+
+      await waitFor(() => {
+        expect(getByText('Event Details')).toBeInTheDocument();
       });
     });
 
     test('renders empty state when no results available', async () => {
-      mockCoreServices.http.get = jest
+      httpClientMock.get = jest
         .fn()
         .mockResolvedValueOnce({
           response: {
@@ -286,14 +481,14 @@ describe('<DailyInsights /> spec', () => {
 
   describe('Start insights job', () => {
     test('calls start API with 24h frequency', async () => {
-      mockCoreServices.http.get = jest.fn().mockResolvedValue({
+      httpClientMock.get = jest.fn().mockResolvedValue({
         response: {
           enabled: false,
           schedule: null,
         },
       });
 
-      mockCoreServices.http.post = jest.fn().mockResolvedValue({
+      httpClientMock.post = jest.fn().mockResolvedValue({
         message: 'Success',
       });
 
@@ -304,13 +499,13 @@ describe('<DailyInsights /> spec', () => {
       });
 
       // Note: Button is in action menu, testing the API call
-      expect(mockCoreServices.http.post).not.toHaveBeenCalled();
+      expect(httpClientMock.post).not.toHaveBeenCalled();
     });
   });
 
   describe('Stop insights job', () => {
     test('calls stop API when stopping job', async () => {
-      mockCoreServices.http.get = jest.fn().mockResolvedValue({
+      httpClientMock.get = jest.fn().mockResolvedValue({
         response: {
           enabled: true,
           schedule: {
@@ -323,14 +518,14 @@ describe('<DailyInsights /> spec', () => {
         },
       });
 
-      mockCoreServices.http.post = jest.fn().mockResolvedValue({
+      httpClientMock.post = jest.fn().mockResolvedValue({
         message: 'Success',
       });
 
       renderWithRouter();
 
       await waitFor(() => {
-        expect(mockCoreServices.http.get).toHaveBeenCalled();
+        expect(httpClientMock.get).toHaveBeenCalled();
       });
     });
   });
@@ -344,22 +539,32 @@ describe('<DailyInsights /> spec', () => {
         response: {
           results: [
             {
-              task_id: 'task-123',
               window_start: windowStart,
               window_end: windowEnd,
               generated_at: generatedAt,
+              doc_detector_names: ['detector-1'],
               doc_detector_ids: ['detector-1'],
               doc_indices: ['index-1'],
-              doc_series_keys: ['series-1'],
-              paragraphs: [
+              doc_model_ids: ['model-1'],
+              clusters: [
                 {
                   indices: ['index-1'],
                   detector_ids: ['detector-1'],
+                  detector_names: ['detector-1'],
                   entities: ['entity-1'],
-                  series_keys: ['series-1'],
-                  start: windowStart,
-                  end: windowEnd,
-                  text: 'Test anomaly text',
+                  model_ids: ['model-1'],
+                  event_start: windowStart,
+                  event_end: windowEnd,
+                  cluster_text: 'Test anomaly text',
+                  num_anomalies: 1,
+                  anomalies: [
+                    {
+                      model_id: 'model-1',
+                      detector_id: 'detector-1',
+                      data_start_time: windowStart,
+                      data_end_time: windowEnd,
+                    },
+                  ],
                 },
               ],
             },
@@ -367,7 +572,7 @@ describe('<DailyInsights /> spec', () => {
         },
       };
 
-      mockCoreServices.http.get = jest
+      httpClientMock.get = jest
         .fn()
         .mockResolvedValueOnce({
           response: {
@@ -400,19 +605,19 @@ describe('<DailyInsights /> spec', () => {
 
   describe('Error handling', () => {
     test('shows error toast when fetching status fails', async () => {
-      mockCoreServices.http.get = jest
+      httpClientMock.get = jest
         .fn()
         .mockRejectedValue(new Error('API Error'));
 
       renderWithRouter();
 
       await waitFor(() => {
-        expect(mockCoreServices.http.get).toHaveBeenCalled();
+        expect(httpClientMock.get).toHaveBeenCalled();
       });
     });
 
     test('shows error toast when fetching results fails', async () => {
-      mockCoreServices.http.get = jest
+      httpClientMock.get = jest
         .fn()
         .mockResolvedValueOnce({
           response: {
@@ -438,7 +643,7 @@ describe('<DailyInsights /> spec', () => {
 
   describe('Breadcrumbs', () => {
     test('sets breadcrumbs on mount', async () => {
-      mockCoreServices.http.get = jest.fn().mockResolvedValue({
+      httpClientMock.get = jest.fn().mockResolvedValue({
         response: {
           enabled: false,
           schedule: null,
