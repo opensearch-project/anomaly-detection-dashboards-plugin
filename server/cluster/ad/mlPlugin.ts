@@ -29,4 +29,17 @@ export default function mlPlugin(
     needBody: true,
     method: 'POST',
   });
+
+  ml.getTask = ca({
+    url: {
+      fmt: `/_plugins/_ml/tasks/<%=taskId%>`,
+      req: {
+        taskId: {
+          type: 'string',
+          required: true,
+        },
+      },
+    },
+    method: 'GET',
+  });
 }
