@@ -187,7 +187,15 @@ export function DailyInsights(props: DailyInsightsProps) {
   const [insightsSchedule, setInsightsSchedule] = useState<InsightsSchedule | null>(null);
   const [insightsResults, setInsightsResults] = useState<InsightResult[]>([]);
   const [selectedEvent, setSelectedEvent] = useState<{cluster: InsightCluster, result: InsightResult} | null>(null);
-  const [featureEnabled, setFeatureEnabled] = useState<boolean>(false);
+  // Read once at mount — core.uiSettings.get() is synchronous and the setting
+  // does not change during the component lifecycle without a full page reload.
+  const [featureEnabled] = useState<boolean>(() => {
+    try {
+      return core.uiSettings.get(DAILY_INSIGHTS_ENABLED, false);
+    } catch {
+      return false;
+    }
+  });
   
   // Index selection for setup flow
   const [selectedIndicesForSetup, setSelectedIndicesForSetup] = useState<string[]>([]);
@@ -207,23 +215,6 @@ export function DailyInsights(props: DailyInsightsProps) {
       ? (queryParams.dataSourceId || undefined)
       : undefined,
   });
-
-  // Check if the feature is enabled via UI settings
-  useEffect(() => {
-    const checkFeatureFlag = async () => {
-      try {
-        const isEnabled = core.uiSettings.get(DAILY_INSIGHTS_ENABLED, false);
-        setFeatureEnabled(isEnabled);
-        if (!isEnabled) {
-          setIsLoading(false);
-        }
-      } catch (error) {
-        console.error('Error checking Daily Insights feature flag:', error);
-        setFeatureEnabled(false);
-      }
-    };
-    checkFeatureFlag();
-  }, [core]);
 
   const handleDataSourceChange = (dataSources: any[]) => {
     const dataSourceId = dataSources[0]?.id;
@@ -268,12 +259,16 @@ export function DailyInsights(props: DailyInsightsProps) {
     }
   }, [MDSInsightsState]);
 
-  // Fetch status and results
+  // Fetch status and results in a single load sequence to avoid flash
   useEffect(() => {
-    fetchInsightsStatus();
+    if (!featureEnabled) {
+      setIsLoading(false);
+      return;
+    }
+    fetchInsightsStatusAndResults();
   }, [MDSInsightsState]);
 
-  const fetchInsightsStatus = async () => {
+  const fetchInsightsStatusAndResults = async () => {
     setIsLoading(true);
     try {
       const statusResponse = await dispatch(
@@ -281,9 +276,13 @@ export function DailyInsights(props: DailyInsightsProps) {
       );
       const enabled = statusResponse?.response?.enabled || false;
       const schedule = statusResponse?.response?.schedule || null;
-      
+
       setInsightsEnabled(enabled);
       setInsightsSchedule(schedule);
+
+      if (enabled) {
+        await fetchInsightsResults(schedule);
+      }
     } catch (error: any) {
       console.error('Error fetching insights status:', error);
       setInsightsEnabled(false);
@@ -293,13 +292,7 @@ export function DailyInsights(props: DailyInsightsProps) {
     }
   };
 
-  useEffect(() => {
-    if (insightsEnabled) {
-      fetchInsightsResults();
-    }
-  }, [insightsEnabled, insightsSchedule, MDSInsightsState.selectedDataSourceId]);
-
-  const fetchInsightsResults = async () => {
+  const fetchInsightsResults = async (scheduleOverride?: InsightsSchedule | null) => {
     try {
       const resultsResponse = await dispatch(
         getInsightsResultsAction(MDSInsightsState.selectedDataSourceId || '')
@@ -312,10 +305,11 @@ export function DailyInsights(props: DailyInsightsProps) {
       // use current job schedule, or default to 24 hours
       let filterPeriod = 24;
       let filterUnit: moment.unitOfTime.DurationConstructor = 'hours';
-      
-      if (insightsSchedule?.interval) {
-        filterPeriod = insightsSchedule.interval.period;
-        const apiUnit = insightsSchedule.interval.unit.toLowerCase();
+
+      const schedule = scheduleOverride !== undefined ? scheduleOverride : insightsSchedule;
+      if (schedule?.interval) {
+        filterPeriod = schedule.interval.period;
+        const apiUnit = schedule.interval.unit.toLowerCase();
         filterUnit = apiUnit as moment.unitOfTime.DurationConstructor;
       }
       
@@ -409,7 +403,7 @@ export function DailyInsights(props: DailyInsightsProps) {
                 text: `Auto-created detectors for ${selectedIndicesForSetup.length} indices.`,
               });
               
-              await fetchInsightsStatus();
+              await fetchInsightsStatusAndResults();
             } catch (error: any) {              
               core?.notifications.toasts.addDanger(
                 prettifyErrorMessage(
@@ -446,7 +440,7 @@ export function DailyInsights(props: DailyInsightsProps) {
       setIsRefreshing(true);
       
       await new Promise(resolve => setTimeout(resolve, 2000));
-      await fetchInsightsStatus();
+      await fetchInsightsStatusAndResults();
       
       setIsRefreshing(false);
     } catch (error: any) {
@@ -817,45 +811,39 @@ export function DailyInsights(props: DailyInsightsProps) {
       {dataSourceEnabled && renderDataSourceComponent}
       
       {selectedEvent && renderEventModal()}
-      
-      {isLoading || isRefreshing ? (
-        <EuiEmptyPrompt
-          icon={<EuiLoadingSpinner size="xl" />}
+
+      {useUpdatedUX && (
+        <HeaderControl
+          setMountPoint={setAppDescriptionControls}
+          controls={[
+            {
+              description: 'Automated insights showing correlated anomalies across your detectors',
+            },
+          ]}
         />
-      ) : insightsEnabled ? (
-        <Fragment>
-          {useUpdatedUX && (
-            <HeaderControl
-              setMountPoint={setAppDescriptionControls}
-              controls={[
-                {
-                  description: 'Automated insights showing correlated anomalies across your detectors',
-                },
-              ]}
-            />
-          )}
-          {!useUpdatedUX && (
-            <>
-              <EuiSpacer size="m" />
-              <EuiText size="s">
-                Automated insights showing correlated anomalies across your detectors
-              </EuiText>
-            </>
-          )}
-          <EuiSpacer size="xl" />
-          <div style={{ paddingLeft: '24px', paddingRight: '24px' }}>
-            {renderInsightsView()}
-          </div>
-        </Fragment>
-      ) : (
-        <div style={{ paddingLeft: '24px', paddingRight: '24px' }}>
-          <EuiSpacer size="l" />
+      )}
+      {!useUpdatedUX && (
+        <>
+          <EuiSpacer size="m" />
+          <EuiText size="s">
+            Automated insights showing correlated anomalies across your detectors
+          </EuiText>
+        </>
+      )}
+      <EuiSpacer size="xl" />
+      <div style={{ paddingLeft: '24px', paddingRight: '24px' }}>
+        {(isLoading || isRefreshing) ? (
+          <EuiEmptyPrompt
+            icon={<EuiLoadingSpinner size="xl" />}
+          />
+        ) : insightsEnabled ? (
+          renderInsightsView()
+        ) : (
           <EuiPanel hasBorder paddingSize="l" data-test-subj="dailyInsightsSetupPanel">
             {renderSetupView()}
-            
           </EuiPanel>
-        </div>
-      )}
+        )}
+      </div>
 
       {/* Index Selection Modal */}
       <EnhancedSelectionModal
