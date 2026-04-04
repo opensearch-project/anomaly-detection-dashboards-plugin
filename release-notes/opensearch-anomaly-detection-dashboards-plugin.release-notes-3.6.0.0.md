@@ -10,10 +10,6 @@ Compatible with OpenSearch and OpenSearch Dashboards version 3.6.0
 
 * Update delete_backport_branch workflow to also clean up release-chores branches after merge ([#1080](https://github.com/opensearch-project/anomaly-detection-dashboards-plugin/pull/1080))
 
-### Documentation
-
-* Add release notes for 3.5.0 ([#1143](https://github.com/opensearch-project/anomaly-detection-dashboards-plugin/pull/1143))
-
 ### Maintenance
 
 * Bump axios from 1.12.1 to 1.13.5 to address security and bug fixes ([#1145](https://github.com/opensearch-project/anomaly-detection-dashboards-plugin/pull/1145))
