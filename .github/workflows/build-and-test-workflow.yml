@@ -28,13 +28,13 @@ jobs:
 
     steps:
       - name: Checkout OpenSearch Dashboards
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
         with:
           repository: opensearch-project/OpenSearch-Dashboards
           ref: ${{ env.OPENSEARCH_DASHBOARDS_VERSION }}
           path: OpenSearch-Dashboards
       - name: Checkout Anomaly Detection OpenSearch Dashboards plugin
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
         with:
           path: OpenSearch-Dashboards/plugins/anomaly-detection-dashboards-plugin
       - name: Bootstrap / build / unit test the plugin
@@ -45,7 +45,7 @@ jobs:
                                cd ./plugins/anomaly-detection-dashboards-plugin &&
                                whoami && yarn osd bootstrap --single-version=loose && yarn build && yarn run test:jest --coverage"
       - name: Uploads coverage
-        uses: codecov/codecov-action@v1
+        uses: codecov/codecov-action@v4
 
   # TODO: once github actions supports windows and macos docker containers, we can
   # merge these in to the above step's matrix.
@@ -61,13 +61,13 @@ jobs:
         if: ${{ matrix.os == 'windows-latest' }}
         run: git config --system core.longpaths true
       - name: Checkout OpenSearch Dashboards
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
         with:
           repository: opensearch-project/OpenSearch-Dashboards
           ref: ${{ env.OPENSEARCH_DASHBOARDS_VERSION }}
           path: OpenSearch-Dashboards
       - name: Setup Node
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
           node-version-file: './OpenSearch-Dashboards/.nvmrc'
           registry-url: 'https://registry.npmjs.org'
@@ -81,9 +81,18 @@ jobs:
       - run: node -v
       - run: yarn -v
       - name: Checkout Anomaly Detection OpenSearch Dashboards plugin
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
         with:
           path: OpenSearch-Dashboards/plugins/anomaly-detection-dashboards-plugin
+      - name: Yarn Cache
+        uses: actions/cache@v4
+        with:
+          path: |
+            OpenSearch-Dashboards/**/node_modules
+            ~/.cache/yarn
+          key: ${{ runner.OS }}-yarn-${{ hashFiles('OpenSearch-Dashboards/**/yarn.lock') }}
+          restore-keys: |
+            ${{ runner.OS }}-yarn-
       - name: Bootstrap the plugin
         run: |
           cd OpenSearch-Dashboards/plugins/anomaly-detection-dashboards-plugin
@@ -103,5 +112,4 @@ jobs:
           cd OpenSearch-Dashboards/plugins/anomaly-detection-dashboards-plugin
           yarn run test:jest --coverage
       - name: Uploads coverage
-        uses: codecov/codecov-action@v1
-
+        uses: codecov/codecov-action@v4
