@@ -600,6 +600,12 @@ const fetchInsightsStatus = async () => {
         immediateExecute={true}
         modalTitle="Add Indices to Daily Insights"
         confirmButtonText="Add Indices"
+        existingDetectorCounts={Object.fromEntries(
+          indicesData.map(d => [d.indexName, {
+            count: d.detectors.length,
+            names: d.detectors.map((det: any) => det.name || det.id),
+          }])
+        )}
       />
     </React.Fragment>
   );

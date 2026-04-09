@@ -25,9 +25,11 @@ import {
   EuiModalFooter,
   EuiButtonEmpty,
   EuiDescriptionList,
-  EuiCodeBlock,
+  EuiFlexGroup,
+  EuiFlexItem,
   EuiCallOut,
   EuiLink,
+  EuiToolTip,
 } from '@elastic/eui';
 import React, { useState, useEffect, useMemo, Fragment } from 'react';
 import { useDispatch } from 'react-redux';
@@ -51,7 +53,7 @@ import {
   getDataSourceFromURL,
   isDataSourceCompatible,
 } from '../../utils/helpers';
-import { BREADCRUMBS, MDS_BREADCRUMBS, USE_NEW_HOME_PAGE, DAILY_INSIGHTS_INDICES_PAGE_NAV_ID } from '../../../utils/constants';
+import { BREADCRUMBS, MDS_BREADCRUMBS, USE_NEW_HOME_PAGE, DAILY_INSIGHTS_INDICES_PAGE_NAV_ID, PLUGIN_NAME, APP_PATH } from '../../../utils/constants';
 import { CoreStart, MountPoint } from '../../../../../../src/core/public';
 import { DataSourceSelectableConfig } from '../../../../../../src/plugins/data_source_management/public';
 import {
@@ -66,6 +68,7 @@ import {
 import { DAILY_INSIGHTS_ENABLED } from '../../../../utils/constants';
 import moment from 'moment';
 import { EnhancedSelectionModal } from '../components/EnhancedSelectionModal';
+import { formatEntityValue, localizeTimestamps } from '../utils/insightCardHelpers';
 
 interface DailyInsightsProps extends RouteComponentProps {
   setActionMenu: (menuMount: MountPoint | undefined) => void;
@@ -525,15 +528,10 @@ export function DailyInsights(props: DailyInsightsProps) {
     if (!selectedEvent) return null;
 
     const { cluster, result } = selectedEvent;
-    const detectorNames = cluster.detector_names && cluster.detector_names.length > 0
-      ? cluster.detector_names
-      : cluster.detector_ids;
-    const formattedAnomalies = (cluster.anomalies || []).map((anomaly) => ({
-      detector_id: anomaly.detector_id,
-      data_start_time: moment(anomaly.data_start_time).format('lll'),
-      data_end_time: moment(anomaly.data_end_time).format('lll'),
-    }));
-    
+    const dsQuery = MDSInsightsState.selectedDataSourceId
+      ? `?dataSourceId=${MDSInsightsState.selectedDataSourceId}`
+      : '';
+
     const descriptionListItems = [
       {
         title: 'Time Range',
@@ -545,7 +543,19 @@ export function DailyInsights(props: DailyInsightsProps) {
       },
       {
         title: 'Detectors',
-        description: detectorNames.join(', '),
+        description: (
+          <div style={{ display: 'flex', gap: '4px', flexWrap: 'wrap' }}>
+            {cluster.detector_ids.map((id: string, i: number) => (
+              <EuiLink
+                key={id}
+                href={`${PLUGIN_NAME}#/detectors/${id}/results${dsQuery}`}
+                target="_blank"
+              >
+                {cluster.detector_names?.[i] || id}
+              </EuiLink>
+            ))}
+          </div>
+        ),
       },
       {
         title: 'Indices',
@@ -568,7 +578,7 @@ export function DailyInsights(props: DailyInsightsProps) {
         <EuiModalBody>
           <EuiText>
             <h3>Summary</h3>
-            <p>{cluster.cluster_text}</p>
+            <p>{localizeTimestamps(cluster.cluster_text)}</p>
           </EuiText>
           
           <EuiSpacer size="m" />
@@ -582,12 +592,14 @@ export function DailyInsights(props: DailyInsightsProps) {
           <EuiSpacer size="m" />
           
           <EuiText>
-            <h3>Affected Entities ({cluster.entities.length})</h3>
+            <h3>Affected Resources ({cluster.entities.length})</h3>
           </EuiText>
           <EuiSpacer size="s" />
           <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
-            {cluster.entities.map((entity, index) => (
-              <EuiBadge key={index} color="hollow">{entity}</EuiBadge>
+            {cluster.entities.map((entity: string, index: number) => (
+              <EuiToolTip key={index} content={entity}>
+                <EuiBadge color="hollow">{formatEntityValue(entity)}</EuiBadge>
+              </EuiToolTip>
             ))}
           </div>
           
@@ -615,16 +627,36 @@ export function DailyInsights(props: DailyInsightsProps) {
             type="column"
           />
           
-          {formattedAnomalies.length > 0 && (
+          {cluster.anomalies && cluster.anomalies.length > 0 && (
             <>
               <EuiSpacer size="m" />
               <EuiText>
-                <h3>Anomalies ({formattedAnomalies.length})</h3>
+                <h3>Anomalies ({cluster.anomalies.length})</h3>
               </EuiText>
               <EuiSpacer size="s" />
-              <EuiCodeBlock language="json" paddingSize="s" isCopyable>
-                {JSON.stringify(formattedAnomalies, null, 2)}
-              </EuiCodeBlock>
+              {cluster.anomalies.map((anomaly: ClusterAnomaly, aIndex: number) => (
+                <EuiPanel key={aIndex} hasBorder paddingSize="s" style={{ marginBottom: '8px' }}>
+                  <EuiFlexGroup alignItems="center" gutterSize="m">
+                    <EuiFlexItem>
+                      <EuiText size="s">
+                        <strong>
+                          <EuiLink
+                            href={`${PLUGIN_NAME}#/detectors/${anomaly.detector_id}/results${dsQuery}`}
+                            target="_blank"
+                          >
+                            {cluster.detector_names?.[cluster.detector_ids.indexOf(anomaly.detector_id)] || anomaly.detector_id}
+                          </EuiLink>
+                        </strong>
+                      </EuiText>
+                    </EuiFlexItem>
+                    <EuiFlexItem grow={false}>
+                      <EuiText size="xs" color="subdued">
+                        {moment(anomaly.data_start_time).format('lll')} → {moment(anomaly.data_end_time).format('lll')}
+                      </EuiText>
+                    </EuiFlexItem>
+                  </EuiFlexGroup>
+                </EuiPanel>
+              ))}
             </>
           )}
         </EuiModalBody>
@@ -651,7 +683,7 @@ export function DailyInsights(props: DailyInsightsProps) {
               <p>
                 The last attempt to create detectors did not succeed.{' '}
                 <EuiLink
-                  href={`/app/${DAILY_INSIGHTS_INDICES_PAGE_NAV_ID}`}
+                  href={`/app/${DAILY_INSIGHTS_INDICES_PAGE_NAV_ID}#${APP_PATH.DAILY_INSIGHTS_INDICES}`}
                 >
                   Go to Indices Management
                 </EuiLink>
@@ -739,18 +771,20 @@ export function DailyInsights(props: DailyInsightsProps) {
                             </EuiTitle>
                             <EuiSpacer size="s" />
                             <EuiText size="s">
-                              <p>{cluster.cluster_text}</p>
+                              <p>{localizeTimestamps(cluster.cluster_text)}</p>
                             </EuiText>
                             {cluster.entities.length > 0 && (
                               <Fragment>
                                 <EuiSpacer size="s" />
                                 <EuiText size="xs" color="subdued">
-                                  <strong>Affected entities:</strong>
+                                  <strong>Affected resources:</strong>
                                 </EuiText>
                                 <EuiSpacer size="xs" />
                                 <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
                                   {cluster.entities.slice(0, 5).map((entity, eIndex) => (
-                                    <EuiBadge key={eIndex} color="hollow">{entity}</EuiBadge>
+                                    <EuiToolTip key={eIndex} content={entity}>
+                                      <EuiBadge color="hollow">{formatEntityValue(entity)}</EuiBadge>
+                                    </EuiToolTip>
                                   ))}
                                   {cluster.entities.length > 5 && (
                                     <EuiBadge color="hollow">+{cluster.entities.length - 5} more</EuiBadge>

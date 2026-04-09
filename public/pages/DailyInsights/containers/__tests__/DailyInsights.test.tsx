@@ -657,5 +657,149 @@ describe('<DailyInsights /> spec', () => {
       });
     });
   });
+
+  describe('Insight card UX', () => {
+    const windowStart = new Date(Date.now() - 3 * 60 * 60 * 1000).toISOString();
+    const windowEnd = new Date(Date.now() - 60 * 60 * 1000).toISOString();
+    const generatedAt = new Date(Date.now() - 30 * 60 * 1000).toISOString();
+
+    const buildMockResults = (overrides: any = {}) => ({
+      response: {
+        results: [
+          {
+            window_start: windowStart,
+            window_end: windowEnd,
+            generated_at: generatedAt,
+            doc_detector_names: ['my-detector'],
+            doc_detector_ids: ['det-abc-123'],
+            doc_indices: ['index-1'],
+            doc_model_ids: ['model-1'],
+            clusters: [
+              {
+                indices: ['index-1'],
+                detector_ids: ['det-abc-123'],
+                detector_names: ['my-detector'],
+                entities: ['resource.attributes.service.name: load-generator'],
+                model_ids: ['model-1'],
+                event_start: windowStart,
+                event_end: windowEnd,
+                cluster_text: 'Correlated anomalies detected',
+                num_anomalies: 1,
+                anomalies: [
+                  {
+                    model_id: 'model-1',
+                    detector_id: 'det-abc-123',
+                    data_start_time: windowStart,
+                    data_end_time: windowEnd,
+                  },
+                ],
+                ...overrides,
+              },
+            ],
+          },
+        ],
+      },
+    });
+
+    const setupInsightsView = (mockResults: any) => {
+      httpClientMock.get = jest
+        .fn()
+        .mockResolvedValueOnce({
+          response: {
+            enabled: true,
+            schedule: {
+              interval: { start_time: Date.now(), period: 24, unit: 'hours' },
+            },
+          },
+        })
+        .mockResolvedValueOnce(mockResults);
+    };
+
+    test('formats OTel entity names in cluster cards', async () => {
+      setupInsightsView(buildMockResults());
+      const { findByText } = renderWithRouter();
+
+      await waitFor(async () => {
+        // formatEntityValue extracts "load-generator" from "resource.attributes.service.name: load-generator"
+        expect(await findByText('load-generator')).toBeInTheDocument();
+      });
+    });
+
+    test('renders detector links in event modal', async () => {
+      setupInsightsView(buildMockResults());
+      const { findByText, getByText, getAllByText } = renderWithRouter();
+
+      const clusterText = await findByText('Correlated anomalies detected');
+      fireEvent.click(clusterText.closest('.euiPanel') || clusterText);
+
+      await waitFor(() => {
+        expect(getByText('Event Details')).toBeInTheDocument();
+      });
+
+      // Detector name should be a link
+      const detectorLinks = getAllByText('my-detector');
+      const linkElement = detectorLinks.find(el => el.closest('a'));
+      expect(linkElement).toBeDefined();
+      expect(linkElement!.closest('a')).toHaveAttribute(
+        'href',
+        expect.stringContaining('anomaly-detection-dashboards#/detectors/det-abc-123/results')
+      );
+    });
+
+    test('renders anomaly cards instead of JSON in event modal', async () => {
+      setupInsightsView(buildMockResults());
+      const { findByText, getByText, container } = renderWithRouter();
+
+      const clusterText = await findByText('Correlated anomalies detected');
+      fireEvent.click(clusterText.closest('.euiPanel') || clusterText);
+
+      await waitFor(() => {
+        expect(getByText('Anomalies (1)')).toBeInTheDocument();
+      });
+
+      // Should NOT have a code block (old JSON dump)
+      expect(container.querySelector('.euiCodeBlock')).toBeNull();
+    });
+
+    test('shows "Affected Resources" instead of "Affected Entities" in modal', async () => {
+      setupInsightsView(buildMockResults());
+      const { findByText, getByText, queryByText } = renderWithRouter();
+
+      const clusterText = await findByText('Correlated anomalies detected');
+      fireEvent.click(clusterText.closest('.euiPanel') || clusterText);
+
+      await waitFor(() => {
+        expect(getByText('Event Details')).toBeInTheDocument();
+      });
+
+      expect(getByText('Affected Resources (1)')).toBeInTheDocument();
+      expect(queryByText('Affected Entities (1)')).toBeNull();
+    });
+
+    test('formats entities in event modal', async () => {
+      setupInsightsView(buildMockResults());
+      const { findByText, getByText, getAllByText } = renderWithRouter();
+
+      const clusterText = await findByText('Correlated anomalies detected');
+      fireEvent.click(clusterText.closest('.euiPanel') || clusterText);
+
+      await waitFor(() => {
+        expect(getByText('Event Details')).toBeInTheDocument();
+      });
+
+      // Entity appears in both the card (behind overlay) and the modal
+      const badges = getAllByText('load-generator');
+      expect(badges.length).toBeGreaterThanOrEqual(2);
+    });
+
+    test('shows "Affected resources" label in cluster cards', async () => {
+      setupInsightsView(buildMockResults());
+      const { findByText } = renderWithRouter();
+
+      await waitFor(async () => {
+        expect(await findByText('Affected resources:')).toBeInTheDocument();
+      });
+    });
+  });
 });
 
