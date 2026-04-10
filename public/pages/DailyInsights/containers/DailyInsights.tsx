@@ -26,6 +26,8 @@ import {
   EuiButtonEmpty,
   EuiDescriptionList,
   EuiCodeBlock,
+  EuiCallOut,
+  EuiLink,
 } from '@elastic/eui';
 import React, { useState, useEffect, useMemo, Fragment } from 'react';
 import { useDispatch } from 'react-redux';
@@ -34,6 +36,8 @@ import { RouteComponentProps } from 'react-router-dom';
 import queryString from 'querystring';
 import { CoreServicesContext } from '../../../components/CoreServices/CoreServices';
 import { executeAutoCreateAgent } from '../../../redux/reducers/ml';
+import { useAgentTaskPolling } from '../hooks/useAgentTaskPolling';
+import { getAgentTask } from '../utils/agentTaskStorage';
 import {
   getInsightsResults as getInsightsResultsAction,
   getInsightsStatus as getInsightsStatusAction,
@@ -47,7 +51,7 @@ import {
   getDataSourceFromURL,
   isDataSourceCompatible,
 } from '../../utils/helpers';
-import { BREADCRUMBS, MDS_BREADCRUMBS, USE_NEW_HOME_PAGE } from '../../../utils/constants';
+import { BREADCRUMBS, MDS_BREADCRUMBS, USE_NEW_HOME_PAGE, DAILY_INSIGHTS_INDICES_PAGE_NAV_ID } from '../../../utils/constants';
 import { CoreStart, MountPoint } from '../../../../../../src/core/public';
 import { DataSourceSelectableConfig } from '../../../../../../src/plugins/data_source_management/public';
 import {
@@ -187,7 +191,15 @@ export function DailyInsights(props: DailyInsightsProps) {
   const [insightsSchedule, setInsightsSchedule] = useState<InsightsSchedule | null>(null);
   const [insightsResults, setInsightsResults] = useState<InsightResult[]>([]);
   const [selectedEvent, setSelectedEvent] = useState<{cluster: InsightCluster, result: InsightResult} | null>(null);
-  const [featureEnabled, setFeatureEnabled] = useState<boolean>(false);
+  // Read once at mount — core.uiSettings.get() is synchronous and the setting
+  // does not change during the component lifecycle without a full page reload.
+  const [featureEnabled] = useState<boolean>(() => {
+    try {
+      return core.uiSettings.get(DAILY_INSIGHTS_ENABLED, false);
+    } catch {
+      return false;
+    }
+  });
   
   // Index selection for setup flow
   const [selectedIndicesForSetup, setSelectedIndicesForSetup] = useState<string[]>([]);
@@ -208,22 +220,10 @@ export function DailyInsights(props: DailyInsightsProps) {
       : undefined,
   });
 
-  // Check if the feature is enabled via UI settings
-  useEffect(() => {
-    const checkFeatureFlag = async () => {
-      try {
-        const isEnabled = core.uiSettings.get(DAILY_INSIGHTS_ENABLED, false);
-        setFeatureEnabled(isEnabled);
-        if (!isEnabled) {
-          setIsLoading(false);
-        }
-      } catch (error) {
-        console.error('Error checking Daily Insights feature flag:', error);
-        setFeatureEnabled(false);
-      }
-    };
-    checkFeatureFlag();
-  }, [core]);
+  const { isPolling, startPolling } = useAgentTaskPolling(
+    MDSInsightsState.selectedDataSourceId || '',
+    (outcome) => fetchInsightsStatusAndResults()
+  );
 
   const handleDataSourceChange = (dataSources: any[]) => {
     const dataSourceId = dataSources[0]?.id;
@@ -268,12 +268,16 @@ export function DailyInsights(props: DailyInsightsProps) {
     }
   }, [MDSInsightsState]);
 
-  // Fetch status and results
+  // Fetch status and results in a single load sequence to avoid flash
   useEffect(() => {
-    fetchInsightsStatus();
+    if (!featureEnabled) {
+      setIsLoading(false);
+      return;
+    }
+    fetchInsightsStatusAndResults();
   }, [MDSInsightsState]);
 
-  const fetchInsightsStatus = async () => {
+  const fetchInsightsStatusAndResults = async () => {
     setIsLoading(true);
     try {
       const statusResponse = await dispatch(
@@ -281,9 +285,13 @@ export function DailyInsights(props: DailyInsightsProps) {
       );
       const enabled = statusResponse?.response?.enabled || false;
       const schedule = statusResponse?.response?.schedule || null;
-      
+
       setInsightsEnabled(enabled);
       setInsightsSchedule(schedule);
+
+      if (enabled) {
+        await fetchInsightsResults(schedule);
+      }
     } catch (error: any) {
       console.error('Error fetching insights status:', error);
       setInsightsEnabled(false);
@@ -293,13 +301,7 @@ export function DailyInsights(props: DailyInsightsProps) {
     }
   };
 
-  useEffect(() => {
-    if (insightsEnabled) {
-      fetchInsightsResults();
-    }
-  }, [insightsEnabled, insightsSchedule, MDSInsightsState.selectedDataSourceId]);
-
-  const fetchInsightsResults = async () => {
+  const fetchInsightsResults = async (scheduleOverride?: InsightsSchedule | null) => {
     try {
       const resultsResponse = await dispatch(
         getInsightsResultsAction(MDSInsightsState.selectedDataSourceId || '')
@@ -312,10 +314,11 @@ export function DailyInsights(props: DailyInsightsProps) {
       // use current job schedule, or default to 24 hours
       let filterPeriod = 24;
       let filterUnit: moment.unitOfTime.DurationConstructor = 'hours';
-      
-      if (insightsSchedule?.interval) {
-        filterPeriod = insightsSchedule.interval.period;
-        const apiUnit = insightsSchedule.interval.unit.toLowerCase();
+
+      const schedule = scheduleOverride !== undefined ? scheduleOverride : insightsSchedule;
+      if (schedule?.interval) {
+        filterPeriod = schedule.interval.period;
+        const apiUnit = schedule.interval.unit.toLowerCase();
         filterUnit = apiUnit as moment.unitOfTime.DurationConstructor;
       }
       
@@ -378,57 +381,50 @@ export function DailyInsights(props: DailyInsightsProps) {
       setIsIndexSelectionModalVisible(true);
       return;
     }
+    if (!agentId) return;
 
+    const dsId = MDSInsightsState.selectedDataSourceId || '';
     setIsStarting(true);
-    
-    if (agentId) {
-      // Step 1: Execute ML agent - following ReviewAndCreate pattern exactly
-      dispatch(
-        executeAutoCreateAgent(selectedIndicesForSetup, agentId, MDSInsightsState.selectedDataSourceId || '')
-      ).then((resp: any) => {
-          // Check if response indicates success
-          if (!resp || resp.error || !resp.response) {     
-            core?.notifications.toasts.addDanger(
-              'Failed to execute ML agent - API endpoint not available'
-            );
-            setIsStarting(false);
-            return;
-          }
-          // Step 2: Start insights job after delay
-          setTimeout(async () => {
-            try {
-              await dispatch(
-                startInsightsJobAction(
-                  '24h',
-                  MDSInsightsState.selectedDataSourceId || ''
-                )
-              );
-              
-              core?.notifications.toasts.addSuccess({
-                title: 'Insights job started successfully',
-                text: `Auto-created detectors for ${selectedIndicesForSetup.length} indices.`,
-              });
-              
-              await fetchInsightsStatus();
-            } catch (error: any) {              
-              core?.notifications.toasts.addDanger(
-                prettifyErrorMessage(
-                  getErrorMessage(error, 'There was a problem starting the insights job')
-                )
-              );
-            } finally {
-              setIsStarting(false);
-            }
-          }, 3000);
-        })
-        .catch((err: any) => {          
-          core?.notifications.toasts.addDanger(
-            prettifyErrorMessage(
-              getErrorMessage(err, 'There was a problem executing the ML agent')
-            )
-          );
-          setIsStarting(false);
-        });
+
+    try {
+      // Start insights job first — if this fails, don't create detectors
+      if (!insightsEnabled) {
+        try {
+          await dispatch(startInsightsJobAction('24h', dsId));
+        } catch (error: any) {
+          core?.notifications.toasts.addDanger({
+            title: 'Failed to start insights job',
+            text: 'Detector creation was not started. Please try again.',
+          });
+          return;
+        }
+      }
+
+      const resp: any = await dispatch(
+        executeAutoCreateAgent(selectedIndicesForSetup, agentId, dsId)
+      );
+      if (!resp || resp.error || !resp.response) {
+        core?.notifications.toasts.addDanger('Failed to execute ML agent');
+        return;
+      }
+
+      const taskId = resp.response?.task_id || resp.task_id;
+      if (taskId) {
+        startPolling(taskId);
+      }
+
+      core?.notifications.toasts.addSuccess({
+        title: 'Insights job started',
+        text: `Creating detectors for ${selectedIndicesForSetup.length} ${selectedIndicesForSetup.length === 1 ? 'index' : 'indices'}. You'll be notified when complete.`,
+      });
+
+      await fetchInsightsStatusAndResults();
+    } catch (err: any) {
+      core?.notifications.toasts.addDanger(
+        prettifyErrorMessage(getErrorMessage(err, 'There was a problem executing the ML agent'))
+      );
+    } finally {
+      setIsStarting(false);
     }
   };
 
@@ -446,7 +442,7 @@ export function DailyInsights(props: DailyInsightsProps) {
       setIsRefreshing(true);
       
       await new Promise(resolve => setTimeout(resolve, 2000));
-      await fetchInsightsStatus();
+      await fetchInsightsStatusAndResults();
       
       setIsRefreshing(false);
     } catch (error: any) {
@@ -642,6 +638,29 @@ export function DailyInsights(props: DailyInsightsProps) {
 
   const renderInsightsView = () => {
     if (insightsResults.length === 0) {
+      // Check if the last agent task failed — show error instead of generic "no insights"
+      const lastTask = getAgentTask();
+      if (lastTask?.finalState === 'FAILED' || lastTask?.finalState === 'TIMEOUT') {
+        return (
+          <Fragment>
+            <EuiCallOut
+              title="Detector creation failed"
+              color="danger"
+              iconType="alert"
+            >
+              <p>
+                The last attempt to create detectors did not succeed.{' '}
+                <EuiLink
+                  href={`/app/${DAILY_INSIGHTS_INDICES_PAGE_NAV_ID}`}
+                >
+                  Go to Indices Management
+                </EuiLink>
+                {' '}to try again with different indices.
+              </p>
+            </EuiCallOut>
+          </Fragment>
+        );
+      }
       return (
         <Fragment>
           <EuiPanel hasBorder>
@@ -817,45 +836,39 @@ export function DailyInsights(props: DailyInsightsProps) {
       {dataSourceEnabled && renderDataSourceComponent}
       
       {selectedEvent && renderEventModal()}
-      
-      {isLoading || isRefreshing ? (
-        <EuiEmptyPrompt
-          icon={<EuiLoadingSpinner size="xl" />}
+
+      {useUpdatedUX && (
+        <HeaderControl
+          setMountPoint={setAppDescriptionControls}
+          controls={[
+            {
+              description: 'Automated insights showing correlated anomalies across your detectors',
+            },
+          ]}
         />
-      ) : insightsEnabled ? (
-        <Fragment>
-          {useUpdatedUX && (
-            <HeaderControl
-              setMountPoint={setAppDescriptionControls}
-              controls={[
-                {
-                  description: 'Automated insights showing correlated anomalies across your detectors',
-                },
-              ]}
-            />
-          )}
-          {!useUpdatedUX && (
-            <>
-              <EuiSpacer size="m" />
-              <EuiText size="s">
-                Automated insights showing correlated anomalies across your detectors
-              </EuiText>
-            </>
-          )}
-          <EuiSpacer size="xl" />
-          <div style={{ paddingLeft: '24px', paddingRight: '24px' }}>
-            {renderInsightsView()}
-          </div>
-        </Fragment>
-      ) : (
-        <div style={{ paddingLeft: '24px', paddingRight: '24px' }}>
-          <EuiSpacer size="l" />
+      )}
+      {!useUpdatedUX && (
+        <>
+          <EuiSpacer size="m" />
+          <EuiText size="s">
+            Automated insights showing correlated anomalies across your detectors
+          </EuiText>
+        </>
+      )}
+      <EuiSpacer size="xl" />
+      <div style={{ paddingLeft: '24px', paddingRight: '24px' }}>
+        {(isLoading || isRefreshing) ? (
+          <EuiEmptyPrompt
+            icon={<EuiLoadingSpinner size="xl" />}
+          />
+        ) : insightsEnabled ? (
+          renderInsightsView()
+        ) : (
           <EuiPanel hasBorder paddingSize="l" data-test-subj="dailyInsightsSetupPanel">
             {renderSetupView()}
-            
           </EuiPanel>
-        </div>
-      )}
+        )}
+      </div>
 
       {/* Index Selection Modal */}
       <EnhancedSelectionModal
@@ -870,11 +883,8 @@ export function DailyInsights(props: DailyInsightsProps) {
         onConfirm={() => {}}
         onStartInsights={async (indices, agentId) => {
           setSelectedIndicesForSetup(indices);
-          try {
-            await handleStartInsights(agentId);
-            setIsIndexSelectionModalVisible(false);
-          } catch (error: any) {
-          }
+          await handleStartInsights(agentId);
+          setIsIndexSelectionModalVisible(false);
         }}
         isLoading={isStarting}
       />

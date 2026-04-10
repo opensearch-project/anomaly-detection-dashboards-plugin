@@ -22,9 +22,9 @@ import {
   EuiPanel,
   EuiTitle,
   EuiLink,
-  EuiToolTip,
   EuiIcon,
   EuiLoadingSpinner,
+  EuiCallOut,
 } from '@elastic/eui';
 import React, { useState, useEffect, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
@@ -38,6 +38,8 @@ import { AppState } from '../../../redux/reducers';
 import { CoreServicesContext } from '../../../components/CoreServices/CoreServices';
 import { CoreStart, MountPoint } from '../../../../../../src/core/public';
 import { getDataSourceEnabled, getApplication, getNotifications, getDataSourceManagementPlugin, getSavedObjectsClient } from '../../../services';
+import { useAgentTaskPolling } from '../hooks/useAgentTaskPolling';
+import { getAgentTask } from '../utils/agentTaskStorage';
 import { DataSourceSelectableConfig } from '../../../../../../src/plugins/data_source_management/public';
 import { BREADCRUMBS, MDS_BREADCRUMBS, DAILY_INSIGHTS_OVERVIEW_PAGE_NAV_ID, PLUGIN_NAME } from '../../../utils/constants';
 import { useHistory, useLocation } from 'react-router-dom';
@@ -78,6 +80,11 @@ export function IndicesManagement(props: IndicesManagementProps) {
       ? (dataSourceId || undefined)
       : undefined,
   });
+
+  const { isPolling, startPolling } = useAgentTaskPolling(
+    MDSInsightsState.selectedDataSourceId || '',
+    (outcome) => loadDetectors()
+  );
 
   const history = useHistory();
 
@@ -199,8 +206,6 @@ const fetchInsightsStatus = async () => {
   };
 
   const processDetectors = () => {
-    setIsLoading(true);
-    
     let detectors = [];
     if (adState.detectorList) {
       if (Array.isArray(adState.detectorList)) {
@@ -254,7 +259,7 @@ const fetchInsightsStatus = async () => {
   };
 
   const [selectedModalIndices, setSelectedModalIndices] = useState<string[]>([]);
-  const [agentId, setAgentId] = useState('auto-create-detector-agent');
+  const agentId = 'auto-create-detector-agent';
 
   const handleStartAutoInsights = async (selectedIndices: string[], agentIdToUse: string) => {
     if (selectedIndices.length === 0) {
@@ -263,22 +268,25 @@ const fetchInsightsStatus = async () => {
     }
 
     setIsStartingInsights(true);
-    
-    // Execute ML agent to create detectors
-    dispatch(
-      executeAutoCreateAgent(
-        selectedIndices, 
-        agentIdToUse,
-        MDSInsightsState.selectedDataSourceId || ''
-      )
-    ).then((resp: any) => {      
+
+    try {
+      const resp: any = await dispatch(
+        executeAutoCreateAgent(
+          selectedIndices,
+          agentIdToUse,
+          MDSInsightsState.selectedDataSourceId || ''
+        )
+      );
+
       if (!resp || resp.error) {
         const errorMsg = resp?.error?.message || resp?.error || 'Unknown error';
-        getNotifications().toasts.addDanger(
-          `Failed to execute ML agent: ${errorMsg}`
-        );
-        setIsStartingInsights(false);
+        getNotifications().toasts.addDanger(`Failed to execute ML agent: ${errorMsg}`);
         return;
+      }
+
+      const taskId = resp.response?.task_id || resp.task_id;
+      if (taskId) {
+        startPolling(taskId);
       }
 
       getNotifications().toasts.addSuccess(
@@ -286,16 +294,12 @@ const fetchInsightsStatus = async () => {
       );
       setIsModalVisible(false);
       setSelectedModalIndices([]);
+    } catch (error: any) {
+      const errorMsg = error?.body?.message || error?.message || 'Unknown error';
+      getNotifications().toasts.addDanger(`Failed to start auto insights: ${errorMsg}`);
+    } finally {
       setIsStartingInsights(false);
-      loadDetectors();
-    }).catch((error: any) => {
-      console.error('Error starting auto insights:', error);
-      const errorMsg = error?.body?.message || error?.message || error?.toString() || 'Unknown error';
-      getNotifications().toasts.addDanger(
-        `Failed to start auto insights: ${errorMsg}`
-      );
-      setIsStartingInsights(false);
-    });
+    }
   };
 
 
@@ -430,6 +434,7 @@ const fetchInsightsStatus = async () => {
             color="primary"
             iconType="plus"
             onClick={() => setIsModalVisible(true)}
+            isDisabled={isPolling}
           >
             Add Indices
           </EuiSmallButton>
@@ -472,13 +477,41 @@ const fetchInsightsStatus = async () => {
       );
     }
 
-    // Scenario 2: Job active, no detectors yet - Show "detectors being created" message
-    if (insightsEnabled && indicesData.length === 0) {
+    // Scenario 2: Job active or agent polling, no detectors yet
+    if ((insightsEnabled || isPolling) && indicesData.length === 0) {
+      // Check if the last agent task failed
+      const lastTask = getAgentTask();
+      if (lastTask?.finalState === 'FAILED' || lastTask?.finalState === 'TIMEOUT') {
+        return (
+          <>
+            <EuiCallOut
+              title="Detector creation failed"
+              color="danger"
+              iconType="alert"
+              data-test-subj="detectorCreationFailedCallout"
+            >
+              <p>The last attempt to create detectors did not succeed. Try adding indices again with a different selection.</p>
+            </EuiCallOut>
+            <EuiSpacer size="l" />
+            <EuiEmptyPrompt
+              actions={
+                <EuiSmallButton
+                  fill
+                  iconType="plus"
+                  onClick={() => setIsModalVisible(true)}
+                >
+                  Add Indices
+                </EuiSmallButton>
+              }
+            />
+          </>
+        );
+      }
       return (
         <EuiEmptyPrompt
           data-test-subj="detectorsBeingCreatedPrompt"
           icon={<EuiLoadingSpinner size="xl" />}
-          title={<h3>Job has started and detectors are being created</h3>}
+          title={<h3>Detectors are being created</h3>}
           body={
             <p>
               Please wait while we create detectors for your indices. This process may take a few minutes.
@@ -496,10 +529,34 @@ const fetchInsightsStatus = async () => {
   return (
     <React.Fragment>
         {dataSourceEnabled && renderDataSourceComponent}
+        <EuiSpacer size="xl" />
         {insightsEnabled && renderAddIndicesPanel()}
       <EuiSpacer size="l" />
 
       <div style={{ margin: '0 24px' }}>
+        {(() => {
+          const lastTask = getAgentTask();
+          if (lastTask?.failedIndices && lastTask.failedIndices.length > 0 && indicesData.length > 0) {
+            return (
+              <>
+                <EuiCallOut
+                  title="Some detectors failed to create"
+                  color="warning"
+                  iconType="alert"
+                  data-test-subj="partialDetectorFailureCallout"
+                >
+                  <ul>
+                    {lastTask.failedIndices.map((f, i) => (
+                      <li key={i}><strong>{f.index}</strong>: {f.error}</li>
+                    ))}
+                  </ul>
+                </EuiCallOut>
+                <EuiSpacer size="m" />
+              </>
+            );
+          }
+          return null;
+        })()}
         <ContentPanel 
           title="Configured Indices" 
           titleSize="m"
