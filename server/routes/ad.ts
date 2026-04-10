@@ -9,7 +9,7 @@
  * GitHub history for details.
  */
 
-import { get, orderBy, pullAll, isEmpty } from 'lodash';
+import { get, orderBy, pullAll, isEmpty, isNumber, set } from 'lodash';
 import { SearchResponse } from '../models/interfaces';
 import {
   AnomalyResult,
@@ -44,7 +44,23 @@ import {
   getLatestTaskForDetectorQuery,
   convertTaskAndJobFieldsToCamelCase,
 } from './utils/adHelpers';
-import { isNumber, set } from 'lodash';
+import {
+  buildPrometheusDetectorName,
+  DEFAULT_PROMETHEUS_FEATURE_NAME,
+  DEFAULT_PROMETHEUS_HISTORY,
+  DEFAULT_PROMETHEUS_INTERVAL_MINUTES,
+  DEFAULT_PROMETHEUS_MIN_SAMPLES,
+  DEFAULT_PROMETHEUS_SHINGLE_SIZE,
+  extractPromqlMetricName,
+  getPrometheusHistoryFloor,
+  getPromqlLookbackHistoryBuffer,
+  getPromqlRangeIntervalPeriod,
+  IntervalPeriod,
+  normalizeIntervalPeriod,
+  PROMETHEUS_QUERY_LANGUAGE,
+  PROMETHEUS_SOURCE_TYPE,
+  PROMETHEUS_SUGGEST_TYPES,
+} from './utils/prometheusHelpers';
 import {
   RequestHandlerContext,
   OpenSearchDashboardsRequest,
@@ -71,8 +87,9 @@ export function registerADRoutes(apiRouter: Router, adService: AdService) {
     adService.putDetector
   );
 
-  // routes not used in the UI, therefore no data source id
+  // detector search is used by Metrics to rediscover existing monitor associations
   apiRouter.post('/detectors/_search', adService.searchDetector);
+  apiRouter.post('/detectors/_search/{dataSourceId}', adService.searchDetector);
 
   // post search anomaly results
   apiRouter.post('/detectors/results/_search', adService.searchResults);
@@ -95,7 +112,10 @@ export function registerADRoutes(apiRouter: Router, adService: AdService) {
 
   // preview detector
   apiRouter.post('/detectors/preview', adService.previewDetector);
-  apiRouter.post('/detectors/preview/{dataSourceId}', adService.previewDetector);
+  apiRouter.post(
+    '/detectors/preview/{dataSourceId}',
+    adService.previewDetector
+  );
 
   // suggest detector
   apiRouter.post(
@@ -105,6 +125,14 @@ export function registerADRoutes(apiRouter: Router, adService: AdService) {
   apiRouter.post(
     '/detectors/_suggest/{suggestType}/{dataSourceId}',
     adService.suggestDetector
+  );
+  apiRouter.post(
+    '/detectors/_create_from_prometheus_query',
+    adService.createPrometheusDetectorFromQuery
+  );
+  apiRouter.post(
+    '/detectors/_create_from_prometheus_query/{dataSourceId}',
+    adService.createPrometheusDetectorFromQuery
   );
 
   // get detector anomaly results
@@ -163,7 +191,10 @@ export function registerADRoutes(apiRouter: Router, adService: AdService) {
 
   // match detector
   apiRouter.get('/detectors/{detectorName}/_match', adService.matchDetector);
-  apiRouter.get('/detectors/{detectorName}/_match/{dataSourceId}', adService.matchDetector);
+  apiRouter.get(
+    '/detectors/{detectorName}/_match/{dataSourceId}',
+    adService.matchDetector
+  );
 
   // get detector count
   apiRouter.get('/detectors/_count', adService.getDetectorCount);
@@ -199,11 +230,17 @@ export function registerADRoutes(apiRouter: Router, adService: AdService) {
 
   // get insights status
   apiRouter.get('/insights/_status', adService.getInsightsStatus);
-  apiRouter.get('/insights/_status/{dataSourceId}', adService.getInsightsStatus);
+  apiRouter.get(
+    '/insights/_status/{dataSourceId}',
+    adService.getInsightsStatus
+  );
 
   // get insights results
   apiRouter.get('/insights/_results', adService.getInsightsResults);
-  apiRouter.get('/insights/_results/{dataSourceId}', adService.getInsightsResults);
+  apiRouter.get(
+    '/insights/_results/{dataSourceId}',
+    adService.getInsightsResults
+  );
 }
 
 export default class AdService {
@@ -271,10 +308,9 @@ export default class AdService {
         dataSourceId,
         this.client
       );
-      const response = await callWithRequest(
-        'ad.previewDetector', {
-          body: requestBody,
-        });
+      const response = await callWithRequest('ad.previewDetector', {
+        body: requestBody,
+      });
       const transformedKeys = mapKeysDeep(response, toCamel);
       return opensearchDashboardsResponse.ok({
         body: {
@@ -316,11 +352,10 @@ export default class AdService {
       const requestBody = JSON.stringify(
         convertDetectorKeysToSnakeCase(request.body)
       );
-      const response = await callWithRequest(
-        'ad.suggestDetector', {
-          body: requestBody,
-          suggestType: suggestType,
-        });
+      const response = await callWithRequest('ad.suggestDetector', {
+        body: requestBody,
+        suggestType: suggestType,
+      });
       return opensearchDashboardsResponse.ok({
         body: {
           ok: true,
@@ -329,6 +364,256 @@ export default class AdService {
       });
     } catch (err) {
       console.log('Anomaly detector - suggestDetector', err);
+      return opensearchDashboardsResponse.ok({
+        body: {
+          ok: false,
+          error: getErrorMessage(err),
+        },
+      });
+    }
+  };
+
+  createPrometheusDetectorFromQuery = async (
+    context: RequestHandlerContext,
+    request: OpenSearchDashboardsRequest,
+    opensearchDashboardsResponse: OpenSearchDashboardsResponseFactory
+  ): Promise<IOpenSearchDashboardsResponse<any>> => {
+    try {
+      const { dataSourceId = '' } = request.params as { dataSourceId?: string };
+      const requestBody = (request.body || {}) as Record<string, any>;
+      const detectorMode = String(
+        requestBody.detectorMode || requestBody.detector_mode || 'single_stream'
+      ).trim();
+      const promqlQuery = String(
+        requestBody.query ||
+          requestBody.promqlQuery ||
+          requestBody.promql_query ||
+          ''
+      ).trim();
+      const dataConnectionId = String(
+        requestBody.dataConnectionId ||
+          requestBody.data_connection_id ||
+          get(requestBody, 'prometheusSource.dataConnectionId') ||
+          get(requestBody, 'prometheusSource.data_connection_id') ||
+          ''
+      ).trim();
+      const entityField = String(
+        requestBody.entityField || requestBody.entity_field || ''
+      ).trim();
+      const rawSelectedSeries =
+        detectorMode === 'high_cardinality'
+          ? undefined
+          : requestBody.selectedSeries ||
+            requestBody.selected_series ||
+            get(requestBody, 'prometheusSource.seriesFilter') ||
+            get(requestBody, 'prometheusSource.series_filter');
+      const seriesFilter =
+        rawSelectedSeries && typeof rawSelectedSeries === 'object'
+          ? Object.fromEntries(
+              Object.entries(rawSelectedSeries as Record<string, unknown>)
+                .filter(
+                  ([key, value]) =>
+                    key != null &&
+                    String(key).trim() !== '' &&
+                    value != null &&
+                    String(value).trim() !== ''
+                )
+                .map(([key, value]) => [
+                  String(key).trim(),
+                  String(value).trim(),
+                ])
+            )
+          : undefined;
+      const categoryFields =
+        detectorMode === 'high_cardinality' && entityField
+          ? [entityField]
+          : undefined;
+
+      if (!promqlQuery || !dataConnectionId) {
+        return opensearchDashboardsResponse.ok({
+          body: {
+            ok: false,
+            error: 'Prometheus connection ID and query are required.',
+          },
+        });
+      }
+
+      if (detectorMode === 'high_cardinality' && !entityField) {
+        return opensearchDashboardsResponse.ok({
+          body: {
+            ok: false,
+            error:
+              'Prometheus high-cardinality detector creation requires an entity field.',
+          },
+        });
+      }
+
+      const detectorDescription =
+        String(requestBody.description || '').trim() ||
+        'Auto-created from Explore Metrics alerts flow.';
+      const extractedMetricName = extractPromqlMetricName(promqlQuery);
+      const featureName =
+        extractedMetricName || DEFAULT_PROMETHEUS_FEATURE_NAME;
+      const detectorName =
+        String(requestBody.name || '').trim() ||
+        buildPrometheusDetectorName(
+          promqlQuery,
+          extractedMetricName,
+          seriesFilter
+        );
+      const intervalFromPromql = getPromqlRangeIntervalPeriod(promqlQuery);
+
+      const defaultDetectionInterval: IntervalPeriod = intervalFromPromql || {
+        period: {
+          interval: DEFAULT_PROMETHEUS_INTERVAL_MINUTES,
+          unit: 'Minutes',
+        },
+      };
+
+      const suggestPayload = {
+        name: detectorName,
+        description: detectorDescription,
+        source_type: PROMETHEUS_SOURCE_TYPE,
+        prometheus_source: {
+          query_language: PROMETHEUS_QUERY_LANGUAGE,
+          query: promqlQuery,
+          data_connection_id: dataConnectionId,
+          ...(seriesFilter && Object.keys(seriesFilter).length > 0
+            ? { series_filter: seriesFilter }
+            : {}),
+        },
+        feature_attributes: [
+          {
+            feature_name: featureName,
+            feature_enabled: true,
+          },
+        ],
+        ...(categoryFields ? { category_field: categoryFields } : {}),
+        detection_interval: defaultDetectionInterval,
+        window_delay: {
+          period: {
+            interval: 1,
+            unit: 'Minutes',
+          },
+        },
+        shingle_size: DEFAULT_PROMETHEUS_SHINGLE_SIZE,
+      };
+
+      let suggestedDetectionInterval =
+        normalizeIntervalPeriod(defaultDetectionInterval, 1) ||
+        defaultDetectionInterval;
+      let suggestedWindowDelay =
+        normalizeIntervalPeriod(suggestPayload.window_delay, 0) ||
+        suggestPayload.window_delay;
+      let suggestedHistory = DEFAULT_PROMETHEUS_HISTORY;
+      let suggestedShingleSize = DEFAULT_PROMETHEUS_SHINGLE_SIZE;
+
+      const callWithRequest = getClientBasedOnDataSource(
+        context,
+        this.dataSourceEnabled,
+        request,
+        dataSourceId,
+        this.client
+      );
+
+      try {
+        const suggestResponse = await callWithRequest('ad.suggestDetector', {
+          body: JSON.stringify(suggestPayload),
+          suggestType: PROMETHEUS_SUGGEST_TYPES,
+        });
+
+        if (!intervalFromPromql) {
+          const detectionIntervalSuggestion =
+            get(suggestResponse, 'detectionInterval') ||
+            get(suggestResponse, 'detection_interval') ||
+            get(suggestResponse, 'interval') ||
+            get(suggestResponse, 'frequency');
+          suggestedDetectionInterval =
+            normalizeIntervalPeriod(detectionIntervalSuggestion, 1) ||
+            suggestedDetectionInterval;
+        }
+
+        const windowDelaySuggestion =
+          get(suggestResponse, 'windowDelay') ||
+          get(suggestResponse, 'window_delay');
+        suggestedWindowDelay =
+          normalizeIntervalPeriod(windowDelaySuggestion, 0) ||
+          suggestedWindowDelay;
+
+        const historySuggestion = Number(get(suggestResponse, 'history'));
+        if (Number.isFinite(historySuggestion) && historySuggestion > 0) {
+          suggestedHistory = Math.round(historySuggestion);
+        }
+
+        const shingleSizeSuggestion = Number(
+          get(suggestResponse, 'shingleSize') ||
+            get(suggestResponse, 'shingle_size')
+        );
+        if (
+          Number.isFinite(shingleSizeSuggestion) &&
+          shingleSizeSuggestion > 0
+        ) {
+          suggestedShingleSize = Math.round(shingleSizeSuggestion);
+        }
+      } catch (_suggestError) {
+        // Fall back to deterministic defaults if suggest API is unavailable for this payload.
+      }
+
+      const lookbackHistoryBuffer = getPromqlLookbackHistoryBuffer(
+        promqlQuery,
+        suggestedDetectionInterval
+      );
+      suggestedHistory = Math.max(
+        suggestedHistory,
+        getPrometheusHistoryFloor(suggestedDetectionInterval),
+        DEFAULT_PROMETHEUS_MIN_SAMPLES +
+          suggestedShingleSize +
+          lookbackHistoryBuffer
+      );
+
+      const createPayload = {
+        name: detectorName,
+        description: detectorDescription,
+        source_type: PROMETHEUS_SOURCE_TYPE,
+        prometheus_source: {
+          query_language: PROMETHEUS_QUERY_LANGUAGE,
+          query: promqlQuery,
+          data_connection_id: dataConnectionId,
+          ...(seriesFilter && Object.keys(seriesFilter).length > 0
+            ? { series_filter: seriesFilter }
+            : {}),
+        },
+        feature_attributes: [
+          {
+            feature_name: featureName,
+            feature_enabled: true,
+          },
+        ],
+        ...(categoryFields ? { category_field: categoryFields } : {}),
+        detection_interval: suggestedDetectionInterval,
+        window_delay: suggestedWindowDelay,
+        history: suggestedHistory,
+        shingle_size: suggestedShingleSize,
+      };
+
+      const createResponse = await callWithRequest('ad.createDetector', {
+        body: JSON.stringify(createPayload),
+      });
+      const detectorId =
+        get(createResponse, '_id') || get(createResponse, 'id');
+
+      return opensearchDashboardsResponse.ok({
+        body: {
+          ok: true,
+          detectorId,
+          detectorName,
+          featureName,
+          detectionInterval: suggestedDetectionInterval,
+          response: createResponse,
+        },
+      });
+    } catch (err) {
+      console.log('Anomaly detector - createPrometheusDetectorFromQuery', err);
       return opensearchDashboardsResponse.ok({
         body: {
           ok: false,
@@ -423,11 +708,10 @@ export default class AdService {
       const requestBody = JSON.stringify(
         convertPreviewInputKeysToSnakeCase(request.body)
       );
-      const response = await callWithRequest(
-        'ad.validateDetector', {
-          body: requestBody,
-          validationType: validationType,
-        });
+      const response = await callWithRequest('ad.validateDetector', {
+        body: requestBody,
+        validationType: validationType,
+      });
       return opensearchDashboardsResponse.ok({
         body: {
           ok: true,
@@ -824,10 +1108,19 @@ export default class AdService {
     opensearchDashboardsResponse: OpenSearchDashboardsResponseFactory
   ): Promise<IOpenSearchDashboardsResponse<any>> => {
     try {
+      const { dataSourceId = '' } = request.params as { dataSourceId?: string };
       const requestBody = JSON.stringify(request.body);
-      const response: SearchResponse<Detector> = await this.client
-        .asScoped(request)
-        .callAsCurrentUser('ad.searchDetector', { body: requestBody });
+      const callWithRequest = getClientBasedOnDataSource(
+        context,
+        this.dataSourceEnabled,
+        request,
+        dataSourceId,
+        this.client
+      );
+      const response: SearchResponse<Detector> = await callWithRequest(
+        'ad.searchDetector',
+        { body: requestBody }
+      );
       const totalDetectors = get(response, 'hits.total.value', 0);
       const detectors = get(response, 'hits.hits', []).map((detector: any) => ({
         ...convertDetectorKeysToCamelCase(detector._source),
@@ -1471,10 +1764,9 @@ export default class AdService {
         this.client
       );
 
-      const response = await callWithRequest(
-        'ad.matchDetector', {
-          detectorName,
-        });
+      const response = await callWithRequest('ad.matchDetector', {
+        detectorName,
+      });
       return opensearchDashboardsResponse.ok({
         body: {
           ok: true,
@@ -1505,8 +1797,7 @@ export default class AdService {
         this.client
       );
 
-      const response = await callWithRequest(
-        'ad.detectorCount');
+      const response = await callWithRequest('ad.detectorCount');
       return opensearchDashboardsResponse.ok({
         body: {
           ok: true,
