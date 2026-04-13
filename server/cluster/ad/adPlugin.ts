@@ -278,11 +278,4 @@ export default function adPlugin(Client: any, config: any, components: any) {
     },
     method: 'GET',
   });
-
-  ad.getInsightsResults = ca({
-    url: {
-      fmt: `/_plugins/_anomaly_detection/insights/_results`,
-    },
-    method: 'GET',
-  });
 }

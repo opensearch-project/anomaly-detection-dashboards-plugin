@@ -6,7 +6,8 @@ env:
   CI: 1
   # avoid warnings like "tput: No value for $TERM and no -T specified"
   TERM: xterm
-  OPENSEARCH_DASHBOARDS_VERSION: '3.5'
+  # Using main branch which includes React 18 upgrade (OpenSearch-Dashboards#11187)
+  OPENSEARCH_DASHBOARDS_VERSION: 'main'
   OPENSEARCH_VERSION: '3.5.0'
   OPENSEARCH_PLUGIN_VERSION: '3.5.0.0'
 
@@ -22,12 +23,13 @@ jobs:
 
     steps:
       - name: Set up JDK
-        uses: actions/setup-java@v1
+        uses: actions/setup-java@v4
         with:
+          distribution: temurin
           java-version: ${{ matrix.jdk }}
 
       - name: Checkout Anomaly-Detection
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
         with:
           path: anomaly-detection
           repository: opensearch-project/anomaly-detection
@@ -39,25 +41,17 @@ jobs:
           ./gradlew run -PdualCluster=true &
           timeout 300 bash -c 'while [[ "$(curl -s -o /dev/null -w ''%{http_code}'' localhost:9200)" != "200" ]]; do sleep 5; done'
         shell: bash
-    
-      - name: Check OpenSearch Running on Linux
-        if: ${{ runner.os != 'Windows'}}
-        run: curl http://localhost:9200/
-        shell: bash
-      
+
       - name: Checkout OpenSearch Dashboards
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
         with:
           path: OpenSearch-Dashboards
           repository: opensearch-project/OpenSearch-Dashboards
           ref: ${{ env.OPENSEARCH_DASHBOARDS_VERSION }}
           fetch-depth: 0
-          filter: |
-            cypress
-            test
 
       - name: Checkout AD in OpenSearch Dashboards Plugins Dir
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
         with:
             path: OpenSearch-Dashboards/plugins/anomaly-detection-dashboards-plugin
 
@@ -68,17 +62,16 @@ jobs:
         working-directory: OpenSearch-Dashboards
         shell: bash
 
-      - uses: actions/setup-node@v1
+      - uses: actions/setup-node@v4
         with:
           node-version: ${{ steps.tool-versions.outputs.node_version }}
           registry-url: 'https://registry.npmjs.org'
 
       - name: Install correct yarn version for OpenSearch Dashboards
-        id: setup-yarn
         run: |
           npm uninstall -g yarn
-          echo "Installing yarn ${{ steps.versions_step.outputs.yarn_version }}"
-          npm i -g yarn@${{ steps.versions_step.outputs.yarn_version }}
+          echo "Installing yarn ${{ steps.tool-versions.outputs.yarn_version }}"
+          npm i -g yarn@${{ steps.tool-versions.outputs.yarn_version }}
 
       - name: Yarn Cache
         uses: actions/cache@v4
@@ -94,7 +87,7 @@ jobs:
         run: |
           cd OpenSearch-Dashboards
           yarn osd bootstrap --single-version=loose
-      
+
       - name: Compile OpenSearch Dashboards
         run: |
           cd OpenSearch-Dashboards
@@ -105,34 +98,18 @@ jobs:
           nohup yarn start --no-base-path --no-watch --server.host="0.0.0.0" | tee dashboard.log &
         working-directory: OpenSearch-Dashboards
 
-      - name: Check If OpenSearch Dashboards Is Ready
-        if: ${{ runner.os == 'Linux' }}
+      - name: Wait for OpenSearch Dashboards
         run: |
-          cd ./OpenSearch-Dashboards
-          if timeout 60 grep -q "http server running" <(tail -n +1 -f dashboard.log); then
-            echo "OpenSearch Dashboards started successfully."
-          else
-            echo "Timeout of 60 seconds reached. OpenSearch Dashboards did not start successfully."
-            exit 1
-          fi&
+          timeout 600 bash -c 'while [[ "$(curl -s http://localhost:5601/api/status | jq -r '.status.overall.state')" != "green" ]]; do sleep 5; done'
+        shell: bash
 
       - name: Show OpenSearch Dashboards Logs
         if: always()
         run: cat dashboard.log
         working-directory: OpenSearch-Dashboards
-      
-      - name: Health check 
-        run: |
-          timeout 600 bash -c 'while [[ "$(curl -k http://localhost:5601/api/status | jq -r '.status.overall.state')" != "green" ]]; do sleep 5; done'
-        shell: bash
-
-      - name: Check OpenSearch Dashboards Running on Linux
-        if: ${{ runner.os != 'Windows'}}
-        run: curl http://localhost:5601/api/status
-        shell: bash
 
       - name: Checkout Dashboards Functional Test Repo
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
         with:
           path: opensearch-dashboards-functional-test
           repository: opensearch-project/opensearch-dashboards-functional-test
@@ -148,22 +125,12 @@ jobs:
       - name: Get Cypress version
         id: cypress_version
         run: |
-          echo "::set-output name=cypress_version::$(cat ./package.json | jq '.dependencies.cypress' | tr -d '"')"
+          echo "cypress_version=$(jq -r '.dependencies.cypress' package.json)" >> $GITHUB_OUTPUT
         working-directory: opensearch-dashboards-functional-test
 
-      - name: Finding spec files and store to output
-        id: finding-files
+      - name: Run Cypress E2E tests
         run: |
-          {
-            echo 'FILELIST<<EOF'
-            find cypress/integration/plugins/anomaly-detection-dashboards-plugin -name '*.js' -print 
-            echo EOF
-          } >> "$GITHUB_ENV"
-        working-directory: opensearch-dashboards-functional-test
-
-      - name: Run spec files from output
-        run: |
-          env CYPRESS_NO_COMMAND_LOG=1 yarn cypress:run-without-security --browser chromium --spec 'cypress/integration/plugins/anomaly-detection-dashboards-plugin/*'
+          env CYPRESS_NO_COMMAND_LOG=1 yarn cypress:run-without-security --browser electron --spec 'cypress/integration/plugins/anomaly-detection-dashboards-plugin/*'
         working-directory: opensearch-dashboards-functional-test
 
       - name: Capture failure screenshots
