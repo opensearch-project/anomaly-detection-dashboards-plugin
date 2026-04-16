@@ -27,6 +27,8 @@ export function registerMLRoutes(
   apiRouter.post('/agents/{agentId}/execute/{dataSourceId}', mlService.executeAgent);
   apiRouter.get('/tasks/{taskId}', mlService.getTask);
   apiRouter.get('/tasks/{taskId}/{dataSourceId}', mlService.getTask);
+  apiRouter.post('/models/{modelId}/predict', mlService.predict);
+  apiRouter.post('/models/{modelId}/predict/{dataSourceId}', mlService.predict);
 }
 
 export default class MLService {
@@ -113,6 +115,39 @@ export default class MLService {
         body: {
           ok: false,
           error: err?.body?.error?.reason || err?.message || 'Failed to get task status',
+        },
+      });
+    }
+  };
+
+  predict = async (
+    context: RequestHandlerContext,
+    request: OpenSearchDashboardsRequest,
+    opensearchDashboardsResponse: OpenSearchDashboardsResponseFactory
+  ): Promise<IOpenSearchDashboardsResponse<any>> => {
+    try {
+      const { modelId, dataSourceId = '' } = request.params as { modelId: string; dataSourceId?: string };
+      const callWithRequest = getClientBasedOnDataSource(
+        context,
+        this.dataSourceEnabled,
+        request,
+        dataSourceId,
+        this.client
+      );
+
+      const response = await callWithRequest('ml.predict', {
+        modelId,
+        body: request.body,
+      });
+
+      return opensearchDashboardsResponse.ok({
+        body: { ok: true, response },
+      });
+    } catch (err: any) {
+      return opensearchDashboardsResponse.ok({
+        body: {
+          ok: false,
+          error: err?.body?.error?.reason || err?.message || 'Failed to call predict',
         },
       });
     }

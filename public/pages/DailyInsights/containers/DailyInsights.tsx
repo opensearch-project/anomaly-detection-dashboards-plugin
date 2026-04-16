@@ -18,15 +18,6 @@ import {
   EuiBadge,
   EuiTitle,
   EuiPanel,
-  EuiModal,
-  EuiModalHeader,
-  EuiModalHeaderTitle,
-  EuiModalBody,
-  EuiModalFooter,
-  EuiButtonEmpty,
-  EuiDescriptionList,
-  EuiFlexGroup,
-  EuiFlexItem,
   EuiCallOut,
   EuiLink,
   EuiToolTip,
@@ -39,6 +30,7 @@ import queryString from 'querystring';
 import { CoreServicesContext } from '../../../components/CoreServices/CoreServices';
 import { executeAutoCreateAgent } from '../../../redux/reducers/ml';
 import { useAgentTaskPolling } from '../hooks/useAgentTaskPolling';
+import { useClusterClickHandler } from '../hooks/useClusterClickHandler';
 import { getAgentTask } from '../utils/agentTaskStorage';
 import {
   getInsightsResults as getInsightsResultsAction,
@@ -68,7 +60,8 @@ import {
 import { DAILY_INSIGHTS_ENABLED } from '../../../../utils/constants';
 import moment from 'moment';
 import { EnhancedSelectionModal } from '../components/EnhancedSelectionModal';
-import { formatEntityValue, localizeTimestamps } from '../utils/insightCardHelpers';
+import { formatEntityValue } from '../utils/insightCardHelpers';
+import { EventDetailModal, InsightCluster, ClusterAnomaly } from '../components/EventDetailModal';
 
 interface DailyInsightsProps extends RouteComponentProps {
   setActionMenu: (menuMount: MountPoint | undefined) => void;
@@ -84,26 +77,6 @@ interface InsightResult {
   doc_indices: string[];
   doc_model_ids: string[];
   clusters: InsightCluster[];
-}
-
-interface InsightCluster {
-  indices: string[];
-  detector_ids: string[];
-  detector_names: string[];
-  entities: string[];
-  model_ids: string[];
-  num_anomalies?: number;
-  event_start: string;
-  event_end: string;
-  cluster_text: string;
-  anomalies?: ClusterAnomaly[];
-}
-
-interface ClusterAnomaly {
-  model_id: string;
-  detector_id: string;
-  data_start_time: string;
-  data_end_time: string;
 }
 
 interface InsightsSchedule {
@@ -137,9 +110,6 @@ const getClusterDetectorIdCount = (cluster: any): number => {
   return normalizeStringArray(cluster?.detector_ids).length;
 };
 
-// Returns top N clusters sorted by:
-// 1) num_anomalies (desc; falls back to anomalies.length)
-// 2) detector_ids count (desc; after normalization)
 const selectTopClusters = (clusters: any[], topN = 3): any[] => {
   if (!Array.isArray(clusters) || topN <= 0) {
     return [];
@@ -193,7 +163,6 @@ export function DailyInsights(props: DailyInsightsProps) {
   const [insightsEnabled, setInsightsEnabled] = useState(false);
   const [insightsSchedule, setInsightsSchedule] = useState<InsightsSchedule | null>(null);
   const [insightsResults, setInsightsResults] = useState<InsightResult[]>([]);
-  const [selectedEvent, setSelectedEvent] = useState<{cluster: InsightCluster, result: InsightResult} | null>(null);
   // Read once at mount — core.uiSettings.get() is synchronous and the setting
   // does not change during the component lifecycle without a full page reload.
   const [featureEnabled] = useState<boolean>(() => {
@@ -222,6 +191,13 @@ export function DailyInsights(props: DailyInsightsProps) {
       ? (queryParams.dataSourceId || undefined)
       : undefined,
   });
+
+  const {
+    selectedEvent, setSelectedEvent,
+    detectorFeatures, detectorDescriptions, detectorTimeFields,
+    anomalyEntities, llmSummaries, llmLoadingKeys,
+    handleClusterClick,
+  } = useClusterClickHandler(MDSInsightsState.selectedDataSourceId || '');
 
   const { isPolling, startPolling } = useAgentTaskPolling(
     MDSInsightsState.selectedDataSourceId || '',
@@ -526,145 +502,21 @@ export function DailyInsights(props: DailyInsightsProps) {
 
   const renderEventModal = () => {
     if (!selectedEvent) return null;
-
-    const { cluster, result } = selectedEvent;
-    const dsQuery = MDSInsightsState.selectedDataSourceId
-      ? `?dataSourceId=${MDSInsightsState.selectedDataSourceId}`
-      : '';
-
-    const descriptionListItems = [
-      {
-        title: 'Time Range',
-        description: `${moment(cluster.event_start).format('lll')} → ${moment(cluster.event_end).format('lll')}`,
-      },
-      {
-        title: 'Duration',
-        description: moment.duration(moment(cluster.event_end).diff(moment(cluster.event_start))).humanize(),
-      },
-      {
-        title: 'Detectors',
-        description: (
-          <div style={{ display: 'flex', gap: '4px', flexWrap: 'wrap' }}>
-            {cluster.detector_ids.map((id: string, i: number) => (
-              <EuiLink
-                key={id}
-                href={`${PLUGIN_NAME}#/detectors/${id}/results${dsQuery}`}
-                target="_blank"
-              >
-                {cluster.detector_names?.[i] || id}
-              </EuiLink>
-            ))}
-          </div>
-        ),
-      },
-      {
-        title: 'Indices',
-        description: cluster.indices.join(', '),
-      },
-      {
-        title: 'Number of Entities',
-        description: cluster.entities.length.toString(),
-      },
-    ];
-
+    const { cluster } = selectedEvent;
+    const cacheKey = `${cluster.event_start}_${cluster.detector_ids.join(',')}`;
     return (
-      <EuiModal onClose={() => setSelectedEvent(null)} style={{ minWidth: '600px' }}>
-        <EuiModalHeader>
-          <EuiModalHeaderTitle>
-            <h2>Event Details</h2>
-          </EuiModalHeaderTitle>
-        </EuiModalHeader>
-
-        <EuiModalBody>
-          <EuiText>
-            <h3>Summary</h3>
-            <p>{localizeTimestamps(cluster.cluster_text)}</p>
-          </EuiText>
-          
-          <EuiSpacer size="m" />
-          
-          <EuiDescriptionList
-            listItems={descriptionListItems}
-            type="column"
-            compressed={false}
-          />
-          
-          <EuiSpacer size="m" />
-          
-          <EuiText>
-            <h3>Affected Resources ({cluster.entities.length})</h3>
-          </EuiText>
-          <EuiSpacer size="s" />
-          <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
-            {cluster.entities.map((entity: string, index: number) => (
-              <EuiToolTip key={index} content={entity}>
-                <EuiBadge color="hollow">{formatEntityValue(entity)}</EuiBadge>
-              </EuiToolTip>
-            ))}
-          </div>
-          
-          <EuiSpacer size="m" />
-          
-          <EuiText>
-            <h3>Insight Context</h3>
-          </EuiText>
-          <EuiSpacer size="s" />
-          <EuiDescriptionList
-            listItems={[
-              {
-                title: 'Generated At',
-                description: moment(result.generated_at).format('LLLL'),
-              },
-              {
-                title: 'Analysis Window',
-                description: `${moment(result.window_start).format('lll')} to ${moment(result.window_end).format('lll')}`,
-              },
-              {
-                title: 'Total Clusters in Report',
-                description: result.clusters.length.toString(),
-              },
-            ]}
-            type="column"
-          />
-          
-          {cluster.anomalies && cluster.anomalies.length > 0 && (
-            <>
-              <EuiSpacer size="m" />
-              <EuiText>
-                <h3>Anomalies ({cluster.anomalies.length})</h3>
-              </EuiText>
-              <EuiSpacer size="s" />
-              {cluster.anomalies.map((anomaly: ClusterAnomaly, aIndex: number) => (
-                <EuiPanel key={aIndex} hasBorder paddingSize="s" style={{ marginBottom: '8px' }}>
-                  <EuiFlexGroup alignItems="center" gutterSize="m">
-                    <EuiFlexItem>
-                      <EuiText size="s">
-                        <strong>
-                          <EuiLink
-                            href={`${PLUGIN_NAME}#/detectors/${anomaly.detector_id}/results${dsQuery}`}
-                            target="_blank"
-                          >
-                            {cluster.detector_names?.[cluster.detector_ids.indexOf(anomaly.detector_id)] || anomaly.detector_id}
-                          </EuiLink>
-                        </strong>
-                      </EuiText>
-                    </EuiFlexItem>
-                    <EuiFlexItem grow={false}>
-                      <EuiText size="xs" color="subdued">
-                        {moment(anomaly.data_start_time).format('lll')} → {moment(anomaly.data_end_time).format('lll')}
-                      </EuiText>
-                    </EuiFlexItem>
-                  </EuiFlexGroup>
-                </EuiPanel>
-              ))}
-            </>
-          )}
-        </EuiModalBody>
-
-        <EuiModalFooter>
-          <EuiButtonEmpty onClick={() => setSelectedEvent(null)}>Close</EuiButtonEmpty>
-        </EuiModalFooter>
-      </EuiModal>
+      <EventDetailModal
+        cluster={cluster}
+        onClose={() => setSelectedEvent(null)}
+        llmSummary={llmSummaries[cacheKey]}
+        llmLoading={llmLoadingKeys.has(cacheKey)}
+        detectorDescriptions={detectorDescriptions}
+        detectorFeatures={detectorFeatures}
+        detectorTimeFields={detectorTimeFields}
+        anomalyEntities={anomalyEntities}
+        dataSourceId={MDSInsightsState.selectedDataSourceId}
+        core={core}
+      />
     );
   };
 
@@ -759,7 +611,7 @@ export function DailyInsights(props: DailyInsightsProps) {
                         key={pIndex} 
                         hasBorder 
                         style={{ marginBottom: '12px', cursor: 'pointer' }}
-                        onClick={() => setSelectedEvent({ cluster, result })}
+                        onClick={() => handleClusterClick(cluster, result)}
                         onMouseEnter={(e: React.MouseEvent<HTMLDivElement>) => (e.currentTarget.style.backgroundColor = '#F5F7FA')}
                         onMouseLeave={(e: React.MouseEvent<HTMLDivElement>) => (e.currentTarget.style.backgroundColor = 'transparent')}
                       >
@@ -769,9 +621,9 @@ export function DailyInsights(props: DailyInsightsProps) {
                             <EuiTitle size="xxs">
                               <h5>Cluster {pIndex + 1}: {cluster.entities.length} {cluster.entities.length === 1 ? 'entity' : 'entities'}</h5>
                             </EuiTitle>
-                            <EuiSpacer size="s" />
-                            <EuiText size="s">
-                              <p>{localizeTimestamps(cluster.cluster_text)}</p>
+                            <EuiSpacer size="xs" />
+                            <EuiText size="s" color="subdued">
+                              <p>{cluster.cluster_text}. Started {moment(cluster.event_start).format('lll')}.</p>
                             </EuiText>
                             {cluster.entities.length > 0 && (
                               <Fragment>

@@ -9,9 +9,9 @@ import moment from 'moment';
  * Returns the full string if no colon separator found.
  */
 export function formatEntityValue(entity: string): string {
-  const colonIdx = entity.indexOf(':');
-  if (colonIdx === -1) return entity;
-  const value = entity.substring(colonIdx + 1).trim();
+  const sepIdx = entity.includes(':') ? entity.indexOf(':') : entity.indexOf('=');
+  if (sepIdx === -1) return entity;
+  const value = entity.substring(sepIdx + 1).trim();
   return value || entity;
 }
 

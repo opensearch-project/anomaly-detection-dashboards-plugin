@@ -31,6 +31,18 @@ const AnySwitch: any = Switch;
 const AnyRoute: any = Route;
 const AnyRedirect: any = Redirect;
 
+jest.mock('../../hooks/useAgentTaskPolling', () => ({
+  useAgentTaskPolling: () => ({ isPolling: false, startPolling: jest.fn() }),
+}));
+
+jest.mock('../../utils/agentTaskStorage', () => ({
+  getAgentTask: () => null,
+}));
+
+jest.mock('../../utils/discoverLink', () => ({
+  buildDiscoverUrl: jest.fn().mockResolvedValue(null),
+}));
+
 jest.mock('../../../../services', () => {
   const originalModule = jest.requireActual('../../../../services');
 
@@ -122,8 +134,13 @@ const renderWithRouter = (landingDataSourceId?: string) => ({
 describe('<DailyInsights /> spec', () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    sessionStorage.clear();
     httpClientMock.get = jest.fn();
     httpClientMock.post = jest.fn();
+  });
+
+  afterEach(() => {
+    sessionStorage.clear();
   });
 
   beforeAll(() => {
@@ -374,14 +391,14 @@ describe('<DailyInsights /> spec', () => {
         expect(getByText('Top 3 Correlated Anomaly Clusters')).toBeInTheDocument();
       });
 
-      // Top 3 by num_anomalies should render
-      expect(getByText('cluster-top')).toBeInTheDocument();
-      expect(getByText('cluster-mid-1')).toBeInTheDocument();
-      expect(getByText('cluster-mid-2')).toBeInTheDocument();
+      // Top 3 by num_anomalies should render (entity badges are unique per cluster)
+      expect(getByText('entity-c')).toBeInTheDocument();   // num_anomalies: 10
+      expect(getByText('entity-b')).toBeInTheDocument();   // num_anomalies: 5
+      expect(getByText('entity-d')).toBeInTheDocument();   // num_anomalies: 3
 
       // Lower-ranked clusters should be omitted
-      expect(queryByText('cluster-low')).toBeNull();
-      expect(queryByText('cluster-very-low')).toBeNull();
+      expect(queryByText('entity-e')).toBeNull();
+      expect(queryByText('entity-a')).toBeNull();
     });
 
     test('normalizes detector_ids when backend returns a string', async () => {
@@ -442,8 +459,8 @@ describe('<DailyInsights /> spec', () => {
       });
 
       // Ensure the cluster panel renders + click works (would crash if detector_ids is a string)
-      const eventPanel = await findByText('Test anomaly text');
-      fireEvent.click(eventPanel.closest('.euiPanel') || eventPanel);
+      const entityBadge = await findByText('entity-1');
+      fireEvent.click(entityBadge.closest('.euiPanel') || entityBadge);
 
       await waitFor(() => {
         expect(getByText('Event Details')).toBeInTheDocument();
@@ -594,8 +611,8 @@ describe('<DailyInsights /> spec', () => {
         expect(getByText('Latest Insights')).toBeInTheDocument();
       });
 
-      const eventPanel = await findByText('Test anomaly text');
-      fireEvent.click(eventPanel.closest('.euiPanel') || eventPanel);
+      const entityBadge = await findByText('entity-1');
+      fireEvent.click(entityBadge.closest('.euiPanel') || entityBadge);
 
       await waitFor(() => {
         expect(getByText('Event Details')).toBeInTheDocument();
@@ -729,7 +746,7 @@ describe('<DailyInsights /> spec', () => {
       setupInsightsView(buildMockResults());
       const { findByText, getByText, getAllByText } = renderWithRouter();
 
-      const clusterText = await findByText('Correlated anomalies detected');
+      const clusterText = await findByText(/Correlated anomalies detected/);
       fireEvent.click(clusterText.closest('.euiPanel') || clusterText);
 
       await waitFor(() => {
@@ -750,7 +767,7 @@ describe('<DailyInsights /> spec', () => {
       setupInsightsView(buildMockResults());
       const { findByText, getByText, container } = renderWithRouter();
 
-      const clusterText = await findByText('Correlated anomalies detected');
+      const clusterText = await findByText(/Correlated anomalies detected/);
       fireEvent.click(clusterText.closest('.euiPanel') || clusterText);
 
       await waitFor(() => {
@@ -765,7 +782,7 @@ describe('<DailyInsights /> spec', () => {
       setupInsightsView(buildMockResults());
       const { findByText, getByText, queryByText } = renderWithRouter();
 
-      const clusterText = await findByText('Correlated anomalies detected');
+      const clusterText = await findByText(/Correlated anomalies detected/);
       fireEvent.click(clusterText.closest('.euiPanel') || clusterText);
 
       await waitFor(() => {
@@ -780,7 +797,7 @@ describe('<DailyInsights /> spec', () => {
       setupInsightsView(buildMockResults());
       const { findByText, getByText, getAllByText } = renderWithRouter();
 
-      const clusterText = await findByText('Correlated anomalies detected');
+      const clusterText = await findByText(/Correlated anomalies detected/);
       fireEvent.click(clusterText.closest('.euiPanel') || clusterText);
 
       await waitFor(() => {
@@ -798,6 +815,19 @@ describe('<DailyInsights /> spec', () => {
 
       await waitFor(async () => {
         expect(await findByText('Affected resources:')).toBeInTheDocument();
+      });
+    });
+
+    test('renders View in Discover button in event modal', async () => {
+      setupInsightsView(buildMockResults());
+      const { findByText, getByText } = renderWithRouter();
+
+      const clusterText = await findByText(/Correlated anomalies detected/);
+      fireEvent.click(clusterText.closest('.euiPanel') || clusterText);
+
+      await waitFor(() => {
+        expect(getByText('Event Details')).toBeInTheDocument();
+        expect(getByText('Discover')).toBeInTheDocument();
       });
     });
   });

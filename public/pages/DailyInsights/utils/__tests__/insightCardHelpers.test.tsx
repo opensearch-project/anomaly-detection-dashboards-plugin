@@ -38,6 +38,10 @@ describe('insightCardHelpers', () => {
     test('handles empty string', () => {
       expect(formatEntityValue('')).toBe('');
     });
+
+    test('extracts value with = separator (insight format)', () => {
+      expect(formatEntityValue('serviceName.keyword=checkout')).toBe('checkout');
+    });
   });
 
   describe('localizeTimestamps', () => {

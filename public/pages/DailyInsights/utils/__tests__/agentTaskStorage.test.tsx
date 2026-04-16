@@ -14,6 +14,10 @@ describe('agentTaskStorage', () => {
     sessionStorage.clear();
   });
 
+  afterAll(() => {
+    sessionStorage.clear();
+  });
+
   describe('saveAgentTask', () => {
     test('saves task to sessionStorage', () => {
       saveAgentTask('task-123', 'ds-1');
