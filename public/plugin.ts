@@ -153,7 +153,7 @@ export class AnomalyDetectionOpenSearchDashboardsPlugin
     }
 
     // register applications with category and use case information
-    const enableIconSideNav = core.uiSettings.get('home:enableIconSideNav', false);
+    const enableIconSideNav = core.chrome.getIsIconSideNavEnabled();
 
     if (enableIconSideNav) {
       core.chrome.navGroup.addNavLinksToGroup(DEFAULT_NAV_GROUPS.observability, [
