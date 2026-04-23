@@ -57,6 +57,9 @@ describe('AnomalyDetectionPlugin nav registration', () => {
   beforeEach(() => {
     coreSetup = coreMock.createSetup();
     coreSetup.chrome.navGroup.getNavGroupEnabled.mockReturnValue(true);
+    if (!coreSetup.chrome.getIsIconSideNavEnabled) {
+      coreSetup.chrome.getIsIconSideNavEnabled = jest.fn();
+    }
     coreSetup.uiSettings.get = jest.fn().mockReturnValue(false);
     plugin = new AnomalyDetectionOpenSearchDashboardsPlugin();
   });
