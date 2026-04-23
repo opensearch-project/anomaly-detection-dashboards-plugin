@@ -6,10 +6,10 @@ import React from 'react';
 import { EuiLink, EuiText } from '@elastic/eui';
 import { getNotifications } from '../../../services';
 import { mountReactNode } from '../../../../../../src/core/public/utils';
-import { DAILY_INSIGHTS_INDICES_PAGE_NAV_ID } from '../../../utils/constants';
+import { APP_PATH, DAILY_INSIGHTS_INDICES_PAGE_NAV_ID } from '../../../utils/constants';
 
 const STORAGE_KEY = 'ad_agent_task';
-const IM_URL = `/app/${DAILY_INSIGHTS_INDICES_PAGE_NAV_ID}`;
+const IM_URL = `/app/${DAILY_INSIGHTS_INDICES_PAGE_NAV_ID}#${APP_PATH.DAILY_INSIGHTS_INDICES}`;
 
 export interface AgentTaskInfo {
   taskId: string;

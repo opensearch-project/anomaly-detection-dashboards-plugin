@@ -42,4 +42,18 @@ export default function mlPlugin(
     },
     method: 'GET',
   });
+
+  ml.predict = ca({
+    url: {
+      fmt: `/_plugins/_ml/models/<%=modelId%>/_predict`,
+      req: {
+        modelId: {
+          type: 'string',
+          required: true,
+        },
+      },
+    },
+    needBody: true,
+    method: 'POST',
+  });
 }

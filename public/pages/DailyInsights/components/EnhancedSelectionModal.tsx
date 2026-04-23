@@ -72,6 +72,7 @@ interface EnhancedSelectionModalProps {
   immediateExecute?: boolean; // If true, executes on confirm; if false, returns selection
   modalTitle?: string; // Custom modal title
   confirmButtonText?: string; // Custom confirm button text
+  existingDetectorCounts?: Record<string, { count: number; names: string[] }>;
 }
 
 export function EnhancedSelectionModal({
@@ -85,6 +86,7 @@ export function EnhancedSelectionModal({
   immediateExecute = false,
   modalTitle = 'Select Indices for Daily Insights',
   confirmButtonText = 'Confirm Selected Indices',
+  existingDetectorCounts,
 }: EnhancedSelectionModalProps) {
   const dispatch = useDispatch();
   const location = useLocation();
@@ -451,6 +453,15 @@ export function EnhancedSelectionModal({
                         {item.type === 'index' && item.docCount > 0 && (
                           <EuiFlexItem grow={false}>
                             <EuiBadge color="hollow" style={{ fontSize: '10px' }}>{item.docCount.toLocaleString()}</EuiBadge>
+                          </EuiFlexItem>
+                        )}
+                        {existingDetectorCounts && existingDetectorCounts[item.name]?.count > 0 && (
+                          <EuiFlexItem grow={false}>
+                            <EuiToolTip content={existingDetectorCounts[item.name].names.join(', ')}>
+                              <EuiBadge color="primary" style={{ fontSize: '10px' }}>
+                                {existingDetectorCounts[item.name].count} detector{existingDetectorCounts[item.name].count !== 1 ? 's' : ''}
+                              </EuiBadge>
+                            </EuiToolTip>
                           </EuiFlexItem>
                         )}
                       </EuiFlexGroup>

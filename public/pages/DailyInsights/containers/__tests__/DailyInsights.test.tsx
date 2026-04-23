@@ -31,6 +31,18 @@ const AnySwitch: any = Switch;
 const AnyRoute: any = Route;
 const AnyRedirect: any = Redirect;
 
+jest.mock('../../hooks/useAgentTaskPolling', () => ({
+  useAgentTaskPolling: () => ({ isPolling: false, startPolling: jest.fn() }),
+}));
+
+jest.mock('../../utils/agentTaskStorage', () => ({
+  getAgentTask: () => null,
+}));
+
+jest.mock('../../utils/discoverLink', () => ({
+  buildDiscoverUrl: jest.fn().mockResolvedValue(null),
+}));
+
 jest.mock('../../../../services', () => {
   const originalModule = jest.requireActual('../../../../services');
 
@@ -122,8 +134,13 @@ const renderWithRouter = (landingDataSourceId?: string) => ({
 describe('<DailyInsights /> spec', () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    sessionStorage.clear();
     httpClientMock.get = jest.fn();
     httpClientMock.post = jest.fn();
+  });
+
+  afterEach(() => {
+    sessionStorage.clear();
   });
 
   beforeAll(() => {
@@ -374,14 +391,14 @@ describe('<DailyInsights /> spec', () => {
         expect(getByText('Top 3 Correlated Anomaly Clusters')).toBeInTheDocument();
       });
 
-      // Top 3 by num_anomalies should render
-      expect(getByText('cluster-top')).toBeInTheDocument();
-      expect(getByText('cluster-mid-1')).toBeInTheDocument();
-      expect(getByText('cluster-mid-2')).toBeInTheDocument();
+      // Top 3 by num_anomalies should render (entity badges are unique per cluster)
+      expect(getByText('entity-c')).toBeInTheDocument();   // num_anomalies: 10
+      expect(getByText('entity-b')).toBeInTheDocument();   // num_anomalies: 5
+      expect(getByText('entity-d')).toBeInTheDocument();   // num_anomalies: 3
 
       // Lower-ranked clusters should be omitted
-      expect(queryByText('cluster-low')).toBeNull();
-      expect(queryByText('cluster-very-low')).toBeNull();
+      expect(queryByText('entity-e')).toBeNull();
+      expect(queryByText('entity-a')).toBeNull();
     });
 
     test('normalizes detector_ids when backend returns a string', async () => {
@@ -442,8 +459,8 @@ describe('<DailyInsights /> spec', () => {
       });
 
       // Ensure the cluster panel renders + click works (would crash if detector_ids is a string)
-      const eventPanel = await findByText('Test anomaly text');
-      fireEvent.click(eventPanel.closest('.euiPanel') || eventPanel);
+      const entityBadge = await findByText('entity-1');
+      fireEvent.click(entityBadge.closest('.euiPanel') || entityBadge);
 
       await waitFor(() => {
         expect(getByText('Event Details')).toBeInTheDocument();
@@ -594,8 +611,8 @@ describe('<DailyInsights /> spec', () => {
         expect(getByText('Latest Insights')).toBeInTheDocument();
       });
 
-      const eventPanel = await findByText('Test anomaly text');
-      fireEvent.click(eventPanel.closest('.euiPanel') || eventPanel);
+      const entityBadge = await findByText('entity-1');
+      fireEvent.click(entityBadge.closest('.euiPanel') || entityBadge);
 
       await waitFor(() => {
         expect(getByText('Event Details')).toBeInTheDocument();
@@ -654,6 +671,163 @@ describe('<DailyInsights /> spec', () => {
 
       await waitFor(() => {
         expect(mockCoreServices.chrome.setBreadcrumbs).toHaveBeenCalled();
+      });
+    });
+  });
+
+  describe('Insight card UX', () => {
+    const windowStart = new Date(Date.now() - 3 * 60 * 60 * 1000).toISOString();
+    const windowEnd = new Date(Date.now() - 60 * 60 * 1000).toISOString();
+    const generatedAt = new Date(Date.now() - 30 * 60 * 1000).toISOString();
+
+    const buildMockResults = (overrides: any = {}) => ({
+      response: {
+        results: [
+          {
+            window_start: windowStart,
+            window_end: windowEnd,
+            generated_at: generatedAt,
+            doc_detector_names: ['my-detector'],
+            doc_detector_ids: ['det-abc-123'],
+            doc_indices: ['index-1'],
+            doc_model_ids: ['model-1'],
+            clusters: [
+              {
+                indices: ['index-1'],
+                detector_ids: ['det-abc-123'],
+                detector_names: ['my-detector'],
+                entities: ['resource.attributes.service.name: load-generator'],
+                model_ids: ['model-1'],
+                event_start: windowStart,
+                event_end: windowEnd,
+                cluster_text: 'Correlated anomalies detected',
+                num_anomalies: 1,
+                anomalies: [
+                  {
+                    model_id: 'model-1',
+                    detector_id: 'det-abc-123',
+                    data_start_time: windowStart,
+                    data_end_time: windowEnd,
+                  },
+                ],
+                ...overrides,
+              },
+            ],
+          },
+        ],
+      },
+    });
+
+    const setupInsightsView = (mockResults: any) => {
+      httpClientMock.get = jest
+        .fn()
+        .mockResolvedValueOnce({
+          response: {
+            enabled: true,
+            schedule: {
+              interval: { start_time: Date.now(), period: 24, unit: 'hours' },
+            },
+          },
+        })
+        .mockResolvedValueOnce(mockResults);
+    };
+
+    test('formats OTel entity names in cluster cards', async () => {
+      setupInsightsView(buildMockResults());
+      const { findByText } = renderWithRouter();
+
+      await waitFor(async () => {
+        // formatEntityValue extracts "load-generator" from "resource.attributes.service.name: load-generator"
+        expect(await findByText('load-generator')).toBeInTheDocument();
+      });
+    });
+
+    test('renders detector links in event modal', async () => {
+      setupInsightsView(buildMockResults());
+      const { findByText, getByText, getAllByText } = renderWithRouter();
+
+      const clusterText = await findByText(/Correlated anomalies detected/);
+      fireEvent.click(clusterText.closest('.euiPanel') || clusterText);
+
+      await waitFor(() => {
+        expect(getByText('Event Details')).toBeInTheDocument();
+      });
+
+      // Detector name should be a link
+      const detectorLinks = getAllByText('my-detector');
+      const linkElement = detectorLinks.find(el => el.closest('a'));
+      expect(linkElement).toBeDefined();
+      expect(linkElement!.closest('a')).toHaveAttribute(
+        'href',
+        expect.stringContaining('anomaly-detection-dashboards#/detectors/det-abc-123/results')
+      );
+    });
+
+    test('renders anomaly cards instead of JSON in event modal', async () => {
+      setupInsightsView(buildMockResults());
+      const { findByText, getByText, container } = renderWithRouter();
+
+      const clusterText = await findByText(/Correlated anomalies detected/);
+      fireEvent.click(clusterText.closest('.euiPanel') || clusterText);
+
+      await waitFor(() => {
+        expect(getByText('Anomalies (1)')).toBeInTheDocument();
+      });
+
+      // Should NOT have a code block (old JSON dump)
+      expect(container.querySelector('.euiCodeBlock')).toBeNull();
+    });
+
+    test('shows "Affected Resources" instead of "Affected Entities" in modal', async () => {
+      setupInsightsView(buildMockResults());
+      const { findByText, getByText, queryByText } = renderWithRouter();
+
+      const clusterText = await findByText(/Correlated anomalies detected/);
+      fireEvent.click(clusterText.closest('.euiPanel') || clusterText);
+
+      await waitFor(() => {
+        expect(getByText('Event Details')).toBeInTheDocument();
+      });
+
+      expect(getByText('Affected Resources (1)')).toBeInTheDocument();
+      expect(queryByText('Affected Entities (1)')).toBeNull();
+    });
+
+    test('formats entities in event modal', async () => {
+      setupInsightsView(buildMockResults());
+      const { findByText, getByText, getAllByText } = renderWithRouter();
+
+      const clusterText = await findByText(/Correlated anomalies detected/);
+      fireEvent.click(clusterText.closest('.euiPanel') || clusterText);
+
+      await waitFor(() => {
+        expect(getByText('Event Details')).toBeInTheDocument();
+      });
+
+      // Entity appears in both the card (behind overlay) and the modal
+      const badges = getAllByText('load-generator');
+      expect(badges.length).toBeGreaterThanOrEqual(2);
+    });
+
+    test('shows "Affected resources" label in cluster cards', async () => {
+      setupInsightsView(buildMockResults());
+      const { findByText } = renderWithRouter();
+
+      await waitFor(async () => {
+        expect(await findByText('Affected resources:')).toBeInTheDocument();
+      });
+    });
+
+    test('renders View in Discover button in event modal', async () => {
+      setupInsightsView(buildMockResults());
+      const { findByText, getByText } = renderWithRouter();
+
+      const clusterText = await findByText(/Correlated anomalies detected/);
+      fireEvent.click(clusterText.closest('.euiPanel') || clusterText);
+
+      await waitFor(() => {
+        expect(getByText('Event Details')).toBeInTheDocument();
+        expect(getByText('Discover')).toBeInTheDocument();
       });
     });
   });

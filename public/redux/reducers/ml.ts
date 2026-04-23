@@ -97,4 +97,19 @@ export const getMLTaskStatus = (
   };
 };
 
+export const predictModel = (
+  modelId: string,
+  body: any,
+  dataSourceId: string = ''
+): APIAction => {
+  const baseUrl = `${ML_COMMONS_NODE_API.PREDICT}/${modelId}/predict`;
+  const url = dataSourceId ? `${baseUrl}/${dataSourceId}` : baseUrl;
+
+  return {
+    type: 'ml/PREDICT',
+    request: (client: HttpSetup) =>
+      client.post(url, { body: JSON.stringify(body) }),
+  };
+};
+
 export default reducer;
