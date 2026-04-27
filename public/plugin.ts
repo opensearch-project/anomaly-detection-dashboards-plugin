@@ -153,12 +153,26 @@ export class AnomalyDetectionOpenSearchDashboardsPlugin
     }
 
     // register applications with category and use case information
-    core.chrome.navGroup.addNavLinksToGroup(DEFAULT_NAV_GROUPS.observability, [
-      {
-        id: PLUGIN_NAME,
-        category: DEFAULT_APP_CATEGORIES.detect,
-      }
-    ]);
+    const enableIconSideNav = core.chrome.getIsIconSideNavEnabled();
+
+    if (enableIconSideNav) {
+      core.chrome.navGroup.addNavLinksToGroup(DEFAULT_NAV_GROUPS.observability, [
+        {
+          id: PLUGIN_NAME,
+          category: DEFAULT_APP_CATEGORIES.observabilityTools,
+          order: 5200,
+          title: 'Anomaly Detection',
+          euiIconType: 'navAnomalyDetection',
+        },
+      ]);
+    } else {
+      core.chrome.navGroup.addNavLinksToGroup(DEFAULT_NAV_GROUPS.observability, [
+        {
+          id: PLUGIN_NAME,
+          category: DEFAULT_APP_CATEGORIES.detect,
+        },
+      ]);
+    }
     core.chrome.navGroup.addNavLinksToGroup(DEFAULT_NAV_GROUPS.all, [
       {
         id: PLUGIN_NAME,
@@ -173,12 +187,24 @@ export class AnomalyDetectionOpenSearchDashboardsPlugin
     ]);
 
     if (forecastingEnabled) {
-      core.chrome.navGroup.addNavLinksToGroup(DEFAULT_NAV_GROUPS.observability, [
-        {
-          id: FORECASTING_FEATURE_NAME,
-          category: DEFAULT_APP_CATEGORIES.detect,
-        }
-      ]);
+      if (enableIconSideNav) {
+        core.chrome.navGroup.addNavLinksToGroup(DEFAULT_NAV_GROUPS.observability, [
+          {
+            id: FORECASTING_FEATURE_NAME,
+            category: DEFAULT_APP_CATEGORIES.observabilityTools,
+            order: 5300,
+            title: 'Forecasting',
+            euiIconType: 'visLine',
+          },
+        ]);
+      } else {
+        core.chrome.navGroup.addNavLinksToGroup(DEFAULT_NAV_GROUPS.observability, [
+          {
+            id: FORECASTING_FEATURE_NAME,
+            category: DEFAULT_APP_CATEGORIES.detect,
+          },
+        ]);
+      }
       core.chrome.navGroup.addNavLinksToGroup(DEFAULT_NAV_GROUPS.all, [
         {
           id: FORECASTING_FEATURE_NAME,
