@@ -16,6 +16,7 @@ import { Monitor } from '../models/types';
 import { Router } from '../router';
 import { MAX_MONITORS } from '../utils/constants';
 import { getErrorMessage } from './utils/adHelpers';
+import { MDSEnabledClientService } from '../services/MDSEnabledClientService';
 import {
   RequestHandlerContext,
   OpenSearchDashboardsRequest,
@@ -38,21 +39,20 @@ export function registerAlertingRoutes(
   apiRouter.get('/monitors/alerts/{dataSourceId}', alertingService.searchAlerts);
 }
 
-export default class AlertingService {
-  private client: any;
-  dataSourceEnabled: boolean;
-
-  constructor(client: any, dataSourceEnabled: boolean) {
-    this.client = client;
-    this.dataSourceEnabled = dataSourceEnabled;
-  }
-
+export default class AlertingService extends MDSEnabledClientService {
   searchMonitors = async (
     context: RequestHandlerContext,
     request: OpenSearchDashboardsRequest,
     opensearchDashboardsResponse: OpenSearchDashboardsResponseFactory
   ): Promise<IOpenSearchDashboardsResponse<any>> => {
     try {
+      const aclResponse = await this.enforceWorkspaceAcl(
+        context,
+        request,
+        opensearchDashboardsResponse,
+        ['library_write', 'library_read']
+      );
+      if (aclResponse) return aclResponse;
       const { dataSourceId = '' } = request.params as { dataSourceId?: string };
 
       const requestBody = {
@@ -139,6 +139,13 @@ export default class AlertingService {
     opensearchDashboardsResponse: OpenSearchDashboardsResponseFactory
   ): Promise<IOpenSearchDashboardsResponse<any>> => {
     try {
+      const aclResponse = await this.enforceWorkspaceAcl(
+        context,
+        request,
+        opensearchDashboardsResponse,
+        ['library_write', 'library_read']
+      );
+      if (aclResponse) return aclResponse;
       const { monitorId, startTime, endTime } = request.query as {
         monitorId?: string;
         startTime?: number;
