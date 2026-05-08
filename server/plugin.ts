@@ -149,6 +149,11 @@ export class AnomalyDetectionOpenSearchDashboardsPlugin
     // layer because `startDetector` / `stopDetector` are shared handlers
     // (the isHistorical branch is inside the handler body). Those handlers
     // return 501 themselves when the endpoint is unsupported.
+    //
+    // Sample data routes are intentionally supported: they are
+    // Dashboards-owned ingestion helpers that write through the selected data
+    // source, so authorization is governed by the data source itself (for
+    // example, an AOSS data access policy).
     const adUnsupportedRoutes = new Set<string>([
       `POST ${BASE_NODE_API_PATH}/insights/_start`,
       `POST ${BASE_NODE_API_PATH}/insights/_start/{dataSourceId}`,
@@ -158,10 +163,6 @@ export class AnomalyDetectionOpenSearchDashboardsPlugin
       `GET ${BASE_NODE_API_PATH}/insights/_status/{dataSourceId}`,
       `GET ${BASE_NODE_API_PATH}/insights/_results`,
       `GET ${BASE_NODE_API_PATH}/insights/_results/{dataSourceId}`,
-      // Sample data uses the AD backend plugin's sample ingestion API,
-      // which does not exist on Oasis AD.
-      `POST ${BASE_NODE_API_PATH}/create_sample_data/{type}`,
-      `POST ${BASE_NODE_API_PATH}/create_sample_data/{type}/{dataSourceId}`,
     ]);
 
     // Create routers. The ML and forecast subtrees are blocked wholesale —
