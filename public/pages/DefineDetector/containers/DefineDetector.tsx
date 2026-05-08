@@ -61,6 +61,7 @@ import {
   getNotifications,
   getSavedObjectsClient,
 } from '../../../services';
+import { isServerlessDataSource } from '../../../utils/dataSourceUtils';
 import { DataSourceSelectableConfig, DataSourceViewConfig } from '../../../../../../src/plugins/data_source_management/public';
 import {
   constructHrefWithDataSourceId,
@@ -101,6 +102,22 @@ export const DefineDetector = (props: DefineDetectorProps) => {
     queryParams: MDSQueryParams,
     selectedDataSourceId: dataSourceId === undefined? undefined : dataSourceId,
   });
+
+  // Tracks whether the currently selected data source is an OpenSearch
+  // Serverless (AOSS) collection. Resolved asynchronously from the data-source
+  // saved object. Serverless disables several AD features (historical
+  // analysis, default result index, flattened result index) so child
+  // components must branch on this value.
+  const [isServerless, setIsServerless] = useState<boolean>(false);
+  useEffect(() => {
+    let cancelled = false;
+    isServerlessDataSource(MDSCreateState.selectedDataSourceId).then((result) => {
+      if (!cancelled) setIsServerless(result);
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, [MDSCreateState.selectedDataSourceId]);
 
   // To handle backward compatibility, we need to pass some fields via
   // props to the subcomponents so they can render correctly
@@ -392,6 +409,7 @@ export const DefineDetector = (props: DefineDetectorProps) => {
                   isEdit={props.isEdit}
                   resultIndex={get(formikProps, 'values.resultIndex')}
                   formikProps={formikProps}
+                  isServerless={isServerless}
                 />
               </Fragment>
             </EuiPageBody>

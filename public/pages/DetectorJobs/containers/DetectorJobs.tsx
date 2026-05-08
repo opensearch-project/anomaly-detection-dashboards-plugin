@@ -44,6 +44,7 @@ import {
   getSavedObjectsClient,
 } from '../../../services';
 import { DataSourceViewConfig } from '../../../../../../src/plugins/data_source_management/public';
+import { isServerlessDataSource } from '../../../utils/dataSourceUtils';
 
 interface DetectorJobsProps extends RouteComponentProps {
   setStep?(stepNumber: number): void;
@@ -66,6 +67,25 @@ export function DetectorJobs(props: DetectorJobsProps) {
   const [historical, setHistorical] = useState<boolean>(
     props.initialValues ? props.initialValues.historical : false
   );
+
+  // On serverless (AOSS) detectors, historical analysis is unsupported in P0.
+  // Hide the HistoricalJob form entirely and force the historical flag off so
+  // the payload sent to the backend never schedules a historical task.
+  const [isServerless, setIsServerless] = useState<boolean>(false);
+  useEffect(() => {
+    let cancelled = false;
+    isServerlessDataSource(dataSourceId).then((result) => {
+      if (!cancelled) setIsServerless(result);
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, [dataSourceId]);
+  useEffect(() => {
+    if (isServerless && historical) {
+      setHistorical(false);
+    }
+  }, [isServerless, historical]);
 
   // Jump to top of page on first load
   useEffect(() => {
@@ -171,11 +191,15 @@ export function DetectorJobs(props: DetectorJobsProps) {
                 formikProps={formikProps}
                 setRealTime={setRealTime}
               />
-              <EuiSpacer />
-              <HistoricalJob
-                formikProps={formikProps}
-                setHistorical={setHistorical}
-              />
+              {!isServerless ? (
+                <Fragment>
+                  <EuiSpacer />
+                  <HistoricalJob
+                    formikProps={formikProps}
+                    setHistorical={setHistorical}
+                  />
+                </Fragment>
+              ) : null}
             </EuiPageBody>
           </EuiPage>
 
