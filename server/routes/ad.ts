@@ -29,6 +29,7 @@ import {
   toCamel,
   toFixedNumberForAnomaly,
 } from '../utils/helpers';
+import { isServerlessDataSource } from '../utils/dataSourceUtils';
 import {
   anomalyResultMapper,
   convertDetectorKeysToCamelCase,
@@ -938,7 +939,19 @@ export default class AdService {
         this.client
       );
 
-      const response = !resultIndex
+      // On OpenSearch Serverless the AD backend plugin does not run, so the
+      // plugin-level `_plugins/_anomaly_detection/detectors/results/_search`
+      // endpoint is unavailable. Fall back to the core `_search` API against
+      // the custom result index. Serverless detectors always have a custom
+      // result index (enforced in the UI); the `opensearch-ad-plugin-result-*`
+      // wildcard is a defensive fallback.
+      const serverless = await isServerlessDataSource(context, dataSourceId);
+      const response = serverless
+        ? await callWithRequest('search', {
+            index: resultIndex || `${CUSTOM_AD_RESULT_INDEX_PREFIX}*`,
+            body: request.body,
+          })
+        : !resultIndex
         ? await callWithRequest('ad.searchResults', {
             body: requestBody,
           })
@@ -1067,20 +1080,27 @@ export default class AdService {
         onlyQueryCustomResultIndex: 'false',
       } as {};
 
-      const aggregationResult = await callWithRequest(
-        'ad.searchResultsFromCustomResultIndex',
-        {
-          ...requestParams,
-          body: getResultAggregationQuery(allDetectorIds, {
-            from,
-            size,
-            sortField,
-            sortDirection,
-            search,
-            indices,
-          }),
-        }
-      );
+      // On serverless the AD plugin endpoint is unavailable; call core
+      // `_search` against the `opensearch-ad-plugin-result-*` wildcard to
+      // aggregate across all custom result indices.
+      const serverless = await isServerlessDataSource(context, dataSourceId);
+      const aggregationBody = getResultAggregationQuery(allDetectorIds, {
+        from,
+        size,
+        sortField,
+        sortDirection,
+        search,
+        indices,
+      });
+      const aggregationResult = serverless
+        ? await callWithRequest('search', {
+            index: CUSTOM_AD_RESULT_INDEX_PREFIX + '*',
+            body: aggregationBody,
+          })
+        : await callWithRequest('ad.searchResultsFromCustomResultIndex', {
+            ...requestParams,
+            body: aggregationBody,
+          });
       const aggsDetectors = get(
         aggregationResult,
         'aggregations.unique_detectors.buckets',
@@ -1366,7 +1386,15 @@ export default class AdService {
         this.client
       );
 
-      const response = !resultIndex
+      // See note in searchResults(): core `_search` on serverless because
+      // the AD plugin results endpoint is not available.
+      const serverless = await isServerlessDataSource(context, dataSourceId);
+      const response = serverless
+        ? await callWithRequest('search', {
+            index: resultIndex || `${CUSTOM_AD_RESULT_INDEX_PREFIX}*`,
+            body: requestBody,
+          })
+        : !resultIndex
         ? await callWithRequest('ad.searchResults', {
             body: requestBody,
           })
