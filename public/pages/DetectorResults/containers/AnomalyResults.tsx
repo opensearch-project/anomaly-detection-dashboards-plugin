@@ -78,6 +78,10 @@ interface AnomalyResultsProps extends RouteComponentProps {
   onStopDetector(): void;
   onSwitchToConfiguration(): void;
   onSwitchToHistorical(): void;
+  // When true, the detector targets an OpenSearch Serverless collection;
+  // historical analysis is unsupported in this mode so callers should not
+  // render any switch-to-historical CTA.
+  isServerless?: boolean;
 }
 
 export function AnomalyResults(props: AnomalyResultsProps) {
