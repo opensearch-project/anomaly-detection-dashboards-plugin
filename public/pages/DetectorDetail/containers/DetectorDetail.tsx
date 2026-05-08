@@ -71,6 +71,7 @@ import {
   getUISettings,
 } from '../../../services';
 import { constructHrefWithDataSourceId, getDataSourceFromURL } from '../../../pages/utils/helpers';
+import { isServerlessDataSource } from '../../../utils/dataSourceUtils';
 
 export interface DetectorRouterProps {
   detectorId?: string;
@@ -121,6 +122,21 @@ export const DetectorDetail = (props: DetectorDetailProps) => {
   const location = useLocation();
   const MDSQueryParams = getDataSourceFromURL(location);
   const dataSourceId = MDSQueryParams.dataSourceId;
+
+  // Serverless (AOSS) does not support AD historical analysis in P0. Resolve
+  // this once from the data-source saved object and gate the tab, route, and
+  // downstream CTAs accordingly. Starts as false so local-cluster detectors
+  // render immediately; flips to true after the async lookup if applicable.
+  const [isServerless, setIsServerless] = useState<boolean>(false);
+  useEffect(() => {
+    let cancelled = false;
+    isServerlessDataSource(dataSourceId).then((result) => {
+      if (!cancelled) setIsServerless(result);
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, [dataSourceId]);
 
   const { detector, hasError, isLoadingDetector, errorMessage } =
     useFetchDetectorInfo(detectorId, dataSourceId);
@@ -511,18 +527,23 @@ export const DetectorDetail = (props: DetectorDetailProps) => {
           <EuiFlexGroup>
             <EuiFlexItem>
               <EuiTabs size="s">
-                {tabs.map((tab) => (
-                  <EuiTab
-                    onClick={() => {
-                      handleTabChange(tab.route);
-                    }}
-                    isSelected={tab.id === detectorDetailModel.selectedTab}
-                    key={tab.id}
-                    data-test-subj={`${tab.id}Tab`}
-                  >
-                    {tab.name}
-                  </EuiTab>
-                ))}
+                {tabs
+                  .filter(
+                    (tab) =>
+                      !(isServerless && tab.id === DETECTOR_DETAIL_TABS.HISTORICAL)
+                  )
+                  .map((tab) => (
+                    <EuiTab
+                      onClick={() => {
+                        handleTabChange(tab.route);
+                      }}
+                      isSelected={tab.id === detectorDetailModel.selectedTab}
+                      key={tab.id}
+                      data-test-subj={`${tab.id}Tab`}
+                    >
+                      {tab.name}
+                    </EuiTab>
+                  ))}
               </EuiTabs>
             </EuiFlexItem>
           </EuiFlexGroup>
@@ -643,19 +664,22 @@ export const DetectorDetail = (props: DetectorDetailProps) => {
               onStopDetector={() => handleStopAdJob(detectorId)}
               onSwitchToConfiguration={handleSwitchToConfigurationTab}
               onSwitchToHistorical={handleSwitchToHistoricalTab}
+              isServerless={isServerless}
             />
           )}
         />
-        <Route
-          exact
-          path="/detectors/:detectorId/historical"
-          render={(configProps) => (
-            <HistoricalDetectorResults
-              {...configProps}
-              detectorId={detectorId}
-            />
-          )}
-        />
+        {!isServerless ? (
+          <Route
+            exact
+            path="/detectors/:detectorId/historical"
+            render={(configProps) => (
+              <HistoricalDetectorResults
+                {...configProps}
+                detectorId={detectorId}
+              />
+            )}
+          />
+        ) : null}
         <Route
           exact
           path="/detectors/:detectorId/configurations"

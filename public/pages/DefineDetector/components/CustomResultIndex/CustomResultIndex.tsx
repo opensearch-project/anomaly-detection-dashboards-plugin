@@ -43,10 +43,17 @@ interface CustomResultIndexProps {
   useDefaultResultIndex?: boolean;
   resultIndex?: string;
   formikProps: FormikProps<DetectorDefinitionFormikValues>;
+  // When true, the detector targets an OpenSearch Serverless (AOSS) collection.
+  // Serverless mandates a custom result index (no default index is created) and
+  // does not support the flattened-result-index ingest pipeline (script
+  // processor is not available). We hide the toggles and hard-wire the values.
+  isServerless?: boolean;
 }
 
 function CustomResultIndex(props: CustomResultIndexProps) {
-  const [enabled, setEnabled] = useState<boolean>(!!props.resultIndex);
+  const { isServerless = false } = props;
+  // On serverless, "Enable custom result index" is implicit — no toggle, always on.
+  const [enabled, setEnabled] = useState<boolean>(isServerless || !!props.resultIndex);
   const [customResultIndexConditionsEnabled, setCustomResultIndexConditionsEnabled] = useState<boolean>(true);
   const customResultIndexMinAge = get(props.formikProps, 'values.resultIndexMinAge');
   const customResultIndexMinSize = get(props.formikProps, 'values.resultIndexMinSize');
@@ -65,6 +72,16 @@ function CustomResultIndex(props: CustomResultIndexProps) {
       setFieldValue('resultIndexTtl', '');
     }
   },[customResultIndexConditionsEnabled])
+
+  // On serverless, flattened custom result index is unsupported because AOSS
+  // does not allow the `script` processor in ingest pipelines. Force the field
+  // to false so the detector payload never carries an enabled flag.
+  useEffect(() => {
+    if (isServerless) {
+      setEnabled(true);
+      setFieldValue('flattenCustomResultIndex', false);
+    }
+  }, [isServerless, setFieldValue]);
 
   const hintTextStyle = {
     color: '#69707d',
@@ -101,20 +118,32 @@ function CustomResultIndex(props: CustomResultIndexProps) {
       >
         {({ field, form }: FieldProps) => (
           <EuiFlexGroup direction="column">
-            <EuiFlexItem>
-              <EuiCompressedCheckbox
-                id={'resultIndexCheckbox'}
-                label="Enable custom result index"
-                checked={enabled}
-                disabled={props.isEdit}
-                onChange={() => {
-                  if (enabled) {
-                    form.setFieldValue('resultIndex', undefined);
-                  }
-                  setEnabled(!enabled);
-                }}
-              />
-            </EuiFlexItem>
+            {isServerless ? (
+              <EuiFlexItem>
+                <EuiCallOut
+                  data-test-subj="serverlessCustomResultIndexRequiredCallout"
+                  title="Custom result index is required on OpenSearch Serverless."
+                  color="primary"
+                  iconType="iInCircle"
+                  size="s"
+                />
+              </EuiFlexItem>
+            ) : (
+              <EuiFlexItem>
+                <EuiCompressedCheckbox
+                  id={'resultIndexCheckbox'}
+                  label="Enable custom result index"
+                  checked={enabled}
+                  disabled={props.isEdit}
+                  onChange={() => {
+                    if (enabled) {
+                      form.setFieldValue('resultIndex', undefined);
+                    }
+                    setEnabled(!enabled);
+                  }}
+                />
+              </EuiFlexItem>
+            )}
 
             {enabled ? (
               <EuiFlexItem>
@@ -152,7 +181,7 @@ function CustomResultIndex(props: CustomResultIndexProps) {
 
       <EuiFlexGroup direction="column">
         <EuiFlexItem>
-          { enabled ? (
+          { (enabled && !isServerless) ? (
             <Field
               name="flattenCustomResultIndex">
             {({ field, form }: FieldProps) => (
