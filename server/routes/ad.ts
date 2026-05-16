@@ -75,6 +75,12 @@ export function registerADRoutes(apiRouter: Router, adService: AdService) {
   // routes not used in the UI, therefore no data source id
   apiRouter.post('/detectors/_search', adService.searchDetector);
 
+  // search tasks
+  apiRouter.post('/detectors/tasks/_search', adService.searchTasks);
+  apiRouter.post(
+    '/detectors/tasks/_search/{dataSourceId}',
+    adService.searchTasks
+  );
   // post search anomaly results
   apiRouter.post('/detectors/results/_search', adService.searchResults);
   apiRouter.post(
@@ -1003,6 +1009,39 @@ export default class AdService extends MDSEnabledClientService {
           ok: false,
           error: getErrorMessage(err),
         },
+      });
+    }
+  };
+
+  searchTasks = async (
+    context: RequestHandlerContext,
+    request: OpenSearchDashboardsRequest,
+    opensearchDashboardsResponse: OpenSearchDashboardsResponseFactory
+  ): Promise<IOpenSearchDashboardsResponse<any>> => {
+    try {
+      const { dataSourceId = '' } = request.params as { dataSourceId?: string };
+      const callWithRequest = getClientBasedOnDataSource(
+        context,
+        this.dataSourceEnabled,
+        request,
+        dataSourceId,
+        this.client
+      );
+      const response = await callWithRequest('ad.searchTasks', {
+        body: JSON.stringify(request.body),
+      });
+      return opensearchDashboardsResponse.ok({
+        body: { ok: true, response },
+      });
+    } catch (err) {
+      console.log('Anomaly detector - Unable to search tasks', err);
+      if (isIndexNotFoundError(err)) {
+        return opensearchDashboardsResponse.ok({
+          body: { ok: true, response: { hits: { total: { value: 0 }, hits: [] } } },
+        });
+      }
+      return opensearchDashboardsResponse.ok({
+        body: { ok: false, error: getErrorMessage(err) },
       });
     }
   };
