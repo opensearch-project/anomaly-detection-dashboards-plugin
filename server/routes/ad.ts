@@ -1019,6 +1019,13 @@ export default class AdService extends MDSEnabledClientService {
     opensearchDashboardsResponse: OpenSearchDashboardsResponseFactory
   ): Promise<IOpenSearchDashboardsResponse<any>> => {
     try {
+      const aclResponse = await this.enforceWorkspaceAcl(
+        context,
+        request,
+        opensearchDashboardsResponse,
+        ['library_write', 'library_read']
+      );
+      if (aclResponse) return aclResponse;
       const { dataSourceId = '' } = request.params as { dataSourceId?: string };
       const callWithRequest = getClientBasedOnDataSource(
         context,
