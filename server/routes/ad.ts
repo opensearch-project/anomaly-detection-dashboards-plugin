@@ -1023,7 +1023,7 @@ export default class AdService extends MDSEnabledClientService {
         context,
         request,
         opensearchDashboardsResponse,
-        ['library_write', 'library_read']
+        ['library_read']
       );
       if (aclResponse) return aclResponse;
       const { dataSourceId = '' } = request.params as { dataSourceId?: string };
@@ -1044,7 +1044,10 @@ export default class AdService extends MDSEnabledClientService {
       console.log('Anomaly detector - Unable to search tasks', err);
       if (isIndexNotFoundError(err)) {
         return opensearchDashboardsResponse.ok({
-          body: { ok: true, response: { hits: { total: { value: 0 }, hits: [] } } },
+          body: {
+            ok: true,
+            response: { hits: { total: { value: 0 }, hits: [] } },
+          },
         });
       }
       return opensearchDashboardsResponse.ok({

@@ -8,8 +8,8 @@ env:
   TERM: xterm
   # Using main branch which includes React 18 upgrade (OpenSearch-Dashboards#11187)
   OPENSEARCH_DASHBOARDS_VERSION: 'main'
-  OPENSEARCH_VERSION: '3.5.0'
-  OPENSEARCH_PLUGIN_VERSION: '3.5.0.0'
+  OPENSEARCH_VERSION: '3.6.0'
+  OPENSEARCH_PLUGIN_VERSION: '3.6.0.0'
 
 jobs:
   tests:
