@@ -122,6 +122,8 @@ export const getSuggestAnomalyDetectorAction = () => {
     getIconType: () => ANOMALY_DETECTION_ICON,
     // suggestAD is only compatible with data sources that have certain agents configured
     isCompatible: async (context) => {
+      // Hide for AnalyticEngine data sources
+      if (context.dataSourceType === 'AnalyticEngine') return false;
       if (
         context.datasetId &&
         (context.datasetType === DEFAULT_DATA.SET_TYPES.INDEX_PATTERN ||
