@@ -1,0 +1,1079 @@
+openapi: 3.0.0
+info:
+  title: OpenSearch Dashboards Anomaly Detection APIs
+  description: OpenAPI spec for OpenSearch Dashboards Anomaly Detection plugin APIs
+  termsOfService: https://lfprojects.org/policies/terms-of-use/
+  contact:
+    name: OpenSearch Dashboards
+    url: https://opensearch.org
+    email: opensearch@amazon.com
+  license:
+    name: Apache v2.0 License
+    url: https://www.apache.org/licenses/LICENSE-2.0
+  version: 3.5.0
+servers:
+  - url: http://localhost:5601
+externalDocs:
+  description: Official documentation
+  url: https://docs.opensearch.org/latest/observing-your-data/ad/api/
+components:
+  schemas: {}
+  parameters: {}
+paths:
+  /api/anomaly_detectors/detectors/_search:
+    post:
+      operationId: searchDetector
+      summary: Search detectors
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              description: OpenSearch query DSL body
+      responses:
+        "200":
+          description: Detectors matching the search query
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                  response:
+                    type: object
+  /api/anomaly_detectors/detectors/_list:
+    get:
+      operationId: getDetectors
+      summary: List detectors with pagination and sorting
+      parameters:
+        - schema:
+            type: integer
+            minimum: 0
+          required: true
+          name: from
+          in: query
+          description: Pagination offset
+        - schema:
+            type: integer
+            minimum: 1
+            maximum: 10000
+          required: true
+          name: size
+          in: query
+          description: Number of results per page
+        - schema:
+            type: string
+          required: false
+          name: search
+          in: query
+          description: Search string to filter detectors
+        - schema:
+            type: string
+          required: false
+          name: indices
+          in: query
+          description: Filter by index name
+        - schema:
+            type: string
+            enum:
+              - name
+              - indices
+              - lastUpdateTime
+          required: false
+          name: sortField
+          in: query
+          description: Field to sort by
+        - schema:
+            type: string
+            enum:
+              - asc
+              - desc
+          required: false
+          name: sortDirection
+          in: query
+          description: Sort order
+      responses:
+        "200":
+          description: List of detectors
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                  response:
+                    type: object
+                    properties:
+                      totalDetectors:
+                        type: integer
+                      detectorList:
+                        type: array
+                        items:
+                          type: object
+  /api/anomaly_detectors/detectors/_list/{dataSourceId}:
+    get:
+      operationId: getDetectorsWithDataSource
+      summary: List detectors with pagination and sorting (with datasource)
+      parameters:
+        - schema:
+            type: string
+          required: true
+          name: dataSourceId
+          in: path
+          description: Datasource ID
+        - schema:
+            type: integer
+            minimum: 0
+          required: true
+          name: from
+          in: query
+        - schema:
+            type: integer
+            minimum: 1
+          required: true
+          name: size
+          in: query
+        - schema:
+            type: string
+          required: false
+          name: search
+          in: query
+        - schema:
+            type: string
+          required: false
+          name: sortField
+          in: query
+        - schema:
+            type: string
+            enum:
+              - asc
+              - desc
+          required: false
+          name: sortDirection
+          in: query
+      responses:
+        "200":
+          description: List of detectors
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                  response:
+                    type: object
+  /api/anomaly_detectors/detectors:
+    post:
+      operationId: createDetector
+      summary: Create an anomaly detector
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - name
+                - timeField
+                - indices
+                - featureAttributes
+                - detectionInterval
+              properties:
+                name:
+                  type: string
+                description:
+                  type: string
+                timeField:
+                  type: string
+                indices:
+                  type: array
+                  items:
+                    type: string
+                featureAttributes:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      featureName:
+                        type: string
+                      featureEnabled:
+                        type: boolean
+                      aggregationQuery:
+                        type: object
+                filterQuery:
+                  type: object
+                detectionInterval:
+                  type: object
+                  properties:
+                    period:
+                      type: object
+                      properties:
+                        interval:
+                          type: integer
+                        unit:
+                          type: string
+                windowDelay:
+                  type: object
+                  properties:
+                    period:
+                      type: object
+                      properties:
+                        interval:
+                          type: integer
+                        unit:
+                          type: string
+                categoryField:
+                  type: array
+                  items:
+                    type: string
+                  maxItems: 2
+                resultIndex:
+                  type: string
+      responses:
+        "200":
+          description: Detector created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                  response:
+                    type: object
+  /api/anomaly_detectors/detectors/{dataSourceId}:
+    post:
+      operationId: createDetectorWithDataSource
+      summary: Create an anomaly detector (with datasource)
+      parameters:
+        - schema:
+            type: string
+          required: true
+          name: dataSourceId
+          in: path
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              description: Detector configuration (camelCase)
+      responses:
+        "200":
+          description: Detector created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                  response:
+                    type: object
+  /api/anomaly_detectors/detectors/{detectorId}:
+    get:
+      operationId: getDetector
+      summary: Get a detector by ID
+      parameters:
+        - schema:
+            type: string
+          required: true
+          name: detectorId
+          in: path
+      responses:
+        "200":
+          description: Detector details
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                  response:
+                    type: object
+    put:
+      operationId: updateDetector
+      summary: Update a detector
+      parameters:
+        - schema:
+            type: string
+          required: true
+          name: detectorId
+          in: path
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                ifSeqNo:
+                  type: integer
+                ifPrimaryTerm:
+                  type: integer
+                body:
+                  type: object
+                  description: Detector configuration (camelCase)
+      responses:
+        "200":
+          description: Detector updated
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                  response:
+                    type: object
+    delete:
+      operationId: deleteDetector
+      summary: Delete a detector
+      parameters:
+        - schema:
+            type: string
+          required: true
+          name: detectorId
+          in: path
+      responses:
+        "200":
+          description: Detector deleted
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+  /api/anomaly_detectors/detectors/{detectorId}/{dataSourceId}:
+    get:
+      operationId: getDetectorWithDataSource
+      summary: Get a detector by ID (with datasource)
+      parameters:
+        - schema:
+            type: string
+          required: true
+          name: detectorId
+          in: path
+        - schema:
+            type: string
+          required: true
+          name: dataSourceId
+          in: path
+      responses:
+        "200":
+          description: Detector details
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                  response:
+                    type: object
+    put:
+      operationId: updateDetectorWithDataSource
+      summary: Update a detector (with datasource)
+      parameters:
+        - schema:
+            type: string
+          required: true
+          name: detectorId
+          in: path
+        - schema:
+            type: string
+          required: true
+          name: dataSourceId
+          in: path
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+      responses:
+        "200":
+          description: Detector updated
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                  response:
+                    type: object
+    delete:
+      operationId: deleteDetectorWithDataSource
+      summary: Delete a detector (with datasource)
+      parameters:
+        - schema:
+            type: string
+          required: true
+          name: detectorId
+          in: path
+        - schema:
+            type: string
+          required: true
+          name: dataSourceId
+          in: path
+      responses:
+        "200":
+          description: Detector deleted
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+  /api/anomaly_detectors/detectors/preview:
+    post:
+      operationId: previewDetector
+      summary: Preview detector anomaly results
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                periodStart:
+                  type: integer
+                periodEnd:
+                  type: integer
+                detector:
+                  type: object
+                detectorId:
+                  type: string
+      responses:
+        "200":
+          description: Preview results
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                  response:
+                    type: object
+  /api/anomaly_detectors/detectors/preview/{dataSourceId}:
+    post:
+      operationId: previewDetectorWithDataSource
+      summary: Preview detector anomaly results (with datasource)
+      parameters:
+        - schema:
+            type: string
+          required: true
+          name: dataSourceId
+          in: path
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+      responses:
+        "200":
+          description: Preview results
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                  response:
+                    type: object
+  /api/anomaly_detectors/detectors/_validate/{validationType}:
+    post:
+      operationId: validateDetector
+      summary: Validate detector configuration
+      parameters:
+        - schema:
+            type: string
+            enum:
+              - detector
+              - model
+          required: true
+          name: validationType
+          in: path
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+      responses:
+        "200":
+          description: Validation result
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                  response:
+                    type: object
+  /api/anomaly_detectors/detectors/_validate/{validationType}/{dataSourceId}:
+    post:
+      operationId: validateDetectorWithDataSource
+      summary: Validate detector configuration (with datasource)
+      parameters:
+        - schema:
+            type: string
+          required: true
+          name: validationType
+          in: path
+        - schema:
+            type: string
+          required: true
+          name: dataSourceId
+          in: path
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+      responses:
+        "200":
+          description: Validation result
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                  response:
+                    type: object
+  /api/anomaly_detectors/detectors/_suggest/{suggestType}:
+    post:
+      operationId: suggestDetector
+      summary: Get suggestions for detector configuration
+      parameters:
+        - schema:
+            type: string
+          required: true
+          name: suggestType
+          in: path
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+      responses:
+        "200":
+          description: Suggestion result
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                  response:
+                    type: object
+  /api/anomaly_detectors/detectors/_suggest/{suggestType}/{dataSourceId}:
+    post:
+      operationId: suggestDetectorWithDataSource
+      summary: Get suggestions for detector configuration (with datasource)
+      parameters:
+        - schema:
+            type: string
+          required: true
+          name: suggestType
+          in: path
+        - schema:
+            type: string
+          required: true
+          name: dataSourceId
+          in: path
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+      responses:
+        "200":
+          description: Suggestion result
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                  response:
+                    type: object
+  /api/anomaly_detectors/detectors/{detectorId}/start:
+    post:
+      operationId: startDetector
+      summary: Start a detector job
+      parameters:
+        - schema:
+            type: string
+          required: true
+          name: detectorId
+          in: path
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                startTime:
+                  type: integer
+                endTime:
+                  type: integer
+      responses:
+        "200":
+          description: Detector started
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                  response:
+                    type: object
+  /api/anomaly_detectors/detectors/{detectorId}/start/{dataSourceId}:
+    post:
+      operationId: startDetectorWithDataSource
+      summary: Start a detector job (with datasource)
+      parameters:
+        - schema:
+            type: string
+          required: true
+          name: detectorId
+          in: path
+        - schema:
+            type: string
+          required: true
+          name: dataSourceId
+          in: path
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              type: object
+      responses:
+        "200":
+          description: Detector started
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                  response:
+                    type: object
+  /api/anomaly_detectors/detectors/{detectorId}/stop/{isHistorical}:
+    post:
+      operationId: stopDetector
+      summary: Stop a detector job
+      parameters:
+        - schema:
+            type: string
+          required: true
+          name: detectorId
+          in: path
+        - schema:
+            type: string
+            enum:
+              - "true"
+              - "false"
+          required: true
+          name: isHistorical
+          in: path
+      responses:
+        "200":
+          description: Detector stopped
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                  response:
+                    type: object
+  /api/anomaly_detectors/detectors/{detectorId}/stop/{isHistorical}/{dataSourceId}:
+    post:
+      operationId: stopDetectorWithDataSource
+      summary: Stop a detector job (with datasource)
+      parameters:
+        - schema:
+            type: string
+          required: true
+          name: detectorId
+          in: path
+        - schema:
+            type: string
+          required: true
+          name: isHistorical
+          in: path
+        - schema:
+            type: string
+          required: true
+          name: dataSourceId
+          in: path
+      responses:
+        "200":
+          description: Detector stopped
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                  response:
+                    type: object
+  /api/anomaly_detectors/detectors/{detectorId}/_profile:
+    get:
+      operationId: getDetectorProfile
+      summary: Get detector profile
+      parameters:
+        - schema:
+            type: string
+          required: true
+          name: detectorId
+          in: path
+      responses:
+        "200":
+          description: Detector profile
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                  response:
+                    type: object
+  /api/anomaly_detectors/detectors/{detectorName}/_match:
+    get:
+      operationId: matchDetector
+      summary: Check if a detector name exists
+      parameters:
+        - schema:
+            type: string
+          required: true
+          name: detectorName
+          in: path
+      responses:
+        "200":
+          description: Match result
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                  response:
+                    type: object
+                    properties:
+                      match:
+                        type: boolean
+  /api/anomaly_detectors/detectors/{detectorName}/_match/{dataSourceId}:
+    get:
+      operationId: matchDetectorWithDataSource
+      summary: Check if a detector name exists (with datasource)
+      parameters:
+        - schema:
+            type: string
+          required: true
+          name: detectorName
+          in: path
+        - schema:
+            type: string
+          required: true
+          name: dataSourceId
+          in: path
+      responses:
+        "200":
+          description: Match result
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                  response:
+                    type: object
+  /api/anomaly_detectors/detectors/_count:
+    get:
+      operationId: getDetectorCount
+      summary: Get total detector count
+      responses:
+        "200":
+          description: Detector count
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                  response:
+                    type: object
+                    properties:
+                      count:
+                        type: integer
+  /api/anomaly_detectors/detectors/_count/{dataSourceId}:
+    get:
+      operationId: getDetectorCountWithDataSource
+      summary: Get total detector count (with datasource)
+      parameters:
+        - schema:
+            type: string
+          required: true
+          name: dataSourceId
+          in: path
+      responses:
+        "200":
+          description: Detector count
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                  response:
+                    type: object
+  /api/anomaly_detectors/detectors/results/_search:
+    post:
+      operationId: searchResults
+      summary: Search anomaly detection results
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              description: OpenSearch query DSL body
+      responses:
+        "200":
+          description: Anomaly results
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                  response:
+                    type: object
+  /api/anomaly_detectors/detectors/results/_search/{dataSourceId}:
+    post:
+      operationId: searchResultsWithDataSource
+      summary: Search anomaly detection results (with datasource)
+      parameters:
+        - schema:
+            type: string
+          required: true
+          name: dataSourceId
+          in: path
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+      responses:
+        "200":
+          description: Anomaly results
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                  response:
+                    type: object
+  /api/anomaly_detectors/detectors/results/_search/{resultIndex}/{onlyQueryCustomResultIndex}:
+    post:
+      operationId: searchResultsFromCustomIndex
+      summary: Search results from a custom result index
+      parameters:
+        - schema:
+            type: string
+          required: true
+          name: resultIndex
+          in: path
+        - schema:
+            type: string
+            enum:
+              - "true"
+              - "false"
+          required: true
+          name: onlyQueryCustomResultIndex
+          in: path
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+      responses:
+        "200":
+          description: Anomaly results
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                  response:
+                    type: object
+  /api/anomaly_detectors/detectors/{detectorId}/results/{isHistorical}:
+    get:
+      operationId: getAnomalyResults
+      summary: Get anomaly results for a detector
+      parameters:
+        - schema:
+            type: string
+          required: true
+          name: detectorId
+          in: path
+        - schema:
+            type: string
+            enum:
+              - "true"
+              - "false"
+          required: true
+          name: isHistorical
+          in: path
+        - schema:
+            type: integer
+            minimum: 0
+          required: false
+          name: from
+          in: query
+        - schema:
+            type: integer
+            minimum: 1
+          required: false
+          name: size
+          in: query
+        - schema:
+            type: string
+            enum:
+              - asc
+              - desc
+          required: false
+          name: sortDirection
+          in: query
+      responses:
+        "200":
+          description: Anomaly results
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                  response:
+                    type: object
+  /api/anomaly_detectors/detectors/{detectorId}/_topAnomalies/{isHistorical}:
+    post:
+      operationId: getTopAnomalyResults
+      summary: Get top anomaly results for a high-cardinality detector
+      parameters:
+        - schema:
+            type: string
+          required: true
+          name: detectorId
+          in: path
+        - schema:
+            type: string
+            enum:
+              - "true"
+              - "false"
+          required: true
+          name: isHistorical
+          in: path
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - startTime
+                - endTime
+              properties:
+                startTime:
+                  type: integer
+                endTime:
+                  type: integer
+                size:
+                  type: integer
+                categoryField:
+                  type: array
+                  items:
+                    type: string
+                order:
+                  type: string
+                  enum:
+                    - severity
+                    - occurrence
+                taskId:
+                  type: string
+      responses:
+        "200":
+          description: Top anomaly results
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                  response:
+                    type: object
+  /api/anomaly_detectors/detectors/tasks/_search:
+    post:
+      operationId: searchTasks
+      summary: Search detector tasks
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              description: OpenSearch query DSL body
+      responses:
+        "200":
+          description: Task search results
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                  response:
+                    type: object
