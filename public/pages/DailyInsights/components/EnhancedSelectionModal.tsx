@@ -61,6 +61,108 @@ export interface ClusterOption {
   localcluster: string;
 }
 
+interface FlatIndexItem {
+  name: string;
+  displayName: string;
+  type: 'index' | 'alias';
+  cluster: string;
+  docCount?: number;
+  size?: string;
+}
+
+export const getClustersStringForSearchQuery = (clusters: ClusterOption[]) => {
+  return clusters
+    .filter((cluster) => cluster.localcluster === 'false')
+    .map((cluster) => cluster.cluster)
+    .join(',');
+};
+
+export const getVisibleClusterOptions = (clusters: ClusterInfo[]): ClusterOption[] => {
+  if (clusters.length > 0) {
+    const visibleClusters = clusters.map((value) => ({
+      label: getClusterOptionLabel(value),
+      cluster: value.name,
+      localcluster: value.localCluster.toString(),
+    }));
+    return visibleClusters.sort((a, b) => {
+      if (a.localcluster === 'true' && b.localcluster === 'false') return -1;
+      if (a.localcluster === 'false' && b.localcluster === 'true') return 1;
+      return a.label.localeCompare(b.label);
+    });
+  }
+  return [];
+};
+
+export const flattenGroupedOptions = (
+  groupedOptions: Array<{ label: string; options: any[] }>,
+  visibleIndices: CatIndex[],
+  visibleAliases: IndexAlias[]
+): FlatIndexItem[] => {
+  const flattenedItems: FlatIndexItem[] = [];
+
+  // Group by cluster first, then by type within each cluster
+  const clusterGroups = new Map<string, { indices: any[]; aliases: any[] }>();
+
+  groupedOptions.forEach((group) => {
+    const isAlias = group.label.toLowerCase().includes('alias');
+    const type = isAlias ? 'aliases' : 'indices';
+
+    // Extract cluster name from group label (e.g., "Indices: [Local]" or "Aliases: cluster-name")
+    const clusterMatch = group.label.match(/:\s*(.+)$/);
+    const clusterName = clusterMatch ? clusterMatch[1] : 'unknown';
+
+    if (!clusterGroups.has(clusterName)) {
+      clusterGroups.set(clusterName, { indices: [], aliases: [] });
+    }
+
+    clusterGroups.get(clusterName)![type] = group.options;
+  });
+
+  // Process each cluster: indices first, then aliases
+  clusterGroups.forEach((groupData, clusterName) => {
+    groupData.indices.forEach((option: any) => {
+      const indexName = option.label; // Keep original name (remote already has cluster:index format)
+      const displayName = `${indexName}`;
+
+      let docCount = 0;
+      let size = '';
+      const indexInfo = visibleIndices.find((i) => i.index === option.label);
+      if (indexInfo) {
+        docCount = parseInt(indexInfo['docs.count'] || '0');
+        size = indexInfo['store.size'] || '0b';
+      }
+
+      flattenedItems.push({
+        name: indexName,
+        displayName,
+        type: 'index',
+        cluster: clusterName,
+        docCount,
+        size,
+      });
+    });
+
+    groupData.aliases.forEach((option: any) => {
+      const aliasName = option.label; // Keep original name
+      const displayName = `${aliasName} (alias)`;
+
+      const aliasInfo = visibleAliases.find((a) => a.alias === option.label);
+      const size = aliasInfo ? `Alias for: ${aliasInfo.index}` : 'Alias';
+
+      flattenedItems.push({
+        name: aliasName,
+        displayName,
+        type: 'alias',
+        cluster: clusterName,
+        docCount: 0,
+        size,
+      });
+    });
+  });
+
+  return flattenedItems;
+};
+
 interface EnhancedSelectionModalProps {
   isVisible: boolean;
   selectedIndices: string[];
@@ -195,29 +297,6 @@ export function EnhancedSelectionModal({
     debouncedSearch(searchValue, selectedClusters, dataSourceId);
   };
 
-  const getClustersStringForSearchQuery = (clusters: ClusterOption[]) => {
-    return clusters
-      .filter((cluster) => cluster.localcluster === 'false')
-      .map((cluster) => cluster.cluster)
-      .join(',');
-  };
-
-  const getVisibleClusterOptions = (clusters: ClusterInfo[]): ClusterOption[] => {
-    if (clusters.length > 0) {
-      const visibleClusters = clusters.map((value) => ({
-        label: getClusterOptionLabel(value),
-        cluster: value.name,
-        localcluster: value.localCluster.toString(),
-      }));
-      return visibleClusters.sort((a, b) => {
-        if (a.localcluster === 'true' && b.localcluster === 'false') return -1;
-        if (a.localcluster === 'false' && b.localcluster === 'true') return 1;
-        return a.label.localeCompare(b.label);
-      });
-    }
-    return [];
-  };
-
   // Get real indices and aliases from redux state
   const visibleIndices = get(opensearchState, 'indices', []) as CatIndex[];
   const visibleAliases = get(opensearchState, 'aliases', []) as IndexAlias[];
@@ -228,76 +307,8 @@ export function EnhancedSelectionModal({
     return getVisibleOptions(visibleIndices, visibleAliases, localClusterName);
   }, [visibleIndices, visibleAliases, localClusterName]);
 
-  // Flatten grouped options with proper cluster ordering (indices, aliases per cluster)
   const allIndices = useMemo(() => {
-    const flattenedItems: Array<{name: string, displayName: string, type: 'index' | 'alias', cluster: string, docCount?: number, size?: string}> = [];
-    
-    // Group by cluster first, then by type within each cluster
-    const clusterGroups = new Map<string, {indices: any[], aliases: any[]}>();
-    
-    groupedOptions.forEach(group => {
-      const isAlias = group.label.toLowerCase().includes('alias');
-      const type = isAlias ? 'aliases' : 'indices';
-      
-      // Extract cluster name from group label (e.g., "Indices: [Local]" or "Aliases: cluster-name")
-      const clusterMatch = group.label.match(/:\s*(.+)$/);
-      const clusterName = clusterMatch ? clusterMatch[1] : 'unknown';
-      
-      if (!clusterGroups.has(clusterName)) {
-        clusterGroups.set(clusterName, { indices: [], aliases: [] });
-      }
-      
-      clusterGroups.get(clusterName)![type] = group.options;
-    });
-    
-    // Process each cluster: indices first, then aliases
-    clusterGroups.forEach((groupData, clusterName) => {
-      const isLocal = clusterName.includes('[Local]') || clusterName.includes('(Local)');
-      
-      // Process indices first
-      groupData.indices.forEach((option: any) => {
-        const indexName = option.label; // Keep original name (remote already has cluster:index format)
-        const displayName = `${indexName}`;
-        
-        let docCount = 0;
-        let size = '';
-        const indexInfo = visibleIndices.find(i => i.index === option.label);
-        if (indexInfo) {
-          docCount = parseInt(indexInfo['docs.count'] || '0');
-          size = indexInfo['store.size'] || '0b';
-        }
-        
-        flattenedItems.push({
-          name: indexName,
-          displayName,
-          type: 'index',
-          cluster: clusterName,
-          docCount,
-          size,
-        });
-      });
-      
-      // Then process aliases
-      groupData.aliases.forEach((option: any) => {
-        const aliasName = option.label; // Keep original name
-        const displayName = `${aliasName} (alias)`;
-        
-        let size = '';
-        const aliasInfo = visibleAliases.find(a => a.alias === option.label);
-        size = aliasInfo ? `Alias for: ${aliasInfo.index}` : 'Alias';
-        
-        flattenedItems.push({
-          name: aliasName,
-          displayName,
-          type: 'alias',
-          cluster: clusterName,
-          docCount: 0,
-          size,
-        });
-      });
-    });
-    
-    return flattenedItems;
+    return flattenGroupedOptions(groupedOptions, visibleIndices, visibleAliases);
   }, [groupedOptions, visibleIndices, visibleAliases]);
 
   const filteredIndices = useMemo(() => {
