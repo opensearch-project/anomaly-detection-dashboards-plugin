@@ -287,6 +287,15 @@ export const isDataSourceCompatible = (
   dataSource: SavedObject<DataSourceAttributes>
 ) => {
   if (
+    pluginManifest.hasOwnProperty('unsupportedOSDataSourceEngineTypes') &&
+    pluginManifest.unsupportedOSDataSourceEngineTypes?.includes(
+      dataSource.attributes.dataSourceEngineType ?? ''
+    )
+  ) {
+    return false;
+  }
+
+  if (
     pluginManifest.hasOwnProperty('requiredOSDataSourcePlugins') &&
     !pluginManifest.requiredOSDataSourcePlugins.every((plugin) =>
       dataSource.attributes.installedPlugins?.includes(plugin)

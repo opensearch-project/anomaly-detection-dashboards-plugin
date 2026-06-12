@@ -19,6 +19,7 @@ import {
 
 jest.mock('../../../../opensearch_dashboards.json', () => ({
   supportedOSDataSourceVersions: '>=2.9.0',
+  unsupportedOSDataSourceEngineTypes: ['AnalyticEngine'],
   requiredOSDataSourcePlugins: ['opensearch-anomaly-detection'],
 }));
 
@@ -219,11 +220,13 @@ describe('helpers', () => {
   describe('isDataSourceCompatible', () => {
     const mockDataSource = (
       version: string,
-      plugins: string[] = ['opensearch-anomaly-detection']
+      plugins: string[] = ['opensearch-anomaly-detection'],
+      dataSourceEngineType?: string
     ) => ({
       attributes: {
         dataSourceVersion: version,
         installedPlugins: plugins,
+        dataSourceEngineType,
       },
     });
 
@@ -251,16 +254,27 @@ describe('helpers', () => {
       const dataSource = mockDataSource('3.1.0', ['some-other-plugin']);
       expect(isDataSourceCompatible(dataSource as any)).toBe(false);
     });
+
+    test('should be incompatible for AnalyticEngine', () => {
+      const dataSource = mockDataSource(
+        '3.1.0',
+        ['opensearch-anomaly-detection'],
+        'AnalyticEngine'
+      );
+      expect(isDataSourceCompatible(dataSource as any)).toBe(false);
+    });
   });
 
   describe('isForecastingDataSourceCompatible', () => {
     const mockDataSource = (
       version: string,
-      plugins: string[] = ['opensearch-anomaly-detection']
+      plugins: string[] = ['opensearch-anomaly-detection'],
+      dataSourceEngineType?: string
     ) => ({
       attributes: {
         dataSourceVersion: version,
         installedPlugins: plugins,
+        dataSourceEngineType,
       },
     });
 
@@ -286,6 +300,15 @@ describe('helpers', () => {
 
     test('should be incompatible if required plugin is missing', () => {
       const dataSource = mockDataSource('3.1.0', ['some-other-plugin']);
+      expect(isForecastingDataSourceCompatible(dataSource as any)).toBe(false);
+    });
+
+    test('should be incompatible for AnalyticEngine', () => {
+      const dataSource = mockDataSource(
+        '3.1.0',
+        ['opensearch-anomaly-detection'],
+        'AnalyticEngine'
+      );
       expect(isForecastingDataSourceCompatible(dataSource as any)).toBe(false);
     });
   });
