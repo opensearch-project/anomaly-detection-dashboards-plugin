@@ -2,15 +2,40 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
+import React from 'react';
 import {
+  showAgentFailureToast,
+  showCompletionToasts,
   saveAgentTask,
   getAgentTask,
   updateAgentTaskState,
   extractFailedIndices,
 } from '../agentTaskStorage';
 
+const mockAddSuccess = jest.fn();
+const mockAddDanger = jest.fn();
+const mockMountReactNode = jest.fn((node) => node);
+
+jest.mock('../../../../services', () => ({
+  getNotifications: () => ({
+    toasts: {
+      addSuccess: mockAddSuccess,
+      addDanger: mockAddDanger,
+    },
+  }),
+}));
+
+jest.mock(
+  '../../../../../../../src/core/public/utils',
+  () => ({
+    mountReactNode: (node: React.ReactNode) => mockMountReactNode(node),
+  }),
+  { virtual: true }
+);
+
 describe('agentTaskStorage', () => {
   beforeEach(() => {
+    jest.clearAllMocks();
     sessionStorage.clear();
   });
 
@@ -105,9 +130,7 @@ describe('agentTaskStorage', () => {
                       { status: 'success', detectorName: 'det-1' },
                       { status: 'failed_validation', error: 'No data found' },
                     ],
-                    'index-b': [
-                      { status: 'success', detectorName: 'det-2' },
-                    ],
+                    'index-b': [{ status: 'success', detectorName: 'det-2' }],
                   }),
                 },
               ],
@@ -116,9 +139,7 @@ describe('agentTaskStorage', () => {
         },
       };
       const failures = extractFailedIndices(response);
-      expect(failures).toEqual([
-        { index: 'index-a', error: 'No data found' },
-      ]);
+      expect(failures).toEqual([{ index: 'index-a', error: 'No data found' }]);
     });
 
     test('returns empty array when all succeed', () => {
@@ -166,6 +187,76 @@ describe('agentTaskStorage', () => {
       };
       const failures = extractFailedIndices(response);
       expect(failures).toEqual([{ index: 'index-a', error: 'Unknown error' }]);
+    });
+  });
+
+  describe('showCompletionToasts', () => {
+    test('shows a generic success toast when the response has no result payload', () => {
+      showCompletionToasts({ response: {} });
+
+      expect(mockAddSuccess).toHaveBeenCalledWith('Agent task completed');
+      expect(mockAddDanger).not.toHaveBeenCalled();
+    });
+
+    test('shows success and failure summaries from the agent result payload', () => {
+      showCompletionToasts({
+        response: {
+          inference_results: [
+            {
+              output: [
+                {
+                  result: JSON.stringify({
+                    'index-a': [{ status: 'success' }, { status: 'success' }],
+                    'index-b': [{ status: 'failed', error: 'No data found' }],
+                    'index-c': [{ status: 'failed' }],
+                  }),
+                },
+              ],
+            },
+          ],
+        },
+      });
+
+      expect(mockAddSuccess).toHaveBeenCalledWith(
+        expect.objectContaining({
+          title: '1 index configured',
+        })
+      );
+      expect(mockAddDanger).toHaveBeenCalledWith(
+        expect.objectContaining({
+          title: '2 indices failed',
+          toastLifeTimeMs: 60000,
+        })
+      );
+      expect(mockMountReactNode).toHaveBeenCalledTimes(2);
+    });
+
+    test('falls back to a generic success toast for malformed result JSON', () => {
+      showCompletionToasts({
+        response: {
+          inference_results: [
+            {
+              output: [{ result: 'not-json' }],
+            },
+          ],
+        },
+      });
+
+      expect(mockAddSuccess).toHaveBeenCalledWith('Agent task completed');
+    });
+  });
+
+  describe('showAgentFailureToast', () => {
+    test('shows a retry toast with the failure message', () => {
+      showAgentFailureToast('agent timed out');
+
+      expect(mockAddDanger).toHaveBeenCalledWith(
+        expect.objectContaining({
+          title: 'Detector creation failed',
+          toastLifeTimeMs: 60000,
+        })
+      );
+      expect(mockMountReactNode).toHaveBeenCalledTimes(1);
     });
   });
 });
