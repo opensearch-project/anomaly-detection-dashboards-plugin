@@ -517,8 +517,10 @@ describe('<DetectorList /> spec', () => {
       await user.click(getAllByRole('checkbox')[0]);
       await user.click(getByTestId('listActionsButton'));
       await user.click(getByText('Stop real-time detectors'));
-      getByText('Are you sure you want to stop the selected detectors?');
-      getByText('Stop detectors');
+      await waitFor(() => {
+        getByText('Are you sure you want to stop the selected detectors?');
+        getByText('Stop detectors');
+      });
     });
     //TODO: fix this failed UT
     test.skip('delete action always enabled', async () => {
