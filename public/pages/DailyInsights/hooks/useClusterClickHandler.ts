@@ -16,7 +16,7 @@ import { searchResults } from '../../../redux/reducers/anomalyResults';
 import { predictModel } from '../../../redux/reducers/ml';
 import { InsightCluster, ClusterAnomaly } from '../components/EventDetailModal';
 
-const buildLLMPrompt = (
+export const buildLLMPrompt = (
   cluster: InsightCluster,
   configs: Record<string, any>,
 ): Record<string, any> => {
@@ -170,6 +170,7 @@ export function useClusterClickHandler(dataSourceId: string) {
       // LLM summary disabled by default. Set to a deployed model ID to enable.
       // See LLM_MODEL_CONFIG_OPTIONS.md for configuration options.
       const modelId = '';
+      /* istanbul ignore next: disabled until a model ID is configured */
       if (modelId) {
         llmInFlightRef.current.add(cacheKey);
         setLlmLoadingKeys((prev) => new Set(prev).add(cacheKey));
