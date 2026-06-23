@@ -41,7 +41,9 @@ jobs:
         run: |
           chown -R 1000:1000 `pwd`
           cd ./OpenSearch-Dashboards/
-          su `id -un 1000` -c "source $NVM_DIR/nvm.sh && nvm use && node -v && yarn -v &&
+          su `id -un 1000` -c "source $NVM_DIR/nvm.sh && nvm install && nvm use && node -v &&
+                               YARN_VERSION=\$(node -p \"require('./package.json').engines.yarn\") &&
+                               npm i -g yarn@\${YARN_VERSION} && yarn -v &&
                                cd ./plugins/anomaly-detection-dashboards-plugin &&
                                whoami && yarn osd bootstrap --single-version=loose && yarn build && yarn run test:jest --coverage"
       - name: Uploads coverage
