@@ -27,7 +27,6 @@
     "@types/react-plotly.js": "^2.6.0",
     "@types/redux-mock-store": "^1.0.6",
     "babel-polyfill": "^6.26.0",
-    "eslint-plugin-no-unsanitized": "^3.0.2",
     "eslint-plugin-prefer-object-spread": "^1.2.1",
     "jest-canvas-mock": "2.5.1",
     "lint-staged": "^9.2.0",
@@ -39,7 +38,6 @@
     "brace": "0.11.1",
     "formik": "^2.2.5",
     "plotly.js-dist": "^2.29.1",
-    "prettier": "^2.1.1",
     "react-plotly.js": "^2.6.0",
     "react-redux": "^8.1.0",
     "reselect": "^4.0.0"
