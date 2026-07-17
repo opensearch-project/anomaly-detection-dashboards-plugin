@@ -24,15 +24,6 @@ jest.mock('../../../services', () => ({
 
 describe('<RefreshForecastersButton /> spec', () => {
   beforeAll(() => {
-    Object.defineProperty(window, 'location', {
-      value: {
-        href: 'http://test.com',
-        pathname: '/',
-        search: '',
-        hash: '',
-      },
-      writable: true
-    });
   });
 
   beforeEach(() => {

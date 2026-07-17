@@ -55,12 +55,8 @@ describe('buildDiscoverUrl', () => {
       find: jest.fn().mockResolvedValue({ savedObjects: [{ id: 'idx-pat-1', attributes: { title: 'my-index', timeFieldName: 'time' } }] }),
       create: jest.fn().mockResolvedValue({ id: 'new-pat-1' }),
     });
-
-    // jsdom doesn't set these, so provide defaults
-    Object.defineProperty(window, 'location', {
-      value: { origin: 'http://localhost:5601', pathname: '/app/anomaly-detection-dashboards' },
-      writable: true,
-    });
+    // window.location.origin is 'http://localhost:5601' via testEnvironmentOptions.url;
+    // pathname defaults to '/' under jsdom which is sufficient for these assertions.
   });
 
   test('returns a URL containing the discover path', async () => {

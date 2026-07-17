@@ -98,7 +98,7 @@ export function ForecasterPopover(props: ForecasterPopoverProps) {
         ) : (
           <EuiSmallButton
             fullWidth
-            onClick={() => window.location.href = forecasterUrl}
+            onClick={() => window.location.assign(forecasterUrl)}
           >
             View forecast
           </EuiSmallButton>

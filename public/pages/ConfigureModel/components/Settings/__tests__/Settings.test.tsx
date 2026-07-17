@@ -45,7 +45,7 @@ describe('<Settings /> spec', () => {
     // or loses focus (and again on form submit).
     await fireEvent.focus(getByPlaceholderText('Interval'));
     await fireEvent.blur(getByPlaceholderText('Interval'));
-    expect(findByText('Must be a positive integer')).not.toBeNull();
+    expect(await findByText('Must be a positive integer')).toBeInTheDocument();
   });
   test('shows error for invalid interval when toggling focus/blur', async () => {
     const { queryByText, findByText, getByPlaceholderText } = render(
@@ -58,9 +58,12 @@ describe('<Settings /> spec', () => {
       </Formik>
     );
     expect(queryByText('Required')).toBeNull();
-    await userEvent.type(getByPlaceholderText('Interval'), '-1');
+    // jsdom 26 sanitizes type=number inputs: userEvent.type typing '-1' drops the
+    // intermediate '-' (an invalid number-input value) and leaves the field as '1'.
+    // Set the negative value directly to preserve the original test intent.
+    await fireEvent.change(getByPlaceholderText('Interval'), { target: { value: '-1' } });
     await fireEvent.blur(getByPlaceholderText('Interval'));
-    expect(findByText('Must be a positive integer')).not.toBeNull();
+    expect(await findByText('Must be a positive integer')).toBeInTheDocument();
   });
   test('shows error for interval of 0 when toggling focus/blur', async () => {
     const { queryByText, findByText, getByPlaceholderText } = render(
@@ -75,7 +78,7 @@ describe('<Settings /> spec', () => {
     expect(queryByText('Required')).toBeNull();
     await userEvent.type(getByPlaceholderText('Interval'), '0');
     await fireEvent.blur(getByPlaceholderText('Interval'));
-    expect(findByText('Must be a positive integer')).not.toBeNull();
+    expect(await findByText('Must be a positive integer')).toBeInTheDocument();
   });
   test('shows error for invalid window delay when toggling focus/blur', async () => {
     const { queryByText, findByText, getByPlaceholderText } = render(
@@ -88,9 +91,11 @@ describe('<Settings /> spec', () => {
       </Formik>
     );
     expect(queryByText('Required')).toBeNull();
-    await userEvent.type(getByPlaceholderText('Window delay'), '-1');
+    // jsdom 26 sanitizes type=number inputs: userEvent.type typing '-1' drops the
+    // intermediate '-', so set the negative value directly to preserve test intent.
+    await fireEvent.change(getByPlaceholderText('Window delay'), { target: { value: '-1' } });
     await fireEvent.blur(getByPlaceholderText('Window delay'));
-    expect(findByText('Must be a non-negative integer')).not.toBeNull();
+    expect(await findByText('Must be a non-negative integer')).toBeInTheDocument();
   });
 
   describe('handleIntervalChange - frequency auto-adjustment', () => {

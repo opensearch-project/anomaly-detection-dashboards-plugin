@@ -25,15 +25,6 @@ jest.mock('../../../../../services', () => ({
 
 describe('<EmptyDetectorMessage /> spec', () => {
   beforeAll(() => {
-    Object.defineProperty(window, 'location', {
-      value: {
-        href: 'http://test.com',
-        pathname: '/',
-        search: '',
-        hash: '',
-      },
-      writable: true
-    });
   });
   describe('Empty results', () => {
     test('renders component with empty message', () => {

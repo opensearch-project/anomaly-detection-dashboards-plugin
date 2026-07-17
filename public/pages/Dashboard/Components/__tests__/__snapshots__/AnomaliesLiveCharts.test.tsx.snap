@@ -1,4 +1,4 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`<AnomaliesLiveChart /> spec AnomaliesLiveChart with Sample anomaly data 1`] = `
 <div>
@@ -114,7 +114,7 @@ exports[`<AnomaliesLiveChart /> spec AnomaliesLiveChart with Sample anomaly data
       >
         <div
           class="euiFlexGroup euiFlexGroup--gutterLarge euiFlexGroup--directionRow euiFlexGroup--responsive"
-          style="padding-top: 175px;"
+          style=""
         >
           <div
             class="euiFlexItem"

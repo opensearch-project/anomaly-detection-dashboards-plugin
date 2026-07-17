@@ -11,8 +11,8 @@
  
 module.exports = {
   rootDir: '../',
-  setupFiles: ['<rootDir>/test/polyfills.ts', '<rootDir>/test/setupTests.ts'],
-  setupFilesAfterEnv: ['<rootDir>/test/setup.jest.ts'],
+  setupFiles: ['jest-canvas-mock', '<rootDir>/test/polyfills.ts', '<rootDir>/test/setupTests.ts'],
+  setupFilesAfterEnv: ['jest-location-mock', '<rootDir>/test/setup.jest.ts'],
   roots: ['<rootDir>'],
   coverageDirectory: './coverage',
   moduleNameMapper: {
@@ -20,6 +20,15 @@ module.exports = {
     '^opensearch-dashboards/public$': '<rootDir>/../../src/core/public',
   },
   testEnvironment: 'jest-environment-jsdom',
+  testEnvironmentOptions: {
+    url: 'http://localhost:5601',
+  },
+  // Retain Jest 28 snapshot defaults; Jest 29 flipped escapeString and printBasicPrototype to false,
+  // which would invalidate existing snapshots. See https://jestjs.io/docs/29.0/upgrading-to-jest29
+  snapshotFormat: {
+    escapeString: true,
+    printBasicPrototype: true,
+  },
   coverageReporters: ['lcov', 'text', 'cobertura'],
   testMatch: ['**/*.test.js', '**/*.test.jsx', '**/*.test.ts', '**/*.test.tsx'],
   collectCoverageFrom: [
@@ -55,7 +64,4 @@ module.exports = {
     '^.+\\.svg$': '<rootDir>/test/mocks/transformMock.ts',
     '^.+\\.html$': '<rootDir>/test/mocks/transformMock.ts',
   },
-  setupFiles: [
-    "jest-canvas-mock"
-  ]
 };

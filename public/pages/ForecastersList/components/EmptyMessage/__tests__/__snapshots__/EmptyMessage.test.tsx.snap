@@ -1,4 +1,4 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`<EmptyForecasterMessage /> spec Empty results renders component with empty message and learn more link 1`] = `
 <div

@@ -77,15 +77,6 @@ const renderWithRouter = () => ({
 
 describe('<AnomalyDetectionOverview /> spec', () => {
   beforeAll(() => {
-    Object.defineProperty(window, 'location', {
-      value: {
-        href: 'http://test.com',
-        pathname: '/',
-        search: '',
-        hash: '',
-      },
-      writable: true
-    });
   });
   jest.clearAllMocks();
   describe('No sample detectors created', () => {

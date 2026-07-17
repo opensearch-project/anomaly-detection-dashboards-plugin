@@ -67,15 +67,6 @@ const renderAnomalyOccurenceChart = (
 
 describe('<AnomalyOccurrenceChart /> spec', () => {
   beforeAll(() => {
-    Object.defineProperty(window, 'location', {
-      value: {
-        href: 'http://test.com',
-        pathname: '/',
-        search: '',
-        hash: '',
-      },
-      writable: true
-    });
   });
   test('renders the component in case of Sample Anomaly', () => {
     console.error = jest.fn();

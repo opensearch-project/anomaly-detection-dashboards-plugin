@@ -53,15 +53,6 @@ jest.mock('../../utils/utils', () => ({
 }));
 describe('<AnomaliesLiveChart /> spec', () => {
   beforeAll(() => {
-    Object.defineProperty(window, 'location', {
-      value: {
-        href: 'http://test.com',
-        pathname: '/',
-        search: '',
-        hash: '',
-      },
-      writable: true
-    });
   });
   test('AnomaliesLiveChart with Sample anomaly data', async () => {
     const history = createMemoryHistory(); 
