@@ -1,4 +1,4 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`<DataConnectionFlyout /> spec renders the flyout with indices and local cluster name 1`] = `null`;
 

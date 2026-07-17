@@ -144,15 +144,6 @@ describe('<DailyInsights /> spec', () => {
   });
 
   beforeAll(() => {
-    Object.defineProperty(window, 'location', {
-      value: {
-        href: 'http://test.com',
-        pathname: '/',
-        search: '',
-        hash: '',
-      },
-      writable: true,
-    });
   });
 
   describe('Feature flag disabled', () => {

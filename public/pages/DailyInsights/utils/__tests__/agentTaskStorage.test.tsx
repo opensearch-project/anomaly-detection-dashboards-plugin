@@ -25,13 +25,13 @@ jest.mock('../../../../services', () => ({
   }),
 }));
 
-jest.mock(
-  '../../../../../../../src/core/public/utils',
-  () => ({
-    mountReactNode: (node: React.ReactNode) => mockMountReactNode(node),
-  }),
-  { virtual: true }
-);
+// NOTE: src/core/public/utils is a real module (exports mountReactNode), so this must NOT be a
+// virtual mock. Under Jest 30's stricter resolver a virtual mock of an existing module races with
+// the real module across parallel workers and intermittently fails to apply (mountReactNode ends up
+// un-mocked -> 0 calls). Mocking it as a normal module makes it deterministic.
+jest.mock('../../../../../../../src/core/public/utils', () => ({
+  mountReactNode: (node: React.ReactNode) => mockMountReactNode(node),
+}));
 
 describe('agentTaskStorage', () => {
   beforeEach(() => {

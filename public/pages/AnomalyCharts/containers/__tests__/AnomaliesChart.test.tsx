@@ -65,15 +65,6 @@ const renderDataFilter = (chartProps: AnomaliesChartProps) => ({
 
 describe('<AnomaliesChart /> spec', () => {
   beforeAll(() => {
-    Object.defineProperty(window, 'location', {
-      value: {
-        href: 'http://test.com',
-        pathname: '/',
-        search: '',
-        hash: '',
-      },
-      writable: true
-    });
   });
   test('renders the component for sample / preview', () => {
     console.error = jest.fn();

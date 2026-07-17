@@ -1,4 +1,4 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`<DetectorControls /> spec Detector Controls renders detector controls with disabled detecor and empty features 1`] = `
 <div>

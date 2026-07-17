@@ -37,15 +37,6 @@ jest.mock('../../../../../services', () => ({
 
 describe('<SampleDataBox /> spec', () => {
   beforeAll(() => {
-    Object.defineProperty(window, 'location', {
-      value: {
-        href: 'http://test.com',
-        pathname: '/',
-        search: '',
-        hash: '',
-      },
-      writable: true
-    });
   });
   describe('Data not loaded', () => {
     test('renders component', () => {
