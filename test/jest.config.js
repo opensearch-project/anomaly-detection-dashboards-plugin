@@ -24,7 +24,7 @@ module.exports = {
     url: 'http://localhost:5601',
   },
   // Retain Jest 28 snapshot defaults; Jest 29 flipped escapeString and printBasicPrototype to false,
-  // which would invalidate existing snapshots. See https://jestjs.io/docs/29.0/upgrading-to-jest29
+  // which would invalidate existing snapshots. See https://jestjs.io/docs/upgrading-to-jest29
   snapshotFormat: {
     escapeString: true,
     printBasicPrototype: true,
