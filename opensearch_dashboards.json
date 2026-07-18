@@ -1,7 +1,7 @@
 {
   "id": "anomalyDetectionDashboards",
-  "version": "3.7.0.0",
-  "opensearchDashboardsVersion": "3.7.0",
+  "version": "3.8.0.0",
+  "opensearchDashboardsVersion": "3.8.0",
   "configPath": [
     "anomaly_detection_dashboards"
   ],
@@ -28,7 +28,9 @@
   "server": true,
   "ui": true,
   "supportedOSDataSourceVersions": ">=2.9.0",
-  "unsupportedOSDataSourceEngineTypes": ["AnalyticEngine"],
+  "unsupportedOSDataSourceEngineTypes": [
+    "AnalyticEngine"
+  ],
   "requiredOSDataSourcePlugins": [
     "opensearch-anomaly-detection"
   ]
