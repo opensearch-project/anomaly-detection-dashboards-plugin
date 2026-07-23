@@ -207,23 +207,31 @@ exports[`<AnomaliesLiveChart /> spec AnomaliesLiveChart with Sample anomaly data
             style="height: 200px; width: 100%; opacity: 1;"
           >
             <div
+              aria-roledescription="visualization"
               class="echChart"
+              data-testid="echChart"
+              role="graphics-document"
+              style="width: 100%; height: 100%;"
             >
               <div
-                class="echChartBackground"
-                style="background-color: transparent;"
-              />
-              <div
-                class="echChartStatus"
-                data-ech-render-complete="false"
-                data-ech-render-count="0"
-              />
-              <div
-                class="echChartResizer"
-              />
-              <div
-                class="echContainer"
-              />
+                class="echChartContent"
+              >
+                <div
+                  class="echChartBackground"
+                  style="background-color: transparent;"
+                />
+                <div
+                  class="echChartStatus"
+                  data-ech-render-complete="false"
+                  data-ech-render-count="0"
+                />
+                <div
+                  class="echChartResizer"
+                />
+                <div
+                  class="echContainer"
+                />
+              </div>
             </div>
           </div>
         </div>
