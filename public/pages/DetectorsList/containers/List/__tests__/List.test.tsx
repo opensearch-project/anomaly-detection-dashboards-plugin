@@ -144,19 +144,15 @@ describe('<DetectorList /> spec', () => {
       expect(queryByText('index_30')).toBeNull();
 
       // Navigate to next page
-      await waitFor(async () =>
-        await user.click(getAllByTestId('pagination-button-next')[0])
-      );
-      getByText('detector_name_30');
+      await user.click(getAllByTestId('pagination-button-next')[0]);
+      await waitFor(() => getByText('detector_name_30'));
       getByText('index_30');
       expect(queryByText('detector_name_0')).toBeNull();
       expect(queryByText('index_0')).toBeNull();
 
       // Navigate to previous page
-      await waitFor(async () =>
-        await user.click(getAllByTestId('pagination-button-previous')[0])
-      );
-      getByText('detector_name_0');
+      await user.click(getAllByTestId('pagination-button-previous')[0]);
+      await waitFor(() => getByText('detector_name_0'));
       expect(queryByText('detector_name_30')).toBeNull();
     }, 20000);
     test('sorting functionality', async () => {
