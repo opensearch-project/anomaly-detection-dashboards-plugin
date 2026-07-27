@@ -484,7 +484,19 @@ export const DetectorDetail = (props: DetectorDetailProps) => {
           >
             {renderPageHeader()}
             <EuiFlexItem grow={false}>
-              <DetectorControls
+              <EuiFlexGroup gutterSize="s" alignItems="center" responsive={false}>
+                {/* Resource-sharing SPI marker: security-dashboards-plugin mounts
+                    its centralized Share button here when installed and enabled */}
+                <EuiFlexItem grow={false}>
+                  <div
+                    data-resource-share-button
+                    data-resource-id={detectorId}
+                    data-resource-type="anomaly-detector"
+                    {...(dataSourceId ? { 'data-resource-data-source-id': dataSourceId } : {})}
+                  />
+                </EuiFlexItem>
+                <EuiFlexItem grow={false}>
+                  <DetectorControls
                 onEditDetector={handleEditDetector}
                 onDelete={() =>
                   setDetectorDetailModel({
@@ -504,6 +516,8 @@ export const DetectorDetail = (props: DetectorDetailProps) => {
                 onEditFeatures={handleEditFeature}
                 detector={detector}
               />
+                </EuiFlexItem>
+              </EuiFlexGroup>
             </EuiFlexItem>
           </EuiFlexGroup>
           {isResultIndexMissing ? (
