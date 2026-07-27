@@ -13,3 +13,21 @@
 import { MutationObserver } from './polyfills/mutationObserver';
 
 Object.defineProperty(window, 'MutationObserver', { value: MutationObserver });
+
+// jsdom does not implement ResizeObserver, but chart components construct one.
+class ResizeObserverMock {
+  observe() {
+    return undefined;
+  }
+
+  unobserve() {
+    return undefined;
+  }
+
+  disconnect() {
+    return undefined;
+  }
+}
+
+Object.defineProperty(window, 'ResizeObserver', { value: ResizeObserverMock });
+Object.defineProperty(globalThis, 'ResizeObserver', { value: ResizeObserverMock });
