@@ -21,10 +21,10 @@ import moment from 'moment';
 import { get, isEmpty } from 'lodash';
 import React from 'react';
 import { Detector } from '../../../models/interfaces';
-import { PLUGIN_NAME } from '../../../utils/constants';
+import { AD_RESOURCE_TYPE, PLUGIN_NAME } from '../../../utils/constants';
+import { isResourceSharingAvailable } from '../../utils/helpers';
 import { DETECTOR_STATE } from '../../../../server/utils/constants';
 import { stateToColorMap } from '../../utils/constants';
-import { getApplication } from '../../../services';
 
 export const DEFAULT_EMPTY_DATA = '-';
 
@@ -185,7 +185,7 @@ export function getColumns(dataSourceId) {
               <div
                 data-resource-share-button
                 data-resource-id={detector.id}
-                data-resource-type="anomaly-detector"
+                data-resource-type={AD_RESOURCE_TYPE}
                 data-resource-share-display="icon"
                 {...(dataSourceId ? { 'data-resource-data-source-id': dataSourceId } : {})}
               />
@@ -194,17 +194,4 @@ export function getColumns(dataSourceId) {
         ]
       : []),
   ] as EuiBasicTableColumn<any>[];
-}
-
-/**
- * Whether the resource-sharing feature is available, via the core capability
- * registered by security-dashboards-plugin. False when that plugin is not
- * installed or the feature is disabled — no plugin dependency involved.
- */
-function isResourceSharingAvailable(): boolean {
-  try {
-    return !!(getApplication().capabilities as any)?.resourceSharing?.enabled;
-  } catch (e) {
-    return false;
-  }
 }
