@@ -33,6 +33,10 @@ export const staticColumn = [
     truncateText: false,
     render: renderTime,
     dataType: 'date',
+    align: 'center',
+    // add width on each column to leave more room for the entity value column
+    // as it tends to be longer than the other columns
+    width: '130px',
   },
   {
     field: 'endTime',
@@ -41,6 +45,8 @@ export const staticColumn = [
     truncateText: false,
     render: renderTime,
     dataType: 'date',
+    align: 'center',
+    width: '130px',
   },
   {
     field: 'confidence',
@@ -57,6 +63,13 @@ export const staticColumn = [
     sortable: true,
     truncateText: false,
     dataType: 'number',
+    align: 'center',
+    width: '100px',
+    render: (confidence: number) => (
+      <span style={{ textAlign: 'center', display: 'block' }}>
+        {confidence ? confidence.toFixed(2) : DEFAULT_EMPTY_DATA}
+      </span>
+    ),
   },
   {
     field: 'anomalyGrade',
@@ -73,6 +86,13 @@ export const staticColumn = [
     sortable: true,
     truncateText: false,
     dataType: 'number',
+    align: 'center',
+    width: '140px',
+    render: (anomalyGrade: number) => (
+      <span style={{ textAlign: 'center', display: 'block' }}>
+        {anomalyGrade ? anomalyGrade.toFixed(2) : DEFAULT_EMPTY_DATA}
+      </span>
+    ),
   },
   {
     field: 'actions',
@@ -85,8 +105,10 @@ export const staticColumn = [
           type="iInCircle"
         />
       </EuiText>
-    ),    align: 'left',
-    truncateText: true,
+    ),
+    align: 'center',
+    truncateText: false,
+    width: '80px',
     actions: [
       {
         type: 'icon',
@@ -106,6 +128,16 @@ export const entityValueColumn = {
   sortable: true,
   truncateText: false,
   dataType: 'string',
-  // To render newline character correctly
-  style: { whiteSpace: 'pre-wrap' },
+  align: 'center',
+  width: '260px',
+  render: (entityValue: string) => (
+    <div
+      style={{
+        whiteSpace: 'pre-wrap',
+        wordBreak: 'break-word',
+      }}
+    >
+      {entityValue || DEFAULT_EMPTY_DATA}
+    </div>
+  ),
 } as EuiBasicTableColumn<any>;
