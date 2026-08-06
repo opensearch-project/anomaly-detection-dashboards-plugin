@@ -32,7 +32,8 @@ import {
 } from './constants';
 import { DETECTOR_STATE } from '../../../server/utils/constants';
 import { timeFormatter } from '@elastic/charts';
-import { getDataSourceEnabled } from '../../services';
+import { getApplication, getDataSourceEnabled } from '../../services';
+import { AD_RESOURCE_TYPE } from '../../utils/constants';
 import { DataSourceAttributes } from '../../../../../src/plugins/data_source/common/data_sources';
 import { SavedObject } from '../../../../../src/core/public';
 import pluginManifest from '../../../opensearch_dashboards.json';
@@ -422,3 +423,23 @@ export const mapToVisibleForecasterOptions = (items: any[], key: string) =>
       return acc;
     }, [] as { label: string; options: any[] }[]);
   }
+
+/**
+ * Whether resource sharing is available for the given resource type, via the
+ * core capability registered by security-dashboards-plugin. False when that
+ * plugin is not installed, the feature is disabled, or the type is not
+ * registered with the resource-sharing framework — no plugin dependency
+ * involved.
+ */
+export function isResourceSharingAvailable(
+  resourceType: string = AD_RESOURCE_TYPE
+): boolean {
+  try {
+    const caps = (getApplication().capabilities as any)?.resourceSharing;
+    if (!caps?.enabled) return false;
+    const types: string = caps.availableTypes ?? '';
+    return types.split(',').includes(resourceType);
+  } catch (e) {
+    return false;
+  }
+}

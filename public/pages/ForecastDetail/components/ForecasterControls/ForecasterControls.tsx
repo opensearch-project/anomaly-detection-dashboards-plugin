@@ -23,7 +23,8 @@ import {
 } from '@elastic/eui';
 import moment from 'moment';
 import { getNotifications, getSavedObjectsClient, getUISettings, getDataSourceEnabled, getDataSourceManagementPlugin } from '../../../../services';
-import { USE_NEW_HOME_PAGE } from '../../../../utils/constants';
+import { FORECASTER_RESOURCE_TYPE, USE_NEW_HOME_PAGE } from '../../../../utils/constants';
+import { isResourceSharingAvailable } from '../../../utils/helpers';
 import { Forecaster } from '../../../../models/interfaces';
 import { FORECASTER_STATE, isActiveState } from '../../../../../server/utils/constants';
 import { forecastStateToColorMap } from '../../../utils/constants';
@@ -198,6 +199,18 @@ export const ForecasterControls = (props: ForecasterControlsProps) => {
         const actions = [];
         if (dataSourceEnabled && renderDataSourceComponent) {
             actions.push(renderDataSourceComponent);
+        }
+        if (isResourceSharingAvailable(FORECASTER_RESOURCE_TYPE) && currentForecaster?.id) {
+            // Resource-sharing SPI marker: security-dashboards-plugin mounts
+            // its centralized Share button here when installed and enabled.
+            actions.push(
+                <div
+                    data-resource-share-button
+                    data-resource-id={currentForecaster.id}
+                    data-resource-type={FORECASTER_RESOURCE_TYPE}
+                    {...(dataSourceId ? { 'data-resource-data-source-id': dataSourceId } : {})}
+                />
+            );
         }
         actions.push(deleteButton);
         if (!isActiveState(currentForecaster?.curState)) {
