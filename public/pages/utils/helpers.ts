@@ -425,18 +425,20 @@ export const mapToVisibleForecasterOptions = (items: any[], key: string) =>
   }
 
 /**
- * Whether resource sharing is available for anomaly detectors, via the core
- * capability registered by security-dashboards-plugin. False when that plugin
- * is not installed, the feature is disabled, or the anomaly-detector type is
- * not registered with the resource-sharing framework — no plugin dependency
+ * Whether resource sharing is available for the given resource type, via the
+ * core capability registered by security-dashboards-plugin. False when that
+ * plugin is not installed, the feature is disabled, or the type is not
+ * registered with the resource-sharing framework — no plugin dependency
  * involved.
  */
-export function isResourceSharingAvailable(): boolean {
+export function isResourceSharingAvailable(
+  resourceType: string = AD_RESOURCE_TYPE
+): boolean {
   try {
     const caps = (getApplication().capabilities as any)?.resourceSharing;
     if (!caps?.enabled) return false;
     const types: string = caps.availableTypes ?? '';
-    return types.split(',').includes(AD_RESOURCE_TYPE);
+    return types.split(',').includes(resourceType);
   } catch (e) {
     return false;
   }
