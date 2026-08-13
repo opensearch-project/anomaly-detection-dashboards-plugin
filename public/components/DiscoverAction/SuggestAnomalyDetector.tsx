@@ -141,6 +141,8 @@ function SuggestAnomalyDetector({
     const [allDateFields, setAllDateFields] = useState<string[]>([]);
     const [feedbackResult, setFeedbackResult] = useState<boolean | undefined>(undefined);
     const [timeFieldName, setTimeFieldName] = useState(dataset.timeFieldName || '');
+    const [generatedFeatureList, setGeneratedFeatureList] = useState<FeaturesFormikValues[]>([]);
+    const [generatedCategoryField, setGeneratedCategoryField] = useState<string>('');
 
     // let LLM to generate parameters for creating anomaly detector
     async function getParameters() {
@@ -163,9 +165,8 @@ function SuggestAnomalyDetector({
                 throw new Error('Generated parameters have empty model features!');
             }
 
-            initialDetectorValue.featureList = generatedParameters.features;
-            initialDetectorValue.categoryFieldEnabled = !!generatedParameters.categoryField;
-            initialDetectorValue.categoryField = initialDetectorValue.categoryFieldEnabled ? [generatedParameters.categoryField] : [];
+            setGeneratedFeatureList(generatedParameters.features);
+            setGeneratedCategoryField(generatedParameters.categoryField || '');
 
             // if the dataset has no time field, then we find a root level field from the mapping, or we use the first one as the default time field
             if (!timeFieldName) {
@@ -174,7 +175,6 @@ function SuggestAnomalyDetector({
                 }
                 const defaultTimeField = generatedParameters.dateFields.find(dateField => !dateField.includes('.')) || generatedParameters.dateFields[0];
                 setTimeFieldName(defaultTimeField);
-                initialDetectorValue.timeField = defaultTimeField;
             }
 
             setIsLoading(false);
@@ -423,7 +423,7 @@ function SuggestAnomalyDetector({
         }
     };
 
-    let initialDetectorValue = {
+    const initialDetectorValue = {
         name: detectorName,
         index: [{ label: indexName }],
         timeField: timeFieldName,
@@ -434,9 +434,9 @@ function SuggestAnomalyDetector({
         description: 'Created based on the OpenSearch Assistant',
         resultIndex: undefined,
         filters: [],
-        featureList: [] as FeaturesFormikValues[],
-        categoryFieldEnabled: false,
-        categoryField: [] as string[],
+        featureList: generatedFeatureList,
+        categoryFieldEnabled: !!generatedCategoryField,
+        categoryField: generatedCategoryField ? [generatedCategoryField] : [] as string[],
         realTime: true,
         historical: false,
     };
@@ -445,6 +445,7 @@ function SuggestAnomalyDetector({
         <div className="add-anomaly-detector">
             <Formik
                 initialValues={initialDetectorValue}
+                enableReinitialize={true}
                 onSubmit={handleSubmit}
                 validateOnChange={true}
                 validate={validateFeatures}
