@@ -52,8 +52,8 @@ import {
   setSecurityDashboards,
   setSecurityDashboardsAvailable,
 } from './services';
-import { AnomalyDetectionOpenSearchDashboardsPluginStart } from 'public';
 import { SecurityPluginStart } from '../../../plugins/security-dashboards-plugin/public/types';
+import { AnomalyDetectionOpenSearchDashboardsPluginStart } from 'public';
 import {
   VisAugmenterSetup,
   VisAugmenterStart,

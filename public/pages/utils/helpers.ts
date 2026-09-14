@@ -482,7 +482,7 @@ export async function getResourceSharingAvailableTypes(
           .catch(() => false)
       )
     );
-    return candidateTypes.filter((_, index) => confirmations[index]);
+    return candidateTypes.filter((_type, index) => confirmations[index]);
   } catch (e) {
     return [];
   }
