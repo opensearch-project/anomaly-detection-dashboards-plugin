@@ -49,10 +49,7 @@ import {
   setApplication,
   setUsageCollection,
   setAssistantClient,
-  setSecurityDashboards,
-  setSecurityDashboardsAvailable,
 } from './services';
-import { SecurityPluginStart } from '../../../plugins/security-dashboards-plugin/public/types';
 import { AnomalyDetectionOpenSearchDashboardsPluginStart } from 'public';
 import {
   VisAugmenterSetup,
@@ -90,7 +87,6 @@ export interface AnomalyDetectionStartDeps {
   data: DataPublicPluginStart;
   navigation: NavigationPublicPluginStart;
   assistantDashboards: AssistantPublicPluginStart;
-  securityDashboards?: SecurityPluginStart;
 }
 
 export class AnomalyDetectionOpenSearchDashboardsPlugin
@@ -475,15 +471,7 @@ export class AnomalyDetectionOpenSearchDashboardsPlugin
 
   public start(
     core: CoreStart,
-    {
-      embeddable,
-      visAugmenter,
-      uiActions,
-      data,
-      navigation,
-      assistantDashboards,
-      securityDashboards,
-    }: AnomalyDetectionStartDeps
+    { embeddable, visAugmenter, uiActions, data, navigation, assistantDashboards }: AnomalyDetectionStartDeps
   ): AnomalyDetectionOpenSearchDashboardsPluginStart {
     setUISettings(core.uiSettings);
     setEmbeddable(embeddable);
@@ -496,15 +484,6 @@ export class AnomalyDetectionOpenSearchDashboardsPlugin
     setNavigationUI(navigation.ui);
     if (assistantDashboards) {
       setAssistantClient(assistantDashboards.assistantClient);
-    }
-    if (securityDashboards) {
-      // Presence alone only means the plugin is installed; whether its
-      // DOM-marker SPI is actually running (and thus whether a Share button
-      // can ever mount) is answered per call via
-      // securityDashboards.ui.isResourceSharingAvailable(...), which fails
-      // closed when the SPI isn't running on the local cluster.
-      setSecurityDashboards(securityDashboards);
-      setSecurityDashboardsAvailable(true);
     }
     setApplication(core.application);
     return {};

@@ -9,8 +9,7 @@
     "dataSource",
     "dataSourceManagement",
     "assistantDashboards",
-    "usageCollection",
-    "securityDashboards"
+    "usageCollection"
   ],
   "requiredPlugins": [
     "opensearchDashboardsUtils",

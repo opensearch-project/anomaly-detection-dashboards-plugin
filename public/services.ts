@@ -18,7 +18,6 @@ import { SavedAugmentVisLoader } from '../../../src/plugins/vis_augmenter/public
 import { NavigationPublicPluginStart } from '../../../src/plugins/navigation/public';
 import { UsageCollectionSetup } from '../../../src/plugins/usage_collection/public/plugin';
 import { AssistantPublicPluginStart } from '../../../plugins/dashboards-assistant/public/';
-import { SecurityPluginStart } from '../../../plugins/security-dashboards-plugin/public/types';
 
 export interface DataSourceEnabled {
   enabled: boolean;
@@ -68,18 +67,6 @@ export const [getDataSourceEnabled, setDataSourceEnabled] =
 
 export const [getNavigationUI, setNavigationUI] =
   createGetterSetter<NavigationPublicPluginStart['ui']>('navigation');
-
-// Optional: only set when security-dashboards-plugin is installed (see plugin.ts
-// start()). `getSecurityDashboards` throws if unset, so callers should guard with
-// `isSecurityDashboardsAvailable()` first rather than calling the getter directly.
-export const [getSecurityDashboards, setSecurityDashboards] =
-  createGetterSetter<SecurityPluginStart>('SecurityDashboards');
-
-let securityDashboardsAvailable = false;
-export const setSecurityDashboardsAvailable = (available: boolean) => {
-  securityDashboardsAvailable = available;
-};
-export const isSecurityDashboardsAvailable = () => securityDashboardsAvailable;
 
 export const [getApplication, setApplication] =
   createGetterSetter<CoreStart['application']>('application');
