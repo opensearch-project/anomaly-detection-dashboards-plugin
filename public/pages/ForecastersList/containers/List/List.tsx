@@ -635,14 +635,19 @@ export const ForecastersList = (props: ListProps) => {
     columns.map(({ id }) => id) // initialize to the full set of columns
   );
 
-  // Re-sync the visible column set when the Access column is added or removed.
-  // `columns` changes when resource-sharing availability changes (e.g. the user
-  // switches data source), but the visibleColumns state above is only seeded
-  // once on mount, so without this the Access column would never show/hide.
+  // Re-sync the visible column set when the Access column is added or removed
+  // (e.g. the user switches data source and resource-sharing availability
+  // changes). Adds/removes only the 'share' column id — it must not reset the
+  // whole set to `columns`, or a user's manual hide/show choices for the other
+  // columns (name, indices, status, last updated time) would be discarded.
   useEffect(() => {
-    setVisibleColumns(
-      getDataGridColumns(resourceSharingAvailable).map(({ id }) => id)
-    );
+    setVisibleColumns((current) => {
+      const hasShareColumn = current.includes('share');
+      if (resourceSharingAvailable === hasShareColumn) return current;
+      return resourceSharingAvailable
+        ? [...current, 'share']
+        : current.filter((id) => id !== 'share');
+    });
   }, [resourceSharingAvailable]);
 
   const onColumnResize = useRef((eventData) => {

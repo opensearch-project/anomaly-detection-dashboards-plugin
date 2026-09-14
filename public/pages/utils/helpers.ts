@@ -32,7 +32,12 @@ import {
 } from './constants';
 import { DETECTOR_STATE } from '../../../server/utils/constants';
 import { timeFormatter } from '@elastic/charts';
-import { getClient, getDataSourceEnabled } from '../../services';
+import {
+  getClient,
+  getDataSourceEnabled,
+  getSecurityDashboards,
+  isSecurityDashboardsAvailable,
+} from '../../services';
 import { DataSourceAttributes } from '../../../../../src/plugins/data_source/common/data_sources';
 import { SavedObject } from '../../../../../src/core/public';
 import pluginManifest from '../../../opensearch_dashboards.json';
@@ -431,10 +436,22 @@ export const mapToVisibleForecasterOptions = (items: any[], key: string) =>
  * plugins (reporting, notifications, security-analytics, ml-commons,
  * flow-framework). Returns [] when resource sharing is disabled or on any error
  * (fails closed).
+ *
+ * These backend checks alone are not sufficient: the Share button is mounted
+ * by security-dashboards-plugin's client-side DOM-marker SPI, which only runs
+ * when resource sharing is enabled on the *local* cluster. In a multi-data-source
+ * deployment where the local cluster has it disabled but the *selected* data
+ * source has it enabled, the checks above would say "available" even though no
+ * Share button can ever mount, rendering an Access column that is permanently
+ * empty. So each candidate type is re-confirmed against
+ * `securityDashboards.ui.isResourceSharingAvailable`, which is gated on the
+ * local SPI. If security-dashboards-plugin isn't installed, this fails closed
+ * to [] as well: with no plugin, no Share button can mount either.
  */
 export async function getResourceSharingAvailableTypes(
   dataSourceId?: string
 ): Promise<string[]> {
+  if (!isSecurityDashboardsAvailable()) return [];
   try {
     const query =
       dataSourceId && dataSourceId.trim().length > 0 ? { dataSourceId } : {};
@@ -451,9 +468,21 @@ export async function getResourceSharingAvailableTypes(
     const rawTypes = Array.isArray(typesResp)
       ? typesResp
       : (typesResp?.types ?? []);
-    return rawTypes
+    const candidateTypes: string[] = rawTypes
       .map((entry: { type: string }) => entry?.type)
       .filter((type: string | undefined): type is string => Boolean(type));
+
+    // Local-SPI gate: re-confirm each candidate can actually get a Share
+    // button, rather than trusting the selected data source's response alone.
+    const securityDashboards = getSecurityDashboards();
+    const confirmations = await Promise.all(
+      candidateTypes.map((type) =>
+        securityDashboards.ui
+          .isResourceSharingAvailable(type, dataSourceId)
+          .catch(() => false)
+      )
+    );
+    return candidateTypes.filter((_, index) => confirmations[index]);
   } catch (e) {
     return [];
   }

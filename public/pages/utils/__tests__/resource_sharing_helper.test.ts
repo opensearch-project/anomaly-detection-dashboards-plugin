@@ -12,6 +12,8 @@
 jest.mock('../../../services', () => ({
   getClient: jest.fn(),
   getDataSourceEnabled: jest.fn(() => ({ enabled: false })),
+  getSecurityDashboards: jest.fn(),
+  isSecurityDashboardsAvailable: jest.fn(() => true),
 }));
 
 jest.mock('../../../../opensearch_dashboards.json', () => ({
@@ -21,10 +23,21 @@ jest.mock('../../../../opensearch_dashboards.json', () => ({
 }));
 
 import { getResourceSharingAvailableTypes } from '../helpers';
-import { getClient } from '../../../services';
+import {
+  getClient,
+  getSecurityDashboards,
+  isSecurityDashboardsAvailable,
+} from '../../../services';
 
 const mockGet = jest.fn();
 (getClient as jest.Mock).mockReturnValue({ get: mockGet });
+
+// By default, security-dashboards-plugin's local-SPI check confirms every
+// type it is asked about. Individual tests override this per case.
+const mockIsResourceSharingAvailable = jest.fn(() => Promise.resolve(true));
+(getSecurityDashboards as jest.Mock).mockReturnValue({
+  ui: { isResourceSharingAvailable: mockIsResourceSharingAvailable },
+});
 
 // Queue responses for the two endpoints the helper calls: the feature-flag
 // gate (resource_sharing_enabled) and the registered-types list.
@@ -44,7 +57,10 @@ const withHttpResponses = (enabled: unknown, types?: unknown): jest.Mock => {
 describe('getResourceSharingAvailableTypes', () => {
   afterEach(() => {
     mockGet.mockReset();
+    mockIsResourceSharingAvailable.mockReset();
+    mockIsResourceSharingAvailable.mockImplementation(() => Promise.resolve(true));
     (getClient as jest.Mock).mockReturnValue({ get: mockGet });
+    (isSecurityDashboardsAvailable as jest.Mock).mockReturnValue(true);
   });
 
   it('returns [] when resource sharing is disabled on the data source', async () => {
@@ -55,7 +71,7 @@ describe('getResourceSharingAvailableTypes', () => {
     await expect(getResourceSharingAvailableTypes('ds-1')).resolves.toEqual([]);
   });
 
-  it('returns the registered types when enabled', async () => {
+  it('returns the registered types when enabled and the local SPI confirms each one', async () => {
     withHttpResponses(
       { enabled: true },
       { types: [{ type: 'anomaly-detector' }, { type: 'forecaster' }] }
@@ -64,6 +80,8 @@ describe('getResourceSharingAvailableTypes', () => {
       'anomaly-detector',
       'forecaster',
     ]);
+    expect(mockIsResourceSharingAvailable).toHaveBeenCalledWith('anomaly-detector', 'ds-1');
+    expect(mockIsResourceSharingAvailable).toHaveBeenCalledWith('forecaster', 'ds-1');
   });
 
   it('supports a bare array types response', async () => {
@@ -95,5 +113,33 @@ describe('getResourceSharingAvailableTypes', () => {
     expect(get).toHaveBeenCalledWith('/api/v1/auth/resource_sharing_enabled', {
       query: {},
     });
+  });
+
+  it('returns [] without calling either backend route when security-dashboards-plugin is not installed', async () => {
+    (isSecurityDashboardsAvailable as jest.Mock).mockReturnValue(false);
+    const get = withHttpResponses({ enabled: true }, { types: [{ type: 'anomaly-detector' }] });
+    await expect(getResourceSharingAvailableTypes('ds-1')).resolves.toEqual([]);
+    expect(get).not.toHaveBeenCalled();
+  });
+
+  it('drops a type that the backend reports as registered but the local SPI does not confirm', async () => {
+    withHttpResponses(
+      { enabled: true },
+      { types: [{ type: 'anomaly-detector' }, { type: 'forecaster' }] }
+    );
+    // Simulates: local cluster has resource sharing disabled (so the SPI never
+    // started) while the selected data source reports it as enabled.
+    mockIsResourceSharingAvailable.mockImplementation((type: string) =>
+      Promise.resolve(type === 'forecaster')
+    );
+    await expect(getResourceSharingAvailableTypes('ds-1')).resolves.toEqual([
+      'forecaster',
+    ]);
+  });
+
+  it('drops a type when the local SPI confirmation throws', async () => {
+    withHttpResponses({ enabled: true }, { types: [{ type: 'anomaly-detector' }] });
+    mockIsResourceSharingAvailable.mockRejectedValue(new Error('boom'));
+    await expect(getResourceSharingAvailableTypes('ds-1')).resolves.toEqual([]);
   });
 });
