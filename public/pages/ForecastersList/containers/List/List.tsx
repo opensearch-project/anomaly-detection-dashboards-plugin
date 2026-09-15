@@ -60,6 +60,7 @@ import {
   filterAndSortForecasters,
   getAllForecastersQueryParamsWithDataSourceId,
   getDataSourceFromURL,
+  getResourceSharingAvailableTypes,
   getVisibleOptions,
   isForecastingDataSourceCompatible,
   sanitizeSearchText,
@@ -71,7 +72,7 @@ import {
   ALL_INDICES,
   SINGLE_FORECASTER_NOT_FOUND_MSG,
 } from '../../../utils/constants';
-import { BREADCRUMBS } from '../../../../utils/constants';
+import { BREADCRUMBS, FORECASTER_RESOURCE_TYPE } from '../../../../utils/constants';
 import {
   getURLQueryParams,
 } from '../../utils/helpers';
@@ -223,6 +224,35 @@ export const ForecastersList = (props: ListProps) => {
     }
     intializeForecasters();
   }, [state.selectedDataSourceId]);
+
+  // Whether resource sharing is available on the SELECTED data source. Gates
+  // the Access column per data source (a backend setting), rather than the
+  // local Dashboards capability. Defaults to false and fails closed.
+  const [resourceSharing, setResourceSharing] = useState<{
+    dataSourceId: string | undefined;
+    types: string[];
+  }>({ dataSourceId: undefined, types: [] });
+  useEffect(() => {
+    let cancelled = false;
+    getResourceSharingAvailableTypes(state.selectedDataSourceId).then(
+      (types) => {
+        if (!cancelled)
+          setResourceSharing({
+            dataSourceId: state.selectedDataSourceId,
+            types,
+          });
+      }
+    );
+    return () => {
+      cancelled = true;
+    };
+  }, [state.selectedDataSourceId]);
+
+  // Guard against a stale value flashing the column during a data-source switch:
+  // only trust availability resolved for the currently selected data source.
+  const resourceSharingAvailable =
+    resourceSharing.dataSourceId === state.selectedDataSourceId &&
+    resourceSharing.types.includes(FORECASTER_RESOURCE_TYPE);
 
   const intializeForecasters = async () => {
     // wait until selected data source is ready before doing dispatch calls if mds is enabled
@@ -580,7 +610,7 @@ export const ForecastersList = (props: ListProps) => {
     }, [getSavedObjectsClient(), getNotifications(), props.setActionMenu]);
   }
 
-  const columns = getDataGridColumns();
+  const columns = getDataGridColumns(resourceSharingAvailable);
 
   const createForecasterUrl = `${FORECASTING_FEATURE_NAME}#` + constructHrefWithDataSourceId(APP_PATH.CREATE_FORECASTER, state.selectedDataSourceId, false);
 
@@ -613,6 +643,21 @@ export const ForecastersList = (props: ListProps) => {
   const [visibleColumns, setVisibleColumns] = useState(
     columns.map(({ id }) => id) // initialize to the full set of columns
   );
+
+  // Re-sync the visible column set when the Access column is added or removed
+  // (e.g. the user switches data source and resource-sharing availability
+  // changes). Adds/removes only the 'share' column id — it must not reset the
+  // whole set to `columns`, or a user's manual hide/show choices for the other
+  // columns (name, indices, status, last updated time) would be discarded.
+  useEffect(() => {
+    setVisibleColumns((current) => {
+      const hasShareColumn = current.includes('share');
+      if (resourceSharingAvailable === hasShareColumn) return current;
+      return resourceSharingAvailable
+        ? [...current, 'share']
+        : current.filter((id) => id !== 'share');
+    });
+  }, [resourceSharingAvailable]);
 
   const onColumnResize = useRef((eventData) => {
     console.log(eventData);

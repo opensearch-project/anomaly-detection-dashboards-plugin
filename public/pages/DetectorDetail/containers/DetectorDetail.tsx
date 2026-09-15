@@ -46,7 +46,12 @@ import {
 import { getAliases, getIndices } from '../../../redux/reducers/opensearch';
 import { getErrorMessage, Listener } from '../../../utils/utils';
 import { darkModeEnabled } from '../../../utils/opensearchDashboardsUtils';
-import { BREADCRUMBS, MDS_BREADCRUMBS, USE_NEW_HOME_PAGE } from '../../../utils/constants';
+import {
+  AD_RESOURCE_TYPE,
+  BREADCRUMBS,
+  MDS_BREADCRUMBS,
+  USE_NEW_HOME_PAGE,
+} from '../../../utils/constants';
 import { DetectorControls } from '../components/DetectorControls';
 import { ConfirmModal } from '../components/ConfirmModal/ConfirmModal';
 import { useFetchMonitorInfo } from '../hooks/useFetchMonitorInfo';
@@ -70,7 +75,11 @@ import {
   getSavedObjectsClient,
   getUISettings,
 } from '../../../services';
-import { constructHrefWithDataSourceId, getDataSourceFromURL } from '../../../pages/utils/helpers';
+import {
+  constructHrefWithDataSourceId,
+  getDataSourceFromURL,
+  getResourceSharingAvailableTypes,
+} from '../../../pages/utils/helpers';
 import { isServerlessDataSource } from '../../../utils/dataSourceUtils';
 
 export interface DetectorRouterProps {
@@ -132,6 +141,20 @@ export const DetectorDetail = (props: DetectorDetailProps) => {
     let cancelled = false;
     isServerlessDataSource(dataSourceId).then((result) => {
       if (!cancelled) setIsServerless(result);
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, [dataSourceId]);
+
+  // Per-data-source resource-sharing availability gate for the share button.
+  const [resourceSharingAvailable, setResourceSharingAvailable] =
+    useState<boolean>(false);
+  useEffect(() => {
+    let cancelled = false;
+    getResourceSharingAvailableTypes(dataSourceId).then((types) => {
+      if (!cancelled)
+        setResourceSharingAvailable(types.includes(AD_RESOURCE_TYPE));
     });
     return () => {
       cancelled = true;
@@ -484,7 +507,23 @@ export const DetectorDetail = (props: DetectorDetailProps) => {
           >
             {renderPageHeader()}
             <EuiFlexItem grow={false}>
-              <DetectorControls
+              <EuiFlexGroup gutterSize="s" alignItems="center" responsive={false}>
+                {/* Resource-sharing SPI marker: security-dashboards-plugin mounts
+                    its centralized Share button here when installed and enabled */}
+                {resourceSharingAvailable && (
+                  <EuiFlexItem grow={false}>
+                    <div
+                      data-resource-share-button
+                      data-resource-id={detectorId}
+                      data-resource-type={AD_RESOURCE_TYPE}
+                      data-resource-hide-status
+                      {...(detector?.name ? { 'data-resource-name': detector.name } : {})}
+                      {...(dataSourceId ? { 'data-resource-data-source-id': dataSourceId } : {})}
+                    />
+                  </EuiFlexItem>
+                )}
+                <EuiFlexItem grow={false}>
+                  <DetectorControls
                 onEditDetector={handleEditDetector}
                 onDelete={() =>
                   setDetectorDetailModel({
@@ -504,6 +543,8 @@ export const DetectorDetail = (props: DetectorDetailProps) => {
                 onEditFeatures={handleEditFeature}
                 detector={detector}
               />
+                </EuiFlexItem>
+              </EuiFlexGroup>
             </EuiFlexItem>
           </EuiFlexGroup>
           {isResultIndexMissing ? (

@@ -58,6 +58,20 @@ jest.mock('@elastic/eui', () => {
       <div data-test-subj={testSubj}>
         <div data-test-subj="gridRowCount">{rowCount}</div>
         <div data-test-subj="gridColumns">{columns?.length || 0}</div>
+        <div data-test-subj="gridVisibleColumns">
+          {columnVisibility?.visibleColumns?.join(',')}
+        </div>
+        {columnVisibility && (
+          <button
+            onClick={() =>
+              columnVisibility.setVisibleColumns(
+                columnVisibility.visibleColumns.filter((id: string) => id !== 'state')
+              )
+            }
+          >
+            Hide state column
+          </button>
+        )}
         {pagination && (
           <div data-test-subj="gridPagination">
             <button onClick={() => onChangePage?.(1)}>Next Page</button>
@@ -346,6 +360,7 @@ jest.mock('../../../../utils/helpers', () => ({
   getVisibleOptions: jest.fn(() => []),
   isDataSourceCompatible: jest.fn(() => true),
   sanitizeSearchText: jest.fn((text: string) => text),
+  getResourceSharingAvailableTypes: jest.fn(() => Promise.resolve([])),
 }));
 
 jest.mock('../../../utils/helpers', () => ({
@@ -372,6 +387,7 @@ jest.mock('../../../../../utils/constants', () => ({
   MDS_BREADCRUMBS: { FORECASTING: jest.fn() },
   USE_NEW_HOME_PAGE: 'useNewHomePage',
   BREADCRUMBS: { FORECASTING: { text: 'Forecasting' } },
+  FORECASTER_RESOURCE_TYPE: 'forecaster',
 }));
 
 jest.mock('../../../../utils/constants', () => ({
@@ -537,6 +553,50 @@ describe('<ForecastersList />', () => {
       expect(screen.getByTestId('startButton-0')).toBeInTheDocument();
       expect(screen.getByTestId('stopButton-1')).toBeInTheDocument();
       expect(screen.getByTestId('deleteButton-2')).toBeInTheDocument();
+    });
+  });
+
+  describe('Access column visibility', () => {
+    it('adds the share column when resource-sharing availability resolves, without re-showing a column the user hid', async () => {
+      const { getResourceSharingAvailableTypes } = jest.requireMock(
+        '../../../../utils/helpers'
+      );
+      // Resolve after mount, simulating availability becoming known once the
+      // async check completes (e.g. after a data-source switch).
+      let resolveTypes: (types: string[]) => void = () => {};
+      getResourceSharingAvailableTypes.mockImplementation(
+        () => new Promise<string[]>((resolve) => (resolveTypes = resolve))
+      );
+
+      renderWithProviders(<ForecastersList setActionMenu={jest.fn()} />, {
+        preloadedState: {
+          forecast: { forecasterList: sampleForecasters, requesting: false, errorMessage: '' },
+        },
+      });
+
+      // Before availability resolves: only the always-present columns.
+      expect(await screen.findByTestId('gridVisibleColumns')).toHaveTextContent(
+        'name,state,lastUpdateTime'
+      );
+
+      // Simulate the user manually hiding the 'state' column (EuiDataGrid
+      // reports this back through columnVisibility.setVisibleColumns).
+      fireEvent.click(screen.getByText('Hide state column'));
+      expect(screen.getByTestId('gridVisibleColumns')).toHaveTextContent(
+        'name,lastUpdateTime'
+      );
+
+      // Resource sharing resolves as available for forecasters.
+      resolveTypes(['forecaster']);
+
+      // The 'share' column is added; the user's hidden 'state' column stays
+      // hidden. Before the fix, this effect reset the full column set and
+      // 'state' would reappear.
+      await waitFor(() =>
+        expect(screen.getByTestId('gridVisibleColumns')).toHaveTextContent(
+          'name,lastUpdateTime,share'
+        )
+      );
     });
   });
 

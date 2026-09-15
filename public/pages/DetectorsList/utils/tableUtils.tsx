@@ -21,7 +21,7 @@ import moment from 'moment';
 import { get, isEmpty } from 'lodash';
 import React from 'react';
 import { Detector } from '../../../models/interfaces';
-import { PLUGIN_NAME } from '../../../utils/constants';
+import { AD_RESOURCE_TYPE, PLUGIN_NAME } from '../../../utils/constants';
 import { DETECTOR_STATE } from '../../../../server/utils/constants';
 import { stateToColorMap } from '../../utils/constants';
 
@@ -51,7 +51,7 @@ export const renderState = (state: DETECTOR_STATE) => {
   );
 };
 
-export function getColumns(dataSourceId) {
+export function getColumns(dataSourceId, resourceSharingAvailable = false) {
   return [
     {
       field: 'name',
@@ -166,5 +166,30 @@ export function getColumns(dataSourceId) {
       width: '16%',
       render: renderTime,
     },
+    ...(resourceSharingAvailable
+      ? [
+          {
+            // Resource-sharing SPI marker column: the centralized Share button is
+            // mounted here by security-dashboards-plugin when installed and enabled.
+            name: (
+              <EuiToolTip content="Manage who this detector is shared with">
+                <span style={columnStyle}>Access{''}</span>
+              </EuiToolTip>
+            ),
+            truncateText: false,
+            width: '120px',
+            render: (detector: Detector) => (
+              <div
+                data-resource-share-button
+                data-resource-id={detector.id}
+                data-resource-type={AD_RESOURCE_TYPE}
+                data-resource-name={detector.name}
+                data-resource-share-display="icon"
+                {...(dataSourceId ? { 'data-resource-data-source-id': dataSourceId } : {})}
+              />
+            ),
+          },
+        ]
+      : []),
   ] as EuiBasicTableColumn<any>[];
 }

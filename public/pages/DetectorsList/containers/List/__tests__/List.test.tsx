@@ -643,3 +643,62 @@ describe('<DetectorList /> spec', () => {
     });
   });
 });
+
+describe('Access column staleness guard logic', () => {
+  // Direct unit coverage of the guard itself: `resourceSharing.dataSourceId
+  // === state.selectedDataSourceId && resourceSharing.types.includes(TYPE)`.
+  // This is the same guard shape used across List.tsx (detectors) and
+  // ForecastersList/List.tsx. It exists because `resourceSharing.types` is
+  // only updated once an async getResourceSharingAvailableTypes(...) call
+  // resolves; while a newer call (triggered by a data-source switch) is
+  // still in flight, `resourceSharing.dataSourceId` still names the
+  // previous data source. Without the guard, the previous data source's
+  // resolved types would decide the Access column's visibility for the
+  // newly-selected data source until the new call resolves.
+  const computeAvailable = (
+    resourceSharing: { dataSourceId: string | undefined; types: string[] },
+    selectedDataSourceId: string | undefined,
+    resourceType: string
+  ) =>
+    resourceSharing.dataSourceId === selectedDataSourceId &&
+    resourceSharing.types.includes(resourceType);
+
+  it('is available once types resolve for the currently selected data source', () => {
+    const resourceSharing = {
+      dataSourceId: 'ds-a',
+      types: ['anomaly-detector'],
+    };
+    expect(computeAvailable(resourceSharing, 'ds-a', 'anomaly-detector')).toBe(
+      true
+    );
+  });
+
+  it('is unavailable while a resolved result belongs to a data source other than the one now selected', () => {
+    // Simulates: types resolved for ds-a (previously selected), but the user
+    // has since switched to ds-b and the new probe has not resolved yet.
+    const resourceSharing = {
+      dataSourceId: 'ds-a',
+      types: ['anomaly-detector'],
+    };
+    expect(computeAvailable(resourceSharing, 'ds-b', 'anomaly-detector')).toBe(
+      false
+    );
+  });
+
+  it('is unavailable before any result has resolved for the currently selected data source', () => {
+    const resourceSharing = { dataSourceId: undefined, types: [] };
+    expect(computeAvailable(resourceSharing, 'ds-a', 'anomaly-detector')).toBe(
+      false
+    );
+  });
+
+  it('is unavailable once the current data source resolves but does not register the resource type', () => {
+    const resourceSharing = {
+      dataSourceId: 'ds-a',
+      types: ['some-other-type'],
+    };
+    expect(computeAvailable(resourceSharing, 'ds-a', 'anomaly-detector')).toBe(
+      false
+    );
+  });
+});

@@ -32,7 +32,7 @@ import {
 } from './constants';
 import { DETECTOR_STATE } from '../../../server/utils/constants';
 import { timeFormatter } from '@elastic/charts';
-import { getDataSourceEnabled } from '../../services';
+import { getClient, getDataSourceEnabled } from '../../services';
 import { DataSourceAttributes } from '../../../../../src/plugins/data_source/common/data_sources';
 import { SavedObject } from '../../../../../src/core/public';
 import pluginManifest from '../../../opensearch_dashboards.json';
@@ -422,3 +422,39 @@ export const mapToVisibleForecasterOptions = (items: any[], key: string) =>
       return acc;
     }, [] as { label: string; options: any[] }[]);
   }
+
+/**
+ * Resource-sharing types available on the given data source. Combines the
+ * feature-flag gate (`/api/v1/auth/resource_sharing_enabled`, evaluated per
+ * data source) with the registered/protected type list (`/api/resource/types`),
+ * mirroring the shared gating helper used by the other resource-sharing consumer
+ * plugins (reporting, notifications, security-analytics, ml-commons,
+ * flow-framework). Returns [] when resource sharing is disabled or on any error
+ * (fails closed).
+ */
+export async function getResourceSharingAvailableTypes(
+  dataSourceId?: string
+): Promise<string[]> {
+  try {
+    const query =
+      dataSourceId && dataSourceId.trim().length > 0 ? { dataSourceId } : {};
+    // Global gate: resource sharing must be enabled on the selected data source.
+    const info: any = await getClient().get(
+      '/api/v1/auth/resource_sharing_enabled',
+      { query }
+    );
+    if (!info?.enabled) return [];
+    // Per-type gate: the registered/protected shareable types on that source.
+    const typesResp: any = await getClient().get('/api/resource/types', {
+      query,
+    });
+    const rawTypes = Array.isArray(typesResp)
+      ? typesResp
+      : (typesResp?.types ?? []);
+    return rawTypes
+      .map((entry: { type: string }) => entry?.type)
+      .filter((type: string | undefined): type is string => Boolean(type));
+  } catch (e) {
+    return [];
+  }
+}
