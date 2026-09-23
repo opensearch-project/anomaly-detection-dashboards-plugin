@@ -9,6 +9,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 ### Enhancements
 ### Bug Fixes
 ### Infrastructure
+- Include nested visualization integration tests in AD Dashboards CI.
 ### Documentation
 - Point the unit tests badge at the current build and test workflow ([#1251](https://github.com/opensearch-project/anomaly-detection-dashboards-plugin/pull/1251))
 ### Maintenance
