@@ -1,4 +1,4 @@
-[![Unit tests](https://github.com/opensearch-project/anomaly-detection-dashboards-plugin/workflows/Unit%20tests%20workflow/badge.svg)](https://github.com/opensearch-project/anomaly-detection-dashboards-plugin/actions?query=workflow%3A%22Unit+tests+workflow%22)
+[![Unit tests](https://github.com/opensearch-project/anomaly-detection-dashboards-plugin/actions/workflows/build-and-test-workflow.yml/badge.svg)](https://github.com/opensearch-project/anomaly-detection-dashboards-plugin/actions/workflows/build-and-test-workflow.yml)
 [![Integration tests](https://github.com/opensearch-project/anomaly-detection-dashboards-plugin/actions/workflows/remote-integ-tests-workflow.yml/badge.svg)](https://github.com/opensearch-project/anomaly-detection-dashboards-plugin/actions/workflows/remote-integ-tests-workflow.yml)
 [![codecov](https://codecov.io/gh/opensearch-project/anomaly-detection-dashboards-plugin/branch/main/graph/badge.svg)](https://codecov.io/gh/opensearch-project/anomaly-detection-dashboards-plugin)
 [![Documentation](https://img.shields.io/badge/doc-reference-blue)](https://opensearch.org/docs/monitoring-plugins/ad)
