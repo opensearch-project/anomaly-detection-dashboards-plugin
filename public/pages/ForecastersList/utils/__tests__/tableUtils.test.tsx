@@ -63,6 +63,7 @@ jest.mock('../CurStateCell', () => ({
 // Mock constants
 jest.mock('../../../../utils/constants', () => ({
   FORECASTING_FEATURE_NAME: 'forecasting',
+  FORECASTER_RESOURCE_TYPE: 'forecaster',
 }));
 
 describe('tableUtils', () => {
@@ -481,5 +482,66 @@ describe('tableUtils', () => {
       
       consoleSpy.mockRestore();
     });
+  });
+});
+
+describe('resource sharing (share) column', () => {
+  test('appends a share column when resource sharing is available for forecasters', () => {
+    const columns = getDataGridColumns(true);
+    expect(columns).toHaveLength(5);
+    expect(columns[columns.length - 1]).toEqual(
+      expect.objectContaining({
+        id: 'share',
+        displayAsText: 'Access',
+        isSortable: false,
+      })
+    );
+  });
+
+  test('does not append a share column when resource sharing is unavailable', () => {
+    const columns = getDataGridColumns(false);
+    expect(columns).toHaveLength(4);
+    expect(columns.some((column) => column.id === 'share')).toBe(false);
+  });
+
+  test('renders the share cell as a share-button marker with forecaster metadata', () => {
+    const forecasters = [{ id: 'forecaster-1', name: 'My Forecaster' }];
+    const RenderCellValue = renderCellValueFactory(forecasters, 'ds-1');
+    const { container } = render(
+      <RenderCellValue
+        rowIndex={0}
+        columnId="share"
+        setCellProps={() => {}}
+        isExpandable={false}
+        isExpanded={false}
+        isDetails={false}
+      />
+    );
+    const marker = container.querySelector('[data-resource-share-button]');
+    expect(marker).not.toBeNull();
+    expect(marker!.getAttribute('data-resource-id')).toBe('forecaster-1');
+    expect(marker!.getAttribute('data-resource-type')).toBe('forecaster');
+    expect(marker!.getAttribute('data-resource-name')).toBe('My Forecaster');
+    expect(marker!.getAttribute('data-resource-share-display')).toBe('icon');
+    expect(marker!.getAttribute('data-resource-data-source-id')).toBe('ds-1');
+  });
+
+  test('omits name and data source id attributes when they are not provided', () => {
+    const forecasters = [{ id: 'forecaster-2' }];
+    const RenderCellValue = renderCellValueFactory(forecasters);
+    const { container } = render(
+      <RenderCellValue
+        rowIndex={0}
+        columnId="share"
+        setCellProps={() => {}}
+        isExpandable={false}
+        isExpanded={false}
+        isDetails={false}
+      />
+    );
+    const marker = container.querySelector('[data-resource-share-button]');
+    expect(marker).not.toBeNull();
+    expect(marker!.getAttribute('data-resource-name')).toBeNull();
+    expect(marker!.getAttribute('data-resource-data-source-id')).toBeNull();
   });
 });

@@ -18,7 +18,10 @@ import {
 //@ts-ignore
 import moment from 'moment';
 import React from 'react';
-import { FORECASTING_FEATURE_NAME, } from '../../../utils/constants';
+import {
+  FORECASTING_FEATURE_NAME,
+  FORECASTER_RESOURCE_TYPE,
+} from '../../../utils/constants';
 import { FORECASTER_STATE, FORECASTER_STATE_TO_DISPLAY } from '../../../../server/utils/constants';
 import { forecastStateToColorMap } from '../../utils/constants';
 import { CurStateCell } from './CurStateCell';
@@ -52,7 +55,9 @@ export const renderState = (state: FORECASTER_STATE) => {
   );
 };
 
-export function getDataGridColumns(): EuiDataGridColumn[] {
+export function getDataGridColumns(
+  resourceSharingAvailable = false
+): EuiDataGridColumn[] {
   return [
     {
       id: 'name',
@@ -100,6 +105,25 @@ export function getDataGridColumns(): EuiDataGridColumn[] {
       schema: 'datetime', // from dataType 'date'
       defaultSortDirection: 'desc',
     },
+    ...(resourceSharingAvailable
+      ? [
+          {
+            // Resource-sharing SPI marker column: the centralized Share button
+            // is mounted here by security-dashboards-plugin when installed and
+            // resource sharing is enabled for forecasters.
+            id: 'share',
+            displayAsText: 'Access',
+            display: (
+              <EuiToolTip content="Manage who this forecaster is shared with">
+                <span style={columnStyle}>Access</span>
+              </EuiToolTip>
+            ),
+            isSortable: false,
+            schema: 'string',
+            initialWidth: 120,
+          } as EuiDataGridColumn,
+        ]
+      : []),
   ];
 }
 
@@ -159,6 +183,21 @@ export function renderCellValueFactory(
 
         case 'lastUpdateTime':
           return renderTime(value);
+
+        case 'share':
+          // Resource-sharing SPI marker: fulfilled by security-dashboards-plugin
+          return (
+            <div
+              data-resource-share-button
+              data-resource-id={forecaster.id}
+              data-resource-type={FORECASTER_RESOURCE_TYPE}
+              {...(forecaster.name ? { 'data-resource-name': forecaster.name } : {})}
+              data-resource-share-display="icon"
+              {...(dataSourceId
+                ? { 'data-resource-data-source-id': dataSourceId }
+                : {})}
+            />
+          );
 
         default:
           return <>{value}</>;

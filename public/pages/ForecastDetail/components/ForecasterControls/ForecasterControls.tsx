@@ -9,7 +9,7 @@
  * GitHub history for details.
  */
 
-import React, { useMemo } from 'react';
+import React, { useMemo, useState, useEffect } from 'react';
 import {
     EuiSmallButton,
     EuiFlexGroup,
@@ -23,7 +23,8 @@ import {
 } from '@elastic/eui';
 import moment from 'moment';
 import { getNotifications, getSavedObjectsClient, getUISettings, getDataSourceEnabled, getDataSourceManagementPlugin } from '../../../../services';
-import { USE_NEW_HOME_PAGE } from '../../../../utils/constants';
+import { FORECASTER_RESOURCE_TYPE, USE_NEW_HOME_PAGE } from '../../../../utils/constants';
+import { getResourceSharingAvailableTypes } from '../../../utils/helpers';
 import { Forecaster } from '../../../../models/interfaces';
 import { FORECASTER_STATE, isActiveState } from '../../../../../server/utils/constants';
 import { forecastStateToColorMap } from '../../../utils/constants';
@@ -106,6 +107,18 @@ const getStateMsg = (forecaster: Forecaster | undefined) => {
 export const ForecasterControls = (props: ForecasterControlsProps) => {
     const { forecaster, dataSourceId, setActionMenu, handleDeleteClick, handleStartTest, handleCancelForecasting, handleStartForecasting, runOnceRunning } = props;
     const useUpdatedUX = getUISettings().get(USE_NEW_HOME_PAGE);
+
+    // Per-data-source resource-sharing availability gate for the share button.
+    const [resourceSharingAvailable, setResourceSharingAvailable] = useState<boolean>(false);
+    useEffect(() => {
+        let cancelled = false;
+        getResourceSharingAvailableTypes(dataSourceId).then((types) => {
+            if (!cancelled) setResourceSharingAvailable(types.includes(FORECASTER_RESOURCE_TYPE));
+        });
+        return () => {
+            cancelled = true;
+        };
+    }, [dataSourceId]);
 
     let renderDataSourceComponent = null;
     const dataSourceEnabled = getDataSourceEnabled().enabled;
@@ -198,6 +211,20 @@ export const ForecasterControls = (props: ForecasterControlsProps) => {
         const actions = [];
         if (dataSourceEnabled && renderDataSourceComponent) {
             actions.push(renderDataSourceComponent);
+        }
+        if (resourceSharingAvailable && currentForecaster?.id) {
+            // Resource-sharing SPI marker: security-dashboards-plugin mounts
+            // its centralized Share button here when installed and enabled.
+            actions.push(
+                <div
+                    data-resource-share-button
+                    data-resource-id={currentForecaster.id}
+                    data-resource-type={FORECASTER_RESOURCE_TYPE}
+                    data-resource-hide-status
+                    {...(currentForecaster.name ? { 'data-resource-name': currentForecaster.name } : {})}
+                    {...(dataSourceId ? { 'data-resource-data-source-id': dataSourceId } : {})}
+                />
+            );
         }
         actions.push(deleteButton);
         if (!isActiveState(currentForecaster?.curState)) {

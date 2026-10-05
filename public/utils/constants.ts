@@ -63,6 +63,12 @@ export const OPENSEARCH_DASHBOARDS_PATH = {
 };
 
 export const PLUGIN_NAME = 'anomaly-detection-dashboards';
+// Resource type registered by the AD backend plugin's ResourceSharingExtension.
+// Must match org.opensearch.ad.constant.ADResourceSharingConstants / the value
+// returned by the backend ResourceProvider#resourceType().
+export const AD_RESOURCE_TYPE = 'anomaly-detector';
+// Resource type registered by the forecasting backend ResourceProvider.
+export const FORECASTER_RESOURCE_TYPE = 'forecaster';
 
 export const ALERTING_PLUGIN_NAME = 'alerting';
 

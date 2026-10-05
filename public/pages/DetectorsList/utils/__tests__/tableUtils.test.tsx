@@ -51,3 +51,43 @@ describe('tableUtils spec', () => {
     });
   });
 });
+
+describe('resource sharing Access column', () => {
+  test('appends an Access column with a share-button marker when resource sharing is available', () => {
+    const columns = getColumns('cluster-1', true);
+    const accessColumn = columns[columns.length - 1];
+
+    const { container: headerContainer } = render(accessColumn.name);
+    expect(headerContainer.textContent).toContain('Access');
+
+    const { container } = render(
+      accessColumn.render({ id: 'detector-1', name: 'my detector' })
+    );
+    const marker = container.querySelector('[data-resource-share-button]');
+    expect(marker).not.toBeNull();
+    expect(marker!.getAttribute('data-resource-id')).toBe('detector-1');
+    expect(marker!.getAttribute('data-resource-type')).toBe('anomaly-detector');
+    expect(marker!.getAttribute('data-resource-name')).toBe('my detector');
+    expect(marker!.getAttribute('data-resource-share-display')).toBe('icon');
+    expect(marker!.getAttribute('data-resource-data-source-id')).toBe(
+      'cluster-1'
+    );
+  });
+
+  test('omits the data source id attribute when no dataSourceId is provided', () => {
+    const columns = getColumns('', true);
+    const accessColumn = columns[columns.length - 1];
+
+    const { container } = render(
+      accessColumn.render({ id: 'detector-2', name: 'another detector' })
+    );
+    const marker = container.querySelector('[data-resource-share-button]');
+    expect(marker!.getAttribute('data-resource-data-source-id')).toBeNull();
+  });
+
+  test('does not append the Access column when resource sharing is unavailable', () => {
+    const withoutAccess = getColumns('cluster-1', false).length;
+    const withAccess = getColumns('cluster-1', true).length;
+    expect(withAccess).toBe(withoutAccess + 1);
+  });
+});

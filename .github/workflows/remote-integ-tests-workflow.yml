@@ -118,7 +118,7 @@ jobs:
 
       - name: Install Cypress
         run: |
-          npm install cypress --save-dev
+          npm ci
         shell: bash
         working-directory: opensearch-dashboards-functional-test
 

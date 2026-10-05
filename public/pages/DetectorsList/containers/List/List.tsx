@@ -61,7 +61,7 @@ import {
   ALL_INDICES,
   SINGLE_DETECTOR_NOT_FOUND_MSG,
 } from '../../../utils/constants';
-import { BREADCRUMBS } from '../../../../utils/constants';
+import { BREADCRUMBS, AD_RESOURCE_TYPE } from '../../../../utils/constants';
 import {
   getURLQueryParams,
   getDetectorsForAction,
@@ -70,6 +70,7 @@ import {
 import {
   filterAndSortDetectors,
   getDetectorsToDisplay,
+  getResourceSharingAvailableTypes,
 } from '../../../utils/helpers';
 import { getColumns } from '../../utils/tableUtils';
 import { DETECTOR_ACTION } from '../../utils/constants';
@@ -177,6 +178,14 @@ export const DetectorList = (props: ListProps) => {
 
   const [localClusterName, setLocalClusterName] = useState("");
 
+  // Whether resource sharing is available on the SELECTED data source. Gates
+  // the Access column per data source (a backend setting), rather than the
+  // local Dashboards capability. Defaults to false and fails closed.
+  const [resourceSharing, setResourceSharing] = useState<{
+    dataSourceId: string | undefined;
+    types: string[];
+  }>({ dataSourceId: undefined, types: [] });
+
   // Getting all initial monitors
   useEffect(() => {
     const getInitialMonitors = async () => {
@@ -255,6 +264,29 @@ export const DetectorList = (props: ListProps) => {
     };
     getInitialIndices();
   }, [state.selectedDataSourceId]);
+
+  // Probe resource-sharing availability on the selected data source.
+  useEffect(() => {
+    let cancelled = false;
+    getResourceSharingAvailableTypes(state.selectedDataSourceId).then(
+      (types) => {
+        if (!cancelled)
+          setResourceSharing({
+            dataSourceId: state.selectedDataSourceId,
+            types,
+          });
+      }
+    );
+    return () => {
+      cancelled = true;
+    };
+  }, [state.selectedDataSourceId]);
+
+  // Guard against a stale value flashing the column during a data-source switch:
+  // only trust availability resolved for the currently selected data source.
+  const resourceSharingAvailable =
+    resourceSharing.dataSourceId === state.selectedDataSourceId &&
+    resourceSharing.types.includes(AD_RESOURCE_TYPE);
 
   // Refresh data if user change any parameters / filter / sort
   useEffect(() => {
@@ -737,7 +769,7 @@ export const DetectorList = (props: ListProps) => {
     }, [getSavedObjectsClient(), getNotifications(), props.setActionMenu]);
   }
 
-  const columns = getColumns(state.selectedDataSourceId);
+  const columns = getColumns(state.selectedDataSourceId, resourceSharingAvailable);
 
   const createDetectorUrl =`${PLUGIN_NAME}#` + constructHrefWithDataSourceId(APP_PATH.CREATE_DETECTOR, state.selectedDataSourceId, false);
 
