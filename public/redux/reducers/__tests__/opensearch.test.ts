@@ -281,6 +281,15 @@ describe('opensearch reducer actions', () => {
     });
   });
   describe('getIndicesAndAliases', () => {
+    test('should initialize data stream state', () => {
+      expect(initialState).toEqual(
+        expect.objectContaining({
+          dataStreams: [],
+          dataStreamsError: '',
+        })
+      );
+    });
+
     test('should handle [REQUEST, SUCCESS] actions for getIndicesAndAliases', async () => {
       const indices = [
         { index: 'index1', health: 'green' },
@@ -302,6 +311,8 @@ describe('opensearch reducer actions', () => {
       expect(reducer(initialState, actions[0])).toEqual({
         ...initialState,
         requesting: true,
+        dataStreams: [],
+        dataStreamsError: '',
       });
     
       expect(actions[1].type).toBe('opensearch/GET_INDICES_AND_ALIASES_SUCCESS');
@@ -310,6 +321,8 @@ describe('opensearch reducer actions', () => {
         requesting: false,
         indices,
         aliases,
+        dataStreams: [],
+        dataStreamsError: '',
       });
     
       expect(httpMockedClient.get).toHaveBeenCalledWith(
@@ -319,6 +332,114 @@ describe('opensearch reducer actions', () => {
         }
       );
     });
+    test('should send includeDataStreams when getIndicesAndAliases opts in', async () => {
+      httpMockedClient.get = jest.fn().mockResolvedValue({
+        ok: true,
+        response: { indices: [], aliases: [], dataStreams: [] },
+      });
+
+      await store.dispatch(getIndicesAndAliases('', '', '', true, true));
+
+      expect(httpMockedClient.get).toHaveBeenCalledWith(
+        `..${BASE_NODE_API_PATH}/_indices_and_aliases`,
+        {
+          query: {
+            indexOrAliasQuery: '',
+            clusters: '',
+            queryForLocalCluster: true,
+            includeDataStreams: true,
+          },
+        }
+      );
+    });
+
+    test('should omit includeDataStreams when getIndicesAndAliases does not opt in', async () => {
+      httpMockedClient.get = jest.fn().mockResolvedValue({
+        ok: true,
+        response: { indices: [], aliases: [] },
+      });
+
+      await store.dispatch(getIndicesAndAliases());
+
+      expect(httpMockedClient.get).toHaveBeenCalledWith(
+        `..${BASE_NODE_API_PATH}/_indices_and_aliases`,
+        {
+          query: {
+            indexOrAliasQuery: '',
+            clusters: '',
+            queryForLocalCluster: true,
+          },
+        }
+      );
+    });
+
+    test('should store data streams and data stream errors on success', async () => {
+      const dataStreams = [{ name: 'logs-http', localCluster: true }];
+      httpMockedClient.get = jest.fn().mockResolvedValue({
+        ok: true,
+        response: {
+          indices: [],
+          aliases: [],
+          dataStreams,
+          dataStreamsError: 'resolve unavailable',
+        },
+      });
+
+      await store.dispatch(getIndicesAndAliases('', '', '', true, true));
+      const actions = store.getActions();
+
+      expect(reducer(initialState, actions[1])).toEqual({
+        ...initialState,
+        requesting: false,
+        indices: [],
+        aliases: [],
+        dataStreams,
+        dataStreamsError: 'resolve unavailable',
+      });
+    });
+
+    test('should clear data stream errors when a new getIndicesAndAliases request starts', async () => {
+      const stateWithDataStreamError = {
+        ...initialState,
+        dataStreams: [{ name: 'logs-http', localCluster: true }],
+        dataStreamsError: 'resolve unavailable',
+      } as any;
+      httpMockedClient.get = jest.fn().mockResolvedValue({
+        ok: true,
+        response: { indices: [], aliases: [] },
+      });
+
+      await store.dispatch(getIndicesAndAliases());
+      const actions = store.getActions();
+
+      expect(reducer(stateWithDataStreamError, actions[0])).toEqual({
+        ...stateWithDataStreamError,
+        requesting: true,
+        errorMessage: '',
+        dataStreams: [],
+        dataStreamsError: '',
+      });
+    });
+
+    test('should keep optional data stream fields empty for 404 success responses', async () => {
+      httpMockedClient.get = jest.fn().mockResolvedValue({
+        ok: true,
+        response: { indices: [], aliases: [] },
+      });
+
+      await store.dispatch(getIndicesAndAliases('', '', '', true, true));
+      const actions = store.getActions();
+
+      expect(reducer(initialState, actions[1])).toEqual({
+        ...initialState,
+        requesting: false,
+        indices: [],
+        aliases: [],
+        dataStreams: [],
+        dataStreamsError: '',
+      });
+    });
+
     test('should handle [REQUEST, SUCCESS] actions for getIndicesAndAliases with clusters', async () => {
       const indices = [
         { index: 'index1', health: 'green' },

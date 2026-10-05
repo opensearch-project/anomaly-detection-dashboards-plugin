@@ -13,6 +13,7 @@ import { get } from 'lodash';
 import { SearchResponse } from '../models/interfaces';
 import {
   CatIndex,
+  DataStream,
   ClusterInfo,
   GetAliasesResponse,
   GetIndicesResponse,
@@ -445,19 +446,23 @@ export default class OpenSearchService {
     }
   };
 
-  // we use this to retrieve indices and aliases from both the local cluster and remote clusters
-  // 3 different OS APIs are called here, _cat/indices, _cat/aliases and _resolve/index
+  // Retrieve indices and aliases, plus data streams when requested by the detector picker.
   getIndicesAndAliases = async (
     context: RequestHandlerContext,
     request: OpenSearchDashboardsRequest,
     opensearchDashboardsResponse: OpenSearchDashboardsResponseFactory
   ): Promise<IOpenSearchDashboardsResponse<any>> => {
-    const { indexOrAliasQuery, clusters, queryForLocalCluster } =
-      request.query as {
-        indexOrAliasQuery: string;
-        clusters: string;
-        queryForLocalCluster: string;
-      };
+    const {
+      indexOrAliasQuery,
+      clusters,
+      queryForLocalCluster,
+      includeDataStreams,
+    } = request.query as {
+      indexOrAliasQuery: string;
+      clusters: string;
+      queryForLocalCluster: string;
+      includeDataStreams?: string;
+    };
     const { dataSourceId = '' } = request.params as { dataSourceId?: string };
     try {
       const callWithRequest = getClientBasedOnDataSource(
@@ -469,6 +474,9 @@ export default class OpenSearchService {
       );
       let indicesResponse: CatIndex[] = [];
       let aliasesResponse: IndexAlias[] = [];
+      let dataStreams: DataStream[] = [];
+      let dataStreamsError = '';
+      const discoverDataStreams = includeDataStreams === 'true';
       if (queryForLocalCluster == 'true') {
         indicesResponse = await callWithRequest('cat.indices', {
           index: indexOrAliasQuery,
@@ -489,13 +497,39 @@ export default class OpenSearchService {
           ...item,
           localCluster: true,
         }));
+
+        if (discoverDataStreams) {
+          try {
+            const resolved: { data_streams?: DataStream[] } =
+              await callWithRequest('transport.request', {
+                method: 'GET',
+                path:
+                  '/_resolve/index/' +
+                  encodeURIComponent(indexOrAliasQuery || '*'),
+              });
+            dataStreams = (resolved.data_streams || []).map((item) => ({
+              name: item.name,
+              localCluster: true,
+            }));
+          } catch (err) {
+            // Keep index and alias choices available when stream discovery is denied.
+            if (!isIndexNotFoundError(err)) {
+              dataStreamsError =
+                getErrorMessage(err) || 'Data stream discovery failed.';
+            }
+          }
+        }
       }
 
-      // only call cat indices and cat aliases
+      // Resolve names on selected remote clusters.
       if (clusters != '') {
         let remoteIndices: CatIndex[] = [];
         let remoteAliases: IndexAlias[] = [];
-        let resolveResponse;
+        let resolveResponse: {
+          indices: Array<{ name: string }>;
+          aliases: Array<{ name: string; indices: string[] }>;
+          data_streams?: DataStream[];
+        };
         const resolveIndexQuery =
           indexOrAliasQuery == ''
             ? clusters
@@ -525,12 +559,24 @@ export default class OpenSearchService {
         }));
         indicesResponse = indicesResponse.concat(remoteIndices);
         aliasesResponse = aliasesResponse.concat(remoteAliases);
+        if (discoverDataStreams) {
+          dataStreams = dataStreams.concat(
+            (resolveResponse.data_streams || []).map((item) => ({
+              name: item.name,
+              localCluster: false,
+            }))
+          );
+        }
       }
 
       return opensearchDashboardsResponse.ok({
         body: {
           ok: true,
-          response: { aliases: aliasesResponse, indices: indicesResponse },
+          response: {
+            aliases: aliasesResponse,
+            indices: indicesResponse,
+            ...(discoverDataStreams && { dataStreams, dataStreamsError }),
+          },
         },
       });
     } catch (err) {
@@ -540,7 +586,17 @@ export default class OpenSearchService {
         get<string>(err, 'body.error.type', '') === 'index_not_found_exception'
       ) {
         return opensearchDashboardsResponse.ok({
-          body: { ok: true, response: { indices: [], aliases: [] } },
+          body: {
+            ok: true,
+            response: {
+              indices: [],
+              aliases: [],
+              ...(includeDataStreams === 'true' && {
+                dataStreams: [],
+                dataStreamsError: '',
+              }),
+            },
+          },
         });
       }
       console.log('Anomaly detector - Unable to get indices and aliases', err);

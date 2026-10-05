@@ -21,6 +21,8 @@ The OpenSearch Anomaly Detection Dashboards plugin enables you to leverage Machi
 
 Anomaly detection uses the Random Cut Forest (RCF) algorithm for detecting anomalous data points.
 
+When creating or editing a detector, the source selector lists logical data stream names alongside indices and aliases. Data streams are grouped by local or remote cluster, and selecting one keeps its logical name as the detector source. If data stream discovery fails, the selector reports the error and retains the index and alias options.
+
 You should use the plugin with the same version of the [OpenSearch Alerting Dashboards Plugin](https://github.com/opensearch-project/alerting-dashboards-plugin). You can also create monitors based on a created anomaly detector. A scheduled monitor run checks the anomaly detection results regularly and collects anomalies to trigger alerts based on custom trigger conditions.
 
 ## Documentation

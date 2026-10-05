@@ -16,6 +16,7 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import {
   CatIndex,
+  DataStream,
   ClusterInfo,
   IndexAlias,
 } from '../../../../../server/models/types';
@@ -27,7 +28,6 @@ import {
   getIndices,
   getIndicesAndAliases,
   getMappings,
-  getPrioritizedIndices,
 } from '../../../../redux/reducers/opensearch';
 import { getError, isInvalid } from '../../../../utils/utils';
 import { IndexOption } from './IndexOption';
@@ -96,7 +96,8 @@ export function DataSource(props: DataSourceProps) {
         queryText,
         dataSourceId,
         clustersString,
-        localClusterExists
+        localClusterExists,
+        true
       )
     );
     setFieldValue('index', props.formikProps.values.index);
@@ -169,17 +170,19 @@ export function DataSource(props: DataSourceProps) {
     if (searchValue !== queryText) {
       const sanitizedQuery = sanitizeSearchText(searchValue);
       setQueryText(sanitizedQuery);
-      if (props.formikProps.values.clusters) {
-        const selectedClusters: ClusterOption[] =
-          props.formikProps.values.clusters;
-        const clustersString =
-          getClustersStringForSearchQuery(selectedClusters);
-        await dispatch(
-          getPrioritizedIndices(sanitizedQuery, dataSourceId, clustersString)
-        );
-      } else {
-        await dispatch(getPrioritizedIndices(sanitizedQuery, dataSourceId, ''));
-      }
+      const selectedClusters = props.formikProps.values.clusters || [];
+      const localClusterExists =
+        selectedClusters.length === 0 ||
+        selectedClusters.some((cluster) => cluster.localcluster === 'true');
+      await dispatch(
+        getIndicesAndAliases(
+          sanitizedQuery,
+          dataSourceId,
+          getClustersStringForSearchQuery(selectedClusters),
+          localClusterExists,
+          true
+        )
+      );
     }
   }, 300);
 
@@ -240,9 +243,30 @@ export function DataSource(props: DataSourceProps) {
   const visibleClusters = get(opensearchState, 'clusters', []) as ClusterInfo[];
   const visibleIndices = get(opensearchState, 'indices', []) as CatIndex[];
   const visibleAliases = get(opensearchState, 'aliases', []) as IndexAlias[];
+  const visibleDataStreams = get(
+    opensearchState,
+    'dataStreams',
+    []
+  ) as DataStream[];
 
   return (
     <ContentPanel title="Select Data" titleSize="s">
+      {opensearchState.dataStreamsError ? (
+        <>
+          {/* Legacy EUI lacks announceOnMount; role="alert" announces the error. */}
+          {/* eslint-disable-next-line @elastic/eui/callout-announce-on-mount */}
+          <EuiCallOut
+            role="alert"
+            title="Unable to load data streams"
+            color="warning"
+            iconType="alert"
+            size="s"
+          >
+            {opensearchState.dataStreamsError}
+          </EuiCallOut>
+          <EuiSpacer />
+        </>
+      ) : null}
       {props.isEdit && isSelectedOptionIndexRemoved() ? (
         <div>
           <EuiCallOut
@@ -287,7 +311,7 @@ export function DataSource(props: DataSourceProps) {
           return (
             <FormattedFormRow
               title="Index"
-              hint="Choose an index, index pattern or alias as the data source."
+              hint="Choose an index, index pattern, alias or data stream as the data source."
               isInvalid={isInvalid(field.name, form)}
               error={getError(field.name, form)}
               helpText="You can use a wildcard (*) in your index pattern."
@@ -301,7 +325,8 @@ export function DataSource(props: DataSourceProps) {
                 options={getVisibleOptions(
                   visibleIndices,
                   visibleAliases,
-                  localClusterName
+                  localClusterName,
+                  visibleDataStreams
                 )}
                 onSearchChange={handleSearchChange}
                 onCreateOption={(createdOption: string) => {
