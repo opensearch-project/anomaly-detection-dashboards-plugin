@@ -11,6 +11,7 @@
 import queryString from 'query-string';
 import {
   CatIndex,
+  DataStream,
   ClusterInfo,
   IndexAlias,
   MDSQueryParams,
@@ -96,7 +97,8 @@ export function groupIndicesOrAliasesByCluster(
 export function getVisibleOptions(
   indices: CatIndex[],
   aliases: IndexAlias[],
-  localClusterName: string = ''
+  localClusterName: string = '',
+  dataStreams: DataStream[] = []
 ) {
   // Group by cluster or fallback to default label format
   const getLabeledOptions = (items: any[], label: string) =>
@@ -107,15 +109,24 @@ export function getVisibleOptions(
   const visibleIndices = mapToVisibleOptions(indices, 'index');
   const visibleAliases = mapToVisibleOptions(aliases, 'alias');
 
-  // Combine grouped indices and aliases
+  const visibleDataStreams = mapToVisibleOptions(dataStreams, 'name');
+
+  // Combine grouped indices, aliases and data streams.
   const visibleIndicesLabel = getLabeledOptions(visibleIndices, 'Indices');
   const visibleAliasesLabel = getLabeledOptions(visibleAliases, 'Aliases');
-  const combinedVisibleIndicesAndAliases =
-    visibleIndicesLabel.concat(visibleAliasesLabel);
-  const sortedVisibleIndicesAndAliases = _.sortBy(combinedVisibleIndicesAndAliases, [
-    (item) => (item.label.includes('Indices:') ? 0 : 1), // Indices first, then Aliases
-    (item) => (item.label.includes('(Local)') ? 0 : 1), // Local first, then Remote
-  ]);
+  const combinedVisibleIndicesAndAliases = visibleIndicesLabel.concat(
+    visibleAliasesLabel,
+    visibleDataStreams.length > 0
+      ? getLabeledOptions(visibleDataStreams, 'Data streams')
+      : []
+  );
+  const sortedVisibleIndicesAndAliases = _.sortBy(
+    combinedVisibleIndicesAndAliases,
+    [
+      (item) => (item.label.includes('Indices:') ? 0 : 1), // Indices first, then Aliases
+      (item) => (item.label.includes('(Local)') ? 0 : 1), // Local first, then Remote
+    ]
+  );
   return sortedVisibleIndicesAndAliases;
 }
 

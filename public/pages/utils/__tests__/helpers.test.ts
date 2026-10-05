@@ -25,6 +25,42 @@ jest.mock('../../../../opensearch_dashboards.json', () => ({
 
 describe('helpers', () => {
   describe('getVisibleOptions', () => {
+    test('groups logical streams by cluster without exposing backing or system names', () => {
+      const options = getVisibleOptions(
+        [{ index: 'plain-index', health: 'green', localCluster: true }],
+        [{ alias: 'plain-alias', index: 'plain-index', localCluster: true }],
+        'local',
+        [
+          { name: 'logs-stream', localCluster: true },
+          { name: 'remote:logs-stream', localCluster: false },
+          { name: '.system-stream', localCluster: true },
+          { name: 'remote:.system-stream', localCluster: false },
+        ]
+      );
+
+      expect(options).toEqual(
+        expect.arrayContaining([
+          {
+            label: 'Indices: local (Local)',
+            options: [{ label: 'plain-index', health: 'green' }],
+          },
+          {
+            label: 'Aliases: local (Local)',
+            options: [{ label: 'plain-alias' }],
+          },
+          {
+            label: 'Data streams: local (Local)',
+            options: [{ label: 'logs-stream' }],
+          },
+          {
+            label: 'Data streams: remote (Remote)',
+            options: [{ label: 'remote:logs-stream' }],
+          },
+        ])
+      );
+      expect(options).toHaveLength(4);
+    });
+
     test('returns without system indices if valid index options and undefined localCluster', () => {
       expect(
         getVisibleOptions(

@@ -8,6 +8,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 ### Features
 ### Enhancements
 ### Bug Fixes
+- Show logical data stream names in the detector source selector for local and remote clusters ([#1252](https://github.com/opensearch-project/anomaly-detection-dashboards-plugin/pull/1252)).
 ### Infrastructure
 ### Documentation
 - Point the unit tests badge at the current build and test workflow ([#1251](https://github.com/opensearch-project/anomaly-detection-dashboards-plugin/pull/1251))

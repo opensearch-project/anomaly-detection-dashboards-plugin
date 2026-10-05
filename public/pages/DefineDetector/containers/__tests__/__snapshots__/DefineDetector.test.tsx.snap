@@ -338,7 +338,7 @@ exports[`<DefineDetector /> Full creating detector definition renders the compon
           </div>
           <div
             class="euiFormRow euiFormRow--compressed"
-            hint="Choose an index, index pattern or alias as the data source."
+            hint="Choose an index, index pattern, alias or data stream as the data source."
             id="random_html_id-row"
             title="Index"
           >
@@ -361,7 +361,7 @@ exports[`<DefineDetector /> Full creating detector definition renders the compon
                     class="euiText euiText--medium sublabel"
                     style="max-width: 400px;"
                   >
-                    Choose an index, index pattern or alias as the data source.
+                    Choose an index, index pattern, alias or data stream as the data source.
                   </div>
                 </div>
               </label>
@@ -1200,7 +1200,7 @@ exports[`<DefineDetector /> FullEdit editing detector page renders the component
           </div>
           <div
             class="euiFormRow euiFormRow--compressed"
-            hint="Choose an index, index pattern or alias as the data source."
+            hint="Choose an index, index pattern, alias or data stream as the data source."
             id="random_html_id-row"
             title="Index"
           >
@@ -1223,7 +1223,7 @@ exports[`<DefineDetector /> FullEdit editing detector page renders the component
                     class="euiText euiText--medium sublabel"
                     style="max-width: 400px;"
                   >
-                    Choose an index, index pattern or alias as the data source.
+                    Choose an index, index pattern, alias or data stream as the data source.
                   </div>
                 </div>
               </label>
@@ -2061,7 +2061,7 @@ exports[`<DefineDetector /> empty creating detector definition renders the compo
           </div>
           <div
             class="euiFormRow euiFormRow--compressed"
-            hint="Choose an index, index pattern or alias as the data source."
+            hint="Choose an index, index pattern, alias or data stream as the data source."
             id="random_html_id-row"
             title="Index"
           >
@@ -2084,7 +2084,7 @@ exports[`<DefineDetector /> empty creating detector definition renders the compo
                     class="euiText euiText--medium sublabel"
                     style="max-width: 400px;"
                   >
-                    Choose an index, index pattern or alias as the data source.
+                    Choose an index, index pattern, alias or data stream as the data source.
                   </div>
                 </div>
               </label>
@@ -2890,7 +2890,7 @@ exports[`<DefineDetector /> empty editing detector definition renders the compon
           </div>
           <div
             class="euiFormRow euiFormRow--compressed"
-            hint="Choose an index, index pattern or alias as the data source."
+            hint="Choose an index, index pattern, alias or data stream as the data source."
             id="random_html_id-row"
             title="Index"
           >
@@ -2913,7 +2913,7 @@ exports[`<DefineDetector /> empty editing detector definition renders the compon
                     class="euiText euiText--medium sublabel"
                     style="max-width: 400px;"
                   >
-                    Choose an index, index pattern or alias as the data source.
+                    Choose an index, index pattern, alias or data stream as the data source.
                   </div>
                 </div>
               </label>

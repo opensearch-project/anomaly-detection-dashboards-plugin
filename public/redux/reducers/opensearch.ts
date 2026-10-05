@@ -20,6 +20,7 @@ import handleActions from '../utils/handleActions';
 import { getPathsPerDataType } from './mapper';
 import {
   CatIndex,
+  DataStream,
   ClusterInfo,
   IndexAlias,
 } from '../../../server/models/types';
@@ -64,6 +65,8 @@ export interface DataTypes {
 interface OpenSearchState {
   indices: CatIndex[];
   aliases: IndexAlias[];
+  dataStreams: DataStream[];
+  dataStreamsError: string;
   dataTypes: DataTypes;
   requesting: boolean;
   searchResult: object;
@@ -74,6 +77,8 @@ interface OpenSearchState {
 export const initialState: OpenSearchState = {
   indices: [],
   aliases: [],
+  dataStreams: [],
+  dataStreamsError: '',
   dataTypes: {},
   requesting: false,
   searchResult: {},
@@ -85,7 +90,13 @@ const reducer = handleActions<OpenSearchState>(
   {
     [GET_INDICES_AND_ALIASES]: {
       REQUEST: (state: OpenSearchState): OpenSearchState => {
-        return { ...state, requesting: true, errorMessage: '' };
+        return {
+          ...state,
+          requesting: true,
+          errorMessage: '',
+          dataStreams: [],
+          dataStreamsError: '',
+        };
       },
       SUCCESS: (
         state: OpenSearchState,
@@ -96,6 +107,8 @@ const reducer = handleActions<OpenSearchState>(
           requesting: false,
           indices: get(action, 'result.response.indices', []),
           aliases: get(action, 'result.response.aliases', []),
+          dataStreams: get(action, 'result.response.dataStreams', []),
+          dataStreamsError: get(action, 'result.response.dataStreamsError', ''),
         };
       },
       FAILURE: (
@@ -330,7 +343,8 @@ export const getIndicesAndAliases = (
   searchKey = '',
   dataSourceId: string = '',
   givenClusters: string = '',
-  queryForLocalCluster: boolean = true
+  queryForLocalCluster: boolean = true,
+  includeDataStreams: boolean = false
 ): APIAction => {
   const baseUrl = `..${AD_NODE_API.GET_INDICES_AND_ALIASES}`;
   const url = dataSourceId ? `${baseUrl}/${dataSourceId}` : baseUrl;
@@ -342,6 +356,7 @@ export const getIndicesAndAliases = (
           indexOrAliasQuery: searchKey,
           clusters: givenClusters,
           queryForLocalCluster: queryForLocalCluster,
+          ...(includeDataStreams && { includeDataStreams: true }),
         },
       }),
   };

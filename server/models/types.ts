@@ -22,6 +22,11 @@ export type ClusterInfo = {
   localCluster: boolean;
 }
 
+export interface DataStream {
+  name: string;
+  localCluster?: boolean;
+}
+
 export type IndexAlias = {
   index: string[] | string;
   alias: string;
