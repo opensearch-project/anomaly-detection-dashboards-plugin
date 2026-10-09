@@ -18,7 +18,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     steps:  
       - name: Checkout Branch
-        uses: actions/checkout@a37ce9120846195fa4ece8f58b268e6043cb2f26 # v3
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
       - name: Set env
         run: |
@@ -29,14 +29,14 @@ jobs:
         shell: bash
 
       - name: Run Opensearch
-        uses: derek-ho/start-opensearch@28a7ce5aa29e82a4b426b202d92af4ed2bb9003b # v2
+        uses: derek-ho/start-opensearch@d686795cd945a1cd702ab4237227045300505e09 # v10
         with:
           opensearch-version: ${{ env.OPENSEARCH_VERSION }}
           security-enabled: false
 
       - name: Run Dashboard
         id: setup-dashboards
-        uses: derek-ho/setup-opensearch-dashboards@f64b331c58fe5b0a6533e76da1b46cb9d11bcaef # v1
+        uses: derek-ho/setup-opensearch-dashboards@623a4c478a9075486bb1db7eaffa7046524992a4 # v3
         with:
           plugin_name: anomaly-detection-dashboards-plugin
           built_plugin_name: anomaly-detection-dashboards
