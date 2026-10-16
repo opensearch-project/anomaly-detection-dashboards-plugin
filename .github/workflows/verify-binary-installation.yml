@@ -29,18 +29,21 @@ jobs:
         shell: bash
 
       - name: Run Opensearch
-        uses: derek-ho/start-opensearch@d686795cd945a1cd702ab4237227045300505e09 # v10
+        uses: opensearch-project/opensearch-build/.github/actions/start-opensearch@643b632712710159088d5f0798de7e91c1f2b8f7
         with:
           opensearch-version: ${{ env.OPENSEARCH_VERSION }}
           security-enabled: false
+          jdk-version: 21
+          snapshot: false
 
       - name: Run Dashboard
         id: setup-dashboards
-        uses: derek-ho/setup-opensearch-dashboards@623a4c478a9075486bb1db7eaffa7046524992a4 # v3
+        uses: opensearch-project/opensearch-build/.github/actions/setup-opensearch-dashboards@643b632712710159088d5f0798de7e91c1f2b8f7
         with:
           plugin_name: anomaly-detection-dashboards-plugin
           built_plugin_name: anomaly-detection-dashboards
           install_zip: true
+          snapshot: true
 
       - name: Start the binary
         run: | 
