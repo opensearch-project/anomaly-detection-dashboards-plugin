@@ -2,6 +2,8 @@ name: 'Install Dashboards with Plugin via Binary'
 
 on: [push, pull_request]
 env:
+  # setup-opensearch-dashboards runs `yarn add sha.js`, which pulls deps requiring Node 20+; OSD 2.19 is Node 18
+  YARN_IGNORE_ENGINES: true
   OPENSEARCH_VERSION: '2.14.0'
   CI: 1
   # avoid warnings like "tput: No value for $TERM and no -T specified"
