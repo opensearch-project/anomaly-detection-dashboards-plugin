@@ -51,9 +51,6 @@ jobs:
           repository: opensearch-project/OpenSearch-Dashboards
           ref: ${{ env.OPENSEARCH_DASHBOARDS_VERSION }}
           fetch-depth: 0
-          filter: |
-            cypress
-            test
 
       - name: Checkout AD in OpenSearch Dashboards Plugins Dir
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -70,14 +67,13 @@ jobs:
       - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
         with:
           node-version: ${{ steps.tool-versions.outputs.node_version }}
-          registry-url: 'https://registry.npmjs.org'
 
       - name: Install correct yarn version for OpenSearch Dashboards
         id: setup-yarn
         run: |
           npm uninstall -g yarn
-          echo "Installing yarn ${{ steps.versions_step.outputs.yarn_version }}"
-          npm i -g yarn@${{ steps.versions_step.outputs.yarn_version }}
+          echo "Installing yarn ${{ steps.tool-versions.outputs.yarn_version }}"
+          npm i -g yarn@${{ steps.tool-versions.outputs.yarn_version }}
 
       - name: Yarn Cache
         uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
