@@ -1,3 +1,8 @@
+/*
+ * Copyright OpenSearch Contributors
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
 export const featureQuery1 = {
   featureName: 'value',
   featureEnabled: true,
