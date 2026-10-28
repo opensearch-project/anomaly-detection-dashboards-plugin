@@ -439,7 +439,10 @@ export class AnomalyDetectionOpenSearchDashboardsPlugin
 
     const enabled = !!plugins.dataSource;
 
-    setDataSourceEnabled({ enabled });
+    setDataSourceEnabled({
+      enabled,
+      hideLocalCluster: plugins.dataSource?.hideLocalCluster,
+    });
 
     // Create context menu actions
     const actions = getActions();

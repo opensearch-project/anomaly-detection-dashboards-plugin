@@ -21,6 +21,7 @@ import { AssistantPublicPluginStart } from '../../../plugins/dashboards-assistan
 
 export interface DataSourceEnabled {
   enabled: boolean;
+  hideLocalCluster?: boolean;
 }
 
 export const [getSavedFeatureAnywhereLoader, setSavedFeatureAnywhereLoader] =

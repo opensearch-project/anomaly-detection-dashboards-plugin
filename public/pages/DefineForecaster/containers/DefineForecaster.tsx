@@ -61,6 +61,7 @@ import { DataSourceSelectableConfig, } from '../../../../../../src/plugins/data_
 import {
   constructHrefWithDataSourceId,
   getDataSourceFromURL,
+  getInitialDataSourceId,
   isForecastingDataSourceCompatible,
 } from '../../utils/helpers';
 import queryString from 'querystring';
@@ -120,7 +121,6 @@ export const validateForecasterNameTemplate = async (
 export const DefineForecaster = (props: DefineForecasterProps) => {
   const location = useLocation();
   const MDSQueryParams = getDataSourceFromURL(location);
-  const dataSourceId = MDSQueryParams.dataSourceId;
   const dataSourceEnabled = getDataSourceEnabled().enabled;
 
   const core = React.useContext(CoreServicesContext) as CoreStart;
@@ -130,17 +130,18 @@ export const DefineForecaster = (props: DefineForecasterProps) => {
   // when match.params.forecasterId is undefined).
   // Therefore, forecaster is undefined during forecaster creation
   const forecasterId: string = get(props, 'match.params.forecasterId', '');
-  const { forecaster, hasError } = useFetchForecasterInfo(forecasterId, dataSourceId);
-
-  const [newIndexSelected, setNewIndexSelected] = useState<boolean>(false);
-
   const [MDSCreateState, setMDSCreateState] = useState<MDSStates>({
     queryParams: MDSQueryParams,
-    // MDS treats empty dataSourceId as the local cluster scenario, 
-    // and only undefined actionOption will render the default remote data source.
-    // If dataSourceId is '',  we get ''.
-    selectedDataSourceId: dataSourceId === undefined? undefined : dataSourceId,
+    selectedDataSourceId: getInitialDataSourceId(MDSQueryParams.dataSourceId),
   });
+  const dataSourceId = MDSCreateState.selectedDataSourceId;
+  const isDataSourceReady = !dataSourceEnabled || dataSourceId !== undefined;
+  const { forecaster, hasError } = useFetchForecasterInfo(
+    isDataSourceReady ? forecasterId : '',
+    dataSourceId ?? ''
+  );
+
+  const [newIndexSelected, setNewIndexSelected] = useState<boolean>(false);
 
   const [isHCForecaster, setIsHCForecaster] = useState<boolean>(
     props.initialValues ? props.initialValues.categoryFieldEnabled : false
@@ -152,10 +153,10 @@ export const DefineForecaster = (props: DefineForecasterProps) => {
     if (forecaster && get(forecaster, 'categoryField', []).length > 0) {
       setIsHCForecaster(true);
     }
-    if (forecaster?.indices) {
+    if (isDataSourceReady && forecaster?.indices) {
       dispatch(getMappings(forecaster.indices, dataSourceId));
     }
-  }, [forecaster]);
+  }, [forecaster, dataSourceId]);
 
 
   // Jump to top of page on first load
@@ -196,8 +197,9 @@ export const DefineForecaster = (props: DefineForecasterProps) => {
     }
   });
 
-  // If no forecaster found with ID, redirect it to list
+  // Keep subsequent creation steps on the resolved data source.
   useEffect(() => {
+    if (!isDataSourceReady) return;
     if (dataSourceEnabled) {
       const { history, location } = props;
       const updatedParams = {
@@ -219,6 +221,7 @@ export const DefineForecaster = (props: DefineForecasterProps) => {
   );
 
   const handleValidateName = async (forecasterName: string) => {
+    if (!isDataSourceReady) return;
     return validateForecasterNameTemplate(
       forecasterName,
       dispatch,
@@ -353,6 +356,8 @@ export const DefineForecaster = (props: DefineForecasterProps) => {
                   <EuiSpacer />
                   <DataSource
                     formikProps={formikProps}
+                    dataSourceId={dataSourceId}
+                    dataSourceReady={isDataSourceReady}
                     isEdit={false}
                     isEditable={true}
                     setModelConfigValues={props.setModelConfigValues}
@@ -408,6 +413,7 @@ export const DefineForecaster = (props: DefineForecasterProps) => {
                   fill={true}
                   data-test-subj="defineForecasterNextButton"
                   isLoading={formikProps.isSubmitting}
+                  isDisabled={!isDataSourceReady}
                   //@ts-ignore
                   onClick={() => {
                     handleFormValidation(formikProps);

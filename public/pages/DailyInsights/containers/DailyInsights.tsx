@@ -43,6 +43,7 @@ import { prettifyErrorMessage } from '../../../../server/utils/helpers';
 import { MDSStates } from '../../../models/interfaces';
 import { 
   getDataSourceFromURL,
+  getInitialDataSourceId,
   isDataSourceCompatible,
 } from '../../utils/helpers';
 import { BREADCRUMBS, MDS_BREADCRUMBS, USE_NEW_HOME_PAGE, DAILY_INSIGHTS_INDICES_PAGE_NAV_ID, PLUGIN_NAME, APP_PATH } from '../../../utils/constants';
@@ -188,7 +189,7 @@ export function DailyInsights(props: DailyInsightsProps) {
   const [MDSInsightsState, setMDSInsightsState] = useState<MDSStates>({
     queryParams,
     selectedDataSourceId: dataSourceEnabled
-      ? (queryParams.dataSourceId || undefined)
+      ? getInitialDataSourceId(queryParams.dataSourceId)
       : undefined,
   });
 
@@ -220,6 +221,9 @@ export function DailyInsights(props: DailyInsightsProps) {
 
   // Update URL params when data source changes
   useEffect(() => {
+    if (dataSourceEnabled && MDSInsightsState.selectedDataSourceId === undefined) {
+      return;
+    }
     const { history, location } = props;
     if (dataSourceEnabled) {
       const updatedParams = {
@@ -257,6 +261,9 @@ export function DailyInsights(props: DailyInsightsProps) {
   }, [MDSInsightsState]);
 
   const fetchInsightsStatusAndResults = async () => {
+    if (dataSourceEnabled && MDSInsightsState.selectedDataSourceId === undefined) {
+      return;
+    }
     setIsLoading(true);
     try {
       const statusResponse = await dispatch(

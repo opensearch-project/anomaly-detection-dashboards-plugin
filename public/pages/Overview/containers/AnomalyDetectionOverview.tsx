@@ -68,7 +68,7 @@ import {
 } from '../../../../public/services';
 import { RouteComponentProps } from 'react-router-dom';
 import queryString from 'querystring';
-import { getDataSourceFromURL, getSampleDetectorsQueryParamsWithDataSouceId, isDataSourceCompatible } from '../../../../public/pages/utils/helpers';
+import { getDataSourceFromURL, getInitialDataSourceId, getSampleDetectorsQueryParamsWithDataSouceId, isDataSourceCompatible } from '../../../../public/pages/utils/helpers';
 import { MDSStates } from '../../../models/interfaces';
 import { TopNavControlButtonData, TopNavControlLinkData } from '../../../../../../src/plugins/navigation/public';
 
@@ -108,9 +108,7 @@ export function AnomalyDetectionOverview(props: AnomalyDetectionOverviewProps) {
   const queryParams = getDataSourceFromURL(props.location);
   const [MDSOverviewState, setMDSOverviewState] = useState<MDSStates>({
     queryParams,
-    selectedDataSourceId: queryParams.dataSourceId === undefined
-      ? undefined
-      : queryParams.dataSourceId,
+    selectedDataSourceId: getInitialDataSourceId(queryParams.dataSourceId),
   });
 
   const useUpdatedUX = getUISettings().get(USE_NEW_HOME_PAGE);
@@ -139,6 +137,9 @@ export function AnomalyDetectionOverview(props: AnomalyDetectionOverviewProps) {
 
   // Getting all initial sample detectors & indices
   useEffect(() => {
+    if (dataSourceEnabled && MDSOverviewState.selectedDataSourceId === undefined) {
+      return;
+    }
     const { history, location } = props;
     if (dataSourceEnabled) {
       const updatedParams = {
@@ -181,6 +182,9 @@ export function AnomalyDetectionOverview(props: AnomalyDetectionOverviewProps) {
     detectorConfig: any,
     setLoadingState: (isLoading: boolean) => void
   ) => {
+    if (dataSourceEnabled && MDSOverviewState.selectedDataSourceId === undefined) {
+      return;
+    }
     setLoadingState(true);
     let errorDuringAction = false;
     let errorMessage = '';

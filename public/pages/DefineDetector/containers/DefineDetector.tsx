@@ -66,6 +66,7 @@ import { DataSourceSelectableConfig, DataSourceViewConfig } from '../../../../..
 import {
   constructHrefWithDataSourceId,
   getDataSourceFromURL,
+  getInitialDataSourceId,
   isDataSourceCompatible,
 } from '../../../pages/utils/helpers';
 import queryString from 'querystring';
@@ -88,20 +89,25 @@ interface DefineDetectorProps
 export const DefineDetector = (props: DefineDetectorProps) => {
   const location = useLocation();
   const MDSQueryParams = getDataSourceFromURL(location);
-  const dataSourceId = MDSQueryParams.dataSourceId;
   const dataSourceEnabled = getDataSourceEnabled().enabled;
   const opensearchState = useSelector((state: AppState) => state.opensearch);
   const core = React.useContext(CoreServicesContext) as CoreStart;
   const dispatch = useDispatch<Dispatch<APIAction>>();
   useHideSideNavBar(true, false);
   const detectorId: string = get(props, 'match.params.detectorId', '');
-  const { detector, hasError } = useFetchDetectorInfo(detectorId, dataSourceId);
   const [newIndexSelected, setNewIndexSelected] = useState<boolean>(false);
 
   const [MDSCreateState, setMDSCreateState] = useState<MDSStates>({
     queryParams: MDSQueryParams,
-    selectedDataSourceId: dataSourceId === undefined? undefined : dataSourceId,
+    selectedDataSourceId: getInitialDataSourceId(MDSQueryParams.dataSourceId),
   });
+
+  const dataSourceId = MDSCreateState.selectedDataSourceId;
+  const isDataSourceReady = !dataSourceEnabled || dataSourceId !== undefined;
+  const { detector, hasError } = useFetchDetectorInfo(
+    isDataSourceReady ? detectorId : '',
+    dataSourceId ?? ''
+  );
 
   // Tracks whether the currently selected data source is an OpenSearch
   // Serverless (AOSS) collection. Resolved asynchronously from the data-source
@@ -183,6 +189,9 @@ export const DefineDetector = (props: DefineDetectorProps) => {
 
   // If no detector found with ID, redirect it to list
   useEffect(() => {
+    if (!isDataSourceReady) {
+      return;
+    }
     if (dataSourceEnabled) {
       const { history, location } = props;
       const updatedParams = {
@@ -202,6 +211,7 @@ export const DefineDetector = (props: DefineDetectorProps) => {
   }, [props.isEdit, MDSCreateState]);
 
   const handleValidateName = async (detectorName: string) => {
+    if (!isDataSourceReady) return;
     if (isEmpty(detectorName)) {
       return 'Detector name cannot be empty';
     } else {
@@ -392,6 +402,8 @@ export const DefineDetector = (props: DefineDetectorProps) => {
                 />
                 <EuiSpacer />
                 <DataSource
+                  dataSourceId={dataSourceId}
+                  dataSourceReady={isDataSourceReady}
                   formikProps={formikProps}
                   origIndex={
                     props.isEdit ? get(detector, 'indices', [] as { label: string; }[]) : null
@@ -453,6 +465,7 @@ export const DefineDetector = (props: DefineDetectorProps) => {
                   type="submit"
                   fill={true}
                   data-test-subj="updateDetectorButton"
+                  isDisabled={!isDataSourceReady}
                   //@ts-ignore
                   onClick={() => {
                     handleFormValidation(formikProps);
@@ -467,6 +480,7 @@ export const DefineDetector = (props: DefineDetectorProps) => {
                   iconType="arrowRight"
                   fill={true}
                   data-test-subj="defineDetectorNextButton"
+                  isDisabled={!isDataSourceReady}
                   isLoading={formikProps.isSubmitting}
                   //@ts-ignore
                   onClick={() => {

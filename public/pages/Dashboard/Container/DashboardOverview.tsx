@@ -42,6 +42,7 @@ import {
 import {
   getAllDetectorsQueryParamsWithDataSourceId,
   getDataSourceFromURL,
+  getInitialDataSourceId,
   getVisibleOptions,
   isDataSourceCompatible,
 } from '../../utils/helpers';
@@ -95,9 +96,7 @@ export function DashboardOverview(props: OverviewProps) {
   const queryParams = getDataSourceFromURL(props.location);
   const [MDSOverviewState, setMDSOverviewState] = useState<MDSStates>({
     queryParams,
-    selectedDataSourceId: queryParams.dataSourceId === undefined
-      ? undefined
-      : queryParams.dataSourceId,
+    selectedDataSourceId: getInitialDataSourceId(queryParams.dataSourceId),
   });
 
   const getDetectorOptions = (detectorsIdMap: {
@@ -208,6 +207,9 @@ export function DashboardOverview(props: OverviewProps) {
   };
 
   useEffect(() => {
+    if (dataSourceEnabled && MDSOverviewState.selectedDataSourceId === undefined) {
+      return;
+    }
     const { history, location } = props;
     if (dataSourceEnabled) {
       const updatedParams = {

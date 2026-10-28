@@ -49,6 +49,8 @@ import _ from 'lodash';
 import { getClusterOptionLabel } from '../../utils/helpers';
 
 interface DataSourceProps {
+  dataSourceId?: string;
+  dataSourceReady?: boolean;
   formikProps: FormikProps<DetectorDefinitionFormikValues>;
   origIndex: { label: string }[];
   isEdit: boolean;
@@ -68,7 +70,7 @@ export function DataSource(props: DataSourceProps) {
   const dispatch = useDispatch();
   const location = useLocation();
   const MDSQueryParams = getDataSourceFromURL(location);
-  const dataSourceId = MDSQueryParams.dataSourceId;
+  const dataSourceId = props.dataSourceId ?? MDSQueryParams.dataSourceId;
   const [indexNames, setIndexNames] = useState<{ label: string }[]>(
     props.formikProps.values.index
   );
@@ -78,17 +80,23 @@ export function DataSource(props: DataSourceProps) {
   const [localClusterName, setLocalClusterName] = useState('');
 
   useEffect(() => {
+    if (props.dataSourceReady === false) {
+      return;
+    }
     const getInitialClusters = async () => {
       await dispatch(getClustersInfo(dataSourceId));
       handleClusterUpdate(opensearchState.clusters);
     };
     getInitialClusters();
-  }, [dataSourceId]);
+  }, [dataSourceId, props.dataSourceReady]);
 
   const getIndicesAndAliasesBasedOnCluster = async (
     clusters: ClusterOption[],
     localClusterExists: boolean
   ) => {
+    if (props.dataSourceReady === false) {
+      return;
+    }
     //Convert list of clusters to a string for searching
     const clustersString = getClustersStringForSearchQuery(clusters);
     await dispatch(
@@ -127,7 +135,7 @@ export function DataSource(props: DataSourceProps) {
         }
       }
     }
-  }, [props.formikProps.values.clusters]);
+  }, [props.formikProps.values.clusters, dataSourceId, props.dataSourceReady]);
 
   const getClustersStringForSearchQuery = (clusters: ClusterOption[]) => {
     let clustersString = '';
@@ -166,6 +174,7 @@ export function DataSource(props: DataSourceProps) {
   }, [props.formikProps.values.index]);
 
   const handleSearchChange = debounce(async (searchValue: string) => {
+    if (props.dataSourceReady === false) return;
     if (searchValue !== queryText) {
       const sanitizedQuery = sanitizeSearchText(searchValue);
       setQueryText(sanitizedQuery);
@@ -184,6 +193,7 @@ export function DataSource(props: DataSourceProps) {
   }, 300);
 
   const handleIndexNameChange = (selectedOptions: any, oldOptions: { label: string }[] = props.formikProps.values.index) => {
+    if (props.dataSourceReady === false) return;
     const indexNames = selectedOptions;
     setIndexNames(indexNames);
     if (indexNames.length > 0) {
