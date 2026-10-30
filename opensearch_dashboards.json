@@ -28,9 +28,7 @@
   "server": true,
   "ui": true,
   "supportedOSDataSourceVersions": ">=2.9.0",
-  "unsupportedOSDataSourceEngineTypes": [
-    "AnalyticEngine"
-  ],
+  "unsupportedOSDataSourceEngineTypes": [],
   "requiredOSDataSourcePlugins": [
     "opensearch-anomaly-detection"
   ]

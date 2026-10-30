@@ -12,7 +12,7 @@
 import React from 'react';
 import { Provider } from 'react-redux';
 import {
-  HashRouter as Router,
+  Router,
   RouteComponentProps,
   Route,
   Switch,
@@ -26,11 +26,20 @@ import { ForecasterDefinitionFormikValues } from '../../models/interfaces';
 import { matchForecaster } from '../../../../redux/reducers/forecast';
 import { getApplication, getDataSourceEnabled, getNavigationUI, getUISettings } from '../../../../services';
 import thunk from 'redux-thunk';
+import { createMemoryHistory } from 'history';
+import { getDataSourceManagementPlugin, getNotifications } from '../../../../services';
+import { getClustersInfo, getIndicesAndAliases } from '../../../../redux/reducers/opensearch';
 
 // Mock redux actions
 jest.mock('../../../../redux/reducers/forecast', () => ({
   ...jest.requireActual('../../../../redux/reducers/forecast'),
   matchForecaster: jest.fn(),
+}));
+
+jest.mock('../../../../redux/reducers/opensearch', () => ({
+  ...jest.requireActual('../../../../redux/reducers/opensearch'),
+  getClustersInfo: jest.fn((...args) => jest.requireActual('../../../../redux/reducers/opensearch').getClustersInfo(...args)),
+  getIndicesAndAliases: jest.fn((...args) => jest.requireActual('../../../../redux/reducers/opensearch').getIndicesAndAliases(...args)),
 }));
 
 // Mock services
@@ -88,7 +97,8 @@ const filledInitialValues: ForecasterDefinitionFormikValues = {
 const renderDefineForecaster = (
   isEdit: boolean = false,
   initialValues: ForecasterDefinitionFormikValues,
-  setStep = jest.fn()
+  setStep = jest.fn(),
+  route = '/create'
 ) => {
   // Mock store with initial state
   const store = mockStore({
@@ -102,10 +112,12 @@ const renderDefineForecaster = (
     }
   });
 
+  const history = createMemoryHistory({ initialEntries: [route] });
+
   return {
   ...render(
       <Provider store={store}>
-      <Router>
+      <Router history={history}>
         <Switch>
           <Route
             render={(props: RouteComponentProps) => (
@@ -125,6 +137,7 @@ const renderDefineForecaster = (
     </Provider>
   ),
     setStep,
+    history,
   };
 };
 
@@ -218,5 +231,86 @@ describe('<DefineForecaster />', () => {
         'test-forecaster-name'
       );
     });
+  });
+});
+
+
+describe('DefineForecaster data source selection', () => {
+  const analyticEngine = {
+    id: 'analytic-engine-id',
+    attributes: {
+      title: 'Analytic engine',
+      dataSourceEngineType: 'AnalyticEngine',
+      dataSourceVersion: '3.1.0',
+      installedPlugins: ['opensearch-anomaly-detection'],
+    },
+  };
+  let pickerConfig: any;
+  const addDanger = jest.fn();
+
+  beforeEach(() => {
+    jest.clearAllMocks();
+    (matchForecaster as jest.Mock).mockImplementation(() => () =>
+      Promise.resolve({ response: { match: false } })
+    );
+    (getDataSourceEnabled as jest.Mock).mockReturnValue({ enabled: true, hideLocalCluster: true });
+    (getUISettings as jest.Mock).mockReturnValue({ get: jest.fn() });
+    (getNavigationUI as jest.Mock).mockReturnValue({ HeaderControl: () => null });
+    (getApplication as jest.Mock).mockReturnValue({ setAppRightControls: jest.fn() });
+    (getNotifications as jest.Mock).mockReturnValue({ toasts: { addDanger } });
+    (getDataSourceManagementPlugin as jest.Mock).mockReturnValue({
+      ui: {
+        getDataSourceMenu: () => ({ componentConfig }: any) => {
+          pickerConfig = componentConfig;
+          return (
+            <button onClick={() => componentConfig.onSelectedDataSources([{ id: analyticEngine.id }])}>
+              Select analytic engine
+            </button>
+          );
+        },
+      },
+    });
+  });
+
+  it.each(['/create?dataSourceId=', '/create'])(
+    'waits for the default source before requests for %s',
+    async (route) => {
+      const { history } = renderDefineForecaster(false, emptyInitialValues, jest.fn(), route);
+      expect(pickerConfig.activeOption).toBeUndefined();
+      expect(pickerConfig.dataSourceFilter(analyticEngine)).toBe(true);
+      expect(getClustersInfo).not.toHaveBeenCalled();
+      expect(getIndicesAndAliases).not.toHaveBeenCalled();
+      expect(matchForecaster).not.toHaveBeenCalled();
+      expect(screen.getByTestId('defineForecasterNextButton')).toBeDisabled();
+
+      fireEvent.click(screen.getByText('Select analytic engine'));
+
+      await waitFor(() => expect(getClustersInfo).toHaveBeenCalledWith(analyticEngine.id));
+      expect(history.location.search).toBe(`?dataSourceId=${analyticEngine.id}`);
+      const nameInput = screen.getByTestId('forecasterNameTextInput');
+      fireEvent.change(nameInput, { target: { value: 'new-forecast' } });
+      fireEvent.blur(nameInput);
+      await waitFor(() => expect(matchForecaster).toHaveBeenCalledWith('new-forecast', analyticEngine.id));
+      fireEvent.click(screen.getByText('Cancel'));
+      expect(history.location.pathname).toBe('/forecasters');
+      expect(history.location.search).toBe(`?dataSourceId=${analyticEngine.id}`);
+      expect(addDanger).not.toHaveBeenCalled();
+    }
+  );
+
+  it('retains an explicitly selected analytic engine', async () => {
+    renderDefineForecaster(false, emptyInitialValues, jest.fn(), `/create?dataSourceId=${analyticEngine.id}`);
+    expect(pickerConfig.activeOption).toEqual([{ id: analyticEngine.id }]);
+    expect(pickerConfig.dataSourceFilter(analyticEngine)).toBe(true);
+    await waitFor(() => expect(getClustersInfo).toHaveBeenCalledWith(analyticEngine.id));
+    expect(addDanger).not.toHaveBeenCalled();
+  });
+
+  it('keeps explicit local-cluster selection when local cluster is enabled', async () => {
+    (getDataSourceEnabled as jest.Mock).mockReturnValue({ enabled: true, hideLocalCluster: false });
+    renderDefineForecaster(false, emptyInitialValues, jest.fn(), '/create?dataSourceId=');
+    expect(pickerConfig.activeOption).toEqual([{ id: '' }]);
+    await waitFor(() => expect(getClustersInfo).toHaveBeenCalledWith(''));
+    expect(addDanger).not.toHaveBeenCalled();
   });
 });

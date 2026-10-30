@@ -16,7 +16,7 @@ import configureStore from 'redux-mock-store';
 import thunk from 'redux-thunk';
 import { Provider } from 'react-redux';
 import { createMemoryHistory } from 'history';
-import { Router } from 'react-router-dom';
+import { Router, Route } from 'react-router-dom';
 
 // System under test
 import { ForecastersList } from '../List';
@@ -357,6 +357,8 @@ jest.mock('../../../../utils/helpers', () => ({
   }),
   getAllForecastersQueryParamsWithDataSourceId: jest.fn(() => ({})),
   getDataSourceFromURL: jest.fn(() => undefined),
+  getInitialDataSourceId: jest.requireActual('../../../../utils/helpers').getInitialDataSourceId,
+  isForecastingDataSourceCompatible: jest.requireActual('../../../../utils/helpers').isForecastingDataSourceCompatible,
   getVisibleOptions: jest.fn(() => []),
   isDataSourceCompatible: jest.fn(() => true),
   sanitizeSearchText: jest.fn((text: string) => text),
@@ -443,7 +445,9 @@ function renderWithProviders(
   const utils = render(
     <CoreServicesContext.Provider value={coreMock as any}>
       <Provider store={store}>
-        <Router history={history}>{ui}</Router>
+        <Router history={history}>
+          <Route render={(routerProps) => React.cloneElement(ui, routerProps)} />
+        </Router>
       </Provider>
     </CoreServicesContext.Provider>
   );
@@ -917,5 +921,100 @@ describe('<ForecastersList />', () => {
         expect(screen.queryByTestId('confirmStartModal')).not.toBeInTheDocument();
       });
     });
+  });
+});
+
+
+describe('ForecastersList data source selection', () => {
+  const services = jest.requireMock('../../../../../services');
+  const actions = jest.requireMock('../../../../../redux/reducers/opensearch');
+  const helpers = jest.requireMock('../../../../utils/helpers');
+  const listHelpers = jest.requireMock('../../../utils/helpers');
+  const analyticEngine = {
+    id: 'analytic-engine-id',
+    attributes: {
+      title: 'Analytic engine',
+      dataSourceEngineType: 'AnalyticEngine',
+      dataSourceVersion: '3.1.0',
+      installedPlugins: ['opensearch-anomaly-detection'],
+    },
+  };
+  let pickerConfig: any;
+  const addDanger = jest.fn();
+
+  beforeEach(() => {
+    jest.clearAllMocks();
+    services.getDataSourceEnabled.mockReturnValue({ enabled: true, hideLocalCluster: true });
+    services.getNotifications.mockReturnValue({ toasts: { addDanger } });
+    services.getDataSourceManagementPlugin.mockReturnValue({
+      ui: {
+        getDataSourceMenu: () => ({ componentConfig }: any) => {
+          pickerConfig = componentConfig;
+          return (
+            <button onClick={() => componentConfig.onSelectedDataSources([{ id: analyticEngine.id }])}>
+              Select analytic engine
+            </button>
+          );
+        },
+      },
+    });
+    listHelpers.getURLQueryParams.mockImplementation((location) => ({
+      dataSourceId: new URLSearchParams(location.search).get('dataSourceId') ?? undefined,
+    }));
+    helpers.getAllForecastersQueryParamsWithDataSourceId.mockImplementation((dataSourceId) => ({ dataSourceId }));
+    helpers.constructHrefWithDataSourceId.mockImplementation((path, dataSourceId) =>
+      dataSourceId === undefined ? path : `${path}?dataSourceId=${dataSourceId}`
+    );
+  });
+
+  it.each(['/forecasters?dataSourceId=', '/forecasters'])(
+    'waits for the default source before requests for %s',
+    async (route) => {
+      const { history } = renderWithProviders(<ForecastersList setActionMenu={jest.fn()} />, { route });
+      expect(pickerConfig.activeOption).toBeUndefined();
+      expect(pickerConfig.dataSourceFilter(analyticEngine)).toBe(true);
+      expect(getForecasterList).not.toHaveBeenCalled();
+      expect(actions.getIndices).not.toHaveBeenCalled();
+      expect(actions.getAliases).not.toHaveBeenCalled();
+      expect(actions.getClustersInfo).not.toHaveBeenCalled();
+      expect(actions.getIndicesAndAliases).not.toHaveBeenCalled();
+      expect(helpers.getResourceSharingAvailableTypes).not.toHaveBeenCalled();
+
+      fireEvent.click(screen.getByText('Select analytic engine'));
+
+      await waitFor(() => expect(getForecasterList).toHaveBeenCalledWith({ dataSourceId: analyticEngine.id }));
+      expect(actions.getIndices).toHaveBeenCalledWith('', analyticEngine.id);
+      expect(actions.getAliases).toHaveBeenCalledWith('', analyticEngine.id);
+      expect(actions.getClustersInfo).toHaveBeenCalledWith(analyticEngine.id);
+      expect(actions.getIndicesAndAliases).toHaveBeenCalledWith('', analyticEngine.id, '*');
+      expect(helpers.getResourceSharingAvailableTypes).toHaveBeenCalledWith(analyticEngine.id);
+      expect(history.location.search).toBe(`?dataSourceId=${analyticEngine.id}`);
+      expect(screen.getByTestId('createForecasterButton')).toHaveAttribute(
+        'data-href', `forecasting#/create?dataSourceId=${analyticEngine.id}`
+      );
+      expect(addDanger).not.toHaveBeenCalled();
+    }
+  );
+
+  it('retains an explicitly selected analytic engine', async () => {
+    renderWithProviders(<ForecastersList setActionMenu={jest.fn()} />, {
+      route: `/forecasters?dataSourceId=${analyticEngine.id}`,
+    });
+    expect(pickerConfig.activeOption).toEqual([{ id: analyticEngine.id }]);
+    expect(pickerConfig.dataSourceFilter(analyticEngine)).toBe(true);
+    await waitFor(() => expect(getForecasterList).toHaveBeenCalledWith({ dataSourceId: analyticEngine.id }));
+    expect(actions.getClustersInfo).toHaveBeenCalledWith(analyticEngine.id);
+    expect(addDanger).not.toHaveBeenCalled();
+  });
+
+  it('keeps explicit local-cluster selection when local cluster is enabled', async () => {
+    services.getDataSourceEnabled.mockReturnValue({ enabled: true, hideLocalCluster: false });
+    renderWithProviders(<ForecastersList setActionMenu={jest.fn()} />, {
+      route: '/forecasters?dataSourceId=',
+    });
+    expect(pickerConfig.activeOption).toEqual([{ id: '' }]);
+    await waitFor(() => expect(getForecasterList).toHaveBeenCalledWith({ dataSourceId: '' }));
+    expect(actions.getClustersInfo).toHaveBeenCalledWith('');
+    expect(addDanger).not.toHaveBeenCalled();
   });
 });

@@ -10,20 +10,51 @@
  */
 
 import {
+  getInitialDataSourceId,
   getVisibleOptions,
   groupIndicesOrAliasesByCluster,
   isDataSourceCompatible,
   isForecastingDataSourceCompatible,
   sanitizeSearchText,
 } from '../helpers';
+import { getDataSourceEnabled } from '../../../services';
 
-jest.mock('../../../../opensearch_dashboards.json', () => ({
-  supportedOSDataSourceVersions: '>=2.9.0',
-  unsupportedOSDataSourceEngineTypes: ['AnalyticEngine'],
-  requiredOSDataSourcePlugins: ['opensearch-anomaly-detection'],
+jest.mock('../../../services', () => ({
+  getDataSourceEnabled: jest.fn(),
 }));
 
 describe('helpers', () => {
+  describe('getInitialDataSourceId', () => {
+    test.each([
+      { hideLocalCluster: true, dataSourceId: '', expected: undefined },
+      { hideLocalCluster: true, dataSourceId: undefined, expected: undefined },
+      { hideLocalCluster: true, dataSourceId: 'source-id', expected: 'source-id' },
+      { hideLocalCluster: false, dataSourceId: '', expected: '' },
+      { hideLocalCluster: false, dataSourceId: undefined, expected: undefined },
+      { hideLocalCluster: false, dataSourceId: 'source-id', expected: 'source-id' },
+      { hideLocalCluster: undefined, dataSourceId: '', expected: '' },
+      {
+        hideLocalCluster: undefined,
+        dataSourceId: undefined,
+        expected: undefined,
+      },
+      {
+        hideLocalCluster: undefined,
+        dataSourceId: 'source-id',
+        expected: 'source-id',
+      },
+    ])(
+      'resolves $dataSourceId to $expected when hideLocalCluster=$hideLocalCluster',
+      ({ hideLocalCluster, dataSourceId, expected }) => {
+        (getDataSourceEnabled as jest.Mock).mockReturnValue({
+          enabled: true,
+          hideLocalCluster,
+        });
+        expect(getInitialDataSourceId(dataSourceId)).toBe(expected);
+      }
+    );
+  });
+
   describe('getVisibleOptions', () => {
     test('returns without system indices if valid index options and undefined localCluster', () => {
       expect(
@@ -255,9 +286,23 @@ describe('helpers', () => {
       expect(isDataSourceCompatible(dataSource as any)).toBe(false);
     });
 
-    test('should be incompatible for AnalyticEngine', () => {
+    test('should be compatible for AnalyticEngine using the plugin manifest', () => {
       const dataSource = mockDataSource(
         '3.1.0',
+        ['opensearch-anomaly-detection'],
+        'AnalyticEngine'
+      );
+      expect(isDataSourceCompatible(dataSource as any)).toBe(true);
+    });
+
+    test('should reject AnalyticEngine when the required plugin is missing', () => {
+      const dataSource = mockDataSource('3.1.0', [], 'AnalyticEngine');
+      expect(isDataSourceCompatible(dataSource as any)).toBe(false);
+    });
+
+    test('should reject AnalyticEngine below the supported version', () => {
+      const dataSource = mockDataSource(
+        '2.8.0',
         ['opensearch-anomaly-detection'],
         'AnalyticEngine'
       );
@@ -303,9 +348,23 @@ describe('helpers', () => {
       expect(isForecastingDataSourceCompatible(dataSource as any)).toBe(false);
     });
 
-    test('should be incompatible for AnalyticEngine', () => {
+    test('should be compatible for AnalyticEngine using the plugin manifest', () => {
       const dataSource = mockDataSource(
         '3.1.0',
+        ['opensearch-anomaly-detection'],
+        'AnalyticEngine'
+      );
+      expect(isForecastingDataSourceCompatible(dataSource as any)).toBe(true);
+    });
+
+    test('should reject AnalyticEngine when the required plugin is missing', () => {
+      const dataSource = mockDataSource('3.1.0', [], 'AnalyticEngine');
+      expect(isForecastingDataSourceCompatible(dataSource as any)).toBe(false);
+    });
+
+    test('should reject AnalyticEngine below the forecasting version floor', () => {
+      const dataSource = mockDataSource(
+        '3.0.0',
         ['opensearch-anomaly-detection'],
         'AnalyticEngine'
       );

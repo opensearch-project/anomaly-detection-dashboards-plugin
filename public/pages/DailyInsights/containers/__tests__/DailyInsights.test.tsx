@@ -193,6 +193,30 @@ describe('<DailyInsights /> spec', () => {
         expect(spinner).toBeInTheDocument();
       });
     });
+
+    test('clears loading without requests while the default data source is unresolved', async () => {
+      const services = jest.requireMock('../../../../services');
+      const dataSourceSettings = jest.spyOn(services, 'getDataSourceEnabled')
+        .mockReturnValue({ enabled: true, hideLocalCluster: true });
+      const dataSourceManagement = jest.spyOn(services, 'getDataSourceManagementPlugin')
+        .mockReturnValue({
+          ui: { getDataSourceMenu: () => () => null },
+        } as any);
+
+      try {
+        const { container, getByTestId } = renderWithRouter();
+
+        await waitFor(() => {
+          expect(container.querySelector('.euiLoadingSpinner')).toBeNull();
+        });
+        expect(getByTestId('dailyInsightsSetupPanel')).toBeInTheDocument();
+        expect(httpClientMock.get).not.toHaveBeenCalled();
+        expect(httpClientMock.post).not.toHaveBeenCalled();
+      } finally {
+        dataSourceSettings.mockRestore();
+        dataSourceManagement.mockRestore();
+      }
+    });
   });
 
   describe('Setup view when insights not enabled', () => {

@@ -248,6 +248,15 @@ export const getDataSourceFromURL = (location: {
   return { dataSourceId: typeof dataSourceId === 'string' ? dataSourceId : '' };
 };
 
+export const getInitialDataSourceId = (
+  dataSourceId?: string
+): string | undefined => {
+  // An empty ID selects the local cluster only when that cluster is available.
+  return dataSourceId === '' && getDataSourceEnabled().hideLocalCluster
+    ? undefined
+    : dataSourceId;
+};
+
 export const constructHrefWithDataSourceId = (
   basePath: string,
   dataSourceId: string = '',
@@ -286,9 +295,10 @@ export const constructHrefWithDataSourceId = (
 export const isDataSourceCompatible = (
   dataSource: SavedObject<DataSourceAttributes>
 ) => {
+  const unsupportedEngineTypes: readonly string[] =
+    pluginManifest.unsupportedOSDataSourceEngineTypes ?? [];
   if (
-    pluginManifest.hasOwnProperty('unsupportedOSDataSourceEngineTypes') &&
-    pluginManifest.unsupportedOSDataSourceEngineTypes?.includes(
+    unsupportedEngineTypes.includes(
       dataSource.attributes.dataSourceEngineType ?? ''
     )
   ) {

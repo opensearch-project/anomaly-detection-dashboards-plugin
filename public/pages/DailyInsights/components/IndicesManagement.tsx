@@ -31,7 +31,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { RouteComponentProps } from 'react-router-dom';
 import ContentPanel from '../../../components/ContentPanel/ContentPanel';
 import { EnhancedSelectionModal } from './EnhancedSelectionModal';
-import { getDataSourceFromURL, getAllDetectorsQueryParamsWithDataSourceId, isDataSourceCompatible } from '../../utils/helpers';
+import { getDataSourceFromURL, getInitialDataSourceId, getAllDetectorsQueryParamsWithDataSourceId, isDataSourceCompatible } from '../../utils/helpers';
 import { getDetectorList } from '../../../redux/reducers/ad';
 import { executeAutoCreateAgent } from '../../../redux/reducers/ml';
 import { AppState } from '../../../redux/reducers';
@@ -65,7 +65,7 @@ export function IndicesManagement(props: IndicesManagementProps) {
   const location = useLocation();
   const queryParams = getDataSourceFromURL(location);
   
-  const dataSourceId = queryParams.dataSourceId || undefined;
+  const dataSourceId = getInitialDataSourceId(queryParams.dataSourceId);
   const dataSourceEnabled = !!getDataSourceEnabled().enabled;
   
   const adState = useSelector((state: AppState) => state.ad);
@@ -77,7 +77,7 @@ export function IndicesManagement(props: IndicesManagementProps) {
   const [MDSInsightsState, setMDSInsightsState] = useState<MDSStates>({
     queryParams,
     selectedDataSourceId: dataSourceEnabled
-      ? (dataSourceId || undefined)
+      ? dataSourceId
       : undefined,
   });
 
@@ -130,6 +130,9 @@ export function IndicesManagement(props: IndicesManagementProps) {
 
   // Update URL params when data source changes
   useEffect(() => {
+    if (dataSourceEnabled && MDSInsightsState.selectedDataSourceId === undefined) {
+      return;
+    }
     if (dataSourceEnabled) {
       const updatedParams = {
         dataSourceId: MDSInsightsState.selectedDataSourceId,
@@ -173,6 +176,9 @@ export function IndicesManagement(props: IndicesManagementProps) {
   }, [MDSInsightsState.selectedDataSourceId]);
 
 const fetchInsightsStatus = async () => {
+    if (dataSourceEnabled && MDSInsightsState.selectedDataSourceId === undefined) {
+      return;
+    }
   try {
       const statusPath = MDSInsightsState.selectedDataSourceId
         ? `${AD_NODE_API.INSIGHTS_STATUS}/${MDSInsightsState.selectedDataSourceId}`
@@ -196,6 +202,9 @@ const fetchInsightsStatus = async () => {
   }, [adState.detectorList]);
 
   const loadDetectors = async () => {
+    if (dataSourceEnabled && MDSInsightsState.selectedDataSourceId === undefined) {
+      return;
+    }
     try {
       await dispatch(getDetectorList(getAllDetectorsQueryParamsWithDataSourceId(MDSInsightsState.selectedDataSourceId)));
     } catch (error) {

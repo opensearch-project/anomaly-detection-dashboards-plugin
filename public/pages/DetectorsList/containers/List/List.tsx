@@ -49,6 +49,7 @@ import {
   constructHrefWithDataSourceId,
   getAllDetectorsQueryParamsWithDataSourceId,
   getVisibleOptions,
+  getInitialDataSourceId,
   isDataSourceCompatible,
   sanitizeSearchText,
 } from '../../../utils/helpers';
@@ -186,17 +187,7 @@ export const DetectorList = (props: ListProps) => {
     types: string[];
   }>({ dataSourceId: undefined, types: [] });
 
-  // Getting all initial monitors
-  useEffect(() => {
-    const getInitialMonitors = async () => {
-      dispatch(searchMonitors(state.selectedDataSourceId));
-    };
-    const getInitialClusters = async () => {
-      await dispatch(getClustersInfo(state.selectedDataSourceId));
-    }
-    getInitialMonitors();
-    getInitialClusters();
-  }, []);
+
 
   useEffect(() => {
     if (opensearchState.clusters && opensearchState.clusters.length > 0) {
@@ -236,10 +227,23 @@ export const DetectorList = (props: ListProps) => {
     selectedIndices: queryParams.indices
       ? queryParams.indices.split(',')
       : ALL_INDICES,
-    selectedDataSourceId: queryParams.dataSourceId === undefined
-      ? undefined
-      : queryParams.dataSourceId,
+    selectedDataSourceId: getInitialDataSourceId(queryParams.dataSourceId),
   });
+
+  // Getting all initial monitors
+  useEffect(() => {
+    if (dataSourceEnabled && state.selectedDataSourceId === undefined) {
+      return;
+    }
+    const getInitialMonitors = async () => {
+      dispatch(searchMonitors(state.selectedDataSourceId));
+    };
+    const getInitialClusters = async () => {
+      await dispatch(getClustersInfo(state.selectedDataSourceId));
+    }
+    getInitialMonitors();
+    getInitialClusters();
+  }, [state.selectedDataSourceId]);
 
   // Set breadcrumbs on page initialization
   useEffect(() => {
@@ -259,6 +263,9 @@ export const DetectorList = (props: ListProps) => {
   // Getting all initial indices
   const [indexQuery, setIndexQuery] = useState('');
   useEffect(() => {
+    if (dataSourceEnabled && state.selectedDataSourceId === undefined) {
+      return;
+    }
     const getInitialIndices = async () => {
       await dispatch(getIndicesAndAliases(indexQuery, state.selectedDataSourceId, "*"))
     };
@@ -267,6 +274,9 @@ export const DetectorList = (props: ListProps) => {
 
   // Probe resource-sharing availability on the selected data source.
   useEffect(() => {
+    if (dataSourceEnabled && state.selectedDataSourceId === undefined) {
+      return;
+    }
     let cancelled = false;
     getResourceSharingAvailableTypes(state.selectedDataSourceId).then(
       (types) => {
@@ -290,6 +300,9 @@ export const DetectorList = (props: ListProps) => {
 
   // Refresh data if user change any parameters / filter / sort
   useEffect(() => {
+    if (dataSourceEnabled && state.selectedDataSourceId === undefined) {
+      return;
+    }
     const { history, location } = props;
     let updatedParams = {
       from: state.page * state.queryParams.size,
@@ -412,6 +425,9 @@ export const DetectorList = (props: ListProps) => {
 
   // Refresh data if user is typing in the index filter
   const handleSearchIndexChange = debounce(async (searchValue: string) => {
+    if (dataSourceEnabled && state.selectedDataSourceId === undefined) {
+      return;
+    }
     if (searchValue !== indexQuery) {
       const sanitizedQuery = sanitizeSearchText(searchValue);
       setIndexQuery(sanitizedQuery);

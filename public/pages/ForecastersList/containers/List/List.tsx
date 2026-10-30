@@ -60,6 +60,7 @@ import {
   filterAndSortForecasters,
   getAllForecastersQueryParamsWithDataSourceId,
   getDataSourceFromURL,
+  getInitialDataSourceId,
   getResourceSharingAvailableTypes,
   getVisibleOptions,
   isForecastingDataSourceCompatible,
@@ -205,13 +206,14 @@ export const ForecastersList = (props: ListProps) => {
     queryParams,
     selectedForecasterStates: EMPTY_FORECASTER_STATES,
     selectedIndices: ALL_INDICES,
-    selectedDataSourceId: queryParams.dataSourceId === undefined
-      ? undefined
-      : queryParams.dataSourceId,
+    selectedDataSourceId: getInitialDataSourceId(queryParams.dataSourceId),
     searchText: '',
   });
 
+  const isDataSourceReady = !dataSourceEnabled || state.selectedDataSourceId !== undefined;
+
   useEffect(() => {
+    if (!isDataSourceReady) return;
     const { history, location } = props;
     if (dataSourceEnabled) {
       const updatedParams = {
@@ -233,6 +235,7 @@ export const ForecastersList = (props: ListProps) => {
     types: string[];
   }>({ dataSourceId: undefined, types: [] });
   useEffect(() => {
+    if (!isDataSourceReady) return;
     let cancelled = false;
     getResourceSharingAvailableTypes(state.selectedDataSourceId).then(
       (types) => {
@@ -255,26 +258,24 @@ export const ForecastersList = (props: ListProps) => {
     resourceSharing.types.includes(FORECASTER_RESOURCE_TYPE);
 
   const intializeForecasters = async () => {
-    // wait until selected data source is ready before doing dispatch calls if mds is enabled
-      dispatch(
-        getForecasterList(
-          getAllForecastersQueryParamsWithDataSourceId(
-            state.selectedDataSourceId
-          )
-        )
-      );
-      dispatch(getIndices('', state.selectedDataSourceId));
-      dispatch(getAliases('', state.selectedDataSourceId));
-    //}
+    if (!isDataSourceReady) return;
+    dispatch(
+      getForecasterList(
+        getAllForecastersQueryParamsWithDataSourceId(state.selectedDataSourceId)
+      )
+    );
+    dispatch(getIndices('', state.selectedDataSourceId));
+    dispatch(getAliases('', state.selectedDataSourceId));
   };
 
   // Getting all initial monitors
   useEffect(() => {
+    if (!isDataSourceReady) return;
     const getInitialClusters = async () => {
       await dispatch(getClustersInfo(state.selectedDataSourceId));
     }
     getInitialClusters();
-  }, []);
+  }, [state.selectedDataSourceId]);
 
   useEffect(() => {
     if (opensearchState.clusters && opensearchState.clusters.length > 0) {
@@ -319,6 +320,7 @@ export const ForecastersList = (props: ListProps) => {
   // Getting all initial indices
   const [indexQuery, setIndexQuery] = useState('');
   useEffect(() => {
+    if (!isDataSourceReady) return;
     const getInitialIndices = async () => {
       await dispatch(getIndicesAndAliases(indexQuery, state.selectedDataSourceId, "*"))
     };
@@ -367,7 +369,7 @@ export const ForecastersList = (props: ListProps) => {
 
   const getUpdatedForecasters = async () => {
     // wait until selected data source is ready before doing dispatch calls if mds is enabled
-    if (!dataSourceEnabled || (state.selectedDataSourceId && state.selectedDataSourceId !== "")) {
+    if (isDataSourceReady) {
       dispatch(
         getForecasterList(
           getAllForecastersQueryParamsWithDataSourceId(state.selectedDataSourceId)
@@ -435,6 +437,7 @@ export const ForecastersList = (props: ListProps) => {
 
   // Refresh data if user is typing in the index filter
   const handleSearchIndexChange = debounce(async (searchValue: string) => {
+    if (!isDataSourceReady) return;
     if (searchValue !== indexQuery) {
       const sanitizedQuery = sanitizeSearchText(searchValue);
       setIndexQuery(sanitizedQuery);
@@ -503,7 +506,7 @@ export const ForecastersList = (props: ListProps) => {
   };
 
   const handleDataSourceChange = (dataSources: DataSourceOption[]) => {
-    const dataSourceId = dataSources[0].id;
+    const dataSourceId = dataSources[0]?.id;
 
     if (dataSourceEnabled && dataSourceId === undefined) {
       getNotifications().toasts.addDanger(
