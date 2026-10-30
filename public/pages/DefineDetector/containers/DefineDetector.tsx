@@ -323,10 +323,14 @@ export const DefineDetector = (props: DefineDetectorProps) => {
 
   let renderDataSourceComponent: ReactElement | null = null;
   if (dataSourceEnabled) {
-    if (props.isEdit) {
+    // Resolve a missing source with the existing picker before showing the
+    // read-only edit menu, which cannot select a default itself.
+    const showReadOnlyDataSource = props.isEdit && isDataSourceReady;
+    renderDataSourceComponent = useMemo(() => {
+    if (showReadOnlyDataSource) {
       const DataSourceMenu =
       getDataSourceManagementPlugin()?.ui.getDataSourceMenu<DataSourceViewConfig>();
-    renderDataSourceComponent = (
+    return (
       <DataSourceMenu
         setMenuMountPoint={props.setActionMenu}
         componentType={'DataSourceView'}
@@ -341,7 +345,6 @@ export const DefineDetector = (props: DefineDetectorProps) => {
     } else {
       const DataSourceMenu =
         getDataSourceManagementPlugin().ui.getDataSourceMenu<DataSourceSelectableConfig>();
-      renderDataSourceComponent = useMemo(() => {
         return (
           <DataSourceMenu
             setMenuMountPoint={props.setActionMenu}
@@ -359,8 +362,8 @@ export const DefineDetector = (props: DefineDetectorProps) => {
             }}
           />
         );
-      }, [getSavedObjectsClient(), getNotifications(), props.setActionMenu]);
     }
+    }, [getSavedObjectsClient(), getNotifications(), props.setActionMenu, showReadOnlyDataSource]);
   }
 
 

@@ -17,7 +17,7 @@ import { DefineDetector } from '../DefineDetector';
 import { CoreServicesContext } from '../../../../components/CoreServices/CoreServices';
 import { coreServicesMock } from '../../../../../test/mocks';
 import { INITIAL_DETECTOR_DEFINITION_VALUES } from '../../utils/constants';
-import { matchDetector } from '../../../../redux/reducers/ad';
+import { getDetector, matchDetector } from '../../../../redux/reducers/ad';
 import {
   getClustersInfo,
   getIndicesAndAliases,
@@ -40,6 +40,7 @@ jest.mock('../../../../services', () => ({
 jest.mock('../../../../redux/reducers/ad', () => ({
   ...jest.requireActual('../../../../redux/reducers/ad'),
   matchDetector: jest.fn(),
+  getDetector: jest.fn(),
 }));
 
 jest.mock('../../../../redux/reducers/opensearch', () => ({
@@ -63,7 +64,7 @@ const analyticEngine = {
   },
 };
 
-function renderDefineDetector(route: string) {
+function renderDefineDetector(route: string, isEdit = false) {
   const history = createMemoryHistory({ initialEntries: [route] });
   const store = mockStore({
     ad: { detectors: {}, errorMessage: '', requesting: false },
@@ -73,11 +74,12 @@ function renderDefineDetector(route: string) {
     <Provider store={store}>
       <Router history={history}>
         <Route
+          path={isEdit ? '/detectors/:detectorId/edit' : undefined}
           render={(props) => (
             <CoreServicesContext.Provider value={coreServicesMock}>
               <DefineDetector
                 {...props}
-                isEdit={false}
+                isEdit={isEdit}
                 setActionMenu={jest.fn()}
                 initialValues={{
                   ...INITIAL_DETECTOR_DEFINITION_VALUES,
@@ -110,10 +112,14 @@ describe('DefineDetector data source initialization', () => {
     (matchDetector as jest.Mock).mockImplementation(() => () =>
       Promise.resolve({ response: { match: false } })
     );
+    (getDetector as jest.Mock).mockImplementation(() => () => Promise.resolve({}));
     (getDataSourceManagementPlugin as jest.Mock).mockReturnValue({
       ui: {
-        getDataSourceMenu: () => ({ componentConfig }: any) => {
+        getDataSourceMenu: () => ({ componentType, componentConfig }: any) => {
           pickerConfig = componentConfig;
+          if (componentType === 'DataSourceView') {
+            return <span data-test-subj="readOnlyDataSource">{componentConfig.activeOption[0].id}</span>;
+          }
           return (
             <button
               onClick={() => componentConfig.onSelectedDataSources([{ id: analyticEngine.id }])}
@@ -157,4 +163,39 @@ describe('DefineDetector data source initialization', () => {
       expect(addDanger).not.toHaveBeenCalled();
     }
   );
+
+  it.each(['/detectors/detector-id/edit?dataSourceId=', '/detectors/detector-id/edit'])(
+    'resolves the source before loading an edit route: %s',
+    async (route) => {
+      const history = renderDefineDetector(route, true);
+      expect(pickerConfig.activeOption).toBeUndefined();
+      expect(pickerConfig.dataSourceFilter(analyticEngine)).toBe(true);
+      expect(getDetector).not.toHaveBeenCalled();
+      expect(getClustersInfo).not.toHaveBeenCalled();
+      expect(getIndicesAndAliases).not.toHaveBeenCalled();
+      expect(screen.getByTestId('updateDetectorButton')).toBeDisabled();
+
+      fireEvent.click(screen.getByText('Select analytic engine'));
+
+      await waitFor(() =>
+        expect(getDetector).toHaveBeenCalledWith('detector-id', analyticEngine.id)
+      );
+      expect(history.location.search).toBe(`?dataSourceId=${analyticEngine.id}`);
+      expect(screen.getByTestId('readOnlyDataSource')).toHaveTextContent(analyticEngine.id);
+      expect(screen.queryByText('Select analytic engine')).not.toBeInTheDocument();
+      expect(screen.getByTestId('updateDetectorButton')).toBeEnabled();
+    }
+  );
+
+  it.each([
+    [true, true, analyticEngine.id],
+    [true, false, ''],
+    [false, false, ''],
+  ])('preserves edit selection with MDS=%s and local hidden=%s', async (enabled, hideLocalCluster, id) => {
+    (getDataSourceEnabled as jest.Mock).mockReturnValue({ enabled, hideLocalCluster });
+    renderDefineDetector(`/detectors/detector-id/edit?dataSourceId=${id}`, true);
+    await waitFor(() => expect(getDetector).toHaveBeenCalledWith('detector-id', id));
+    expect(screen.queryByText('Select analytic engine')).not.toBeInTheDocument();
+    expect(screen.getByTestId('updateDetectorButton')).toBeEnabled();
+  });
 });

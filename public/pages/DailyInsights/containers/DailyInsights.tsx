@@ -262,6 +262,7 @@ export function DailyInsights(props: DailyInsightsProps) {
 
   const fetchInsightsStatusAndResults = async () => {
     if (dataSourceEnabled && MDSInsightsState.selectedDataSourceId === undefined) {
+      setIsLoading(false);
       return;
     }
     setIsLoading(true);

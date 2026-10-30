@@ -425,6 +425,9 @@ export const DetectorList = (props: ListProps) => {
 
   // Refresh data if user is typing in the index filter
   const handleSearchIndexChange = debounce(async (searchValue: string) => {
+    if (dataSourceEnabled && state.selectedDataSourceId === undefined) {
+      return;
+    }
     if (searchValue !== indexQuery) {
       const sanitizedQuery = sanitizeSearchText(searchValue);
       setIndexQuery(sanitizedQuery);
