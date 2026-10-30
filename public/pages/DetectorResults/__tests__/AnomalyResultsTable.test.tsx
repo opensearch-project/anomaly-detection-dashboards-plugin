@@ -16,6 +16,12 @@ import { AnomalyResultsTable } from '../containers/AnomalyResultsTable';
 import { getSavedObjectsClient, getNotifications, getDataSourceEnabled } from '../../../services';
 import { CoreServicesContext } from '../../../components/CoreServices/CoreServices';
 
+const mockDispatch = jest.fn();
+
+jest.mock('react-redux', () => ({
+  useDispatch: () => mockDispatch,
+}));
+
 const mockWindowOpen = jest.fn();
 Object.defineProperty(window, 'open', {
   value: mockWindowOpen,
@@ -92,6 +98,13 @@ describe('AnomalyResultsTable', () => {
 
   beforeEach(() => {
     jest.clearAllMocks();
+    mockDispatch.mockResolvedValue({
+      response: {
+        hits: {
+          hits: [],
+        },
+      },
+    });
     
     (getSavedObjectsClient as jest.Mock).mockReturnValue({
       find: jest.fn().mockResolvedValue({ savedObjects: [] }),
@@ -106,6 +119,24 @@ describe('AnomalyResultsTable', () => {
     });
 
     (getDataSourceEnabled as jest.Mock).mockReturnValue({ enabled: false });
+  });
+
+  it('renders Anomaly analysis column header', () => {
+    renderWithContext(<AnomalyResultsTable {...defaultProps} />);
+
+    const headers = screen.getAllByText('Anomaly analysis');
+    expect(headers.length).toBeGreaterThan(0);
+  });
+
+  it('shows loading state when Analyze is clicked', async () => {
+    renderWithContext(<AnomalyResultsTable {...defaultProps} />);
+
+    const analyzeButton = screen.getByRole('button', { name: /analyze/i });
+    fireEvent.click(analyzeButton);
+
+    await waitFor(() =>
+      expect(screen.getByText('Analyzing...')).toBeInTheDocument()
+    );
   });
 
   it('shows no anomalies message when there are no anomalies', () => {
