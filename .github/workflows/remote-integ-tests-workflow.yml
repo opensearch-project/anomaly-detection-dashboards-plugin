@@ -130,7 +130,7 @@ jobs:
 
       - name: Run Cypress E2E tests
         run: |
-          env CYPRESS_NO_COMMAND_LOG=1 yarn cypress:run-without-security --browser electron --spec 'cypress/integration/plugins/anomaly-detection-dashboards-plugin/*'
+          env CYPRESS_NO_COMMAND_LOG=1 yarn cypress:run-without-security --browser electron --spec 'cypress/integration/plugins/anomaly-detection-dashboards-plugin/**/*.js'
         working-directory: opensearch-dashboards-functional-test
 
       - name: Capture failure screenshots
