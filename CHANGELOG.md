@@ -10,6 +10,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 ### Bug Fixes
 - Allow AnalyticEngine data sources in anomaly detection and forecasting, and resolve blank selections to the default data source when the local cluster is hidden.
 ### Infrastructure
+- Include nested visualization integration tests in AD Dashboards CI.
 ### Documentation
 - Point the unit tests badge at the current build and test workflow ([#1251](https://github.com/opensearch-project/anomaly-detection-dashboards-plugin/pull/1251))
 ### Maintenance
